@@ -15,21 +15,11 @@ require "macfile"
 
 module BigEndianConverters
 	
-	def packFourCharCodeData(code)
+	def fourCharCode(code)
 		return code
 	end
 	
-	def packEightCharCodeData(code)
-		return code
-	end
-	
-	##
-	
-	def unpackFourCharCodeData(data)
-		return data
-	end
-	
-	def unpackEightCharCodeData(code)
+	def eightCharCode(code)
 		return code
 	end
 
@@ -38,23 +28,14 @@ end
 
 module SmallEndianConverters
 	
-	def packFourCharCodeData(code)
+	def fourCharCode(code)
 		return code.reverse
 	end
 	
-	def packEightCharCodeData(code)
+	def eightCharCode(code)
 		return code[0,4].reverse + code[4,4].reverse
 	end
 	
-	##
-	
-	def unpackFourCharCodeData(data)
-		return data.reverse
-	end
-	
-	def unpackEightCharCodeData(data)
-		return data[0,4].reverse + data[4,4].reverse
-	end
 end
 
 
@@ -127,15 +108,15 @@ class Codecs
 		elsif val.is_a?(Hash) then packHash(val)
 		elsif val.is_a?(MacFile::FileBase) then val.desc
 		elsif val.is_a?(TypeWrappers::AEType) then
-			AE::AEDesc.new(KAE::TypeType, packFourCharCodeData(val.code))
+			AE::AEDesc.new(KAE::TypeType, fourCharCode(val.code))
 		elsif val.is_a?(TypeWrappers::AEEnum) then
-			AE::AEDesc.new(KAE::TypeEnumerated, packFourCharCodeData(val.code))
+			AE::AEDesc.new(KAE::TypeEnumerated, fourCharCode(val.code))
 		elsif val.is_a?(TypeWrappers::AEProp) then 
-			AE::AEDesc.new(KAE::TypeProperty, packFourCharCodeData(val.code))
+			AE::AEDesc.new(KAE::TypeProperty, fourCharCode(val.code))
 		elsif val.is_a?(TypeWrappers::AEKey) then
-			AE::AEDesc.new(KAE::TypeKeyword, packFourCharCodeData(val.code))
+			AE::AEDesc.new(KAE::TypeKeyword, fourCharCode(val.code))
 		elsif val.is_a?(TypeWrappers::AEEventName) then 
-			AE::AEDesc.new(KAE::TypeEventName, packEightCharCodeData(val.code))
+			AE::AEDesc.new(KAE::TypeEventName, eightCharCode(val.code))
 		elsif val.is_a?(AE::AEDesc) then val
 		else
 			raise TypeError
@@ -273,23 +254,23 @@ class Codecs
 	#######
 	
 	def unpackType(desc)
-		return TypeWrappers::AEType.new(unpackFourCharCodeData(desc.data))
+		return TypeWrappers::AEType.new(fourCharCode(desc.data))
 	end
 	
 	def unpackEnumerated(desc)
-		return TypeWrappers::AEEnum.new(unpackFourCharCodeData(desc.data))
+		return TypeWrappers::AEEnum.new(fourCharCode(desc.data))
 	end
 	
 	def unpackProperty(desc)
-		return TypeWrappers::AEProp.new(unpackFourCharCodeData(desc.data))
+		return TypeWrappers::AEProp.new(fourCharCode(desc.data))
 	end
 	
 	def unpackKeyword(desc)
-		return TypeWrappers::AEKey.new(unpackFourCharCodeData(desc.data))
+		return TypeWrappers::AEKey.new(fourCharCode(desc.data))
 	end
 	
 	def unpackEventName(desc)
-		return TypeWrappers::AEEventName.new(unpackEightCharCodeData(desc.data))
+		return TypeWrappers::AEEventName.new(eightCharCode(desc.data))
 	end
 	
 	#######
@@ -458,7 +439,7 @@ class Codecs
 	##
 	
 	def unpackAbsoluteOrdinal(desc)
-		return Ordinal.new(unpackFourCharCodeData(desc.data))
+		return Ordinal.new(fourCharCode(desc.data))
 	end
 	
 	def unpackCurrentContainer(desc)

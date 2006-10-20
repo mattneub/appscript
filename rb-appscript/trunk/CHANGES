@@ -1,3 +1,14 @@
+2006-10-20 -- ???
+
+- improved test_aemreference.rb; fixed bug in aemreference.rb where comparing two non-equivalent aem references could return true
+
+- simplified four-char-code conversion code in codecs.rb
+
+- AS::Reference#methods now returns names of application-defined properties, elements and commands in addition to names of built-in methods [MN]
+
+- AS::Reference#respond_to? now returns true for names of application-defined properties, elements and commands in addition to names of built-in methods [MN]
+
+
 2006-10-18 -- 0.1.5
 
 - renamed MacFile::Alias#newPath, MacFile::FileURL#newPath to Alias#at and FileURL#at for conciseness; e.g.: FileURL.at("/some/path"). Note: newPath methods will be removed in 0.2.0.

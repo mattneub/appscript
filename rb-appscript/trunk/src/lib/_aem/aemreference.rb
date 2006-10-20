@@ -31,16 +31,41 @@ module AEMReference
 		return desc.coerce(type)
 	end
 	
+	class CollectComparable
+		attr_reader :result
+		
+		def initialize
+			@result = []
+		end
+		
+		def method_missing(name, *args)
+			self.result.push([name] + args)
+			return self
+		end
+	end
 	
 	######################################################################
 	# BASE CLASS
 	######################################################################
 	
 	class Base
-		
-		def eql?(val)
-			return self == val
+	
+		def AEM_comparable
+			if not @_comparable
+				collector = AEMReference::CollectComparable.new
+				AEM_resolve(collector)
+				@_comparable = collector.result
+			end
+			return @_comparable
 		end
+		
+		def ==(val)
+			return (self.equal?(val) or (
+					self.class == val.class and 
+					self.AEM_comparable == val.AEM_comparable))
+		end
+		
+		alias_method :eql?, :==
 		
 		def hash
 			return to_s.hash
@@ -63,10 +88,6 @@ module AEMReference
 		def initialize(container, key)
 			@_container = container
 			@_key = key
-		end
-		
-		def ==(v)
-			return (self.class == v.class and @_key == v._key)
 		end
 		
 		def AEM_root
@@ -139,10 +160,6 @@ module AEMReference
 		
 		def to_s
 			return "#{@_container}.#{self.class::By}(#{@_key.inspect})"
-		end
-		
-		def ==(v)
-			return (super and @AEM_want == v.AEM_want)
 		end
 		
 		def _packSelf(codecs)
@@ -527,10 +544,6 @@ module AEMReference
 			@_container = container
 		end
 		
-		def ==(v)
-			return (self.class == v.class and @AEM_want == v.AEM_want and @_container == v._container)
-		end
-		
 		def to_s
 			return "#{@_container}.elements(#{@AEM_want.inspect})"
 		end
@@ -567,10 +580,6 @@ module AEMReference
 		
 		def to_s
 			return _realRef.to_s
-		end
-		
-		def ==(v)
-			return (_realRef == v)
 		end
 		
 		def AEM_root
@@ -618,10 +627,6 @@ module AEMReference
 		def initialize(operand1, operand2)
 			@_operand1 = operand1
 			@_operand2 = operand2
-		end
-		
-		def ==(v)
-			return (self.class == v.class and @_operand1 == v._operand1 and @_operand2 == v._operand2)
 		end
 		
 		def to_s
@@ -716,10 +721,6 @@ module AEMReference
 		def initialize(operands)
 			@_operands = operands
 		end
-		
-		def ==(v)
-			return (self.class == v.class and @_operands == v._operands)
-		end
 			
 		def to_s
 			opStr = (@_operands[1, @_operands.length].collect { |o| o.inspect }).join(', ')
@@ -774,10 +775,6 @@ module AEMReference
 	class ReferenceRoot < PositionSpecifier
 	
 		def initialize
-		end
-		
-		def ==(v)
-			return self.class == v.class
 		end
 		
 		def to_s

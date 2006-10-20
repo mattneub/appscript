@@ -17,6 +17,8 @@ produces reference objects okay, but these objects' to_s method returns empty st
 
 - profiling
 
+- check if eight-char-codes (event names) are 2x32-bit words or 1x64-bit word; codecs module currently assumes the former
+
 - finish commenting source code
 
 - add bigger note about UTF8 usage to manual, useful tips (e.g. jcode), etc.

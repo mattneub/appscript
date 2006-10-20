@@ -412,6 +412,18 @@ module AS
 		
 		#######
 		# introspection
+	
+		def respond_to?(name)
+			if super 
+				return true
+			else
+				return @AS_appdata.referencebyname.has_key?(name.is_a?(String) ? name.intern : name)
+			end
+		end
+		
+		def methods
+			return super + @AS_appdata.referencebyname.keys.collect { |name| name.to_s }
+		end
 		
 		def commands
 			return (@AS_appdata.referencebyname.collect { |name, info| info[0] == :command ? name.to_s : nil }).compact.sort

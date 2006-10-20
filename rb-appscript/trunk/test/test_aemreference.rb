@@ -86,10 +86,18 @@ class TC_AEMReferences < Test::Unit::TestCase
 			val = unpackedVersion ? unpackedVersion : val
 			val2 = DefaultCodecs.unpack(d)
 			assert_equal(val, val2)
+			val2 = DefaultCodecs.unpack(d)
 			assert_block { val.eql?(val2) }
+			val2 = DefaultCodecs.unpack(d)
 			assert_equal(val2, val)
+			val2 = DefaultCodecs.unpack(d)
 			assert_block { val2.eql?(val) }
 		end
+		assert_not_equal(AEMReference::App.property('ctxt').property('ctxt'), AEMReference::Con.property('ctxt').property('ctxt'))
+		assert_not_equal(AEMReference::App.property('foob').property('ctxt'), AEMReference::App.property('ctxt').property('ctxt'))
+		assert_not_equal(AEMReference::App.elements('ctxt').property('ctxt'), AEMReference::App.property('ctxt').property('ctxt'))
+		assert_not_equal(AEMReference::App.elements('ctxt').property('ctxt'), 333)
+		assert_not_equal(333, AEMReference::App.property('ctxt').property('ctxt'))
 		# by-range and by-filter references do basic type checking to ensure a reference is given
 		assert_raises(TypeError) { AEMReference::App.elements('docu').byrange(1, 2) }
 		assert_raises(TypeError) { AEMReference::App.elements('docu').byfilter(1) }
