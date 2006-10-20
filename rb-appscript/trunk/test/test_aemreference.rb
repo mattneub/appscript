@@ -87,6 +87,8 @@ class TC_AEMReferences < Test::Unit::TestCase
 			val2 = DefaultCodecs.unpack(d)
 			assert_equal(val, val2)
 			assert_block { val.eql?(val2) }
+			assert_equal(val2, val)
+			assert_block { val2.eql?(val) }
 		end
 		# by-range and by-filter references do basic type checking to ensure a reference is given
 		assert_raises(TypeError) { AEMReference::App.elements('docu').byrange(1, 2) }
