@@ -1,0 +1,10 @@
+#!/bin/sh
+
+echo "Installing rbosadict..."
+
+cd `dirname "$0"`
+
+sudo cp rbosadict /usr/local/bin
+sudo chmod 755 /usr/local/bin/rbosadict
+
+echo "rbosadict is installed."

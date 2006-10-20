@@ -1,0 +1,74 @@
+2006-10-18 -- 0.1.5
+
+- renamed MacFile::Alias#newPath, MacFile::FileURL#newPath to Alias#at and FileURL#at for conciseness; e.g.: FileURL.at("/some/path"). Note: newPath methods will be removed in 0.2.0.
+
+- appscript module now packs UInt32 csig attributes correctly [DH]
+
+- fixed little-endian bugs when packing and unpacking typeSInt64 and typeLongDateTime
+
+- packing and unpacking typeLongDateTime AEDescs is now about as accurate as can be expected, given the inherent problems of LongDateTime (i.e. UCConvertLongDateTimeToCFAbsoluteTime and UCConvertCFAbsoluteTimeToLongDateTime have off-by-an-hour [or whatever the local difference is] inaccuracies at ST/DST/ST boundaries)
+
+- improved error reporting in MacFile module: creating a MacFile::Alias object with a path to a non-existent filesystem object, getting path for MacFile::Alias object that no longer identifies a valid filesystem object, etc. now raises MacFile::FileNotFoundError instead of various MacOSErrors
+
+- comparison methods' arguments now display correctly when to_s/inspect is called on its-based references
+
+- its-based aem references now correctly unpack KAEContains comparison descriptors as 'reference.isin(value)', rather than trying to unpack them incorrectly as 'value.contains(reference)'
+
+- first/middle/last/any references now compare correctly with identical references that have been previously packed and unpacked. Previously the codecs module was unpacking them with different _key attributes, so equality tests would always return false even when the two references were identical.
+
+- Attempting to pack invalid UTF8 strings now raises AEM::NotUTF8TextError rather than AE::MacOSError -1700.
+
+- fixed launch method (was calling non-existent Connect.launch, not Connect.launchApp)
+
+- attempting to retrieve aete resource from an application that doesn't have any terminology no longer raises 'resource not found' (-192) error
+
+- AEM module now re-exports AE::MacOSError class for convenience
+
+- Apple Event Manager-raised errors that occur when sending events are now reported correctly (was giving 'uninitialized constant Send::Event::None' errors)
+
+- appscript referencerenderer module now renders class names in next and previous references correctly
+
+- GenericReference#to_s now includes 'AS.' prefix when rendering string representations of generic references
+
+- fixed ==() methods in appscript Reference and aem Application classes
+
+- implemented eql? methods so aem types, aem references and appscript references should now work correctly as hash keys
+
+- fixed endian bugs in Codecs when unpacking insertion location selectors and comparison and logic operators
+
+
+2006-10-15 -- 0.1.4
+
+- fixed error message when reporting an unknown parameter (was showing command name, not parameter name)
+
+- fixed bug in TextEdit_demo.rb script (count command's parameter should be :each, not :each_)
+
+- fixed bug where typeBoolean AEDescs would always unpack as true
+
+- fixed bugs when packing and unpacking AEDescs of typeSInt64
+
+- integers between 2*31 and 2**63-1 now pack as typeSInt64, not typeFloat
+
+- [mostly] fixed timezone and winter/summer time bugs; there's probably still problems at the points where DST begins and ends (some of which may be Ruby's fault; this is still to be determined)
+
+
+2006-10-13 -- 0.1.3
+
+- fixed a bug in appscript where the first argument in a command call would be ignored if it was false or nil [MN]
+
+- changed priority order for determining what an ambiguous keyword (e.g. :workbook in Excel) that may be either a type or enumerator name should be packed as; previously typeEnumerated was the default, now it's typeType [MN]
+
+
+2006-10-12 -- 0.1.2
+
+- fixed a bug where appscript was unpacking typeEnumerated AEDescs as AEM::AEEnums instead of Symbols [MN]
+
+
+2006-10-10 -- 0.1.1
+
+- made several corrections and improvements to appscript manual [MN]
+
+
+2006-10-09 -- 0.1.0
+
+- first release

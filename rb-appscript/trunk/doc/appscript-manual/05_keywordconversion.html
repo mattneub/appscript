@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<title>appscript | 5. Keyword Conversion</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<style type="text/css" media="all"><!--@import url(full.css);--></style>
+
+</head>
+<body>
+
+<h1>5. Keyword Conversion</h1>
+
+<!-- top navigation -->
+<div class="navbar">
+	<a href="04_gettinghelp.html">Previous</a> | <a href="index.html">Up</a> | <a href="06_classesandenums.html">Next</a>
+	
+</div>
+
+<!-- content -->
+<div id="content">
+<h2>Keyword conversion</h2>
+
+<p>Because application terminology resources specify AppleScript-style keywords for class, property, command, etc. names, appscript uses the following rules to translate these keywords to legal Ruby identifiers:</p>
+
+<ul>
+<li>Characters a-z, A-Z, 0-9 and underscores (_) are preserved.</li>
+
+<li>Spaces, hyphens (-) and forward slashes (/) are replaced with underscores.</li>
+
+<li>Ampersands (&amp;) are replaced by the word 'and'.</li>
+
+<li>All other characters are converted to 0x00-style hexadecimal representations.</li>
+
+<li>Names that match the methods already defined on appscript's Application and Reference classes have an underscore appended. Reserved method names are:
+
+<pre><code>AS_aemreference               keywords
+AS_appdata                    last
+ID                            launch
+after                         le
+and                           lt
+any                           method
+before                        method_missing
+class                         methods
+clone                         middle
+commands                      ne
+contains                      next
+display                       not
+doesnotcontain                object_id
+doesnotendwith                or
+doesnotstartwith              parameters
+dup                           previous
+elements                      private_methods
+end                           properties
+endswith                      protected_methods
+endtransaction                public_methods
+eq                            resulttype
+extend                        send
+first                         singleton_methods
+freeze                        start
+ge                            startswith
+gt                            starttransaction
+hash                          taint
+id                            telltarget
+ignore                        timeout
+inspect                       to_a
+instance_eval                 to_s
+instance_variable_get         type
+instance_variable_set         untaint
+instance_variables            useterminology
+isin                          waitreply
+isnotin</code></pre>
+</li>
+</ul>
+</div>
+
+<!-- bottom navigation -->
+<div class="navbar">
+	<a href="04_gettinghelp.html">Previous</a> | <a href="index.html">Up</a> | <a href="06_classesandenums.html">Next</a>
+	
+</div>
+
+<!--footer-->
+<p class="footer">&copy; 2006 HAS</p>
+</body>
+</html>

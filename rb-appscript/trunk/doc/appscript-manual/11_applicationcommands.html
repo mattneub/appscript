@@ -1,0 +1,209 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<title>appscript | 11. Application Commands</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<style type="text/css" media="all"><!--@import url(full.css);--></style>
+
+</head>
+<body>
+
+<h1>11. Application Commands</h1>
+
+<!-- top navigation -->
+<div class="navbar">
+	<a href="10_referenceexamples.html">Previous</a> | <a href="index.html">Up</a> | <a href="12_commandexamples.html">Next</a>
+	
+</div>
+
+<!-- content -->
+<div id="content">
+
+<h2>Command syntax</h2>
+
+<p>Appscript commands have the following syntax:</p>
+
+<pre><code>application.command_name([direct_parameter][, keyword_parameters])</code></pre>
+
+<p>Both direct and keyword parameters are optional.</p>
+
+<p>Application commands are implemented by the application's top-level <code>application</code> object (represented by an <code>AS::Application</code> instance). For convenience, appscript also makes application commands available as methods on every reference. If a command is called upon a reference rather than an Application object, that reference will be taken as the application's direct parameter (with one or two caveats; see the Special Cases section below).</p>
+
+<p>The command's direct parameter can be any value; the application's dictionary will (usually) indicate the appropriate types. A command can have a maximum of one direct parameter; if more than one is given, an error will occur. (Remember that if a command is called on a reference, that reference is counted as a direct parameter.)</p>
+
+<p>Keyword parameters are specified as a <code>Hash</code> object whose keys are symbols representing the parameter names. Note that Ruby allows this hash to be written without the enclosing <code>{</code> and <code>}</code> for easier readability:</p>
+
+<pre><code>application.command_name(direct_parameter, :name1 =&gt; value1, :name2 =&gt; value2, ...)</code></pre>
+
+<p>Each command can have zero or more keyword parameters as defined in the application dictionary. In addition, appscript provides the following default parameters <small>[<a href="#_1">1</a>]</small> for indicating how the command should be handled:</p>
+
+<table summary="Default appscript parameters">
+<thead>
+<tr><th>Name</th><th>Class</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>:waitreply</code></td><td><code>Boolean</code></td><td>Wait for application to return a result/error?</td></tr>
+
+<tr><td><code>:timeout</code></td><td><code>Integer</code></td><td>Number of seconds to wait for a reply (no timeout = 0)</td></tr>
+
+<tr><td><code>:resulttype</code></td><td><code>nil</code> | <code>Symbol</code></td><td>AE type to coerce return value to (e.g. <code>:FSRef</code>)</td></tr>
+
+<tr><td><code>:ignore</code></td><td><code>nil</code> | <code>Array of Symbol</code></td><td>String characteristics to ignore when evaluating references <small>[<a href="#_2">2</a>]</small>. The array should contain zero or more of the following enumerators: <code>:case</code>, <code>:diacriticals</code>, <code>:expansion</code>, <code>:hyphens</code>, <code>:punctuation</code>, <code>:whitespace</code></td></tr>
+
+</tbody>
+</table>
+
+
+<p>For convenience, appscript allows the direct parameter and/or keyword parameters arguments to be omitted from the method's argument list if unused. For example, a command that has no direct or keyword parameters would be written as:</p>
+
+<pre><code>application.command_name</code></pre>
+
+<p>If the command takes only keyword parameters, or the direct parameter is the reference upon which the command is called, it can be written as:</p>
+
+<pre><code>application.command_name(:name1 =&gt; value1, :name2 =&gt; value2, ...)</code></pre>
+
+<p>If the command takes only a direct parameter, then it can <em>usually</em> be written as follows:
+
+<pre><code>application.command_name(direct_parameter)</code></pre>
+
+<p>The one caveat is where the direct parameter is a Ruby hash representing an <code>AERecord</code> value. To avoid appscript mistaking this value for a keyword parameters hash, you must also indicate that the command has no keyword parameters by specifying <code>nil</code> as the second argument to the call:</p>
+
+<pre><code>application.command_name(direct_hash_parameter, nil)</code></pre>
+
+<p>See the Special cases section below for additional rules.</p>
+
+<h2>Examples</h2>
+
+<pre><code># tell application &quot;TextEdit&quot; to activate
+AS.app('TextEdit').activate
+
+# tell application &quot;TextEdit&quot; to open fileRefList
+AS.app('TextEdit').open(fileRefList)
+
+# tell application &quot;Finder&quot; to get version
+AS.app('Finder').version.get
+
+# tell application &quot;Finder&quot; to set name of file &quot;foo.txt&quot; of home to &quot;bar.txt&quot;
+AS.app('Finder').home.files['foo.txt'].name.set('bar.txt')
+
+# tell application &quot;TextEdit&quot; to count (text of first document) each paragraph
+AS.app('TextEdit').documents.first.text.count(:each =&gt; :paragraph)
+
+# tell application &quot;TextEdit&quot; to make new document at end of documents
+AS.app('TextEdit').documents.end.make(:new =&gt; :document)
+
+# tell application &quot;Finder&quot; to get items of home as alias list
+AS.app('Finder').home.items.get(:resulttype =&gt; :Alias)</code></pre>
+
+
+
+<h2>Special cases</h2>
+
+<p>The following special-case behaviours are implemented for convenience:</p>
+
+<ol>
+<li><p>Commands that take a reference to one or more application objects as a direct parameter may be written in the following form:</p>
+
+<pre><code>reference.command(keyword_parameters)</code></pre>
+
+<p>The conventional  form is also supported should you ever wish (or need) to use it:</p>
+
+<pre><code>application.command(keyword_parameters)</code></pre>
+
+<p>The two forms are equivalent (appscript converts the first form to the second behind the scenes) although the first form is preferred for conciseness. Note that the form:</p>
+
+<pre><code>reference.command(reference, **args)</code></pre>
+
+<p>is invalid as it effectively specifies two direct parameters and results in a "Too many direct parameters" error if used.</p>
+
+</li>
+
+
+<li><p>When the <code>make</code> command is called on a reference, it will take that reference as its insertion location if if there is no existing <code>at</code> keyword parameter; i.e.:</p>
+
+<pre><code>insertion_location.make(:new =&gt; some_class)</code></pre>
+
+<p>instead of:</p>
+
+<pre><code>application.make(:new =&gt; some_class, :at =&gt; insertion_location)</code></pre>
+
+<p>The first form is preferred, although both are supported. (Of course, it is still up to the user to know whether an insertion location should or should not be specified in a given situation.)</p></li>
+
+
+<li><p>When the <code>set</code> command is called on a reference, its <code>to</code> parameter can be written as a direct parameter; i.e.:</p>
+
+<pre><code>reference.set(value)</code></pre>
+
+<p>instead of:</p>
+
+<pre><code>reference.set(:to =&gt; value)</code></pre>
+
+<p>or:</p>
+
+<pre><code>application.set(reference, :to =&gt; value)</code></pre>
+
+<p>The first form is preferred, although all three are supported.</p></li>
+
+</ol>
+
+
+<h2>Note to AppleScript users</h2>
+
+<p>Unlike AppleScript, which implicitly sends a <code>get</code> command to any unresolved application object references at the end of evaluating an expression, appscript only resolves a reference when it receives an appropriate command. For example:</p>
+
+<pre><code>foo = AS.app('Finder').disks</code></pre>
+
+<p>is <em>not</em> equivalent to:</p>
+
+<pre><code>set foo to disks of application &quot;Finder&quot;</code></pre>
+
+<p>even though the two may look similar. In the first case, the value assigned to variable <code>foo</code> is a reference, <code>AS.app('Finder').disks</code>. In the second, AppleScript evaluates the <code>disks of application &quot;Finder&quot;</code> reference by performing an implicit <code>get</code> command before assigning the result, a <em>list</em> containing one or more references (one to each disk currently mounted), to variable <code>foo</code>. To assign an unresolved reference to a variable in AppleScript, the reference must be preceded by the <code>a reference to</code> operator. For example:</p>
+
+<ul>
+<li><p>Getting a reference to all disks:</p>
+
+<pre><code>set foo to a reference to every disk of application &quot;Finder&quot;
+return foo
+--&gt; a reference to every disk of application &quot;Finder&quot;</code></pre>
+
+<pre><code>foo = AS.app('Finder').disks
+print foo
+--&gt; AS.app('Finder').disks</code></pre></li>
+
+
+<li><p>Getting a list of references to each disk:</p>
+
+<pre><code>set foo to get every disk of application &quot;Finder&quot; -- (the 'get' is optional here)
+return foo
+--&gt; {disk &quot;Mac HD&quot; of application &quot;Finder&quot;, disk &quot;ZIP-100&quot; of application &quot;Finder&quot;}</code></pre>
+
+<pre><code>foo = AS.app('Finder').disks.get
+print foo
+--&gt; [AS.app('Finder').disks['Mac HD'], AS.app('Finder').disks['ZIP-100']]</code></pre>
+
+</li>
+</ul>
+
+
+<hr />
+
+
+<p><a name="_1"></a>[1] Appscript provides one additional special parameter: <code>:telltarget</code>. This is covered in <a href="14_problemapps.html">Chapter 14</a>.</p>
+
+<p><a name="_2"></a>[2] Note that most applications currently ignore this setting and use the default behaviour (ignore case).</p>
+
+
+</div>
+
+<!-- bottom navigation -->
+<div class="navbar">
+	<a href="10_referenceexamples.html">Previous</a> | <a href="index.html">Up</a> | <a href="12_commandexamples.html">Next</a>
+	
+</div>
+
+<!--footer-->
+<p class="footer">&copy; 2006 HAS</p>
+</body>
+</html>
