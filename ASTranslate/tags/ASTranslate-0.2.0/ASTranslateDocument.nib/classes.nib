@@ -1,0 +1,12 @@
+{
+    IBClasses = (
+        {
+            CLASS = ASTranslateDocument; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {codeView = id; resultView = id; }; 
+            SUPERCLASS = NSDocument; 
+        }, 
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }
+    ); 
+    IBVersion = 1; 
+}
