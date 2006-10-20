@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<title>appscript | 14. Dealing With Problem Applications</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<style type="text/css" media="all"><!--@import url(full.css);--></style>
+
+</head>
+<body>
+
+<h1>14. Dealing With Problem Applications</h1>
+
+<!-- top navigation -->
+<div class="navbar">
+	<a href="13_performanceissues.html">Previous</a> | <a href="index.html">Up</a> | <a href="15_notes.html">Next</a>
+	
+</div>
+
+<!-- content -->
+<div id="content">
+
+<p>Appscript provides a number of mechanisms for dealing with problematic applications, particularly those with missing or incorrect terminology. The APIs and documentation for these have still to be finalized, however; once they are, this chapter will be expanded with additional information.</p>
+
+<h2>Working around defective terminology</h2>
+
+<!--
+<p>There are two ways to work around missing or incorrect terminology: use <code>aem</code> or use appscript's <code>dump</code> module.</p>
+
+<h3>Use aem</h3>
+-->
+
+<p>If faulty terminology prevents you from correctly constructing an appscript reference or command, one solution is to use the lower-level aem module, which uses raw codes instead of human-readable names. (You can use the <a href="http://sourceforge.net/project/showfiles.php?group_id=175009">HTMLDictionary</a> application to obtain a plain text listing of raw codes from an application's terminology resource.)</p>
+
+<p>Note that you can obtain an aem reference from an existing appscript reference by calling its <code>AS_aemreference</code> method. You can also pass an aem reference as a parameter to an appscript command. (You cannot use an appscript reference in an aem event, however; you have to extract its aem reference and use that.)</p>
+
+<p>For example:</p>
+
+<pre><code>aemRef = AS.app('TextEdit').documents[1].text.AS_aemreference
+
+# aemRef contains an aem reference:
+#     app.elements('docu').byindex(1).elements('ctxt')
+
+app('TextEdit').get(aemRef)</code></pre>
+
+
+<p class="hilitebox">Note that the rb-aem documentation is not yet available; for now, refer to the py-aem documentation (rb-aem's API is virtually identical to py-aem's) and rb-aem source code for more information.</p>
+
+
+
+<!-- TO DO: dump format; patching AS_appdata codecs -->
+
+
+
+<h2>Providing a subject attribute</h2>
+
+<p>While most applications will happily accept a reference to their target object(s) as a command parameter, you may occasionally encounter an application that violates Apple's Scripting Interface Guidelines by requiring it to be provided as a special subject (<code>'subj'</code>) attribute.</p>
+
+<p>In AppleScript, a reference specified by a tell block that cannot be packed as the direct parameter (either because the command already has a direct parameter or doesn't have one) is automatically packed as a subject attribute instead. Appscript provides an equivalent workaround via the special <code>:telltarget</code> parameter available in any command.</p>
+
+<table summary="Special appscript parameters">
+<thead>
+<tr><th>Name</th><th>Class</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>:telltarget</code></td><td><code>nil</code> | <code>AS::Reference</code></td><td>Reference to use as the event's subject attribute.</td></tr>
+</tbody>
+</table>
+
+</div>
+
+<!-- bottom navigation -->
+<div class="navbar">
+	<a href="13_performanceissues.html">Previous</a> | <a href="index.html">Up</a> | <a href="15_notes.html">Next</a>
+	
+</div>
+
+<!--footer-->
+<p class="footer">&copy; 2006 HAS</p>
+</body>
+</html>
