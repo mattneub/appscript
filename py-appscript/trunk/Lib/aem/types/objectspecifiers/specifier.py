@@ -36,15 +36,12 @@ class DeferredSpecifier(base.BASE):
 	def __repr__(self):
 		return repr(self._realRef())
 	
-	def __eq__(self, v):
-		return self._realRef() == v
-	
 	def AEM_root(self):
 		return self._realRef().AEM_root()
 	
 	def AEM_resolve(self, obj):
 		return self._realRef().AEM_resolve(obj)
-
+		
 
 ######################################################################
 # BASE CLASS FOR ALL REFERENCE FORMS
@@ -56,10 +53,6 @@ class Specifier(base.BASE):
 	def __init__(self, container, key):
 		self._container = container
 		self._key = key
-	
-	def __eq__(self, v):
-		"""References may be compared for equality."""
-		return (self.__class__ == v.__class__) and (self._key == v._key) and (self._container == v._container)
 		
 	def AEM_root(self):
 		# Get reference's root node. Used by range and filter specifiers when determining type of reference
@@ -130,9 +123,6 @@ class _PositionSpecifier(Specifier):
 	
 	def __repr__(self):
 		return '%r.%s(%r)' % (self._container, self._by, self._key)
-	
-	def __eq__(self, v):
-		return Specifier.__eq__(self, v) and (self.AEM_want == v.AEM_want)
 	
 	def _packSelf(self, codecs):
 		return base.packListAs(kAE.typeObjectSpecifier, [
@@ -505,9 +495,6 @@ class UnkeyedElements(Specifier):
 		self.AEM_want = wantcode
 		self._container = container
 	
-	def __eq__(self, v):
-		return (self.__class__ == v.__class__) and (self.AEM_want == v.AEM_want) and (self._container == v._container)
-	
 	def __repr__(self):
 		return '%r.elements(%r)' % (self._container, self.AEM_want)
 	
@@ -528,9 +515,6 @@ class UnkeyedElements(Specifier):
 class ReferenceRoot(_PositionSpecifier):
 	def __init__(self):
 		pass
-	
-	def __eq__(self, v):
-		return (self.__class__ == v.__class__)
 	
 	def __repr__(self):
 		return self._kName

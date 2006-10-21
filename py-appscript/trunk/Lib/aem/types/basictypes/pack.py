@@ -23,13 +23,24 @@ _macEpochT = time.mktime(_macEpoch.timetuple())
 _shortMacEpoch = _macEpoch.date() # used in packing date objects as AEDesc typeLongDateTime
 
 #######
+
+if struct.pack("L", *struct.unpack(">L", 'abcd')) == 'abcd' : # host is big-endian
+	fourCharCode = eightCharCode = lambda code: code
+else: # host is small-endian
+	fourCharCode = lambda code: code[::-1]
+	eightCharCode = lambda code: code[3::-1] + code[:3:-1]
+
+#######
 # Packing functions
 
 def _packLong(val, codecs):
-	try:
-		return AECreateDesc(kAE.typeSInt64, struct.pack('q', val)) # pack as typeSInt64 if possible (non-lossy)
-	except OverflowError:
-		return codecs.pack(float(val)) # otherwise pack as typeFloat (lossy)
+	if (-2**31) <= val < (2**31): # pack as typeSInt32 if possible (non-lossy)
+		return codecs.pack(int(val))
+	elif (-2**63) <= val < (2**63): # else pack as typeSInt64 if possible (non-lossy)
+		return AECreateDesc(kAE.typeSInt64, struct.pack('q', val))
+	else: # else pack as typeFloat (lossy)
+		return codecs.pack(float(val))
+
 
 def _packList(val, codecs):
 	lst = AECreateList('', False)
@@ -88,7 +99,7 @@ encoders = {
 	types.LongType: _packLong,
 	types.FloatType: lambda val, codecs: AECreateDesc(kAE.typeFloat, struct.pack('d', val)),
 	types.StringType: lambda val, codecs: AECreateDesc(kAE.typeChar, val),
-	types.UnicodeType: lambda val, codecs: AECreateDesc(kAE.typeUnicodeText, val.encode('utf16')), # TO DO: check if there's any issues with including BOM in typeUnicodeText; decide if typeUTF16ExternalRepresentation should be used instead
+	types.UnicodeType: lambda val, codecs: AECreateDesc(kAE.typeUnicodeText, val.encode('utf16')[2:]), # note: optional BOM is omitted as this causes problems with stupid apps like iTunes 7 that don't handle BOMs correctly; note: while typeUnicodeText is not recommended as of OS 10.4, it's still being used rather than typeUTF8Text or typeUTF16ExternalRepresentation to provide compatibility with not-so-well-designed applications that may have problems with these newer types
 	types.ListType: _packList,
 	types.TupleType: _packList,
 	types.DictionaryType: _packDict,
@@ -102,10 +113,10 @@ encoders = {
 	macfile.Alias: lambda val, codecs: val.aedesc,
 	macfile.File: lambda val, codecs: val.aedesc,
 	# ensure correct endianness in following
-	AEType: lambda val, codecs: AECreateDesc(kAE.typeType, struct.pack("L", *struct.unpack(">L", val.code))),
-	AEEnum: lambda val, codecs: AECreateDesc(kAE.typeEnumeration, struct.pack("L", *struct.unpack(">L", val.code))),
-	AEProp: lambda val, codecs: AECreateDesc(kAE.typeProperty, struct.pack("L", *struct.unpack(">L", val.code))),
-	AEKey: lambda val, codecs: AECreateDesc(kAE.typeKeyword, struct.pack("L", *struct.unpack(">L", val.code))),
-	AEEventName: lambda val, codecs: AECreateDesc('evnt', struct.pack("LL", *struct.unpack(">LL", val.code))),
+	AEType: lambda val, codecs: AECreateDesc(kAE.typeType, fourCharCode(val.code)),
+	AEEnum: lambda val, codecs: AECreateDesc(kAE.typeEnumeration, fourCharCode(val.code)),
+	AEProp: lambda val, codecs: AECreateDesc(kAE.typeProperty, fourCharCode(val.code)),
+	AEKey: lambda val, codecs: AECreateDesc(kAE.typeKeyword, fourCharCode(val.code)),
+	AEEventName: lambda val, codecs: AECreateDesc('evnt', eightCharCode(val.code)),
 }
 

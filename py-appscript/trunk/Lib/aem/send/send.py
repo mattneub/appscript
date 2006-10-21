@@ -73,10 +73,10 @@ class Event(object):
 	
 	_createAppleEvent = AECreateAppleEvent
 	
-	def _sendAppleEvent(self, flags, timeout): # TO DO: Mach port support
+	def _sendAppleEvent(self, flags, timeout):
 		"""Hook method; may be overridden to modify event sending."""
-		return self.AEM_event.AESendMessage(flags, timeout)
-		#return self.AEM_event.AESendMach(flags, kAE.kAENormalPriority, timeout)
+		#return self.AEM_event.AESendMessage(flags, timeout)
+		return self.AEM_event.AESendMessageAllocatingMachPort(flags, timeout) # NOTE: this allocates a new Mach port each time it's called. This seems a bit wasteful; however, the performance hit is negligible, and it avoids the complexities of managing Mach ports (either manually or automatically) in multi-threaded situations. Hopefully no unexpected problems (memory leaks, etc.) will turn up with this approach; if they do, a different arrangement will have to be found. Also note that allocating a custom Mach port instead of using the default one avoids the bouncing Python launcher icon in the Dock with Python 2.4+; this also reduces the startup time.
 	
 	# Public
 	

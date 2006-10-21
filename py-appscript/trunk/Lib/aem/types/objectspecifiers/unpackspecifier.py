@@ -3,31 +3,46 @@
 (C) 2005 HAS
 """
 
+import struct
+
 from CarbonX import kAE
 
 from aem.types.basictypes import AEType, AEEnum
-import specifier
+import specifier, base
 
 
 ######################################################################
 # PRIVATE
 ######################################################################
 
+if struct.pack("L", *struct.unpack(">L", 'abcd')) == 'abcd' : # host is big-endian
+	fourCharCode = lambda code: code
+else: # host is small-endian
+	fourCharCode = lambda code: code[::-1]
+
+
+_kInsertionLocSelectors = {
+		fourCharCode(kAE.kAEBefore): 'before', 
+		fourCharCode(kAE.kAEAfter): 'after', 
+		fourCharCode(kAE.kAEBeginning): 'start', 
+		fourCharCode(kAE.kAEEnd): 'end'
+}
+
 _kTypeCompDescriptorOperators = {
-		kAE.kAEGreaterThan:'gt',
-		kAE.kAEGreaterThanEquals:'ge',
-		kAE.kAEEquals:'eq',
-		kAE.kAELessThan:'lt',
-		kAE.kAELessThanEquals:'le',
-		kAE.kAEBeginsWith:'startswith',
-		kAE.kAEEndsWith:'endswith',
-		kAE.kAEContains:'contains'
+		fourCharCode(kAE.kAEGreaterThan): 'gt',
+		fourCharCode(kAE.kAEGreaterThanEquals): 'ge',
+		fourCharCode(kAE.kAEEquals): 'eq',
+		fourCharCode(kAE.kAELessThan): 'lt',
+		fourCharCode(kAE.kAELessThanEquals): 'le',
+		fourCharCode(kAE.kAEBeginsWith): 'startswith',
+		fourCharCode(kAE.kAEEndsWith): 'endswith',
+		fourCharCode(kAE.kAEContains): 'contains'
 }
 
 _kTypeLogicalDescriptorOperators = {
-		kAE.kAEAND:'AND',
-		kAE.kAEOR:'OR',
-		kAE.kAENOT:'NOT'
+		fourCharCode(kAE.kAEAND): 'AND',
+		fourCharCode(kAE.kAEOR): 'OR',
+		fourCharCode(kAE.kAENOT): 'NOT'
 }
 
 
@@ -38,7 +53,7 @@ class _Ordinal:
 		self.code = code
 
 
-def _descToDict(desc): # Shallow unpack an AEDesc
+def _descToDict(desc): # Shallow unpack an AEDesc # TO DO: is this still needed? Or can we just coerce to record and do a normal unpack?
 	desc = desc.AECoerceDesc(kAE.typeAERecord) # needed in 10.3, otherwise the next line raises MacOS.Error(-1704) (annoying, as it makes unpacking references 5% slower)
 	return dict([desc.AEGetNthDesc(i + 1, kAE.typeWildCard) for i in range(desc.AECountItems())])
 
@@ -90,9 +105,11 @@ def _unpackObjectSpecifier(desc, codecs): # TO DECIDE: what, if any, type/value 
 		return ref.userproperty(key)
 	elif keyForm == kAE.formRelativePosition: # relative element specifier
 		if key.code == kAE.kAEPrevious:
-			return ref.previous(AEType(want))
+			return ref.previous(want)
 		elif key.code == kAE.kAENext:
-			return ref.next(AEType(want))
+			return ref.next(want)
+		else:
+			raise ValueError, "Bad relative position selector: %r" % want
 	else: # other element(s) specifier
 		ref = ref.elements(want)
 		if keyForm == kAE.formName:
@@ -119,13 +136,20 @@ def _unpackObjectSpecifier(desc, codecs): # TO DECIDE: what, if any, type/value 
 def _unpackInsertionLoc(desc, codecs):
 	rec = _descToDict(desc)
 	return getattr(_unpackObjectSpecifier(rec[kAE.keyAEObject], codecs), 
-			{kAE.kAEBefore: 'before', kAE.kAEAfter: 'after', kAE.kAEBeginning: 'start', kAE.kAEEnd: 'end'}[rec[kAE.keyAEPosition].data])
+			_kInsertionLocSelectors[rec[kAE.keyAEPosition].data])
 
 
 def _unpackCompDescriptor(desc, codecs):
 	rec = _descToDict(desc)
 	operator = _kTypeCompDescriptorOperators[rec[kAE.keyAECompOperator].data]
-	return getattr(codecs.unpack(rec[kAE.keyAEObject1]), operator)(codecs.unpack(rec[kAE.keyAEObject2]))
+	op1 = codecs.unpack(rec[kAE.keyAEObject1])
+	op2 = codecs.unpack(rec[kAE.keyAEObject2])
+	if operator == 'contains':
+		if isinstance(op1, base.BASE) and op1.AEM_root() == specifier.its:
+			return op1.contains(op2)
+		else:
+			return op2.isin(op1)
+	return getattr(op1, operator)(op2)
 
 
 def _unpackLogicalDescriptor(desc, codecs):
@@ -142,7 +166,7 @@ def _unpackLogicalDescriptor(desc, codecs):
 osdecoders = {
 	kAE.typeInsertionLoc: _unpackInsertionLoc,
 	kAE.typeObjectSpecifier: _unpackDeferredObjectSpecifier, #_unpackObjectSpecifier,#
-	kAE.typeAbsoluteOrdinal: lambda desc,codecs: _Ordinal(desc.data),
+	kAE.typeAbsoluteOrdinal: lambda desc,codecs: _Ordinal(fourCharCode(desc.data)),
 	kAE.typeCurrentContainer: lambda desc, codecs: codecs.con,
 	kAE.typeObjectBeingExamined: lambda desc, codecs: codecs.its,
 	kAE.typeCompDescriptor: _unpackCompDescriptor,

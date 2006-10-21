@@ -9,9 +9,6 @@ TO DO
 - better error reporting (i.e. CommandError should allow clients to obtain type, object, application, etc. information when available)
 
 
-- decide whether to use typeUnicodeText or typeUTF16ExternalRepresentation when packing Unicode text (i.e. former is not recommended due to endianness issues, but latter may not be as backwards-compatible); also check if there's any problems with including BOM in typeUnicodeText AEDescs
-
-
 - Any other Python/AE type/class unpack routines needed? (See [e.g.] AEDataModel.h) e.g.:
 
 	unpack:
@@ -55,3 +52,6 @@ print its == its.eq(True)
 
 
 - wrap loose CarbonX.AE.AEDescs as aem.AEDesc to avoid users coupling code directly to Carbon(X).AE when using AEDescs (and have appscript reexport this class for convenience), adding better __repr__ support # wrapping returned AEDescs is easy enough, but allowing clients to construct them from scratch isn't
+
+
+- decide whether to use typeUnicodeText or typeUTF16ExternalRepresentation when packing Unicode text (i.e. former is not recommended due to endianness issues, but latter may not be as backwards-compatible). Note: will stick with typeUnicodeText for compatibility's sake for the time being as some less-well applications appear to have problems with other types

@@ -27,6 +27,18 @@ def packListAs(type, lst):
 	return desc.AECoerceDesc(type)
 
 
+class _CollectComparable:
+	def __init__(self):
+		self.result = []
+	
+	def __getattr__(self, name):
+		self.result.append(name)
+		return self
+	
+	def __call__(self, *args):
+		self.result.append(args)
+		return self
+
 
 class BASE(object):
 	"""Base class for all specifier and testclause classes."""
@@ -38,3 +50,17 @@ class BASE(object):
 	def __ne__(self, v):
 		"""References may be compared for equality."""
 		return not (self == v)
+	
+	def __eq__(self, v):
+		"""References may be compared for equality."""
+		return self is v or (
+				self.__class__ == v.__class__ and 
+				self.AEM_comparable() == v.AEM_comparable())
+	
+	def AEM_comparable(self):
+		collector = _CollectComparable()
+		self.AEM_resolve(collector)
+		val = collector.result
+		self.AEM_comparable = lambda: val
+		return val
+

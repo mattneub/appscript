@@ -642,23 +642,20 @@ static PyObject *AEDesc_AESend(AEDescObject *_self, PyObject *_args)
 	return _res;
 }
 
-/* START PROOF-OF-CONCEPT CODE */
 
-static PyObject *AEDesc_AESendMach(AEDescObject *_self, PyObject *_args)
+static PyObject *AEDesc_AESendMessageAllocatingMachPort(AEDescObject *_self, PyObject *_args)
 {
 	PyObject *_res = NULL;
 	OSErr _err;
 	AppleEvent reply;
 	AESendMode sendMode;
-	AESendPriority sendPriority;
 	long timeOutInTicks;
 	mach_port_t replyPort;
 #ifndef AESend
 	PyMac_PRECHECK(AESend);
 #endif
-	if (!PyArg_ParseTuple(_args, "lhl",
+	if (!PyArg_ParseTuple(_args, "ll",
 						  &sendMode,
-						  &sendPriority,
 						  &timeOutInTicks))
 		return NULL;
 	if (sendMode == kAEWaitReply) {
@@ -691,7 +688,6 @@ cleanup:
 	return PyMac_Error(_err);
 }
 
-/* END PROOF-OF-CONCEPT CODE */
 
 
 static PyObject *AEDesc_AESendMessage(AEDescObject *_self, PyObject *_args)
@@ -911,12 +907,8 @@ static PyMethodDef AEDesc_methods[] = {
 	 PyDoc_STR("(AESendMode sendMode, AESendPriority sendPriority, long timeOutInTicks) -> (AppleEvent reply)")},
 	{"AESendMessage", (PyCFunction)AEDesc_AESendMessage, 1,
 	 PyDoc_STR("(AESendMode sendMode, long timeOutInTicks) -> (AppleEvent reply)")}, 
-	 
-	 /* START PROOF-OF-CONCEPT CODE */
-	{"AESendMach", (PyCFunction)AEDesc_AESendMach, 1,
-	 PyDoc_STR("(AESendMode sendMode, AESendPriority sendPriority, long timeOutInTicks) -> (AppleEvent reply)")},
-	 /* END PROOF-OF-CONCEPT CODE */
-	 
+	{"AESendMessageAllocatingMachPort", (PyCFunction)AEDesc_AESendMessageAllocatingMachPort, 1,
+	 PyDoc_STR("(AESendMode sendMode, long timeOutInTicks) -> (AppleEvent reply)")},
 	{"AEResetTimer", (PyCFunction)AEDesc_AEResetTimer, 1,
 	 PyDoc_STR("() -> None")},
 	{"AESuspendTheCurrentEvent", (PyCFunction)AEDesc_AESuspendTheCurrentEvent, 1,

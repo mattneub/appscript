@@ -25,6 +25,14 @@ _typeUTF16ExternalRepresentation = 'ut16'
 _macEpoch = datetime.datetime(1904, 1, 1)
 
 #######
+
+if struct.pack("L", *struct.unpack(">L", 'abcd')) == 'abcd' : # host is big-endian
+	fourCharCode = eightCharCode = lambda code: code
+else: # host is small-endian
+	fourCharCode = lambda code: code[::-1]
+	eightCharCode = lambda code: code[3::-1] + code[:3:-1]
+
+#######
 # AEDesc Decoders
 
 def _unpackUnicodeText(desc,codecs):
@@ -102,11 +110,11 @@ decoders = {
 	kAE.typeQDRectangle: _unpackQDRect, 
 	kAE.typeRGBColor: lambda desc,codecs: struct.unpack('HHH', desc.data),
 	# ensure correct endianness in following
-	kAE.typeType: lambda desc,codecs: AEType(struct.pack("L", *struct.unpack(">L", desc.data))),
-	kAE.typeEnumeration: lambda desc,codecs: AEEnum(struct.pack("L", *struct.unpack(">L", desc.data))),
-	kAE.typeProperty: lambda desc,codecs: AEProp(struct.pack("L", *struct.unpack(">L", desc.data))),
-	kAE.typeKeyword: lambda desc,codecs: AEKey(struct.pack("L", *struct.unpack(">L", desc.data))),
-	'evnt': lambda desc,codecs: AEEventName(struct.pack("LL", *struct.unpack(">LL", desc.data))), # event name
+	kAE.typeType: lambda desc,codecs: AEType(fourCharCode(desc.data)),
+	kAE.typeEnumeration: lambda desc,codecs: AEEnum(fourCharCode(desc.data)),
+	kAE.typeProperty: lambda desc,codecs: AEProp(fourCharCode(desc.data)),
+	kAE.typeKeyword: lambda desc,codecs: AEKey(fourCharCode(desc.data)),
+	'evnt': lambda desc,codecs: AEEventName(eightCharCode(desc.data)), # event name
 	
 	kAE.typeStyledText: lambda desc,codecs: _unpackUnicodeText(desc.AECoerceDesc(kAE.typeUnicodeText), codecs),
 	kAE.typeStyledUnicodeText: lambda desc,codecs: _unpackUnicodeText(desc.AECoerceDesc(kAE.typeUnicodeText), codecs),

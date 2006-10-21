@@ -1,5 +1,22 @@
 HISTORY
 
+2006-10-21 -- ???
+
+- no longer includes BOM when packing AEDescs of typeUnicodeText as this caused problems with applications that don't handle BOMs correctly (e.g. iTunes 7)
+
+- no longer errors when packing Python longs on Python 2.5
+
+- now allocates and disposes a new Mach port each time an event is sent. This seems a bit wasteful; however, the performance hit is negligible, and it avoids the complexities of managing Mach ports (either manually or automatically) in multi-threaded situations. Hopefully no unexpected problems (memory leaks, etc.) will turn up with this approach; if they do, a different arrangement will have to be found. Also note that allocating a custom Mach port instead of using the default one avoids the bouncing Python launcher icon in the Dock with Python 2.4+; this also reduces the startup time.
+
+- comparing aem references now works correctly; before, comparing equivalent references for equality could return False if one had been previously unpacked (i.e. DeferredSpecifier objects weren't being taken account of)
+
+- next and previous references now unpack correctly (previously, selector would appear as an AEType, not four-char-code string)
+
+- fixed endian bugs when unpacking first/middle/last/any/all specifiers, insertion loc specifiers and comparison and logic tests
+
+- kAEContains comparison descriptors now unpack correctly as 'op2.isin(op1)' when first operator isn't an its-based aem reference
+
+
 2006-08-08 -- 0.11.0
 
 - renamed ApplicationError class to CommandError
