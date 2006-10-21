@@ -459,7 +459,7 @@ textedit.event('corecrel', {
 ======================================================================
 NOTES
 
-- In multi-threaded systems, always send Apple events from the main thread. AEM currently doesn't support receiving reply events on non-main threads.
+- AEM now allocates a new Mach port for each event sent. This allows aem/appscript to be used from non-main threads while avoiding the complexities of managing per-thread ports, though it remains to be seen if there will be any unexpected problems caused by this approach.
 
 - Note that aem 0.10.0+ uses CarbonX.AE instead of Carbon.AE. Python scripts that refer to the AE extension directly should use the CarbonX version to ensure compatibility with aem.
 
