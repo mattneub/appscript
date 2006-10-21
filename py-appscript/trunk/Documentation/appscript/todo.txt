@@ -9,6 +9,11 @@ TO DO
 - Should we use AS-style names (suitably escaped) for default AE types? Pros and cons? (e.g. this'd simplify things when generating dictionaries from sdefs by avoiding extra conversion steps)
 
 
+- Allow apps to be identified by unix process id. 
+
+- Allow multiple instances of same application to be launched and/or controlled.
+
+
 - Should we omit non-useful and uncommon AE types from typetables (i.e. drop the automated scraping of Carbon.AppleEvents) and define a fixed set of known types. This would require manual updating whenever Apple add new AE types (not very often), but would get rid of a lot of useless crap that appscript users could do without.
 
 

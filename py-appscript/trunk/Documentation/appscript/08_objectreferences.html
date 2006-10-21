@@ -197,7 +197,8 @@ test.NOT</code></pre>
 <p>Examples:</p>
 <pre><code>(its == '').NOT
 (its.size &gt; 1024).AND(its.size &lt; 10240)
-its.words[1].startswith('A').OR(its.words[2].contains('ce'), its.words[1] == 'Foo')</code></pre></li>
+its.words[1].startswith('A').OR(
+    its.words[2].contains('ce'), its.words[1] == 'Foo')</code></pre></li>
 </ul>
 
 <p class="hilitebox">Note: conditional tests must be written with a test reference as the first operand otherwise an error will occur, e.g. write <code>its.size &gt;= 1024</code> <em>not</em> <code>1024 &lt; its.size</code></p>
@@ -242,7 +243,8 @@ app('Tex-Edit Plus').windows[1].text[<em>con.words[2]</em>:<em>con.words[-2]</em
 
 <p>or as command parameters:</p>
 
-<pre><code>app('TextEdit').make(new=k.word, at=<em>app.documents.end</em>, with_data='Hello')
+<pre><code>app('TextEdit').make(new=k.word,
+    at=<em>app.documents[1].words.end</em>, with_data='Hello')
 
 app('Finder').desktop.duplicate(to=<em>app.home.folders['Desktop Copy']</em>)</code></pre>
 

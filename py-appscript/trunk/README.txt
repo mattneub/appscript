@@ -1,4 +1,4 @@
-Appscript is packaged using the standard Python Distribution Utilities (a.k.a. Distutils). To install appscript, cd to the appscript-0.16.2 directory and run:
+Appscript is packaged using the standard Python Distribution Utilities (a.k.a. Distutils). To install appscript, cd to the appscript-0.17.0 directory and run:
 
 	python setup.py bdist_mpkg --open
 
@@ -18,7 +18,9 @@ NOTES
 
 - The appscript API has undergone several changes, including the following:
 
-	- the filter reference form syntax has changed (you will need to update your scripts accordingly)
+	- the filter reference form syntax has changed from ref.filter(test) to ref[test]. You will need to update your scripts accordingly when upgrading from appscript 0.16.2 or earlier.
+
+	- 'filter' is no longer a reserved word so application-defined 'filter' keywords no longer have an underscore appended (e.g. Photoshop's 'filter' command is no longer written as 'filter_'). You will need to update your scripts accordingly when upgrading from appscript 0.16.2 or earlier.
 
 	- 'app' is no longer a class (only an issue if subclassing it/using it for typechecking purposes)
 

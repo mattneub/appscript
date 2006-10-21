@@ -10,6 +10,7 @@ class TC_FindApp(unittest.TestCase):
 		for val, res in [
 			['/Applications/iCal.app', '/Applications/iCal.app'],
 			['ical.app', '/Applications/iCal.app'],
+			['ICAL.APP', '/Applications/iCal.app'],
 			['ICAL', '/Applications/iCal.app'],
 		]:
 			self.assertEqual(res, findapp.byname(val))

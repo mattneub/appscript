@@ -94,7 +94,7 @@ app(u'/Applications/TextEdit.app').documents[1]
 
 <pre><code>te.documents[1].text</code></pre>
 
-<p>the result is another reference, <code>te.documents[1].text</code>, not the value being referenced (<tt>'Hello World'</tt>). To get the value being referenced, you have to pass the reference as the direct argument to TextEdit's <code>get()</code> command:</p>
+<p>the result is another reference, <code>app(u'/Applications/TextEdit.app').documents[1].text</code>, not the value being referenced (<tt>'Hello World'</tt>). To get the value being referenced, you have to pass the reference as the direct argument to TextEdit's <code>get()</code> command:</p>
 
 <pre><code>&gt;&gt;&gt; te.get(doc.text)
 'Hello World!'
@@ -118,7 +118,7 @@ app('/Applications/TextEdit.app').documents[1]
 &gt;&gt;&gt; te.documents.get()
 [app('/Applications/TextEdit.app').documents[1], 
     app('/Applications/TextEdit.app').documents[2]]
-&gt;&gt;&gt; te.documents.get()
+&gt;&gt;&gt; te.documents.text.get()
 ['Hello World', '']
 &gt;&gt;&gt; </code></pre>
 

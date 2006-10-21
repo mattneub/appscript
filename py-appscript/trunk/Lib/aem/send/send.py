@@ -99,7 +99,7 @@ class Event(object):
 		except MacOS.Error, err: # an OS-level error occurred
 			if not (self._eventCode == 'aevtquit' and err[0] == -609): # Ignore invalid connection error (-609) when quitting
 				#print 'QUIT609'
-				raise CommandError(err[0], err[1:] and err[1] or '', None)
+				raise CommandError(err[0], err.args[1:] and err[1] or '', None)
 		else: # decode application's reply, if any
 			if replyEvent.type != kAE.typeNull:
 				eventResult = dict([replyEvent.AEGetNthDesc(i + 1, kAE.typeWildCard) 

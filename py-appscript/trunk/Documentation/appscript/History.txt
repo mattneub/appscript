@@ -1,5 +1,16 @@
 HISTORY
 
+2006-10-22 -- ???
+
+- fixed unpacking of comparison descriptors
+
+- removed 'filter' method; 'filter' is no longer a reserved word. Users will need to update any scripts that use apps with a 'filter' keyword (e.g. Photoshop has a 'filter' command) to change 'filter_' -> 'filter'.
+
+- no longer raises error -192 when getting an aete from an application that doesn't have one
+
+- fixed various errors in appscript manual
+
+
 2006-08-16 -- 0.16.1
 
 - unbroke terminologyparser on i386

@@ -5,8 +5,6 @@
 
 import keyword, string
 
-# NOTE: 'filter' is deprecated as reserved word; TO DO: remove 'filter' from list of reserved words in next release
-
 ######################################################################
 # PRIVATE
 ######################################################################
@@ -18,7 +16,6 @@ _reservedPrefix = 'AS_'
 
 _reservedWords = """
 		timeout waitreply resulttype ignore telltarget
-		filter
 		ID previous next
 		start end before after
 		first last middle any

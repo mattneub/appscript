@@ -60,10 +60,10 @@ def byname(name):
 			try:
 				name = _findApp(name)
 			except ApplicationNotFoundError:
-				if name.endswith('.app'):
+				if name.lower().endswith('.app'):
 					raise
 				name = _findApp(name + '.app')
-	if not exists(name) and not name.endswith('.app') and exists(name + '.app'):
+	if not exists(name) and not name.lower().endswith('.app') and exists(name + '.app'):
 		name += '.app'
 	if not exists(name):
 		raise ApplicationNotFoundError, name

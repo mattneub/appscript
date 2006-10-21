@@ -23,7 +23,7 @@ class ArgDef:
 		try:
 			return self._unpack(desc, codecs)
 		except MacOS.Error, e:
-			number, message = e[0], e[1:] and e[1] or None
+			number, message = e[0], e.args[1:] and e[1] or None
 			if number == -1700: # coercion error
 				return False, EventHandlerError(number, message, object=desc, coercion= AEType(self.AEM_code))
 			else:

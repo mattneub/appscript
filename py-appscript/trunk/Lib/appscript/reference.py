@@ -411,9 +411,6 @@ class Reference(_Base):
 	def __call__(self, *args, **kargs):
 		return self.get(*args, **kargs)
 	
-	def filter(self, testref): # NOTE: 'filter' method is deprecated; TO DO: remove this in the next release
-		return self[testref]
-	
 	# Following methods will be called by its-based generic references when resolving themselves into real references; end-users and other clients shouldn't call them directly.
 	
 	def AS__gt__(self, operand):

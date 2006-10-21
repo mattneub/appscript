@@ -81,24 +81,24 @@ terminal = app(url=address)</code></pre>
 
 <p>All applications should respond to the following commands:</p>
 
-<pre><code>application.run() -- Run an application.
+<pre><code>run() -- Run an application.
         Most applications will open an empty, untitled window.
 
-application.launch() -- Launch an application without sending it a 'run' event. [1]
+launch() -- Launch an application without sending it a 'run' event. [1]
         Applications that normally open a new, empty document upon launch won't.
 
-application.activate() -- Bring the application to the front.
+activate() -- Bring the application to the front.
 
-application.reopen() -- Reactivate a running application.
+reopen() -- Reactivate a running application.
         Some applications will open a new untitled window if no window is open.
 
-application.open(directarg) -- Open the specified object(s).
+open(directarg) -- Open the specified object(s).
     directarg : anything -- list of objects to open, typically a list of macfile.Alias
 
-application.print_(directarg) -- Print the specified object(s).
+print_(directarg) -- Print the specified object(s).
     directarg : anything -- list of objects to print, typically a list of macfile.Alias
 
-application.quit(saving) -- Quit an application.
+quit(saving) -- Quit an application.
     saving : k.yes | k.ask | k.no -- specifies whether to save currently open documents
 </code></pre>
 
@@ -108,11 +108,11 @@ application.quit(saving) -- Quit an application.
 
 <p>Appscript also defines <code>get()</code> and <code>set()</code> commands for any scriptable application that doesn't supply its own definitions:</p>
 
-<pre><code>reference.get() -- Get the data for an object.
+<pre><code>get(reference) -- Get the data for an object.
     reference -- the object for the command
     Result: anything -- the reply for the command
 
-reference.set(to) -- Set an object's data.
+set(reference, to) -- Set an object's data.
     reference -- the object for the command
     to : anything -- The new value.</code></pre>
 
@@ -134,8 +134,6 @@ reference.set(to) -- Set an object's data.
 <h3>How applications are identified</h3>
 
 <p>When you create an <code>app</code> object by application name, bundle id or creator type, appscript uses LaunchServices to locate an application matching that description. If you have more than one copy of the same application installed, you can identify the one you want by providing its full path, otherwise LaunchServices will identify the newest copy for you.</p>
-
-<p>Appscript identifies running applications by their process ids so it's possible to control multiple versions of an application running at the same time.</p>
 
 
 <h3>Using <code>launch</code> vs <code>run</code></h3>

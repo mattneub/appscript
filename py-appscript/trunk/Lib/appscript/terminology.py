@@ -5,7 +5,7 @@
 (C) 2004 HAS
 """
 
-from aem import AEType, AEEnum, Application
+from aem import AEType, AEEnum, Application, CommandError
 from osaterminology import appscripttypedefs
 
 from terminologyparser import buildtablesforaetes
@@ -147,7 +147,10 @@ def tablesforapp(path=None, url=None):
 		try:
 			aetes = Application(path, url).event('ascrgdte', {'----':0}).send()
 		except Exception, e: # (e.g.application not running)
-			raise RuntimeError, "Can't get terminology for application (%s): %s" % (path or url, e)
+			if isinstance(e, CommandError) and e.number == -192:
+				aetes = []
+			else:
+				raise RuntimeError, "Can't get terminology for application (%s): %s" % (path or url, e)
 		if not isinstance(aetes, list):
 			aetes = [aetes]
 		#print [aete.data for aete in aetes if aete.type == 'aete']
