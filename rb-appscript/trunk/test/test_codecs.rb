@@ -142,6 +142,9 @@ class TC_Codecs < Test::Unit::TestCase
 			val2 = @c.unpack(d)
 			assert_equal(val, val2)
 			assert_block { val.eql?(val2) }
+			val2 = @c.unpack(d)
+			assert_equal(val2, val)
+			assert_block { val2.eql?(val) }
 		end
 		assert_raises(ArgumentError) { AEM::AEType.new(3) }
 		assert_raises(ArgumentError) { AEM::AEType.new("docum") }
