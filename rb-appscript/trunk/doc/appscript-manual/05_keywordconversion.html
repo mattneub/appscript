@@ -33,47 +33,47 @@
 
 <li>All other characters are converted to 0x00-style hexadecimal representations.</li>
 
-<li>Names that match the methods already defined on appscript's Application and Reference classes have an underscore appended. Reserved method names are:
+<li>Names that begin with '_' or 'AS_' have an underscore appended.</li>
 
-<pre><code>AS_aemreference               keywords
-AS_appdata                    last
-ID                            launch
-after                         le
-and                           lt
-any                           method
-before                        method_missing
-class                         methods
-clone                         middle
-commands                      ne
-contains                      next
-display                       not
-doesnotcontain                object_id
-doesnotendwith                or
-doesnotstartwith              parameters
-dup                           previous
-elements                      private_methods
-end                           properties
-endswith                      protected_methods
-endtransaction                public_methods
-eq                            resulttype
-extend                        send
-first                         singleton_methods
-freeze                        start
-ge                            startswith
-gt                            starttransaction
-hash                          taint
-id                            telltarget
-ignore                        timeout
-inspect                       to_a
-instance_eval                 to_s
-instance_variable_get         type
-instance_variable_set         untaint
-instance_variables            useterminology
-isin                          waitreply
-isnotin</code></pre>
+<li>Names that match the methods already defined on appscript's Application and Reference classes have an underscore appended. The reserved method names are:
+
+<pre><code>ID                            keywords
+after                         last
+and                           launch
+any                           le
+before                        lt
+class                         method
+clone                         method_missing
+commands                      methods
+contains                      middle
+display                       ne
+doesnotcontain                next
+doesnotendwith                not
+doesnotstartwith              object_id
+dup                           or
+elements                      parameters
+end                           previous
+endswith                      private_methods
+endtransaction                properties
+eq                            protected_methods
+extend                        public_methods
+first                         resulttype
+freeze                        send
+ge                            singleton_methods
+gt                            start
+hash                          startswith
+id                            starttransaction
+ignore                        taint
+inspect                       telltarget
+instance_eval                 timeout
+instance_variable_get         to_a
+instance_variable_set         to_s
+instance_variables            type
+isin                          untaint
+isnotin                       waitreply</code></pre>
+</div>
 </li>
 </ul>
-</div>
 
 <!-- bottom navigation -->
 <div class="navbar">

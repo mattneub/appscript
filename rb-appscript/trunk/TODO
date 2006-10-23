@@ -11,8 +11,6 @@ produces reference objects okay, but these objects' to_s method returns empty st
 
 - allow users to extract a generic ref from a real ref (to_generic) for comparison purposes. Or vice-versa?
 
-- override 'methods' and 'respond_to?' methods to check for application-defined properties, elements and commands, as well as built-in methods
-
 - improve error reporting; e.g. AE::MacOSError needs to include error number in message string; pack/unpack errors in aem/codecs.rb could have better descriptions and/or represented by a CodecsError class; ae/aem/appscript-defined exception classes aren't quite idiomatic Ruby
 
 - profiling
@@ -27,34 +25,9 @@ produces reference objects okay, but these objects' to_s method returns empty st
 
 - MacFile objects should support ==, eql? and hash
 
-- sending 'run' to AS non-stay-open applet causes appscript to hang until timeout error occurs (the ascrgdte event is being sent after the applet's event loop has already stopped):
-
-AS.app('~/foo.app').run
-
-/usr/local/lib/ruby/site_ruby/1.8/_appscript/terminology.rb:278:in `tablesForApp': Can't get terminology for application (/Users/has/foo.app): uninitialized constant Send::Event::None (RuntimeError)
-	from /usr/local/lib/ruby/site_ruby/1.8/appscript.rb:49:in `_connect'
-
-Need to add note to manual about this (already discusses related issues, but not this exact point).
-
-
-- following isn't working as it should:
-
-require "appscript"
-
-f = AS.app('~/foo.app')
-f.launch
-f.run
-
-Applet launches and then quits without doing anything, then waits a minute before launching again, beeping and quitting, then waits another minute before giving a "Can't send Apple event" (-609) error.
-
-
 - finish writing tests
 
-- remove MacFile::Alias#newPath, MacFile::FileURL#newPath in 0.2.0 (replaced by 'at' methods)
-
-- check OS10.3 (with user-installed Ruby 1.8+) compatibility
-
-- port aem, macfile, findapp manuals
+- port aem, findapp manuals
 
 - see also TO DO items in source files
 

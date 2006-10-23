@@ -20,29 +20,14 @@
 
 <!-- content -->
 <div id="content">
-<p>Appscript provides two ways to get information about applications' scripting interfaces: the <code>rbosadict</code> shell program and introspective methods.</p>
-
-<p class="hilitebox">See the <code>misc/rbosadict/README</code> file for instructions on installing <code>rbosadict</code>. Note that <a href="http://appscript.sourceforge.net/">py-appscript</a> must be installed before <code>rbosadict</code> can be used.</p>
+<p>There are two ways to get information about applications' scripting interfaces: the ASDictionary application and introspection.</p>
 
 
-<h2>Using rbosadict</h2>
+<h2>ASDictionary</h2>
 
-<p><code>rbosadict</code> renders an application's terminology resource to readable HTML format. Its syntax is as follows:</p>
+<p>ASDictionary renders application terminology resources in plain text and HTML formats. You can obtain the latest version from the py-appscript project site (<a href="http://sourceforge.net/projects/appscript">http://sourceforge.net/projects/appscript</a>).</p>
 
-<pre><code>rbosadict app-name html-file
-
-    app-name -- name or full path of application
-
-    html-file -- path to write HTML file to</code></pre>
-
-<p>Examples:</p>
-
-<pre><code>rbosadict /Applications/TextEdit.app ~/TextEdit.html
-
-rbosadict Finder ~/Finder.html</code></pre>
-
-
-<h2>Using introspective methods</h2>
+<h2>Introspection</h2>
 
 <p>Appscript Application and Reference objects provide several methods for obtaining information on the target application: </p>
 

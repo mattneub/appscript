@@ -1,12 +1,32 @@
-2006-10-20 -- ???
+2006-10-23 -- 0.1.6
 
-- improved test_aemreference.rb; fixed bug in aemreference.rb where comparing two non-equivalent aem references could return true
+- improved test_aemreference.rb
 
-- simplified four-char-code conversion code in codecs.rb
+- fixed bug in aemreference.rb where comparing two non-equivalent aem references could return true
+
+- simplified four-char-code conversion routines in codecs.rb
 
 - AS::Reference#methods now returns names of application-defined properties, elements and commands in addition to names of built-in methods [MN]
 
 - AS::Reference#respond_to? now returns true for names of application-defined properties, elements and commands in addition to names of built-in methods [MN]
+
+- removed rbosadict; use ASDictionary.app instead (available from <http://appscript.sourceforge.net>)
+
+- removed AS::Application#useterminology; added optional 'terms' argument to Application constructors instead
+
+- in Terminology module, changed timeout for ascrgdte event from 120 to 30 sec
+
+- added dump tool + documentation
+
+- added info to manual on scripting non-stay-open applications
+
+- removed MacFile::Alias#newPath and MacFile::FileURL#newPath constructors (use 'at' instead)
+
+- changed MacFile::Alias#to_s and MacFile::FileURL#to_s to return plain path string instead of object representation (use 'inspect' for that)
+
+- removed MacFile::Alias#path and MacFile::FileURL#path (use 'to_s' instead)
+
+- added macfile manual
 
 
 2006-10-18 -- 0.1.5

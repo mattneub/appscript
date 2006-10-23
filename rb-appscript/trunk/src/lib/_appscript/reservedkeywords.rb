@@ -90,6 +90,5 @@ ReservedKeywords = [
 	"to_s",
 	"type",
 	"untaint",
-	"useterminology",
 	"waitreply",
 ]

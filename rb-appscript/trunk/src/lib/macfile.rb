@@ -56,16 +56,8 @@ module MacFile
 					KAE::TypeAlias, path))
 		end
 		
-		def Alias.newPath(path) # TO DO: remove in 0.2.0
-			return Alias.at(path)
-		end
-		
 		def Alias.newDesc(desc)
 			return new(desc)
-		end
-		
-		def path
-			return FileBase._urlToPath(FileBase._coerce(@desc, KAE::TypeFileURL).data)
 		end
 		
 		def desc
@@ -73,11 +65,11 @@ module MacFile
 		end
 		
 		def to_s
-			return "MacFile::Alias.at(#{path.inspect})"
+			return FileBase._urlToPath(FileBase._coerce(@desc, KAE::TypeFileURL).data)
 		end
 		
 		def inspect
-			return to_s
+			return "MacFile::Alias.at(#{to_s.inspect})"
 		end
 		
 		def to_Alias
@@ -103,19 +95,8 @@ module MacFile
 			return new(path, nil)
 		end
 		
-		def FileURL.newPath(path) # TO DO: remove in 0.2.0
-			return FileURL.at(path)
-		end
-		
 		def FileURL.newDesc(desc)
 			return new(nil, desc)
-		end
-		
-		def path
-			if not @path
-				@path = FileBase._urlToPath(FileBase._coerce(@desc, KAE::TypeFileURL, @path).data)
-			end
-			return @path
 		end
 		
 		def desc
@@ -126,15 +107,18 @@ module MacFile
 		end
 		
 		def to_s
-			return "MacFile::FileURL.at(#{path.inspect})"
+			if not @path
+				@path = FileBase._urlToPath(FileBase._coerce(@desc, KAE::TypeFileURL).data)
+			end
+			return @path
 		end
 		
 		def inspect
-			return to_s
+			return "MacFile::FileURL.at(#{to_s.inspect})"
 		end
 		
 		def to_Alias
-			return MacFile::Alias.newDesc(FileBase._coerce(desc, KAE::TypeAlias, path))
+			return MacFile::Alias.newDesc(FileBase._coerce(desc, KAE::TypeAlias, to_s))
 		end
 		
 		def to_FileURL

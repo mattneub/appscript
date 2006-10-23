@@ -123,11 +123,11 @@ class TC_Codecs < Test::Unit::TestCase
 	def test_file
 		path = '/Applications/TextEdit.app/'
 		d = @c.pack(MacFile::Alias.at(path))
-		assert_equal(path, @c.unpack(d).path)
+		assert_equal(path, @c.unpack(d).to_s)
 		
 		path = '/Applications/TextEdit.app'
 		d = @c.pack(MacFile::FileURL.at(path))
-		assert_equal(path, @c.unpack(d).path)
+		assert_equal(path, @c.unpack(d).to_s)
 	end
 	
 	def test_typewrappers

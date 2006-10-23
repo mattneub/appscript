@@ -24,29 +24,35 @@ module AS
 	class AppData < AEM::Codecs
 	
 		attr_reader :path, :pid, :url
-		attr_writer :terms
 	
-		def initialize(aemApplicationClass, path, pid, url)
+		def initialize(aemApplicationClass, path, pid, url, terms)
 			super()
 			@_aemApplicationClass = aemApplicationClass
-			@terms = nil
+			@_terms = terms
 			@path = path
 			@pid = pid
 			@url = url
 		end
 		
-		def _connect
+		def _connect # initialize AEM::Application instance and terminology tables the first time they are needed
 			if @path
 				@target = @_aemApplicationClass.newPath(@path)
 			elsif @pid
 				@target = @_aemApplicationClass.newPID(@pid)
 			elsif @url
 				@target = @_aemApplicationClass.newURL(@url)
-			end
-			if @_terms
-				@typebycode, @typebyname, @referencebycode, @referencebyname = Terminology.tablesForData(@_terms)
 			else
-				@typebycode, @typebyname, @referencebycode, @referencebyname = Terminology.tablesForApp(@path, @pid, @url)
+				@target = @_aemApplicationClass.current
+			end
+			case @_terms
+				when true # obtain terminology from application
+					@typebycode, @typebyname, @referencebycode, @referencebyname = Terminology.tablesForApp(@path, @pid, @url)
+				when false # use built-in terminology only (e.g. use this when running AppleScript applets)
+					@typebycode, @typebyname, @referencebycode, @referencebyname = Terminology.defaultTables
+				when nil # allows developers to get names of built-in methods only when calling Application#methods
+					@typebycode, @typebyname, @referencebycode, @referencebyname = {}, {}, {}, {}
+			else # @_terms is [assumed to be] a module containing dumped terminology, so use that
+				@typebycode, @typebyname, @referencebycode, @referencebyname = Terminology.tablesForModule(@_terms)
 			end
 			extend(AppDataAccessors)
 		end
@@ -659,41 +665,37 @@ module AS
 			return AEM::Application
 		end
 		
-		def initialize(path, pid, url)
-			super(AppData.new(_aemApplicationClass, path, pid, url), AEM.app)
+		def initialize(path, pid, url, terms)
+			super(AppData.new(_aemApplicationClass, path, pid, url, terms), AEM.app)
 		end
 		
 		# constructors
 		
-		def Application.byName(name)
-			return new(FindApp.byName(name), nil, nil)
+		def Application.byName(name, terms=true)
+			return new(FindApp.byName(name), nil, nil, terms)
 		end
 		
-		def Application.byID(id)
-			return new(FindApp.byID(id), nil, nil)
+		def Application.byID(id, terms=true)
+			return new(FindApp.byID(id), nil, nil, terms)
 		end
 		
-		def Application.byCreator(creator)
-			return new(FindApp.byCreator(creator), nil, nil)
+		def Application.byCreator(creator, terms=true)
+			return new(FindApp.byCreator(creator), nil, nil, terms)
 		end
 		
-		def Application.byPID(pid)
-			return new(nil, pid, nil)
+		def Application.byPID(pid, terms=true)
+			return new(nil, pid, nil, terms)
 		end
 		
-		def Application.byURL(url)
-			return new(nil, nil, url)
+		def Application.byURL(url, terms=true)
+			return new(nil, nil, url, terms)
 		end
 		
-		def Application.current
-			return new(nil, nil, nil)
+		def Application.current(terms=true)
+			return new(nil, nil, nil, terms)
 		end
 		
 		#
-		
-		def useterminology(terms)
-			@AS_appdata.terms = terms
-		end
 		
 		def starttransaction
 			@AS_appdata.target.starttransaction
@@ -722,28 +724,28 @@ module AS
 			super(['app'])
 		end
 		
-		def byName(name)
-			return @_appClass.byName(name)
+		def byName(name, terms=true)
+			return @_appClass.byName(name, terms)
 		end
 		
-		def byID(id)
-			return @_appClass.byID(id)
+		def byID(id, terms=true)
+			return @_appClass.byID(id, terms)
 		end
 		
-		def byCreator(creator)
-			return @_appClass.byCreator(creator)
+		def byCreator(creator, terms=true)
+			return @_appClass.byCreator(creator, terms)
 		end
 		
-		def byPID(pid)
-			return @_appClass.byPID(pid)
+		def byPID(pid, terms=true)
+			return @_appClass.byPID(pid, terms)
 		end
 		
-		def byURL(url)
-			return @_appClass.byURL(url)
+		def byURL(url, terms=true)
+			return @_appClass.byURL(url, terms)
 		end
 		
-		def current
-			return @_appClass.current
+		def current(terms=true)
+			return @_appClass.current(terms)
 		end
 	end
 	
@@ -763,7 +765,7 @@ module AS
 		if args == []
 			return AS_App
 		else
-			return AS_App.byName(args[0])
+			return AS_App.byName(*args)
 		end
 	end
 

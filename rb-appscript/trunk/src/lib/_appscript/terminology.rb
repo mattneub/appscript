@@ -256,9 +256,16 @@ module Terminology
 	#######
 	# public
 	
-	def Terminology.tablesForData(terms)
-		return _makeTypeTable(terms.classes, terms.enums, terms.properties) \
-			+ _makeReferenceTable(terms.properties, terms.elements, terms.commands)
+	def Terminology.defaultTables
+		return _makeTypeTable([], [], []) + _makeReferenceTable([], [], [])
+	end
+	
+	def Terminology.tablesForModule(terms)
+		if terms::Version != 1.1
+			raise RuntimeError, "Unsupported terminology module version: #{terms::Version} (requires version 1.1)."
+		end
+		return _makeTypeTable(terms::Classes, terms::Enumerators, terms::Properties) \
+			+ _makeReferenceTable(terms::Properties, terms::Elements, terms::Commands)
 	end
 	
 	def Terminology.tablesForApp(path, pid, url)
@@ -274,7 +281,7 @@ module Terminology
 					app = AEM::Application.current
 				end
 				begin
-					aetes = app.event('ascrgdte', {'----' => 0}).send
+					aetes = app.event('ascrgdte', {'----' => 0}).send(30 * 60)
 				rescue AEM::CommandError => e
 					if  e.number == -192 # aete resource not found
 						aetes = []

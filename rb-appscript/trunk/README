@@ -3,7 +3,7 @@ Appscript Read Me
 ======================================================================
 ABOUT
 
-Ruby appscript (rb-appscript) is a high-level Apple Event Manager bridge for the Ruby scripting language. rb-appscript is closely based on the Python appscript (py-appscript) bridge.
+Ruby appscript (rb-appscript) is a high-level Apple event bridge for the Ruby scripting language. rb-appscript is closely based on the Python appscript (py-appscript) bridge.
 
 See the doc folder for more information.
 

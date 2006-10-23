@@ -15,34 +15,34 @@ class TC_MacFile < Test::Unit::TestCase
 	
 	def test_alias
 		# make alias
-		@f = MacFile::Alias.at(@path1)
+		f = MacFile::Alias.at(@path1)
 		
 		# get path
 		# note that initial /tmp/codecs-test... path will automatically change to /private/tmp/codecs-test...
 		p1 = '/private'+@path1
 		p2 = '/private'+@path2
 		
-		assert_equal("MacFile::Alias.at(#{p1.inspect})", @f.inspect)
+		assert_equal("MacFile::Alias.at(#{p1.inspect})", f.inspect)
 		
-		#puts "alias path 1: #{f.path}" # e.g. /private/tmp/codecs-test.HWr1EnE3
-		assert_equal(p1, @f.path)
+		#puts "alias path 1: #{f}" # e.g. /private/tmp/codecs-test.HWr1EnE3
+		assert_equal(p1, f.to_s)
 		
 		# get desc
 		#puts f.desc.type, f.desc.data # alis, [binary data]
-		assert_equal('alis', @f.desc.type)
+		assert_equal('alis', f.desc.type)
 
 		
 		# check alias keeps track of moved file
 		`mv #{@path1} #{@path2}`
-		# puts "alias path 2: #{f.path}" # /private/tmp/moved-codecs-test.HWr1EnE3
-		assert_equal(p2, @f.path)
+		# puts "alias path 2: #{f}" # /private/tmp/moved-codecs-test.HWr1EnE3
+		assert_equal(p2, f.to_s)
 
-		assert_equal("MacFile::Alias.at(#{p2.inspect})", @f.inspect)
+		assert_equal("MacFile::Alias.at(#{p2.inspect})", f.inspect)
 		
 		# check a FileNotFoundError is raised if getting path/FileURL for a filesystem object that no longer exists
 		`rm #{@path2}`
-		assert_raises(MacFile::FileNotFoundError) { @f.path } # File not found.
-		assert_raises(MacFile::FileNotFoundError) { @f.to_FileURL } # File not found.
+		assert_raises(MacFile::FileNotFoundError) { f.to_s } # File not found.
+		assert_raises(MacFile::FileNotFoundError) { f.to_FileURL } # File not found.
 	end
 
 
@@ -50,7 +50,7 @@ class TC_MacFile < Test::Unit::TestCase
 
 		g = MacFile::FileURL.at('/non/existent path')
 
-		assert_equal('/non/existent path', g.path)
+		assert_equal('/non/existent path', g.to_s)
 		
 		assert_equal('furl', g.desc.type)
 		assert_equal('file://localhost/non/existent%20path', g.desc.data)
