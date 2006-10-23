@@ -2,6 +2,10 @@
 
 from osaterminology.dom.osadictionary import kAll, Nodes
 
+
+######################################################################
+
+
 class TypeRendererBase:
 
 	def __init__(self):
@@ -27,29 +31,41 @@ class TypeRendererBase:
 		return sep.join(res)
 
 
-##
+######################################################################
+
 
 class AppscriptTypeRenderer(TypeRendererBase):
 	
 	def _render(self, type):
-		if type.kind == 'type':
-			return type.name or 'AEType(%r)' % self.escapecode(type.code)
-		elif type.kind == 'enumeration':
-			return ' / '.join([e.name and 'k.%s'%e.name or 'AEEnum(%r)' % self.escapecode(e.code) 
+		if type.kind == 'enumeration':
+			return ' / '.join([e.name and self._keyword % e.name or self._enum % self.escapecode(e.code) 
 					for e in type.enumerators()])
 		else:
-			return type.name and 'k.%s'%type.name or 'AEType(%r)' % self.escapecode(type.code)
+			return type.name or self._type % self.escapecode(type.code)
 	
 	def escapecode(self, s):
-		# format non-ASCII characters as '\x00' hex values for readability; TO FIX: escape backslashes correctly
-		return ''.join([(31 < ord(c) < 128) and c != '\x5c' and c or '\\x%2.0x' % ord(c) for c in s])
+		# format non-ASCII characters as '\x00' hex values for readability (also backslash and single and double quotes)
+		return ''.join([(31 < ord(c) < 128) and c not in '\\\'"' and c or '\\x%2.0x' % ord(c) for c in s])
 	
 	def elementname(self, type): # appscript uses plural names for elements
 		type = type.realvalue()
 		return getattr(type, 'pluralname', type.name) or self._render(type)
 
 
-##
+class PyAppscriptTypeRenderer(AppscriptTypeRenderer):
+	_type = 'AEType("%s")'
+	_enum = 'AEEnum("%s")'
+	_keyword = 'k.%s'
+
+
+class RbAppscriptTypeRenderer(AppscriptTypeRenderer):
+	_type = 'AEType.new("%s")'
+	_enum = 'AEEnum.new("%s")'
+	_keyword = ':%s'
+
+
+######################################################################
+
 
 class ApplescriptTypeRenderer(TypeRendererBase):
 		
@@ -67,10 +83,13 @@ class ApplescriptTypeRenderer(TypeRendererBase):
 		return self._render(type.realvalue())
 
 
-#######
+######################################################################
+
 
 typerenderers = {
 	'applescript': ApplescriptTypeRenderer,
-	'appscript': AppscriptTypeRenderer,
+	'appscript': PyAppscriptTypeRenderer,
+	'py-appscript': PyAppscriptTypeRenderer,
+	'rb-appscript': RbAppscriptTypeRenderer,
 	}
 

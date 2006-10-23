@@ -11,7 +11,7 @@ from CarbonX.AE import AECreateList, AECreateDesc
 import aem
 
 from genericreference import GenericReference
-from terminology import tablesforapp, tablesfordata, kProperty, kElement, kCommand
+from terminology import tablesforapp, tablesfordata, defaulttables, kProperty, kElement, kCommand
 from referencerenderer import renderreference
 from keywordwrapper import Keyword
 
@@ -151,8 +151,10 @@ class AppData(aem.Codecs):
 		# initialise translation tables
 		if terms: # use user-supplied terminology module
 			self.typebycode, self.typebyname, self.referencebycode, self.referencebyname = tablesfordata(terms)
-		else: # path or url
+		elif terms == True: # get terminology from application specified by path or url
 			self.typebycode, self.typebyname, self.referencebycode, self.referencebyname = tablesforapp(path, url)
+		else: 
+			self.typebycode, self.typebyname, self.referencebycode, self.referencebyname = defaulttables
 	
 	def pack(self, data):
 		if isinstance(data, GenericReference):
@@ -303,7 +305,7 @@ class Command(_Base):
 					# - If application isn't running, then we see if the event being sent is one of those allowed to relaunch the application (i.e. 'run' or 'launch'). If it is, the aplication is relaunched, the process id updated and the event resent; if not, the error is rethrown.
 					if not self.AS_appdata.target.isrunning():
 						if self._code == 'ascrnoop':
-							aem.launch(self.AS_appdata.path) # relaunch app in background
+							aem.Application.launch(self.AS_appdata.path) # relaunch app in background
 						elif self._code != 'aevtoapp': # only 'launch' and 'run' are allowed to restart a local application that's been quit
 							raise CommandError(self, (args, kargs), e)
 					self.AS_appdata.target.reconnect() # update aem.Application object so it has a valid address for app
@@ -472,13 +474,13 @@ class Application(Reference):
 	
 	_Application = aem.Application # overridable hook; appscript.Application subclasses can modify creating and/or sending Apple events by using custom aem.Application and aem.Event classes # Note: subclassing this class is now a bit trickier due to introduction of generic 'app'; clients need to import this class directly, subclass it, and then create their own GenericApp instance to use in place of the standard version.
 	
-	def __init__(self, name=None, id=None, creator=None, url=None, terms=None):
+	def __init__(self, name=None, id=None, creator=None, url=None, terms=True):
 		"""
 			app(name=None, id=None, creator=None, url=None, terms=None)
 				name : str -- name or path of application, e.g. 'TextEdit', 'TextEdit.app', '/Applications/Textedit.app'
 				id : str -- bundle id of application, e.g. 'com.apple.textedit'
 				creator : str -- 4-character creator type of application, e.g. 'ttxt'
-				terms : module -- use the terminology from this module instead of the application
+				terms : module | bool -- if a module, get terminology from it; if True, get terminology from target application; if False, use built-in terminology only
     		"""
 		if len([i for i in [name, id, creator, url] if i]) != 1:
 			raise TypeError, 'app() requires a single name/id/creator/url argument.'
@@ -518,7 +520,7 @@ class Application(Reference):
 	
 	def launch(self):
 		"""Launch a non-running application in the background and send it a 'launch' event. Note: this only works for local apps."""
-		aem.launch(self._path)
+		aem.Application.launch(self._path)
 		self.AS_appdata.target.reconnect() # make sure aem.Application object's AEAddressDesc is up to date
 
 

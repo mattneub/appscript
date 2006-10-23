@@ -5,22 +5,30 @@
 (C) 2006 HAS
 """
 
-# TO DO: remove test code, tidy
+# TO DO: tidy
 
 # TO DO: add option flag allowing overlapped definitions to be ignored when rendering collapsed/full definitions
 
 # __all__ = ['SummaryRenderer', 'FullRenderer']
 
+import sys
+
 from typerenderers import typerenderers
 
-import sys
+
+######################################################################
+
 
 class _Out:
 	def write(self, v):
 		sys.stdout.write(v.encode('utf8'))
+
 _out = _Out()
 
-##############
+
+
+######################################################################
+
 
 class IndexRenderer:
 	def __init__(self, style='appscript', options=[], out=_out):
@@ -52,7 +60,9 @@ class IndexRenderer:
 		pass
 
 
-#######
+
+######################################################################
+
 
 class SummaryRenderer:
 	def __init__(self, style='appscript', options=[], out=_out):
@@ -158,10 +168,10 @@ class SummaryRenderer:
 	
 	draw_enumeration = draw_recordproperty = draw_valuetype = draw_nothing
 
-##
 
 
-##
+######################################################################
+
 
 class FullRenderer(SummaryRenderer):
 	
@@ -255,68 +265,4 @@ class FullRenderer(SummaryRenderer):
 		print >> self._out, self._in + '%s%s%s' % (self.code(o), o.name, self.desc(o))
 		self.draw_documentation(o)
 	
-#######
 
-if __name__ == '__main__':
-	from osaterminology.dom.aeteparser import *
-#	from osaterminology.dom.sdefparser import *
-	style = 'appscript'
-	
-#	d = parsefile('/Users/has/PythonDev/appscript_dev/sdefstuff/InDesignCS2.sdef', style)
-#	d = sparseapp('/Applications/ical.app', style)
-#	d = parsefile('/Users/has/PythonDev/OSATerminology_dev/sdef_test/UIActionsSuite.sdef', style)
-#	d = parsefile('/Users/has/PythonDev/OSATerminology_dev/sdef_test/UIActionsSuiteNoDTD.sdef', style)
-#	d=parseapp('/Users/has/PythonDev/osaterminology_dev/sdef_test/UI Actions.app', style)
-	d = parseapp('/System/Library/CoreServices/Finder.app', style)
-	#d = parseapp('/Applications/Tex-Edit Plus 4.9.2/Tex-Edit Plus.app', style)
-#	d = parseapp('/Applications/Mail.app', style)
-#	d = parseapp('/Applications/TextWrangler.app', style)
-#	d = parseapp('/Applications/TextEdit.app', style)
-
-#	d = parsefile('/Users/has/dictionaryparsers/Automator.sdef', style)
-#	d = parseapp('/Volumes/d3/Applications/QuickTime Player.app', style)
-#	d = parseapp('/Volumes/d3/Applications/OmniGraffle/OmniGraffle.app', style)
-	
-#	d = parseapp('/System/Library/CoreServices/Database Events.app', style)
-#	d = parseapp('/Users/has/Documents/WORK/Rosenthal/~junk/MacSQL 3.0/MacSQL3.app', style)
-#	d = parselang(style='appscript')
-
-#	d = parseapp('/Volumes/d2/System/Library/CoreServices/Finder.app', style)
-	
-#	appclass = d.classes().byname('application')
-
-#	d = parseapp('/Applications/iCal.app', style)
-#	d. setvisibility(kAll)
-#	FullRenderer(style, ['fu ll', 'cod es', 'colla pse']).draw(d)
-	FullRenderer(style, ['ful l', 'c odes']).draw(d.classes().byname('folder'))
-#	FullRenderer(style, ['full', 'c odes']).draw(d.classes().byname('rgb_color'))
-#	FullRenderer(style, ['full', 'codes']).draw(d.classes().byname('item'))
-	
-#	d.showall()
-#	FullRenderer(style, ['full', 'c odes']).draw(appclass)
-#	d.showvisible()
-#	FullRenderer(style, ['full', 'c odes']).draw(appclass)
-#	d.showhidden()
-	
-#	IndexRenderer(style, ['sort', 'collapse']).draw(d)
-#	SummaryRenderer(style).draw(d)
-#	FullRenderer(style, ['fu ll', 'codes']).draw(d)
-#	FullRenderer(style, ['full', 'c odes']).draw(appclass)
-#	print d.classes().byname('application').full().properties()
-
-#	FullRenderer(style, ['full']).draw(d.commands().byname('publish terminology'))
-
-
-#	print d.classes().byname('account')._type.realvalues()
-
-	
-if 0:
-	import hotshot, hotshot.stats, test.pystone
-	prof = hotshot.Profile("sp.prof")
-	print prof.runcall(FullRenderer(style, ['fu ll', 'cod es']).draw, d)
-	prof.close()
-	stats = hotshot.stats.load("sp.prof")
-	stats.strip_dirs()
-	stats.sort_stats('time', 'calls')
-	stats.print_stats()
-	

@@ -97,7 +97,7 @@ def _makeTypeTable(classes, enums, properties):
 	# Each parameter is of format [[name, code], ...]
 	typebycode = _typebycode.copy()
 	typebyname = _typebyname.copy()
-	for klass, table in [(AEType, classes), (AEEnum, enums), (AEType, properties)]: # note: packing properties as AEProp causes problems when the same name is used for both a class and a property, and the property's definition masks the class's one (e.g. Finder's 'file'); if an AEProp is passed where an AEType is expected, it can cause an error as it's not what the receiving app expects. (Whereas they may be more tolerant of an AEType being passed where an AEProp is expected.) Also, note that AppleScript always seems to pack property names as typeType, so we should be ok following its lead here.
+	for klass, table in [(AEType, properties), (AEEnum, enums), (AEType, classes)]: # note: packing properties as AEProp causes problems when the same name is used for both a class and a property, and the property's definition masks the class's one (e.g. Finder's 'file'); if an AEProp is passed where an AEType is expected, it can cause an error as it's not what the receiving app expects. (Whereas they may be more tolerant of an AEType being passed where an AEProp is expected.) Also, note that AppleScript always seems to pack property names as typeType, so we should be ok following its lead here.
 		for name, code in table:
 			# TO DO: decide where best to apply AE keyword escaping, language keyword escaping
 			# TO DO: make sure same collision avoidance is done in help terminology (i.e. need to centralise all this stuff in a single osaterminology module)
@@ -136,6 +136,9 @@ def _makeReferenceTable(properties, elements, commands):
 defaulttypesbycode= _typebycode # used by help system
 
 
+defaulttables = _makeTypeTable([], [], []) + _makeReferenceTable([], [], [])
+
+
 def tablesfordata(terms):
 	"""Build terminology tables from a dumped terminology module."""
 	return _makeTypeTable(terms.classes, terms.enums, terms.properties) \
@@ -145,7 +148,7 @@ def tablesfordata(terms):
 def tablesforapp(path=None, url=None):
 	if not _terminologyCache.has_key(path or url):
 		try:
-			aetes = Application(path, url).event('ascrgdte', {'----':0}).send()
+			aetes = Application(path, url).event('ascrgdte', {'----':0}).send(60 * 30)
 		except Exception, e: # (e.g.application not running)
 			if isinstance(e, CommandError) and e.number == -192:
 				aetes = []
@@ -159,33 +162,3 @@ def tablesforapp(path=None, url=None):
 	return _terminologyCache[path or url]
 
 
-######################################################################
-# TEST
-######################################################################
-
-if __name__ == '__main__':
-	#for t in tablesforlocalapp('/Applications/TextEdit.app'):
-	#	print t, '\n\n'
-#	tablesforapp(url='eppc://mini.local/TextEdit')
-#	_terminologyCache.clear()
-	from time import time as t
-	d=tablesforapp('/Applications/textedit.app')
-	tt=t()
-#	d=tablesforapp(url='eppc://mini.local/TextEdit')
-	print t()-tt
-	'''
-	from aem import Codecs
-	import InDesignCS2 as i
-	c=Codecs()
-	o=c.pack((i.classes, i.enums, i.properties, i.elements, i.commands))
-	tt=t()
-	c.unpack(o)
-	d = tablesfordata(i)
-	print t()-tt
-	'''
-	if 1:
-		from pprint import pprint
-		for n in d:
-			pprint(n)
-			print
-			print

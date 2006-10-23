@@ -6,7 +6,7 @@ The tables returned by this module are an intermediate format, suitable for expo
 
 (C) 2004 HAS"""
 
-from osaterminology.makeidentifier import convert
+from osaterminology.makeidentifier import getconverter
 from struct import pack, unpack
 
 # TO DO: what about synonyms?
@@ -18,6 +18,7 @@ from struct import pack, unpack
 
 class Parser:
 	def __init__(self):
+		self.convert = getconverter('py-appscript')
 		# terminology tables (items are stored by code to eliminate duplicates)
 		self.enumerators = {}
 		self.properties = {}
@@ -43,7 +44,7 @@ class Parser:
 		"""Read a MacRoman-encoded Pascal keyword string."""
 		count = ord(self._str[self._ptr])
 		self._ptr += 1 + count
-		return convert(self._str[self._ptr - count:self._ptr]) # Note: non-ASCII characters will be differently encoded than in osaterminology.sax.aeteparser, which turns everything into unicode first. Not aware of any apps using non-ASCII characters in keywords though.
+		return self.convert(self._str[self._ptr - count:self._ptr]) # Note: non-ASCII characters will be differently encoded than in osaterminology.sax.aeteparser, which turns everything into unicode first. Not aware of any apps using non-ASCII characters in keywords though.
 	
 	##
 	
@@ -173,37 +174,4 @@ def buildtablesforaetes(aetes):
 	else:
 		return LittleEndianParser().parse(aetes)
 
-
-######################################################################
-# TEST
-######################################################################
-
-if __name__ == '__main__':
-	#from osaterminology.getterminology import getaete
-	#p = '/Applications/TextEdit.app'
-	#p = '/Applications/GraphicConverter US/GraphicConverter.app'
-	#p = '/Applications/Smile269/Smile.app'
-	#p = '/Applications/Smile/Smile.app'
-	#p = '/System/Library/CoreServices/Finder.app'
-	#terms = buildtablesforaetes(getaete(p))
-	
-	f = file('/Users/has/PythonDev/appscript/~old/osaterminology_dev/InDesign_CS2_raw_terms/idcs2.aete')
-	a=f.read()
-	f.close()
-	from time import time as t
-	import terminology
-	tt=t()
-	terms = buildtablesforaetes([a])
-	print t()-tt
-#	classes, enums, properties, elements, commands = terms
-#	tt=t()
-#	terminology._makeTypeTable(classes,enums,properties)
-#	terminology._makeReferenceTable(properties,elements,commands)
-#	print t()-tt
-#	print terms
-	if 0:
-		from pprint import pprint
-		for i in terms:
-			pprint(i)
-			print
 

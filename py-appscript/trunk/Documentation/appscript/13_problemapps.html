@@ -59,6 +59,32 @@ app('TextEdit').get(aemref)</code></pre>
 
 <!-- TO DO: dump format; telltarget; patching AS_appdata codecs -->
 
+<h2>Scripting non-stay-open applications</h2>
+
+<p>When scripting AppleScript applets and other applications that take only a single <code>run</code> or <code>open</code> event, scripts must take some additional steps to avoid problems:<p>
+
+<ol>
+<li>When creating an application object, the <code>terms</code> argument must be <code>False</code>. This will prevent appscript from repeatedly starting the application in an (unsuccessful) attempt to retrieve its terminology.</li>
+
+<li>When sending an <code>open</code> event, the application must first be started using the <code>launch</code> command to avoid it receiving the usual <code>run</code> event upon start-up.</li>
+
+<li>Since non-stay-open applications don't reply to commands, the <code>run</code>/<code>open</code> command's <code>waitreply</code> argument must be <code>False</code> to prevent appscript waiting for a non-existent response.</li>
+</ol>
+
+<p>Examples:</p>
+
+<pre><code>from appscript import *
+from macfile import *
+
+# Run
+app('Foo', terms=False).run(waitreply=False)
+
+# Open
+bar = app('Bar', terms=False)
+bar.launch()
+bar.open([Alias('/path/to/item 1'), ...], waitreply=False)</code></pre>
+
+
 
 </div>
 

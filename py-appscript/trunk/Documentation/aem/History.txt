@@ -22,6 +22,8 @@ HISTORY
 
 - fixed case-sensitivity issue in aem.send.connect._psnForApplicationPath (previously it lowercased file paths)
 
+- changed aem.launch into static method of aem.Application class
+
 
 2006-08-08 -- 0.11.0
 

@@ -1,5 +1,8 @@
 osascangui Read Me
 
-To install osascangui, double-click the install.command to run it in a Terminal window and enter your administrator password. 
+To install osascangui, cd to the Extras/osascangui directory in Terminal.app and run:
 
-To view osascangui's help, open a Terminal window, type 'osascangui' (or '/usr/local/bin/osascangui') and hit return.
+	sudo cp osascangui /usr/local/bin
+	sudo chmod 755 /usr/local/bin/osascangui
+
+To view osascangui's help, run 'osascangui' (or '/usr/local/bin/osascangui').

@@ -13,7 +13,7 @@ from send import *
 
 import constants as k # re-export
 
-__all__ = ['Application', 'CommandError', 'k', 'Event', 'launch']
+__all__ = ['Application', 'CommandError', 'k', 'Event']
 
 ######################################################################
 # PRIVATE
@@ -24,8 +24,6 @@ _defaultCodecs = Codecs()
 ######################################################################
 # PUBLIC
 ######################################################################
-
-launch = connect.launchapp # should this be Application class method to avoid top-level namespace pollution? ditto for run(), open(files)
 
 class Application:
 	"""Target application for Apple events."""
@@ -73,6 +71,8 @@ class Application:
 			self.endtransaction()
 	
 	##
+	
+	launch = staticmethod(connect.launchapp)
 	
 	def isrunning(self):
 		"""Is application running? 

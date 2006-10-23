@@ -6,19 +6,18 @@
 
 # TO DO: find app with missing savo and see how this is represented
 
-# OSACopyScriptingDefinition's aete->sdef conversion has bug where classes and commands defined in hidden 'tpnm' suite aren't included in generated sdef (though enumerations are)
+# Note: OSACopyScriptingDefinition's aete->sdef conversion has bug where classes and commands defined in hidden 'tpnm' suite aren't included in generated sdef (though enumerations are)
 
 # note: xml.sax bug? parser.getProperty(all_properties), getFeature(all_features) raise an error (2.4)
 
 import  xml.sax, xml.sax.xmlreader
-from xml.sax.handler import *#ContentHandler, ErrorHandler, property_xml_string
+from xml.sax.handler import * #ContentHandler, ErrorHandler, property_xml_string
 from StringIO import StringIO
 import struct
 
 from CarbonX import kAE
 
-from osaterminology.getterminology import getsdef
-from osaterminology.makeidentifier import convert
+from osaterminology import getterminology, makeidentifier
 from osadictionary import *
 
 ######################################################################
@@ -254,7 +253,6 @@ class AppleScriptHandler(Handler):
 
 
 class AppscriptHandler(Handler):
-	asname = staticmethod(convert)
 	elementnamesareplural = True
 	applescripttypesbyname = {}
 	
@@ -306,6 +304,22 @@ class AppscriptHandler(Handler):
 		return Handler.result(self)
 
 
+
+class PyAppscriptHandler(AppscriptHandler):
+	asname = staticmethod(makeidentifier.getconverter('py-appscript'))
+
+
+class RbAppscriptHandler(AppscriptHandler):
+	asname = staticmethod(makeidentifier.getconverter('rb-appscript'))
+
+
+handlers = {
+		'applescript': AppleScriptHandler,
+		'appscript': PyAppscriptHandler,
+		'py-appscript': PyAppscriptHandler,
+		'rb-appscript': RbAppscriptHandler,
+}
+
 ######################################################################
 # PUBLIC
 ######################################################################
@@ -313,7 +327,7 @@ class AppscriptHandler(Handler):
 
 def parsestring(sdef, path='', style='appscript'):
 	parser = xml.sax.make_parser()
-	handler = {'applescript':AppleScriptHandler, 'appscript':AppscriptHandler}[style](parser, path)
+	handler = handlers[style](parser, path)
 	parser.setContentHandler(handler)
 	parser.setErrorHandler(Error()) # TO DO: better error reporting/handling
 	source = xml.sax.xmlreader.InputSource()
@@ -328,49 +342,10 @@ def parsefile(path, style='appscript'):
 	return parsestring(sdef, path, style)
 
 def parseapp(path, style='appscript'):
-	sdef = getsdef(path)
+	sdef = getterminology.getsdef(path)
 	if sdef is None:
 		raise RuntimeError, "Can't get sdef (requires OS 10.4+)."
 	return parsestring(sdef, path, style)
-
-
-######################################################################
-# TEST
-######################################################################
-
-if __name__ == '__main__':
-#	p = '/Users/has/PythonDev/osaterminology_dev/sdef_test/UI Actions.app'
-#	p = '/Users/has/PythonDev/OSATerminology_dev/sdef_test/UIActionsSuiteNoDTD.sdef'
-#	p = '/Developer/Examples/Scripting Definitions/NSCoreSuite.sdef'
-# 	p = '/Applications/Mail.app'
-	from time import time as t
-	tt=t()
-	d = parsefile('/Users/has/PythonDev/appscript/~old/osaterminology_dev/sdefstuff/InDesignCS2.sdef', 'appscript') # 3.3 sec (AS); 4.1 sec (appscript, after adding caching to makeidentifier; was 6 sec)
-	print t()-tt
-#	p = '/System/Library/CoreServices/Finder.app'
-#	p = '/Applications/TextEdit.app'
-#	d = parsefile('/Users/has/dictionaryparsers/Automator.sdef')
-#	d = parsefile('/Users/has/PythonDev/OSATerminology_dev/sdef_test/UIActionsSuite.sdef', 'applescript')
-	
-#	d = parseapp(p,'appscript')
-#	d = parseapp(p)
-
-	print d
-
-#	print d.classes()
-#	print d.classes().byname('document').allproperties().byname('text').types.resolve()
-#	print d.classes().byname('document').allproperties().byname('name').types.resolve()
-
-	
-if 0:	
-	import hotshot, hotshot.stats, test.pystone
-	prof = hotshot.Profile("sp.prof")
-	print prof.runcall(parsefile, '/Users/has/PythonDev/appscript/~old/osaterminology_dev/sdefstuff/InDesignCS2.sdef', 'appscript')
-	prof.close()
-	stats = hotshot.stats.load("sp.prof")
-	stats.strip_dirs()
-	stats.sort_stats('time', 'calls')
-	stats.print_stats(20)
 
 
 

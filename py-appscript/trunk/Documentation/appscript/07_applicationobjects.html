@@ -23,17 +23,22 @@
 <h2>Creating application objects</h2>
 
 
-<p>Before you can communicate with a scriptable application you must call the <code>app()</code> constructor to create an application object:</p>
+<p>Before you can communicate with a scriptable application, you must call the <code>app</code> object to create an application object. For example:</p>
+
+<pre><code>textedit = app('TextEdit')</code></pre>
+
+<p>The arguments to this call are as follows:</p>
 
 <pre><code>app(name=None, id=None, creator=None, url=None, terms=None)
     name : str -- name or POSIX path of local application
     id : str -- bundle id for a local application
     creator : str -- 4-character creator type for a local application
     url : str -- eppc URL for a remote running application
-    terms : module -- use terminology provided by this module
-                      instead of obtaining it from the target application</code></pre>
+    terms : module | bool -- if a module, get terminology from it;
+            if True, get terminology from target application;
+            if False, use built-in terminology only</code></pre>
 
-<p>To target a local application you must supply one of the following arguments:</p>
+<p>To target a local application you must supply <em>one</em> of the following arguments:</p>
 
 <dl>
 <dt><code>name</code></dt>
@@ -84,29 +89,34 @@ terminal = app(url=address)</code></pre>
 <pre><code>run() -- Run an application.
         Most applications will open an empty, untitled window.
 
-launch() -- Launch an application without sending it a 'run' event. [1]
-        Applications that normally open a new, empty document upon launch won't.
+launch() -- Launch an application without sending it a 'run' event.
+        Applications that normally open a new, empty document upon
+        launch won't.
 
 activate() -- Bring the application to the front.
 
 reopen() -- Reactivate a running application.
-        Some applications will open a new untitled window if no window is open.
+        Some applications will open a new untitled window if no window
+        is open.
 
 open(directarg) -- Open the specified object(s).
-    directarg : anything -- list of objects to open, typically a list of macfile.Alias
+    directarg : anything -- list of objects to open, typically a list
+            of macfile.Alias
 
 print_(directarg) -- Print the specified object(s).
-    directarg : anything -- list of objects to print, typically a list of macfile.Alias
+    directarg : anything -- list of objects to print, typically a list
+            of macfile.Alias
 
 quit(saving) -- Quit an application.
-    saving : k.yes | k.ask | k.no -- specifies whether to save currently open documents
+    saving : k.yes | k.ask | k.no -- specifies whether to save
+            currently open documents
 </code></pre>
 
-<p><small>[1] The <code>launch</code> command should be used before constructing references or sending other commands, otherwise appscript will run the application normally.</small></p>
+<p class="hilitebox">Note that appscript will automatically run an application in order to get its terminology. To start an application with a <code>launch</code> event instead of the usual <code>run</code> event, the <code>launch</code> command must be used immediately after an application object is created (i.e. before constructing any references or sending other commands).</p>
 
 <p>Some applications may provide their own definitions of some or all of these commands, so check their terminology before use.</p>
 
-<p>Appscript also defines <code>get()</code> and <code>set()</code> commands for any scriptable application that doesn't supply its own definitions:</p>
+<p>Appscript also defines <code>get</code> and <code>set</code> commands for any scriptable application that doesn't supply its own definitions:</p>
 
 <pre><code>get(reference) -- Get the data for an object.
     reference -- the object for the command
@@ -161,6 +171,7 @@ te.launch()
 
 
 <p class="hilitebox">There is a known problem with quitting and immediately relaunching an application via appscript, where the relaunch instruction is sent to the application before it has actually quit. This timing issue appears to be the OS's fault; the current workaround for scripts that need to quit and restart applications is to insert a few seconds' delay between the <code>quit</code> and <code>run</code>/<code>launch</code> using the <code>time</code> module's <code>sleep</code> function.</p>
+
 
 
 </div>

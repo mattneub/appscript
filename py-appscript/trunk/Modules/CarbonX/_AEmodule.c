@@ -74,7 +74,7 @@ int AEDesc_Convert(PyObject *v, AEDesc *p_itself)
 {
 	if (!AEDesc_Check(v))
 	{
-		PyErr_SetString(PyExc_TypeError, "AEDesc required");
+		PyErr_SetString(PyExc_TypeError, "CarbonX._AE.AEDesc required");
 		return 0;
 	}
 	*p_itself = ((AEDescObject *)v)->ob_itself;

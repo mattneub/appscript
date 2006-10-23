@@ -1,6 +1,6 @@
 HISTORY
 
-2006-10-22 -- ???
+2006-10-23 -- ???
 
 - fixed unpacking of comparison descriptors
 
@@ -9,6 +9,14 @@ HISTORY
 - no longer raises error -192 when getting an aete from an application that doesn't have one
 
 - fixed various errors in appscript manual
+
+- terminology module now times out after 30 seconds (was 120) when getting application aete via ascrgdte event
+
+- terms argument in appscript.app(...) now takes module/True/False instead of module/None, allowing users to indicate that only built-in terminology should be used.
+
+- added note to Problem Apps chapter on sending run and open events to non-stay-open applications
+
+- addressed compatibility issue in terminology module so that an ambiguous keyword is used as both a class name and an enumerator name (e.g. k.workbook in Excel) will now be packed as typeType (same as in AppleScript), not typeEnumerated
 
 
 2006-08-16 -- 0.16.1

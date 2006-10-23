@@ -9,8 +9,8 @@ from os import sys
 
 from osaterminology.sax.aeteparser import Receiver, parse
 from osaterminology.getterminology import getaete, getaeut
-from osaterminology.makeidentifier import convert
-		
+from osaterminology.makeidentifier import getconverter
+
 
 __all__ = ['app', 'component', 'QuickDoc']
 
@@ -158,7 +158,7 @@ if __name__ == '__main__':
 		else:
 			out = None
 		if ('-k', '') in opts:
-			converter = convert
+			converter = getconverter('appscript')
 		else:
 			converter = None
 		if ('-c', '') in opts:

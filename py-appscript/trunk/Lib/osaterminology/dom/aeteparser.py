@@ -206,7 +206,6 @@ class AppleScriptParser(_Parser):
 
 class AppscriptParser(_Parser):
 	elementnamesareplural = True
-	asname = staticmethod(makeidentifier.convert)
 	
 	def typemodule(self):
 		import appscripttypes
@@ -216,10 +215,22 @@ class AppscriptParser(_Parser):
 		if (name == 'get' and code != 'coregetd') or (name == 'set' and code != 'coresetd'):
 			name += '_' # escape non-standard get/set commands (e.g. InDesign)
 		_Parser.start_command(self, code, name, description, directarg, reply)
-	
 
 
-_parsers = {'applescript':AppleScriptParser, 'appscript':AppscriptParser}
+class PyAppscriptParser(AppscriptParser):
+	asname = staticmethod(makeidentifier.getconverter('py-appscript'))
+
+
+class RbAppscriptParser(AppscriptParser):
+	asname = staticmethod(makeidentifier.getconverter('rb-appscript'))
+
+
+_parsers = {
+		'applescript': AppleScriptParser, 
+		'appscript': PyAppscriptParser,
+		'py-appscript': PyAppscriptParser,
+		'rb-appscript': RbAppscriptParser,
+}
 
 
 ######################################################################
@@ -248,46 +259,4 @@ def parsefile(paths, style='appscript'):
 
 def parseapp(path, style='appscript'):
 	return parsestring(getterminology.getaete(path), path, style)
-
-
-# TEST
-if __name__ == '__main__':
-	
-	d = parseapp('/Applications/Mail.app')
-	print d.suites()
-	
-	
-	if 0:
-		p = '/Users/has/PythonDev/appscript_dev/sdefstuff/InDesignCS2.aete'
-		d=parsefile(p)
-		
-		#d.classbyname('graphic')
-		print d.commands()
-#		print d.classes().byname('graphic').parents()
-#		print d.classes().byname('graphic').properties()
-#		print d.classes().byname('graphic').elements()
-
-if 0:
-#	d = parseapp('/Applications/TextEdit.app')
-#	print d.classes()
-#	print d.classes().byname('document').allproperties().byname('text').types.resolve()
-#	print d.classes().byname('document').allproperties().byname('name').types.resolve()
-#	d = parseapp('/Applications/Automator.app')
-#	d = parseapp('/Applications/ical.app','appscript')
-	#d = parseapp('/System/Library/CoreServices/Finder.app')
-	#d = parseapp('/System/Library/CoreServices/System Events.app')
-#	d=parseapp('/Users/has/PythonDev/osaterminology_dev/sdef_test/UI Actions.app')
-	#print d.allclasses()
-	#parseapp('/System/Library/CoreServices/System Events.app').display()
-#	d=parsefile('/Users/has/PythonDev/appscript_dev/sdefstuff/InDesignCS2.aete')
-
-	d = parseapp('/Applications/Automator.app')
-#	print d.classes().name()
-	c = d.classes().byname('application')
-	print c.name, c.suitename
-	print c.parents()
-	print c.properties().names()
-	print c.elements().names()
-	print c.collapse().__dict__
-
 
