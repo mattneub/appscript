@@ -1,3 +1,0 @@
-TO DO
-
-- notify users of apps that don't have dictionaries and don't render output for them

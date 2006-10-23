@@ -1,13 +1,13 @@
-ASDictionary project source
+ASDictionary source
 
 Requirements:
 
-- appscript 0.16.2 <http://appscript.sourceforge.net>
+- appscript 0.17.0+ <http://appscript.sourceforge.net>
 
 - py2app <http://undefined.org/python/>
 
 --
 
-To build, cd to ASDictionary-source-0.6.2 directory and run:
+To build, cd to ASDictionary-0.7.0 directory and run:
 
 	python setup.py py2app

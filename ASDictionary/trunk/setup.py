@@ -8,8 +8,8 @@ setup(
 		'py2app': {
 			'argv_emulation': True,
 			'plist': Plist(
-				CFBundleVersion='0.6.2',
-				CFBundleShortVersionString='0.6.2'
+				CFBundleVersion='0.7.0',
+				CFBundleShortVersionString='0.7.0'
 				),
 			'resources': ['ASDictionary.icns'],
 			'iconfile': 'ASDictionary.icns',

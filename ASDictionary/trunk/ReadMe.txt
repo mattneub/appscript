@@ -30,6 +30,8 @@ Note that HTML elements containing special 'node' attributes are used by ASDicti
 -----------------------------------
 HISTORY
 
+2006-10-23 -- 0.7.0; added rb-appscript support; now reports when an application's terminology isn't found instead of writing an empty file; changed 'appscript' suffix to 'py'/'rb' suffixes to distinguish different versions
+
 2006-09-19 -- 0.6.2; renamed to ASDictionary
 
 2006-08-26 -- 0.6.1; now uses appscript 0.16.2 - this fixes some additional HTML rendering problems; combining duplicate class definitions into one is now optional
