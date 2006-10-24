@@ -30,6 +30,23 @@ What about packing/unpacking application identifiers?
 - support for default 'open' events (i.e. where aevtodoc event is passed via LaunchApplication)
 
 
+- support creating Application instances by PID:
+
+Obtains the process serial number from a Unix PID.
+
+OSStatus GetProcessForPID(
+   pid_t                  pid,
+   ProcessSerialNumber *  psn); 
+Parameters
+pid
+The Unix process ID (PID).
+
+psn
+On return, psn points to the process serial number.
+
+
+- find a way to avoid GUI process starting when running from python2.4/python2.5; calling Process Manager functions (GetNextEvent, GetProcessBundleLocation, LaunchApplication) seems to trigger this. e.g. Might be BSD APIs that could be used instead, in which case could use AEAddressDescs of typeKernelProcessID ('kpid')
+
 ----------------------------------------------------------------------
 Following will probably be rejected as too hard or not important enough to do:
 

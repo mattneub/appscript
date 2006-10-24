@@ -1,6 +1,6 @@
 HISTORY
 
-2006-10-22 -- ???
+2006-10-24 -- ???
 
 - no longer includes BOM when packing AEDescs of typeUnicodeText as this caused problems with applications that don't handle BOMs correctly (e.g. iTunes 7)
 
@@ -23,6 +23,8 @@ HISTORY
 - fixed case-sensitivity issue in aem.send.connect._psnForApplicationPath (previously it lowercased file paths)
 
 - changed aem.launch into static method of aem.Application class
+
+- fixed problem where temporary traceback code in CommandError.__init__ could cause an error in Python 2.5
 
 
 2006-08-08 -- 0.11.0

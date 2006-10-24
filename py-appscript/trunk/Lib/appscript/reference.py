@@ -551,10 +551,14 @@ class CommandError(Exception):
 			trace : str -- internal traceback (for debugging appscript)
 	"""
 	def __init__(self, command, parameters, realerror):
-		import StringIO, traceback
-		s = StringIO.StringIO()
-		traceback.print_exc(file=s)
-		self.trace = s.getvalue()
+		# TO DO: delete traceback code once testing/debugging complete
+		import StringIO, traceback, sys
+		if sys.exc_info() != (None, None, None):
+			s = StringIO.StringIO()
+			traceback.print_exc(file=s)
+			self.trace = s.getvalue()
+		else:
+			self.trace = None
 		self.command, self. parameters, self.realerror = command, parameters, realerror
 		Exception.__init__(self, command, parameters, realerror)
 	

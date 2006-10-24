@@ -1,6 +1,6 @@
 HISTORY
 
-2006-10-23 -- ???
+2006-10-24 -- ???
 
 - fixed unpacking of comparison descriptors
 
@@ -17,6 +17,8 @@ HISTORY
 - added note to Problem Apps chapter on sending run and open events to non-stay-open applications
 
 - addressed compatibility issue in terminology module so that an ambiguous keyword is used as both a class name and an enumerator name (e.g. k.workbook in Excel) will now be packed as typeType (same as in AppleScript), not typeEnumerated
+
+- fixed problem where temporary traceback code in CommandError.__init__ could cause an error in Python 2.5
 
 
 2006-08-16 -- 0.16.1

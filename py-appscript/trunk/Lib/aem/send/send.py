@@ -132,10 +132,14 @@ class CommandError(MacOS.Error):
 	"""
 	
 	def __init__(self, number, message, raw):
-		import StringIO, traceback
-		s = StringIO.StringIO()
-		traceback.print_exc(file=s)
-		self.trace = s.getvalue()
+		# TO DO: delete traceback code once testing/debugging complete
+		import StringIO, traceback, sys
+		if sys.exc_info() != (None, None, None):
+			s = StringIO.StringIO()
+			traceback.print_exc(file=s)
+			self.trace = s.getvalue()
+		else:
+			self.trace = None
 		MacOS.Error.__init__(self, *(message and [number, message] or [number]))
 		self.number, self.message, self.raw = number, message, raw
 	
