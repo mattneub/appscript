@@ -18,13 +18,20 @@ struct rbAE_AEDescWrapper {
 	AEDesc desc;
 };
 
-// These two macros are from RubyAEOSA's aedesc.c
+// (these two macros are basically cribbed from RubyAEOSA's aedesc.c)
 #define AEDESC_DATA_PTR(o) ((struct rbAE_AEDescWrapper*)(DATA_PTR(o)))
 #define AEDESC_OF(o) (AEDESC_DATA_PTR(o)->desc)
 
 
 /**********************************************************************/
 // Raise MacOS error
+
+/*
+ * Note: MacOSError should only be raised by AE module; attempting to raise it from Ruby
+ * just results in unexpected errors. (I've not quite figured out how to implement an
+ * Exception class in C that constructs correctly in both C and Ruby. Not serious, since
+ * nobody else needs to raise MacOSErrors - just a bit irritating.)
+ */ 
 
 static void
 rbAE_raiseMacOSError(const char *description, OSErr number)
@@ -402,6 +409,7 @@ rbAE_pidToPsn(VALUE self, VALUE pid)
 }
 
 /**********************************************************************/
+// Date conversion
 
 static VALUE
 rbAE_convertLongDateTimeToUnixSeconds(VALUE self, VALUE ldt)
@@ -437,6 +445,7 @@ Init_ae (void)
 	mAE = rb_define_module("AE");
 
 	// AE::AEDesc
+	
 	cAEDesc = rb_define_class_under(mAE, "AEDesc", rb_cObject);
 	
 	rb_define_singleton_method(cAEDesc, "new", rbAE_AEDesc_new, 2);
@@ -456,6 +465,7 @@ Init_ae (void)
 	rb_define_method(cAEDesc, "send", rbAE_AEDesc_send, 2);
 	
 	// AE::MacOSError
+	
 	cMacOSError = rb_define_class_under(mAE, "MacOSError", rb_eStandardError);
 	
 	rb_define_attr(cMacOSError, "to_i", Qtrue, Qfalse);
@@ -465,6 +475,7 @@ Init_ae (void)
 	rb_define_method(cMacOSError, "inspect", rbAE_MacOSError_inspect, 0);
 
 	// Support functions
+	
 	rb_define_module_function(mAE, "findApplication", rbAE_findApplication, 3);
 	rb_define_module_function(mAE, "psnForApplicationPath", rbAE_psnForApplicationPath, 1);
 	rb_define_module_function(mAE, "launchApplication", rbAE_launchApplication, 3);
