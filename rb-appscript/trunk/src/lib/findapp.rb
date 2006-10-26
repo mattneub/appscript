@@ -22,7 +22,7 @@ module FindApp
 		begin
 			return AE.findApplication(creator, id, name)
 		rescue AE::MacOSError => err
-			if err.number == -10814
+			if err.to_i == -10814
 				ident = [creator, id, name].compact.to_s.inspect
 				raise ApplicationNotFoundError.new(creator, id, name), "Application #{ident} not found."
 			else
@@ -33,19 +33,15 @@ module FindApp
 
 	def FindApp.byName(name)
 		if name[0, 1] != '/'
-			if name[0, 1] == '~' and name['/']
-				name = File.expand_path(name)
-			else
-				begin
-					newName = _findApp(nil, nil, name)
-				rescue ApplicationNotFoundError
-					if ('----' + name)[-4, 4].downcase == '.app'
-						raise ApplicationNotFoundError.new(creator, id, name), "Application #{name.inspect} not found."
-					end
-					newName = _findApp(nil, nil, name + '.app')
+			begin
+				newName = _findApp(nil, nil, name)
+			rescue ApplicationNotFoundError
+				if ('----' + name)[-4, 4].downcase == '.app'
+					raise ApplicationNotFoundError.new(creator, id, name), "Application #{name.inspect} not found."
 				end
-				name = newName
+				newName = _findApp(nil, nil, name + '.app')
 			end
+			name = newName
 		end
 		if not FileTest.exist?(name) and name[-4, 4].downcase != '.app' and not FileTest.exist?(name+ '.app')
 			name += '.app'

@@ -12,7 +12,7 @@ module MacFile
 		URLPrefix = 'file://localhost'
 	
 		def FileBase._pathToURL(path)
-			return URLPrefix + File.expand_path(path).gsub(/[^a-zA-Z0-9_.-\/]/) { |c| "%%%02x" % c[0] }
+			return URLPrefix + path.gsub(/[^a-zA-Z0-9_.-\/]/) { |c| "%%%02x" % c[0] }
 		end
 	
 		def FileBase._urlToPath(url)
@@ -26,7 +26,7 @@ module MacFile
 			begin
 				return desc.coerce(type)
 			rescue AE::MacOSError => e
-				if [-35, -43, -120, -1700].include?(e.number) # disk/file/folder not found, or coercion error
+				if [-35, -43, -120, -1700].include?(e.to_i) # disk/file/folder not found, or coercion error
 					if path != nil
 						raise FileNotFoundError, "File #{path.inspect} not found."
 					else

@@ -137,12 +137,18 @@ module Send
 			return @AEM_event.send(flags, timeout)
 		end
 		
-		def send(timeout=KAE::KAEDefaultTimeout, flags=KAE::KAEWaitReply)
+		def inspect
+			return "#<AEM::Event @code=#{@_eventCode}>"
+		end
+		
+		alias_method :to_s, :inspect
+		
+		def send(timeout=KAE::KAEDefaultTimeout, flags=KAE::KAECanSwitchLayer + KAE::KAEWaitReply)
 			begin
 				replyEvent = _sendAppleEvent(flags, timeout)
 			rescue AE::MacOSError => err
-				if not @_eventCode == 'aevtquit' and err.number == -609
-					raise CommandError.new(err.number, err.message, nil)
+				if not (@_eventCode == 'aevtquit' and err.to_i == -609)
+					raise CommandError.new(err.to_i, nil, err)
 				end
 			else
 				if replyEvent.type != KAE::TypeNull

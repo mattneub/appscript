@@ -95,7 +95,7 @@ class Codecs
 			begin
 				AE::AEDesc.new(KAE::TypeUTF8Text, val).coerce(KAE::TypeUnicodeText)
 			rescue AE::MacOSError => e
-				if e.number == -1700
+				if e.to_i == -1700
 					raise NotUTF8TextError, "Not valid UTF8 data: #{val.inspect}"
 				else
 					raise

@@ -113,6 +113,17 @@ module AEM
 		#######
 		# methods
 		
+		def inspect
+			if @identity[0] == :current
+				return 'AEM::Application.current'
+			else
+				conName = {:path => 'newPath', :url => 'newURL', :pid => 'newPID', :desc => 'newDesc'}[@identity[0]]
+				return "AEM::Application.#{conName}(#{@identity[1].inspect})"
+			end
+		end
+		
+		alias_method :to_s, :inspect
+		
 		def ==(val)
 			return (self.class == val.class and @identity == val.identity)
 		end

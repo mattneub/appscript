@@ -54,7 +54,7 @@ irb(main):001:0&gt;</code></pre>
 <pre><code>irb&gt; te.make(:new =&gt; :document)
 =&gt; AS.app("/Applications/TextEdit.app").documents[1]</code></pre>
 
-<p>Notice that keyword parameters are specified as an inline Hash with symbols as keys. The <a href="10_applicationcommands.html">Application Commands</a> chapter will discuss appscript's command syntax in more detail.</p>
+<p>Notice that keyword parameters are specified as an inline Hash with symbols as keys. The <a href="11_applicationcommands.html">Application Commands</a> chapter will discuss appscript's command syntax in more detail.</p>
 
 <p>Because <code>document</code> objects are always elements of the root <code>application</code> class, applications such as TextEdit can usually infer the location at which the new <code>document</code> object should appear. At other times, you need to supply an <code>at</code> parameter that indicates the desired location.</p>
 
@@ -78,7 +78,7 @@ irb(main):001:0&gt;</code></pre>
 
 <pre><code>doc.text.set('Hello World')</code></pre>
 
-<p>Appscript converts this second form to the first form internally, so the end result is exactly the same. Appscript supports several such special cases, and these are described in the <a href="10_applicationcommands.html">Application Commands</a> chapter. Using these special cases produces more elegant, readable source code, and is recommended.</p>
+<p>Appscript converts this second form to the first form internally, so the end result is exactly the same. Appscript supports several such special cases, and these are described in the <a href="11_applicationcommands.html">Application Commands</a> chapter. Using these special cases produces more elegant, readable source code, and is recommended.</p>
 
 <h3>Get the document's content</h3>
 

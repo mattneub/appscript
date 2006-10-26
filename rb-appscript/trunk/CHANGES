@@ -1,3 +1,14 @@
+2006-10-26 -- ???
+
+- removed path expansion in FindApp#byName, MacFile::Alias#at, MacFile::FileURL#at
+
+- changed default send flags to KAE::KAECanSwitchLayer + KAE::KAEWaitReply (same as AppleScript)
+
+- renamed AE::MacOSError#number to 'to_i'; added 'to_s' and 'inspect' methods
+
+- added 'to_s' and 'inspect' methods to AE::AEDesc
+
+
 2006-10-23 -- 0.1.6
 
 - improved test_aemreference.rb

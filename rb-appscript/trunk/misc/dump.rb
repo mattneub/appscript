@@ -21,7 +21,7 @@ end
 
 appPath = FindApp.byName(ARGV[0])
 moduleName = ARGV[1]
-outPath = File.expand_path(ARGV[2])
+outPath = ARGV[2]
 
 if not /^[A-Z][A-Za-z0-9_]*$/ === moduleName
 	raise RuntimeError, "Invalid module name."

@@ -31,7 +31,7 @@ module Connect
 		begin
 			psn = AE.psnForApplicationPath(path)
 		rescue AE::MacOSError => err
-			if err.number == -600
+			if err.to_i == -600
 				sleep(1)
 				AE.launchApplication(path, LaunchEvent,  
 						LaunchContinue + LaunchNoFileFlags + LaunchDontSwitch)
@@ -48,7 +48,7 @@ module Connect
 			AE.psnForApplicationPath(path)
 			return true
 		rescue AE::MacOSError => err
-			if err.number == -600
+			if err.to_i == -600
 				return false
 			else
 				raise
@@ -62,7 +62,7 @@ module Connect
 		begin
 			psn = AE.psnForApplicationPath(path)
 		rescue AE::MacOSError => err
-			if err.number == -600
+			if err.to_i == -600
 				sleep(1)
 				psn = AE.launchApplication(path, RunEvent,  
 						LaunchContinue + LaunchNoFileFlags + LaunchDontSwitch)

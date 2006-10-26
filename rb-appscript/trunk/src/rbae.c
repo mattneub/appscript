@@ -1,6 +1,7 @@
 /*
  *  Copyright (C) 2006 HAS
  *
+ *  Thanks to: FUJIMOTO Hisakuni, author of RubyAEOSA
  */
 
 #include "osx_ruby.h"
@@ -12,45 +13,43 @@ static VALUE mAE;
 static VALUE cAEDesc;
 static VALUE cMacOSError;
 
+// Note: AEDescs need extra wrapping to avoid nasty problems with Ruby's Data_Wrap_Struct.
 struct rbAE_AEDescWrapper {
 	AEDesc desc;
 };
 
+// These two macros are from RubyAEOSA's aedesc.c
 #define AEDESC_DATA_PTR(o) ((struct rbAE_AEDescWrapper*)(DATA_PTR(o)))
 #define AEDESC_OF(o) (AEDESC_DATA_PTR(o)->desc)
 
-
-/* TO DO
-
-begin
-	raise AE::MacOSError.new(-1701), 'noo'
-rescue AE::MacOSError => err
-	print "(#{err.message}) [#{err.number}]"
-end
-# (some description) [] # note: error number missing if no initialize() defined; message missing if initialize() defined
-*/
 
 /**********************************************************************/
 // Raise MacOS error
 
 static void
-rbAE_raiseMacOSError(VALUE self, const char *message, OSErr number)
+rbAE_raiseMacOSError(const char *description, OSErr number)
 {
 	VALUE errObj;
 	
-	errObj = rb_funcall(cMacOSError, rb_intern("new"), 1, rb_str_new2(message));
-	rb_iv_set(errObj, "@number", INT2NUM(number));
+	errObj = rb_funcall(cMacOSError, rb_intern("new"), 0);
+	rb_iv_set(errObj, "@to_i", INT2NUM(number)); // returns the OS error number
+	rb_iv_set(errObj, "@description", rb_str_new2(description)); // troubleshooting info
 	rb_exc_raise(errObj);
 }
 
-/*
+
+/**********************************************************************/
+// MacOSError methods
+
 static VALUE
-rbAE_MacOSError_initialize(VALUE self, VALUE number)
+rbAE_MacOSError_inspect(VALUE self)
 {
-	rb_iv_set(self, "@number", number);
-	return self;
+	char s[32];
+	
+	sprintf(s, "#<AE::MacOSError %i>", NUM2INT(rb_iv_get(self, "@to_i")));
+	return rb_str_new2(s);
 }
-*/
+
 
 /**********************************************************************/
 // AEDesc support functions
@@ -77,6 +76,7 @@ rbAE_wrapAEDesc(VALUE class, const AEDesc *desc)
 {
 		struct rbAE_AEDescWrapper *wrapper;
 		
+		// Found out how to wrap AEDescs so Ruby wouldn't crash by reading RubyAEOSA's aedesc.c
 		wrapper = malloc(sizeof(struct rbAE_AEDescWrapper));
 		wrapper->desc = *desc;
 		return Data_Wrap_Struct(class, 0, rbAE_freeAEDesc, wrapper);
@@ -95,7 +95,7 @@ rbAE_AEDesc_new(VALUE class, VALUE type, VALUE data)
 	err = AECreateDesc(rbStringToDescType(type),
 					   RSTRING(data)->ptr, RSTRING(data)->len,
 					   &desc);
-	if (err != noErr) rbAE_raiseMacOSError(class, "Can't create AEDesc.", err);
+	if (err != noErr) rbAE_raiseMacOSError("Can't create AEDesc.", err);
 	return rbAE_wrapAEDesc(class, &desc);
 }
 
@@ -107,7 +107,7 @@ rbAE_AEDesc_newList(VALUE class, VALUE isRecord)
 	AEDesc desc;
 	
 	err = AECreateList(NULL, 0, RTEST(isRecord), &desc);
-	if (err != noErr) rbAE_raiseMacOSError(class, "Can't create AEDescList.", err);
+	if (err != noErr) rbAE_raiseMacOSError("Can't create AEDescList.", err);
 	return rbAE_wrapAEDesc(class, &desc);
 }
 
@@ -125,13 +125,35 @@ rbAE_AEDesc_newAppleEvent(VALUE class, VALUE eventClass, VALUE eventID,
 							 NUM2INT(returnID), 
 							 NUM2LONG(transactionID),
 							 &desc);
-	if (err != noErr) rbAE_raiseMacOSError(class, "Can't create AppleEvent.", err);
+	if (err != noErr) rbAE_raiseMacOSError("Can't create AppleEvent.", err);
 	return rbAE_wrapAEDesc(class, &desc);
 }
 
 
 /**********************************************************************/
 // AEDesc methods
+
+static VALUE
+rbAE_AEDesc_inspect(VALUE self)
+{
+	VALUE s, type;
+	Size dataSize;
+	
+	s = rb_str_new2("#<AE::AEDesc type=%s size=%i>");
+	type = rb_funcall(self, rb_intern("type"), 0);
+	dataSize = AEGetDescDataSize(&(AEDESC_OF(self)));
+	return rb_funcall(s, 
+					  rb_intern("%"), 
+					  1,
+					  rb_ary_new3(2, 
+								  rb_funcall(type, rb_intern("inspect"), 0),
+								  INT2NUM(dataSize)
+					  )
+	);
+}
+
+
+/*******/
 
 static VALUE
 rbAE_AEDesc_type(VALUE self)
@@ -154,7 +176,7 @@ rbAE_AEDesc_data(VALUE self)
 	dataSize = AEGetDescDataSize(&(AEDESC_OF(self)));
 	data = malloc(dataSize);
 	err = AEGetDescData(&(AEDESC_OF(self)), data, dataSize);
-	if (err != noErr) rbAE_raiseMacOSError(self, "Can't get AEDesc data.", err);
+	if (err != noErr) rbAE_raiseMacOSError("Can't get AEDesc data.", err);
 	result = rb_str_new(data, dataSize);
 	free(data);
 	return result;
@@ -170,7 +192,7 @@ rbAE_AEDesc_coerce(VALUE self, VALUE type)
 	AEDesc desc;
 	
 	err = AECoerceDesc(&(AEDESC_OF(self)), rbStringToDescType(type), &desc);
-	if (err != noErr) rbAE_raiseMacOSError(self, "Can't coerce AEDesc.", err);
+	if (err != noErr) rbAE_raiseMacOSError("Can't coerce AEDesc.", err);
 	return rbAE_wrapAEDesc(rb_funcall(self, rb_intern("class"), 0), &desc);
 }
 
@@ -181,7 +203,7 @@ rbAE_AEDesc_length(VALUE self)
 	long length;
 	
 	err = AECountItems(&(AEDESC_OF(self)), &length);
-	if (err != noErr) rbAE_raiseMacOSError(self, "Can't get length of AEDesc.", err);
+	if (err != noErr) rbAE_raiseMacOSError("Can't get length of AEDesc.", err);
 	return INT2NUM(length);
 }
 
@@ -194,7 +216,7 @@ rbAE_AEDesc_putItem(VALUE self, VALUE index, VALUE desc)
 	if (rb_obj_is_instance_of(desc, rb_funcall(self, rb_intern("class"), 0)) != Qtrue)
 			rb_raise(rb_eTypeError, "Can't put parameter into AEDesc.");
 	err = AEPutDesc(&(AEDESC_OF(self)), NUM2LONG(index), &(AEDESC_OF(desc)));
-	if (err != noErr) rbAE_raiseMacOSError(self, "Can't put item into AEDesc.", err);
+	if (err != noErr) rbAE_raiseMacOSError("Can't put item into AEDesc.", err);
 	return Qnil;
 }
 
@@ -207,7 +229,7 @@ rbAE_AEDesc_putParam(VALUE self, VALUE key, VALUE desc)
 	if (rb_obj_is_instance_of(desc, rb_funcall(self, rb_intern("class"), 0)) != Qtrue)
 			rb_raise(rb_eTypeError, "Can't put parameter into AEDesc.");
 	err = AEPutParamDesc(&(AEDESC_OF(self)), rbStringToDescType(key), &(AEDESC_OF(desc)));
-	if (err != noErr) rbAE_raiseMacOSError(self, "Can't put parameter into AEDesc.", err);
+	if (err != noErr) rbAE_raiseMacOSError("Can't put parameter into AEDesc.", err);
 	return Qnil;
 }
 
@@ -220,7 +242,7 @@ rbAE_AEDesc_putAttr(VALUE self, VALUE key, VALUE desc)
 	if (rb_obj_is_instance_of(desc, rb_funcall(self, rb_intern("class"), 0)) != Qtrue)
 			rb_raise(rb_eTypeError, "Can't put parameter into AEDesc.");
 	err = AEPutAttributeDesc(&(AEDESC_OF(self)), rbStringToDescType(key), &(AEDESC_OF(desc)));
-	if (err != noErr) rbAE_raiseMacOSError(self, "Can't put attribute into AEDesc.", err);
+	if (err != noErr) rbAE_raiseMacOSError("Can't put attribute into AEDesc.", err);
 	return Qnil;
 }
 
@@ -239,7 +261,7 @@ rbAE_AEDesc_get(VALUE self, VALUE index, VALUE type)
 					   rbStringToDescType(type),
 					   &key,
 					   &desc);
-	if (err != noErr) rbAE_raiseMacOSError(self, "Can't get item from AEDesc.", err);
+	if (err != noErr) rbAE_raiseMacOSError("Can't get item from AEDesc.", err);
 	*(DescType*)keyStr = CFSwapInt32HostToBig(key);
 	return rb_ary_new3(2,
 					   rb_str_new(keyStr, 4),
@@ -257,7 +279,7 @@ rbAE_AEDesc_send(VALUE self, VALUE sendMode, VALUE timeout)
 						&reply,
 						(AESendMode)NUM2LONG(sendMode),
 						NUM2LONG(timeout));
-	if (err != noErr) rbAE_raiseMacOSError(self, "Can't send Apple event.", err);
+	if (err != noErr) rbAE_raiseMacOSError("Can't send Apple event.", err);
 	return rbAE_wrapAEDesc(rb_funcall(self, rb_intern("class"), 0), &reply);
 }
 
@@ -307,9 +329,9 @@ rbAE_findApplication(VALUE self, VALUE creator, VALUE bundleID, VALUE name)
 								   NULL);
 	if (inBundleID != NULL) CFRelease(inBundleID);
 	if (inName != NULL) CFRelease(inName);
-	if (err != 0) rbAE_raiseMacOSError(self, "Couldn't find application.", err);
+	if (err != 0) rbAE_raiseMacOSError("Couldn't find application.", err);
 	err = FSRefMakePath(&outAppRef, path, PATH_MAX);
-	if (err != 0) rbAE_raiseMacOSError(self, "Couldn't get application path.", err);
+	if (err != 0) rbAE_raiseMacOSError("Couldn't get application path.", err);
 	return rb_str_new2((char *)path);
 }
 
@@ -322,10 +344,10 @@ rbAE_psnForApplicationPath(VALUE self, VALUE path)
 	FSRef appRef, foundRef;
 
 	err = FSPathMakeRef((UInt8 *)StringValuePtr(path), &appRef, NULL);
-	if (err != 0) rbAE_raiseMacOSError(self, "Couldn't make FSRef for application.", err);
+	if (err != 0) rbAE_raiseMacOSError("Couldn't make FSRef for application.", err);
 	while (1) {
 		err = GetNextProcess(&psn);
-		if (err != 0) rbAE_raiseMacOSError(self, "Can't get next process.", err); // -600 if no more processes left
+		if (err != 0) rbAE_raiseMacOSError("Can't get next process.", err); // -600 if no more processes left
 		err = GetProcessBundleLocation(&psn, &foundRef);
 		if (err != 0) continue;
 		if (FSCompareFSRefs(&appRef, &foundRef) == noErr) 
@@ -347,15 +369,15 @@ rbAE_launchApplication(VALUE self, VALUE path, VALUE firstEvent, VALUE flags)
 	OSErr err = noErr;
 	
 	err = FSPathMakeRef((UInt8 *)StringValuePtr(path), &appRef, NULL);
-	if (err != 0) rbAE_raiseMacOSError(self, "Couldn't make FSRef for application.", err);
+	if (err != 0) rbAE_raiseMacOSError("Couldn't make FSRef for application.", err);
 	err = FSGetCatalogInfo(&appRef, kFSCatInfoNone, NULL, NULL, &fss, NULL);
-	if (err != 0) rbAE_raiseMacOSError(self, "Couldn't make FSSpec for application.", err);
+	if (err != 0) rbAE_raiseMacOSError("Couldn't make FSSpec for application.", err);
 	err = AECoerceDesc(&(AEDESC_OF(firstEvent)), typeAppParameters, &paraDesc);
 	paraSize = AEGetDescDataSize(&paraDesc);
 	paraData = (AppParametersPtr)NewPtr(paraSize);
-	if (paraData == NULL) rbAE_raiseMacOSError(self, "Can't make app parameters AEDesc.", memFullErr);
+	if (paraData == NULL) rbAE_raiseMacOSError("Can't make app parameters AEDesc.", memFullErr);
 	err = AEGetDescData(&paraDesc, paraData, paraSize);
-	if (err != noErr) rbAE_raiseMacOSError(self, "Can't get AEDesc data.", err);
+	if (err != noErr) rbAE_raiseMacOSError("Can't get AEDesc data.", err);
 	launchParams.launchBlockID = extendedBlock;
 	launchParams.launchEPBLength = extendedBlockLen;
 	launchParams.launchFileFlags = 0;
@@ -363,7 +385,7 @@ rbAE_launchApplication(VALUE self, VALUE path, VALUE firstEvent, VALUE flags)
 	launchParams.launchAppSpec = &fss;
 	launchParams.launchAppParameters = paraData;
 	err = LaunchApplication(&launchParams);
-	if (err != noErr) rbAE_raiseMacOSError(self, "Can't launch application.", err);
+	if (err != noErr) rbAE_raiseMacOSError("Can't launch application.", err);
 	psn = launchParams.launchProcessSN;
 	return rb_ary_new3(2, INT2NUM(psn.highLongOfPSN), INT2NUM(psn.lowLongOfPSN));
 }
@@ -375,7 +397,7 @@ rbAE_pidToPsn(VALUE self, VALUE pid)
 	ProcessSerialNumber psn;
 	
 	err = GetProcessForPID((pid_t)NUM2INT(pid), &psn);
-	if (err != noErr) rbAE_raiseMacOSError(self, "Can't convert PID to PSN.", err);
+	if (err != noErr) rbAE_raiseMacOSError("Can't convert PID to PSN.", err);
 	return rb_ary_new3(2, INT2NUM(psn.highLongOfPSN), INT2NUM(psn.lowLongOfPSN));
 }
 
@@ -388,7 +410,7 @@ rbAE_convertLongDateTimeToUnixSeconds(VALUE self, VALUE ldt)
 	CFAbsoluteTime cfTime;
 	
 	err = UCConvertLongDateTimeToCFAbsoluteTime(rb_big2ll(ldt), &cfTime);
-	if (err != noErr) rbAE_raiseMacOSError(self, "Can't convert LongDateTime to seconds.", err);
+	if (err != noErr) rbAE_raiseMacOSError("Can't convert LongDateTime to seconds.", err);
 	return rb_float_new(cfTime + kCFAbsoluteTimeIntervalSince1970);
 }
 
@@ -400,7 +422,7 @@ rbAE_convertUnixSecondsToLongDateTime(VALUE self, VALUE secs)
 	SInt64 ldt;
 
 	err = UCConvertCFAbsoluteTimeToLongDateTime(NUM2DBL(secs) - kCFAbsoluteTimeIntervalSince1970, &ldt);
-	if (err != noErr) rbAE_raiseMacOSError(self, "Can't convert seconds to LongDateTime.", err);
+	if (err != noErr) rbAE_raiseMacOSError("Can't convert seconds to LongDateTime.", err);
 	return rb_ll2big(ldt);
 }
 
@@ -414,12 +436,15 @@ Init_ae (void)
 
 	mAE = rb_define_module("AE");
 
+	// AE::AEDesc
 	cAEDesc = rb_define_class_under(mAE, "AEDesc", rb_cObject);
 	
 	rb_define_singleton_method(cAEDesc, "new", rbAE_AEDesc_new, 2);
 	rb_define_singleton_method(cAEDesc, "newList", rbAE_AEDesc_newList, 1);
 	rb_define_singleton_method(cAEDesc, "newAppleEvent", rbAE_AEDesc_newAppleEvent, 5);
 	
+	rb_define_method(cAEDesc, "to_s", rbAE_AEDesc_inspect, 0);
+	rb_define_method(cAEDesc, "inspect", rbAE_AEDesc_inspect, 0);
 	rb_define_method(cAEDesc, "type", rbAE_AEDesc_type, 0);
 	rb_define_method(cAEDesc, "data", rbAE_AEDesc_data, 0);
 	rb_define_method(cAEDesc, "coerce", rbAE_AEDesc_coerce, 1);
@@ -430,11 +455,16 @@ Init_ae (void)
 	rb_define_method(cAEDesc, "get", rbAE_AEDesc_get, 2);
 	rb_define_method(cAEDesc, "send", rbAE_AEDesc_send, 2);
 	
+	// AE::MacOSError
 	cMacOSError = rb_define_class_under(mAE, "MacOSError", rb_eStandardError);
 	
-//	rb_define_method(cMacOSError, "initialize", rbAE_MacOSError_initialize, 1);
-	rb_define_attr(cMacOSError, "number", Qtrue, Qfalse);
+	rb_define_attr(cMacOSError, "to_i", Qtrue, Qfalse);
+	rb_define_attr(cMacOSError, "description", Qtrue, Qfalse);
+	
+	rb_define_method(cMacOSError, "to_s", rbAE_MacOSError_inspect, 0);
+	rb_define_method(cMacOSError, "inspect", rbAE_MacOSError_inspect, 0);
 
+	// Support functions
 	rb_define_module_function(mAE, "findApplication", rbAE_findApplication, 3);
 	rb_define_module_function(mAE, "psnForApplicationPath", rbAE_psnForApplicationPath, 1);
 	rb_define_module_function(mAE, "launchApplication", rbAE_launchApplication, 3);
