@@ -11,6 +11,8 @@ module AEMReference
 	# SUPPORT FUNCTIONS
 	######################################################################
 	
+	# TO DO: optimise type packers a-la codecs.rb
+	
 	def AEMReference.packType(code)
 		return AE::AEDesc.new(KAE::TypeType, code.unpack('N').pack('L'))
 	end
@@ -24,14 +26,18 @@ module AEMReference
 	end
 	
 	def AEMReference.packListAs(type, lst)
+		# used to pack object specifiers, etc.
+		# pack key-value pairs into an AEListDesc, then coerce it to the desired type
+		# (there are other AEM APIs for packing obj specs, but this way is easiest)
 		desc = AE::AEDesc.newList(true)
-		lst.each do |key, value|
-			desc.putParam(key, value)
-		end
+		lst.each { |key, value| desc.putParam(key, value) }
 		return desc.coerce(type)
 	end
 	
 	class CollectComparable
+		# obtains the data needed to perform equality tests on references
+		# uses AEM_resolve to walk a reference, building up a list of method call names and their arguments
+		
 		attr_reader :result
 		
 		def initialize
@@ -51,6 +57,7 @@ module AEMReference
 	class Base
 	
 		def AEM_comparable
+			# called by Base#==; returns the data needed to compare two aem references
 			if not @_comparable
 				collector = AEMReference::CollectComparable.new
 				AEM_resolve(collector)
@@ -82,6 +89,8 @@ module AEMReference
 	######################################################################
 	
 	class Specifier < Base
+		# Base class for insertion specifier and all object specifier classes.
+		
 		attr_reader :_key, :_container
 		protected :_key, :_container
 	
@@ -91,10 +100,18 @@ module AEMReference
 		end
 		
 		def AEM_root
+			# Get reference's root node. Used by range and filter specifiers when determining type of reference
+			# passed as argument(s): range specifiers require absolute (app-based) or container (con-based)
+			# references; filter specifiers require an item (its-based) reference.
 			return @_container.AEM_root
 		end
 		
 		def AEM_trueSelf
+			# Called by specifier classes when creating a reference to sub-element(s) of the current reference.
+			# - An AllElements specifier (which contains 'want', 'form', 'seld' and 'from' values) will return an UnkeyedElements object (which contains 'want' and 'from' data only). The new specifier object  (ElementByIndex, ElementsByRange, etc.) wraps itself around this stub and supply its own choice of 'form' and 'seld' values.
+			# - All other specifiers simply return themselves. 
+			#
+			#This sleight-of-hand allows foo.elements('bar ') to produce a legal reference to all elements, so users don't need to write foo.elements('bar ').all to achieve the same goal. This isn't a huge deal for aem, but makes a significant difference to the usability of user-friendly wrappers like appscript, and dealing with the mechanics of it here helps keep other layers simple.
 			return self
 		end
 		
@@ -103,8 +120,9 @@ module AEMReference
 		end
 		
 		def AEM_packSelf(codecs)
+			# Pack this Specifier; called by Codecs#pack, which passes itself so that specifiers in this reference can pack their selectors.
 			if not @_desc
-				@_desc = _packSelf(codecs)
+				@_desc = _packSelf(codecs) # once packed, cache this AEDesc for efficiency
 			end
 			return @_desc
 		end
@@ -116,6 +134,10 @@ module AEMReference
 	######################################################################
 	
 	class InsertionSpecifier < Specifier
+		# A reference to an element insertion point.
+		
+		# Syntax: all_elements_ref.start / all_elements_ref.end / element_ref.before / element_ref.after
+		
 		def initialize(container, key, keyname)
 			super(container, key)
 			@_keyname = keyname
@@ -143,6 +165,15 @@ module AEMReference
 	######################################################################
 	
 	class PositionSpecifier < Specifier
+		# All property and element reference forms inherit from this class. It provides most
+		# of the reference building methods; the rest are supplied by MultipleElements to
+		# those reference forms for which they're valid.
+	
+		# Note that comparison and logic 'operator' methods are implemented on this class
+		# - these are only for use in constructing its-based references and shouldn't be used 
+		# on app- and con-based references. Aem doesn't enforce this rule itself so as to 
+		# minimise runtime overhead (the target application will raise an error if the user 
+		# does something foolish).
 	
 		Beginning = AEMReference.packEnum(KAE::KAEBeginning)
 		End = AEMReference.packEnum(KAE::KAEEnd)
@@ -172,6 +203,8 @@ module AEMReference
 		end
 		
 		# Comparison tests; these should only be used on its-based references:
+		
+		# Each of these methods returns a ComparisonTest subclass
 		
 		def gt(val)
 			return GreaterThan.new(self, val)
@@ -215,6 +248,10 @@ module AEMReference
 	
 		# Logic tests; these should only be used on its-based references:
 		
+		# Note: these are convenience methods allowing boolean tests to be written in shorthand form;
+		# e.g. AEM.its.visible.and(...) will automatically expand to AEM.its.visible.eq(true).and(...)
+		# The Test class implements the actual logic test methods
+		
 		def and(*operands)
 			return Equals.new(self, true).and(*operands)
 		end
@@ -228,7 +265,10 @@ module AEMReference
 		end
 		
 		
-		# Insertion references
+		# Insertion references:
+		
+		# Thes can be called on any kind of element reference, and also on property references where the 
+		# property represents a one-to-one relationship, e.g. textedit.documents[1].text.end is valid
 			
 		def start
 			return InsertionSpecifier.new(self, Beginning, 'start')
@@ -262,6 +302,10 @@ module AEMReference
 	
 		# Relative position references
 		
+		# these are unlikely to work on one-to-one relationships - but what the hey, putting them here
+		# simplifies the class structure a bit. As with all reference forms, it's mostly left to the client to
+		# ensure the references they construct can be understood by the target application.
+		
 		def previous(elementcode)
 			return ElementByRelativePosition.new(elementcode, self, Previous, 'previous')
 		end
@@ -277,7 +321,10 @@ module AEMReference
 	######################################################################
 	
 	class Property < PositionSpecifier
-	
+		# A reference to a user-defined property, where code is the code identifying the property.
+
+		# Syntax: ref.property(code)
+			
 		By = 'property'
 		KeyForm = AEMReference.packEnum(KAE::FormPropertyID)
 		
@@ -292,6 +339,12 @@ module AEMReference
 	
 	
 	class UserProperty < PositionSpecifier
+		# A reference to a user-defined property, where name is a string representing the property's name. 
+		
+		# Scriptable applications shouldn't use this reference form, but OSA script applets can.
+		# Note that OSA languages may have additional rules regarding case sensitivity/conversion.
+	
+		# Syntax: ref.userproperty(name)
 	
 		By = 'userproperty'
 		KeyForm = AEMReference.packEnum('usrp')
@@ -314,6 +367,7 @@ module AEMReference
 	# Single elements
 	
 	class SingleElement < PositionSpecifier
+		# Base class for all single element specifiers.
 		
 		def initialize(wantcode, container, key)
 			super(wantcode, container.AEM_trueSelf, key)
@@ -332,25 +386,42 @@ module AEMReference
 	#######
 	
 	class ElementByName < SingleElement
+		# A reference to a single element by its name, where name is a string.
+		
+		# Syntax: elements_ref..byname(string)
+		
 		By = 'byname'
 		KeyForm = AEMReference.packEnum(KAE::FormName)
 	end
 	
 	
 	class ElementByIndex < SingleElement
+		# A reference to a single element by its index, where index is a non-zero whole number.
+		
+		# Syntax: elements_ref.byindex(integer)
+		
+		# Note that a few apps (e.g. Finder) may allow other values as well (e.g. Aliases/FSRefs)
+		
 		By = 'byindex'
 		KeyForm = AEMReference.packEnum(KAE::FormAbsolutePosition)
 	end
 	
 	
 	class ElementByID < SingleElement
+		# A reference to a single element by its id.
+		
+		# Syntax: elements_ref.byid(anything)
+		
 		By = 'byid'
 		KeyForm = AEMReference.packEnum(KAE::FormUniqueID)
 	end
 	
 	##
 	
-	class ElementByOrdinal < SingleElement # first/middle/last/any
+	class ElementByOrdinal < SingleElement
+		# A reference to first/middle/last/any element.
+		
+		# Syntax: elements_ref.first / elements_ref.middle / elements_ref.last / elements_ref.any
 	
 		KeyForm = AEMReference.packEnum(KAE::FormAbsolutePosition)
 		
@@ -370,7 +441,16 @@ module AEMReference
 	
 	
 	class ElementByRelativePosition < PositionSpecifier
-	
+		# A relative reference to previous/next element, where code
+		# is the class code of element to get (e.g. 'docu').
+		
+		# Syntax: elements_ref.previous(code) / elements_ref.next(code)
+		
+		# Note: this class subclasses PositionSpecifier, not SingleElement,
+		# as it needs the container reference intact. (SingleElement#initialize
+		# calls the container's AEM_trueSelf method, which breaks up 
+		# AllElements specifiers - not what we want here.)
+		
 		KeyForm = AEMReference.packEnum(KAE::FormRelativePosition)
 		
 		def initialize(wantcode, container, key, keyname)
@@ -396,6 +476,7 @@ module AEMReference
 	# Multiple elements
 	
 	class MultipleElements < PositionSpecifier
+		# Base class for all multiple element specifiers.
 		
 		First = AEMReference.packAbsoluteOrdinal(KAE::KAEFirst)
 		Middle = AEMReference.packAbsoluteOrdinal(KAE::KAEMiddle)
@@ -443,13 +524,19 @@ module AEMReference
 	#######
 	
 	class ElementsByRange < MultipleElements
+		# A reference to a range of elements
+		
+		# Syntax: elements_ref.byrange(start, stop)
+		
+		# The start and stop args are con-based relative references to the first and last elements in range.
+		# Note that absolute (app-based) references are also acceptable.
 	
 		KeyForm = AEMReference.packEnum(KAE::FormRange)
 		
 		def initialize(wantcode, container, key)
 			key.each do |item|
-				if not item.is_a?(Specifier)
-					raise TypeError, "Not a container (con-based) specifier: #{item.inspect}"
+				if not (item.is_a?(Specifier) and item.AEM_root != Its)
+					raise TypeError, "Bad selector: not an application (app) or container (con) based reference: #{item.inspect}"
 				end
 			end
 			super(wantcode, container.AEM_trueSelf, key)
@@ -473,6 +560,13 @@ module AEMReference
 	
 	
 	class ElementsByFilter < MultipleElements
+		# A reference to all elements that match a condition
+		
+		# Syntax: elements_ref.byfilter(test)
+		
+		# The test argument is a Test object constructed from an its-based reference.
+		# For convenience, an its-based reference can also be passed directly - this will
+		# be expanded to a Boolean equality test, e.g. AEM.its.visible -> AEM.its.visible.eq(true)
 	
 		KeyForm = AEMReference.packEnum(KAE::FormTest)
 		
@@ -481,7 +575,7 @@ module AEMReference
 				if key.is_a?(Specifier) and key.AEM_root == Its
 					key = key.eq(true)
 				else
-					raise TypeError, "Not a test (its-based) specifier: #{key.inspect}"
+					raise TypeError, "Bad selector: not a test (its) based specifier: #{key.inspect}"
 				end
 			end
 			super(wantcode, container.AEM_trueSelf, key)
@@ -502,6 +596,49 @@ module AEMReference
 	
 	
 	class AllElements < MultipleElements
+		# A reference to all elements of the container reference.
+		
+		# Syntax: ref.elements(code)
+		
+		# The 'code' argument is the four-character class code of the desired elements (e.g. 'docu').
+				
+		# Note that an AllElements object is a wrapper around an UnkeyedElements object. 
+		# When sub-selecting these elements, e.g. ref.elements('docu').byindex(1), the AllElements
+		# wrapper is ignored and the UnkeyedElements object is used as the basis for the
+		# new specifier. e.g. 
+		#
+		# AEM.app.elements('docu') # every document of application
+		#
+		# produces the following chain:
+		#
+		# ApplicationRoot -> UnkeyedElements -> AllElements
+		#
+		# Subselecting these elements, e.g. 
+		#
+		# AEM.app.elements('docu').byindex(1) # document 1 of application
+		#
+		# produces the following chain:
+		#
+		# ApplicationRoot -> UnkeyedElements -> ElementByIndex
+		#
+		# As you can see, the previous UnkeyedElements object is retained, but the AllElements
+		# object isn't.
+		#
+		# The result of all this is that users can legally write a reference to all elements as (e.g.):
+		#
+		# AEM.app.elements('docu')
+		# AS.app.documents
+		# 
+		# instead of:
+		#
+		# AEM.app.elements('docu').all
+		# AS.app.documents.all
+		#
+		# Compare with some other bridges (e.g. Frontier), where (e.g.) 'ref.documents' is not
+		# a legitimate reference in itself, and users must remember to add '.all' in order to specify
+		# all elements, or else it won't work correctly. This maps directly onto the underlying AEM
+		# API, which is easy to implement but isn't so good for usability. Whereas aem trades
+		# a bit of increased internal complexity for a simpler, more intuitive and foolproof external API.
 	
 		KeyForm = AEMReference.packEnum(KAE::FormAbsolutePosition)
 		All = AEMReference.packAbsoluteOrdinal(KAE::KAEAll)
@@ -519,11 +656,12 @@ module AEMReference
 		end
 		
 		def AEM_trueSelf
+			 # override default implementation to return the UnkeyedElements object stored inside of this AllElements instance
 			return @_container
 		end
 		
 		def AEM_resolve(obj)
-			return @_container.AEM_resolve(obj)
+			return @_container.AEM_resolve(obj) # forward to UnkeyedElements
 		end
 	end
 	
@@ -536,6 +674,9 @@ module AEMReference
 	# Multiple element shim
 	
 	class UnkeyedElements < Specifier
+		# A partial elements reference, containing element code but no keyform/keydata. A shim.
+		# User is never exposed to this class directly. See comments in AllElements class.
+		
 		attr_reader :AEM_want, :_container
 		protected :AEM_want, :_container
 		
@@ -799,18 +940,30 @@ module AEMReference
 	# Concrete classes
 	
 	class ApplicationRoot < ReferenceRoot
+		# Reference base; represents an application's application object. Used to construct full references.
+		
+		# Syntax: app
+		
 		Name = 'app'
 		Type = AE::AEDesc.new(KAE::TypeNull, '')
 	end
 	
 	
 	class CurrentContainer < ReferenceRoot
+		# Reference base; represents elements' container object. Used to construct by-range references.
+		
+		# Syntax: con
+		
 		Name = 'con'
 		Type = AE::AEDesc.new(KAE::TypeCurrentContainer, '')
 	end
 	
 	
 	class ObjectBeingExamined < ReferenceRoot
+		# Reference base; represents an element to be tested. Used to construct by-filter references.
+		
+		# Syntax: its
+		
 		Name = 'its'
 		Type = AE::AEDesc.new(KAE::TypeObjectBeingExamined, '')
 	end
