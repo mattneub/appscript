@@ -144,7 +144,6 @@ def component(code='ascr', out=sys.stdout, converter=None):
 ######################################################################
 
 if __name__ == '__main__':
-	from os.path import expanduser
 	from getopt import getopt
 	if len(sys.argv) < 2:
 		print _help
@@ -152,7 +151,7 @@ if __name__ == '__main__':
 		opts, args = getopt(sys.argv[1:], 'ck')
 		target = args[0]
 		if args[1:]:
-			out = open(expanduser(args[1].encode('utf8')), 'w')
+			out = open(args[1].encode('utf8'), 'w')
 			out.write('\xEF\xBB\xBFTerminology for %s\n' % (
 					('-c', '') in opts and 'component %r' % _code(target) or target.encode('utf8')))
 		else:

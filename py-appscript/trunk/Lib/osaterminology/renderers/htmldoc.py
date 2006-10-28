@@ -8,8 +8,6 @@
 # TO DO: a useful effect would be highlighting related elements when hovering over an element name
 # would need to get list of children for each element class, then generate simple JS script on each
 
-from os.path import expanduser
-
 from HTMLTemplate import Template
 
 from aem import findapp
@@ -426,7 +424,7 @@ def doc(path, file, style='appscript', options=[], template=None):
 		else:
 			tpl = _template
 		result = encodeNonASCII(tpl.render(terms, typerenderers[style](), options))
-		f = open(expanduser(file), 'w')
+		f = open(file, 'w')
 		f.write(str(result))
 		f.close()
 

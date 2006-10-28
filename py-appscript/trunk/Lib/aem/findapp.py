@@ -47,22 +47,19 @@ class ApplicationNotFoundError(Exception):
 def byname(name):
 	"""Find the application with the given name and return its full path. 
 	
-	Absolute paths and paths starting with '~' are also accepted. A '.app' suffix is optional.
+	Absolute paths are also accepted. An '.app' suffix is optional.
 	
 	Examples: 
 		byname('TextEdit')
 		byname('Finder.app')
 	"""
-	if not name.startswith('/'): # if not full name to app
-		if name.startswith('~') and '/' in name: # expand relative name
-			name = expanduser(name)
-		else: # expand app name
-			try:
-				name = _findApp(name)
-			except ApplicationNotFoundError:
-				if name.lower().endswith('.app'):
-					raise
-				name = _findApp(name + '.app')
+	if not name.startswith('/'): # application name only, not its full path
+		try:
+			name = _findApp(name)
+		except ApplicationNotFoundError:
+			if name.lower().endswith('.app'):
+				raise
+			name = _findApp(name + '.app')
 	if not exists(name) and not name.lower().endswith('.app') and exists(name + '.app'):
 		name += '.app'
 	if not exists(name):

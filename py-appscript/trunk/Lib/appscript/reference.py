@@ -149,12 +149,12 @@ class AppData(aem.Codecs):
 		# initialise aem.Application instance
 		self.target = aemApplicationClass(path, url)
 		# initialise translation tables
-		if terms: # use user-supplied terminology module
-			self.typebycode, self.typebyname, self.referencebycode, self.referencebyname = tablesfordata(terms)
-		elif terms == True: # get terminology from application specified by path or url
+		if terms == True: # obtain terminology from application
 			self.typebycode, self.typebyname, self.referencebycode, self.referencebyname = tablesforapp(path, url)
-		else: 
+		elif terms == False: # use built-in terminology only (e.g. use this when running AppleScript applets)
 			self.typebycode, self.typebyname, self.referencebycode, self.referencebyname = defaulttables
+		else: # use user-supplied terminology module
+			self.typebycode, self.typebyname, self.referencebycode, self.referencebyname = tablesfordata(terms)
 	
 	def pack(self, data):
 		if isinstance(data, GenericReference):

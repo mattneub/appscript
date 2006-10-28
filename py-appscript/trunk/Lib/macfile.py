@@ -10,7 +10,6 @@ Both classes provide a variety of constructors and read-only properties for gett
 
 """
 
-from os.path import expanduser
 from urlparse import urlparse, urlunparse
 from urllib import quote, unquote # TO TO: should we use pathname2url, url2pathname instead (what's the difference?)
 from CarbonX.AE import AECreateDesc
@@ -127,7 +126,7 @@ class File(_Base):
 	
 	def __init__(self, path):
 		"""Make File object from POSIX path."""
-		self._path = expanduser(unicode(path))
+		self._path = unicode(path)
 		#self._hfs = None
 		self._url = None
 		self._fsref = None

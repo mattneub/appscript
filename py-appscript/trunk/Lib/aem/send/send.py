@@ -80,7 +80,7 @@ class Event(object):
 	
 	# Public
 	
-	def send(self, timeout=kAE.kAEDefaultTimeout, flags=kAE.kAEWaitReply):
+	def send(self, timeout=kAE.kAEDefaultTimeout, flags= kAE.kAECanSwitchLayer + kAE.kAEWaitReply):
 		"""Send this Apple event (may be called any number of times).
 			timeout : int | aem.k.DefaultTimeout | aem.k.NoTimeout -- number of ticks to wait for target process to reply before raising timeout error (default=DefaultTimeout)
 			flags : int -- bitwise flags [1] indicating how target process should handle event (default=WaitReply)

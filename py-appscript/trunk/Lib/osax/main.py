@@ -4,7 +4,6 @@
 
 (C) 2004 HAS"""
 
-from CarbonX.AE import AECreateDesc
 import CarbonX.kAE as _k
 import MacOS
 
