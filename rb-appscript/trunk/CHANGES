@@ -1,4 +1,4 @@
-2006-10-26 -- ???
+2006-10-28 -- ???
 
 - removed path expansion in FindApp#byName, MacFile::Alias#at, MacFile::FileURL#at
 
@@ -8,6 +8,9 @@
 
 - added 'to_s' and 'inspect' methods to AE::AEDesc
 
+- fixed undefined variable bug in FindApp#byName when raising an ApplicationNotFoundError
+
+- added osax module and documentation
 
 2006-10-23 -- 0.1.6
 

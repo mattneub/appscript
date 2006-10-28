@@ -260,6 +260,13 @@ module Terminology
 		return _makeTypeTable([], [], []) + _makeReferenceTable([], [], [])
 	end
 	
+	def Terminology.tablesForAetes(aetes)
+		classes, enums, properties, elements, commands = TerminologyParser.buildTablesForAetes(aetes.delete_if { |aete| aete == nil or aete.type != 'aete' })
+		return _makeTypeTable(classes, enums, properties) + _makeReferenceTable(properties, elements, commands)
+	end
+	
+	##
+	
 	def Terminology.tablesForModule(terms)
 		if terms::Version != 1.1
 			raise RuntimeError, "Unsupported terminology module version: #{terms::Version} (requires version 1.1)."
@@ -281,7 +288,7 @@ module Terminology
 					app = AEM::Application.current
 				end
 				begin
-					aetes = app.event('ascrgdte', {'----' => 0}).send(30 * 60)
+					aetes = app.event('ascrgdte', {'----' => 0, 'rtyp' => 'list'}).send(30 * 60)
 				rescue AEM::CommandError => e
 					if  e.number == -192 # aete resource not found
 						aetes = []
@@ -289,14 +296,13 @@ module Terminology
 						raise
 					end
 				end
+				if not aetes.is_a?(Array)
+					aetes = [aetes]
+				end
 			rescue => err
 				raise RuntimeError, "Can't get terminology for application (#{path or pid or url}): #{err}"
 			end
-			if not aetes.is_a?(Array)
-				aetes = [aetes]
-			end
-			classes, enums, properties, elements, commands = TerminologyParser.buildTablesForAetes(aetes.delete_if { |aete| aete == nil or aete.type != 'aete' })
-			@@_terminologyCache[[path, pid, url]] = _makeTypeTable(classes, enums, properties) + _makeReferenceTable(properties, elements, commands)
+			@@_terminologyCache[[path, pid, url]] = Terminology.tablesForAetes(aetes)
 		end
 		return @@_terminologyCache[[path, pid, url]]
 	end

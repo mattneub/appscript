@@ -37,7 +37,7 @@ module FindApp
 				newName = _findApp(nil, nil, name)
 			rescue ApplicationNotFoundError
 				if ('----' + name)[-4, 4].downcase == '.app'
-					raise ApplicationNotFoundError.new(creator, id, name), "Application #{name.inspect} not found."
+					raise ApplicationNotFoundError.new(nil, nil, name), "Application #{name.inspect} not found."
 				end
 				newName = _findApp(nil, nil, name + '.app')
 			end

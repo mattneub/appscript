@@ -436,6 +436,37 @@ rbAE_convertUnixSecondsToLongDateTime(VALUE self, VALUE secs)
 
 
 /**********************************************************************/
+// Get aete
+
+static VALUE
+rbAE_OSAGetAppTerminology(VALUE self, VALUE path)
+{
+	FSRef appRef;
+	FSSpec fss;
+	ComponentInstance defaultComponent;
+	Boolean didLaunch;
+	AEDesc theDesc;
+	OSErr err = noErr;
+	
+	err = FSPathMakeRef((UInt8 *)StringValuePtr(path), &appRef, NULL);
+	if (err != 0) rbAE_raiseMacOSError("Couldn't make FSRef.", err);
+	err = FSGetCatalogInfo(&appRef, kFSCatInfoNone, NULL, NULL, &fss, NULL);
+	if (err != 0) rbAE_raiseMacOSError("Couldn't make FSSpec.", err);
+	defaultComponent = OpenDefaultComponent(kOSAComponentType, 'ascr');
+	err = GetComponentInstanceError(defaultComponent);
+	if (err != 0) rbAE_raiseMacOSError("Couldn't make default component instance.", err);
+	err = OSAGetAppTerminology(defaultComponent, 
+							   kOSAModeNull,
+							   &fss, 
+							   0,
+							   &didLaunch, 
+							   &theDesc);
+	if (err != 0) rbAE_raiseMacOSError("Couldn't get aete resource.", err);
+	return rbAE_wrapAEDesc(cAEDesc, &theDesc);
+}
+
+
+/**********************************************************************/
 // Initialisation
 
 void
@@ -485,4 +516,6 @@ Init_ae (void)
 							  rbAE_convertLongDateTimeToUnixSeconds, 1);
 	rb_define_module_function(mAE, "convertUnixSecondsToLongDateTime", 
 							  rbAE_convertUnixSecondsToLongDateTime, 1);
+							  
+	rb_define_module_function(mAE, "getAETE", rbAE_OSAGetAppTerminology, 1);
 }
