@@ -35,7 +35,7 @@
 
 sa = OSAX::ScriptingAddition.new("StandardAdditions")
 
-sa.say("Hello world", :using=>"Victoria")</code></pre>
+sa.say("Hello world", :using=&gt;"Victoria")</code></pre>
 
 <p>The default application commands (<code>run</code>, <code>activate</code>, <code>quit</code>, etc.) are also available; see the appscript manual for details on those.</p>
 
@@ -88,7 +88,7 @@ p OSAX.scripting_additions
         targetURL(url) -- eppc URL, e.g. "eppc://jukebox-mac.local/iTunes"</code></pre>
 
 
-<p class="hilitebox">Take care when using the osax module from the command line Ruby interpreter, which runs as a non-GUI process. Due to an OS limitation, commands such as <code>display_dialog</code> that require GUI access <em>must</em> be sent to a GUI process, otherwise a MacOSError (-1713, no user interaction allowed) will occur.</p>
+<p class="hilitebox">Take care when using the osax module from the command line Ruby interpreter, which runs as a non-GUI process. Due to OS limitations, commands such as <code>display_dialog</code> that require GUI access <em>must</em> be sent to a GUI process, otherwise a MacOSError (-1713, no user interaction allowed) will occur. To avoid bringing another application's windows in front of the user's current application, target a faceless GUI application such as System Events.</p>
 
 
 <h2>Examples</h2>
@@ -116,12 +116,12 @@ p sa.path_to(:scripts_folder)
 
 # Remember to target a GUI process when using dialog commands:
 
-finder = sa.targetName("Finder")
-finder.activate # bring Finder frontmost so user can see the dialog
-p finder.display_dialog("Ruby says hello!",
-                        :buttons => ["Hi!", "Howdy!", "Duuuude!"],
-                        :default_button => 3)
-# Result: {:button_returned=>"Howdy!"}</code></pre>
+systemEvents = sa.targetName("System Events")
+systemEvents.activate # give focus to System Events
+p systemEvents.display_dialog("Ruby says hello!",
+                              :buttons=&gt;["Hi!", "Howdy!", "Duuuude!"],
+                              :default_button=&gt;3)
+# Result: {:button_returned=&gt;"Howdy!"}</code></pre>
 
 
 </div>

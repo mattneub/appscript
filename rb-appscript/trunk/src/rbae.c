@@ -7,8 +7,9 @@
 #include "osx_ruby.h"
 #include <Carbon/Carbon.h>
 
-VALUE rb_ll2big(LONG_LONG);
+VALUE rb_ll2big(LONG_LONG); // keeps gcc happy
 
+// AE module and classes
 static VALUE mAE;
 static VALUE cAEDesc;
 static VALUE cMacOSError;
@@ -21,6 +22,12 @@ struct rbAE_AEDescWrapper {
 // (these two macros are basically cribbed from RubyAEOSA's aedesc.c)
 #define AEDESC_DATA_PTR(o) ((struct rbAE_AEDescWrapper*)(DATA_PTR(o)))
 #define AEDESC_OF(o) (AEDESC_DATA_PTR(o)->desc)
+
+// Event handling
+typedef long refcontype;
+
+AEEventHandlerUPP upp_GenericEventHandler;
+AECoercionHandlerUPP upp_GenericCoercionHandler;
 
 
 /**********************************************************************/
@@ -71,6 +78,17 @@ rbStringToDescType(VALUE obj)
 	}
 }
 
+static VALUE
+rbDescTypeToString(DescType descType)
+{
+	char s[4];
+	
+	*(DescType*)s = CFSwapInt32HostToBig(descType);
+	return rb_str_new(s, 4);
+}
+
+/*******/
+
 static void
 rbAE_freeAEDesc(struct rbAE_AEDescWrapper *p)
 {
@@ -87,6 +105,26 @@ rbAE_wrapAEDesc(VALUE class, const AEDesc *desc)
 		wrapper = malloc(sizeof(struct rbAE_AEDescWrapper));
 		wrapper->desc = *desc;
 		return Data_Wrap_Struct(class, 0, rbAE_freeAEDesc, wrapper);
+}
+
+/*******/
+// Note: clients should not attempt to use retain/use borrowed AE::AEDesc instances after handler callbacks return,
+// as AEM will have disposed of the underlying AEDesc objects by then (TO DO: safety checking in AEDESC_OF?)
+
+static void
+rbAE_freeBorrowedAEDesc(struct rbAE_AEDescWrapper *p)
+{
+	free(p);
+}
+
+static VALUE
+rbAE_wrapBorrowedAEDesc(VALUE class, const AEDesc *desc)
+{
+		struct rbAE_AEDescWrapper *wrapper;
+		
+		wrapper = malloc(sizeof(struct rbAE_AEDescWrapper));
+		wrapper->desc = *desc;
+		return Data_Wrap_Struct(class, 0, rbAE_freeBorrowedAEDesc, wrapper);
 }
 
 /**********************************************************************/
@@ -164,11 +202,8 @@ rbAE_AEDesc_inspect(VALUE self)
 
 static VALUE
 rbAE_AEDesc_type(VALUE self)
-{
-	char type[4];
-	
-	*(DescType*)type = CFSwapInt32HostToBig(AEDESC_OF(self).descriptorType);
-	return rb_str_new(type, 4);
+{	
+	return rbDescTypeToString(AEDESC_OF(self).descriptorType);
 }
 
 
@@ -260,7 +295,6 @@ rbAE_AEDesc_get(VALUE self, VALUE index, VALUE type)
 	OSErr err = noErr;
 	AEKeyword key;
 	AEDesc desc;
-	char keyStr[4];
 	
 	// TO DO: this gives bus error if typeAEList and index = 0 (should be OSErr -1701); why?
 	err = AEGetNthDesc(&(AEDESC_OF(self)),
@@ -269,9 +303,8 @@ rbAE_AEDesc_get(VALUE self, VALUE index, VALUE type)
 					   &key,
 					   &desc);
 	if (err != noErr) rbAE_raiseMacOSError("Can't get item from AEDesc.", err);
-	*(DescType*)keyStr = CFSwapInt32HostToBig(key);
 	return rb_ary_new3(2,
-					   rb_str_new(keyStr, 4),
+					   rbDescTypeToString(key),
 					   rbAE_wrapAEDesc(rb_funcall(self, rb_intern("class"), 0), &desc));
 }
 
@@ -467,6 +500,178 @@ rbAE_OSAGetAppTerminology(VALUE self, VALUE path)
 
 
 /**********************************************************************/
+// Install event handlers
+
+// TO DO: make sure GC won't collect handler objects while they're installed as event/coercion handlers
+
+static pascal OSErr
+rbAE_GenericEventHandler(const AppleEvent *request, AppleEvent *reply, refcontype refcon)
+{
+	VALUE err;
+	
+	err = rb_funcall((VALUE)refcon, 
+					 rb_intern("handle_event"), 
+					 2, 
+					 rbAE_wrapBorrowedAEDesc(cAEDesc, request),
+					 rbAE_wrapBorrowedAEDesc(cAEDesc, reply));
+	return NUM2INT(err);
+}
+
+/*******/
+
+static VALUE
+rbAE_AEInstallEventHandler(VALUE self, VALUE eventClass, VALUE eventID, VALUE handler)
+{
+	/* 
+	 * eventClass and eventID must be four-character code strings
+	 *
+	 * handler must be a Ruby object containing a method named 'handle_event' that takes two
+	 * AppleEvent descriptors (request and reply) as arguments, and returns an integer.
+	 * Note that this object is responsible for trapping any unhandled exceptions and returning
+	 * an OS error number as appropriate (or 0 if no error), otherwise the program will exit.
+	 */
+	OSErr err = noErr;
+	
+	err = AEInstallEventHandler(rbStringToDescType(eventClass),
+								rbStringToDescType(eventID),
+	                            upp_GenericEventHandler, (long)handler,
+	                            0);
+	if (err != noErr) rbAE_raiseMacOSError("Can't install event handler.", err);
+	return Qnil;
+}
+
+
+static VALUE
+rbAE_AERemoveEventHandler(VALUE self, VALUE eventClass, VALUE eventID)
+{
+	OSErr err = noErr;
+	
+	err = AERemoveEventHandler(rbStringToDescType(eventClass),
+							   rbStringToDescType(eventID),
+							   upp_GenericEventHandler,
+							   0);
+	if (err != noErr) rbAE_raiseMacOSError("Can't remove event handler.", err);
+	return Qnil;
+}
+
+
+static VALUE
+rbAE_AEGetEventHandler(VALUE self, VALUE eventClass, VALUE eventID)
+{
+	OSErr err = noErr;
+	AEEventHandlerUPP handlerUPP;
+	VALUE handler;
+	
+	err = AEGetEventHandler(rbStringToDescType(eventClass),
+							 rbStringToDescType(eventID),
+	                         &handlerUPP, (long *)&handler,
+	                         0);
+	if (err != noErr) rbAE_raiseMacOSError("Can't get event handler.", err);
+	return handler;
+}
+
+
+/**********************************************************************/
+// Install coercion handlers
+
+// TO DO: make sure GC won't collect handler objects while they're installed as event/coercion handlers
+
+static pascal OSErr
+rbAE_GenericCoercionHandler(const AEDesc *fromDesc, DescType toType, refcontype refcon, AEDesc *toDesc)
+{
+	// handle_coercion method should return an AE::AEDesc, or nil if an error occurred
+	OSErr err = noErr;
+	VALUE res;
+	
+	res = rb_funcall((VALUE)refcon, 
+					 rb_intern("handle_coercion"),
+					 2,
+					 rbAE_wrapBorrowedAEDesc(cAEDesc, fromDesc),
+					 rbDescTypeToString(toType));
+	if (rb_obj_is_instance_of(res, cAEDesc) != Qtrue) return errAECoercionFail;
+	err = AEDuplicateDesc(&AEDESC_OF(res), toDesc);
+	return err;
+}
+
+
+/*******/
+
+static VALUE
+rbAE_AEInstallCoercionHandler(VALUE self, VALUE fromType, VALUE toType, VALUE handler)
+{
+	/* 
+	 * fromType and toType must be four-character code strings
+	 *
+	 * handler must be a Ruby object containing a method named 'handle_coercion' that takes an
+	 * AEDesc and a four-character code (original value, desired type) as arguments, and returns an
+	 * AEDesc of the desired type.Note that this object is responsible for trapping any unhandled 
+	 * exceptions and returning nil (or any other non-AEDesc value) as appropriate, otherwise the 
+	 * program will exit.
+	 */
+	OSErr err = noErr;
+	
+	err = AEInstallCoercionHandler(rbStringToDescType(fromType),
+								   rbStringToDescType(toType),
+								   upp_GenericCoercionHandler, (long)handler,
+								   1, 0);
+	if (err != noErr) rbAE_raiseMacOSError("Can't install coercion handler.", err);
+	return Qnil;
+}
+
+
+static VALUE
+rbAE_AERemoveCoercionHandler(VALUE self, VALUE fromType, VALUE toType)
+{
+	OSErr err = noErr;
+	
+	err = AERemoveCoercionHandler(rbStringToDescType(fromType),
+								  rbStringToDescType(toType),
+								  upp_GenericCoercionHandler,
+								  0);
+	if (err != noErr) rbAE_raiseMacOSError("Can't remove coercion handler.", err);
+	return Qnil;
+}
+
+
+static VALUE
+rbAE_AEGetCoercionHandler(VALUE self, VALUE fromType, VALUE toType)
+{
+	OSErr err = noErr;
+	AECoercionHandlerUPP handlerUPP;
+	VALUE handler;
+	Boolean fromTypeIsDesc;
+	
+	err = AEGetCoercionHandler(rbStringToDescType(fromType),
+							   rbStringToDescType(toType),
+							   &handlerUPP, (long *)&handler,
+							   &fromTypeIsDesc,
+							   0);
+	if (err != noErr) rbAE_raiseMacOSError("Can't get coercion handler.", err);
+	return rb_ary_new3(2, handler, fromTypeIsDesc ? Qtrue : Qfalse);
+}
+
+
+
+		
+/**********************************************************************/
+// Start and stop Carbon event loops; allows handling of incoming Apple events
+
+static VALUE
+rbAE_RunApplicationEventLoop(VALUE self)
+{
+	RunApplicationEventLoop();
+	return Qnil;
+}
+
+static VALUE
+rbAE_QuitApplicationEventLoop(VALUE self)
+{
+	QuitApplicationEventLoop();
+	return Qnil;
+}
+
+		
+/**********************************************************************/
 // Initialisation
 
 void
@@ -518,4 +723,20 @@ Init_ae (void)
 							  rbAE_convertUnixSecondsToLongDateTime, 1);
 							  
 	rb_define_module_function(mAE, "getAETE", rbAE_OSAGetAppTerminology, 1);
+	
+	// Event handling
+	
+	upp_GenericEventHandler = NewAEEventHandlerUPP(rbAE_GenericEventHandler);
+	upp_GenericCoercionHandler = NewAECoerceDescUPP(rbAE_GenericCoercionHandler);
+	
+	rb_define_module_function(mAE, "installEventHandler", rbAE_AEInstallEventHandler, 3);
+	rb_define_module_function(mAE, "removeEventHandler", rbAE_AERemoveEventHandler, 2);
+	rb_define_module_function(mAE, "getEventHandler", rbAE_AEGetEventHandler, 2);
+	
+	rb_define_module_function(mAE, "installCoercionHandler", rbAE_AEInstallCoercionHandler, 3);
+	rb_define_module_function(mAE, "removeCoercionHandler", rbAE_AERemoveCoercionHandler, 2);
+	rb_define_module_function(mAE, "getCoercionHandler", rbAE_AEGetCoercionHandler, 2);
+	
+	rb_define_module_function(mAE, "runApplicationEventLoop", rbAE_RunApplicationEventLoop, 0);
+	rb_define_module_function(mAE, "quitApplicationEventLoop", rbAE_QuitApplicationEventLoop, 0);
 }

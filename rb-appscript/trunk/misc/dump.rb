@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 
+require "ae"
 require "aem"
 require "findapp"
 require "_appscript/terminology"
@@ -15,7 +16,8 @@ Usage:
 
 Example:
 
-	ruby  dumb.rb  TextEdit.app  TextEdit  ~/textedit_terms.rb"
+	ruby  dump.rb  Address\ Book  AddressBook  ~/addressbook_terms.rb"
+	
 	exit
 end
 
@@ -30,16 +32,13 @@ end
 File.open(outPath, "w") do |f|
 	# Get aete(s)
 	begin
-		aetes = AEM::Application.newPath(appPath).event("ascrgdte", {'----' => 0}).send(30 * 60)
-	rescue AEM::CommandError => e
-		if  e.number == -192 # aete resource not found
+		aetes = AEM::Codecs.new.unpack(AE.getAETE(appPath).coerce(KAE::TypeAEList))
+	rescue AE::MacOSError => e
+		if  e.to_i == -192 # aete resource not found
 			raise RuntimeError, "No terminology found."
 		else
 			raise
 		end
-	end
-	if not aetes.is_a?(Array)
-		aetes = [aetes]
 	end
 	
 	# Parse aete(s) into intermediate tables, suitable for use by Terminology#tablesForModule

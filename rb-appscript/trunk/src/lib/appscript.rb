@@ -49,7 +49,7 @@ module AS
 					@typebycode, @typebyname, @referencebycode, @referencebyname = Terminology.tablesForApp(@path, @pid, @url)
 				when false # use built-in terminology only (e.g. use this when running AppleScript applets)
 					@typebycode, @typebyname, @referencebycode, @referencebyname = Terminology.defaultTables
-				when nil # allows developers to get names of built-in methods only when calling Application#methods
+				when nil # [developer-only] make Application#methods return names of built-in methods only (needed to generate reservedkeywords.rb file)
 					@typebycode, @typebyname, @referencebycode, @referencebyname = {}, {}, {}, {}
 			else # @_terms is [assumed to be] a module containing dumped terminology, so use that
 				@typebycode, @typebyname, @referencebycode, @referencebyname = Terminology.tablesForModule(@_terms)
