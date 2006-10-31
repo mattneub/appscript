@@ -15,6 +15,8 @@ produces reference objects okay, but these objects' to_s method returns empty st
 
 - profiling
 
+- implement built-in help system by bridging to py-appscript
+
 - see about getting a Window Manager connection in command-line ruby interpreter to allow dialog osaxen to display
 
 - check if eight-char-codes (event names) are 2x32-bit words or 1x64-bit word; codecs module currently assumes the former
@@ -28,6 +30,8 @@ produces reference objects okay, but these objects' to_s method returns empty st
 - add bigger note about UTF8 usage to manual, useful tips (e.g. jcode), etc.
 
 - would be nice if MacFile::FileNotFoundError always showed the failed path (this'd need a bit of Alias Manager glue added to the ae extension)
+
+- include an example project (or source for) that uses ruby2exe to build a standalone 'applet'
 
 - MacFile objects should support ==, eql? and hash
 
