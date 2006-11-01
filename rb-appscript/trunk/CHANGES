@@ -16,6 +16,10 @@
 
 - added gemspec for source-based gem
 
+- made Reference class's AS_appdata and AS_aemreference ivars writeable as well as readable - this'll make it easier to inject workarounds (e.g. modified pack/unpack routines) for occasional application flaws
+
+- added sample/Build_iTunes_playlist_for_local_files.rb
+
 
 2006-10-23 -- 0.1.6
 

@@ -247,7 +247,9 @@ module AS
 	
 	class Reference
 	
+		# users may occasionally require access to the following for creating workarounds to problem apps
 		attr_reader :AS_aemreference, :AS_appdata
+		attr_writer :AS_aemreference, :AS_appdata
 	
 		def initialize(appdata, aemreference)
 			@AS_appdata = appdata
