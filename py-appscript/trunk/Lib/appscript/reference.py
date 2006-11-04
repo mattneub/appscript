@@ -476,7 +476,7 @@ class Application(Reference):
 	
 	def __init__(self, name=None, id=None, creator=None, url=None, terms=True):
 		"""
-			app(name=None, id=None, creator=None, url=None, terms=None)
+			app(name=None, id=None, creator=None, url=None, terms=True)
 				name : str -- name or path of application, e.g. 'TextEdit', 'TextEdit.app', '/Applications/Textedit.app'
 				id : str -- bundle id of application, e.g. 'com.apple.textedit'
 				creator : str -- 4-character creator type of application, e.g. 'ttxt'

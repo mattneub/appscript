@@ -42,7 +42,13 @@
 
 <h2>Appscript and threads</h2>
 
+<p>appscript 0.17.0 now creates its own Mach port each time an event is sent. This allows aem to send and receive events even when used from non-main threads. (Earlier versions used the default Mach port, which meant that reply events could only be received on the main thread.)</p>
+
+<p class="hilitebox">Note: this feature is not yet finalised and may be subject to further changes. In addition, it has not yet been extensively tested, so if any unexpected problems occur during use then please report them ASAP.</p> 
+
+<!--
 <p>When using appscript in multi-threaded systems, always send application commands from the main thread. (This is a limitation of the underlying aem package, which currently doesn't support receiving reply events on non-main threads.)</p>
+-->
 
 
 <h2>Credits</h2>

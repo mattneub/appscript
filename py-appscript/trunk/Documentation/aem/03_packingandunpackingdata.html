@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<title>aem | 3. Packing and unpacking data</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<style type="text/css" media="all"><!--@import url(full.css);--></style>
+
+</head>
+<body>
+
+<h1>3. Packing and unpacking data</h1>
+
+<!-- top navigation -->
+<div class="navbar">
+	<a href="02_apioverview.html">Previous</a> | <a href="index.html">Up</a> | <a href="04_references.html">Next</a>
+</div>
+
+<!-- content -->
+<div id="content">
+
+
+<h2>Codecs</h2>
+
+<p>The <code>aem.Codecs</code> class provides methods for converting Python data to <code>CarbonX.AE.AEDesc</code> objects, and vice-versa.</p>
+
+<pre><code>Codecs
+
+    Constructor:
+        __init__(self)
+
+    Variables:
+        encoders : dict of functions -- Python-to-AEDesc converters
+        decoders : dict of functions -- AEDesc-to-Python converters
+
+    Methods:
+        pack(self, data) -- convert Python data to an AEDesc; will raise
+                a TypeError if data's type/class is unsupported
+            data : anything
+            Result : AEDesc
+
+        unpack(self, desc) -- convert an AEDesc to Python data; will 
+                return AEDesc if it's an unsupported type
+            desc : AEDesc
+            Result : anything</code></pre>
+
+
+<h3>Notes</h3>
+
+<!-- TO DO: customisation options: 1. subclassing and extending pack/unpack, 2. modifying encoders/decoders; when to instantiate/when to modify; notes on appscript integration; notes on differences to rb-appscript Codecs? -->
+
+<p>The <code>encoders</code> dict's keys are Python types/classes; values are functions. Each function takes two arguments: the Python value to convert and a Codecs instance, and return an AEDesc.</p>
+
+<p>The <code>decoders</code> dict's keys are 4-letter codes; values are functions. Each function takes two arguments: the AEDesc to convert and a Codecs instance, and return a Python value.</p>
+
+
+
+<h2>AE types</h2>
+
+<p>The Apple Event Manager defines several types for representing type/class names, enumerator names, etc. that have no direct equivalent in Python. Accordingly, aem defines several classes to represent these types on the Python side. All share a common abstract base class, <code>AETypeBase</code>:</p>
+
+<pre><code>
+
+AETypeBase -- Abstract base class
+
+    Constructor:
+        __init__(self, code)
+            code : str -- a four-character Apple event code,
+                    or eight-character code for AEEventName
+
+    Properties:
+        code : str (read-only) -- Apple event code</code></pre>
+
+
+<p>The five concrete classes are:</p>
+
+<pre><code>AEType(AETypeBase) -- represents an AE object of typeType
+
+
+AEEnum(AETypeBase) -- represents an AE object of typeEnumeration
+
+
+AEProp(AETypeBase) -- represents an AE object of typeProperty
+
+
+AEKey(AETypeBase) -- represents an AE object of typeKeyword
+
+
+AEEventName(AETypeBase) -- represents an AE object of type 'evnt'</code></pre>
+
+
+
+</div>
+
+<!-- bottom navigation -->
+<div class="navbar">
+	<a href="02_apioverview.html">Previous</a> | <a href="index.html">Up</a> | <a href="04_references.html">Next</a>
+</div>
+
+<!--footer-->
+<p class="footer">&copy; 2006 HAS</p>
+</body>
+</html>

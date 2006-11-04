@@ -11,6 +11,8 @@ from CarbonX import AE, kAE
 # PUBLIC
 ######################################################################
 
+# TO DO: optimise type packers a-la pack.py
+
 def packType(code):
 	return AE.AECreateDesc(kAE.typeType, struct.pack("L", *struct.unpack(">L", code))) # ensure correct endianness
 
