@@ -328,8 +328,10 @@ module AS
 				else
 					timeout *= 60
 				end
+				# default send flags
+				sendFlags = KAE::KAECanSwitchLayer
 				# ignore application's reply?
-				sendFlags = keywordArgs.delete(:waitreply) == false ? KAE::KAENoReply : KAE::KAEWaitReply
+				sendFlags += keywordArgs.delete(:waitreply) == false ? KAE::KAENoReply : KAE::KAEWaitReply
 				# add considering/ignoring attributes
 				ignoreOptions = keywordArgs.delete(:ignore)
 				if ignoreOptions == nil

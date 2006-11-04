@@ -71,11 +71,20 @@ module OSAX
 		return OSAXNames
 	end
 	
+	def OSAX.osax(name, appName=nil)
+		addition = ScriptingAddition.new(name)
+		if appName
+			addition = addition.targetName(appName)
+		end
+		return addition
+	end
+	
 	
 	class ScriptingAddition < AS::Reference
 		# Represents a single scripting addition.
 		
 		def initialize(name)
+			@_osaxName = name
 			if name.is_a?(OSAXData)
 				osaxData = name
 			else
@@ -94,6 +103,12 @@ module OSAX
 			end
 			super(osaxData, AEM.app)
 		end
+		
+		def to_s
+			return "#<OSAX::ScriptingAddition name=#{@_osaxName.inspect} target=#{@AS_appdata.target.inspect}>"
+		end
+		
+		alias_method :inspect, :to_s
 		
 		# A client-created scripting addition is automatically targetted at the current application.
 		# Clients can specify another application as target by calling one of the following methods:

@@ -21,11 +21,9 @@
 <div id="content">
 <h2>What is osax?</h2>
 
-<p>The <code>OSAX</code> module provides an easy way to call scripting additions (a.k.a. OSAXen) from Ruby. It exports a single public class, <code>ScriptingAddition</code>, and a single function, <code>scripting_additions</code>.</p>
+<p>The <code>OSAX</code> module provides an easy way to call scripting additions (a.k.a. OSAXen) from Ruby. It exports a single public class, <code>ScriptingAddition</code>, and two functions, <code>osax</code> and <code>scripting_additions</code>.</p>
 
 <p>The <code>ScriptingAddition</code> class represents a single scripting addition. It is similar to an appscript application object, except that it defines commands for the specified scripting addition instead of the application's normal commands. </p>
-
-<p>By default, a <code>ScriptingAddition</code> object is targetted at the current application. You can obtain a <code>ScriptingAddition</code> object targetted at another application by calling one of its <code>target...</code> methods.</p>
 
 <p>Once you've created a <code>ScriptingAddition</code> instance, you can invoke its commands in exactly the same way as you would call a scriptable application's commands in appscript.</p>
 
@@ -39,6 +37,8 @@ sa.say("Hello world", :using=&gt;"Victoria")</code></pre>
 
 <p>The default application commands (<code>run</code>, <code>activate</code>, <code>quit</code>, etc.) are also available; see the appscript manual for details on those.</p>
 
+<p>By default, <code>ScriptingAddition</code> objects are targetted at the current application. You can obtain a <code>ScriptingAddition</code> object targetted at another application by calling one of its <code>target...</code> methods.</p>
+
 
 
 <h2><code>OSAX.scripting_additions</code></h2>
@@ -49,6 +49,31 @@ sa.say("Hello world", :using=&gt;"Victoria")</code></pre>
 
 p OSAX.scripting_additions
 # Result: ["Digital Hub Scripting", "StandardAdditions", ...]</code></pre>
+
+
+
+<h2><code>OSAX.osax</code></h2>
+
+<p>The <code>osax</code> function provides a convenient shortcut for creating new <code>ScriptingAddition</code> instances:</p>
+
+<pre><code>require "osax"
+
+p OSAX.osax("StandardAdditions")
+# Result: #&lt;OSAX::ScriptingAddition
+#             name="StandardAdditions"
+#             target=AEM::Application.current&gt;</code></pre>
+
+<p>In addition, the <code>osax</code> function accepts an application name as an optional second argument, allowing you to specify the application you want to handle the scripting addition's commands, e.g.:</p>
+
+<pre><code>OSAX.osax("StandardAdditions", "System Events")</code></pre>
+
+<p>is shorthand for:</p>
+
+<pre><code>OSAX::ScriptingAddition.new("StandardAdditions").targetName("System Events")</code></pre>
+
+<p>(To specify applications by other means (e.g. URL), create a <code>ScriptingAddition</code> object first, then call the appropriate <code>target...</code> method.)</p>
+
+
 
 
 <h2><code>OSAX::ScriptingAddition</code></h2>
@@ -97,31 +122,33 @@ p OSAX.scripting_additions
 
 # Create a new ScriptingAddition object:
 
-sa = OSAX::ScriptingAddition.new("StandardAdditions")
+stdAdd = OSAX.osax("StandardAdditions")
 
 
 # List all available commands:
 
-p sa.commands
+p stdAdd.commands
 # Result: ["ASCII_character", "ASCII_number", "activate", ...]
 
 
 # Call some commands:
 
-sa.beep
+stdAdd.beep
 
-p sa.path_to(:scripts_folder)
+p stdAdd.path_to(:scripts_folder)
 # Result: MacFile::Alias.at("/Users/foo/Library/Scripts/")
 
 
 # Remember to target a GUI process when using dialog commands:
 
-systemEvents = sa.targetName("System Events")
+systemEvents = stdAdd.targetName("System Events")
 systemEvents.activate # give focus to System Events
 p systemEvents.display_dialog("Ruby says hello!",
                               :buttons=&gt;["Hi!", "Howdy!", "Duuuude!"],
                               :default_button=&gt;3)
 # Result: {:button_returned=&gt;"Howdy!"}</code></pre>
+
+
 
 
 </div>
