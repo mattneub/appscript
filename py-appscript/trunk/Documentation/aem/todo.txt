@@ -1,5 +1,8 @@
 TO DO
 
+- make sure all constants are represented in CarbonX.kAE, then remove 'k' (constants.py) module
+
+
 - following should work but doesn't:
 
 	Application('/System/Library/CoreServices/Finder.app').event('coregetd', {'----': app.elements('pcap')}).send()
