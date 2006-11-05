@@ -113,7 +113,19 @@ module AS
 					if keyType == nil
 						raise RuntimeError, "Unknown keyword: #{key.inspect}"
 					end
-					record.putParam(keyType.code, pack(value))
+					if keyType.code == 'pcls'
+						# AS packs records that contain a 'class' property by leaving out that property and coercing the AEDesc to the specified class at the end
+						begin
+							if value.is_a?(Symbol)
+								value = @typebyname[key].code
+							end
+							record = record.coerce(value.code)
+						rescue
+							record.putParam(keyType.code, pack(value))
+						end
+					else
+						record.putParam(keyType.code, pack(value))
+					end
 				elsif key.is_a?(AEM::AETypeBase)
 					record.putParam(key.code, pack(value))
 				else
@@ -298,7 +310,8 @@ module AS
 		def _sendCommand(args, name, code, labelledArgTerms)
 	#		puts "Calling command #{name} \n\twith args #{args.inspect},\n\treference #{self}\n\tinfo #{code.inspect}, #{labelledArgTerms.inspect}\n\n"
 #			begin # TO DO: enable error handling block once debugging is completed
-				atts, params = {}, {}
+				atts = {'subj' => nil}
+				params = {}
 				case args.length
 					when 0
 						keywordArgs = {}
@@ -345,10 +358,6 @@ module AS
 					end
 					atts['csig'] = Reference._packUInt32(csig)
 				end
-				# optionally specify 'subj' attribute
-				if keywordArgs.has_key?(:telltarget)
-					atts['subj'] = keywordArgs.delete(:telltarget)
-				end
 				# optionally specify return value type
 				if keywordArgs.has_key?(:resulttype)
 					params['rtyp'] = keywordArgs.delete(:resulttype)
@@ -362,28 +371,23 @@ module AS
 					params[paramCode] = paramValue
 				end
 				# apply special cases
-				if @AS_aemreference != AEM.app
-					if code == 'corecrel'
-						# Special case: if ref.make(...) contains no 'at' argument and target is a reference, use target reference for 'at' parameter
-						if params.has_key?('insh')
-							raise ArgumentError, "Too many direct parameters: 'make' command was called on a reference but already has an 'at' parameter."
-						end
-						params['insh'] = @AS_aemreference
-					elsif code == 'coresetd'
-						# Special case: if ref.set(...) contains no 'to' argument, use direct argument for 'to' parameter and target reference for direct parameter
+				# Note: appscript does not replicate every little AppleScript quirk when packing event attributes and parameters (e.g. AS always packs a make command's tell block as the subject attribute, and always includes an each parameter in count commands), but should provide sufficient consistency with AS's habits and give good usability in their own right.
+				if @AS_aemreference != AEM.app # If command is called on a Reference, rather than an Application...
+					if code == 'coresetd'
+						#  if ref.set(...) contains no 'to' argument, use direct argument for 'to' parameter and target reference for direct parameter
 						if params.has_key?('----') and not params.has_key?('data')
 							params['data'] = params['----']
 							params['----'] = @AS_aemreference
 						elsif not params.has_key?('----')
 							params['----'] = @AS_aemreference
 						else
-							raise ArgumentError, "Too many direct parameters: 'set' command was called on a reference but already has a direct parameter."
+							atts['subj'] = @AS_aemreference
 						end
+					elsif params.has_key?('----')
+						# if user has already supplied a direct parameter, pack that reference as the subject attribute
+						atts['subj'] = @AS_aemreference
 					else
-						# Special case: if command is called on a reference and user hasn't already supplied a direct parameter, use that reference as direct parameter
-						if params.has_key?('----')
-							raise ArgumentError, "Too many direct parameters: command was called on a reference but already has a direct parameter."
-						end
+						# pack that reference as the direct parameter
 						params['----'] = @AS_aemreference
 					end
 				end

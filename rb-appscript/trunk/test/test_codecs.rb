@@ -46,13 +46,12 @@ class TC_Codecs < Test::Unit::TestCase
 	
 	def test_bool
 		[
-			[true, "\001"],
-			[false, "\000"]
-		].each do |val, data|
+			[true, KAE::TypeTrue],
+			[false, KAE::TypeFalse]
+		].each do |val, type|
 			d = @c.pack(val)
-			assert_equal(KAE::TypeBoolean, d.type)
-			assert_equal(1, d.data.length)
-			assert_equal(data, d.data)
+			assert_equal(type, d.type)
+			assert_equal('', d.data)
 			assert_equal(val, @c.unpack(d))
 		end
 		assert_equal(true, @c.unpack(AE::AEDesc.new(KAE::TypeBoolean, "\xfe")))

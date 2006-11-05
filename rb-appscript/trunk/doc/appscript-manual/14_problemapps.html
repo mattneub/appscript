@@ -148,21 +148,6 @@ ical = AS.app('iCal', ICalTerminology)
 
 
 
-<h2><a name="subject_attributes">Providing a subject attribute</h2>
-
-<p>While most applications will happily accept a reference to their target object(s) as a command parameter, you may occasionally encounter an application that violates Apple's Scripting Interface Guidelines by requiring it to be provided as a special subject (<code>'subj'</code>) attribute.</p>
-
-<p>In AppleScript, a reference specified by a tell block that cannot be packed as the direct parameter (either because the command already has a direct parameter or doesn't have one) is automatically packed as a subject attribute instead. Appscript provides an equivalent workaround via the special <code>:telltarget</code> parameter available in any command.</p>
-
-<table summary="Special appscript parameters">
-<thead>
-<tr><th>Name</th><th>Class</th><th>Description</th></tr>
-</thead>
-<tbody>
-<tr><td><code>:telltarget</code></td><td><code>nil</code> | <code>AS::Reference</code></td><td>Reference to use as the event's subject attribute.</td></tr>
-</tbody>
-</table>
-
 
 <h2><a name="non_stay_open_applications">Scripting non-stay-open applications</h2>
 

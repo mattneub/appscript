@@ -67,8 +67,8 @@ class Codecs
 	SInt64Bounds = (-2**63)..(2**63-1)
 
 	NullDesc = AE::AEDesc.new(KAE::TypeNull, '')
-	TrueDesc = AE::AEDesc.new(KAE::TypeBoolean, "\001")
-	FalseDesc = AE::AEDesc.new(KAE::TypeBoolean, "\000")
+	TrueDesc = AE::AEDesc.new(KAE::TypeTrue, '')
+	FalseDesc = AE::AEDesc.new(KAE::TypeFalse, '')
 	
 	def packFailed(val)
 		raise TypeError, "Can't pack data into an AEDesc (unsupported type): #{val.inspect}"
@@ -138,7 +138,15 @@ class Codecs
 		usrf = nil
 		val.each do | key, value |
 			if key.is_a?(TypeWrappers::AETypeBase)
-				record.putParam(key.code, pack(value))
+				if key.code == 'pcls' # AS packs records that contain a 'class' property by coercing the packed record to that type at the end
+					begin
+						record = record.coerce(value.code)
+					rescue
+						record.putParam(key.code, pack(value))
+					end
+				else
+					record.putParam(key.code, pack(value))
+				end
 			else
 				if usrf == nil
 					usrf = AE::AEDesc.newList(false)

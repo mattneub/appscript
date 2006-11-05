@@ -288,7 +288,7 @@ module Terminology
 					app = AEM::Application.current
 				end
 				begin
-					aetes = app.event('ascrgdte', {'----' => 0, 'rtyp' => 'list'}).send(30 * 60)
+					aetes = app.event('ascrgdte', {'----' => 0}).send(30 * 60)
 				rescue AEM::CommandError => e
 					if  e.number == -192 # aete resource not found
 						aetes = []

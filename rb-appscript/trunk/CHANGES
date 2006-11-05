@@ -1,4 +1,4 @@
-2006-10-31 -- ???
+2006-11-05 -- ???
 
 - removed path expansion in FindApp#byName, MacFile::Alias#at, MacFile::FileURL#at
 
@@ -18,7 +18,15 @@
 
 - made Reference class's AS_appdata and AS_aemreference ivars writeable as well as readable - this'll make it easier to inject workarounds (e.g. modified pack/unpack routines) for occasional application flaws
 
-- added sample/Build_iTunes_playlist_for_local_files.rb
+- added sample scripts: Build_iTunes_playlist_for_local_files.rb, Simple_Finder_GUI_Scripting.rb
+
+- now always packs a 'subj' attribute; this is normally a null descriptor. (Note: AS always seems to include a subj attribute for the make command. Photoshop CS2's make command requires either an 'at' parameter or 'subj' attribute and throws an error if it doesn't get one. Including a subj attribute by default should hopefully prevent any complaints.) [BB]
+
+- removed built-in :telltarget argument to simplify the API a bit. Now, if a command is called on a reference and already has a direct parameter, the reference is packed as the subject attribute instead. Also, 'telltarget' is no longer a reserved word.
+
+- true and false are now packed as AEDescs of typeTrue and typeFalse (same as AppleScript), not typeBoolean [BB]
+
+- when hashes containing a :class or AEType.new('pcls') key whose value is a Symbol or AEBaseType instance are packed, the resulting AEDesc is now coerced to that type (previously the class property was packed as just another key-value pair, and the result was an AEDesc of typeAERecord) [BB]
 
 
 2006-10-23 -- 0.1.6
