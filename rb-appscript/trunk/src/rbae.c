@@ -228,6 +228,12 @@ rbAE_AEDesc_data(VALUE self)
 /*******/
 
 static VALUE
+rbAE_AEDesc_isRecord(VALUE self)
+{
+	return AECheckIsRecord(&(AEDESC_OF(self))) ? Qtrue : Qfalse;
+}
+
+static VALUE
 rbAE_AEDesc_coerce(VALUE self, VALUE type)
 {
 	OSErr err = noErr;
@@ -692,6 +698,7 @@ Init_ae (void)
 	rb_define_method(cAEDesc, "inspect", rbAE_AEDesc_inspect, 0);
 	rb_define_method(cAEDesc, "type", rbAE_AEDesc_type, 0);
 	rb_define_method(cAEDesc, "data", rbAE_AEDesc_data, 0);
+	rb_define_method(cAEDesc, "isRecord?", rbAE_AEDesc_isRecord, 0);
 	rb_define_method(cAEDesc, "coerce", rbAE_AEDesc_coerce, 1);
 	rb_define_method(cAEDesc, "length", rbAE_AEDesc_length, 0);
 	rb_define_method(cAEDesc, "putItem", rbAE_AEDesc_putItem, 2);

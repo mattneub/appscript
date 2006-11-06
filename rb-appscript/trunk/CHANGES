@@ -1,4 +1,4 @@
-2006-11-05 -- ???
+2006-11-06 -- ???
 
 - removed path expansion in FindApp#byName, MacFile::Alias#at, MacFile::FileURL#at
 
@@ -27,6 +27,8 @@
 - true and false are now packed as AEDescs of typeTrue and typeFalse (same as AppleScript), not typeBoolean [BB]
 
 - when hashes containing a :class or AEType.new('pcls') key whose value is a Symbol or AEBaseType instance are packed, the resulting AEDesc is now coerced to that type (previously the class property was packed as just another key-value pair, and the result was an AEDesc of typeAERecord) [BB]
+
+- codecs module now unpacks a record-like AEDesc with an unknown type as a hash containing an additional 'class' property that indicates the original type (i.e. same as AppleScript)
 
 
 2006-10-23 -- 0.1.6

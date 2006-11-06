@@ -224,11 +224,15 @@ class Codecs
 			when KAE::TypeObjectBeingExamined then unpackObjectBeingExamined(desc)
 			when KAE::TypeCompDescriptor then unpackCompDescriptor(desc)
 			when KAE::TypeLogicalDescriptor then unpackLogicalDescriptor(desc)
+			when KAE::TypeRangeDescriptor then unpackRangeDescriptor(desc)
 		else
-			if desc.is_a?(AE::AEDesc)
+			if desc.isRecord? # if it's a record-like structure with an unknown/unsupported type then unpack it as a hash, including the original type info as a 'class' property
+				p desc.type
+				rec = desc.coerce(KAE::TypeAERecord)
+				rec.putParam('pcls', pack(TypeWrappers::AEType.new(desc.type)))
+				return unpack(rec)
+			else # else return unchanged
 				return desc
-			else
-				raise TypeError, "Not an AE::AEDesc: #{desc.inspect}"
 			end
 		end
 	end
@@ -282,6 +286,14 @@ class Codecs
 	end
 	
 	#######
+	
+	class Range
+		attr_reader :range
+		
+		def initialize(range)
+			@range = range
+		end
+	end
 	
 	class Ordinal
 		attr_reader :code
@@ -394,8 +406,7 @@ class Codecs
 			elsif keyForm == KAE::FormUniqueID
 				return ref.byid(key)
 			elsif keyForm == KAE::FormRange
-				rec = _descToHash(key)
-				return ref.byrange(unpack(rec[KAE::KeyAERangeStart]), unpack(rec[KAE::KeyAERangeStop]))
+				return ref.byrange(*key.range)
 			elsif keyForm == KAE::FormTest
 				return ref.byfilter(key)
 			end
@@ -489,6 +500,11 @@ class Codecs
 		operator = LogicalEnums[rec[KAE::KeyAELogicalOperator].data]
 		operands = unpack(rec[KAE::KeyAELogicalTerms])
 		return operands[0].send(operator, *operands[1, operands.length])
+	end
+	
+	def unpackRangeDescriptor(desc)
+		rec = _descToHash(desc)
+		return Range.new([unpack(rec[KAE::KeyAERangeStart]), unpack(rec[KAE::KeyAERangeStop])])
 	end
 	
 end

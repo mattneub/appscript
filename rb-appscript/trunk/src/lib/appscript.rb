@@ -263,6 +263,8 @@ module AS
 	class Reference
 	
 		# users may occasionally require access to the following for creating workarounds to problem apps
+		# note: calling #AS_appdata on a newly created application object will return an AppData instance
+		# that is not yet fully initialised, so remember to call its #_connect method before use
 		attr_reader :AS_aemreference, :AS_appdata
 		attr_writer :AS_aemreference, :AS_appdata
 	

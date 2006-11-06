@@ -81,17 +81,22 @@ class TC_AEMReferences < Test::Unit::TestCase
 			[AEMReference::App.elements('docu').byname('foo').after, 'AEM.app.elements("docu").byname("foo").after', nil],
 			
 		].each do |val, res, unpackedVersion|
-			assert_equal(res, val.to_s)
-			d = DefaultCodecs.pack(val)
-			val = unpackedVersion ? unpackedVersion : val
-			val2 = DefaultCodecs.unpack(d)
-			assert_equal(val, val2)
-			val2 = DefaultCodecs.unpack(d)
-			assert_block { val.eql?(val2) }
-			val2 = DefaultCodecs.unpack(d)
-			assert_equal(val2, val)
-			val2 = DefaultCodecs.unpack(d)
-			assert_block { val2.eql?(val) }
+			begin
+				assert_equal(res, val.to_s)
+				d = DefaultCodecs.pack(val)
+				val = unpackedVersion ? unpackedVersion : val
+				val2 = DefaultCodecs.unpack(d)
+				assert_equal(val, val2)
+				val2 = DefaultCodecs.unpack(d)
+				assert_block { val.eql?(val2) }
+				val2 = DefaultCodecs.unpack(d)
+				assert_equal(val2, val)
+				val2 = DefaultCodecs.unpack(d)
+				assert_block { val2.eql?(val) }
+			rescue
+				puts 'EXPECTED: ' + res
+				raise
+			end
 		end
 		assert_not_equal(AEMReference::App.property('ctxt').property('ctxt'), AEMReference::Con.property('ctxt').property('ctxt'))
 		assert_not_equal(AEMReference::App.property('foob').property('ctxt'), AEMReference::App.property('ctxt').property('ctxt'))
