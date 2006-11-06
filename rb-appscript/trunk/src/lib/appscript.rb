@@ -104,28 +104,31 @@ module AS
 		
 		##
 		
+		ClassType = AEM::AEType.new('pcls')
+		
 		def packHash(val)
 			record = AE::AEDesc.newList(true)
+			if val.has_key?(:class_) or val.has_key?(ClassType)
+				# if hash contains a 'class' property containing a class name, coerce the AEDesc to that class
+				newVal = Hash[val]
+				if newVal.has_key?(:class_)
+					value = newVal.delete(:class_)
+				else
+					value = newVal.delete(ClassType)
+				end
+				if value.is_a?(Symbol) # get the corresponding AEType (assuming there is one)
+					value = @typebyname.fetch(value, value)
+				end
+				if value.is_a?(AEM::AEType) # coerce the record to the desired type
+					record = record.coerce(value.code)
+					val = newVal
+				end # else value wasn't a class name, so it'll be packed as a normal record property instead
+			end	
 			usrf = nil
 			val.each do | key, value |
 				if key.is_a?(Symbol)
-					keyType = @typebyname[key]
-					if keyType == nil
-						raise RuntimeError, "Unknown keyword: #{key.inspect}"
-					end
-					if keyType.code == 'pcls'
-						# AS packs records that contain a 'class' property by leaving out that property and coercing the AEDesc to the specified class at the end
-						begin
-							if value.is_a?(Symbol)
-								value = @typebyname[key].code
-							end
-							record = record.coerce(value.code)
-						rescue
-							record.putParam(keyType.code, pack(value))
-						end
-					else
-						record.putParam(keyType.code, pack(value))
-					end
+					keyType = @typebyname.fetch(key) { raise IndexError, "Unknown keyword: #{key.inspect}" }
+					record.putParam(keyType.code, pack(value))
 				elsif key.is_a?(AEM::AETypeBase)
 					record.putParam(key.code, pack(value))
 				else
