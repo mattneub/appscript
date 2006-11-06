@@ -227,7 +227,6 @@ class Codecs
 			when KAE::TypeRangeDescriptor then unpackRangeDescriptor(desc)
 		else
 			if desc.isRecord? # if it's a record-like structure with an unknown/unsupported type then unpack it as a hash, including the original type info as a 'class' property
-				p desc.type
 				rec = desc.coerce(KAE::TypeAERecord)
 				rec.putParam('pcls', pack(TypeWrappers::AEType.new(desc.type)))
 				return unpack(rec)
