@@ -30,6 +30,8 @@
 
 - codecs module now unpacks a record-like AEDesc with an unknown type as a hash containing an additional 'class' property that indicates the original type (i.e. same as AppleScript)
 
+- added macunit.rb
+
 
 2006-10-23 -- 0.1.6
 
