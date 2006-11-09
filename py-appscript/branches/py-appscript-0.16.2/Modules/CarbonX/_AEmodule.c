@@ -19,14 +19,14 @@
 
 #include <Carbon/Carbon.h>
 
-#ifdef USE_TOOLBOX_OBJECT_GLUE
-extern PyObject *_AEDesc_New(AEDesc *);
-extern int _AEDesc_Convert(PyObject *, AEDesc *);
+extern PyObject *_AEDescX_New(AEDesc *);
+extern PyObject *_AEDescX_NewBorrowed(AEDesc *);
+extern int _AEDescX_Convert(PyObject *, AEDesc *);
 
-#define AEDesc_New _AEDesc_New
-#define AEDesc_NewBorrowed _AEDesc_NewBorrowed
-#define AEDesc_Convert _AEDesc_Convert
-#endif
+
+#define AEDescX_New _AEDescX_New
+#define AEDescX_NewBorrowed _AEDescX_NewBorrowed
+#define AEDescX_Convert _AEDescX_Convert
 
 typedef long refcontype;
 
@@ -61,7 +61,7 @@ typedef struct AEDescObject {
 	int ob_owned;
 } AEDescObject;
 
-PyObject *AEDesc_New(AEDesc *itself)
+PyObject *AEDescX_New(AEDesc *itself)
 {
 	AEDescObject *it;
 	it = PyObject_NEW(AEDescObject, &AEDesc_Type);
@@ -70,7 +70,7 @@ PyObject *AEDesc_New(AEDesc *itself)
 	it->ob_owned = 1;
 	return (PyObject *)it;
 }
-int AEDesc_Convert(PyObject *v, AEDesc *p_itself)
+int AEDescX_Convert(PyObject *v, AEDesc *p_itself)
 {
 	if (!AEDesc_Check(v))
 	{
@@ -104,7 +104,7 @@ static PyObject *AEDesc_AECoerceDesc(AEDescObject *_self, PyObject *_args)
 	                    &result);
 	if (_err != noErr) return PyMac_Error(_err);
 	_res = Py_BuildValue("O&",
-	                     AEDesc_New, &result);
+	                     AEDescX_New, &result);
 	return _res;
 }
 
@@ -122,7 +122,7 @@ static PyObject *AEDesc_AEDuplicateDesc(AEDescObject *_self, PyObject *_args)
 	                       &result);
 	if (_err != noErr) return PyMac_Error(_err);
 	_res = Py_BuildValue("O&",
-	                     AEDesc_New, &result);
+	                     AEDescX_New, &result);
 	return _res;
 }
 
@@ -183,7 +183,7 @@ static PyObject *AEDesc_AEPutDesc(AEDescObject *_self, PyObject *_args)
 #endif
 	if (!PyArg_ParseTuple(_args, "lO&",
 	                      &index,
-	                      AEDesc_Convert, &theAEDesc))
+	                      AEDescX_Convert, &theAEDesc))
 		return NULL;
 	_err = AEPutDesc(&_self->ob_itself,
 	                 index,
@@ -258,7 +258,7 @@ static PyObject *AEDesc_AEGetNthDesc(AEDescObject *_self, PyObject *_args)
 	if (_err != noErr) return PyMac_Error(_err);
 	_res = Py_BuildValue("O&O&",
 	                     PyMac_BuildOSType, theAEKeyword,
-	                     AEDesc_New, &result);
+	                     AEDescX_New, &result);
 	return _res;
 }
 
@@ -344,7 +344,7 @@ static PyObject *AEDesc_AEPutParamDesc(AEDescObject *_self, PyObject *_args)
 #endif
 	if (!PyArg_ParseTuple(_args, "O&O&",
 	                      PyMac_GetOSType, &theAEKeyword,
-	                      AEDesc_Convert, &theAEDesc))
+	                      AEDescX_Convert, &theAEDesc))
 		return NULL;
 	_err = AEPutParamDesc(&_self->ob_itself,
 	                      theAEKeyword,
@@ -413,7 +413,7 @@ static PyObject *AEDesc_AEGetParamDesc(AEDescObject *_self, PyObject *_args)
 	                      &result);
 	if (_err != noErr) return PyMac_Error(_err);
 	_res = Py_BuildValue("O&",
-	                     AEDesc_New, &result);
+	                     AEDescX_New, &result);
 	return _res;
 }
 
@@ -518,7 +518,7 @@ static PyObject *AEDesc_AEGetAttributeDesc(AEDescObject *_self, PyObject *_args)
 	                          &result);
 	if (_err != noErr) return PyMac_Error(_err);
 	_res = Py_BuildValue("O&",
-	                     AEDesc_New, &result);
+	                     AEDescX_New, &result);
 	return _res;
 }
 
@@ -585,7 +585,7 @@ static PyObject *AEDesc_AEPutAttributeDesc(AEDescObject *_self, PyObject *_args)
 #endif
 	if (!PyArg_ParseTuple(_args, "O&O&",
 	                      PyMac_GetOSType, &theAEKeyword,
-	                      AEDesc_Convert, &theAEDesc))
+	                      AEDescX_Convert, &theAEDesc))
 		return NULL;
 	_err = AEPutAttributeDesc(&_self->ob_itself,
 	                          theAEKeyword,
@@ -638,7 +638,7 @@ static PyObject *AEDesc_AESend(AEDescObject *_self, PyObject *_args)
 	Py_END_ALLOW_THREADS
 	if (_err != noErr) return PyMac_Error(_err);
 	_res = Py_BuildValue("O&",
-	                     AEDesc_New, &reply);
+	                     AEDescX_New, &reply);
 	return _res;
 }
 
@@ -676,7 +676,7 @@ static PyObject *AEDesc_AESendMessageAllocatingMachPort(AEDescObject *_self, PyO
 						 timeOutInTicks);
 	if (_err != noErr) goto cleanup;
 	_res = Py_BuildValue("O&",
-						 AEDesc_New, &reply);
+						 AEDescX_New, &reply);
 	if (sendMode == kAEWaitReply) {
 		mach_port_destroy(mach_task_self(), replyPort);
 	}
@@ -710,7 +710,7 @@ static PyObject *AEDesc_AESendMessage(AEDescObject *_self, PyObject *_args)
 						 timeOutInTicks);
 	if (_err != noErr) return PyMac_Error(_err);
 	_res = Py_BuildValue("O&",
-						 AEDesc_New, &reply);
+						 AEDescX_New, &reply);
 	return _res;
 }
 
@@ -757,7 +757,7 @@ static PyObject *AEDesc_AEResumeTheCurrentEvent(AEDescObject *_self, PyObject *_
 	PyMac_PRECHECK(AEResumeTheCurrentEvent);
 #endif
 	if (!PyArg_ParseTuple(_args, "O&O",
-	                      AEDesc_Convert, &reply,
+	                      AEDescX_Convert, &reply,
 	                      &dispatcher))
 		return NULL;
 	_err = AEResumeTheCurrentEvent(&_self->ob_itself,
@@ -819,7 +819,7 @@ static PyObject *AEDesc_AEResolve(AEDescObject *_self, PyObject *_args)
 	                 &theToken);
 	if (_err != noErr) return PyMac_Error(_err);
 	_res = Py_BuildValue("O&",
-	                     AEDesc_New, &theToken);
+	                     AEDescX_New, &theToken);
 	return _res;
 }
 
@@ -978,7 +978,7 @@ static PyObject *AEDesc_tp_new(PyTypeObject *type, PyObject *args, PyObject *kwd
 	AEDesc itself;
 	char *kw[] = {"itself", 0};
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "O&", kw, AEDesc_Convert, &itself)) return NULL;
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "O&", kw, AEDescX_Convert, &itself)) return NULL;
 	if ((self = type->tp_alloc(type, 0)) == NULL) return NULL;
 	((AEDescObject *)self)->ob_itself = itself;
 	return self;
@@ -1059,7 +1059,7 @@ static PyObject *AE_AECoercePtr(PyObject *_self, PyObject *_args)
 	                   &result);
 	if (_err != noErr) return PyMac_Error(_err);
 	_res = Py_BuildValue("O&",
-	                     AEDesc_New, &result);
+	                     AEDescX_New, &result);
 	return _res;
 }
 
@@ -1085,7 +1085,7 @@ static PyObject *AE_AECreateDesc(PyObject *_self, PyObject *_args)
 	                    &result);
 	if (_err != noErr) return PyMac_Error(_err);
 	_res = Py_BuildValue("O&",
-	                     AEDesc_New, &result);
+	                     AEDescX_New, &result);
 	return _res;
 }
 
@@ -1111,7 +1111,7 @@ static PyObject *AE_AECreateList(PyObject *_self, PyObject *_args)
 	                    &resultList);
 	if (_err != noErr) return PyMac_Error(_err);
 	_res = Py_BuildValue("O&",
-	                     AEDesc_New, &resultList);
+	                     AEDescX_New, &resultList);
 	return _res;
 }
 
@@ -1131,7 +1131,7 @@ static PyObject *AE_AECreateAppleEvent(PyObject *_self, PyObject *_args)
 	if (!PyArg_ParseTuple(_args, "O&O&O&hl",
 	                      PyMac_GetOSType, &theAEEventClass,
 	                      PyMac_GetOSType, &theAEEventID,
-	                      AEDesc_Convert, &target,
+	                      AEDescX_Convert, &target,
 	                      &returnID,
 	                      &transactionID))
 		return NULL;
@@ -1143,7 +1143,7 @@ static PyObject *AE_AECreateAppleEvent(PyObject *_self, PyObject *_args)
 	                          &result);
 	if (_err != noErr) return PyMac_Error(_err);
 	_res = Py_BuildValue("O&",
-	                     AEDesc_New, &result);
+	                     AEDescX_New, &result);
 	return _res;
 }
 
@@ -1461,7 +1461,7 @@ static PyObject *AE_AEDisposeToken(PyObject *_self, PyObject *_args)
 	_err = AEDisposeToken(&theToken);
 	if (_err != noErr) return PyMac_Error(_err);
 	_res = Py_BuildValue("O&",
-	                     AEDesc_New, &theToken);
+	                     AEDescX_New, &theToken);
 	return _res;
 }
 
@@ -1480,10 +1480,10 @@ static PyObject *AE_AECallObjectAccessor(PyObject *_self, PyObject *_args)
 #endif
 	if (!PyArg_ParseTuple(_args, "O&O&O&O&O&",
 	                      PyMac_GetOSType, &desiredClass,
-	                      AEDesc_Convert, &containerToken,
+	                      AEDescX_Convert, &containerToken,
 	                      PyMac_GetOSType, &containerClass,
 	                      PyMac_GetOSType, &keyForm,
-	                      AEDesc_Convert, &keyData))
+	                      AEDescX_Convert, &keyData))
 		return NULL;
 	_err = AECallObjectAccessor(desiredClass,
 	                            &containerToken,
@@ -1493,7 +1493,7 @@ static PyObject *AE_AECallObjectAccessor(PyObject *_self, PyObject *_args)
 	                            &token);
 	if (_err != noErr) return PyMac_Error(_err);
 	_res = Py_BuildValue("O&",
-	                     AEDesc_New, &token);
+	                     AEDescX_New, &token);
 	return _res;
 }
 
@@ -1553,11 +1553,11 @@ GenericEventHandler(const AppleEvent *request, AppleEvent *reply, refcontype ref
 	OSErr err = noErr;
 	
 	state = PyGILState_Ensure();
-	if ((requestObject = (AEDescObject *)AEDesc_New((AppleEvent *)request)) == NULL) {
+	if ((requestObject = (AEDescObject *)AEDescX_New((AppleEvent *)request)) == NULL) {
 		err = -1;
 		goto cleanup;
 	}
-	if ((replyObject = (AEDescObject *)AEDesc_New(reply)) == NULL) {
+	if ((replyObject = (AEDescObject *)AEDescX_New(reply)) == NULL) {
 		Py_DECREF(requestObject);
 		err = -1;
 		goto cleanup;
@@ -1596,7 +1596,7 @@ GenericCoercionHandler(const AEDesc *fromDesc, DescType toType, refcontype refco
 	OSErr err = noErr;
 	
 	state = PyGILState_Ensure();
-	if ((fromObject = (AEDescObject *)AEDesc_New((AEDesc *)fromDesc)) == NULL) {
+	if ((fromObject = (AEDescObject *)AEDescX_New((AEDesc *)fromDesc)) == NULL) {
 		err = -1;
 		goto cleanup;
 	}
@@ -1632,11 +1632,11 @@ cleanup:
 	return err;
 }
 
-PyObject *AEDesc_NewBorrowed(AEDesc *itself)
+PyObject *AEDescX_NewBorrowed(AEDesc *itself)
 {
 	PyObject *it;
 	
-	it = AEDesc_New(itself);
+	it = AEDescX_New(itself);
 	if (it)
 		((AEDescObject *)it)->ob_owned = 0;
 	return (PyObject *)it;
@@ -1654,10 +1654,6 @@ void init_AE(void)
 		upp_AEIdleProc = NewAEIdleUPP(AEIdleProc);
 		upp_GenericEventHandler = NewAEEventHandlerUPP(GenericEventHandler);
 		upp_GenericCoercionHandler = NewAECoerceDescUPP(GenericCoercionHandler);
-		
-		PyMac_INIT_TOOLBOX_OBJECT_NEW(AEDesc *, AEDesc_New);
-		PyMac_INIT_TOOLBOX_OBJECT_NEW(AEDesc *, AEDesc_NewBorrowed);
-		PyMac_INIT_TOOLBOX_OBJECT_CONVERT(AEDesc, AEDesc_Convert);
 
 
 	m = Py_InitModule("_AE", AE_methods);

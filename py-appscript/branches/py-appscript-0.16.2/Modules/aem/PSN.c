@@ -9,6 +9,21 @@
 #include <Carbon/Carbon.h>
 
 
+extern int _AEDescX_Convert(PyObject *, AEDesc *) __attribute__((weak_import));
+
+
+int AEDescX_Convert(PyObject *pyobj, AEDesc *cobj) { 
+    if (!_AEDescX_Convert) { 
+       if (!PyImport_ImportModule("CarbonX.AE")) return NULL; 
+       if (!_AEDescX_Convert) { 
+           PyErr_SetString(PyExc_ImportError, "Module did not provide routine: CarbonX.AE: AEDescX_Convert"); 
+           return NULL; 
+       } 
+    } 
+    return _AEDescX_Convert(pyobj, cobj); 
+}
+
+
 /**********************************************************************/
 
 static PyObject*
@@ -53,7 +68,7 @@ PSN_LaunchApplication(PyObject* self, PyObject* args)
 	
 	if (!PyArg_ParseTuple(args, "O&O&H", 
 						  PyMac_GetFSSpec, &fss,
-						  AEDesc_Convert, &firstEvent,
+						  AEDescX_Convert, &firstEvent,
 						  &flags))
 		return NULL;
 	err = AECoerceDesc(&firstEvent, typeAppParameters, &paraDesc);
