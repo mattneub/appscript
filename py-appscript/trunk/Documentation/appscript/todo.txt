@@ -1,5 +1,8 @@
 TO DO
 
+- get rid of 'telltarget' (cf rb-appscript)
+
+
 - app('Finder').processes() should now work but doesn't (error -1799 occurs). Find out why.
 
 
@@ -21,6 +24,9 @@ TO DO
 
 
 - Decide if an external caching mechanism is still needed. If it is, a file-based cache in /tmp would be the best solution. Cache staleness could be avoided by using process IDs to keep cache synched with running application (though this could still have synching issues with apps that can load scriptable plugins while running), or by retrieving the application's aete each time and comparing it against the aete used to create the cache (a bit slower, since retrieving aetes from some applications takes time).
+
+
+- aemcodegen should probably show 'subj' attribute
 
 
 - Finish Problem Apps chapter

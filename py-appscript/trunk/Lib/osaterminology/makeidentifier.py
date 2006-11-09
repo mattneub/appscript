@@ -121,7 +121,6 @@ kRbAppscriptReservedWords = [
 	"starttransaction",
 	"taint",
 	"tainted?",
-	"telltarget",
 	"timeout",
 	"to_a",
 	"to_s",
