@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<title>aem | 5. Targetting Applications</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<style type="text/css" media="all"><!--@import url(full.css);--></style>
+
+</head>
+<body>
+
+<h1>5. Targetting Applications</h1>
+
+<!-- top navigation -->
+<div class="navbar">
+	<a href="04_references.html">Previous</a> | <a href="index.html">Up</a> | <a href="06_buildingandsendingevents.html">Next</a>
+</div>
+
+<!-- content -->
+<div id="content">
+
+
+
+
+<h2>The <code>Application</code> class</h2>
+
+<pre><code>Application -- the target application
+
+    Constructor:
+        Application(path=None, url=None, desc=None, codecs=aem.types.Codecs())
+            path : string | None -- full path to local application
+                    (e.g. '/Applications/TextEdit.app')
+            url : string | None -- url for remote process
+                    (e.g. 'eppc://user:pass@0.0.0.1/TextEdit')
+            desc : AEAddressDesc | None -- AEAddressDesc for application
+            codecs : aemtypes.Codecs -- used to convert Python values
+                    to AEDescs and back
+
+    Attributes:
+        _Event : Event -- Event class to be instantiated by
+                Application.event(); Application subclasses may
+                override this [1]
+    
+    Methods:
+        event(event, params={}, atts={}, returnid=k.AutoGenerateReturnID,
+                codecs=None) -- construct an Apple event
+            event  : str -- 8-letter code indicating event's class and id,
+                    e.g. 'coregetd'
+            params : dict -- a dict of form {AE_code:anything,...} containing
+                    zero or more event parameters (message arguments) [2]
+            atts : dict -- a dict of form {AE_code:anything,...} containing
+                    zero or more event attributes (event info) [3]
+            returnid : int  -- reply event's ID
+            codecs : Codecs | None -- custom codecs to use when packing/
+                    unpacking this event; if None, codecs supplied in
+                    Application constructor are used
+            Result : Event -- a ready-to-send Apple event
+
+        starttransaction() -- start a new transaction; all Events
+                constructed after starttransaction() is called will
+                belong to the same transaction until endtransaction()
+                is called [4]
+
+        endtransaction() -- end the current transaction [4]
+
+        launch(path) -- launch an application in background if not
+                already running, and send it a 'ascrnoop' event
+            path : FSRef | str -- path to application, 
+                e.g. '/Applications/TextEdit.app'
+
+        isrunning() -- Is the targetted application currently running?
+                (Note: this only works for Application objects specified
+                by path, not by URL or AEDesc.)
+            Result : bool -- False if target application is not running
+                    or is running under a different process ID, else True
+
+        reconnect() -- Make sure this Application object has the current
+                process ID for the target application, relaunching the
+                target application if it's not currently running.
+                (Note: this only works for Application objects specified
+                by path, not by URL or AEDesc.)</code></pre>
+
+
+
+<p>Note: During a transaction, sending the application an event not created during that transaction will cause an error. Similarly, sending the application an event created during a transaction after that transaction has ended will cause an error. Keeping track of this is the user's responsibility.</p>
+
+
+</div>
+
+<!-- bottom navigation -->
+<div class="navbar">
+	<a href="04_references.html">Previous</a> | <a href="index.html">Up</a> | <a href="06_buildingandsendingevents.html">Next</a>
+</div>
+
+<!--footer-->
+<p class="footer">&copy; 2006 HAS</p>
+</body>
+</html>
