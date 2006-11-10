@@ -14,7 +14,7 @@
 ** Written by Donovan Preston. Modified by Jack Jansen. Modified by HAS.
 */
 #include "Python.h"
-#include "pymactoolbox.h"
+#include "../CarbonX/carbonxtoolbox.c"
 
 #include <Carbon/Carbon.h>
 
@@ -77,7 +77,7 @@ PyOSA_GetAppTerminology(PyObject* self, PyObject* args)
 			&theDesc
 	);
 	if (err) return PyMac_Error(err);
-	return Py_BuildValue("O&i", AEDesc_New, &theDesc, didLaunch);
+	return Py_BuildValue("O&i", AEDescX_New, &theDesc, didLaunch);
 }
 
 static PyObject *
@@ -101,7 +101,7 @@ PyOSA_GetSysTerminology(PyObject* self, PyObject* args)
 			&theDesc
 	);
 	if (err) return PyMac_Error(err);
-	return Py_BuildValue("O&", AEDesc_New, &theDesc);
+	return Py_BuildValue("O&", AEDescX_New, &theDesc);
 }
 
 /* 
