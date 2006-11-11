@@ -177,8 +177,10 @@ module Send
 	
 	
 	class CommandError < RuntimeError
+		# TO DO: other error attributes, where available
 		
 		attr_reader :number, :message, :raw
+		alias_method :to_i, :number
 		
 		def initialize(number, message, raw)
 			if message == nil

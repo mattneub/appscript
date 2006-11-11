@@ -58,10 +58,12 @@ p OSAX.scripting_additions
 
 <pre><code>require "osax"
 
-p OSAX.osax("StandardAdditions")
+sa = OSAX.osax("StandardAdditions")
+
+p sa
 # Result: #&lt;OSAX::ScriptingAddition
-#             name="StandardAdditions"
-#             target=AEM::Application.current&gt;</code></pre>
+#           name="StandardAdditions"
+#           target=AEM::Application.current&gt;</code></pre>
 
 <p>In addition, the <code>osax</code> function accepts an application name as an optional second argument, allowing you to specify the application you want to handle the scripting addition's commands, e.g.:</p>
 
@@ -71,7 +73,7 @@ p OSAX.osax("StandardAdditions")
 
 <pre><code>OSAX::ScriptingAddition.new("StandardAdditions").targetName("System Events")</code></pre>
 
-<p>(To specify applications by other means (e.g. URL), create a <code>ScriptingAddition</code> object first, then call the appropriate <code>target...</code> method.)</p>
+<p>To specify applications by other means (e.g. URL), create a <code>ScriptingAddition</code> object first, then call the appropriate <code>target...</code> method.</p>
 
 
 
@@ -113,41 +115,44 @@ p OSAX.osax("StandardAdditions")
         targetURL(url) -- eppc URL, e.g. "eppc://jukebox-mac.local/iTunes"</code></pre>
 
 
-<p class="hilitebox">Take care when using the osax module from the command line Ruby interpreter, which runs as a non-GUI process. Due to OS limitations, commands such as <code>display_dialog</code> that require GUI access <em>must</em> be sent to a GUI process, otherwise a MacOSError (-1713, no user interaction allowed) will occur. To avoid bringing another application's windows in front of the user's current application, target a faceless GUI application such as System Events.</p>
-
-
 <h2>Examples</h2>
 
 <pre><code>require "osax"
 
 # Create a new ScriptingAddition object:
 
-stdAdd = OSAX.osax("StandardAdditions")
+sa = OSAX.osax("StandardAdditions")
 
 
 # List all available commands:
 
-p stdAdd.commands
+p sa.commands
 # Result: ["ASCII_character", "ASCII_number", "activate", ...]
 
 
 # Call some commands:
 
-stdAdd.beep
+sa.beep
 
-p stdAdd.path_to(:scripts_folder)
+p sa.path_to(:scripts_folder)
 # Result: MacFile::Alias.at("/Users/foo/Library/Scripts/")
 
-
-# Remember to target a GUI process when using dialog commands:
-
-systemEvents = stdAdd.targetName("System Events")
-systemEvents.activate # give focus to System Events
-p systemEvents.display_dialog("Ruby says hello!",
-                              :buttons=&gt;["Hi!", "Howdy!", "Duuuude!"],
-                              :default_button=&gt;3)
+p sa.display_dialog("Ruby says hello!",
+                    :buttons=&gt;["Hi!", "Howdy!", "Duuuude!"],
+                    :default_button=&gt;3)
 # Result: {:button_returned=&gt;"Howdy!"}</code></pre>
 
+
+<h2>Notes</h2>
+
+<p>When using scripting addition commands that require GUI access (e.g. <code>display_dialog</code>) targetted at the command-line Ruby interpreter, the osax module will automatically convert the non-GUI interpreter process into a full GUI process to allow these commands to operate correctly. If you want to avoid this, target these commands at a faceless GUI application such as System Events instead:</p>
+
+<pre><code>sa = OSAX.osax("StandardAdditions", "System Events")
+sa.activate # give focus to System Events
+p sa.display_dialog("Ruby says hello!",
+                    :buttons=&gt;["Hi!", "Howdy!", "Duuuude!"],
+                    :default_button=&gt;3)
+# Result: {:button_returned=&gt;"Duuuude!"}</code></pre>
 
 
 

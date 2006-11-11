@@ -1,12 +1,12 @@
-2006-11-06 -- ???
+2006-11-11 -- ???
 
 - removed path expansion in FindApp#byName, MacFile::Alias#at, MacFile::FileURL#at
 
 - changed default send flags to KAE::KAECanSwitchLayer + KAE::KAEWaitReply (same as AppleScript)
 
-- renamed AE::MacOSError#number to 'to_i'; added 'to_s' and 'inspect' methods
+- aliased AE::MacOSError#number to #to_i; added #to_s and #inspect methods
 
-- added 'to_s' and 'inspect' methods to AE::AEDesc
+- added #to_s and #inspect methods to AE::AEDesc
 
 - fixed undefined variable bug in FindApp#byName when raising an ApplicationNotFoundError
 
@@ -30,7 +30,11 @@
 
 - codecs module now unpacks a record-like AEDesc with an unknown type as a hash containing an additional 'class' property that indicates the original type (i.e. same as AppleScript)
 
-- added macunit.rb
+- aliased AEM::CommandError#number to #to_i
+
+- where property and element names are the same (e.g. file, text in BBEdit), appscript now packs this as a property specifier, unless the name is 'text', in which case it's packed as an elements specifier (i.e. [hopefully] same as AppleScript)
+
+- renamed macfile.rb/MacFile to mactypes.rb/MacTypes; added Units class
 
 
 2006-10-23 -- 0.1.6
@@ -55,11 +59,11 @@
 
 - added info to manual on scripting non-stay-open applications
 
-- removed MacFile::Alias#newPath and MacFile::FileURL#newPath constructors (use 'at' instead)
+- removed MacFile::Alias#newPath and MacFile::FileURL#newPath constructors (use #at instead)
 
-- changed MacFile::Alias#to_s and MacFile::FileURL#to_s to return plain path string instead of object representation (use 'inspect' for that)
+- changed MacFile::Alias#to_s and MacFile::FileURL#to_s to return plain path string instead of object representation (use #inspect for that)
 
-- removed MacFile::Alias#path and MacFile::FileURL#path (use 'to_s' instead)
+- removed MacFile::Alias#path and MacFile::FileURL#path (use #to_s instead)
 
 - added macfile manual
 

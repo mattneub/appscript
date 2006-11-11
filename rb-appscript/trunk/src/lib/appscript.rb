@@ -93,11 +93,7 @@ module AS
 			if data.is_a?(Reference)
 				data = data.AS_aemreference
 			elsif data.is_a?(Symbol)
-				begin
-					data = self.typebyname[data]
-				rescue KeyError
-					raise KeyError, "Unknown Keyword: #{data.inspect}"
-				end
+				data = self.typebyname.fetch(data) { raise IndexError, "Unknown Keyword: #{data.inspect}" }
 			end
 			return super(data)
 		end
@@ -169,10 +165,8 @@ module AS
 					(lst.length / 2).times do |i|
 						dct[lst[i * 2]] = lst[i * 2 + 1]
 					end
-				elsif @typebycode.has_key?(key)
-					dct[@typebycode[key]] = unpack(value)
 				else
-					dct[AEM::AEType.new(key)] = unpack(value)
+					dct[@typebycode.fetch(key) { AEM::AEType.new(key) }] = unpack(value)
 				end
 			end
 			return dct
@@ -581,12 +575,12 @@ module AS
 		
 		def previous(klass)
 			return Reference.new(@AS_appdata, @AS_aemreference.previous(
-					@AS_appdata.typebyname[klass].code))
+					@AS_appdata.typebyname.fetch(klass).code))
 		end
 		
 		def next(klass)
 			return Reference.new(@AS_appdata, @AS_aemreference.next(
-					@AS_appdata.typebyname[klass].code))
+					@AS_appdata.typebyname.fetch(klass).code))
 		end
 		
 		def ID(id)
@@ -803,6 +797,14 @@ module AS
 		def initialize(reference, commandName, parameters, realerror)
 			@reference, @commandName, @parameters, @realerror = reference, commandName, parameters, realerror
 			super()
+		end
+		
+		def to_i
+			if @realerror.is_a?(AE::MacOSError) or @realerror.is_a?(AEM::CommandError)
+				return @realerror.to_i
+			else
+				return -2700
+			end
 		end
 		
 		def to_s

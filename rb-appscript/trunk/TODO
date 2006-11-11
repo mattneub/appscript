@@ -1,5 +1,16 @@
 TO DO
 
+- add appscript constructor names (current, byName, etc.) to reserved keywords
+
+- rename osax target method names to match existing constructor names (fewer reserved keywords)
+
+- rename aem Application constructors to match appscript's
+
+- improve error reporting; e.g. pack/unpack errors in aem/codecs.rb could have better descriptions and/or represented by a CodecsError class; ae/aem/appscript-defined exception classes aren't quite idiomatic Ruby
+
+- check if eight-char-codes (event names) are 2x32-bit words or 1x64-bit word; codecs module currently assumes the former
+
+
 - figure out how to create top-level app, con, its functions that work correctly; right now, defining:
 
 require "appscript"
@@ -11,29 +22,13 @@ produces reference objects okay, but these objects' to_s method returns empty st
 
 - allow users to extract a generic ref from a real ref (to_generic) for comparison purposes. Or vice-versa?
 
-- improve error reporting; e.g. pack/unpack errors in aem/codecs.rb could have better descriptions and/or represented by a CodecsError class; ae/aem/appscript-defined exception classes aren't quite idiomatic Ruby
-
-- profiling
-
-- CommandError class needs a number/to_i method (any non-MacOSErrors should just be -2700)
-
-- revise ScriptingAddition class to use multiple constructors for identifying target apps in different ways, rather than the current two-call arrangement? (i.e. what will users find easier?)
-
-- should osax targetted at current app automatically resend an event to System events if a 'user interaction not allowed' error (-1713) occurs? Might be more convenient for developers, since they don't need to remember to specify an app themselves and call 'activate' before sending dialog commands
+- unit type names in defaultterminology should be lowercase for consistency, e.g. :inches, not :Inches
 
 - implement built-in help system by bridging to py-appscript
 
 - see if it's possible to play nice with irb's autocomplete
 
-- see about getting a Window Manager connection in command-line ruby interpreter to allow dialog osaxen to display
-
-- check if eight-char-codes (event names) are 2x32-bit words or 1x64-bit word; codecs module currently assumes the former
-
 - finish commenting source code
-
-- convenience coercion functions for standard unit types (inches, meters, etc)
-
-- compatibility issue with BBEdit: 'file' properties are being packed as all-element specifiers but need to be packed as property specifiers. ('text' properties and elements still need to be packed as all-element specifiers though.)
 
 - change Alias.at, FileURL.at to Alias.to, FileURL.to/Alias.for, FileURL.for?
 
@@ -43,7 +38,9 @@ produces reference objects okay, but these objects' to_s method returns empty st
 
 - include an example project (or source for) that uses ruby2exe to build a standalone 'applet'
 
-- MacFile objects should support ==, eql? and hash
+- MacTypes::Alias, MacTypes::FileURL should support ==, eql? and hash
+
+- profiling
 
 - finish writing tests
 
@@ -52,5 +49,3 @@ produces reference objects okay, but these objects' to_s method returns empty st
 - see also TO DO items in source files
 
 - see also py-appscript's todo.txt file
-
-- rename aem Application constructors to match appscript's

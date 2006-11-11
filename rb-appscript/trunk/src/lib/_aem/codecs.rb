@@ -6,11 +6,92 @@ require "ae"
 require "kae"
 require "_aem/typewrappers"
 require "_aem/aemreference"
-require "macfile"
-require "macunit"
+require "mactypes" # TO DO: rename mactypes, MacTypes
 
 # Note that AE strings (typeChar, typeUnicodeText, etc.) are unpacked as UTF8-encoded Ruby strings, and UTF8-encoded Ruby strings are packed as typeUnicodeText. Using UTF8 on the Ruby side avoids data loss; using typeUnicodeText on the AEM side provides compatibility with all [reasonably well designed] applications. To change this behaviour (e.g. to support legacy apps that demand typeChar and break on typeUnicodeText), subclass Codecs and override pack and/or unpack methods to provide alternative packing/unpacking of string values. Users can also pack data manually using AE::AEDesc.new(type, data).
 
+######################################################################
+# UNIT TYPE CODECS
+######################################################################
+
+
+class UnitTypeCodecs
+
+	DefaultUnitTypes = [
+		[:centimeters, KAE::TypeCentimeters],
+		[:meters, KAE::TypeMeters],
+		[:kilometers, KAE::TypeKilometers],
+		[:inches, KAE::TypeInches],
+		[:feet, KAE::TypeFeet],
+		[:yards, KAE::TypeYards],
+		[:miles, KAE::TypeMiles],
+		
+		[:square_meters, KAE::TypeSquareMeters],
+		[:square_kilometers, KAE::TypeSquareKilometers],
+		[:square_feet, KAE::TypeSquareFeet],
+		[:square_yards, KAE::TypeSquareYards],
+		[:square_miles, KAE::TypeSquareMiles],
+		
+		[:cubic_centimeters, KAE::TypeCubicCentimeter],
+		[:cubic_meters, KAE::TypeCubicMeters],
+		[:cubic_inches, KAE::TypeCubicInches],
+		[:cubic_feet, KAE::TypeCubicFeet],
+		[:cubic_yards, KAE::TypeCubicYards],
+		
+		[:liters, KAE::TypeLiters],
+		[:quarts, KAE::TypeQuarts],
+		[:gallons, KAE::TypeGallons],
+		
+		[:grams, KAE::TypeGrams],
+		[:kilograms, KAE::TypeKilograms],
+		[:ounces, KAE::TypeOunces],
+		[:pounds, KAE::TypePounds],
+		
+		[:celsius, KAE::TypeDegreesC],
+		[:fahrenheit, KAE::TypeDegreesF],
+		[:kelvin, KAE::TypeDegreesK],
+	]
+	
+	DefaultPacker = proc { |value, code| AE::AEDesc.new(code, [value].pack('d')) }
+	DefaultUnpacker = proc { |desc, name| MacTypes::Units.send(name, desc.data.unpack('d')[0]) }
+
+	def initialize
+		@typebyname = {}
+		@typebycode = {}
+		addTypes(DefaultUnitTypes)
+	end
+	
+	def addTypes(typedefs)
+		# typedefs is a list of lists, where each sublist is of form:
+		#	[typename, typecode, packproc, unpackproc]
+		# or:
+		#	[typename, typecode, packproc, unpackproc]
+		# If optional packproc and unpackproc are omitted, default pack/unpack procs
+		# are used instead; these pack/unpack AEDesc data as a double precision float.
+		typedefs.each do |name, code, packer, unpacker|
+			@typebyname[name] = [code, (packer or DefaultPacker)]
+			@typebycode[code] = [name, (unpacker or DefaultUnpacker)]
+		end
+	end
+	
+	def pack(val)
+		if val.is_a?(MacTypes::Units)
+			code, packer = @typebyname.fetch(val.type) { |val| raise IndexError, "Unknown unit type: #{val.inspect}" }
+			return [true, packer.call(val.value, code)]
+		else
+			return [false, val]
+		end
+	end
+	
+	def unpack(desc)
+		name, unpacker = @typebycode.fetch(desc.type) { |desc| return [false, desc] }
+		return [true, unpacker.call(desc, name)]
+	end
+end
+
+
+######################################################################
+# CODECS
 ######################################################################
 # Endianness support
 
@@ -53,6 +134,11 @@ class Codecs
 
 	def initialize
 		extend(CodeConverters)
+		@unitTypeCodecs = UnitTypeCodecs.new
+	end
+	
+	def addunits(types)
+		@unitTypeCodecs.addTypes(types)
 	end
 	
 	######################################################################
@@ -71,13 +157,14 @@ class Codecs
 	TrueDesc = AE::AEDesc.new(KAE::TypeTrue, '')
 	FalseDesc = AE::AEDesc.new(KAE::TypeFalse, '')
 	
-	def packFailed(val)
+	##
+	
+	def packUnknown(val) # clients may override this to provide additional packers
 		raise TypeError, "Can't pack data into an AEDesc (unsupported type): #{val.inspect}"
 	end
 	
-	##
 	
-	def pack(val)
+	def pack(val) # clients may override this to replace existing packers
 		if val.is_a?(AEMReference::Base) then val.AEM_packSelf(self)
 		elsif val == nil then NullDesc
 		elsif val == true then TrueDesc
@@ -107,7 +194,7 @@ class Codecs
 					[AE.convertUnixSecondsToLongDateTime(val.to_i)].pack('q'))
 		elsif val.is_a?(Array) then packArray(val)
 		elsif val.is_a?(Hash) then packHash(val)
-		elsif val.is_a?(MacFile::FileBase) then val.desc
+		elsif val.is_a?(MacTypes::FileBase) then val.desc
 		elsif val.is_a?(TypeWrappers::AEType) then
 			AE::AEDesc.new(KAE::TypeType, fourCharCode(val.code))
 		elsif val.is_a?(TypeWrappers::AEEnum) then
@@ -118,10 +205,14 @@ class Codecs
 			AE::AEDesc.new(KAE::TypeKeyword, fourCharCode(val.code))
 		elsif val.is_a?(TypeWrappers::AEEventName) then 
 			AE::AEDesc.new(KAE::TypeEventName, eightCharCode(val.code))
-		elsif val.is_a?(MacUnit::UnitBase) then val.desc
 		elsif val.is_a?(AE::AEDesc) then val
 		else
-			raise TypeError
+			didPack, desc = @unitTypeCodecs.pack(val)
+			if didPack
+				desc
+			else
+				packUnknown(val)
+			end
 		end
 	end
 	
@@ -166,7 +257,18 @@ class Codecs
 	######################################################################
 	# Unpack
 	
-	def unpack(desc)
+	def unpackUnknown(desc) # clients may override this to provide additional unpackers
+		if desc.isRecord? # if it's a record-like structure with an unknown/unsupported type then unpack it as a hash, including the original type info as a 'class' property
+			rec = desc.coerce(KAE::TypeAERecord)
+			rec.putParam('pcls', pack(TypeWrappers::AEType.new(desc.type)))
+			unpack(rec)
+		else # else return unchanged
+			desc
+		end
+	end
+	
+	
+	def unpack(desc) # clients may override this to replace existing unpackers
 		return case desc.type
 			
 			when KAE::TypeNull then nil
@@ -202,10 +304,10 @@ class Codecs
 			when KAE::TypeAEList then unpackAEList(desc)
 			when KAE::TypeAERecord then unpackAERecord(desc)
 			
-			when KAE::TypeAlias then MacFile::Alias.newDesc(desc)
-			when KAE::TypeFSS then MacFile::FileURL.newDesc(desc)
-			when KAE::TypeFSRef then MacFile::FileURL.newDesc(desc)
-			when KAE::TypeFileURL then MacFile::FileURL.newDesc(desc)
+			when KAE::TypeAlias then MacTypes::Alias.newDesc(desc)
+			when KAE::TypeFSS then MacTypes::FileURL.newDesc(desc)
+			when KAE::TypeFSRef then MacTypes::FileURL.newDesc(desc)
+			when KAE::TypeFileURL then MacTypes::FileURL.newDesc(desc)
 			
 			when KAE::TypeQDPoint then desc.data.unpack('ss').reverse
 			when KAE::TypeQDRectangle then
@@ -228,40 +330,12 @@ class Codecs
 			when KAE::TypeLogicalDescriptor then unpackLogicalDescriptor(desc)
 			when KAE::TypeRangeDescriptor then unpackRangeDescriptor(desc)
 			
-			when KAE::TypeCentimeters then MacUnit::Length.centimeters(desc)
-			when KAE::TypeMeters then MacUnit::Length.meters(desc)
-			when KAE::TypeKilometers then MacUnit::Length.kilometers(desc)
-			when KAE::TypeInches then MacUnit::Length.inches(desc)
-			when KAE::TypeFeet then MacUnit::Length.feet(desc)
-			when KAE::TypeYards then MacUnit::Length.yards(desc)
-			when KAE::TypeMiles then MacUnit::Length.miles(desc)
-			when KAE::TypeSquareMeters then MacUnit::Area.meters(desc)
-			when KAE::TypeSquareKilometers then MacUnit::Area.kilometers(desc)
-			when KAE::TypeSquareFeet then MacUnit::Area.feet(desc)
-			when KAE::TypeSquareYards then MacUnit::Area.yards(desc)
-			when KAE::TypeSquareMiles then MacUnit::Area.miles(desc)
-			when KAE::TypeCubicCentimeter then MacUnit::CubicVolume.centimeters(desc)
-			when KAE::TypeCubicMeters then MacUnit::CubicVolume.meters(desc)
-			when KAE::TypeCubicInches then MacUnit::CubicVolume.inches(desc)
-			when KAE::TypeCubicFeet then MacUnit::CubicVolume.feet(desc)
-			when KAE::TypeCubicYards then MacUnit::CubicVolume.yards(desc)
-			when KAE::TypeLiters then MacUnit::LiquidVolume.liters(desc)
-			when KAE::TypeQuarts then MacUnit::LiquidVolume.quarts(desc)
-			when KAE::TypeGallons then MacUnit::LiquidVolume.gallons(desc)
-			when KAE::TypeGrams then MacUnit::Weight.grams(desc)
-			when KAE::TypeKilograms then MacUnit::Weight.kilograms(desc)
-			when KAE::TypeOunces then MacUnit::Weight.ounces(desc)
-			when KAE::TypePounds then MacUnit::Weight.pounds(desc)
-			when KAE::TypeDegreesC then MacUnit::Temperature.celsius(desc)
-			when KAE::TypeDegreesF then MacUnit::Temperature.fahrenheit(desc)
-			when KAE::TypeDegreesK then MacUnit::Temperature.kelvin(desc)
 		else
-			if desc.isRecord? # if it's a record-like structure with an unknown/unsupported type then unpack it as a hash, including the original type info as a 'class' property
-				rec = desc.coerce(KAE::TypeAERecord)
-				rec.putParam('pcls', pack(TypeWrappers::AEType.new(desc.type)))
-				unpack(rec)
-			else # else return unchanged
-				desc
+			didUnpack, val = @unitTypeCodecs.unpack(desc)
+			if didUnpack
+				val
+			else
+				unpackUnknown(desc)
 			end
 		end
 	end

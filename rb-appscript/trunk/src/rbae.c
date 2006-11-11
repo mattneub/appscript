@@ -46,7 +46,7 @@ rbAE_raiseMacOSError(const char *description, OSErr number)
 	VALUE errObj;
 	
 	errObj = rb_funcall(cMacOSError, rb_intern("new"), 0);
-	rb_iv_set(errObj, "@to_i", INT2NUM(number)); // returns the OS error number
+	rb_iv_set(errObj, "@number", INT2NUM(number)); // returns the OS error number
 	rb_iv_set(errObj, "@description", rb_str_new2(description)); // troubleshooting info
 	rb_exc_raise(errObj);
 }
@@ -60,7 +60,7 @@ rbAE_MacOSError_inspect(VALUE self)
 {
 	char s[32];
 	
-	sprintf(s, "#<AE::MacOSError %i>", NUM2INT(rb_iv_get(self, "@to_i")));
+	sprintf(s, "#<AE::MacOSError %i>", NUM2INT(rb_iv_get(self, "@number")));
 	return rb_str_new2(s);
 }
 
@@ -97,14 +97,14 @@ rbAE_freeAEDesc(struct rbAE_AEDescWrapper *p)
 }
 
 static VALUE
-rbAE_wrapAEDesc(VALUE class, const AEDesc *desc)
+rbAE_wrapAEDesc(const AEDesc *desc)
 {
 		struct rbAE_AEDescWrapper *wrapper;
 		
 		// Found out how to wrap AEDescs so Ruby wouldn't crash by reading RubyAEOSA's aedesc.c
 		wrapper = malloc(sizeof(struct rbAE_AEDescWrapper));
 		wrapper->desc = *desc;
-		return Data_Wrap_Struct(class, 0, rbAE_freeAEDesc, wrapper);
+		return Data_Wrap_Struct(cAEDesc, 0, rbAE_freeAEDesc, wrapper);
 }
 
 /*******/
@@ -118,13 +118,13 @@ rbAE_freeBorrowedAEDesc(struct rbAE_AEDescWrapper *p)
 }
 
 static VALUE
-rbAE_wrapBorrowedAEDesc(VALUE class, const AEDesc *desc)
+rbAE_wrapBorrowedAEDesc(const AEDesc *desc)
 {
 		struct rbAE_AEDescWrapper *wrapper;
 		
 		wrapper = malloc(sizeof(struct rbAE_AEDescWrapper));
 		wrapper->desc = *desc;
-		return Data_Wrap_Struct(class, 0, rbAE_freeBorrowedAEDesc, wrapper);
+		return Data_Wrap_Struct(cAEDesc, 0, rbAE_freeBorrowedAEDesc, wrapper);
 }
 
 /**********************************************************************/
@@ -141,7 +141,7 @@ rbAE_AEDesc_new(VALUE class, VALUE type, VALUE data)
 					   RSTRING(data)->ptr, RSTRING(data)->len,
 					   &desc);
 	if (err != noErr) rbAE_raiseMacOSError("Can't create AEDesc.", err);
-	return rbAE_wrapAEDesc(class, &desc);
+	return rbAE_wrapAEDesc(&desc);
 }
 
 
@@ -153,7 +153,7 @@ rbAE_AEDesc_newList(VALUE class, VALUE isRecord)
 	
 	err = AECreateList(NULL, 0, RTEST(isRecord), &desc);
 	if (err != noErr) rbAE_raiseMacOSError("Can't create AEDescList.", err);
-	return rbAE_wrapAEDesc(class, &desc);
+	return rbAE_wrapAEDesc(&desc);
 }
 
 
@@ -171,7 +171,7 @@ rbAE_AEDesc_newAppleEvent(VALUE class, VALUE eventClass, VALUE eventID,
 							 NUM2LONG(transactionID),
 							 &desc);
 	if (err != noErr) rbAE_raiseMacOSError("Can't create AppleEvent.", err);
-	return rbAE_wrapAEDesc(class, &desc);
+	return rbAE_wrapAEDesc(&desc);
 }
 
 
@@ -241,7 +241,7 @@ rbAE_AEDesc_coerce(VALUE self, VALUE type)
 	
 	err = AECoerceDesc(&(AEDESC_OF(self)), rbStringToDescType(type), &desc);
 	if (err != noErr) rbAE_raiseMacOSError("Can't coerce AEDesc.", err);
-	return rbAE_wrapAEDesc(rb_funcall(self, rb_intern("class"), 0), &desc);
+	return rbAE_wrapAEDesc(&desc);
 }
 
 static VALUE
@@ -261,8 +261,8 @@ rbAE_AEDesc_putItem(VALUE self, VALUE index, VALUE desc)
 {
 	OSErr err = noErr;
 	
-	if (rb_obj_is_instance_of(desc, rb_funcall(self, rb_intern("class"), 0)) != Qtrue)
-			rb_raise(rb_eTypeError, "Can't put parameter into AEDesc.");
+	if (rb_obj_is_instance_of(desc, cAEDesc) == Qfalse)
+			rb_raise(rb_eTypeError, "Can't put non-AEDesc item into AEDesc.");
 	err = AEPutDesc(&(AEDESC_OF(self)), NUM2LONG(index), &(AEDESC_OF(desc)));
 	if (err != noErr) rbAE_raiseMacOSError("Can't put item into AEDesc.", err);
 	return Qnil;
@@ -274,8 +274,8 @@ rbAE_AEDesc_putParam(VALUE self, VALUE key, VALUE desc)
 {
 	OSErr err = noErr;
 	
-	if (rb_obj_is_instance_of(desc, rb_funcall(self, rb_intern("class"), 0)) != Qtrue)
-			rb_raise(rb_eTypeError, "Can't put parameter into AEDesc.");
+	if (rb_obj_is_instance_of(desc, cAEDesc) == Qfalse)
+			rb_raise(rb_eTypeError, "Can't put non-AEDesc parameter into AEDesc.");
 	err = AEPutParamDesc(&(AEDESC_OF(self)), rbStringToDescType(key), &(AEDESC_OF(desc)));
 	if (err != noErr) rbAE_raiseMacOSError("Can't put parameter into AEDesc.", err);
 	return Qnil;
@@ -287,8 +287,8 @@ rbAE_AEDesc_putAttr(VALUE self, VALUE key, VALUE desc)
 {
 	OSErr err = noErr;
 	
-	if (rb_obj_is_instance_of(desc, rb_funcall(self, rb_intern("class"), 0)) != Qtrue)
-			rb_raise(rb_eTypeError, "Can't put parameter into AEDesc.");
+	if (rb_obj_is_instance_of(desc, cAEDesc) == Qfalse)
+			rb_raise(rb_eTypeError, "Can't put non-AEDesc attribute into AEDesc.");
 	err = AEPutAttributeDesc(&(AEDESC_OF(self)), rbStringToDescType(key), &(AEDESC_OF(desc)));
 	if (err != noErr) rbAE_raiseMacOSError("Can't put attribute into AEDesc.", err);
 	return Qnil;
@@ -311,7 +311,7 @@ rbAE_AEDesc_get(VALUE self, VALUE index, VALUE type)
 	if (err != noErr) rbAE_raiseMacOSError("Can't get item from AEDesc.", err);
 	return rb_ary_new3(2,
 					   rbDescTypeToString(key),
-					   rbAE_wrapAEDesc(rb_funcall(self, rb_intern("class"), 0), &desc));
+					   rbAE_wrapAEDesc(&desc));
 }
 
 
@@ -326,7 +326,7 @@ rbAE_AEDesc_send(VALUE self, VALUE sendMode, VALUE timeout)
 						(AESendMode)NUM2LONG(sendMode),
 						NUM2LONG(timeout));
 	if (err != noErr) rbAE_raiseMacOSError("Can't send Apple event.", err);
-	return rbAE_wrapAEDesc(rb_funcall(self, rb_intern("class"), 0), &reply);
+	return rbAE_wrapAEDesc(&reply);
 }
 
 
@@ -501,7 +501,7 @@ rbAE_OSAGetAppTerminology(VALUE self, VALUE path)
 							   &didLaunch, 
 							   &theDesc);
 	if (err != 0) rbAE_raiseMacOSError("Couldn't get aete resource.", err);
-	return rbAE_wrapAEDesc(cAEDesc, &theDesc);
+	return rbAE_wrapAEDesc(&theDesc);
 }
 
 
@@ -518,8 +518,8 @@ rbAE_GenericEventHandler(const AppleEvent *request, AppleEvent *reply, refcontyp
 	err = rb_funcall((VALUE)refcon, 
 					 rb_intern("handle_event"), 
 					 2, 
-					 rbAE_wrapBorrowedAEDesc(cAEDesc, request),
-					 rbAE_wrapBorrowedAEDesc(cAEDesc, reply));
+					 rbAE_wrapBorrowedAEDesc(request),
+					 rbAE_wrapBorrowedAEDesc(reply));
 	return NUM2INT(err);
 }
 
@@ -592,7 +592,7 @@ rbAE_GenericCoercionHandler(const AEDesc *fromDesc, DescType toType, refcontype 
 	res = rb_funcall((VALUE)refcon, 
 					 rb_intern("handle_coercion"),
 					 2,
-					 rbAE_wrapBorrowedAEDesc(cAEDesc, fromDesc),
+					 rbAE_wrapBorrowedAEDesc(fromDesc),
 					 rbDescTypeToString(toType));
 	if (rb_obj_is_instance_of(res, cAEDesc) != Qtrue) return errAECoercionFail;
 	err = AEDuplicateDesc(&AEDESC_OF(res), toDesc);
@@ -660,7 +660,7 @@ rbAE_AEGetCoercionHandler(VALUE self, VALUE fromType, VALUE toType)
 
 		
 /**********************************************************************/
-// Start and stop Carbon event loops; allows handling of incoming Apple events
+// Process management
 
 static VALUE
 rbAE_RunApplicationEventLoop(VALUE self)
@@ -673,6 +673,17 @@ static VALUE
 rbAE_QuitApplicationEventLoop(VALUE self)
 {
 	QuitApplicationEventLoop();
+	return Qnil;
+}
+
+static VALUE
+rbAE_transformProcessToForegroundApplication(VALUE self)
+{
+	OSStatus err = 0;
+	ProcessSerialNumber psn = {0, kCurrentProcess};
+	
+	err = TransformProcessType(& psn, kProcessTransformToForegroundApplication);
+	if( err != 0) rbAE_raiseMacOSError("Can't transform process.", err);
 	return Qnil;
 }
 
@@ -711,8 +722,10 @@ Init_ae (void)
 	
 	cMacOSError = rb_define_class_under(mAE, "MacOSError", rb_eStandardError);
 	
-	rb_define_attr(cMacOSError, "to_i", Qtrue, Qfalse);
+	rb_define_attr(cMacOSError, "number", Qtrue, Qfalse);
 	rb_define_attr(cMacOSError, "description", Qtrue, Qfalse);
+	
+	rb_define_alias(cMacOSError, "to_i", "number");
 	
 	rb_define_method(cMacOSError, "to_s", rbAE_MacOSError_inspect, 0);
 	rb_define_method(cMacOSError, "inspect", rbAE_MacOSError_inspect, 0);
@@ -729,7 +742,7 @@ Init_ae (void)
 	rb_define_module_function(mAE, "convertUnixSecondsToLongDateTime", 
 							  rbAE_convertUnixSecondsToLongDateTime, 1);
 							  
-	rb_define_module_function(mAE, "getAETE", rbAE_OSAGetAppTerminology, 1);
+	rb_define_module_function(mAE, "getAppTerminology", rbAE_OSAGetAppTerminology, 1);
 	
 	// Event handling
 	
@@ -746,4 +759,6 @@ Init_ae (void)
 	
 	rb_define_module_function(mAE, "runApplicationEventLoop", rbAE_RunApplicationEventLoop, 0);
 	rb_define_module_function(mAE, "quitApplicationEventLoop", rbAE_QuitApplicationEventLoop, 0);
+	rb_define_module_function(mAE, "transformProcessToForegroundApplication", 
+							  rbAE_transformProcessToForegroundApplication, 0);
 }

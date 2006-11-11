@@ -95,7 +95,7 @@ module OSAX
 				if terms
 					@_terms = terms
 				else
-					desc = AE.getAETE(path).coerce(KAE::TypeAEList)
+					desc = AE.getAppTerminology(path).coerce(KAE::TypeAEList)
 					@_terms = OSAXCache[name.downcase][1] = \
 							Terminology.tablesForAetes(DefaultCodecs.unpack(desc))
 				end
@@ -109,6 +109,22 @@ module OSAX
 		end
 		
 		alias_method :inspect, :to_s
+		
+		##
+		
+		def method_missing(name, *args)
+			begin
+				super
+			rescue AS::CommandError => e
+				if e.to_i == -1713
+					AE.transformProcessToForegroundApplication
+					activate
+					super
+				else
+					raise
+				end
+			end
+		end
 		
 		# A client-created scripting addition is automatically targetted at the current application.
 		# Clients can specify another application as target by calling one of the following methods:

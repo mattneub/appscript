@@ -32,7 +32,7 @@ end
 File.open(outPath, "w") do |f|
 	# Get aete(s)
 	begin
-		aetes = AEM::Codecs.new.unpack(AE.getAETE(appPath).coerce(KAE::TypeAEList))
+		aetes = AEM::Codecs.new.unpack(AE.getAppTerminology(appPath).coerce(KAE::TypeAEList))
 	rescue AE::MacOSError => e
 		if  e.to_i == -192 # aete resource not found
 			raise RuntimeError, "No terminology found."

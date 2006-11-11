@@ -235,11 +235,15 @@ module Terminology
 	def Terminology._makeReferenceTable(properties, elements, commands)
 		referencebycode = DefaultTerminology::ReferenceByCode.clone
 		referencebyname = DefaultTerminology::ReferenceByName.clone
-		[[:property, properties], [:element, elements]].each do |kind, table|
+		[[:element, elements], [:property, properties]].each do |kind, table|
+			# note: if property and element names are same (e.g. 'file' in BBEdit), will pack as property specifier unless it's a special case (i.e. see :text below). Note that there is currently no way to override this, i.e. to force appscript to pack it as an all-elements specifier instead (in AS, this would be done by prepending the 'every' keyword), so clients would need to use aem for that (but could add an 'all' method to Reference class if there was demand for a built-in workaround)
 			table.each do |name, code|
-				referencebycode[code] = name
+				referencebycode[code] = name # TO DO: when rendering references, if singular property name and plural class name have same code, need to use either singular or plural name depending on whether it's a property() or elements() call
 				referencebyname[name.intern] = [kind, code]
 			end
+		end
+		if referencebyname.has_key?(:text) # special case: AppleScript always packs 'text of...' as all-elements specifier
+			referencebyname[:text][0] = :element
 		end
 		commands.reverse.each do |name, code, args|
 			if DefaultTerminology::DefaultCommands.has_key?(name) and \

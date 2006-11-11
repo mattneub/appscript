@@ -2,7 +2,7 @@
 # Copyright (C) 2006 HAS. 
 # Released under MIT License.
 
-module MacFile
+module MacTypes
 
 	require "ae"
 	require "kae"
@@ -69,7 +69,7 @@ module MacFile
 		end
 		
 		def inspect
-			return "MacFile::Alias.at(#{to_s.inspect})"
+			return "MacTypes::Alias.at(#{to_s.inspect})"
 		end
 		
 		def to_Alias
@@ -77,7 +77,7 @@ module MacFile
 		end
 		
 		def to_FileURL
-			return MacFile::FileURL.newDesc(FileBase._coerce(@desc, KAE::TypeFileURL))
+			return MacTypes::FileURL.newDesc(FileBase._coerce(@desc, KAE::TypeFileURL))
 		end
 	end
 	
@@ -114,11 +114,11 @@ module MacFile
 		end
 		
 		def inspect
-			return "MacFile::FileURL.at(#{to_s.inspect})"
+			return "MacTypes::FileURL.at(#{to_s.inspect})"
 		end
 		
 		def to_Alias
-			return MacFile::Alias.newDesc(FileBase._coerce(desc, KAE::TypeAlias, to_s))
+			return MacTypes::Alias.newDesc(FileBase._coerce(desc, KAE::TypeAlias, to_s))
 		end
 		
 		def to_FileURL
@@ -130,5 +130,51 @@ module MacFile
 	
 	class FileNotFoundError < RuntimeError
 	end
+	
+	#######
+		
+	class Units
+	
+		private_class_method :new
+		attr_reader :value, :type
+	
+		def Units.method_missing(name, value)
+			return new(value, name)
+		end
+		
+		def initialize(value, type)
+			@value = value
+			@type = type
+		end
+		
+		def ==(val)
+			return (self.equal?(val) or (
+					self.class == val.class and 
+					@value == val.value and @type == val.type))
+		end
+		
+		alias_method :eql?, :==
+		
+		def hash
+			return [@value, @type].hash
+		end
+		
+		def to_i
+			return @value.to_i
+		end
+		
+		def to_f
+			return @value.to_f
+		end
+		
+		def to_s
+			inspect
+		end
+		
+		def inspect
+			return "MacTypes::Units.#{@type}(#{@value.inspect})"
+		end
+	end
+
 end
 
