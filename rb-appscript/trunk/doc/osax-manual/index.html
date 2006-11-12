@@ -37,7 +37,7 @@ sa.say("Hello world", :using=&gt;"Victoria")</code></pre>
 
 <p>The default application commands (<code>run</code>, <code>activate</code>, <code>quit</code>, etc.) are also available; see the appscript manual for details on those.</p>
 
-<p>By default, <code>ScriptingAddition</code> objects are targetted at the current application. You can obtain a <code>ScriptingAddition</code> object targetted at another application by calling one of its <code>target...</code> methods.</p>
+<p>By default, <code>ScriptingAddition</code> objects are targetted at the current application. You can obtain a <code>ScriptingAddition</code> object targetted at another application by calling one of its <code>by...</code> methods.</p>
 
 
 
@@ -71,9 +71,9 @@ p sa
 
 <p>is shorthand for:</p>
 
-<pre><code>OSAX::ScriptingAddition.new("StandardAdditions").targetName("System Events")</code></pre>
+<pre><code>OSAX::ScriptingAddition.new("StandardAdditions").byname("System Events")</code></pre>
 
-<p>To specify applications by other means (e.g. URL), create a <code>ScriptingAddition</code> object first, then call the appropriate <code>target...</code> method.</p>
+<p>To specify applications by other means (e.g. URL), create a <code>ScriptingAddition</code> object first, then call the appropriate <code>by...</code> method.</p>
 
 
 
@@ -101,18 +101,18 @@ p sa
 
         # Each of the following methods returns a new ScriptingAddition
         # instance targetted at the specified application. The arguments
-        # are the same as for the byName, byCreator, etc. methods in
+        # are the same as for the byname, bycreator, etc. methods in
         # appscript.
         
-        targetName(name) -- name or full path of application, e.g. "Finder"
+        byname(name) -- name or full path of application, e.g. "Finder"
 
-        targetCreator(creator) -- four-character creator code, e.g. "ttxt"
+        bycreator(creator) -- four-character creator code, e.g. "ttxt"
 
-        targetID(id) -- bundle id, e.g. "com.apple.ical"
+        byid(id) -- bundle id, e.g. "com.apple.ical"
 
-        targetPID(pid) -- Unix process ID, e.g. 4005
+        bypid(pid) -- Unix process ID, e.g. 4005
 
-        targetURL(url) -- eppc URL, e.g. "eppc://jukebox-mac.local/iTunes"</code></pre>
+        byurl(url) -- eppc URL, e.g. "eppc://jukebox-mac.local/iTunes"</code></pre>
 
 
 <h2>Examples</h2>

@@ -31,9 +31,8 @@ tmpl = TemplateText.new <<END
 END
 
 # Choose the file to write
-se = OSAX.osax('StandardAdditions', 'System Events')
-se.activate
-outFile = se.choose_file_name(:default_name=>'My iTunes Top 40.html')
+sa = OSAX.osax('StandardAdditions')
+outFile = sa.choose_file_name(:default_name=>'My iTunes Top 40.html')
 
 # Get the played count, album and name for every track in iTunes
 tracks = AS.app('iTunes').library_playlists[1].tracks
@@ -43,7 +42,7 @@ top40 = info.sort.reverse[0, 40]
 
 # Assemble input data for Amrita
 data = {
-	:tableRow => top40.collect { |rowData| {:tableColumn=>rowData} }
+	:tableRow=>top40.collect { |rowData| {:tableColumn=>rowData} }
 }
 
 # Render HTML file

@@ -41,11 +41,11 @@ module OSAX
 	
 		def _connect
 			if @path
-				@target = @_aemApplicationClass.newPath(@path)
+				@target = @_aemApplicationClass.bypath(@path)
 			elsif @pid
-				@target = @_aemApplicationClass.newPID(@pid)
+				@target = @_aemApplicationClass.bypid(@pid)
 			elsif @url
-				@target = @_aemApplicationClass.newURL(@url)
+				@target = @_aemApplicationClass.byurl(@url)
 			else
 				@target = @_aemApplicationClass.current
 			end
@@ -74,7 +74,7 @@ module OSAX
 	def OSAX.osax(name, appName=nil)
 		addition = ScriptingAddition.new(name)
 		if appName
-			addition = addition.targetName(appName)
+			addition = addition.byname(appName)
 		end
 		return addition
 	end
@@ -129,24 +129,28 @@ module OSAX
 		# A client-created scripting addition is automatically targetted at the current application.
 		# Clients can specify another application as target by calling one of the following methods:
 		
-		def targetName(name)
-			return ScriptingAddition.new(OSAXData.new(FindApp.byName(name), nil, nil, @_terms))
+		def byname(name)
+			return ScriptingAddition.new(OSAXData.new(FindApp.byname(name), nil, nil, @_terms))
 		end
 		
-		def targetID(id)
-			return ScriptingAddition.new(OSAXData.new(FindApp.byID(id), nil, nil, @_terms))
+		def byid(id)
+			return ScriptingAddition.new(OSAXData.new(FindApp.byid(id), nil, nil, @_terms))
 		end
 		
-		def targetCreator(creator)
-			return ScriptingAddition.new(OSAXData.new(FindApp.byCreator(creator), nil, nil, @_terms))
+		def bycreator(creator)
+			return ScriptingAddition.new(OSAXData.new(FindApp.bycreator(creator), nil, nil, @_terms))
 		end
 		
-		def targetPID(pid)
+		def bypid(pid)
 			return ScriptingAddition.new(OSAXData.new(nil, pid, nil, @_terms))
 		end
 		
-		def targetURL(url)
+		def byurl(url)
 			return ScriptingAddition.new(OSAXData.new(nil, nil, url, @_terms))
+		end
+		
+		def current
+			return ScriptingAddition.new(OSAXData.new(nil, nil, nil, @_terms))
 		end
 	end
 	

@@ -15,14 +15,14 @@ class TC_MacTypes < Test::Unit::TestCase
 	
 	def test_alias
 		# make alias
-		f = MacTypes::Alias.at(@path1)
+		f = MacTypes::Alias.path(@path1)
 		
 		# get path
 		# note that initial /tmp/codecs-test... path will automatically change to /private/tmp/codecs-test...
 		p1 = '/private'+@path1
 		p2 = '/private'+@path2
 		
-		assert_equal("MacTypes::Alias.at(#{p1.inspect})", f.inspect)
+		assert_equal("MacTypes::Alias.path(#{p1.inspect})", f.inspect)
 		
 		#puts "alias path 1: #{f}" # e.g. /private/tmp/codecs-test.HWr1EnE3
 		assert_equal(p1, f.to_s)
@@ -37,28 +37,28 @@ class TC_MacTypes < Test::Unit::TestCase
 		# puts "alias path 2: #{f}" # /private/tmp/moved-codecs-test.HWr1EnE3
 		assert_equal(p2, f.to_s)
 
-		assert_equal("MacTypes::Alias.at(#{p2.inspect})", f.inspect)
+		assert_equal("MacTypes::Alias.path(#{p2.inspect})", f.inspect)
 		
 		# check a FileNotFoundError is raised if getting path/FileURL for a filesystem object that no longer exists
 		`rm #{@path2}`
 		assert_raises(MacTypes::FileNotFoundError) { f.to_s } # File not found.
-		assert_raises(MacTypes::FileNotFoundError) { f.to_FileURL } # File not found.
+		assert_raises(MacTypes::FileNotFoundError) { f.to_fileurl } # File not found.
 	end
 
 
 	def test_fileURL
 
-		g = MacTypes::FileURL.at('/non/existent path')
+		g = MacTypes::FileURL.path('/non/existent path')
 
 		assert_equal('/non/existent path', g.to_s)
 		
 		assert_equal('furl', g.desc.type)
 		assert_equal('file://localhost/non/existent%20path', g.desc.data)
 
-		assert_equal('MacTypes::FileURL.at("/non/existent path")', g.to_FileURL.inspect)
+		assert_equal('MacTypes::FileURL.path("/non/existent path")', g.to_fileurl.inspect)
 
 		# check a not-found error is raised if getting Alias for a filesystem object that doesn't exist
-		assert_raises(MacTypes::FileNotFoundError) { g.to_Alias } # File "/non/existent path" not found.
+		assert_raises(MacTypes::FileNotFoundError) { g.to_alias } # File "/non/existent path" not found.
 
 	end
 end

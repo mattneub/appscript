@@ -121,11 +121,11 @@ class TC_Codecs < Test::Unit::TestCase
 	
 	def test_file
 		path = '/Applications/TextEdit.app/'
-		d = @c.pack(MacTypes::Alias.at(path))
+		d = @c.pack(MacTypes::Alias.path(path))
 		assert_equal(path, @c.unpack(d).to_s)
 		
 		path = '/Applications/TextEdit.app'
-		d = @c.pack(MacTypes::FileURL.at(path))
+		d = @c.pack(MacTypes::FileURL.path(path))
 		assert_equal(path, @c.unpack(d).to_s)
 	end
 	

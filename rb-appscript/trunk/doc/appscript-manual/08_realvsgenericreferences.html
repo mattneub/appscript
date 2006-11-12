@@ -25,12 +25,12 @@
 
 <p>References may be either 'real' or 'generic'. A real reference relates to a specific application, while a generic reference doesn't. Generic references provide a convenient shortcut for writing literal references without having to specify an application each time.</p>
 
-<p>A real reference begins with an <code>app</code> call, followed by a <code>byName</code>, <code>byID</code>, <code>byCreator</code>, <code>byPID</code>, <code>byURL</code> call that identifies the application whose object(s) it refers to, e.g.:</p>
+<p>A real reference begins with an <code>app</code> call, followed by a <code>byname</code>, <code>byid</code>, <code>bycreator</code>, <code>bypid</code>, <code>byurl</code> call that identifies the application whose object(s) it refers to, e.g.:</p>
 
-<pre><code>AS.app.byName('TextEdit').documents.end
-AS.app.byURL('eppc://my-mac.local/Finder').home.folders.name</code></pre>
+<pre><code>AS.app.byname('TextEdit').documents.end
+AS.app.byurl('eppc://my-mac.local/Finder').home.folders.name</code></pre>
 
-<p>(Remember than <code>AS.app.byName('TextEdit')</code> can be shortened to <code>AS.app('TextEdit')</code> for convenience.</p>
+<p>(Remember than <code>AS.app.byname('TextEdit')</code> can be shortened to <code>AS.app('TextEdit')</code> for convenience.</p>
 
 <p>A generic reference begins with <code>app</code>, <code>con</code> or <code>its</code> and does not identify the application to which it relates, e.g.:</p>
 
@@ -60,12 +60,12 @@ AS.app('Finder').desktop.duplicate(
 <p>Application references can be compared for equality and are hashable (so can be used as dictionary keys). For two real references to be considered equal, both must have the same application path or url and reference structure. Examples:</p>
 
 <pre><code>puts AS.app('TextEdit').documents[1] == \
-    AS.app.byID('com.apple.textedit').documents[1].get
-# Result: True; both references evaluate to the same
+    AS.app.byid('com.apple.textedit').documents[1].get
+# Result: true; both references evaluate to the same
 #     application path and reference
 
 puts AS.app('Finder').home == AS.app('Finder').home.get
-# Result: False; AS.app('Finder').home.get returns a
+# Result: false; AS.app('Finder').home.get returns a
 #     different reference to the same location</code></pre>
 
 <p>For two generic references to be equal, both must have the same reference structure. Note that comparing generic references to real references will always return a false result.</p>

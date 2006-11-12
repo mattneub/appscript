@@ -1,14 +1,10 @@
 TO DO
 
-- add appscript constructor names (current, byName, etc.) to reserved keywords
-
-- rename osax target method names to match existing constructor names (fewer reserved keywords)
-
-- rename aem Application constructors to match appscript's
+- rename FileURL to FileRef?
 
 - improve error reporting; e.g. pack/unpack errors in aem/codecs.rb could have better descriptions and/or represented by a CodecsError class; ae/aem/appscript-defined exception classes aren't quite idiomatic Ruby
 
-- check if eight-char-codes (event names) are 2x32-bit words or 1x64-bit word; codecs module currently assumes the former
+- pack/unpack support for application types
 
 
 - figure out how to create top-level app, con, its functions that work correctly; right now, defining:
@@ -22,17 +18,11 @@ produces reference objects okay, but these objects' to_s method returns empty st
 
 - allow users to extract a generic ref from a real ref (to_generic) for comparison purposes. Or vice-versa?
 
-- unit type names in defaultterminology should be lowercase for consistency, e.g. :inches, not :Inches
-
 - implement built-in help system by bridging to py-appscript
 
-- see if it's possible to play nice with irb's autocomplete
+- see if it's possible to work better with irb's autocomplete (autocomplete support is currently limited to start of a reference)
 
 - finish commenting source code
-
-- change Alias.at, FileURL.at to Alias.to, FileURL.to/Alias.for, FileURL.for?
-
-- add bigger note about UTF8 usage to manual, useful tips (e.g. jcode), etc.
 
 - would be nice if MacFile::FileNotFoundError always showed the failed path (this'd need a bit of Alias Manager glue added to the ae extension)
 

@@ -235,10 +235,10 @@ module Terminology
 	def Terminology._makeReferenceTable(properties, elements, commands)
 		referencebycode = DefaultTerminology::ReferenceByCode.clone
 		referencebyname = DefaultTerminology::ReferenceByName.clone
-		[[:element, elements], [:property, properties]].each do |kind, table|
+		[[:element, elements, 'e'], [:property, properties, 'p']].each do |kind, table, prefix|
 			# note: if property and element names are same (e.g. 'file' in BBEdit), will pack as property specifier unless it's a special case (i.e. see :text below). Note that there is currently no way to override this, i.e. to force appscript to pack it as an all-elements specifier instead (in AS, this would be done by prepending the 'every' keyword), so clients would need to use aem for that (but could add an 'all' method to Reference class if there was demand for a built-in workaround)
 			table.each do |name, code|
-				referencebycode[code] = name # TO DO: when rendering references, if singular property name and plural class name have same code, need to use either singular or plural name depending on whether it's a property() or elements() call
+				referencebycode[prefix + code] = name
 				referencebyname[name.intern] = [kind, code]
 			end
 		end
@@ -283,11 +283,11 @@ module Terminology
 		if not @@_terminologyCache.has_key?([path, pid, url])
 			begin
 				if path
-					app = AEM::Application.newPath(path)
+					app = AEM::Application.bypath(path)
 				elsif pid
-					app = AEM::Application.newPID(pid)
+					app = AEM::Application.bypid(pid)
 				elsif url
-					app = AEM::Application.newURL(url)
+					app = AEM::Application.byurl(url)
 				else
 					app = AEM::Application.current
 				end

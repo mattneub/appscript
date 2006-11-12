@@ -508,6 +508,8 @@ rbAE_OSAGetAppTerminology(VALUE self, VALUE path)
 /**********************************************************************/
 // Install event handlers
 
+// Based on Python's CarbonX.AE extension
+
 // TO DO: make sure GC won't collect handler objects while they're installed as event/coercion handlers
 
 static pascal OSErr

@@ -17,9 +17,9 @@ class ReferenceRenderer
 		if  appdata.path
 			@_root = "AS.app(#{appdata.path.inspect})"
 		elsif  appdata.pid
-			@_root = "AS.app.byPID(#{appdata.pid.inspect})"
+			@_root = "AS.app.bypid(#{appdata.pid.inspect})"
 		elsif  appdata.url
-			@_root = "AS.app.byURL(#{appdata.url.inspect})"
+			@_root = "AS.app.byurl(#{appdata.url.inspect})"
 		else
 			@_root = "AS.app.current"
 		end
@@ -35,12 +35,14 @@ class ReferenceRenderer
 	end
 	
 	def property(code)
-		@result += ".#{@_appdata.referencebycode[code]}"
+		name = @_appdata.referencebycode.fetch('p'+code) { @_appdata.referencebycode.fetch('e'+code) }
+		@result += ".#{name}"
 		return self
 	end
 	
 	def elements(code)
-		@result += ".#{@_appdata.referencebycode[code]}"
+		name = @_appdata.referencebycode.fetch('e'+code) { @_appdata.referencebycode.fetch('p'+code) }
+		@result += ".#{name}"
 		return self
 	end
 	

@@ -36,11 +36,11 @@ module AS
 		
 		def _connect # initialize AEM::Application instance and terminology tables the first time they are needed
 			if @path
-				@target = @_aemApplicationClass.newPath(@path)
+				@target = @_aemApplicationClass.bypath(@path)
 			elsif @pid
-				@target = @_aemApplicationClass.newPID(@pid)
+				@target = @_aemApplicationClass.bypid(@pid)
 			elsif @url
-				@target = @_aemApplicationClass.newURL(@url)
+				@target = @_aemApplicationClass.byurl(@url)
 			else
 				@target = @_aemApplicationClass.current
 			end
@@ -327,11 +327,7 @@ module AS
 					raise ArgumentError, "Too many direct parameters."
 				end
 				if not keywordArgs.is_a?(Hash)
-					if keywordArgs == nil
-						keywordArgs = {}
-					else
-						raise ArgumentError, "Second argument must be a Hash containing zero or more keyword parameters, or nil."
-					end
+					raise ArgumentError, "Second argument must be a Hash containing zero or more keyword parameters."
 				end
 				# get user-specified timeout, if any
 				timeout = (keywordArgs.delete(:timeout) {60}).to_i
@@ -381,6 +377,13 @@ module AS
 							params['----'] = @AS_aemreference
 						else
 							atts['subj'] = @AS_aemreference
+						end
+					elsif code == 'corecrel'
+						# if ref.make(...) contains no 'at' argument and target is a reference, use target reference for 'at' parameter
+						if params.has_key?('insh')
+							atts['subj'] = @AS_aemreference
+						else
+							params['insh'] = @AS_aemreference
 						end
 					elsif params.has_key?('----')
 						# if user has already supplied a direct parameter, pack that reference as the subject attribute
@@ -678,23 +681,23 @@ module AS
 		
 		# constructors
 		
-		def Application.byName(name, terms=true)
-			return new(FindApp.byName(name), nil, nil, terms)
+		def Application.byname(name, terms=true)
+			return new(FindApp.byname(name), nil, nil, terms)
 		end
 		
-		def Application.byID(id, terms=true)
-			return new(FindApp.byID(id), nil, nil, terms)
+		def Application.byid(id, terms=true)
+			return new(FindApp.byid(id), nil, nil, terms)
 		end
 		
-		def Application.byCreator(creator, terms=true)
-			return new(FindApp.byCreator(creator), nil, nil, terms)
+		def Application.bycreator(creator, terms=true)
+			return new(FindApp.bycreator(creator), nil, nil, terms)
 		end
 		
-		def Application.byPID(pid, terms=true)
+		def Application.bypid(pid, terms=true)
 			return new(nil, pid, nil, terms)
 		end
 		
-		def Application.byURL(url, terms=true)
+		def Application.byurl(url, terms=true)
 			return new(nil, nil, url, terms)
 		end
 		
@@ -731,24 +734,24 @@ module AS
 			super(['app'])
 		end
 		
-		def byName(name, terms=true)
-			return @_appClass.byName(name, terms)
+		def byname(name, terms=true)
+			return @_appClass.byname(name, terms)
 		end
 		
-		def byID(id, terms=true)
-			return @_appClass.byID(id, terms)
+		def byid(id, terms=true)
+			return @_appClass.byid(id, terms)
 		end
 		
-		def byCreator(creator, terms=true)
-			return @_appClass.byCreator(creator, terms)
+		def bycreator(creator, terms=true)
+			return @_appClass.bycreator(creator, terms)
 		end
 		
-		def byPID(pid, terms=true)
-			return @_appClass.byPID(pid, terms)
+		def bypid(pid, terms=true)
+			return @_appClass.bypid(pid, terms)
 		end
 		
-		def byURL(url, terms=true)
-			return @_appClass.byURL(url, terms)
+		def byurl(url, terms=true)
+			return @_appClass.byurl(url, terms)
 		end
 		
 		def current(terms=true)
@@ -772,7 +775,7 @@ module AS
 		if args == []
 			return AS_App
 		else
-			return AS_App.byName(*args)
+			return AS_App.byname(*args)
 		end
 	end
 

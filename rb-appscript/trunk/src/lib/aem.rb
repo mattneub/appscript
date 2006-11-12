@@ -86,19 +86,19 @@ module AEM
 		#######
 		# constructors
 		
-		def Application.newPath(path)
+		def Application.bypath(path)
 			return new(path, Connect.localApp(path), [:path, path])
 		end
 		
-		def Application.newURL(url)
+		def Application.byurl(url)
 			return new(nil, Connect.remoteApp(url), [:url, url])
 		end
 		
-		def Application.newPID(pid)
+		def Application.bypid(pid)
 			return new(nil, Connect.localAppByPID(pid), [:pid, pid])
 		end
 		
-		def Application.newAEDesc(desc)
+		def Application.bydesc(desc)
 			return new(nil, desc, [:desc, desc.type, desc.data])
 		end
 		
@@ -117,7 +117,7 @@ module AEM
 			if @identity[0] == :current
 				return 'AEM::Application.current'
 			else
-				conName = {:path => 'newPath', :url => 'newURL', :pid => 'newPID', :desc => 'newDesc'}[@identity[0]]
+				conName = {:path => 'bypath', :url => 'byurl', :pid => 'bypid', :desc => 'bydesc'}[@identity[0]]
 				return "AEM::Application.#{conName}(#{@identity[1].inspect})"
 			end
 		end

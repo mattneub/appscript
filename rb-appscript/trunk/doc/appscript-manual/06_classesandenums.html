@@ -61,25 +61,89 @@ AEM::AEEnum.new('xyz ')</code></pre>
 <tr><td><code>:List</code></td><td><code>Array</code></td></tr>
 <tr><td><code>:Record</code></td><td><code>Hash</code></td></tr>
 <tr><td><code>:Date</code></td><td><code>Time</code></td></tr>
-<tr><td><code>:Alias</code></td><td><code>MacFile::Alias</code></td></tr>
-<tr><td><code>:FSRef</code></td><td><code>MacFile::FileURL</code></td></tr>
-<tr><td><code>:FileURL</code></td><td><code>MacFile::FileURL</code></td></tr>
+<tr><td><code>:Alias</code></td><td><code>MacTypes::Alias</code></td></tr>
+<tr><td><code>:FSRef</code></td><td><code>MacTypes::FileURL</code></td></tr>
+<tr><td><code>:FileURL</code></td><td><code>MacTypes::FileURL</code></td></tr>
 <tr><td><code>:Reference</code></td><td><small>appscript reference</small></td></tr>
 <tr><td><code>:InsertionRef</code></td><td><small>appscript insertion reference</small></td></tr>
+<tr><td><small>unit types</small></td><td><code>MacTypes::Units</code></td></tr>
 </tbody>
 </table>
 
 
-<ul>
-<li>Because Ruby lacks a native Unicode class, appscript unpacks both the <code>:String</code> and <code>:Unicode</code> AE types as UTF8-encoded strings.</li>
-<li>Appscript packs UTF8-encoded Ruby strings as the <code>:Unicode</code> AE type. If the string does not contain valid UTF8 data, a coercion error will occur.</li>
-<li>The <code>:Record</code> AE type is a struct-like data structure which appscript represents as a hash with [in most cases] appscript keywords (symbols) as its keys.</li>
-<li>The <code>:Alias</code> AE type represents a filesystem object, and will continue to point to that object even if it's renamed or moved to another location on the same disk.</li>
-<li>The <code>:FSRef</code> and <code>:FileURL</code> types represent a filesystem location. Both can represent existing locations; the <code>:FileURL</code> type can also be used to specify locations that don't already exist.</li>
-<li>While FSSpecs are supported for backwards-compatibility, they are deprecated by Apple and not recommended for use where other types can be used instead. Appscript unpacks a <code>:FSSpec</code> value by first coercing it to a <code>:FileURL</code> type and then unpacking it as a <code>MacFile::FileURL</code> object.</li>
-<li>While appscript unpacks all filesystem-related AE types as either <code>MacFile::Alias</code> or <code> MacFile::FileURL</code>, don't forget that when asking an application to coerce a return value into a file type you must specify the exact file type (<code>:Alias</code>, <code>:FSRef</code>, <code>:FileURL</code>, or <code>:FSSpec</code>) in the <code>get</code> command. e.g. To get a <code>MacFile::FileURL</code> object for the current user's home folder, use <code>AS.app('Finder').home.get(type=:FSRef)</code>, not <code>AS.app('Finder').home.get(type=:File)</code> - <code>:File</code> is not a known AE type and will cause an error. Also be aware that some applications may not support coercions to all AE file types; you'll need to experiment to find out which coercions are supported.</li>
-<li>The Apple Event Manager defines many other AE types which are included by appscript for completeness. A few of these types are of occasional interest, the rest can simply be ignored.</li>
-</ul>
+<h2>Type mapping notes</h2>
+
+<h3>Numbers</h3>
+
+<p>When packing a <code>Bignum</code>, appscript will pack it either as a 32-bit integer, 64-bit integer, or 64-bit float, depending on the value's size.</p>
+
+
+<h3>Strings</h3>
+
+<p>Because Ruby lacks a native Unicode class, appscript unpacks both the <code>:String</code> and <code>:Unicode</code> AE types as UTF8-encoded strings.</p>
+
+<p>Appscript packs UTF8-encoded Ruby strings as the <code>:Unicode</code> AE type. If the string does not contain valid UTF8 data, a coercion error will occur.</p>
+
+<div class="hilitebox">
+<p>You can enable a degree of UTF8 support in Ruby's <code>String</code> class via the Jcode module (included in Ruby's standard library). To use Jcode, add the following lines to the start of your Ruby scripts, irb sessions, etc.:</p>
+<pre><code>require "jcode"
+$KCODE = "UTF8"</code></pre>
+
+<p>This will improve the display of non-ASCII characters in irb, amongst other things.</p>
+
+</div>
+
+
+<h3>Filesystem references</h3>
+
+<p>The <code>:Alias</code> AE type represents a filesystem object, and will continue to point to that object even if it's renamed or moved to another location on the same disk. The <code>:FSRef</code> and <code>:FileURL</code> types represent a filesystem location. Both can represent existing locations; the <code>:FileURL</code> type can also be used to specify locations that don't already exist.</p>
+
+<p>FSSpecs are also supported for sake of backwards-compatibility with older Carbon applications that sometimes still use them. They're deprecated in OS X, however, due to lack of proper Unicode and long filename support, and their use is discouraged.</p>
+
+<p>Note that appscript unpacks FSRefs, FileURLs and FSSpecs as <code>MacTypes::FileURL</code> objects; users do not normally need to worry about this. <code>MacTypes::FileURL</code> objects created in Ruby will always pack as type <code>:FileURL</code>, however. See the <a href="../mactypes-manual/index.html">mactypes manual</a> for more information on <code>MacTypes::Alias</code> and <code>MacTypes::FileURL</code>.</p>
+
+<p>When asking an application to coerce a return value into a file type you must specify the exact AE type (<code>:Alias</code>, <code>:FSRef</code>, <code>:FileURL</code>, or <code>:FSSpec</code>) in the <code>get</code> command. e.g. To get a <code>MacTypes::FileURL</code> object for the current user's home folder, you would normally use:</p>
+
+<pre><code>AS.app('Finder').home.get(type=:FileURL)</code></pre>
+
+<p>Also be aware that some applications may not support coercions to all AE file types; you'll need to experiment to find out which coercions are supported.</p>
+
+
+<h3>Records</h3>
+
+<p>The <code>:Record</code> AE type is a struct-like data structure containing zero or more properties. Appscript represents AE records as Ruby hashes. The keys in this hash are usually symbols representing appscript-style property names, although they may also be <code>AEM::AEType</code> values or strings.</p>
+
+<p>If a hash contains a <code>:class</code> (or <code>AEM::AEType.new('pcls')</code>) key, appscript will pack the remaining items into an AE record, then coerce it to the type specified by the 'class' property. Similarly, when unpacking an record-like AEDesc with a custom type code, appscript will unpack it as a hash with the type represented by a a <code>:class</code> item.</p>
+
+
+<h3>Unit types</h3>
+
+<p>The following unit types are defined as standard:</p>
+
+<pre><code>:centimeters                   :cubic_inches
+:meters                        :cubic_feet
+:kilometers                    :cubic_yards
+:inches                        
+:feet                          :liters
+:yards                         :quarts
+:miles                         :gallons
+                               
+:square_meters                 :grams
+:square_kilometers             :kilograms
+:square_feet                   :ounces
+:square_yards                  :pounds
+:square_miles                  
+                               :celsius
+:cubic_centimeters             :fahrenheit
+:cubic_meters                  :kelvin</code></pre>
+
+<p>Values are represented by instances of the <code>MacTypes::Units</code> class, e.g. <code>MacTypes::Units.inches(3.0)</code>. See the <a href="../mactypes-manual/index.html">mactypes manual</a> for more information on <code>MacTypes::Units</code>.</p>
+
+
+<h3>Miscellaneous types</h3>
+
+<p>The Apple Event Manager defines many other AE types whose names and codes are defined by appscript for completeness. A few of these types are of occasional interest to users, the rest can simply be ignored. In most cases, values of these types will be represented by raw <code>AE::AEDesc</code> instances as appscript doesn't automatically convert them to native objects.</p>
+
 
 </div>
 

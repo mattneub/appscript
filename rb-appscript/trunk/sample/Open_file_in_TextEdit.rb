@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
 
-# Opens a file in TextEdit. (Demonstrates macfile module usage.)
+# Opens a file in TextEdit. (Demonstrates mactypes module usage.)
 
 require "appscript"
-require "macfile"
+require "mactypes"
 
-AS.app('TextEdit').open(MacFile::Alias.at('~/ReadMe.txt'))
+AS.app('TextEdit').open(MacTypes::Alias.path('/Users/NAME/ReadMe.txt'))

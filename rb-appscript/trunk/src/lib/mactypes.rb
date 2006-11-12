@@ -50,13 +50,13 @@ module MacTypes
 			@desc = desc
 		end
 		
-		def Alias.at(path)
+		def Alias.path(path)
 			return new(FileBase._coerce(
 					AE::AEDesc.new(KAE::TypeFileURL, FileBase._pathToURL(path)),
 					KAE::TypeAlias, path))
 		end
 		
-		def Alias.newDesc(desc)
+		def Alias.desc(desc)
 			return new(desc)
 		end
 		
@@ -64,20 +64,22 @@ module MacTypes
 			return @desc
 		end
 		
-		def to_s
+		def path
 			return FileBase._urlToPath(FileBase._coerce(@desc, KAE::TypeFileURL).data)
 		end
 		
+		alias_method :to_s, :path
+		
 		def inspect
-			return "MacTypes::Alias.at(#{to_s.inspect})"
+			return "MacTypes::Alias.path(#{to_s.inspect})"
 		end
 		
-		def to_Alias
+		def to_alias
 			return self
 		end
 		
-		def to_FileURL
-			return MacTypes::FileURL.newDesc(FileBase._coerce(@desc, KAE::TypeFileURL))
+		def to_fileurl
+			return MacTypes::FileURL.desc(FileBase._coerce(@desc, KAE::TypeFileURL))
 		end
 	end
 	
@@ -91,11 +93,11 @@ module MacTypes
 			@desc = desc
 		end
 		
-		def FileURL.at(path)
+		def FileURL.path(path)
 			return new(path, nil)
 		end
 		
-		def FileURL.newDesc(desc)
+		def FileURL.desc(desc)
 			return new(nil, desc)
 		end
 		
@@ -106,23 +108,25 @@ module MacTypes
 			return @desc
 		end
 		
-		def to_s
+		def path
 			if not @path
 				@path = FileBase._urlToPath(FileBase._coerce(@desc, KAE::TypeFileURL).data)
 			end
 			return @path
 		end
 		
+		alias_method :to_s, :path
+		
 		def inspect
-			return "MacTypes::FileURL.at(#{to_s.inspect})"
+			return "MacTypes::FileURL.path(#{to_s.inspect})"
 		end
 		
-		def to_Alias
-			return MacTypes::Alias.newDesc(FileBase._coerce(desc, KAE::TypeAlias, to_s))
+		def to_alias
+			return MacTypes::Alias.desc(FileBase._coerce(desc, KAE::TypeAlias, to_s))
 		end
 		
-		def to_FileURL
-			return self
+		def to_fileurl
+			return MacTypes::FileURL.desc(FileBase._coerce(desc, KAE::TypeFileURL, to_s))
 		end
 	end
 	
@@ -135,7 +139,6 @@ module MacTypes
 		
 	class Units
 	
-		private_class_method :new
 		attr_reader :value, :type
 	
 		def Units.method_missing(name, value)
@@ -168,11 +171,11 @@ module MacTypes
 		end
 		
 		def to_s
-			inspect
+			return "#{@value.inspect} #{@type.tr('_', ' ')}"
 		end
 		
 		def inspect
-			return "MacTypes::Units.#{@type}(#{@value.inspect})"
+			return "MacTypes::Units.new(#{@value.inspect}, #{@type.inspect})"
 		end
 	end
 

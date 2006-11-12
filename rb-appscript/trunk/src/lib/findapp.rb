@@ -31,7 +31,7 @@ module FindApp
 		end
 	end
 
-	def FindApp.byName(name)
+	def FindApp.byname(name)
 		if name[0, 1] != '/'
 			begin
 				newName = _findApp(nil, nil, name)
@@ -52,11 +52,11 @@ module FindApp
 		return name
 	end
 	
-	def FindApp.byID(id)
+	def FindApp.byid(id)
 		return _findApp(nil, id, nil)
 	end
 	
-	def FindApp.byCreator(creator)
+	def FindApp.bycreator(creator)
 		return _findApp(creator, nil, nil)
 	end
 end

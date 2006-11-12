@@ -1,4 +1,6 @@
 #!/usr/local/bin/ruby
+# Copyright (C) 2006 HAS. 
+# Released under MIT License.
 
 AdobeUnitTypes = [
 	[:millimeters, "\x81MM\x8c"],

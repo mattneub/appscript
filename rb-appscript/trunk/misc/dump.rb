@@ -1,4 +1,6 @@
-#!/usr/bin/env ruby
+#!/usr/local/bin/ruby
+# Copyright (C) 2006 HAS. 
+# Released under MIT License.
 
 require "ae"
 require "aem"
@@ -21,7 +23,7 @@ Example:
 	exit
 end
 
-appPath = FindApp.byName(ARGV[0])
+appPath = FindApp.byname(ARGV[0])
 moduleName = ARGV[1]
 outPath = ARGV[2]
 

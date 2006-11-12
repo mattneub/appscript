@@ -31,13 +31,15 @@
 
 <p>Application commands are implemented by the application's top-level <code>application</code> object (represented by an <code>AS::Application</code> instance). For convenience, appscript also makes application commands available as methods on every reference. If a command is called upon a reference rather than an Application object, that reference will be taken as the application's direct parameter (with one or two caveats; see the Special Cases section below).</p>
 
-<p>The command's direct parameter can be any value; the application's dictionary will (usually) indicate the appropriate types. A command can have a maximum of one direct parameter; if more than one is given, an error will occur. (Remember that if a command is called on a reference, that reference is counted as a direct parameter.)</p>
+<p>The command's direct parameter can be any value; the application's dictionary will (usually) indicate the appropriate types. A command can have a maximum of one direct parameter; if more than one is given, an error will occur. Keyword parameters are specified as a <code>Hash</code> object whose keys are symbols representing the parameter names:</p>
 
-<p>Keyword parameters are specified as a <code>Hash</code> object whose keys are symbols representing the parameter names. Note that Ruby allows this hash to be written without the enclosing <code>{</code> and <code>}</code> for easier readability:</p>
+<pre><code>application.command_name(direct_parameter, {:name1 =&gt; value1, :name2 =&gt; value2, ...})</code></pre>
+
+<p>Note that Ruby allows the hash to be written without the enclosing <code>{</code> and <code>}</code> for appearance's sake:</p>
 
 <pre><code>application.command_name(direct_parameter, :name1 =&gt; value1, :name2 =&gt; value2, ...)</code></pre>
 
-<p>Each command can have zero or more keyword parameters as defined in the application dictionary. In addition, appscript provides the following default parameters <small>[<a href="#_1">1</a>]</small> for indicating how the command should be handled:</p>
+<p>Each command can have zero or more keyword parameters as defined in the application dictionary. In addition, appscript provides the following default parameters for indicating how the command should be handled:</p>
 
 <table summary="Default appscript parameters">
 <thead>
@@ -50,10 +52,12 @@
 
 <tr><td><code>:resulttype</code></td><td><code>nil</code> | <code>Symbol</code></td><td>AE type to coerce return value to (e.g. <code>:FSRef</code>)</td></tr>
 
-<tr><td><code>:ignore</code></td><td><code>nil</code> | <code>Array of Symbol</code></td><td>String characteristics to ignore when evaluating references <small>[<a href="#_2">2</a>]</small>. The array should contain zero or more of the following enumerators: <code>:case</code>, <code>:diacriticals</code>, <code>:expansion</code>, <code>:hyphens</code>, <code>:punctuation</code>, <code>:whitespace</code></td></tr>
+<tr><td><code>:ignore</code></td><td><code>nil</code> | <code>Array of Symbol</code></td><td>String characteristics to ignore when evaluating references. The array should contain zero or more of the following enumerators: <code>:case</code>, <code>:diacriticals</code>, <code>:expansion</code>, <code>:hyphens</code>, <code>:punctuation</code>, <code>:whitespace</code></td></tr>
 
 </tbody>
 </table>
+
+<p>(Note that most applications currently ignore the <code>:ignore</code> parameter and use the default behaviour, i.e. ignore case.)</p>
 
 
 <p>For convenience, appscript allows the direct parameter and/or keyword parameters arguments to be omitted from the method's argument list if unused. For example, a command that has no direct or keyword parameters would be written as:</p>
@@ -68,9 +72,11 @@
 
 <pre><code>application.command_name(direct_parameter)</code></pre>
 
-<p>The one caveat is where the direct parameter is a Ruby hash representing an <code>AERecord</code> value. To avoid appscript mistaking this value for a keyword parameters hash, you must also indicate that the command has no keyword parameters by specifying <code>nil</code> as the second argument to the call:</p>
+<p>There is one caveat to this last rule, however. If the direct parameter is a Ruby hash representing an AE record, care must be taken to prevent appscript mistaking this value for keyword parameters. The solution is to provide an empty keyword parameters hash as the second argument to the call:</p>
 
-<pre><code>application.command_name(direct_hash_parameter, nil)</code></pre>
+<pre><code>application.command_name(direct_hash_parameter, {})</code></pre>
+
+<p>If you forget to do this, appscript will treat the direct parameter's items as command parameters instead, resulting in an error or other unexpected behaviour.</p>
 
 <p>See the Special cases section below for additional rules.</p>
 
@@ -112,24 +118,20 @@ AS.app('Finder').home.items.get(:resulttype =&gt; :Alias)</code></pre>
 
 <pre><code>application.command(keyword_parameters)</code></pre>
 
-<p>The two forms are equivalent (appscript converts the first form to the second behind the scenes) although the first form is preferred for conciseness. Note that the form:</p>
-
-<pre><code>reference.command(reference, **args)</code></pre>
-
-<p>is invalid as it effectively specifies two direct parameters and results in a "Too many direct parameters" error if used.</p>
-
-</li>
+<p>The two forms are equivalent (appscript converts the first form to the second behind the scenes) although the first form is preferred for conciseness.</p></li>
 
 
-<li><p>When the <code>make</code> command is called on a reference, it will take that reference as its insertion location if if there is no existing <code>at</code> keyword parameter; i.e.:</p>
+<li><p>If a command that already has a direct parameter is called on a reference, i.e.:</p>
+
+<pre><code>reference.command(direct_parameter[, keyword_parameters])</code></pre>
+
+<p>the reference upon which it is called will be packed as a 'subject' attribute. For example, if the <code>make</code> command is called on a reference, the application will use that reference as its insertion location if there is no <code>at</code> keyword parameter given; i.e.:</p>
 
 <pre><code>insertion_location.make(:new =&gt; some_class)</code></pre>
 
 <p>instead of:</p>
 
-<pre><code>application.make(:new =&gt; some_class, :at =&gt; insertion_location)</code></pre>
-
-<p>The first form is preferred, although both are supported. (Of course, it is still up to the user to know whether an insertion location should or should not be specified in a given situation.)</p></li>
+<pre><code>application.make(:new =&gt; some_class, :at =&gt; insertion_location)</code></pre></li>
 
 
 <li><p>When the <code>set</code> command is called on a reference, its <code>to</code> parameter can be written as a direct parameter; i.e.:</p>
@@ -186,13 +188,6 @@ print foo
 </li>
 </ul>
 
-
-<hr />
-
-
-<p><a name="_1"></a>[1] Appscript provides one additional special parameter: <code>:telltarget</code>. This is covered in <a href="14_problemapps.html">Chapter 14</a>.</p>
-
-<p><a name="_2"></a>[2] Note that most applications currently ignore this setting and use the default behaviour (ignore case).</p>
 
 
 </div>

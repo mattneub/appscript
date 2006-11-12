@@ -25,19 +25,19 @@
 
 <p>Before you can communicate with a scriptable application you must call one of the following methods to create an application object:</p>
 
-<pre><code>AS.app.byName(name) # name or POSIX path of local application
+<pre><code>AS.app.byname(name) # name or POSIX path of local application
 
-AS.app.byID(id) # bundle ID for a local application
+AS.app.byid(id) # bundle ID for a local application
 
-AS.app.byCreator(creator) # 4-character creator type for a local application
+AS.app.bycreator(creator) # 4-character creator type for a local application
 
-AS.app.byPID(pid) # Unix process id for a local process
+AS.app.bypid(pid) # Unix process id for a local process
 
-AS.app.byURL(url) # eppc URL for a remote process
+AS.app.byurl(url) # eppc URL for a remote process
 
 AS.app.current # the host process</code></pre>
 
-<p>For convenience, the most commonly used form, <code>AS.app.byName(name)</code>, can be shortened to:</p>
+<p>For convenience, the most commonly used form, <code>AS.app.byname(name)</code>, can be shortened to:</p>
 
 <pre><code>AS.app(name)</code></pre>
 
@@ -72,13 +72,13 @@ textedit = AS.app('TextEdit.app')
 
 safari = AS.app('/Applications/Safari')
 
-addressbook = AS.app.byID('com.apple.addressbook')
+addressbook = AS.app.byid('com.apple.addressbook')
 
-quicktimeplayer = AS.app.byCreator('TVOD')
+quicktimeplayer = AS.app.bycreator('TVOD')
 
-finder = AS.app.byURL('eppc://192.168.10.1/Finder')
+finder = AS.app.byurl('eppc://192.168.10.1/Finder')
 
-itunes = AS.app.byURL('eppc://Jan%20Smith@G4.local/iTunes')</code></pre>
+itunes = AS.app.byurl('eppc://Jan%20Smith@G4.local/iTunes')</code></pre>
 
 
 <h2>Basic commands</h2>

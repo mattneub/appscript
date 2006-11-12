@@ -6,7 +6,7 @@ require "ae"
 require "kae"
 require "_aem/typewrappers"
 require "_aem/aemreference"
-require "mactypes" # TO DO: rename mactypes, MacTypes
+require "mactypes"
 
 # Note that AE strings (typeChar, typeUnicodeText, etc.) are unpacked as UTF8-encoded Ruby strings, and UTF8-encoded Ruby strings are packed as typeUnicodeText. Using UTF8 on the Ruby side avoids data loss; using typeUnicodeText on the AEM side provides compatibility with all [reasonably well designed] applications. To change this behaviour (e.g. to support legacy apps that demand typeChar and break on typeUnicodeText), subclass Codecs and override pack and/or unpack methods to provide alternative packing/unpacking of string values. Users can also pack data manually using AE::AEDesc.new(type, data).
 
@@ -53,7 +53,7 @@ class UnitTypeCodecs
 	]
 	
 	DefaultPacker = proc { |value, code| AE::AEDesc.new(code, [value].pack('d')) }
-	DefaultUnpacker = proc { |desc, name| MacTypes::Units.send(name, desc.data.unpack('d')[0]) }
+	DefaultUnpacker = proc { |desc, name| MacTypes::Units.new(desc.data.unpack('d')[0], name) }
 
 	def initialize
 		@typebyname = {}
@@ -100,10 +100,6 @@ module BigEndianConverters
 	def fourCharCode(code)
 		return code
 	end
-	
-	def eightCharCode(code)
-		return code
-	end
 
 end
 
@@ -112,10 +108,6 @@ module SmallEndianConverters
 	
 	def fourCharCode(code)
 		return code.reverse
-	end
-	
-	def eightCharCode(code)
-		return code[0,4].reverse + code[4,4].reverse
 	end
 	
 end
@@ -204,7 +196,7 @@ class Codecs
 		elsif val.is_a?(TypeWrappers::AEKey) then
 			AE::AEDesc.new(KAE::TypeKeyword, fourCharCode(val.code))
 		elsif val.is_a?(TypeWrappers::AEEventName) then 
-			AE::AEDesc.new(KAE::TypeEventName, eightCharCode(val.code))
+			AE::AEDesc.new(KAE::TypeEventName, val.code)
 		elsif val.is_a?(AE::AEDesc) then val
 		else
 			didPack, desc = @unitTypeCodecs.pack(val)
@@ -304,10 +296,10 @@ class Codecs
 			when KAE::TypeAEList then unpackAEList(desc)
 			when KAE::TypeAERecord then unpackAERecord(desc)
 			
-			when KAE::TypeAlias then MacTypes::Alias.newDesc(desc)
-			when KAE::TypeFSS then MacTypes::FileURL.newDesc(desc)
-			when KAE::TypeFSRef then MacTypes::FileURL.newDesc(desc)
-			when KAE::TypeFileURL then MacTypes::FileURL.newDesc(desc)
+			when KAE::TypeAlias then MacTypes::Alias.desc(desc)
+			when KAE::TypeFSS then MacTypes::FileURL.desc(desc)
+			when KAE::TypeFSRef then MacTypes::FileURL.desc(desc)
+			when KAE::TypeFileURL then MacTypes::FileURL.desc(desc)
 			
 			when KAE::TypeQDPoint then desc.data.unpack('ss').reverse
 			when KAE::TypeQDRectangle then
@@ -385,7 +377,7 @@ class Codecs
 	end
 	
 	def unpackEventName(desc)
-		return TypeWrappers::AEEventName.new(eightCharCode(desc.data))
+		return TypeWrappers::AEEventName.new(desc.data)
 	end
 	
 	#######

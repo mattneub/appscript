@@ -1,4 +1,4 @@
-2006-11-11 -- ???
+2006-11-12 -- ???
 
 - removed path expansion in FindApp#byName, MacFile::Alias#at, MacFile::FileURL#at
 
@@ -16,7 +16,7 @@
 
 - added gemspec for source-based gem
 
-- made Reference class's AS_appdata and AS_aemreference ivars writeable as well as readable - this'll make it easier to inject workarounds (e.g. modified pack/unpack routines) for occasional application flaws
+- made Reference class's AS_appdata and AS_aemreference instance variables writeable as well as readable - this'll make it easier to inject workarounds (e.g. modified pack/unpack routines) for occasional application flaws
 
 - added sample scripts: Build_iTunes_playlist_for_local_files.rb, Simple_Finder_GUI_Scripting.rb
 
@@ -34,7 +34,42 @@
 
 - where property and element names are the same (e.g. file, text in BBEdit), appscript now packs this as a property specifier, unless the name is 'text', in which case it's packed as an elements specifier (i.e. [hopefully] same as AppleScript)
 
-- renamed macfile.rb/MacFile to mactypes.rb/MacTypes; added Units class
+- renamed macfile.rb/MacFile module to mactypes.rb/MacTypes
+
+- renamed MacTypes::Alias, MacTypes::MacFileURL methods: 
+
+	Alias.at -> Alias.path
+	FileURL.at -> FileURL.path
+	Alias.newDesc -> Alias.desc
+	FileURL.newDesc -> FileURL.desc
+
+- renamed AS.app methods:
+
+	app#byName -> app#byname
+	app#byCreator -> app#bycreator
+	app#byID -> app#byid
+	app#byPID -> app#bypid
+	app#byURL -> app#byurl
+
+
+- renamed AEM::Application methods:
+
+	Application.newPath -> Application.bypath
+	Application.newURL -> Application.byurl
+	Application.newPID -> Application.bypid
+	Application.newAEDesc -> Application.bydesc
+
+- renamed FindApp methods:
+
+	FindApp.byName -> FindApp.byname
+	FindApp.byCreator -> FindApp.bycreator
+	FindApp.byID -> FindApp.byid
+
+- added MacTypes::Units class
+
+- fixed appscript reference rendering bug where property/element names could get muddled (e.g. 'document' property would appear as 'documents')
+
+- fixed endian bug when packing/unpacking AEM::AEEventName (now always big-endian)
 
 
 2006-10-23 -- 0.1.6
