@@ -12,18 +12,7 @@ class ReferenceRenderer
 	
 	def initialize(appdata)
 		@_appdata = appdata
-		@_referencebycode = appdata.referencebycode
-		@_typebycode = appdata.typebycode
-		if  appdata.path
-			@_root = "AS.app(#{appdata.path.inspect})"
-		elsif  appdata.pid
-			@_root = "AS.app.bypid(#{appdata.pid.inspect})"
-		elsif  appdata.url
-			@_root = "AS.app.byurl(#{appdata.url.inspect})"
-		else
-			@_root = "AS.app.current"
-		end
-		@result = ''
+		@result = "AS"
 	end
 	
 	def _format(val)
@@ -72,27 +61,43 @@ class ReferenceRenderer
 	end
 	
 	def previous(sel)
-		@result += ".previous(#{_format(@_typebycode[sel])})"
+		@result += ".previous(#{_format(@_appdata.typebycode[sel])})"
 		return self
 	end
 	
 	def next(sel)
-		@result += ".next(#{_format(@_typebycode[sel])})"
+		@result += ".next(#{_format(@_appdata.typebycode[sel])})"
+		return self
+	end
+	
+	def app
+		if @_appdata.path
+			@result += ".app(#{@_appdata.path.inspect})"
+		elsif @_appdata.pid
+			@result += ".app.bypid(#{@_appdata.pid.inspect})"
+		elsif @_appdata.url
+			@result += ".app.byurl(#{@_appdata.url.inspect})"
+		else
+			@result += ".app.current"
+		end
+		return self
+	end
+	
+	def con
+		@result += ".con"
+		return self
+	end
+	
+	def its
+		@result += ".its"
 		return self
 	end
 	
 	def method_missing(name, *args)
-		case name
-			when :app
-				@result = @_root
-			when :con, :its
-				@result = "AS.#{name}"
+		if args.length > 0
+			@result += ".#{name.to_s}(#{(args.map { |arg| arg.inspect }).join(', ')})"
 		else
-			if args.length > 0
-				@result += ".#{name.to_s}(#{(args.map { |arg| arg.inspect }).join(', ')})"
-			else
-				@result += ".#{name.to_s}"
-			end
+			@result += ".#{name.to_s}"
 		end
 		return self
 	end

@@ -1,20 +1,9 @@
 TO DO
 
-- rename FileURL to FileRef?
-
 - improve error reporting; e.g. pack/unpack errors in aem/codecs.rb could have better descriptions and/or represented by a CodecsError class; ae/aem/appscript-defined exception classes aren't quite idiomatic Ruby
 
 - pack/unpack support for application types
 
-
-- figure out how to create top-level app, con, its functions that work correctly; right now, defining:
-
-require "appscript"
-def app(*args)
-	AS.app(*args)
-end
-
-produces reference objects okay, but these objects' to_s method returns empty strings instead of correct representation
 
 - allow users to extract a generic ref from a real ref (to_generic) for comparison purposes. Or vice-versa?
 

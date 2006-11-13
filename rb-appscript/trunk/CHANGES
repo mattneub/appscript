@@ -1,4 +1,4 @@
-2006-11-12 -- ???
+2006-11-13 -- ???
 
 - removed path expansion in FindApp#byName, MacFile::Alias#at, MacFile::FileURL#at
 
@@ -70,6 +70,8 @@
 - fixed appscript reference rendering bug where property/element names could get muddled (e.g. 'document' property would appear as 'documents')
 
 - fixed endian bug when packing/unpacking AEM::AEEventName (now always big-endian)
+
+- fixed wierd rendering bug where rendered references would be invisible if client script contained an 'app' method of its own (Ruby was invoking this instead of ReferenceRenderer#method_missing)
 
 
 2006-10-23 -- 0.1.6
