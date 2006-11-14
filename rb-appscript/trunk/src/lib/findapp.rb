@@ -8,19 +8,19 @@ module FindApp
 	
 	class ApplicationNotFoundError < RuntimeError
 	
-		attr_reader :creatorType, :bundleID, :applicationName
+		attr_reader :creator_type, :bundle_id, :application_name
 		
 		def initialize(creator, id, name)
-			@creatorType, @bundleID, @applicationName  = creator, id, name 
+			@creator_type, @bundle_id, @application_name  = creator, id, name 
 			super()
 		end
 	end
 	
 	#######
 	
-	def FindApp._findApp(creator, id, name)
+	def FindApp._find_app(creator, id, name)
 		begin
-			return AE.findApplication(creator, id, name)
+			return AE.find_application(creator, id, name)
 		rescue AE::MacOSError => err
 			if err.to_i == -10814
 				ident = [creator, id, name].compact.to_s.inspect
@@ -31,17 +31,17 @@ module FindApp
 		end
 	end
 
-	def FindApp.byname(name)
+	def FindApp.by_name(name)
 		if name[0, 1] != '/'
 			begin
-				newName = _findApp(nil, nil, name)
+				new_name = _find_app(nil, nil, name)
 			rescue ApplicationNotFoundError
 				if ('----' + name)[-4, 4].downcase == '.app'
 					raise ApplicationNotFoundError.new(nil, nil, name), "Application #{name.inspect} not found."
 				end
-				newName = _findApp(nil, nil, name + '.app')
+				new_name = _find_app(nil, nil, name + '.app')
 			end
-			name = newName
+			name = new_name
 		end
 		if not FileTest.exist?(name) and name[-4, 4].downcase != '.app' and not FileTest.exist?(name+ '.app')
 			name += '.app'
@@ -52,11 +52,11 @@ module FindApp
 		return name
 	end
 	
-	def FindApp.byid(id)
-		return _findApp(nil, id, nil)
+	def FindApp.by_id(id)
+		return _find_app(nil, id, nil)
 	end
 	
-	def FindApp.bycreator(creator)
-		return _findApp(creator, nil, nil)
+	def FindApp.by_creator(creator)
+		return _find_app(creator, nil, nil)
 	end
 end

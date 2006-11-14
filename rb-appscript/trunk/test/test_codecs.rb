@@ -154,8 +154,8 @@ class TC_Codecs < Test::Unit::TestCase
 	
 	def test_hash
 		val = {'foo' => 1, AEM::AEType.new('foob') => 2, AEM::AEProp.new('barr') => 3} # TO DO: also need to test appscript codecs (in separate test) to check String, AEType and Symbol keys all pack and unpack correctly
-		expectedVal = {'foo' => 1, AEM::AEType.new('foob') => 2, AEM::AEType.new('barr') => 3} # note that four-char-code keys are always unpacked as AEType
+		expected_val = {'foo' => 1, AEM::AEType.new('foob') => 2, AEM::AEType.new('barr') => 3} # note that four-char-code keys are always unpacked as AEType
 		d = @c.pack(val)
-		assert_equal(expectedVal, @c.unpack(d))
+		assert_equal(expected_val, @c.unpack(d))
 	end
 end

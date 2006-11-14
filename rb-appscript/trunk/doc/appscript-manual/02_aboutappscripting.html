@@ -194,9 +194,9 @@ app('TextEdit').documents[1].text.paragraphs</code></pre>
 <ul>
 <li>using aem:
 
-<pre><code>AEM::Application.bypath('/Applications/TextEdit.app').event('coregetd', {
+<pre><code>AEM::Application.by_path('/Applications/TextEdit.app').event('coregetd', {
     '----' =&gt; AEM.app.elements('docu').property('ctxt').elements('cpar'). \
-        byfilter(AEM.its.ne("\n")).elements('cha ').byindex(1).property('ptsz'),
+        by_filter(AEM.its.ne("\n")).elements('cha ').by_index(1).property('ptsz'),
     'data': 24
     }).send</code></pre>
 </li>

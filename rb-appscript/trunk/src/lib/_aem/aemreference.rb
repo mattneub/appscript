@@ -13,24 +13,24 @@ module AEMReference
 	
 	# TO DO: optimise type packers a-la codecs.rb
 	
-	def AEMReference.packType(code)
+	def AEMReference.pack_type(code)
 		return AE::AEDesc.new(KAE::TypeType, code.unpack('N').pack('L'))
 	end
 	
-	def AEMReference.packEnum(code)
+	def AEMReference.pack_enum(code)
 		return AE::AEDesc.new(KAE::TypeEnumeration, code.unpack('N').pack('L'))
 	end
 	
-	def AEMReference.packAbsoluteOrdinal(code)
+	def AEMReference.pack_absolute_ordinal(code)
 		return AE::AEDesc.new(KAE::TypeAbsoluteOrdinal, code.unpack('N').pack('L'))
 	end
 	
-	def AEMReference.packListAs(type, lst)
+	def AEMReference.pack_list_as(type, lst)
 		# used to pack object specifiers, etc.
 		# pack key-value pairs into an AEListDesc, then coerce it to the desired type
 		# (there are other AEM APIs for packing obj specs, but this way is easiest)
-		desc = AE::AEDesc.newList(true)
-		lst.each { |key, value| desc.putParam(key, value) }
+		desc = AE::AEDesc.new_list(true)
+		lst.each { |key, value| desc.put_param(key, value) }
 		return desc.coerce(type)
 	end
 	
@@ -106,7 +106,7 @@ module AEMReference
 			return @_container.AEM_root
 		end
 		
-		def AEM_trueSelf
+		def AEM_true_self
 			# Called by specifier classes when creating a reference to sub-element(s) of the current reference.
 			# - An AllElements specifier (which contains 'want', 'form', 'seld' and 'from' values) will return an UnkeyedElements object (which contains 'want' and 'from' data only). The new specifier object  (ElementByIndex, ElementsByRange, etc.) wraps itself around this stub and supply its own choice of 'form' and 'seld' values.
 			# - All other specifiers simply return themselves. 
@@ -115,14 +115,14 @@ module AEMReference
 			return self
 		end
 		
-		def AEM_setDesc(desc)
+		def AEM_set_desc(desc)
 			@_desc = desc
 		end
 		
-		def AEM_packSelf(codecs)
+		def AEM_pack_self(codecs)
 			# Pack this Specifier; called by Codecs#pack, which passes itself so that specifiers in this reference can pack their selectors.
 			if not @_desc
-				@_desc = _packSelf(codecs) # once packed, cache this AEDesc for efficiency
+				@_desc = _pack_self(codecs) # once packed, cache this AEDesc for efficiency
 			end
 			return @_desc
 		end
@@ -147,9 +147,9 @@ module AEMReference
 			return "#{@_container}.#{@_keyname}"
 		end
 		
-		def _packSelf(codecs)
-			return AEMReference.packListAs(KAE::TypeInsertionLoc, [
-					[KAE::KeyAEObject, @_container.AEM_packSelf(codecs)],
+		def _pack_self(codecs)
+			return AEMReference.pack_list_as(KAE::TypeInsertionLoc, [
+					[KAE::KeyAEObject, @_container.AEM_pack_self(codecs)],
 					[KAE::KeyAEPosition, @_key],
 					])
 		end
@@ -175,12 +175,12 @@ module AEMReference
 		# minimise runtime overhead (the target application will raise an error if the user 
 		# does something foolish).
 	
-		Beginning = AEMReference.packEnum(KAE::KAEBeginning)
-		End = AEMReference.packEnum(KAE::KAEEnd)
-		Before = AEMReference.packEnum(KAE::KAEBefore)
-		After = AEMReference.packEnum(KAE::KAEAfter)
-		Previous = AEMReference.packEnum(KAE::KAEPrevious)
-		Next = AEMReference.packEnum(KAE::KAENext)
+		Beginning = AEMReference.pack_enum(KAE::KAEBeginning)
+		End = AEMReference.pack_enum(KAE::KAEEnd)
+		Before = AEMReference.pack_enum(KAE::KAEBefore)
+		After = AEMReference.pack_enum(KAE::KAEAfter)
+		Previous = AEMReference.pack_enum(KAE::KAEPrevious)
+		Next = AEMReference.pack_enum(KAE::KAENext)
 		
 		attr_reader :AEM_want
 	
@@ -193,12 +193,12 @@ module AEMReference
 			return "#{@_container}.#{self.class::By}(#{@_key.inspect})"
 		end
 		
-		def _packSelf(codecs)
-			return AEMReference.packListAs(KAE::TypeObjectSpecifier, [
-					[KAE::KeyAEDesiredClass, AEMReference.packType(@AEM_want)],
+		def _pack_self(codecs)
+			return AEMReference.pack_list_as(KAE::TypeObjectSpecifier, [
+					[KAE::KeyAEDesiredClass, AEMReference.pack_type(@AEM_want)],
 					[KAE::KeyAEKeyForm, self.class::KeyForm],
-					[KAE::KeyAEKeyData, _packKey(codecs)],
-					[KAE::KeyAEContainer, @_container.AEM_packSelf(codecs)],
+					[KAE::KeyAEKeyData, _pack_key(codecs)],
+					[KAE::KeyAEContainer, @_container.AEM_pack_self(codecs)],
 					])
 		end
 		
@@ -230,11 +230,11 @@ module AEMReference
 			return LessOrEquals.new(self, val)
 		end
 		
-		def startswith(val)
+		def starts_with(val)
 			return StartsWith.new(self, val)
 		end
 		
-		def endswith(val)
+		def ends_with(val)
 			return EndsWith.new(self, val)
 		end
 		
@@ -242,7 +242,7 @@ module AEMReference
 			return Contains.new(self, val)
 		end
 		
-		def isin(val)
+		def is_in(val)
 			return IsIn.new(self, val)
 		end
 	
@@ -326,10 +326,10 @@ module AEMReference
 		# Syntax: ref.property(code)
 			
 		By = 'property'
-		KeyForm = AEMReference.packEnum(KAE::FormPropertyID)
+		KeyForm = AEMReference.pack_enum(KAE::FormPropertyID)
 		
-		def _packKey(codecs)
-			return AEMReference.packType(@_key)
+		def _pack_key(codecs)
+			return AEMReference.pack_type(@_key)
 		end
 		
 		def AEM_resolve(obj)
@@ -347,10 +347,10 @@ module AEMReference
 		# Syntax: ref.userproperty(name)
 	
 		By = 'userproperty'
-		KeyForm = AEMReference.packEnum('usrp')
+		KeyForm = AEMReference.pack_enum('usrp')
 		
-		def _packKey(codecs)
-			return codecs.pack(@_key).coerceDesc(KAE::TypeChar)
+		def _pack_key(codecs)
+			return codecs.pack(@_key).coerce(KAE::TypeChar)
 		end
 		
 		def AEM_resolve(obj)
@@ -370,10 +370,10 @@ module AEMReference
 		# Base class for all single element specifiers.
 		
 		def initialize(wantcode, container, key)
-			super(wantcode, container.AEM_trueSelf, key)
+			super(wantcode, container.AEM_true_self, key)
 		end
 		
-		def _packKey(codecs)
+		def _pack_key(codecs)
 			return codecs.pack(@_key)
 		end
 		
@@ -388,32 +388,32 @@ module AEMReference
 	class ElementByName < SingleElement
 		# A reference to a single element by its name, where name is a string.
 		
-		# Syntax: elements_ref..byname(string)
+		# Syntax: elements_ref.by_name(string)
 		
-		By = 'byname'
-		KeyForm = AEMReference.packEnum(KAE::FormName)
+		By = 'by_name'
+		KeyForm = AEMReference.pack_enum(KAE::FormName)
 	end
 	
 	
 	class ElementByIndex < SingleElement
 		# A reference to a single element by its index, where index is a non-zero whole number.
 		
-		# Syntax: elements_ref.byindex(integer)
+		# Syntax: elements_ref.by_index(integer)
 		
 		# Note that a few apps (e.g. Finder) may allow other values as well (e.g. Aliases/FSRefs)
 		
-		By = 'byindex'
-		KeyForm = AEMReference.packEnum(KAE::FormAbsolutePosition)
+		By = 'by_index'
+		KeyForm = AEMReference.pack_enum(KAE::FormAbsolutePosition)
 	end
 	
 	
 	class ElementByID < SingleElement
 		# A reference to a single element by its id.
 		
-		# Syntax: elements_ref.byid(anything)
+		# Syntax: elements_ref.by_id(anything)
 		
-		By = 'byid'
-		KeyForm = AEMReference.packEnum(KAE::FormUniqueID)
+		By = 'by_id'
+		KeyForm = AEMReference.pack_enum(KAE::FormUniqueID)
 	end
 	
 	##
@@ -423,7 +423,7 @@ module AEMReference
 		
 		# Syntax: elements_ref.first / elements_ref.middle / elements_ref.last / elements_ref.any
 	
-		KeyForm = AEMReference.packEnum(KAE::FormAbsolutePosition)
+		KeyForm = AEMReference.pack_enum(KAE::FormAbsolutePosition)
 		
 		def initialize(wantcode, container, key, keyname)
 			@_keyname = keyname
@@ -448,17 +448,17 @@ module AEMReference
 		
 		# Note: this class subclasses PositionSpecifier, not SingleElement,
 		# as it needs the container reference intact. (SingleElement#initialize
-		# calls the container's AEM_trueSelf method, which breaks up 
+		# calls the container's AEM_true_self method, which breaks up 
 		# AllElements specifiers - not what we want here.)
 		
-		KeyForm = AEMReference.packEnum(KAE::FormRelativePosition)
+		KeyForm = AEMReference.pack_enum(KAE::FormRelativePosition)
 		
 		def initialize(wantcode, container, key, keyname)
 			@_keyname = keyname
 			super(wantcode, container, key)
 		end
 		
-		def _packKey(codecs)
+		def _pack_key(codecs)
 			return codecs.pack(@_key)
 		end
 		
@@ -478,10 +478,10 @@ module AEMReference
 	class MultipleElements < PositionSpecifier
 		# Base class for all multiple element specifiers.
 		
-		First = AEMReference.packAbsoluteOrdinal(KAE::KAEFirst)
-		Middle = AEMReference.packAbsoluteOrdinal(KAE::KAEMiddle)
-		Last = AEMReference.packAbsoluteOrdinal(KAE::KAELast)
-		Any = AEMReference.packAbsoluteOrdinal(KAE::KAEAny)
+		First = AEMReference.pack_absolute_ordinal(KAE::KAEFirst)
+		Middle = AEMReference.pack_absolute_ordinal(KAE::KAEMiddle)
+		Last = AEMReference.pack_absolute_ordinal(KAE::KAELast)
+		Any = AEMReference.pack_absolute_ordinal(KAE::KAEAny)
 		
 		def first
 			return ElementByOrdinal.new(@AEM_want, self, First, 'first')
@@ -499,23 +499,23 @@ module AEMReference
 			return ElementByOrdinal.new(@AEM_want, self, Any, 'any')
 		end
 		
-		def byname(name)
+		def by_name(name)
 			return ElementByName.new(@AEM_want, self, name)
 		end
 		
-		def byindex(index)
+		def by_index(index)
 			return ElementByIndex.new(@AEM_want, self, index)
 		end
 		
-		def byid(id)
+		def by_id(id)
 			return ElementByID.new(@AEM_want, self, id)
 		end
 		
-		def byrange(start, stop)
+		def by_range(start, stop)
 			return ElementsByRange.new(@AEM_want, self, [start, stop])
 		end
 		
-		def byfilter(expression)
+		def by_filter(expression)
 			return ElementsByFilter.new(@AEM_want, self, expression)
 		end
 	end
@@ -526,12 +526,12 @@ module AEMReference
 	class ElementsByRange < MultipleElements
 		# A reference to a range of elements
 		
-		# Syntax: elements_ref.byrange(start, stop)
+		# Syntax: elements_ref.by_range(start, stop)
 		
 		# The start and stop args are con-based relative references to the first and last elements in range.
 		# Note that absolute (app-based) references are also acceptable.
 	
-		KeyForm = AEMReference.packEnum(KAE::FormRange)
+		KeyForm = AEMReference.pack_enum(KAE::FormRange)
 		
 		def initialize(wantcode, container, key)
 			key.each do |item|
@@ -539,22 +539,22 @@ module AEMReference
 					raise TypeError, "Bad selector: not an application (app) or container (con) based reference: #{item.inspect}"
 				end
 			end
-			super(wantcode, container.AEM_trueSelf, key)
+			super(wantcode, container.AEM_true_self, key)
 		end
 		
 		def to_s
-			return "#{@_container}.byrange(#{@_key[0].inspect}, #{@_key[1].inspect})"
+			return "#{@_container}.by_range(#{@_key[0].inspect}, #{@_key[1].inspect})"
 		end
 	
-		def _packKey(codecs)
-			return AEMReference.packListAs(KAE::TypeRangeDescriptor, [
+		def _pack_key(codecs)
+			return AEMReference.pack_list_as(KAE::TypeRangeDescriptor, [
 					[KAE::KeyAERangeStart, codecs.pack(@_key[0])], 
 					[KAE::KeyAERangeStop, codecs.pack(@_key[1])]
 					])
 		end
 		
 		def AEM_resolve(obj)
-			return @_container.AEM_resolve(obj).byrange(*@_key)
+			return @_container.AEM_resolve(obj).by_range(*@_key)
 		end
 	end
 	
@@ -562,13 +562,13 @@ module AEMReference
 	class ElementsByFilter < MultipleElements
 		# A reference to all elements that match a condition
 		
-		# Syntax: elements_ref.byfilter(test)
+		# Syntax: elements_ref.by_filter(test)
 		
 		# The test argument is a Test object constructed from an its-based reference.
 		# For convenience, an its-based reference can also be passed directly - this will
 		# be expanded to a Boolean equality test, e.g. AEM.its.visible -> AEM.its.visible.eq(true)
 	
-		KeyForm = AEMReference.packEnum(KAE::FormTest)
+		KeyForm = AEMReference.pack_enum(KAE::FormTest)
 		
 		def initialize(wantcode, container, key)
 			if not key.is_a?(Test)
@@ -578,19 +578,19 @@ module AEMReference
 					raise TypeError, "Bad selector: not a test (its) based specifier: #{key.inspect}"
 				end
 			end
-			super(wantcode, container.AEM_trueSelf, key)
+			super(wantcode, container.AEM_true_self, key)
 		end
 		
 		def to_s
-			return "#{@_container}.byfilter(#{@_key.inspect})"
+			return "#{@_container}.by_filter(#{@_key.inspect})"
 		end
 	
-		def _packKey(codecs)
+		def _pack_key(codecs)
 			return codecs.pack(@_key)
 		end
 		
 		def AEM_resolve(obj)
-			return @_container.AEM_resolve(obj).byfilter(@_key)
+			return @_container.AEM_resolve(obj).by_filter(@_key)
 		end
 	end
 	
@@ -603,7 +603,7 @@ module AEMReference
 		# The 'code' argument is the four-character class code of the desired elements (e.g. 'docu').
 				
 		# Note that an AllElements object is a wrapper around an UnkeyedElements object. 
-		# When sub-selecting these elements, e.g. ref.elements('docu').byindex(1), the AllElements
+		# When sub-selecting these elements, e.g. ref.elements('docu').by_index(1), the AllElements
 		# wrapper is ignored and the UnkeyedElements object is used as the basis for the
 		# new specifier. e.g. 
 		#
@@ -615,7 +615,7 @@ module AEMReference
 		#
 		# Subselecting these elements, e.g. 
 		#
-		# AEM.app.elements('docu').byindex(1) # document 1 of application
+		# AEM.app.elements('docu').by_index(1) # document 1 of application
 		#
 		# produces the following chain:
 		#
@@ -640,8 +640,8 @@ module AEMReference
 		# API, which is easy to implement but isn't so good for usability. Whereas aem trades
 		# a bit of increased internal complexity for a simpler, more intuitive and foolproof external API.
 	
-		KeyForm = AEMReference.packEnum(KAE::FormAbsolutePosition)
-		All = AEMReference.packAbsoluteOrdinal(KAE::KAEAll)
+		KeyForm = AEMReference.pack_enum(KAE::FormAbsolutePosition)
+		All = AEMReference.pack_absolute_ordinal(KAE::KAEAll)
 		
 		def initialize(wantcode, container)
 			super(wantcode, UnkeyedElements.new(wantcode, container), All)
@@ -651,11 +651,11 @@ module AEMReference
 			return @_container.to_s
 		end
 		
-		def _packKey(codecs)
+		def _pack_key(codecs)
 			return All
 		end
 		
-		def AEM_trueSelf
+		def AEM_true_self
 			 # override default implementation to return the UnkeyedElements object stored inside of this AllElements instance
 			return @_container
 		end
@@ -689,8 +689,8 @@ module AEMReference
 			return "#{@_container}.elements(#{@AEM_want.inspect})"
 		end
 		
-		def AEM_packSelf(codecs)
-			return @_container.AEM_packSelf(codecs)
+		def AEM_pack_self(codecs)
+			return @_container.AEM_pack_self(codecs)
 		end
 		
 		def AEM_resolve(obj)
@@ -708,27 +708,27 @@ module AEMReference
 			@_codecs   = codecs
 		end
 		
-		def _realRef
+		def _real_ref
 			if not @_ref
-				@_ref = @_codecs.fullyUnpackObjectSpecifier(@_desc)
+				@_ref = @_codecs.fully_unpack_object_specifier(@_desc)
 			end
 			return @_ref
 		end
 		
-		def AEM_trueSelf
+		def AEM_true_self
 			return self
 		end
 		
 		def to_s
-			return _realRef.to_s
+			return _real_ref.to_s
 		end
 		
 		def AEM_root
-			return _realRef.AEM_root
+			return _real_ref.AEM_root
 		end
 		
 		def AEM_resolve(obj)
-			return _realRef.AEM_resolve(obj)
+			return _real_ref.AEM_resolve(obj)
 		end
 	end
 	
@@ -778,8 +778,8 @@ module AEMReference
 			return @_operand1.AEM_resolve(obj).send(self.class::Name, @_operand2)
 		end
 	
-		def AEM_packSelf(codecs)
-			return AEMReference.packListAs(KAE::TypeCompDescriptor, [
+		def AEM_pack_self(codecs)
+			return AEMReference.pack_list_as(KAE::TypeCompDescriptor, [
 					[KAE::KeyAEObject1, codecs.pack(@_operand1)], 
 					[KAE::KeyAECompOperator, self.class::Operator],
 					[KAE::KeyAEObject2, codecs.pack(@_operand2)]
@@ -793,58 +793,58 @@ module AEMReference
 	
 	class GreaterThan < ComparisonTest
 		Name = 'gt'
-		Operator = AEMReference.packEnum(KAE::KAEGreaterThan)
+		Operator = AEMReference.pack_enum(KAE::KAEGreaterThan)
 	end
 	
 	class GreaterOrEquals < ComparisonTest
 		Name = 'ge'
-		Operator = AEMReference.packEnum(KAE::KAEGreaterThanEquals)
+		Operator = AEMReference.pack_enum(KAE::KAEGreaterThanEquals)
 	end
 	
 	class Equals < ComparisonTest
 		Name = 'eq'
-		Operator = AEMReference.packEnum(KAE::KAEEquals)
+		Operator = AEMReference.pack_enum(KAE::KAEEquals)
 	end
 	
 	class NotEquals < Equals
 		Name = 'ne'
-		OperatorNOT = AEMReference.packEnum(KAE::KAENOT)
+		OperatorNOT = AEMReference.pack_enum(KAE::KAENOT)
 		
-		def AEM_packSelf(codecs)
-			return @_operand1.eq(@_operand2).not.AEM_packSelf(codecs)
+		def AEM_pack_self(codecs)
+			return @_operand1.eq(@_operand2).not.AEM_pack_self(codecs)
 		end
 	end
 	
 	class LessThan < ComparisonTest
 		Name = 'lt'
-		Operator = AEMReference.packEnum(KAE::KAELessThan)
+		Operator = AEMReference.pack_enum(KAE::KAELessThan)
 	end
 	
 	class LessOrEquals < ComparisonTest
 		Name = 'le'
-		Operator = AEMReference.packEnum(KAE::KAELessThanEquals)
+		Operator = AEMReference.pack_enum(KAE::KAELessThanEquals)
 	end
 	
 	class StartsWith < ComparisonTest
-		Name = 'startswith'
-		Operator = AEMReference.packEnum(KAE::KAEBeginsWith)
+		Name = 'starts_with'
+		Operator = AEMReference.pack_enum(KAE::KAEBeginsWith)
 	end
 	
 	class EndsWith < ComparisonTest
-		Name = 'endswith'
-		Operator = AEMReference.packEnum(KAE::KAEEndsWith)
+		Name = 'ends_with'
+		Operator = AEMReference.pack_enum(KAE::KAEEndsWith)
 	end
 	
 	class Contains < ComparisonTest
 		Name = 'contains'
-		Operator = AEMReference.packEnum(KAE::KAEContains)
+		Operator = AEMReference.pack_enum(KAE::KAEContains)
 	end
 	
 	class IsIn < Contains
-		Name = 'isin'
+		Name = 'is_in'
 	
-		def AEM_packSelf(codecs)
-			return AEMReference.packListAs(KAE::TypeCompDescriptor, [
+		def AEM_pack_self(codecs)
+			return AEMReference.pack_list_as(KAE::TypeCompDescriptor, [
 					[KAE::KeyAEObject1, codecs.pack(@_operand2)],
 					[KAE::KeyAECompOperator, self.class::Operator],
 					[KAE::KeyAEObject2, codecs.pack(@_operand1)]
@@ -864,16 +864,16 @@ module AEMReference
 		end
 			
 		def to_s
-			opStr = (@_operands[1, @_operands.length].collect { |o| o.inspect }).join(', ')
-			return "#{@_operands[0].inspect}.#{self.class::Name}(#{opStr})"
+			op_str = (@_operands[1, @_operands.length].collect { |o| o.inspect }).join(', ')
+			return "#{@_operands[0].inspect}.#{self.class::Name}(#{op_str})"
 		end
 		
 		def AEM_resolve(obj)
 			return @_operands[0].AEM_resolve(obj).send(self.class::Name, *@_operands[1, @_operands.length])
 		end
 		
-		def AEM_packSelf(codecs)
-			return AEMReference.packListAs(KAE::TypeLogicalDescriptor, [
+		def AEM_pack_self(codecs)
+			return AEMReference.pack_list_as(KAE::TypeLogicalDescriptor, [
 					[KAE::KeyAELogicalOperator, self.class::Operator],
 					[KAE::KeyAELogicalTerms, codecs.pack(@_operands)]
 					])
@@ -883,17 +883,17 @@ module AEMReference
 	##
 	
 	class AND < LogicalTest
-		Operator = AEMReference.packEnum(KAE::KAEAND)
+		Operator = AEMReference.pack_enum(KAE::KAEAND)
 		Name = 'and'
 	end
 	
 	class OR < LogicalTest
-		Operator = AEMReference.packEnum(KAE::KAEOR)
+		Operator = AEMReference.pack_enum(KAE::KAEOR)
 		Name = 'or'
 	end
 	
 	class NOT < LogicalTest
-		Operator = AEMReference.packEnum(KAE::KAENOT)
+		Operator = AEMReference.pack_enum(KAE::KAENOT)
 		Name = 'not'
 			
 		def to_s
@@ -922,7 +922,7 @@ module AEMReference
 			return "AEM.#{self.class::Name}"
 		end
 		
-		def _packSelf(codecs)
+		def _pack_self(codecs)
 			return self.class::Type
 		end
 		

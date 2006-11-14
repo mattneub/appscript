@@ -41,13 +41,13 @@ module OSAX
 	
 		def _connect
 			if @path
-				@target = @_aemApplicationClass.bypath(@path)
+				@target = @_aem_application_class.by_path(@path)
 			elsif @pid
-				@target = @_aemApplicationClass.bypid(@pid)
+				@target = @_aem_application_class.by_pid(@pid)
 			elsif @url
-				@target = @_aemApplicationClass.byurl(@url)
+				@target = @_aem_application_class.by_url(@url)
 			else
-				@target = @_aemApplicationClass.current
+				@target = @_aem_application_class.current
 			end
 			begin
 				@target.event('ascrgdut').send(300) # make sure target application loads osaxen
@@ -56,7 +56,7 @@ module OSAX
 					raise
 				end
 			end
-			@typebycode, @typebyname, @referencebycode, @referencebyname = @_terms
+			@type_by_code, @type_by_name, @reference_by_code, @reference_by_name = @_terms
 			extend(AS::AppDataAccessors)
 		end
 	
@@ -71,10 +71,10 @@ module OSAX
 		return OSAXNames
 	end
 	
-	def OSAX.osax(name, appName=nil)
+	def OSAX.osax(name, app_name=nil)
 		addition = ScriptingAddition.new(name)
-		if appName
-			addition = addition.byname(appName)
+		if app_name
+			addition = addition.by_name(app_name)
 		end
 		return addition
 	end
@@ -84,9 +84,9 @@ module OSAX
 		# Represents a single scripting addition.
 		
 		def initialize(name)
-			@_osaxName = name
+			@_osax_name = name
 			if name.is_a?(OSAXData)
-				osaxData = name
+				osax_data = name
 			else
 				path, terms = OSAXCache[name.downcase.sub(/(?i)\.osax$/, '')]
 				if not path
@@ -95,17 +95,17 @@ module OSAX
 				if terms
 					@_terms = terms
 				else
-					desc = AE.getAppTerminology(path).coerce(KAE::TypeAEList)
+					desc = AE.get_app_terminology(path).coerce(KAE::TypeAEList)
 					@_terms = OSAXCache[name.downcase][1] = \
-							Terminology.tablesForAetes(DefaultCodecs.unpack(desc))
+							Terminology.tables_for_aetes(DefaultCodecs.unpack(desc))
 				end
-				osaxData = OSAXData.new(nil, nil, nil, @_terms)
+				osax_data = OSAXData.new(nil, nil, nil, @_terms)
 			end
-			super(osaxData, AEM.app)
+			super(osax_data, AEM.app)
 		end
 		
 		def to_s
-			return "#<OSAX::ScriptingAddition name=#{@_osaxName.inspect} target=#{@AS_appdata.target.inspect}>"
+			return "#<OSAX::ScriptingAddition name=#{@_osax_name.inspect} target=#{@AS_app_data.target.inspect}>"
 		end
 		
 		alias_method :inspect, :to_s
@@ -117,7 +117,7 @@ module OSAX
 				super
 			rescue AS::CommandError => e
 				if e.to_i == -1713
-					AE.transformProcessToForegroundApplication
+					AE.transform_process_to_foreground_application
 					activate
 					super
 				else
@@ -129,23 +129,23 @@ module OSAX
 		# A client-created scripting addition is automatically targetted at the current application.
 		# Clients can specify another application as target by calling one of the following methods:
 		
-		def byname(name)
-			return ScriptingAddition.new(OSAXData.new(FindApp.byname(name), nil, nil, @_terms))
+		def by_name(name)
+			return ScriptingAddition.new(OSAXData.new(FindApp.by_name(name), nil, nil, @_terms))
 		end
 		
-		def byid(id)
-			return ScriptingAddition.new(OSAXData.new(FindApp.byid(id), nil, nil, @_terms))
+		def by_id(id)
+			return ScriptingAddition.new(OSAXData.new(FindApp.by_id(id), nil, nil, @_terms))
 		end
 		
-		def bycreator(creator)
-			return ScriptingAddition.new(OSAXData.new(FindApp.bycreator(creator), nil, nil, @_terms))
+		def by_creator(creator)
+			return ScriptingAddition.new(OSAXData.new(FindApp.by_creator(creator), nil, nil, @_terms))
 		end
 		
-		def bypid(pid)
+		def by_pid(pid)
 			return ScriptingAddition.new(OSAXData.new(nil, pid, nil, @_terms))
 		end
 		
-		def byurl(url)
+		def by_url(url)
 			return ScriptingAddition.new(OSAXData.new(nil, nil, url, @_terms))
 		end
 		

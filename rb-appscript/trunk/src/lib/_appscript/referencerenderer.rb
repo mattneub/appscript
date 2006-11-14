@@ -10,73 +10,73 @@ class ReferenceRenderer
 	private_class_method :new
 	attr_reader :result
 	
-	def initialize(appdata)
-		@_appdata = appdata
+	def initialize(app_data)
+		@_app_data = app_data
 		@result = "AS"
 	end
 	
 	def _format(val)
 		if val.is_a?(AEMReference::Base)
-			return ReferenceRenderer.render(@_appdata, val)
+			return ReferenceRenderer.render(@_app_data, val)
 		else
 			return val.inspect
 		end
 	end
 	
 	def property(code)
-		name = @_appdata.referencebycode.fetch('p'+code) { @_appdata.referencebycode.fetch('e'+code) }
+		name = @_app_data.reference_by_code.fetch('p'+code) { @_app_data.reference_by_code.fetch('e'+code) }
 		@result += ".#{name}"
 		return self
 	end
 	
 	def elements(code)
-		name = @_appdata.referencebycode.fetch('e'+code) { @_appdata.referencebycode.fetch('p'+code) }
+		name = @_app_data.reference_by_code.fetch('e'+code) { @_app_data.reference_by_code.fetch('p'+code) }
 		@result += ".#{name}"
 		return self
 	end
 	
-	def byname(name)
+	def by_name(name)
 		@result += "[#{_format(name)}]"
 		return self
 	end
 	
-	def byindex(index)
+	def by_index(index)
 		@result += "[#{_format(index)}]"
 		return self
 	end
 	
-	def byid(id)
+	def by_id(id)
 		@result += ".ID(#{_format(id)})"
 		return self
 	end
 	
-	def byrange(sel1, sel2)
+	def by_range(sel1, sel2)
 		@result += "[#{_format(sel1)}, #{_format(sel2)}]"
 		return self
 	end
 	
-	def byfilter(sel)
+	def by_filter(sel)
 		@result += "[#{_format(sel)}]"
 		return self
 	end
 	
 	def previous(sel)
-		@result += ".previous(#{_format(@_appdata.typebycode[sel])})"
+		@result += ".previous(#{_format(@_app_data.type_by_code[sel])})"
 		return self
 	end
 	
 	def next(sel)
-		@result += ".next(#{_format(@_appdata.typebycode[sel])})"
+		@result += ".next(#{_format(@_app_data.type_by_code[sel])})"
 		return self
 	end
 	
 	def app
-		if @_appdata.path
-			@result += ".app(#{@_appdata.path.inspect})"
-		elsif @_appdata.pid
-			@result += ".app.bypid(#{@_appdata.pid.inspect})"
-		elsif @_appdata.url
-			@result += ".app.byurl(#{@_appdata.url.inspect})"
+		if @_app_data.path
+			@result += ".app(#{@_app_data.path.inspect})"
+		elsif @_app_data.pid
+			@result += ".app.by_pid(#{@_app_data.pid.inspect})"
+		elsif @_app_data.url
+			@result += ".app.by_url(#{@_app_data.url.inspect})"
 		else
 			@result += ".app.current"
 		end
@@ -104,13 +104,13 @@ class ReferenceRenderer
 	
 	# public
 	
-	def ReferenceRenderer.render(appdata, aemreference)
-		f = new(appdata)
+	def ReferenceRenderer.render(app_data, aem_reference)
+		f = new(app_data)
 		begin
-			aemreference.AEM_resolve(f)
+			aem_reference.AEM_resolve(f)
 			return f.result
 		rescue
-			return aemreference.inspect
+			return aem_reference.inspect
 		end
 	end
 

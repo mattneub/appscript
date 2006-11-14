@@ -25,19 +25,19 @@
 
 <p>Before you can communicate with a scriptable application you must call one of the following methods to create an application object:</p>
 
-<pre><code>AS.app.byname(name) # name or POSIX path of local application
+<pre><code>AS.app.by_name(name) # name or POSIX path of local application
 
-AS.app.byid(id) # bundle ID for a local application
+AS.app.by_id(id) # bundle ID for a local application
 
-AS.app.bycreator(creator) # 4-character creator type for a local application
+AS.app.by_creator(creator) # 4-character creator type for a local application
 
-AS.app.bypid(pid) # Unix process id for a local process
+AS.app.by_pid(pid) # Unix process id for a local process
 
-AS.app.byurl(url) # eppc URL for a remote process
+AS.app.by_url(url) # eppc URL for a remote process
 
 AS.app.current # the host process</code></pre>
 
-<p>For convenience, the most commonly used form, <code>AS.app.byname(name)</code>, can be shortened to:</p>
+<p>For convenience, the most commonly used form, <code>AS.app.by_name(name)</code>, can be shortened to:</p>
 
 <pre><code>AS.app(name)</code></pre>
 
@@ -72,13 +72,13 @@ textedit = AS.app('TextEdit.app')
 
 safari = AS.app('/Applications/Safari')
 
-addressbook = AS.app.byid('com.apple.addressbook')
+addressbook = AS.app.by_id('com.apple.addressbook')
 
-quicktimeplayer = AS.app.bycreator('TVOD')
+quicktimeplayer = AS.app.by_creator('TVOD')
 
-finder = AS.app.byurl('eppc://192.168.10.1/Finder')
+finder = AS.app.by_url('eppc://192.168.10.1/Finder')
 
-itunes = AS.app.byurl('eppc://Jan%20Smith@G4.local/iTunes')</code></pre>
+itunes = AS.app.by_url('eppc://Jan%20Smith@G4.local/iTunes')</code></pre>
 
 
 <h2>Basic commands</h2>
@@ -125,9 +125,9 @@ set(reference, :to =&gt; value) -- Set an object's data.
 
 <h2>Transaction support</h2>
 
-<p>Application objects implement two additional methods, <code>starttransaction</code> and <code>endtransaction</code> that allow a sequence of related commands to be handled as a single operation by applications that support transactions, e.g. FileMaker Pro. Once the application object's <code>starttransaction</code> method is called, all subsequent commands to that application will be sent as part of the same transaction until <code>endtransaction</code> is called.</p>
+<p>Application objects implement two additional methods, <code>start_transaction</code> and <code>end_transaction</code> that allow a sequence of related commands to be handled as a single operation by applications that support transactions, e.g. FileMaker Pro. Once the application object's <code>start_transaction</code> method is called, all subsequent commands to that application will be sent as part of the same transaction until <code>end_transaction</code> is called.</p>
 
-<p class="hilitebox">Remember to call <code>endtransaction</code> at the end of every transaction. (This includes transactions interrupted by a raised exception.)</p>
+<p class="hilitebox">Remember to call <code>end_transaction</code> at the end of every transaction. (This includes transactions interrupted by a raised exception.)</p>
 
 
 <h2>Local application launching notes</h2>

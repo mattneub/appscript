@@ -31,7 +31,7 @@
 
 
 <!-- TO DO:
-- patching AS_appdata codecs
+- patching AS_app_data codecs
 - adding application-specific unit types
 - FSRef/FileURL/FSSpec, string/unicode/international text compatibility issues with older apps 
 -->
@@ -47,16 +47,16 @@
 
 <p>If faulty terminology prevents you from correctly constructing an appscript reference or command, one solution is to use the lower-level aem module, which uses raw codes instead of human-readable names. (You can use the <a href="http://sourceforge.net/project/showfiles.php?group_id=175009">ASDictionary</a> application to obtain a plain text listing of raw codes from an application's terminology resource.)</p>
 
-<p>Note that you can obtain an aem reference from an existing appscript reference by calling its <code>AS_aemreference</code> method. You can also pass an aem reference as a parameter to an appscript command. (You cannot use an appscript reference in an aem event, however; you have to extract its aem reference and use that.)</p>
+<p>Note that you can obtain an aem reference from an existing appscript reference by calling its <code>AS_aem_reference</code> method. You can also pass an aem reference as a parameter to an appscript command. (You cannot use an appscript reference in an aem event, however; you have to extract its aem reference and use that.)</p>
 
 <p>For example:</p>
 
-<pre><code>aemRef = AS.app('TextEdit').documents[1].text.AS_aemreference
+<pre><code>aem_ref = AS.app('TextEdit').documents[1].text.AS_aem_reference
 
-# aemRef contains an aem reference:
-#     app.elements('docu').byindex(1).elements('ctxt')
+# aem_ref contains an aem reference:
+#     app.elements('docu').by_index(1).elements('ctxt')
 
-app('TextEdit').get(aemRef)</code></pre>
+app('TextEdit').get(aem_ref)</code></pre>
 
 
 <p class="hilitebox">Note that the rb-aem documentation is not yet available; for now, refer to the py-aem documentation (rb-aem's API is virtually identical to py-aem's) and rb-aem source code for more information.</p>
@@ -162,7 +162,7 @@ ical = AS.app('iCal', ICalTerminology)
 
 <li>When sending an <code>open</code> event, the application must first be started using the <code>launch</code> command to avoid it receiving the usual <code>run</code> event upon start-up.</li>
 
-<li>Since non-stay-open applications don't reply to commands, the <code>run</code>/<code>open</code> command's <code>:waitreply</code> argument must be <code>false</code> to prevent appscript waiting for a non-existent response.</li>
+<li>Since non-stay-open applications don't reply to commands, the <code>run</code>/<code>open</code> command's <code>:wait_reply</code> argument must be <code>false</code> to prevent appscript waiting for a non-existent response.</li>
 </ol>
 
 <p>Examples:</p>
@@ -171,12 +171,12 @@ ical = AS.app('iCal', ICalTerminology)
 require "macfile"
 
 # Run
-AS.app('Foo', false).run(:waitreply => false)
+AS.app('Foo', false).run(:wait_reply => false)
 
 # Open
 bar = AS.app('Bar', false)
 bar.launch
-bar.open([MacFile.Alias('/path/to/item 1'), ...], :waitreply => false)</code></pre>
+bar.open([MacFile::Alias.path('/path/to/item 1'), ...], :wait_reply => false)</code></pre>
 
 
 

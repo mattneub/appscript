@@ -23,18 +23,18 @@ Example:
 	exit
 end
 
-appPath = FindApp.byname(ARGV[0])
-moduleName = ARGV[1]
-outPath = ARGV[2]
+app_path = FindApp.by_name(ARGV[0])
+module_name = ARGV[1]
+out_path = ARGV[2]
 
-if not /^[A-Z][A-Za-z0-9_]*$/ === moduleName
+if not /^[A-Z][A-Za-z0-9_]*$/ === module_name
 	raise RuntimeError, "Invalid module name."
 end
 
-File.open(outPath, "w") do |f|
+File.open(out_path, "w") do |f|
 	# Get aete(s)
 	begin
-		aetes = AEM::Codecs.new.unpack(AE.getAppTerminology(appPath).coerce(KAE::TypeAEList))
+		aetes = AEM::Codecs.new.unpack(AE.get_app_terminology(app_path).coerce(KAE::TypeAEList))
 	rescue AE::MacOSError => e
 		if  e.to_i == -192 # aete resource not found
 			raise RuntimeError, "No terminology found."
@@ -43,13 +43,13 @@ File.open(outPath, "w") do |f|
 		end
 	end
 	
-	# Parse aete(s) into intermediate tables, suitable for use by Terminology#tablesForModule
-	tables = TerminologyParser.buildTablesForAetes(aetes)
+	# Parse aete(s) into intermediate tables, suitable for use by Terminology#tables_for_module
+	tables = TerminologyParser.build_tables_for_aetes(aetes)
 	
 	# Write module code
-	f.puts "module #{moduleName}"
+	f.puts "module #{module_name}"
 	f.puts "\tVersion = 1.1"
-	f.puts "\tPath = #{appPath.inspect}"
+	f.puts "\tPath = #{app_path.inspect}"
 	f.puts
 	(["Classes", "Enumerators", "Properties", "Elements"].zip(tables[0,4])).each do |name, table|
 		f.puts "\t#{name} = ["

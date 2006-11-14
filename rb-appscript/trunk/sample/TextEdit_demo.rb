@@ -107,7 +107,7 @@ p textedit.documents[1].paragraphs[AS.its.ne("\n")].get
 
 # tell application "TextEdit" to get text of every document 
 #         whose text begins with "H"
-p textedit.documents[AS.its.text.startswith('H')].text.get
+p textedit.documents[AS.its.text.starts_with('H')].text.get
 
 
 

@@ -57,8 +57,8 @@ module AEM
 		attr_reader :hash, :identity
 		protected :identity
 		
-		@@_appNumberCount = 0
-		@@_transactionIDsByAppNo = {}
+		@@_app_number_count = 0
+		@@_transaction_ids_by_app_no = {}
 
 		#######
 	
@@ -73,12 +73,12 @@ module AEM
 			@identity = identity
 			@hash = identity.hash
 			# workaround for lack of proper destructors; if a transaction is still open when Application instance is garbage collected, the following finalizer will automatically close it. Note: object IDs were different for some reason, so class maintains its own unique ids.
-			@appNumber = appNumber = (@@_appNumberCount += 1)
-			@@_transactionIDsByAppNo[appNumber] = @_transaction
+			@app_number = app_number = (@@_app_number_count += 1)
+			@@_transaction_ids_by_app_no[app_number] = @_transaction
 			ObjectSpace.define_finalizer(WeakRef.new(self), proc do
-				transactionID = @@_transactionIDsByAppNo.delete(appNumber)
-				if transactionID != KAE::KAnyTransactionID
-					Send::Event(address, 'miscendt', transaction=transactionID).send
+				transaction_id = @@_transaction_ids_by_app_no.delete(app_number)
+				if transaction_id != KAE::KAnyTransactionID
+					Send::Event(address, 'miscendt', transaction=transaction_id).send
 				end
 			end)
 		end
@@ -86,19 +86,19 @@ module AEM
 		#######
 		# constructors
 		
-		def Application.bypath(path)
-			return new(path, Connect.localApp(path), [:path, path])
+		def Application.by_path(path)
+			return new(path, Connect.local_app(path), [:path, path])
 		end
 		
-		def Application.byurl(url)
-			return new(nil, Connect.remoteApp(url), [:url, url])
+		def Application.by_url(url)
+			return new(nil, Connect.remote_app(url), [:url, url])
 		end
 		
-		def Application.bypid(pid)
-			return new(nil, Connect.localAppByPID(pid), [:pid, pid])
+		def Application.by_pid(pid)
+			return new(nil, Connect.local_app_by_pid(pid), [:pid, pid])
 		end
 		
-		def Application.bydesc(desc)
+		def Application.by_desc(desc)
 			return new(nil, desc, [:desc, desc.type, desc.data])
 		end
 		
@@ -107,7 +107,7 @@ module AEM
 		end
 	
 		def Application.launch(path)
-			Connect.launchApp(path)
+			Connect.launch_app(path)
 		end
 		
 		#######
@@ -117,8 +117,8 @@ module AEM
 			if @identity[0] == :current
 				return 'AEM::Application.current'
 			else
-				conName = {:path => 'bypath', :url => 'byurl', :pid => 'bypid', :desc => 'bydesc'}[@identity[0]]
-				return "AEM::Application.#{conName}(#{@identity[1].inspect})"
+				con_name = {:path => 'by_path', :url => 'by_url', :pid => 'by_pid', :desc => 'by_desc'}[@identity[0]]
+				return "AEM::Application.#{con_name}(#{@identity[1].inspect})"
 			end
 		end
 		
@@ -140,31 +140,31 @@ module AEM
 		
 		def reconnect
 			if @_path
-				@_address = Connect.localApp(@_path)
+				@_address = Connect.local_app(@_path)
 			end
 			return
 		end
 		
-		def event(event, params={}, atts={}, returnID=KAE::KAutoGenerateReturnID, codecs=DefaultCodecs)
-			return self.class::Event.new(@_address, event, params, atts, @_transaction, returnID, codecs)
+		def event(event, params={}, atts={}, return_id=KAE::KAutoGenerateReturnID, codecs=DefaultCodecs)
+			return self.class::Event.new(@_address, event, params, atts, @_transaction, return_id, codecs)
 		end
 		
-		def starttransaction
+		def start_transaction
 			if @_transaction != KAE::KAnyTransactionID
 				raise RuntimeError, "Transaction is already active."
 			end
 			@_transaction = self.class::Event(@_address, 'miscbegi').send
-			@@_transactionIDsByAppNo[@appNumber] = @_transaction
+			@@_transaction_ids_by_app_no[@app_number] = @_transaction
 			return
 		end
 		
-		def endtransaction
+		def end_transaction
 			if @_transaction == KAE::KAnyTransactionID
 				raise RuntimeError, "No transaction is active."
 			end
-			self.class::Event(@_address, 'miscendt', transaction=@_transaction).send
+			self.class::Event(@_address, 'miscendt', {}, {}, @_transaction).send
 			@_transaction = KAE::KAnyTransactionID
-			@@_transactionIDsByAppNo[@appNumber] = KAE::KAnyTransactionID
+			@@_transaction_ids_by_app_no[@app_number] = KAE::KAnyTransactionID
 			return
 		end
 	end

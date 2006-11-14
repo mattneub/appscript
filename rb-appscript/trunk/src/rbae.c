@@ -704,19 +704,19 @@ Init_ae (void)
 	cAEDesc = rb_define_class_under(mAE, "AEDesc", rb_cObject);
 	
 	rb_define_singleton_method(cAEDesc, "new", rbAE_AEDesc_new, 2);
-	rb_define_singleton_method(cAEDesc, "newList", rbAE_AEDesc_newList, 1);
-	rb_define_singleton_method(cAEDesc, "newAppleEvent", rbAE_AEDesc_newAppleEvent, 5);
+	rb_define_singleton_method(cAEDesc, "new_list", rbAE_AEDesc_newList, 1);
+	rb_define_singleton_method(cAEDesc, "new_apple_event", rbAE_AEDesc_newAppleEvent, 5);
 	
 	rb_define_method(cAEDesc, "to_s", rbAE_AEDesc_inspect, 0);
 	rb_define_method(cAEDesc, "inspect", rbAE_AEDesc_inspect, 0);
 	rb_define_method(cAEDesc, "type", rbAE_AEDesc_type, 0);
 	rb_define_method(cAEDesc, "data", rbAE_AEDesc_data, 0);
-	rb_define_method(cAEDesc, "isRecord?", rbAE_AEDesc_isRecord, 0);
+	rb_define_method(cAEDesc, "is_record?", rbAE_AEDesc_isRecord, 0);
 	rb_define_method(cAEDesc, "coerce", rbAE_AEDesc_coerce, 1);
 	rb_define_method(cAEDesc, "length", rbAE_AEDesc_length, 0);
-	rb_define_method(cAEDesc, "putItem", rbAE_AEDesc_putItem, 2);
-	rb_define_method(cAEDesc, "putParam", rbAE_AEDesc_putParam, 2);
-	rb_define_method(cAEDesc, "putAttr", rbAE_AEDesc_putAttr, 2);
+	rb_define_method(cAEDesc, "put_item", rbAE_AEDesc_putItem, 2);
+	rb_define_method(cAEDesc, "put_param", rbAE_AEDesc_putParam, 2);
+	rb_define_method(cAEDesc, "put_attr", rbAE_AEDesc_putAttr, 2);
 	rb_define_method(cAEDesc, "get", rbAE_AEDesc_get, 2);
 	rb_define_method(cAEDesc, "send", rbAE_AEDesc_send, 2);
 	
@@ -734,33 +734,33 @@ Init_ae (void)
 
 	// Support functions
 	
-	rb_define_module_function(mAE, "findApplication", rbAE_findApplication, 3);
-	rb_define_module_function(mAE, "psnForApplicationPath", rbAE_psnForApplicationPath, 1);
-	rb_define_module_function(mAE, "launchApplication", rbAE_launchApplication, 3);
-	rb_define_module_function(mAE, "pidToPsn", rbAE_pidToPsn, 1);
+	rb_define_module_function(mAE, "find_application", rbAE_findApplication, 3);
+	rb_define_module_function(mAE, "psn_for_application_path", rbAE_psnForApplicationPath, 1);
+	rb_define_module_function(mAE, "launch_application", rbAE_launchApplication, 3);
+	rb_define_module_function(mAE, "pid_to_psn", rbAE_pidToPsn, 1);
 
-	rb_define_module_function(mAE, "convertLongDateTimeToUnixSeconds", 
+	rb_define_module_function(mAE, "convert_long_date_time_to_unix_seconds", 
 							  rbAE_convertLongDateTimeToUnixSeconds, 1);
-	rb_define_module_function(mAE, "convertUnixSecondsToLongDateTime", 
+	rb_define_module_function(mAE, "convert_unix_seconds_to_long_date_time", 
 							  rbAE_convertUnixSecondsToLongDateTime, 1);
 							  
-	rb_define_module_function(mAE, "getAppTerminology", rbAE_OSAGetAppTerminology, 1);
+	rb_define_module_function(mAE, "get_app_terminology", rbAE_OSAGetAppTerminology, 1);
 	
 	// Event handling
 	
 	upp_GenericEventHandler = NewAEEventHandlerUPP(rbAE_GenericEventHandler);
 	upp_GenericCoercionHandler = NewAECoerceDescUPP(rbAE_GenericCoercionHandler);
 	
-	rb_define_module_function(mAE, "installEventHandler", rbAE_AEInstallEventHandler, 3);
-	rb_define_module_function(mAE, "removeEventHandler", rbAE_AERemoveEventHandler, 2);
-	rb_define_module_function(mAE, "getEventHandler", rbAE_AEGetEventHandler, 2);
+	rb_define_module_function(mAE, "install_event_handler", rbAE_AEInstallEventHandler, 3);
+	rb_define_module_function(mAE, "remove_event_handler", rbAE_AERemoveEventHandler, 2);
+	rb_define_module_function(mAE, "get_event_handler", rbAE_AEGetEventHandler, 2);
 	
-	rb_define_module_function(mAE, "installCoercionHandler", rbAE_AEInstallCoercionHandler, 3);
-	rb_define_module_function(mAE, "removeCoercionHandler", rbAE_AERemoveCoercionHandler, 2);
-	rb_define_module_function(mAE, "getCoercionHandler", rbAE_AEGetCoercionHandler, 2);
+	rb_define_module_function(mAE, "install_coercion_handler", rbAE_AEInstallCoercionHandler, 3);
+	rb_define_module_function(mAE, "remove_coercion_handler", rbAE_AERemoveCoercionHandler, 2);
+	rb_define_module_function(mAE, "get_coercion_handler", rbAE_AEGetCoercionHandler, 2);
 	
-	rb_define_module_function(mAE, "runApplicationEventLoop", rbAE_RunApplicationEventLoop, 0);
-	rb_define_module_function(mAE, "quitApplicationEventLoop", rbAE_QuitApplicationEventLoop, 0);
-	rb_define_module_function(mAE, "transformProcessToForegroundApplication", 
+	rb_define_module_function(mAE, "run_application_event_loop", rbAE_RunApplicationEventLoop, 0);
+	rb_define_module_function(mAE, "quit_application_event_loop", rbAE_QuitApplicationEventLoop, 0);
+	rb_define_module_function(mAE, "transform_process_to_foreground_application", 
 							  rbAE_transformProcessToForegroundApplication, 0);
 }

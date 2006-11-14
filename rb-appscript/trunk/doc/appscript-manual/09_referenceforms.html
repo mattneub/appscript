@@ -167,20 +167,20 @@ reference.eq(value) # ==
 reference.ne(value) # !=
 reference.gt(value) # &gt;
 reference.ge(value) # &gt;=
-reference.startswith(value)
-reference.endswith(value)
+reference.starts_with(value)
+reference.ends_with(value)
 reference.contains(value)
-reference.isin(value)
-reference.doesnotstartwith(value)
-reference.doesnotendwith(value)
-reference.doesnotcontain(value)
-reference.isnotin(value)
+reference.is_in(value)
+reference.does_not_start_with(value)
+reference.does_not_end_with(value)
+reference.does_not_contain(value)
+reference.is_not_in(value)
         value : reference or value</code></pre>
 
 <p>Examples:</p>
 <pre><code>AS.its.eq('')
 AS.its.size.gt(1024)
-AS.its.words.first.startswith('A')
+AS.its.words.first.starts_with('A')
 AS.its.characters.first.eq(AS.its.characters.last)</code></pre>
 
 <p>Note that Boolean comparison tests can be written as either <code>reference.eq(true)</code> or just <code>reference</code>, e.g. <code>folderRef.files[AS.its.locked]</code></p></li>
@@ -195,7 +195,7 @@ test.not</code></pre>
 <p>Examples:</p>
 <pre><code>AS.its.eq('').not
 AS.its.size.gt(1024).and(its.size.lt(10240))
-AS.its.words[1].startswith('A').or(
+AS.its.words[1].starts_with('A').or(
     its.words[2].contains('ce'),
     its.words[1].eq('Foo'))</code></pre></li>
 </ul>

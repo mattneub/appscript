@@ -11,7 +11,7 @@ class TC_AppscriptReferences < Test::Unit::TestCase
 		@s = @te.to_s
 	end
 
-	def test_referenceForms
+	def test_reference_forms
 		[
 			[@te.text, @s+'.text', nil],
 			
@@ -55,12 +55,12 @@ class TC_AppscriptReferences < Test::Unit::TestCase
 			[AS.its.words.size.gt(0), 
 					'AS.its.words.size.gt(0)', nil],
 			[AS.its.words.le(''), 'AS.its.words.le("")', nil],
-			[AS.its.words.startswith('foo').not, 
-					'AS.its.words.startswith("foo").not', nil],
+			[AS.its.words.starts_with('foo').not, 
+					'AS.its.words.starts_with("foo").not', nil],
 			
 			
 			[AS.its.words.contains('foo'), 'AS.its.words.contains("foo")', nil],
-			[AS.its.words.isin('foo'), 'AS.its.words.isin("foo")', nil],
+			[AS.its.words.is_in('foo'), 'AS.its.words.is_in("foo")', nil],
 			
 			[@te.documents[AS.its.size.ge(42)], 
 					@s+'.documents[AS.its.size.ge(42)]', nil],
@@ -87,12 +87,12 @@ class TC_AppscriptReferences < Test::Unit::TestCase
 			[@te.documents[3].before, @s+'.documents[3].before', nil],
 			[@te.documents['foo'].after, @s+'.documents["foo"].after', nil],
 			
-		].each do |val, res, unpackedVersion|
+		].each do |val, res, unpacked_version|
 			assert_equal(res, val.to_s)
-			d = @te.AS_appdata.pack(val)
-			val = unpackedVersion ? unpackedVersion : val
-			val2 = @te.AS_appdata.unpack(d)
-			if val.class == @te.AS_appdata.unpack(d).class # note: AS::Reference and AS::GenericReference currently aren't comparable with each other, so the next test would always fail for those
+			d = @te.AS_app_data.pack(val)
+			val = unpacked_version ? unpacked_version : val
+			val2 = @te.AS_app_data.unpack(d)
+			if val.class == @te.AS_app_data.unpack(d).class # note: AS::Reference and AS::GenericReference currently aren't comparable with each other, so the next test would always fail for those
 				assert_equal(val, val2)
 				assert_block { val.eql?(val2) }
 			end

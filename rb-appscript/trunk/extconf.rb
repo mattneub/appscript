@@ -31,9 +31,7 @@
 require 'mkmf'
 
 $CFLAGS << ' -Wall'# -arch ppc -arch i386'
-$LDFLAGS = '-framework Carbon -framework ApplicationServices'
-
-exit 1 unless have_func('LSFindApplicationForInfo')
+$LDFLAGS = '-framework Carbon'
 
 # Avoid `ID' and `T_DATA' symbol collisions between Ruby and Carbon.
 # (adapted code from RubyAEOSA - FUJIMOTO Hisakuni  <hisa -at- fobj - com>)

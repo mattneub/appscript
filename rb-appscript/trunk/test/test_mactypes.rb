@@ -42,11 +42,11 @@ class TC_MacTypes < Test::Unit::TestCase
 		# check a FileNotFoundError is raised if getting path/FileURL for a filesystem object that no longer exists
 		`rm #{@path2}`
 		assert_raises(MacTypes::FileNotFoundError) { f.to_s } # File not found.
-		assert_raises(MacTypes::FileNotFoundError) { f.to_fileurl } # File not found.
+		assert_raises(MacTypes::FileNotFoundError) { f.to_file_url } # File not found.
 	end
 
 
-	def test_fileURL
+	def test_file_url
 
 		g = MacTypes::FileURL.path('/non/existent path')
 
@@ -55,7 +55,7 @@ class TC_MacTypes < Test::Unit::TestCase
 		assert_equal('furl', g.desc.type)
 		assert_equal('file://localhost/non/existent%20path', g.desc.data)
 
-		assert_equal('MacTypes::FileURL.path("/non/existent path")', g.to_fileurl.inspect)
+		assert_equal('MacTypes::FileURL.path("/non/existent path")', g.to_file_url.inspect)
 
 		# check a not-found error is raised if getting Alias for a filesystem object that doesn't exist
 		assert_raises(MacTypes::FileNotFoundError) { g.to_alias } # File "/non/existent path" not found.

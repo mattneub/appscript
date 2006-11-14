@@ -11,11 +11,11 @@ module MacTypes
 	
 		URLPrefix = 'file://localhost'
 	
-		def FileBase._pathToURL(path)
+		def FileBase._path_to_url(path)
 			return URLPrefix + path.gsub(/[^a-zA-Z0-9_.-\/]/) { |c| "%%%02x" % c[0] }
 		end
 	
-		def FileBase._urlToPath(url)
+		def FileBase._url_to_path(url)
 			if url[0, URLPrefix.length] != URLPrefix
 				raise ArgumentError, "Not a file:// URL."
 			end
@@ -52,7 +52,7 @@ module MacTypes
 		
 		def Alias.path(path)
 			return new(FileBase._coerce(
-					AE::AEDesc.new(KAE::TypeFileURL, FileBase._pathToURL(path)),
+					AE::AEDesc.new(KAE::TypeFileURL, FileBase._path_to_url(path)),
 					KAE::TypeAlias, path))
 		end
 		
@@ -65,7 +65,7 @@ module MacTypes
 		end
 		
 		def path
-			return FileBase._urlToPath(FileBase._coerce(@desc, KAE::TypeFileURL).data)
+			return FileBase._url_to_path(FileBase._coerce(@desc, KAE::TypeFileURL).data)
 		end
 		
 		alias_method :to_s, :path
@@ -78,7 +78,7 @@ module MacTypes
 			return self
 		end
 		
-		def to_fileurl
+		def to_file_url
 			return MacTypes::FileURL.desc(FileBase._coerce(@desc, KAE::TypeFileURL))
 		end
 	end
@@ -103,14 +103,14 @@ module MacTypes
 		
 		def desc
 			if not @desc
-				@desc = AE::AEDesc.new(KAE::TypeFileURL, FileBase._pathToURL(@path))
+				@desc = AE::AEDesc.new(KAE::TypeFileURL, FileBase._path_to_url(@path))
 			end
 			return @desc
 		end
 		
 		def path
 			if not @path
-				@path = FileBase._urlToPath(FileBase._coerce(@desc, KAE::TypeFileURL).data)
+				@path = FileBase._url_to_path(FileBase._coerce(@desc, KAE::TypeFileURL).data)
 			end
 			return @path
 		end
@@ -125,7 +125,7 @@ module MacTypes
 			return MacTypes::Alias.desc(FileBase._coerce(desc, KAE::TypeAlias, to_s))
 		end
 		
-		def to_fileurl
+		def to_file_url
 			return MacTypes::FileURL.desc(FileBase._coerce(desc, KAE::TypeFileURL, to_s))
 		end
 	end

@@ -16,36 +16,36 @@ module Connect
 	KNoProcess = 0
 	KCurrentProcess = 2
 	
-	def Connect.makeAddressDesc(psn)
+	def Connect.make_address_desc(psn)
 		return AE::AEDesc.new(KAE::TypeProcessSerialNumber, psn.pack('LL'))
 	end
 	
-	NullAddress = makeAddressDesc([0,KNoProcess])
+	NullAddress = make_address_desc([0,KNoProcess])
 	LaunchEvent = Send::Event.new(Connect::NullAddress, 'ascrnoop').AEM_event
 	RunEvent = Send::Event.new(Connect::NullAddress, 'aevtoapp').AEM_event
 	
 	#######
 	# public
 	
-	def Connect.launchApp(path)
+	def Connect.launch_app(path)
 		begin
-			psn = AE.psnForApplicationPath(path)
+			psn = AE.psn_for_application_path(path)
 		rescue AE::MacOSError => err
 			if err.to_i == -600
 				sleep(1)
-				AE.launchApplication(path, LaunchEvent,  
+				AE.launch_application(path, LaunchEvent,  
 						LaunchContinue + LaunchNoFileFlags + LaunchDontSwitch)
 			else
 				raise
 			end
 		else
-			Send::Event.new(makeAddressDesc(psn), 'ascrnoop').send()
+			Send::Event.new(make_address_desc(psn), 'ascrnoop').send()
 		end
 	end
 	
 	def Connect.running?(path)
 		begin
-			AE.psnForApplicationPath(path)
+			AE.psn_for_application_path(path)
 			return true
 		rescue AE::MacOSError => err
 			if err.to_i == -600
@@ -56,28 +56,28 @@ module Connect
 		end
 	end
 	
-	CurrentApp = makeAddressDesc([0, KCurrentProcess])
+	CurrentApp = make_address_desc([0, KCurrentProcess])
 	
-	def Connect.localApp(path)
+	def Connect.local_app(path)
 		begin
-			psn = AE.psnForApplicationPath(path)
+			psn = AE.psn_for_application_path(path)
 		rescue AE::MacOSError => err
 			if err.to_i == -600
 				sleep(1)
-				psn = AE.launchApplication(path, RunEvent,  
+				psn = AE.launch_application(path, RunEvent,  
 						LaunchContinue + LaunchNoFileFlags + LaunchDontSwitch)
 			else
 				raise
 			end
 		end
-		return makeAddressDesc(psn)
+		return make_address_desc(psn)
 	end
 	
-	def Connect.localAppByPID(pid)
-		return makeAddressDesc(AE.pidToPsn(pid))
+	def Connect.local_app_by_pid(pid)
+		return make_address_desc(AE.pid_to_psn(pid))
 	end
 	
-	def Connect.remoteApp(url)
+	def Connect.remote_app(url)
 		return AE::AEDesc.new(KAE::TypeApplicationURL, url)
 	end
 end

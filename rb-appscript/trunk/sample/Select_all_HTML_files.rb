@@ -5,4 +5,4 @@
 require "appscript"
 
 w = AS.app('Finder').Finder_windows[1].target.get
-w.files[AS.its.name_extension.isin(['htm', 'html'])].select
+w.files[AS.its.name_extension.is_in(['htm', 'html'])].select

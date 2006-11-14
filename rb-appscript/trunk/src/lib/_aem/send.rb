@@ -121,54 +121,54 @@ module Send
 		attr_reader :AEM_event
 	
 		def initialize(address, event, params={}, atts={}, transaction=KAE::KAnyTransactionID, 
-				returnID= KAE::KAutoGenerateReturnID, codecs=DefaultCodecs)
-			@_eventCode = event
+				return_id= KAE::KAutoGenerateReturnID, codecs=DefaultCodecs)
+			@_event_code = event
 			@_codecs = codecs
-			@AEM_event = _createAppleEvent(event[0, 4], event[-4, 4], address, returnID, transaction)
-			atts.each {|key, value| @AEM_event.putAttr(key, codecs.pack(value))}
-			params.each {|key, value| @AEM_event.putParam(key, codecs.pack(value))}
+			@AEM_event = _create_apple_event(event[0, 4], event[-4, 4], address, return_id, transaction)
+			atts.each {|key, value| @AEM_event.put_attr(key, codecs.pack(value))}
+			params.each {|key, value| @AEM_event.put_param(key, codecs.pack(value))}
 		end
 		
-		def _createAppleEvent(eventClass, eventID, target, returnID, transactionID)
-			return AE::AEDesc.newAppleEvent(eventClass, eventID, target, returnID, transactionID)
+		def _create_apple_event(event_class, event_id, target, return_id, transaction_id)
+			return AE::AEDesc.new_apple_event(event_class, event_id, target, return_id, transaction_id)
 		end
 		
-		def _sendAppleEvent(flags, timeout)
+		def _send_apple_event(flags, timeout)
 			return @AEM_event.send(flags, timeout)
 		end
 		
 		def inspect
-			return "#<AEM::Event @code=#{@_eventCode}>"
+			return "#<AEM::Event @code=#{@_event_code}>"
 		end
 		
 		alias_method :to_s, :inspect
 		
 		def send(timeout=KAE::KAEDefaultTimeout, flags=KAE::KAECanSwitchLayer + KAE::KAEWaitReply)
 			begin
-				replyEvent = _sendAppleEvent(flags, timeout)
+				reply_event = _send_apple_event(flags, timeout)
 			rescue AE::MacOSError => err
-				if not (@_eventCode == 'aevtquit' and err.to_i == -609)
+				if not (@_event_code == 'aevtquit' and err.to_i == -609)
 					raise CommandError.new(err.to_i, nil, err)
 				end
 			else
-				if replyEvent.type != KAE::TypeNull
-					eventResult = {}
-					replyEvent.length.times do |i|
-						key, value = replyEvent.get(i + 1, KAE::TypeWildCard)
-						eventResult[key] = value
+				if reply_event.type != KAE::TypeNull
+					event_result = {}
+					reply_event.length.times do |i|
+						key, value = reply_event.get(i + 1, KAE::TypeWildCard)
+						event_result[key] = value
 					end
-					if eventResult.has_key?(KAE::KeyErrorNumber)
-						eNum = DefaultCodecs.unpack(eventResult[KAE::KeyErrorNumber])
-						if eNum != 0
-							eMsg = eventResult[KAE::KeyErrorString]
-							if eMsg
-								eMsg = DefaultCodecs.unpack(eMsg)
+					if event_result.has_key?(KAE::KeyErrorNumber)
+						e_num = DefaultCodecs.unpack(event_result[KAE::KeyErrorNumber])
+						if e_num != 0
+							e_msg = event_result[KAE::KeyErrorString]
+							if e_msg
+								e_msg = DefaultCodecs.unpack(e_msg)
 							end
-							raise CommandError.new(eNum, eMsg, replyEvent)
+							raise CommandError.new(e_num, e_msg, reply_event)
 						end
 					end
-					if eventResult.has_key?(KAE::KeyAEResult)
-						return @_codecs.unpack(eventResult[KAE::KeyAEResult])
+					if event_result.has_key?(KAE::KeyAEResult)
+						return @_codecs.unpack(event_result[KAE::KeyAEResult])
 					end
 				end
 			end

@@ -18,16 +18,16 @@ module AS
 	######################################################################
 	
 	module AppDataAccessors
-		attr_reader :target, :typebyname, :typebycode, :referencebyname, :referencebycode
+		attr_reader :target, :type_by_name, :type_by_code, :reference_by_name, :reference_by_code
 	end
 	
 	class AppData < AEM::Codecs
 	
 		attr_reader :path, :pid, :url
 	
-		def initialize(aemApplicationClass, path, pid, url, terms)
+		def initialize(aem_application_class, path, pid, url, terms)
 			super()
-			@_aemApplicationClass = aemApplicationClass
+			@_aem_application_class = aem_application_class
 			@_terms = terms
 			@path = path
 			@pid = pid
@@ -36,23 +36,23 @@ module AS
 		
 		def _connect # initialize AEM::Application instance and terminology tables the first time they are needed
 			if @path
-				@target = @_aemApplicationClass.bypath(@path)
+				@target = @_aem_application_class.by_path(@path)
 			elsif @pid
-				@target = @_aemApplicationClass.bypid(@pid)
+				@target = @_aem_application_class.by_pid(@pid)
 			elsif @url
-				@target = @_aemApplicationClass.byurl(@url)
+				@target = @_aem_application_class.by_url(@url)
 			else
-				@target = @_aemApplicationClass.current
+				@target = @_aem_application_class.current
 			end
 			case @_terms
 				when true # obtain terminology from application
-					@typebycode, @typebyname, @referencebycode, @referencebyname = Terminology.tablesForApp(@path, @pid, @url)
+					@type_by_code, @type_by_name, @reference_by_code, @reference_by_name = Terminology.tables_for_app(@path, @pid, @url)
 				when false # use built-in terminology only (e.g. use this when running AppleScript applets)
-					@typebycode, @typebyname, @referencebycode, @referencebyname = Terminology.defaultTables
+					@type_by_code, @type_by_name, @reference_by_code, @reference_by_name = Terminology.default_tables
 				when nil # [developer-only] make Application#methods return names of built-in methods only (needed to generate reservedkeywords.rb file)
-					@typebycode, @typebyname, @referencebycode, @referencebyname = {}, {}, {}, {}
+					@type_by_code, @type_by_name, @reference_by_code, @reference_by_name = {}, {}, {}, {}
 			else # @_terms is [assumed to be] a module containing dumped terminology, so use that
-				@typebycode, @typebyname, @referencebycode, @referencebyname = Terminology.tablesForModule(@_terms)
+				@type_by_code, @type_by_name, @reference_by_code, @reference_by_name = Terminology.tables_for_module(@_terms)
 			end
 			extend(AppDataAccessors)
 		end
@@ -64,24 +64,24 @@ module AS
 			return @target
 		end
 		
-		def typebyname
+		def type_by_name
 			_connect
-			return @typebyname
+			return @type_by_name
 		end
 		
-		def typebycode
+		def type_by_code
 			_connect
-			return @typebycode
+			return @type_by_code
 		end
 		
-		def referencebyname
+		def reference_by_name
 			_connect
-			return @referencebyname
+			return @reference_by_name
 		end
 		
-		def referencebycode
+		def reference_by_code
 			_connect
-			return @referencebycode
+			return @reference_by_code
 		end
 		
 		#######
@@ -91,9 +91,9 @@ module AS
 				data = data.AS_resolve(self)
 			end
 			if data.is_a?(Reference)
-				data = data.AS_aemreference
+				data = data.AS_aem_reference
 			elsif data.is_a?(Symbol)
-				data = self.typebyname.fetch(data) { raise IndexError, "Unknown Keyword: #{data.inspect}" }
+				data = self.type_by_name.fetch(data) { raise IndexError, "Unknown Keyword: #{data.inspect}" }
 			end
 			return super(data)
 		end
@@ -102,86 +102,86 @@ module AS
 		
 		ClassType = AEM::AEType.new('pcls')
 		
-		def packHash(val)
-			record = AE::AEDesc.newList(true)
+		def pack_hash(val)
+			record = AE::AEDesc.new_list(true)
 			if val.has_key?(:class_) or val.has_key?(ClassType)
 				# if hash contains a 'class' property containing a class name, coerce the AEDesc to that class
-				newVal = Hash[val]
-				if newVal.has_key?(:class_)
-					value = newVal.delete(:class_)
+				new_val = Hash[val]
+				if new_val.has_key?(:class_)
+					value = new_val.delete(:class_)
 				else
-					value = newVal.delete(ClassType)
+					value = new_val.delete(ClassType)
 				end
 				if value.is_a?(Symbol) # get the corresponding AEType (assuming there is one)
-					value = @typebyname.fetch(value, value)
+					value = @type_by_name.fetch(value, value)
 				end
 				if value.is_a?(AEM::AEType) # coerce the record to the desired type
 					record = record.coerce(value.code)
-					val = newVal
+					val = new_val
 				end # else value wasn't a class name, so it'll be packed as a normal record property instead
 			end	
 			usrf = nil
 			val.each do | key, value |
 				if key.is_a?(Symbol)
-					keyType = @typebyname.fetch(key) { raise IndexError, "Unknown keyword: #{key.inspect}" }
-					record.putParam(keyType.code, pack(value))
+					key_type = @type_by_name.fetch(key) { raise IndexError, "Unknown keyword: #{key.inspect}" }
+					record.put_param(key_type.code, pack(value))
 				elsif key.is_a?(AEM::AETypeBase)
-					record.putParam(key.code, pack(value))
+					record.put_param(key.code, pack(value))
 				else
 					if usrf == nil
-						usrf = AE::AEDesc.newList(false)
+						usrf = AE::AEDesc.new_list(false)
 					end
-					usrf.putItem(0, pack(key))
-					usrf.putItem(0, pack(value))
+					usrf.put_item(0, pack(key))
+					usrf.put_item(0, pack(value))
 				end
 			end
 			if usrf
-				record.putParam('usrf', usrf)
+				record.put_param('usrf', usrf)
 			end
 			return record
 		end
 		
-		def unpackType(desc)
-			aemValue = super(desc)
-			return @typebycode.fetch(aemValue.code, aemValue)
+		def unpack_type(desc)
+			aem_value = super(desc)
+			return @type_by_code.fetch(aem_value.code, aem_value)
 		end
 		
-		def unpackEnumerated(desc)
-			aemValue = super(desc)
-			return @typebycode.fetch(aemValue.code, aemValue)
+		def unpack_enumerated(desc)
+			aem_value = super(desc)
+			return @type_by_code.fetch(aem_value.code, aem_value)
 		end
 		
-		def unpackProperty(desc)
-			aemValue = super(desc)
-			return @typebycode.fetch(aemValue.code, aemValue)
+		def unpack_property(desc)
+			aem_value = super(desc)
+			return @type_by_code.fetch(aem_value.code, aem_value)
 		end
 		
-		def unpackAERecord(desc)
+		def unpack_aerecord(desc)
 			dct = {}
 			desc.length().times do |i|
 				key, value = desc.get(i + 1, KAE::TypeWildCard)
 				if key == 'usrf'
-					lst = unpackAEList(value)
+					lst = unpack_aelist(value)
 					(lst.length / 2).times do |i|
 						dct[lst[i * 2]] = lst[i * 2 + 1]
 					end
 				else
-					dct[@typebycode.fetch(key) { AEM::AEType.new(key) }] = unpack(value)
+					dct[@type_by_code.fetch(key) { AEM::AEType.new(key) }] = unpack(value)
 				end
 			end
 			return dct
 		end
 		
-		def unpackObjectSpecifier(desc)
-			return Reference.new(self, DefaultCodecs.unpackObjectSpecifier(desc))
+		def unpack_object_specifier(desc)
+			return Reference.new(self, DefaultCodecs.unpack_object_specifier(desc))
 		end
 		
-		def unpackInsertionLoc(desc)
-			return Reference.new(self, DefaultCodecs.unpackInsertionLoc(desc))
+		def unpack_insertion_loc(desc)
+			return Reference.new(self, DefaultCodecs.unpack_insertion_loc(desc))
 		end
 				
-		def unpackContainsCompDescriptor(op1, op2)
-			if op1.is_a?(AS::Reference) and op1.AS_aemreference.AEM_root == AEMReference::Its
+		def unpack_contains_comp_descriptor(op1, op2)
+			if op1.is_a?(AS::Reference) and op1.AS_aem_reference.AEM_root == AEMReference::Its
 				return op1.contains(op2)
 			else
 				return super
@@ -240,8 +240,8 @@ module AS
 			return to_s
 		end
 		
-		def AS_resolve(appData)
-			ref = Reference.new(appData, {'app' => AEM.app, 'con' => AEM.con, 'its' => AEM.its}[@_call[0]])
+		def AS_resolve(app_data)
+			ref = Reference.new(app_data, {'app' => AEM.app, 'con' => AEM.con, 'its' => AEM.its}[@_call[0]])
 			@_call[1, @_call.length].each do |name, args|
 				ref = ref.send(name, *args)
 			end
@@ -257,34 +257,34 @@ module AS
 	class Reference
 	
 		# users may occasionally require access to the following for creating workarounds to problem apps
-		# note: calling #AS_appdata on a newly created application object will return an AppData instance
+		# note: calling #AS_app_data on a newly created application object will return an AppData instance
 		# that is not yet fully initialised, so remember to call its #_connect method before use
-		attr_reader :AS_aemreference, :AS_appdata
-		attr_writer :AS_aemreference, :AS_appdata
+		attr_reader :AS_aem_reference, :AS_app_data
+		attr_writer :AS_aem_reference, :AS_app_data
 	
-		def initialize(appdata, aemreference)
-			@AS_appdata = appdata
-			@AS_aemreference = aemreference
+		def initialize(app_data, aem_reference)
+			@AS_app_data = app_data
+			@AS_aem_reference = aem_reference
 		end
 		
-		def _resolveRangeBoundary(selector, valueIfNone)
+		def _resolve_range_boundary(selector, value_if_none)
 			if selector == nil
-				selector = valueIfNone
+				selector = value_if_none
 			end
 			if selector.is_a?(AS::GenericReference)
-				return selector.AS_resolve(@AS_appdata).AS_aemreference
+				return selector.AS_resolve(@AS_app_data).AS_aem_reference
 			elsif selector.is_a?(Reference)
-				return selector.AS_aemreference
+				return selector.AS_aem_reference
 			elsif selector.is_a?(String)
-				return AEM.con.elements(@AS_aemreference.AEM_want).byname(selector)
+				return AEM.con.elements(@AS_aem_reference.AEM_want).by_name(selector)
 			else
-				return AEM.con.elements(@AS_aemreference.AEM_want).byindex(selector)
+				return AEM.con.elements(@AS_aem_reference.AEM_want).by_index(selector)
 			end
 		end
 		
 		#######
 		
-		def Reference._packUInt32(n) # used to pack csig attributes
+		def Reference._pack_uint32(n) # used to pack csig attributes
 			return AE::AEDesc.new(KAE::TypeUInt32, [n].pack('L'))
 		end
 
@@ -302,95 +302,95 @@ module AS
 		# default cons, csig attributes
 		
 		DefaultConsiderations =  AEM::DefaultCodecs.pack([AEM::AEType.new('case')])
-		DefaultConsidersAndIgnores = _packUInt32(KAE::KAECaseIgnoreMask)
+		DefaultConsidersAndIgnores = _pack_uint32(KAE::KAECaseIgnoreMask)
 		
 		##
 		
-		def _sendCommand(args, name, code, labelledArgTerms)
-	#		puts "Calling command #{name} \n\twith args #{args.inspect},\n\treference #{self}\n\tinfo #{code.inspect}, #{labelledArgTerms.inspect}\n\n"
+		def _send_command(args, name, code, labelled_arg_terms)
+	#		puts "Calling command #{name} \n\twith args #{args.inspect},\n\treference #{self}\n\tinfo #{code.inspect}, #{labelled_arg_terms.inspect}\n\n"
 #			begin # TO DO: enable error handling block once debugging is completed
 				atts = {'subj' => nil}
 				params = {}
 				case args.length
 					when 0
-						keywordArgs = {}
+						keyword_args = {}
 					when 1 # note: if a command takes a hash as its direct parameter, user must pass {} as a second arg otherwise hash will be assumed to be keyword parameters
 						if args[0].is_a?(Hash)
-							keywordArgs = args[0]
+							keyword_args = args[0]
 						else
 							params['----'] = args[0]
-							keywordArgs = {}
+							keyword_args = {}
 						end
 					when 2
-						params['----'], keywordArgs = args
+						params['----'], keyword_args = args
 				else
 					raise ArgumentError, "Too many direct parameters."
 				end
-				if not keywordArgs.is_a?(Hash)
+				if not keyword_args.is_a?(Hash)
 					raise ArgumentError, "Second argument must be a Hash containing zero or more keyword parameters."
 				end
 				# get user-specified timeout, if any
-				timeout = (keywordArgs.delete(:timeout) {60}).to_i
+				timeout = (keyword_args.delete(:timeout) {60}).to_i
 				if timeout <= 0
 					timeout = KAE::KNoTimeOut
 				else
 					timeout *= 60
 				end
 				# default send flags
-				sendFlags = KAE::KAECanSwitchLayer
+				send_flags = KAE::KAECanSwitchLayer
 				# ignore application's reply?
-				sendFlags += keywordArgs.delete(:waitreply) == false ? KAE::KAENoReply : KAE::KAEWaitReply
+				send_flags += keyword_args.delete(:wait_reply) == false ? KAE::KAENoReply : KAE::KAEWaitReply
 				# add considering/ignoring attributes
-				ignoreOptions = keywordArgs.delete(:ignore)
-				if ignoreOptions == nil
+				ignore_options = keyword_args.delete(:ignore)
+				if ignore_options == nil
 					atts['cons'] = DefaultConsiderations
 					atts['csig'] = DefaultConsidersAndIgnores
 				else
-					atts['cons'] = ignoreOptions
+					atts['cons'] = ignore_options
 					csig = 0
-					IgnoreEnums.each do |option, considerMask, ignoreMask|
-						csig += ignoreOptions.include?(option) ? ignoreMask : considerMask
+					IgnoreEnums.each do |option, consider_mask, ignore_mask|
+						csig += ignore_options.include?(option) ? ignore_mask : consider_mask
 					end
-					atts['csig'] = Reference._packUInt32(csig)
+					atts['csig'] = Reference._pack_uint32(csig)
 				end
 				# optionally specify return value type
-				if keywordArgs.has_key?(:resulttype)
-					params['rtyp'] = keywordArgs.delete(:resulttype)
+				if keyword_args.has_key?(:result_type)
+					params['rtyp'] = keyword_args.delete(:result_type)
 				end
 				# extract labelled parameters, if any
-				keywordArgs.each do |paramName, paramValue|
-					paramCode = labelledArgTerms[paramName]
-					if paramCode == nil
-						raise ArgumentError, "Unknown keyword parameter: #{paramName.inspect}"
+				keyword_args.each do |param_name, param_value|
+					param_code = labelled_arg_terms[param_name]
+					if param_code == nil
+						raise ArgumentError, "Unknown keyword parameter: #{param_name.inspect}"
 					end
-					params[paramCode] = paramValue
+					params[param_code] = param_value
 				end
 				# apply special cases
 				# Note: appscript does not replicate every little AppleScript quirk when packing event attributes and parameters (e.g. AS always packs a make command's tell block as the subject attribute, and always includes an each parameter in count commands), but should provide sufficient consistency with AS's habits and give good usability in their own right.
-				if @AS_aemreference != AEM.app # If command is called on a Reference, rather than an Application...
+				if @AS_aem_reference != AEM.app # If command is called on a Reference, rather than an Application...
 					if code == 'coresetd'
 						#  if ref.set(...) contains no 'to' argument, use direct argument for 'to' parameter and target reference for direct parameter
 						if params.has_key?('----') and not params.has_key?('data')
 							params['data'] = params['----']
-							params['----'] = @AS_aemreference
+							params['----'] = @AS_aem_reference
 						elsif not params.has_key?('----')
-							params['----'] = @AS_aemreference
+							params['----'] = @AS_aem_reference
 						else
-							atts['subj'] = @AS_aemreference
+							atts['subj'] = @AS_aem_reference
 						end
 					elsif code == 'corecrel'
 						# if ref.make(...) contains no 'at' argument and target is a reference, use target reference for 'at' parameter
 						if params.has_key?('insh')
-							atts['subj'] = @AS_aemreference
+							atts['subj'] = @AS_aem_reference
 						else
-							params['insh'] = @AS_aemreference
+							params['insh'] = @AS_aem_reference
 						end
 					elsif params.has_key?('----')
 						# if user has already supplied a direct parameter, pack that reference as the subject attribute
-						atts['subj'] = @AS_aemreference
+						atts['subj'] = @AS_aem_reference
 					else
 						# pack that reference as the direct parameter
-						params['----'] = @AS_aemreference
+						params['----'] = @AS_aem_reference
 					end
 				end
 #			rescue => e
@@ -398,23 +398,23 @@ module AS
 #			end
 			# build and send the Apple event, returning its result, if any
 			begin
-				# puts 'SENDING EVENT: ' + [code, params, atts, timeout, sendFlags].inspect
-				return @AS_appdata.target.event(code, params, atts, 
-						KAE::KAutoGenerateReturnID, @AS_appdata).send(timeout, sendFlags)
+				# puts 'SENDING EVENT: ' + [code, params, atts, timeout, send_flags].inspect
+				return @AS_app_data.target.event(code, params, atts, 
+						KAE::KAutoGenerateReturnID, @AS_app_data).send(timeout, send_flags)
 			rescue => e
 				if e.is_a?(AEM::CommandError)
-					if [-600, -609].include?(e.number) and @AS_appdata.path
-						if not @AS_appdata.target.running?
+					if [-600, -609].include?(e.number) and @AS_app_data.path
+						if not @AS_app_data.target.running?
 							if code == 'ascrnoop'
-								AEM::Application.launch(@AS_appdata.path)
+								AEM::Application.launch(@AS_app_data.path)
 							elsif code != 'aevtoapp'
 								raise CommandError.new(self, name, args, e)
 							end
 						end
-						@AS_appdata.target.reconnect
+						@AS_app_data.target.reconnect
 						begin
-							return @AS_appdata.target.event(code, params, atts, 
-									KAE::KAutoGenerateReturnID, @AS_appdata).send(timeout, sendFlags)
+							return @AS_app_data.target.event(code, params, atts, 
+									KAE::KAutoGenerateReturnID, @AS_app_data).send(timeout, send_flags)
 						rescue
 						end
 					elsif e.number == -1708 and code == 'ascrnoop'
@@ -433,57 +433,57 @@ module AS
 			if super 
 				return true
 			else
-				return @AS_appdata.referencebyname.has_key?(name.is_a?(String) ? name.intern : name)
+				return @AS_app_data.reference_by_name.has_key?(name.is_a?(String) ? name.intern : name)
 			end
 		end
 		
 		def methods
-			return super + @AS_appdata.referencebyname.keys.collect { |name| name.to_s }
+			return super + @AS_app_data.reference_by_name.keys.collect { |name| name.to_s }
 		end
 		
 		def commands
-			return (@AS_appdata.referencebyname.collect { |name, info| info[0] == :command ? name.to_s : nil }).compact.sort
+			return (@AS_app_data.reference_by_name.collect { |name, info| info[0] == :command ? name.to_s : nil }).compact.sort
 		end
 		
-		def parameters(commandName)
-			if not @AS_appdata.referencebyname.has_key?(commandName.intern)
-				raise ArgumentError, "Command not found: #{commandName}"
+		def parameters(command_name)
+			if not @AS_app_data.reference_by_name.has_key?(command_name.intern)
+				raise ArgumentError, "Command not found: #{command_name}"
 			end
-			return (@AS_appdata.referencebyname[commandName.intern][1][1].keys.collect { |name| name.to_s }).sort
+			return (@AS_app_data.reference_by_name[command_name.intern][1][1].keys.collect { |name| name.to_s }).sort
 		end
 		
 		def properties
-			return (@AS_appdata.referencebyname.collect { |name, info| info[0] == :property ? name.to_s : nil }).compact.sort
+			return (@AS_app_data.reference_by_name.collect { |name, info| info[0] == :property ? name.to_s : nil }).compact.sort
 		end
 		
 		def elements
-			return (@AS_appdata.referencebyname.collect { |name, info| info[0] == :element ? name.to_s : nil }).compact.sort
+			return (@AS_app_data.reference_by_name.collect { |name, info| info[0] == :element ? name.to_s : nil }).compact.sort
 		end
 		
 		def keywords
-			return (@AS_appdata.typebyname.collect { |name, code| name.to_s }).sort
+			return (@AS_app_data.type_by_name.collect { |name, code| name.to_s }).sort
 		end
 
 		#######
 		# standard object methods
 		
 		def ==(val)
-			return (self.class == val.class and @AS_appdata.target == val.AS_appdata.target \
-					and @AS_aemreference == val.AS_aemreference)
+			return (self.class == val.class and @AS_app_data.target == val.AS_app_data.target \
+					and @AS_aem_reference == val.AS_aem_reference)
 		end
 		
 		alias_method :eql?, :== 
 		
 		def hash
 			if not defined? @_hash
-				@_hash = [@AS_appdata.target, @AS_aemreference].hash
+				@_hash = [@AS_app_data.target, @AS_aem_reference].hash
 			end
 			return @_hash
 		end
 		
 		def to_s
 			if not defined? @_to_s
-				@_to_s = ReferenceRenderer.render(@AS_appdata, @AS_aemreference)
+				@_to_s = ReferenceRenderer.render(@AS_app_data, @AS_aem_reference)
 			end
 			return @_to_s
 		end
@@ -494,171 +494,171 @@ module AS
 		# Public properties and methods; these are called by end-user and other clients (e.g. generic references)
 		
 		def method_missing(name, *args)
-			selectorType, code = @AS_appdata.referencebyname[name]
-			case selectorType
+			selector_type, code = @AS_app_data.reference_by_name[name]
+			case selector_type
 				when :property
-					return Reference.new(self.AS_appdata, self.AS_aemreference.property(code))
+					return Reference.new(self.AS_app_data, self.AS_aem_reference.property(code))
 				when :element
-					return Reference.new(self.AS_appdata, self.AS_aemreference.elements(code))
+					return Reference.new(self.AS_app_data, self.AS_aem_reference.elements(code))
 				when :command
-					return _sendCommand(args, name, code[0], code[1])
+					return _send_command(args, name, code[0], code[1])
 			else
 				# convenience shortcuts # TO DO: decide if these should be kept or not; note: if enabled, reserved keywords list will need to be expanded to include methods whose names end in '?' and '='
 				# - if name ends with '?', remove that and look up again; if property/element found, make new reference and send it a 'get' event, else raise 'unknown' error
 				# - if name ends with '=', remove that and look up again; if property/element found, make new reference and send it a 'set' event, else raise 'unknown' error
-				#nameStr = name.to_s
-				#modifier = nameStr[-1, 1]
-				#if modifier == '?' or modifier == '=' and nameStr.length > 0
-				#	newName = nameStr.chop.intern
-				#	selectorType, code = @AS_appdata.referencebyname[newName]
-				#	if [:property, :element].include?(selectorType) and
+				#name_str = name.to_s
+				#modifier = name_str[-1, 1]
+				#if modifier == '?' or modifier == '=' and name_str.length > 0
+				#	new_name = name_str.chop.intern
+				#	selector_type, code = @AS_app_data.reference_by_name[new_name]
+				#	if [:property, :element].include?(selector_type) and
 				#		case modifier
 				#			when '?'
-				#				return self.send(newName, *args).get
+				#				return self.send(new_name, *args).get
 				#			when '='
-				#				return self.send(newName, *args).set(*args)
+				#				return self.send(new_name, *args).set(*args)
 				#		end
 				#	end
 				#end
 				msg = "Unknown property, element or command: '#{name}'"
-				if @AS_appdata.referencebyname.has_key?("#{name}_".intern)
+				if @AS_app_data.reference_by_name.has_key?("#{name}_".intern)
 					msg += " (Did you mean '#{name}_'?)"
 				end
 				raise RuntimeError, msg
 			end
 		end
 		
-		def [](selector, endRangeSelector=nil)
-			if endRangeSelector != nil
-				newRef = self.AS_aemreference.byrange(
-						self._resolveRangeBoundary(selector, 1),
-						self._resolveRangeBoundary(endRangeSelector, -1))
+		def [](selector, end_range_selector=nil)
+			if end_range_selector != nil
+				new_ref = self.AS_aem_reference.by_range(
+						self._resolve_range_boundary(selector, 1),
+						self._resolve_range_boundary(end_range_selector, -1))
 			elsif selector.is_a?(String)
-				 newRef = @AS_aemreference.byname(selector)
+				 new_ref = @AS_aem_reference.by_name(selector)
 			elsif selector.is_a?(AS::GenericReference)
-				newRef = @AS_aemreference.byfilter(
-						selector.AS_resolve(@AS_appdata).AS_aemreference)
+				new_ref = @AS_aem_reference.by_filter(
+						selector.AS_resolve(@AS_app_data).AS_aem_reference)
 			else
-				newRef = @AS_aemreference.byindex(selector)
+				new_ref = @AS_aem_reference.by_index(selector)
 			end
-			return Reference.new(self.AS_appdata, newRef)
+			return Reference.new(self.AS_app_data, new_ref)
 		end
 		
 		def first
-			return Reference.new(@AS_appdata, @AS_aemreference.first)
+			return Reference.new(@AS_app_data, @AS_aem_reference.first)
 		end
 		
 		def middle
-			return Reference.new(@AS_appdata, @AS_aemreference.middle)
+			return Reference.new(@AS_app_data, @AS_aem_reference.middle)
 		end
 		
 		def last
-			return Reference.new(@AS_appdata, @AS_aemreference.last)
+			return Reference.new(@AS_app_data, @AS_aem_reference.last)
 		end
 		
 		def any
-			return Reference.new(@AS_appdata, @AS_aemreference.any)
+			return Reference.new(@AS_app_data, @AS_aem_reference.any)
 		end
 		
 		def start
-			return Reference.new(@AS_appdata, @AS_aemreference.start)
+			return Reference.new(@AS_app_data, @AS_aem_reference.start)
 		end
 		
 		def end
-			return Reference.new(@AS_appdata, @AS_aemreference.end)
+			return Reference.new(@AS_app_data, @AS_aem_reference.end)
 		end
 		
 		def before
-			return Reference.new(@AS_appdata, @AS_aemreference.before)
+			return Reference.new(@AS_app_data, @AS_aem_reference.before)
 		end
 		
 		def after
-			return Reference.new(@AS_appdata, @AS_aemreference.after)
+			return Reference.new(@AS_app_data, @AS_aem_reference.after)
 		end
 		
 		def previous(klass)
-			return Reference.new(@AS_appdata, @AS_aemreference.previous(
-					@AS_appdata.typebyname.fetch(klass).code))
+			return Reference.new(@AS_app_data, @AS_aem_reference.previous(
+					@AS_app_data.type_by_name.fetch(klass).code))
 		end
 		
 		def next(klass)
-			return Reference.new(@AS_appdata, @AS_aemreference.next(
-					@AS_appdata.typebyname.fetch(klass).code))
+			return Reference.new(@AS_app_data, @AS_aem_reference.next(
+					@AS_app_data.type_by_name.fetch(klass).code))
 		end
 		
 		def ID(id)
-			return Reference.new(@AS_appdata, @AS_aemreference.byid(id))
+			return Reference.new(@AS_app_data, @AS_aem_reference.by_id(id))
 		end
 		
 		# Following methods will be called by its-based generic references
 		# Note that rb-appscript's comparison 'operator' names are gt/ge/eq/ne/lt/le, not >/>=/==/!=/</<= as in py-appscript. Unlike Python, Ruby's != operator isn't overridable, and a mixture of styles would be confusing to users. On the plus side, it does mean that rb-appscript's generic refs can be compared for equality.
 		
 		def gt(operand)
-			return Reference.new(@AS_appdata, @AS_aemreference.gt(operand))
+			return Reference.new(@AS_app_data, @AS_aem_reference.gt(operand))
 		end
 		
 		def ge(operand)
-			return Reference.new(@AS_appdata, @AS_aemreference.ge(operand))
+			return Reference.new(@AS_app_data, @AS_aem_reference.ge(operand))
 		end
 		
 		def eq(operand) # avoid colliding with comparison operators, which are normally used to compare two references
-			return Reference.new(@AS_appdata, @AS_aemreference.eq(operand))
+			return Reference.new(@AS_app_data, @AS_aem_reference.eq(operand))
 		end
 		
 		def ne(operand)
-			return Reference.new(@AS_appdata, @AS_aemreference.ne(operand))
+			return Reference.new(@AS_app_data, @AS_aem_reference.ne(operand))
 		end
 		
 		def lt(operand)
-			return Reference.new(@AS_appdata, @AS_aemreference.lt(operand))
+			return Reference.new(@AS_app_data, @AS_aem_reference.lt(operand))
 		end
 		
 		def le(operand)
-			return Reference.new(@AS_appdata, @AS_aemreference.le(operand))
+			return Reference.new(@AS_app_data, @AS_aem_reference.le(operand))
 		end
 		
-		def startswith(operand)
-			return Reference.new(@AS_appdata, @AS_aemreference.startswith(operand))
+		def starts_with(operand)
+			return Reference.new(@AS_app_data, @AS_aem_reference.starts_with(operand))
 		end
 		
-		def endswith(operand)
-			return Reference.new(@AS_appdata, @AS_aemreference.endswith(operand))
+		def ends_with(operand)
+			return Reference.new(@AS_app_data, @AS_aem_reference.ends_with(operand))
 		end
 		
 		def contains(operand)
-			return Reference.new(@AS_appdata, @AS_aemreference.contains(operand))
+			return Reference.new(@AS_app_data, @AS_aem_reference.contains(operand))
 		end
 		
-		def isin(operand)
-			return Reference.new(@AS_appdata, @AS_aemreference.isin(operand))
+		def is_in(operand)
+			return Reference.new(@AS_app_data, @AS_aem_reference.is_in(operand))
 		end
 		
-		def doesnotstartwith(operand)
-			return self.startswith(operand).not
+		def does_not_start_with(operand)
+			return self.starts_with(operand).not
 		end
 		
-		def doesnotendwith(operand)
-			return self.endswith(operand).not
+		def does_not_end_with(operand)
+			return self.ends_with(operand).not
 		end
 		
-		def doesnotcontain(operand)
+		def does_not_contain(operand)
 			return self.contains(operand).not
 		end
 		
-		def isnotin(operand)
-			return self.isin(operand).not
+		def is_not_in(operand)
+			return self.is_in(operand).not
 		end
 		
 		def and(*operands)
-			return Reference.new(@AS_appdata, @AS_aemreference.and(*operands))
+			return Reference.new(@AS_app_data, @AS_aem_reference.and(*operands))
 		end
 			
 		def or(*operands)
-			return Reference.new(@AS_appdata, @AS_aemreference.or(*operands))
+			return Reference.new(@AS_app_data, @AS_aem_reference.or(*operands))
 		end
 		
 		def not
-			return Reference.new(@AS_appdata, @AS_aemreference.not)
+			return Reference.new(@AS_app_data, @AS_aem_reference.not)
 		end
 	end
 		
@@ -671,33 +671,33 @@ module AS
 		
 		private_class_method :new
 			
-		def _aemApplicationClass # hook
+		def _aem_application_class # hook
 			return AEM::Application
 		end
 		
 		def initialize(path, pid, url, terms)
-			super(AppData.new(_aemApplicationClass, path, pid, url, terms), AEM.app)
+			super(AppData.new(_aem_application_class, path, pid, url, terms), AEM.app)
 		end
 		
 		# constructors
 		
-		def Application.byname(name, terms=true)
-			return new(FindApp.byname(name), nil, nil, terms)
+		def Application.by_name(name, terms=true)
+			return new(FindApp.by_name(name), nil, nil, terms)
 		end
 		
-		def Application.byid(id, terms=true)
-			return new(FindApp.byid(id), nil, nil, terms)
+		def Application.by_id(id, terms=true)
+			return new(FindApp.by_id(id), nil, nil, terms)
 		end
 		
-		def Application.bycreator(creator, terms=true)
-			return new(FindApp.bycreator(creator), nil, nil, terms)
+		def Application.by_creator(creator, terms=true)
+			return new(FindApp.by_creator(creator), nil, nil, terms)
 		end
 		
-		def Application.bypid(pid, terms=true)
+		def Application.by_pid(pid, terms=true)
 			return new(nil, pid, nil, terms)
 		end
 		
-		def Application.byurl(url, terms=true)
+		def Application.by_url(url, terms=true)
 			return new(nil, nil, url, terms)
 		end
 		
@@ -707,20 +707,20 @@ module AS
 		
 		#
 		
-		def starttransaction
-			@AS_appdata.target.starttransaction
+		def start_transaction
+			@AS_app_data.target.start_transaction
 		end
 		
-		def endtransaction
-			@AS_appdata.target.endtransaction
+		def end_transaction
+			@AS_app_data.target.end_transaction
 		end
 		
 		def launch
-			if @AS_appdata.path
-				AEM::Application.launch(@AS_appdata.path)
-				@AS_appdata.target.reconnect
+			if @AS_app_data.path
+				AEM::Application.launch(@AS_app_data.path)
+				@AS_app_data.target.reconnect
 			else
-				@AS_appdata.target.event('ascrnoop').send # will send launch event to app if already running; else will error
+				@AS_app_data.target.event('ascrnoop').send # will send launch event to app if already running; else will error
 			end
 		end
 	end
@@ -729,33 +729,33 @@ module AS
 	
 	class GenericApplication < GenericReference
 		
-		def initialize(appClass)
-			@_appClass = appClass
+		def initialize(app_class)
+			@_app_class = app_class
 			super(['app'])
 		end
 		
-		def byname(name, terms=true)
-			return @_appClass.byname(name, terms)
+		def by_name(name, terms=true)
+			return @_app_class.by_name(name, terms)
 		end
 		
-		def byid(id, terms=true)
-			return @_appClass.byid(id, terms)
+		def by_id(id, terms=true)
+			return @_app_class.by_id(id, terms)
 		end
 		
-		def bycreator(creator, terms=true)
-			return @_appClass.bycreator(creator, terms)
+		def by_creator(creator, terms=true)
+			return @_app_class.by_creator(creator, terms)
 		end
 		
-		def bypid(pid, terms=true)
-			return @_appClass.bypid(pid, terms)
+		def by_pid(pid, terms=true)
+			return @_app_class.by_pid(pid, terms)
 		end
 		
-		def byurl(url, terms=true)
-			return @_appClass.byurl(url, terms)
+		def by_url(url, terms=true)
+			return @_app_class.by_url(url, terms)
 		end
 		
 		def current(terms=true)
-			return @_appClass.current(terms)
+			return @_app_class.current(terms)
 		end
 	end
 	
@@ -775,7 +775,7 @@ module AS
 		if args == []
 			return AS_App
 		else
-			return AS_App.byname(*args)
+			return AS_App.by_name(*args)
 		end
 	end
 
@@ -795,23 +795,23 @@ module AS
 	
 	class CommandError < RuntimeError
 		
-		attr_reader :reference, :name, :parameters, :realerror
+		attr_reader :reference, :name, :parameters, :real_error
 		
-		def initialize(reference, commandName, parameters, realerror)
-			@reference, @commandName, @parameters, @realerror = reference, commandName, parameters, realerror
+		def initialize(reference, command_name, parameters, real_error)
+			@reference, @command_name, @parameters, @real_error = reference, command_name, parameters, real_error
 			super()
 		end
 		
 		def to_i
-			if @realerror.is_a?(AE::MacOSError) or @realerror.is_a?(AEM::CommandError)
-				return @realerror.to_i
+			if @real_error.is_a?(AE::MacOSError) or @real_error.is_a?(AEM::CommandError)
+				return @real_error.to_i
 			else
 				return -2700
 			end
 		end
 		
 		def to_s
-			return "#{@realerror}\n\t\tCOMMAND: #{@reference}.#{@commandName}(#{(@parameters.collect { |item| item.inspect }).join(', ')})\n"
+			return "#{@real_error}\n\t\tCOMMAND: #{@reference}.#{@command_name}(#{(@parameters.collect { |item| item.inspect }).join(', ')})\n"
 		end
 	end
 	

@@ -1,4 +1,4 @@
-2006-11-13 -- ???
+2006-11-14 -- ???
 
 - removed path expansion in FindApp#byName, MacFile::Alias#at, MacFile::FileURL#at
 
@@ -45,33 +45,66 @@
 
 - renamed AS.app methods:
 
-	app#byName -> app#byname
-	app#byCreator -> app#bycreator
-	app#byID -> app#byid
-	app#byPID -> app#bypid
-	app#byURL -> app#byurl
+	app#byName -> app#by_name
+	app#byCreator -> app#by_creator
+	app#byID -> app#by_id
+	app#byPID -> app#by_pid
+	app#byURL -> app#by_url
 
+- renamed appscript reference methods:
+
+	startswith -> starts_with
+	endswith -> ends_with
+	isin -> is_in
+	doesnotstartwith -> does_not_start_with
+	doesnotendwith -> does_not_end_with
+	doesnotcontain -> does_not_contain
+	isnotin -> is_not_in
+
+- renamed built-in appscript command parameters:
+
+	:waitreply -> :wait_reply
+	:resulttype -> :result_type
 
 - renamed AEM::Application methods:
 
-	Application.newPath -> Application.bypath
-	Application.newURL -> Application.byurl
-	Application.newPID -> Application.bypid
-	Application.newAEDesc -> Application.bydesc
+	Application.newPath -> Application.by_path
+	Application.newURL -> Application.by_url
+	Application.newPID -> Application.by_pid
+	Application.newAEDesc -> Application.by_desc
+
+- renamed aem reference methods:
+
+	byindex -> by_index
+	byname -> by_name
+	byid -> by_id
+	byrange -> by_range
+	byfilter -> by_filter
+	startswith -> starts_with
+	endswith -> ends_with
+	isin -> is_in
 
 - renamed FindApp methods:
 
-	FindApp.byName -> FindApp.byname
-	FindApp.byCreator -> FindApp.bycreator
-	FindApp.byID -> FindApp.byid
+	FindApp.byName -> FindApp.by_name
+	FindApp.byCreator -> FindApp.by_creator
+	FindApp.byID -> FindApp.by_id
+
+- changed internal variable and method names to follow Ruby style guidelines
 
 - added MacTypes::Units class
+
+- changed built-in unit type names in defaultterminology.rb to follow Ruby conventions (e.g. :Feet -> :feet)
 
 - fixed appscript reference rendering bug where property/element names could get muddled (e.g. 'document' property would appear as 'documents')
 
 - fixed endian bug when packing/unpacking AEM::AEEventName (now always big-endian)
 
 - fixed wierd rendering bug where rendered references would be invisible if client script contained an 'app' method of its own (Ruby was invoking this instead of ReferenceRenderer#method_missing)
+
+- fixed bug in AEM::Application#end_transaction
+
+- added month and weekday name-code definitions to defaultterminology.rb
 
 
 2006-10-23 -- 0.1.6

@@ -10,6 +10,7 @@ require "mactypes"
 
 # Note that AE strings (typeChar, typeUnicodeText, etc.) are unpacked as UTF8-encoded Ruby strings, and UTF8-encoded Ruby strings are packed as typeUnicodeText. Using UTF8 on the Ruby side avoids data loss; using typeUnicodeText on the AEM side provides compatibility with all [reasonably well designed] applications. To change this behaviour (e.g. to support legacy apps that demand typeChar and break on typeUnicodeText), subclass Codecs and override pack and/or unpack methods to provide alternative packing/unpacking of string values. Users can also pack data manually using AE::AEDesc.new(type, data).
 
+
 ######################################################################
 # UNIT TYPE CODECS
 ######################################################################
@@ -56,12 +57,12 @@ class UnitTypeCodecs
 	DefaultUnpacker = proc { |desc, name| MacTypes::Units.new(desc.data.unpack('d')[0], name) }
 
 	def initialize
-		@typebyname = {}
-		@typebycode = {}
-		addTypes(DefaultUnitTypes)
+		@type_by_name = {}
+		@type_by_code = {}
+		add_types(DefaultUnitTypes)
 	end
 	
-	def addTypes(typedefs)
+	def add_types(typedefs)
 		# typedefs is a list of lists, where each sublist is of form:
 		#	[typename, typecode, packproc, unpackproc]
 		# or:
@@ -69,14 +70,14 @@ class UnitTypeCodecs
 		# If optional packproc and unpackproc are omitted, default pack/unpack procs
 		# are used instead; these pack/unpack AEDesc data as a double precision float.
 		typedefs.each do |name, code, packer, unpacker|
-			@typebyname[name] = [code, (packer or DefaultPacker)]
-			@typebycode[code] = [name, (unpacker or DefaultUnpacker)]
+			@type_by_name[name] = [code, (packer or DefaultPacker)]
+			@type_by_code[code] = [name, (unpacker or DefaultUnpacker)]
 		end
 	end
 	
 	def pack(val)
 		if val.is_a?(MacTypes::Units)
-			code, packer = @typebyname.fetch(val.type) { |val| raise IndexError, "Unknown unit type: #{val.inspect}" }
+			code, packer = @type_by_name.fetch(val.type) { |val| raise IndexError, "Unknown unit type: #{val.inspect}" }
 			return [true, packer.call(val.value, code)]
 		else
 			return [false, val]
@@ -84,7 +85,7 @@ class UnitTypeCodecs
 	end
 	
 	def unpack(desc)
-		name, unpacker = @typebycode.fetch(desc.type) { |desc| return [false, desc] }
+		name, unpacker = @type_by_code.fetch(desc.type) { |desc| return [false, desc] }
 		return [true, unpacker.call(desc, name)]
 	end
 end
@@ -97,7 +98,7 @@ end
 
 module BigEndianConverters
 	
-	def fourCharCode(code)
+	def four_char_code(code)
 		return code
 	end
 
@@ -106,7 +107,7 @@ end
 
 module SmallEndianConverters
 	
-	def fourCharCode(code)
+	def four_char_code(code)
 		return code.reverse
 	end
 	
@@ -126,11 +127,11 @@ class Codecs
 
 	def initialize
 		extend(CodeConverters)
-		@unitTypeCodecs = UnitTypeCodecs.new
+		@unit_type_codecs = UnitTypeCodecs.new
 	end
 	
 	def addunits(types)
-		@unitTypeCodecs.addTypes(types)
+		@unit_type_codecs.add_types(types)
 	end
 	
 	######################################################################
@@ -151,13 +152,13 @@ class Codecs
 	
 	##
 	
-	def packUnknown(val) # clients may override this to provide additional packers
+	def pack_unknown(val) # clients may override this to provide additional packers
 		raise TypeError, "Can't pack data into an AEDesc (unsupported type): #{val.inspect}"
 	end
 	
 	
 	def pack(val) # clients may override this to replace existing packers
-		if val.is_a?(AEMReference::Base) then val.AEM_packSelf(self)
+		if val.is_a?(AEMReference::Base) then val.AEM_pack_self(self)
 		elsif val == nil then NullDesc
 		elsif val == true then TrueDesc
 		elsif val == false then FalseDesc
@@ -183,43 +184,43 @@ class Codecs
 			end
 		elsif val.is_a?(Time) then
 			AE::AEDesc.new(KAE::TypeLongDateTime,
-					[AE.convertUnixSecondsToLongDateTime(val.to_i)].pack('q'))
-		elsif val.is_a?(Array) then packArray(val)
-		elsif val.is_a?(Hash) then packHash(val)
+					[AE.convert_unix_seconds_to_long_date_time(val.to_i)].pack('q'))
+		elsif val.is_a?(Array) then pack_array(val)
+		elsif val.is_a?(Hash) then pack_hash(val)
 		elsif val.is_a?(MacTypes::FileBase) then val.desc
 		elsif val.is_a?(TypeWrappers::AEType) then
-			AE::AEDesc.new(KAE::TypeType, fourCharCode(val.code))
+			AE::AEDesc.new(KAE::TypeType, four_char_code(val.code))
 		elsif val.is_a?(TypeWrappers::AEEnum) then
-			AE::AEDesc.new(KAE::TypeEnumerated, fourCharCode(val.code))
+			AE::AEDesc.new(KAE::TypeEnumerated, four_char_code(val.code))
 		elsif val.is_a?(TypeWrappers::AEProp) then 
-			AE::AEDesc.new(KAE::TypeProperty, fourCharCode(val.code))
+			AE::AEDesc.new(KAE::TypeProperty, four_char_code(val.code))
 		elsif val.is_a?(TypeWrappers::AEKey) then
-			AE::AEDesc.new(KAE::TypeKeyword, fourCharCode(val.code))
+			AE::AEDesc.new(KAE::TypeKeyword, four_char_code(val.code))
 		elsif val.is_a?(TypeWrappers::AEEventName) then 
 			AE::AEDesc.new(KAE::TypeEventName, val.code)
 		elsif val.is_a?(AE::AEDesc) then val
 		else
-			didPack, desc = @unitTypeCodecs.pack(val)
-			if didPack
+			did_pack, desc = @unit_type_codecs.pack(val)
+			if did_pack
 				desc
 			else
-				packUnknown(val)
+				pack_unknown(val)
 			end
 		end
 	end
 	
 	#######
 	
-	def packArray(val)
-		lst = AE::AEDesc.newList(false)
+	def pack_array(val)
+		lst = AE::AEDesc.new_list(false)
 		val.each do |item|
-			lst.putItem(0, pack(item))
+			lst.put_item(0, pack(item))
 		end
 		return lst
 	end
 	
-	def packHash(val)
-		record = AE::AEDesc.newList(true)
+	def pack_hash(val)
+		record = AE::AEDesc.new_list(true)
 		usrf = nil
 		val.each do | key, value |
 			if key.is_a?(TypeWrappers::AETypeBase)
@@ -227,21 +228,21 @@ class Codecs
 					begin
 						record = record.coerce(value.code)
 					rescue
-						record.putParam(key.code, pack(value))
+						record.put_param(key.code, pack(value))
 					end
 				else
-					record.putParam(key.code, pack(value))
+					record.put_param(key.code, pack(value))
 				end
 			else
 				if usrf == nil
-					usrf = AE::AEDesc.newList(false)
+					usrf = AE::AEDesc.new_list(false)
 				end
-				usrf.putItem(0, pack(key))
-				usrf.putItem(0, pack(value))
+				usrf.put_item(0, pack(key))
+				usrf.put_item(0, pack(value))
 			end
 		end
 		if usrf
-			record.putParam('usrf', usrf)
+			record.put_param('usrf', usrf)
 		end
 		return record
 	end
@@ -249,10 +250,10 @@ class Codecs
 	######################################################################
 	# Unpack
 	
-	def unpackUnknown(desc) # clients may override this to provide additional unpackers
-		if desc.isRecord? # if it's a record-like structure with an unknown/unsupported type then unpack it as a hash, including the original type info as a 'class' property
+	def unpack_unknown(desc) # clients may override this to provide additional unpackers
+		if desc.is_record? # if it's a record-like structure with an unknown/unsupported type then unpack it as a hash, including the original type info as a 'class' property
 			rec = desc.coerce(KAE::TypeAERecord)
-			rec.putParam('pcls', pack(TypeWrappers::AEType.new(desc.type)))
+			rec.put_param('pcls', pack(TypeWrappers::AEType.new(desc.type)))
 			unpack(rec)
 		else # else return unchanged
 			desc
@@ -286,15 +287,15 @@ class Codecs
 			when KAE::TypeStyledUnicodeText then desc.coerce(KAE::TypeUTF8Text).data
 			
 			when KAE::TypeLongDateTime then
-				Time.at(AE.convertLongDateTimeToUnixSeconds(desc.data.unpack('q')[0]))
+				Time.at(AE.convert_long_date_time_to_unix_seconds(desc.data.unpack('q')[0]))
 				
 			when KAE::TypeVersion
 				vers, lo = desc.data.unpack('CC')
 				subvers, patch = lo.divmod(16)
 				"#{vers}.#{subvers}.#{patch}"
 			
-			when KAE::TypeAEList then unpackAEList(desc)
-			when KAE::TypeAERecord then unpackAERecord(desc)
+			when KAE::TypeAEList then unpack_aelist(desc)
+			when KAE::TypeAERecord then unpack_aerecord(desc)
 			
 			when KAE::TypeAlias then MacTypes::Alias.desc(desc)
 			when KAE::TypeFSS then MacTypes::FileURL.desc(desc)
@@ -307,34 +308,34 @@ class Codecs
 				[y1, x1, y2, x2]
 			when KAE::TypeRGBColor then desc.data.unpack('SSS')
 			
-			when KAE::TypeType then unpackType(desc)
-			when KAE::TypeEnumerated then unpackEnumerated(desc)
-			when KAE::TypeProperty then unpackProperty(desc)
-			when KAE::TypeKeyword then unpackKeyword(desc)
-			when KAE::TypeEventName then unpackEventName(desc)
+			when KAE::TypeType then unpack_type(desc)
+			when KAE::TypeEnumerated then unpack_enumerated(desc)
+			when KAE::TypeProperty then unpack_property(desc)
+			when KAE::TypeKeyword then unpack_keyword(desc)
+			when KAE::TypeEventName then unpack_event_name(desc)
 			
-			when KAE::TypeInsertionLoc then unpackInsertionLoc(desc)
-			when KAE::TypeObjectSpecifier then unpackObjectSpecifier(desc)
-			when KAE::TypeAbsoluteOrdinal then unpackAbsoluteOrdinal(desc)
-			when KAE::TypeCurrentContainer then unpackCurrentContainer(desc)
-			when KAE::TypeObjectBeingExamined then unpackObjectBeingExamined(desc)
-			when KAE::TypeCompDescriptor then unpackCompDescriptor(desc)
-			when KAE::TypeLogicalDescriptor then unpackLogicalDescriptor(desc)
-			when KAE::TypeRangeDescriptor then unpackRangeDescriptor(desc)
+			when KAE::TypeInsertionLoc then unpack_insertion_loc(desc)
+			when KAE::TypeObjectSpecifier then unpack_object_specifier(desc)
+			when KAE::TypeAbsoluteOrdinal then unpack_absolute_ordinal(desc)
+			when KAE::TypeCurrentContainer then unpack_current_container(desc)
+			when KAE::TypeObjectBeingExamined then unpack_object_being_examined(desc)
+			when KAE::TypeCompDescriptor then unpack_comp_descriptor(desc)
+			when KAE::TypeLogicalDescriptor then unpack_logical_descriptor(desc)
+			when KAE::TypeRangeDescriptor then unpack_range_descriptor(desc)
 			
 		else
-			didUnpack, val = @unitTypeCodecs.unpack(desc)
-			if didUnpack
+			did_unpack, val = @unit_type_codecs.unpack(desc)
+			if did_unpack
 				val
 			else
-				unpackUnknown(desc)
+				unpack_unknown(desc)
 			end
 		end
 	end
 	
 	#######
 	
-	def unpackAEList(desc)
+	def unpack_aelist(desc)
 		lst = []
 		desc.length().times do |i|
 			lst.push(unpack(desc.get(i + 1, KAE::TypeWildCard)[1]))
@@ -342,12 +343,12 @@ class Codecs
 		return lst
 	end
 
-	def unpackAERecord(desc)
+	def unpack_aerecord(desc)
 		dct = {}
 		desc.length().times do |i|
 			key, value = desc.get(i + 1, KAE::TypeWildCard)
 			if key == 'usrf'
-				lst = unpackAEList(value)
+				lst = unpack_aelist(value)
 				(lst.length / 2).times do |i|
 					dct[lst[i * 2]] = lst[i * 2 + 1]
 				end
@@ -360,23 +361,23 @@ class Codecs
 	
 	#######
 	
-	def unpackType(desc)
-		return TypeWrappers::AEType.new(fourCharCode(desc.data))
+	def unpack_type(desc)
+		return TypeWrappers::AEType.new(four_char_code(desc.data))
 	end
 	
-	def unpackEnumerated(desc)
-		return TypeWrappers::AEEnum.new(fourCharCode(desc.data))
+	def unpack_enumerated(desc)
+		return TypeWrappers::AEEnum.new(four_char_code(desc.data))
 	end
 	
-	def unpackProperty(desc)
-		return TypeWrappers::AEProp.new(fourCharCode(desc.data))
+	def unpack_property(desc)
+		return TypeWrappers::AEProp.new(four_char_code(desc.data))
 	end
 	
-	def unpackKeyword(desc)
-		return TypeWrappers::AEKey.new(fourCharCode(desc.data))
+	def unpack_keyword(desc)
+		return TypeWrappers::AEKey.new(four_char_code(desc.data))
 	end
 	
-	def unpackEventName(desc)
+	def unpack_event_name(desc)
 		return TypeWrappers::AEEventName.new(desc.data)
 	end
 	
@@ -398,7 +399,7 @@ class Codecs
 		end
 	end
 	
-	def _descToHash(desc)
+	def _desc_to_hash(desc)
 		desc = desc.coerce(KAE::TypeAERecord)
 		h = {}
 		desc.length.times do |i|
@@ -425,58 +426,58 @@ class Codecs
 			}
 	
 	# InsertionLoc keys and comparison and logic comparison operators aren't unpacked before use,
-	# so need to call _fourCharCodes to swap bytes here.
+	# so need to call _four_char_codes to swap bytes here.
 	
-	def Codecs._fourCharCode(code)
+	def Codecs._four_char_code(code) # TO DO: use CodeConverters.four_char_code
 		return code.unpack('N').pack('L')
 	end
 	
 	InsertionLocEnums = {
-			_fourCharCode(KAE::KAEBefore) => 'before', 
-			_fourCharCode(KAE::KAEAfter) => 'after', 
-			_fourCharCode(KAE::KAEBeginning) => 'start',
-			_fourCharCode(KAE::KAEEnd) => 'end',
+			_four_char_code(KAE::KAEBefore) => 'before', 
+			_four_char_code(KAE::KAEAfter) => 'after', 
+			_four_char_code(KAE::KAEBeginning) => 'start',
+			_four_char_code(KAE::KAEEnd) => 'end',
 			}
 
 	ComparisonEnums = {
-			_fourCharCode(KAE::KAEGreaterThan) => 'gt',
-			_fourCharCode(KAE::KAEGreaterThanEquals) => 'ge',
-			_fourCharCode(KAE::KAEEquals) => 'eq',
-			_fourCharCode(KAE::KAELessThan) => 'lt',
-			_fourCharCode(KAE::KAELessThanEquals) => 'le',
-			_fourCharCode(KAE::KAEBeginsWith) => 'startswith',
-			_fourCharCode(KAE::KAEEndsWith) => 'endswith',
-			_fourCharCode(KAE::KAEContains) => 'contains',
+			_four_char_code(KAE::KAEGreaterThan) => 'gt',
+			_four_char_code(KAE::KAEGreaterThanEquals) => 'ge',
+			_four_char_code(KAE::KAEEquals) => 'eq',
+			_four_char_code(KAE::KAELessThan) => 'lt',
+			_four_char_code(KAE::KAELessThanEquals) => 'le',
+			_four_char_code(KAE::KAEBeginsWith) => 'starts_with',
+			_four_char_code(KAE::KAEEndsWith) => 'ends_with',
+			_four_char_code(KAE::KAEContains) => 'contains',
 			}
 
 	LogicalEnums = {
-			_fourCharCode(KAE::KAEAND) => 'and',
-			_fourCharCode(KAE::KAEOR) => 'or',
-			_fourCharCode(KAE::KAENOT) => 'not',
+			_four_char_code(KAE::KAEAND) => 'and',
+			_four_char_code(KAE::KAEOR) => 'or',
+			_four_char_code(KAE::KAENOT) => 'not',
 			}
 	
 	#######
 	
-	def fullyUnpackObjectSpecifier(desc) 
-		# Codecs.unpackObjectSpecifier and DeferredSpecifier._realRef will call this when needed
+	def fully_unpack_object_specifier(desc) 
+		# Codecs.unpack_object_specifier and DeferredSpecifier._real_ref will call this when needed
 		case desc.type
 			when KAE::TypeNull then return self.class::App
 			when KAE::TypeCurrentContainer then return self.class::Con
 			when KAE::TypeObjectBeingExamined then return self.class::Its
 		end
-		rec = _descToHash(desc)
+		rec = _desc_to_hash(desc)
 		want = unpack(rec[KAE::KeyAEDesiredClass]).code 
-		keyForm = unpack(rec[KAE::KeyAEKeyForm]).code
+		key_form = unpack(rec[KAE::KeyAEKeyForm]).code
 		key = unpack(rec[KAE::KeyAEKeyData])
 		ref = unpack(rec[KAE::KeyAEContainer])
 		if ref == nil
 			ref = self.class::App
 		end
-		if keyForm == KAE::FormPropertyID
+		if key_form == KAE::FormPropertyID
 			return ref.property(key.code)
-		elsif keyForm == 'usrp'
+		elsif key_form == 'usrp'
 			return ref.userproperty(key)
-		elsif keyForm == KAE::FormRelativePosition
+		elsif key_form == KAE::FormRelativePosition
 			if key.code == KAE::KAEPrevious
 				return ref.previous(want)
 			elsif key.code == KAE::KAENext
@@ -486,9 +487,9 @@ class Codecs
 			end
 		else
 			ref = ref.elements(want)
-			if keyForm == KAE::FormName
-				return ref.byname(key)
-			elsif keyForm == KAE::FormAbsolutePosition
+			if key_form == KAE::FormName
+				return ref.by_name(key)
+			elsif key_form == KAE::FormAbsolutePosition
 				if key.is_a?(Ordinal)
 					if key.code == KAE::KAEAll
 						return ref
@@ -496,14 +497,14 @@ class Codecs
 						return ref.send(FullUnpackOrdinals[key.code])
 					end
 				else
-					return ref.byindex(key)
+					return ref.by_index(key)
 				end
-			elsif keyForm == KAE::FormUniqueID
-				return ref.byid(key)
-			elsif keyForm == KAE::FormRange
-				return ref.byrange(*key.range)
-			elsif keyForm == KAE::FormTest
-				return ref.byfilter(key)
+			elsif key_form == KAE::FormUniqueID
+				return ref.by_id(key)
+			elsif key_form == KAE::FormRange
+				return ref.by_range(*key.range)
+			elsif key_form == KAE::FormTest
+				return ref.by_filter(key)
 			end
 		end
 		raise TypeError
@@ -511,17 +512,17 @@ class Codecs
 	
 	##
 	
-	def unpackObjectSpecifier(desc) 
+	def unpack_object_specifier(desc) 
 		# defers full unpacking of [most] object specifiers for efficiency
-		rec = _descToHash(desc)
-		keyForm = unpack(rec[KAE::KeyAEKeyForm]).code
-		if [KAE::FormPropertyID, KAE::FormAbsolutePosition, KAE::FormName, KAE::FormUniqueID].include?(keyForm)
+		rec = _desc_to_hash(desc)
+		key_form = unpack(rec[KAE::KeyAEKeyForm]).code
+		if [KAE::FormPropertyID, KAE::FormAbsolutePosition, KAE::FormName, KAE::FormUniqueID].include?(key_form)
 			want = unpack(rec[KAE::KeyAEDesiredClass]).code
 			key = unpack(rec[KAE::KeyAEKeyData])
 			container = AEMReference::DeferredSpecifier.new(rec[KAE::KeyAEContainer], self)
-			if keyForm == KAE::FormPropertyID
+			if key_form == KAE::FormPropertyID
 				ref = AEMReference::Property.new(want, container, key.code)
-			elsif keyForm == KAE::FormAbsolutePosition
+			elsif key_form == KAE::FormAbsolutePosition
 				if key.is_a?(Ordinal)
 					if key.code == KAE::KAEAll
 						ref = AEMReference::AllElements.new(want, container)
@@ -532,73 +533,73 @@ class Codecs
 				else
 					ref = AEMReference::ElementByIndex.new(want, AEMReference::UnkeyedElements.new(want, container), key)
 				end
-			elsif keyForm == KAE::FormName
+			elsif key_form == KAE::FormName
 				ref = AEMReference::ElementByName.new(want, AEMReference::UnkeyedElements.new(want, container), key)
-			elsif keyForm == KAE::FormUniqueID
+			elsif key_form == KAE::FormUniqueID
 				ref = AEMReference::ElementByID.new(want, AEMReference::UnkeyedElements.new(want, container), key)
 			end
-			ref.AEM_setDesc(desc) # retain existing AEDesc for efficiency
+			ref.AEM_set_desc(desc) # retain existing AEDesc for efficiency
 			return ref
 		else # do full unpack of more complex, rarely returned reference forms
-			return fullyUnpackObjectSpecifier(desc)
+			return fully_unpack_object_specifier(desc)
 		end
 	end
 			
 	
-	def unpackInsertionLoc(desc)
-		rec = _descToHash(desc)
-		return unpackObjectSpecifier(rec[KAE::KeyAEObject]).send(InsertionLocEnums[rec[KAE::KeyAEPosition].data])
+	def unpack_insertion_loc(desc)
+		rec = _desc_to_hash(desc)
+		return unpack_object_specifier(rec[KAE::KeyAEObject]).send(InsertionLocEnums[rec[KAE::KeyAEPosition].data])
 	end
 	
 	##
 	
-	def unpackAbsoluteOrdinal(desc)
-		return Ordinal.new(fourCharCode(desc.data))
+	def unpack_absolute_ordinal(desc)
+		return Ordinal.new(four_char_code(desc.data))
 	end
 	
-	def unpackCurrentContainer(desc)
+	def unpack_current_container(desc)
 		return Con
 	end
 	
-	def unpackObjectBeingExamined(desc)
+	def unpack_object_being_examined(desc)
 		return Its
 	end
 	
 	##
 	
-	def unpackContainsCompDescriptor(op1, op2)
-		# KAEContains is also used to construct 'isin' tests, where test value is first operand and
+	def unpack_contains_comp_descriptor(op1, op2)
+		# KAEContains is also used to construct 'is_in' tests, where test value is first operand and
 		# reference being tested is second operand, so need to make sure first operand is an its-based ref;
 		# if not, rearrange accordingly.
 		# Since type-checking is involved, this extra hook is provided so that appscript's AppData subclass can override this method to add its own type checking
 		if  op1.is_a?(AEMReference::Base) and op1.AEM_root == AEMReference::Its
 			return op1.contains(op2)
 		else
-			return op2.isin(op1)
+			return op2.is_in(op1)
 		end
 	end
 	
-	def unpackCompDescriptor(desc)
-		rec = _descToHash(desc)
+	def unpack_comp_descriptor(desc)
+		rec = _desc_to_hash(desc)
 		operator = ComparisonEnums[rec[KAE::KeyAECompOperator].data]
 		op1 = unpack(rec[KAE::KeyAEObject1])
 		op2 = unpack(rec[KAE::KeyAEObject2])
 		if operator == 'contains'
-			return unpackContainsCompDescriptor(op1, op2)
+			return unpack_contains_comp_descriptor(op1, op2)
 		else
 			return op1.send(operator, op2)
 		end
 	end
 	
-	def unpackLogicalDescriptor(desc)
-		rec = _descToHash(desc)
+	def unpack_logical_descriptor(desc)
+		rec = _desc_to_hash(desc)
 		operator = LogicalEnums[rec[KAE::KeyAELogicalOperator].data]
 		operands = unpack(rec[KAE::KeyAELogicalTerms])
 		return operands[0].send(operator, *operands[1, operands.length])
 	end
 	
-	def unpackRangeDescriptor(desc)
-		rec = _descToHash(desc)
+	def unpack_range_descriptor(desc)
+		rec = _desc_to_hash(desc)
 		return Range.new([unpack(rec[KAE::KeyAERangeStart]), unpack(rec[KAE::KeyAERangeStop])])
 	end
 	

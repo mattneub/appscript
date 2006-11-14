@@ -46,11 +46,11 @@
 <tr><th>Name</th><th>Class</th><th>Description</th></tr>
 </thead>
 <tbody>
-<tr><td><code>:waitreply</code></td><td><code>Boolean</code></td><td>Wait for application to return a result/error?</td></tr>
+<tr><td><code>:wait_reply</code></td><td><code>Boolean</code></td><td>Wait for application to return a result/error?</td></tr>
 
 <tr><td><code>:timeout</code></td><td><code>Integer</code></td><td>Number of seconds to wait for a reply (no timeout = 0)</td></tr>
 
-<tr><td><code>:resulttype</code></td><td><code>nil</code> | <code>Symbol</code></td><td>AE type to coerce return value to (e.g. <code>:FSRef</code>)</td></tr>
+<tr><td><code>:result_type</code></td><td><code>nil</code> | <code>Symbol</code></td><td>AE type to coerce return value to (e.g. <code>:FSRef</code>)</td></tr>
 
 <tr><td><code>:ignore</code></td><td><code>nil</code> | <code>Array of Symbol</code></td><td>String characteristics to ignore when evaluating references. The array should contain zero or more of the following enumerators: <code>:case</code>, <code>:diacriticals</code>, <code>:expansion</code>, <code>:hyphens</code>, <code>:punctuation</code>, <code>:whitespace</code></td></tr>
 
@@ -101,7 +101,7 @@ AS.app('TextEdit').documents.first.text.count(:each =&gt; :paragraph)
 AS.app('TextEdit').documents.end.make(:new =&gt; :document)
 
 # tell application &quot;Finder&quot; to get items of home as alias list
-AS.app('Finder').home.items.get(:resulttype =&gt; :Alias)</code></pre>
+AS.app('Finder').home.items.get(:result_type =&gt; :Alias)</code></pre>
 
 
 

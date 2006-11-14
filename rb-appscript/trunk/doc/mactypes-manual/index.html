@@ -54,7 +54,7 @@
     
         to_alias -- returns self
     
-        to_fileurl -- returns a MacTypes::FileURL object</code></pre>
+        to_file_url -- returns a MacTypes::FileURL object</code></pre>
 
 
 <h3>Examples</h3>
@@ -101,7 +101,7 @@ AS.app('TextEdit').open(f)
     
         to_alias -- returns a MacTypes::Alias object
     
-        to_fileurl -- returns a new MacTypes::FileURL object</code></pre>
+        to_file_url -- returns a new MacTypes::FileURL object</code></pre>
 
 <h3>Examples</h3>
 
@@ -135,7 +135,7 @@ fsspec = fileURL.desc.coerce(KAE::TypeFSS)
 
 AS.app('older app').documents[1].save(:in => fsspec)</code></pre>
 
-<p>When used in an application command, a <code>FileURL</code> object returned by appscript will always pack into the same <code>TypeFSRef</code>, <code>TypeFileURL</code> or <code>TypeFSS</code> AEDesc it was created from. A <code>FileURL</code> object returned by <code>FileURL.path</code>, <code>Alias#to_fileurl</code> or <code>FileURL#to_fileurl</code> will always pack into an AEDesc of <code>TypeFileURL</code>.</p>
+<p>When used in an application command, a <code>FileURL</code> object returned by appscript will always pack into the same <code>TypeFSRef</code>, <code>TypeFileURL</code> or <code>TypeFSS</code> AEDesc it was created from. A <code>FileURL</code> object returned by <code>FileURL.path</code>, <code>Alias#to_file_url</code> or <code>FileURL#to_file_url</code> will always pack into an AEDesc of <code>TypeFileURL</code>.</p>
 
 <p>Note that AEDescs of <code>TypeFSRef</code> can represent existing filesystem locations only. AEDescs of <code>TypeFileURL</code> can represent both existing and non-existing locations. AEDescs of <code>TypeFSS</code> (FSSpecs) are deprecated on Mac OS X due to lack of proper Unicode and long filename support, and are retained for backwards compatibility with older applications only.</p>
 

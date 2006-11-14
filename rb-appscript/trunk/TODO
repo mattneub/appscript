@@ -4,6 +4,8 @@ TO DO
 
 - pack/unpack support for application types
 
+- any other types to add to defaultterminology.rb?
+
 
 - allow users to extract a generic ref from a real ref (to_generic) for comparison purposes. Or vice-versa?
 

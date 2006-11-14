@@ -71,7 +71,7 @@ p sa
 
 <p>is shorthand for:</p>
 
-<pre><code>OSAX::ScriptingAddition.new("StandardAdditions").byname("System Events")</code></pre>
+<pre><code>OSAX::ScriptingAddition.new("StandardAdditions").by_name("System Events")</code></pre>
 
 <p>To specify applications by other means (e.g. URL), create a <code>ScriptingAddition</code> object first, then call the appropriate <code>by...</code> method.</p>
 
@@ -101,18 +101,18 @@ p sa
 
         # Each of the following methods returns a new ScriptingAddition
         # instance targetted at the specified application. The arguments
-        # are the same as for the byname, bycreator, etc. methods in
+        # are the same as for the by_name, by_creator, etc. methods in
         # appscript.
         
-        byname(name) -- name or full path of application, e.g. "Finder"
+        by_name(name) -- name or full path of application, e.g. "Finder"
 
-        bycreator(creator) -- four-character creator code, e.g. "ttxt"
+        by_creator(creator) -- four-character creator code, e.g. "ttxt"
 
-        byid(id) -- bundle id, e.g. "com.apple.ical"
+        by_id(id) -- bundle id, e.g. "com.apple.ical"
 
-        bypid(pid) -- Unix process ID, e.g. 4005
+        by_pid(pid) -- Unix process ID, e.g. 4005
 
-        byurl(url) -- eppc URL, e.g. "eppc://jukebox-mac.local/iTunes"</code></pre>
+        by_url(url) -- eppc URL, e.g. "eppc://jukebox-mac.local/iTunes"</code></pre>
 
 
 <h2>Examples</h2>
