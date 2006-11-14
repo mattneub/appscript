@@ -2,6 +2,45 @@
 # Copyright (C) 2006 HAS. 
 # Released under MIT License.
 
+######################################################################
+# Endianness support
+
+module BigEndianPackers
+	
+	def pack_type(code)
+		return AE::AEDesc.new(KAE::TypeType, code)
+	end
+	
+	def pack_enum(code)
+		return AE::AEDesc.new(KAE::TypeEnumeration, code)
+	end
+	
+	def pack_absolute_ordinal(code)
+		return AE::AEDesc.new(KAE::TypeAbsoluteOrdinal, code)
+	end
+
+end
+
+
+module SmallEndianPackers
+	
+	def pack_type(code)
+		return AE::AEDesc.new(KAE::TypeType, code.reverse)
+	end
+	
+	def pack_enum(code)
+		return AE::AEDesc.new(KAE::TypeEnumeration, code.reverse)
+	end
+	
+	def pack_absolute_ordinal(code)
+		return AE::AEDesc.new(KAE::TypeAbsoluteOrdinal, code.reverse)
+	end
+
+end
+
+
+######################################################################
+
 module AEMReference
 
 	require "ae"
@@ -11,19 +50,7 @@ module AEMReference
 	# SUPPORT FUNCTIONS
 	######################################################################
 	
-	# TO DO: optimise type packers a-la codecs.rb
-	
-	def AEMReference.pack_type(code)
-		return AE::AEDesc.new(KAE::TypeType, code.unpack('N').pack('L'))
-	end
-	
-	def AEMReference.pack_enum(code)
-		return AE::AEDesc.new(KAE::TypeEnumeration, code.unpack('N').pack('L'))
-	end
-	
-	def AEMReference.pack_absolute_ordinal(code)
-		return AE::AEDesc.new(KAE::TypeAbsoluteOrdinal, code.unpack('N').pack('L'))
-	end
+	extend([1].pack('s') == "\001\000" ? SmallEndianPackers : BigEndianPackers)
 	
 	def AEMReference.pack_list_as(type, lst)
 		# used to pack object specifiers, etc.

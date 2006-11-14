@@ -48,9 +48,9 @@ class UnitTypeCodecs
 		[:ounces, KAE::TypeOunces],
 		[:pounds, KAE::TypePounds],
 		
-		[:celsius, KAE::TypeDegreesC],
-		[:fahrenheit, KAE::TypeDegreesF],
-		[:kelvin, KAE::TypeDegreesK],
+		[:Celsius, KAE::TypeDegreesC],
+		[:Fahrenheit, KAE::TypeDegreesF],
+		[:Kelvin, KAE::TypeDegreesK],
 	]
 	
 	DefaultPacker = proc { |value, code| AE::AEDesc.new(code, [value].pack('d')) }
@@ -114,9 +114,6 @@ module SmallEndianConverters
 end
 
 
-CodeConverters = [1].pack('s') == "\001\000" ? SmallEndianConverters : BigEndianConverters
-
-
 ######################################################################
 
 class NotUTF8TextError < RuntimeError
@@ -124,9 +121,10 @@ end
 
 
 class Codecs
+	
+	extend([1].pack('s') == "\001\000" ? SmallEndianConverters : BigEndianConverters)
 
 	def initialize
-		extend(CodeConverters)
 		@unit_type_codecs = UnitTypeCodecs.new
 	end
 	
@@ -189,13 +187,13 @@ class Codecs
 		elsif val.is_a?(Hash) then pack_hash(val)
 		elsif val.is_a?(MacTypes::FileBase) then val.desc
 		elsif val.is_a?(TypeWrappers::AEType) then
-			AE::AEDesc.new(KAE::TypeType, four_char_code(val.code))
+			AE::AEDesc.new(KAE::TypeType, Codecs.four_char_code(val.code))
 		elsif val.is_a?(TypeWrappers::AEEnum) then
-			AE::AEDesc.new(KAE::TypeEnumerated, four_char_code(val.code))
+			AE::AEDesc.new(KAE::TypeEnumerated, Codecs.four_char_code(val.code))
 		elsif val.is_a?(TypeWrappers::AEProp) then 
-			AE::AEDesc.new(KAE::TypeProperty, four_char_code(val.code))
+			AE::AEDesc.new(KAE::TypeProperty, Codecs.four_char_code(val.code))
 		elsif val.is_a?(TypeWrappers::AEKey) then
-			AE::AEDesc.new(KAE::TypeKeyword, four_char_code(val.code))
+			AE::AEDesc.new(KAE::TypeKeyword, Codecs.four_char_code(val.code))
 		elsif val.is_a?(TypeWrappers::AEEventName) then 
 			AE::AEDesc.new(KAE::TypeEventName, val.code)
 		elsif val.is_a?(AE::AEDesc) then val
@@ -362,19 +360,19 @@ class Codecs
 	#######
 	
 	def unpack_type(desc)
-		return TypeWrappers::AEType.new(four_char_code(desc.data))
+		return TypeWrappers::AEType.new(Codecs.four_char_code(desc.data))
 	end
 	
 	def unpack_enumerated(desc)
-		return TypeWrappers::AEEnum.new(four_char_code(desc.data))
+		return TypeWrappers::AEEnum.new(Codecs.four_char_code(desc.data))
 	end
 	
 	def unpack_property(desc)
-		return TypeWrappers::AEProp.new(four_char_code(desc.data))
+		return TypeWrappers::AEProp.new(Codecs.four_char_code(desc.data))
 	end
 	
 	def unpack_keyword(desc)
-		return TypeWrappers::AEKey.new(four_char_code(desc.data))
+		return TypeWrappers::AEKey.new(Codecs.four_char_code(desc.data))
 	end
 	
 	def unpack_event_name(desc)
@@ -426,34 +424,30 @@ class Codecs
 			}
 	
 	# InsertionLoc keys and comparison and logic comparison operators aren't unpacked before use,
-	# so need to call _four_char_codes to swap bytes here.
-	
-	def Codecs._four_char_code(code) # TO DO: use CodeConverters.four_char_code
-		return code.unpack('N').pack('L')
-	end
+	# so need to call four_char_codes to swap bytes here.
 	
 	InsertionLocEnums = {
-			_four_char_code(KAE::KAEBefore) => 'before', 
-			_four_char_code(KAE::KAEAfter) => 'after', 
-			_four_char_code(KAE::KAEBeginning) => 'start',
-			_four_char_code(KAE::KAEEnd) => 'end',
+			Codecs.four_char_code(KAE::KAEBefore) => 'before', 
+			Codecs.four_char_code(KAE::KAEAfter) => 'after', 
+			Codecs.four_char_code(KAE::KAEBeginning) => 'start',
+			Codecs.four_char_code(KAE::KAEEnd) => 'end',
 			}
 
 	ComparisonEnums = {
-			_four_char_code(KAE::KAEGreaterThan) => 'gt',
-			_four_char_code(KAE::KAEGreaterThanEquals) => 'ge',
-			_four_char_code(KAE::KAEEquals) => 'eq',
-			_four_char_code(KAE::KAELessThan) => 'lt',
-			_four_char_code(KAE::KAELessThanEquals) => 'le',
-			_four_char_code(KAE::KAEBeginsWith) => 'starts_with',
-			_four_char_code(KAE::KAEEndsWith) => 'ends_with',
-			_four_char_code(KAE::KAEContains) => 'contains',
+			Codecs.four_char_code(KAE::KAEGreaterThan) => 'gt',
+			Codecs.four_char_code(KAE::KAEGreaterThanEquals) => 'ge',
+			Codecs.four_char_code(KAE::KAEEquals) => 'eq',
+			Codecs.four_char_code(KAE::KAELessThan) => 'lt',
+			Codecs.four_char_code(KAE::KAELessThanEquals) => 'le',
+			Codecs.four_char_code(KAE::KAEBeginsWith) => 'starts_with',
+			Codecs.four_char_code(KAE::KAEEndsWith) => 'ends_with',
+			Codecs.four_char_code(KAE::KAEContains) => 'contains',
 			}
 
 	LogicalEnums = {
-			_four_char_code(KAE::KAEAND) => 'and',
-			_four_char_code(KAE::KAEOR) => 'or',
-			_four_char_code(KAE::KAENOT) => 'not',
+			Codecs.four_char_code(KAE::KAEAND) => 'and',
+			Codecs.four_char_code(KAE::KAEOR) => 'or',
+			Codecs.four_char_code(KAE::KAENOT) => 'not',
 			}
 	
 	#######
@@ -554,7 +548,7 @@ class Codecs
 	##
 	
 	def unpack_absolute_ordinal(desc)
-		return Ordinal.new(four_char_code(desc.data))
+		return Ordinal.new(Codecs.four_char_code(desc.data))
 	end
 	
 	def unpack_current_container(desc)
