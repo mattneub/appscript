@@ -26,11 +26,10 @@ _macEpoch = datetime.datetime(1904, 1, 1)
 
 #######
 
-if struct.pack("L", *struct.unpack(">L", 'abcd')) == 'abcd' : # host is big-endian
-	fourCharCode = eightCharCode = lambda code: code
+if struct.pack("h", 1) == '\x00\x01': # host is big-endian
+	fourCharCode = lambda code: code
 else: # host is small-endian
 	fourCharCode = lambda code: code[::-1]
-	eightCharCode = lambda code: code[3::-1] + code[:3:-1]
 
 #######
 # AEDesc Decoders
@@ -114,7 +113,7 @@ decoders = {
 	kAE.typeEnumeration: lambda desc,codecs: AEEnum(fourCharCode(desc.data)),
 	kAE.typeProperty: lambda desc,codecs: AEProp(fourCharCode(desc.data)),
 	kAE.typeKeyword: lambda desc,codecs: AEKey(fourCharCode(desc.data)),
-	'evnt': lambda desc,codecs: AEEventName(eightCharCode(desc.data)), # event name
+	'evnt': lambda desc,codecs: AEEventName(desc.data), # event name
 	
 	kAE.typeStyledText: lambda desc,codecs: _unpackUnicodeText(desc.AECoerceDesc(kAE.typeUnicodeText), codecs),
 	kAE.typeStyledUnicodeText: lambda desc,codecs: _unpackUnicodeText(desc.AECoerceDesc(kAE.typeUnicodeText), codecs),

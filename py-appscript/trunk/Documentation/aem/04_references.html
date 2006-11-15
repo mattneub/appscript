@@ -139,14 +139,16 @@ p ref
 
 <h2>Base classes</h2>
 
+<p>(Note: <code>self</code> arguments omitted for clarity.)</p>
+
 <h3>Basic methods</h3>
 
 <pre><code>BASE -- Base class for all reference form and test clause classes.
-    __hash__(self)
+    __hash__() -- aem references can be used as dictionary keys
 
-    __eq__(self, v)
+    __eq__(value) -- aem references can be compared for equality
 
-    __ne__(self, v)</code></pre>
+    __ne__(value)</code></pre>
 
 
 <h3>Properties and methods for all position specifiers</h3>

@@ -15,7 +15,7 @@ import specifier, base
 # PRIVATE
 ######################################################################
 
-if struct.pack("L", *struct.unpack(">L", 'abcd')) == 'abcd' : # host is big-endian
+if struct.pack("h", 1) == '\x00\x01': # host is big-endian
 	fourCharCode = lambda code: code
 else: # host is small-endian
 	fourCharCode = lambda code: code[::-1]

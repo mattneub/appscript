@@ -1,6 +1,6 @@
 HISTORY
 
-2006-10-25 -- ???
+2006-11-15 -- ???
 - 'filter' is no longer a reserved word
 - added rb-appscript support to makeidentifier, typerenderers and other modules
 - typerenderers no longer prefixes class names

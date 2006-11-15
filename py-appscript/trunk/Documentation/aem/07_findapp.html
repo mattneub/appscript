@@ -25,21 +25,20 @@
 
 <h2>The <code>findapp</code> module</h2>
 
-<p>The findapp module is used to obtain the full path to an application given it file name, bundle ID, or creator code. It exports the following three methods:</p>
+<p>The findapp module is used to obtain the full path to an application given it file name, bundle ID, or creator code. It exports the following functions:</p>
 
-<pre><code>byname(name) -- Find the application with the given name and return its full path. 
+<pre><code>byname(name) -- Find the application with the given name. 
     name : str -- application's name, e.g. 'Finder.app'. The '.app' suffix is
             optional. Absolute paths are also accepted.
-    Result : str
+    Result : str -- full path to application
 
-byid(id) -- Find the application with the given bundle id and return its full path.
+byid(id) -- Find the application with the given bundle id.
     id : str -- bundle id, e.g. 'com.apple.textedit'
-    Result : str
+    Result : str -- full path to application
 
-bycreator(creator) -- Find the application with the given creator type and return
-            its full path.
+bycreator(creator) -- Find the application with the given creator type.
     creator : str -- four-char code, e.g. 'ttxt'
-    Result : str</code></pre>
+    Result : str -- full path to application</code></pre>
 
 
 </div>

@@ -27,8 +27,15 @@
 
 <pre><code>Application -- the target application
 
-    Constructor:
-        Application(path=None, url=None, desc=None, codecs=aem.types.Codecs())
+    Attributes:
+
+        _Event : Event -- Event class to be instantiated by
+                Application.event(); Application subclasses may
+                override this [1]
+    
+    Methods:
+
+        __init__(path=None, url=None, desc=None, codecs=aem.types.Codecs())
             path : string | None -- full path to local application
                     (e.g. '/Applications/TextEdit.app')
             url : string | None -- url for remote process
@@ -37,25 +44,7 @@
             codecs : aemtypes.Codecs -- used to convert Python values
                     to AEDescs and back
 
-    Attributes:
-        _Event : Event -- Event class to be instantiated by
-                Application.event(); Application subclasses may
-                override this [1]
-    
-    Methods:
-        event(event, params={}, atts={}, returnid=k.AutoGenerateReturnID,
-                codecs=None) -- construct an Apple event
-            event  : str -- 8-letter code indicating event's class and id,
-                    e.g. 'coregetd'
-            params : dict -- a dict of form {AE_code:anything,...} containing
-                    zero or more event parameters (message arguments) [2]
-            atts : dict -- a dict of form {AE_code:anything,...} containing
-                    zero or more event attributes (event info) [3]
-            returnid : int  -- reply event's ID
-            codecs : Codecs | None -- custom codecs to use when packing/
-                    unpacking this event; if None, codecs supplied in
-                    Application constructor are used
-            Result : Event -- a ready-to-send Apple event
+        event(...) -- construct an Apple event (see next chapter for details)
 
         starttransaction() -- start a new transaction; all Events
                 constructed after starttransaction() is called will

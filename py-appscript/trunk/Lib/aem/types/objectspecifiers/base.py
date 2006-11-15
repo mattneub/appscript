@@ -11,16 +11,20 @@ from CarbonX import AE, kAE
 # PUBLIC
 ######################################################################
 
-# TO DO: optimise type packers a-la pack.py
+if struct.pack("h", 1) == '\x00\x01': # host is big-endian
+	fourCharCode = lambda code: code
+else: # host is small-endian
+	fourCharCode = lambda code: code[::-1]
+
 
 def packType(code):
-	return AE.AECreateDesc(kAE.typeType, struct.pack("L", *struct.unpack(">L", code))) # ensure correct endianness
+	return AE.AECreateDesc(kAE.typeType, fourCharCode(code))
 
 def packAbsoluteOrdinal(code): 
-	return AE.AECreateDesc(kAE.typeAbsoluteOrdinal, struct.pack("L", *struct.unpack(">L", code)))
+	return AE.AECreateDesc(kAE.typeAbsoluteOrdinal, fourCharCode(code))
 
 def packEnum(code):
-	return AE.AECreateDesc(kAE.typeEnumeration, struct.pack("L", *struct.unpack(">L", code)))
+	return AE.AECreateDesc(kAE.typeEnumeration, fourCharCode(code))
 
 def packListAs(type, lst):
 	desc = AE.AECreateList('', True)

@@ -24,11 +24,10 @@ _shortMacEpoch = _macEpoch.date() # used in packing date objects as AEDesc typeL
 
 #######
 
-if struct.pack("L", *struct.unpack(">L", 'abcd')) == 'abcd' : # host is big-endian
-	fourCharCode = eightCharCode = lambda code: code
+if struct.pack("h", 1) == '\x00\x01': # host is big-endian
+	fourCharCode = lambda code: code
 else: # host is small-endian
 	fourCharCode = lambda code: code[::-1]
-	eightCharCode = lambda code: code[3::-1] + code[:3:-1]
 
 #######
 # Packing functions
@@ -117,6 +116,6 @@ encoders = {
 	AEEnum: lambda val, codecs: AECreateDesc(kAE.typeEnumeration, fourCharCode(val.code)),
 	AEProp: lambda val, codecs: AECreateDesc(kAE.typeProperty, fourCharCode(val.code)),
 	AEKey: lambda val, codecs: AECreateDesc(kAE.typeKeyword, fourCharCode(val.code)),
-	AEEventName: lambda val, codecs: AECreateDesc('evnt', eightCharCode(val.code)),
+	AEEventName: lambda val, codecs: AECreateDesc('evnt', val.code),
 }
 
