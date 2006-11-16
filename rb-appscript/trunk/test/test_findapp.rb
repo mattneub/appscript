@@ -1,7 +1,7 @@
 #!/usr/local/bin/ruby
 
 require 'test/unit'
-require "findapp"
+require "_aem/findapp"
 
 
 class TC_FindApp < Test::Unit::TestCase

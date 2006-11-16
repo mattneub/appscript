@@ -2,14 +2,15 @@
 # Copyright (C) 2006 HAS. 
 # Released under MIT License.
 
+require "_aem/mactypes"
+
 module AS
 	# The following methods and classes are of interest to end users:
 	# app, con, its, CommandError, ApplicationNotFoundError
 	# Other classes are only of interest to implementors who need to hook in their own code.
-
+	
 	require "kae"
 	require "aem"
-	require "findapp"
 	require "_appscript/referencerenderer"
 	require "_appscript/terminology"
 	

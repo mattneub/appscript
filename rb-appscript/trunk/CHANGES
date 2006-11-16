@@ -1,4 +1,4 @@
-2006-11-14 -- ???
+2006-11-16 -- ???
 
 - removed path expansion in FindApp#byName, MacFile::Alias#at, MacFile::FileURL#at
 
@@ -90,11 +90,13 @@
 	FindApp.byCreator -> FindApp.by_creator
 	FindApp.byID -> FindApp.by_id
 
+- changed type names in defaultterminology.rb to be more AppleScript-like, e.g. :String -> :string, :MissingValue -> :missing_value (note that there are still a few deliberate differences, e.g. :float instead of :real)
+
+- added month and weekday name-code definitions to defaultterminology.rb
+
 - changed internal variable and method names to follow Ruby style guidelines
 
 - added MacTypes::Units class
-
-- changed built-in unit type names in defaultterminology.rb to follow Ruby conventions (e.g. :Feet -> :feet)
 
 - fixed appscript reference rendering bug where property/element names could get muddled (e.g. 'document' property would appear as 'documents')
 
@@ -104,7 +106,11 @@
 
 - fixed bug in AEM::Application#end_transaction
 
-- added month and weekday name-code definitions to defaultterminology.rb
+- moved findapp.rb and mactypes.rb to _aem/ (they're already re-exported by aem.rb, appscript.rb, etc. so clients don't need to require them directly)
+
+- 'help' is now a reserved word (though is not currently implemented)
+
+- Attempting to pack invalid UTF8 strings now raises TypeError instead of AEM::NotUTF8TextError
 
 
 2006-10-23 -- 0.1.6

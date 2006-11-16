@@ -4,11 +4,18 @@
 
 module Send
 
+	# Defines the Event class, which represents an Apple event that's packed and ready to send, 
+	# and the CommandError class, which contains error information for a failed event.
+
 	require "ae"
 	require "kae"
 	require "_aem/codecs"
 	
-	MacOSErrorDescriptions = { # Following default error descriptions are mostly cribbed from AppleScript Language Guide.
+	# Most applications don't provide error description strings, so aem defines default descriptions for the common ones.
+	
+	# Following default error descriptions are cribbed from the AppleScript Language Guide/MacErrors.h:
+	
+	MacOSErrorDescriptions = {
 			# OS errors
 			-34 => "Disk is full.",
 			-35 => "Disk wasn't found.",
@@ -75,9 +82,10 @@ module Send
 			-1729 => "Object counting procedure returned a negative count.",
 			-1730 => "Container specified was an empty list.",
 			-1731 => "Unknown object type.",
+			-1739 => "Attempting to perform an invalid operation on a null descriptor.",
 			# Application scripting errors
 			-10000 => "Apple event handler failed.",
-			-10001 => "errAETypeError",
+			-10001 => "Type error.",
 			-10002 => "Invalid key form.",
 			-10003 => "Can't set reference to given value. Access not allowed.",
 			-10004 => "A privilege violation occurred.",
@@ -92,11 +100,15 @@ module Send
 			-10013 => "There is no user selection.",
 			-10014 => "Handler only handles single objects.",
 			-10015 => "Can't undo the previous Apple event or user action.",
-			-10023 => "errAENotAnEnumMember",
-			-10024 => "errAECantPutThatThere",
-			-10025 => "errAEPropertiesClash",
+			-10023 => "Enumerated value is not allowed for this property.",
+			-10024 => "Class can't be an element of container.",
+			-10025 => "Illegal combination of properties settings.",
 	}
 	
+	# Following Cocoa Scripting error descriptions taken from:
+	# http://developer.apple.com/documentation/Cocoa/Reference/Foundation/ObjC_classic/Classes/NSScriptCommand.html
+	# http://developer.apple.com/documentation/Cocoa/Reference/Foundation/ObjC_classic/Classes/NSScriptObjectSpecifier.html
+
 	CocoaErrorDescriptions = [
 			["NSReceiverEvaluationScriptError", "The object or objects specified by the direct parameter to a command could not be found."],
 			["NSKeySpecifierEvaluationScriptError", "The object or objects specified by a key (for commands that support key specifiers) could not be found."],
@@ -104,8 +116,8 @@ module Send
 			["NSReceiversCantHandleCommandScriptError", "The receivers don't support the command sent to them."],
 			["NSRequiredArgumentsMissingScriptError", "An argument (or more than one argument) is missing."],
 			["NSArgumentsWrongScriptError", "An argument (or more than one argument) is of the wrong type or is otherwise invalid."],
-			["NSUnknownKeyScriptError", "An unidentified error occurred; indicates an error in the scripting support of your application."],
-			["NSInternalScriptError", "An unidentified internal error occurred; indicates an error in the scripting support of your application."],
+			["NSUnknownKeyScriptError", "An unidentified error occurred; indicates an error in the scripting support of the application."],
+			["NSInternalScriptError", "An unidentified internal error occurred; indicates an error in the scripting support of the application."],
 			["NSOperationNotSupportedForKeyScriptError", "The implementation of a scripting command signaled an error."],
 			["NSCannotCreateScriptCommandError", "Could not create the script command; an invalid or unrecognized Apple event was received."],
 			["NSNoSpecifierError", "No error encountered."],
@@ -118,22 +130,36 @@ module Send
 	]
 	
 	class Event
+		# Represents an Apple event.
+		
+		# Clients don't instantiate this class directly; instead, new instances are returned by AEM::Application#event.
+		
 		attr_reader :AEM_event
 	
-		def initialize(address, event, params={}, atts={}, transaction=KAE::KAnyTransactionID, 
+		def initialize(address, event_code, params={}, atts={}, transaction=KAE::KAnyTransactionID, 
 				return_id= KAE::KAutoGenerateReturnID, codecs=DefaultCodecs)
-			@_event_code = event
+			# Create and pack a new Apple event ready for sending.
+			# address : AEAddressDesc -- the target application, identified by PSN, URL, etc.
+			# event_code : string -- 8-letter code indicating event's class and id, e.g. 'coregetd'
+			# params : hash -- a hash of form {AE_code=>anything,...} containing zero or more event parameters (message arguments)
+			# atts : hash -- a hash of form {AE_code=>anything,...} containing zero or more event attributes (event info)
+			# transaction : integer -- transaction number; AEM::Application takes care of this value
+			# return_id : integer  -- reply event's ID
+			# codecs : Codecs -- clients can provide custom Codecs object for packing parameters and unpacking result of this event
+			@_event_code = event_code
 			@_codecs = codecs
-			@AEM_event = _create_apple_event(event[0, 4], event[-4, 4], address, return_id, transaction)
+			@AEM_event = _create_apple_event(event_code[0, 4], event_code[-4, 4], address, return_id, transaction)
 			atts.each {|key, value| @AEM_event.put_attr(key, codecs.pack(value))}
 			params.each {|key, value| @AEM_event.put_param(key, codecs.pack(value))}
 		end
 		
 		def _create_apple_event(event_class, event_id, target, return_id, transaction_id)
+			# Hook method; may be overridden to customise how AppleEvent descriptors are created.
 			return AE::AEDesc.new_apple_event(event_class, event_id, target, return_id, transaction_id)
 		end
 		
 		def _send_apple_event(flags, timeout)
+			#ÊHook method; may be overridden to customise how events are sent.
 			return @AEM_event.send(flags, timeout)
 		end
 		
@@ -144,22 +170,36 @@ module Send
 		alias_method :to_s, :inspect
 		
 		def send(timeout=KAE::KAEDefaultTimeout, flags=KAE::KAECanSwitchLayer + KAE::KAEWaitReply)
+			# Send this Apple event (may be called any number of times).
+			# timeout : int | KAEDefaultTimeout | KNoTimeOut -- number of ticks to wait for target process to reply before raising timeout error
+			# flags : integer -- bitwise flags [1] indicating how target process should handle event
+			# Result : anything -- value returned by application, if any
+			#
+			# [1] Should be the sum of zero or more of the following kae module constants:
+			#
+			#	KAENoReply | KAEQueueReply | KAEWaitReply
+			#	KAEDontReconnect
+			#	KAEWantReceipt
+			#	KAENeverInteract | KAECanInteract | KAEAlwaysInteract
+			#	KAECanSwitchLayer
+
 			begin
 				reply_event = _send_apple_event(flags, timeout)
-			rescue AE::MacOSError => err
-				if not (@_event_code == 'aevtquit' and err.to_i == -609)
+			rescue AE::MacOSError => err # The Apple Event Manager raised an error.
+				if not (@_event_code == 'aevtquit' and err.to_i == -609) # Ignore invalid connection errors (-609) when quitting
 					raise CommandError.new(err.to_i, nil, err)
 				end
-			else
+			else # Decode application's reply, if any. May be a return value, error number (and optional message), or nothing.
 				if reply_event.type != KAE::TypeNull
 					event_result = {}
 					reply_event.length.times do |i|
 						key, value = reply_event.get(i + 1, KAE::TypeWildCard)
 						event_result[key] = value
 					end
-					if event_result.has_key?(KAE::KeyErrorNumber)
+					if event_result.has_key?(KAE::KeyErrorNumber) # The application raised an error.
+						# Error info is unpacked using default codecs for reliability.
 						e_num = DefaultCodecs.unpack(event_result[KAE::KeyErrorNumber])
-						if e_num != 0
+						if e_num != 0 # Note that some apps (e.g. Finder) may return error code 0 to indicate a successful operation, so ignore this.
 							e_msg = event_result[KAE::KeyErrorString]
 							if e_msg
 								e_msg = DefaultCodecs.unpack(e_msg)
@@ -168,6 +208,9 @@ module Send
 						end
 					end
 					if event_result.has_key?(KAE::KeyAEResult)
+						# Return values are unpacked using [optionally] client-supplied codecs.
+						# This allows aem clients such as appscript to customise how values are unpacked
+						# (e.g. to unpack object specifier descs as appscript references instead of aem references).
 						return @_codecs.unpack(event_result[KAE::KeyAEResult])
 					end
 				end
@@ -177,9 +220,13 @@ module Send
 	
 	
 	class CommandError < RuntimeError
-		# TO DO: other error attributes, where available
+		# Represents an error raised by the Apple Event Manager or target application when a command fails.
+		#
+		# Methods:
+		#	number : integer -- MacOS error number
+		#	message : string | nil -- application error message if any, or default error description if available, or nil
 		
-		attr_reader :number, :message, :raw
+		attr_reader :number, :message, :raw # raw method is provided for testing/debugging use only
 		alias_method :to_i, :number
 		
 		def initialize(number, message, raw)

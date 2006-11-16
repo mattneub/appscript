@@ -68,15 +68,15 @@
 
 <pre><code>application.command_name(:name1 =&gt; value1, :name2 =&gt; value2, ...)</code></pre>
 
-<p>If the command takes only a direct parameter, then it can <em>usually</em> be written as follows:
+<p>If the command takes only a direct parameter <em>and</em> the value given is not a hash, then it can be written as follows:
 
 <pre><code>application.command_name(direct_parameter)</code></pre>
 
-<p>There is one caveat to this last rule, however. If the direct parameter is a Ruby hash representing an AE record, care must be taken to prevent appscript mistaking this value for keyword parameters. The solution is to provide an empty keyword parameters hash as the second argument to the call:</p>
+<p>If the direct parameter is a Ruby hash, you <em>must</em> provide an empty keyword parameters hash as the second argument to the call:</p>
 
 <pre><code>application.command_name(direct_hash_parameter, {})</code></pre>
 
-<p>If you forget to do this, appscript will treat the direct parameter's items as command parameters instead, resulting in an error or other unexpected behaviour.</p>
+<p>If you forget, appscript will treat this hash value as the command's keyword parameters, resulting in an error or other unexpected behaviour.</p>
 
 <p>See the Special cases section below for additional rules.</p>
 
@@ -101,7 +101,7 @@ AS.app('TextEdit').documents.first.text.count(:each =&gt; :paragraph)
 AS.app('TextEdit').documents.end.make(:new =&gt; :document)
 
 # tell application &quot;Finder&quot; to get items of home as alias list
-AS.app('Finder').home.items.get(:result_type =&gt; :Alias)</code></pre>
+AS.app('Finder').home.items.get(:result_type =&gt; :alias)</code></pre>
 
 
 

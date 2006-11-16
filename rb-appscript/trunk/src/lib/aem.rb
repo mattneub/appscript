@@ -2,10 +2,13 @@
 # Copyright (C) 2006 HAS. 
 # Released under MIT License.
 
+require "ae"
+require "kae"
+require "_aem/findapp"
+require "_aem/mactypes"
+
 module AEM
 	
-	require "ae"
-	require "kae"
 	require "_aem/codecs"
 	require "_aem/aemreference"
 	require "_aem/typewrappers"

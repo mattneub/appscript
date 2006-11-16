@@ -110,7 +110,7 @@ AS.app('Finder').home.folders['Projects'].duplicate(
 #     to group "Birthdays"
 
 AS.app('Address Book').people[
-    AS.its.birth_date.ne(:MissingValue)
+    AS.its.birth_date.ne(:missing_value)
     ].add(:to =&gt; AS.app.groups['Birthdays'])</code></pre>
 
 

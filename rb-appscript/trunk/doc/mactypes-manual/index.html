@@ -22,7 +22,7 @@
 <div id="content">
 <h2>What is mactypes?</h2>
 
-<p>The mactypes module provides user-friendly wrappers for OS X Alias and File objects, commonly used by scriptable applications to identify filesystem objects and locations, and for unit type values used by some applications to represent lengths, etc.</p>
+<p>The mactypes module provides user-friendly wrappers for OS X Alias and File objects, commonly used by scriptable applications to identify filesystem objects and locations, and for unit type values used by some applications to represent lengths, etc. It is automatically imported when requiring appscript, aem or osax.</p>
 
 <p class="hilitebox">Note that most scriptable applications do not use or understand POSIX paths, and while the Apple Event Manager does provide some built-in coercions for converting between path strings and alias/file objects, these work with HFS paths only. Therefore, when specifying files and folders to scriptable applications, use <code>MacTypes::Alias</code> and <code>MacTypes::File</code> objects - not path strings - unless otherwise indicated.</p>
 
@@ -60,7 +60,6 @@
 <h3>Examples</h3>
 
 <pre><code>require "appscript"
-require "mactypes"
 
 f = MacTypes::Alias.path('/Users/foo/some file')
 
@@ -106,7 +105,6 @@ AS.app('TextEdit').open(f)
 <h3>Examples</h3>
 
 <pre><code>require "appscript"
-require "mactypes"
 
 f = MacTypes::FileURL.path('/Users/foo/new file')
 
@@ -126,14 +124,13 @@ AS.app('TextEdit').documents[1].save(:in => f)
 
 <p>When dealing with less well-behaved applications, however, you may need to pass an AEDesc of a specific type. In this case you should use the <code>desc</code> method to obtain an <code>AE::AEDesc</code> object, then call its <code>coerce</code> method to obtain an AEDesc of the desired type. For example, if an older Carbon application refuses to accept a FileURL identifying a non-existing file location, you may need to provide a FSSpec insteaf:</p>
 
-<pre><code>require "mactypes"
-require "kae"
+<pre><code>require "appscript"
 
-fileURL = MacTypes::FileURL.path('/Users/foo/new file')
+file_url = MacTypes::FileURL.path('/Users/foo/new file')
 
-fsspec = fileURL.desc.coerce(KAE::TypeFSS)
+fs_spec = file_url.desc.coerce(KAE::TypeFSS)
 
-AS.app('older app').documents[1].save(:in => fsspec)</code></pre>
+AS.app('older app').documents[1].save(:in => fs_spec)</code></pre>
 
 <p>When used in an application command, a <code>FileURL</code> object returned by appscript will always pack into the same <code>TypeFSRef</code>, <code>TypeFileURL</code> or <code>TypeFSS</code> AEDesc it was created from. A <code>FileURL</code> object returned by <code>FileURL.path</code>, <code>Alias#to_file_url</code> or <code>FileURL#to_file_url</code> will always pack into an AEDesc of <code>TypeFileURL</code>.</p>
 
@@ -146,7 +143,7 @@ AS.app('older app').documents[1].save(:in => fsspec)</code></pre>
 
 <p><code>FileNotFoundError</code> is a subclass of <code>RuntimeError</code>. It is raised by <code>Alias</code> and <code>FileURL</code> objects when an operation that only works for existing filesystem objects/locations fails. For example:</p>
 
-<pre><code>require "mactypes"
+<pre><code>require "appscript"
 
 MacTypes::Alias.path('/some/non/existent/location')
 # raises FileNotFoundError</code></pre>
@@ -154,7 +151,43 @@ MacTypes::Alias.path('/some/non/existent/location')
 
 <h2><code>MacTypes::Units</code></h2>
 
-<!-- TO DO -->
+<p>The <code>Units</code> class represents a measurement of some sort, e.g. 3 inches, 98.5 degrees Fahrenheit.</p>
+
+<pre><code>class Units
+
+    Constructor:
+
+        Units.new(value, type)
+            value : Fixnum | Bignum | Float -- the amount, e.g. 3.5
+            type : Symbol -- the unit of measurement, e.g. :centimeters
+
+    Methods:
+
+        ==
+
+        hash
+
+        inspect
+
+        value -- returns the amount
+
+        type -- returns the unit of measurement
+
+        to_i -- returns the amount as an integer
+
+        to_f -- returns the amount as a float
+
+        to_s -- returns the measurement as a string, e.g. "3.5 centimeters"</code></pre>
+
+<p>For convenience, the <code>Units</code> class also implements an additional class method, <code>Units.method_missing</code>, to allow new values to be created using the unit of measurement as the constructor call, e.g.:</p>
+
+<pre><code>MacTypes::Units.new(14, :inches)</code></pre>
+
+<p>can also be written as:</p>
+
+<pre><code>MacTypes::Units.inches(14)</code></pre>
+
+<p>See the <a href="../appscript-manual/06_classesandenums.html">Classes and Enumerated Types</a> chapter of the appscript manual for a full list of unit types built into aem/appscript. Additional application-specific unit types can be added if needed.</p>
 
 
 </div>

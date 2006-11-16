@@ -6,7 +6,7 @@ require "ae"
 require "kae"
 require "_aem/typewrappers"
 require "_aem/aemreference"
-require "mactypes"
+require "_aem/mactypes"
 
 # Note that AE strings (typeChar, typeUnicodeText, etc.) are unpacked as UTF8-encoded Ruby strings, and UTF8-encoded Ruby strings are packed as typeUnicodeText. Using UTF8 on the Ruby side avoids data loss; using typeUnicodeText on the AEM side provides compatibility with all [reasonably well designed] applications. To change this behaviour (e.g. to support legacy apps that demand typeChar and break on typeUnicodeText), subclass Codecs and override pack and/or unpack methods to provide alternative packing/unpacking of string values. Users can also pack data manually using AE::AEDesc.new(type, data).
 
@@ -48,9 +48,9 @@ class UnitTypeCodecs
 		[:ounces, KAE::TypeOunces],
 		[:pounds, KAE::TypePounds],
 		
-		[:Celsius, KAE::TypeDegreesC],
-		[:Fahrenheit, KAE::TypeDegreesF],
-		[:Kelvin, KAE::TypeDegreesK],
+		[:degrees_Celsius, KAE::TypeDegreesC],
+		[:degrees_Fahrenheit, KAE::TypeDegreesF],
+		[:degrees_Kelvin, KAE::TypeDegreesK],
 	]
 	
 	DefaultPacker = proc { |value, code| AE::AEDesc.new(code, [value].pack('d')) }
@@ -116,9 +116,6 @@ end
 
 ######################################################################
 
-class NotUTF8TextError < RuntimeError
-end
-
 
 class Codecs
 	
@@ -175,7 +172,7 @@ class Codecs
 				AE::AEDesc.new(KAE::TypeUTF8Text, val).coerce(KAE::TypeUnicodeText)
 			rescue AE::MacOSError => e
 				if e.to_i == -1700
-					raise NotUTF8TextError, "Not valid UTF8 data: #{val.inspect}"
+					raise TypeError, "Not valid UTF8 data: #{val.inspect}"
 				else
 					raise
 				end

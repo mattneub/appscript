@@ -1,5 +1,7 @@
 #!/usr/local/bin/ruby
 
+require "appscript"
+
 module OSAX
 	
 	######################################################################
@@ -9,8 +11,6 @@ module OSAX
 	require "ae"
 	require "kae"
 	require "aem"
-	require "appscript"
-	require "findapp"
 	
 	#######
 	# cache; stores osax paths and previously parsed terminology (if any) by osax name

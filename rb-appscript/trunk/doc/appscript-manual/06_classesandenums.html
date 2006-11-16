@@ -25,9 +25,9 @@
 <p>For your convenience, appscript represents Apple event type names and application-specific class and enumerator names as Ruby symbols. Examples:</p>
 
 <pre><code># AEM-defined data types:
-:Boolean
-:Unicode
-:List
+:boolean
+:unicode_text
+:list
 
 # Application-defined class names:
 :document
@@ -39,7 +39,7 @@
 :no
 :ask</code></pre>
 
-<p>Occasionally an application defines a type or enumerator without providing it with a corresponding name name. In these cases, the value will be represented as a raw <code>AEM::AEType</code> or <code>AEM::AEEnum</code> object instead of a symbol, e.g.: <!--The aem package's documentation provides more information on these lower-level objects, should you need to use them.--></p>
+<p>Occasionally an application dictionary defines a type or enumerator without providing it with a corresponding name name. In these cases, the value will be represented as a raw <code>AEM::AEType</code> or <code>AEM::AEEnum</code> object instead of a symbol, e.g.: <!--The aem package's documentation provides more information on these lower-level objects, should you need to use them.--></p>
 
 <pre><code>AEM::AEType.new('abcd')
 
@@ -49,24 +49,27 @@ AEM::AEEnum.new('xyz ')</code></pre>
 
 <table width=100% summary="AE-Ruby type mappings">
 <thead>
-<tr><th>AE type</th><th>Ruby type</th></tr>
+<tr><th>AE type</th><th>appscript type name</th><th>Ruby type</th></tr>
 </thead>
 <tbody>
-<tr><td><code>:Null</code></td><td><code>NilClass</code></td></tr>
-<tr><td><code>:Boolean</code></td><td><code>TrueClass/FalseClass</code></td></tr>
-<tr><td><code>:Integer</code></td><td><code>Fixnum/Bignum</code></td></tr>
-<tr><td><code>:Float</code></td><td><code>Float</code></td></tr>
-<tr><td><code>:String</code></td><td><code>String</code></td></tr>
-<tr><td><code>:Unicode</code></td><td><code>String</code></td></tr>
-<tr><td><code>:List</code></td><td><code>Array</code></td></tr>
-<tr><td><code>:Record</code></td><td><code>Hash</code></td></tr>
-<tr><td><code>:Date</code></td><td><code>Time</code></td></tr>
-<tr><td><code>:Alias</code></td><td><code>MacTypes::Alias</code></td></tr>
-<tr><td><code>:FSRef</code></td><td><code>MacTypes::FileURL</code></td></tr>
-<tr><td><code>:FileURL</code></td><td><code>MacTypes::FileURL</code></td></tr>
-<tr><td><code>:Reference</code></td><td><small>appscript reference</small></td></tr>
-<tr><td><code>:InsertionRef</code></td><td><small>appscript insertion reference</small></td></tr>
-<tr><td><small>unit types</small></td><td><code>MacTypes::Units</code></td></tr>
+<tr><td><code>typeNull</code></td><td><code>:null</code></td><td><code>NilClass</code></td></tr>
+<tr><td><code>typeBoolean</code></td><td><code>:boolean</code></td><td><code>TrueClass/FalseClass</code></td></tr>
+<tr><td><code>typeInteger</code></td><td><code>:integer</code></td><td><code>Fixnum/Bignum</code></td></tr>
+<tr><td><code>typeFloat</code></td><td><code>:float</code></td><td><code>Float</code></td></tr>
+<tr><td><code>typeChar</code></td><td><code>:string</code></td><td><code>String</code></td></tr>
+<tr><td><code>typeUnicodeText</code></td><td><code>:unicode_text</code></td><td><code>String</code></td></tr>
+<tr><td><code>typeAEList</code></td><td><code>:list</code></td><td><code>Array</code></td></tr>
+<tr><td><code>typeAERecord</code></td><td><code>:record</code></td><td><code>Hash</code></td></tr>
+<tr><td><code>typeLongDateTime</code></td><td><code>:date</code></td><td><code>Time</code></td></tr>
+<tr><td><code>typeAlias</code></td><td><code>:alias</code></td><td><code>MacTypes::Alias</code></td></tr>
+<tr><td><code>typeFileURL</code></td><td><code>:file_url</code></td><td><code>MacTypes::FileURL</code></td></tr>
+<tr><td><code>typeFSRef</code></td><td><code>:file_ref</code></td><td><code>MacTypes::FileURL</code></td></tr>
+<tr><td><code>typeFSS</code></td><td><code>:file_specification</code></td><td><code>MacTypes::FileURL</code></td></tr>
+<tr><td><code>typeObjectSpecifier</code></td><td><code>:reference</code></td><td><code>AS::Reference</code></td></tr>
+<tr><td><code>typeInsertionLoc</code></td><td><code>:location_reference</code></td><td><code>AS::Reference</code></td></tr>
+<tr><td><code>typeType</code></td><td><code>:type_class</code></td><td><code>Symbol</code></td></tr>
+<tr><td><code>typeEnumerated</code></td><td><code>:enumerator</code></td><td><code>Symbol</code></td></tr>
+<tr><td><small>unit types</small></td><td><small>unit type names</small></td><td><code>MacTypes::Units</code></td></tr>
 </tbody>
 </table>
 
@@ -80,9 +83,9 @@ AEM::AEEnum.new('xyz ')</code></pre>
 
 <h3>Strings</h3>
 
-<p>Because Ruby lacks a native Unicode class, appscript unpacks both the <code>:String</code> and <code>:Unicode</code> AE types as UTF8-encoded strings.</p>
+<p>Because Ruby lacks a native Unicode class, appscript unpacks the <code>typeChar</code> and <code>typeUnicodeText</code> AE types as UTF8-encoded Ruby strings.</p>
 
-<p>Appscript packs UTF8-encoded Ruby strings as the <code>:Unicode</code> AE type. If the string does not contain valid UTF8 data, a coercion error will occur.</p>
+<p>Appscript packs UTF8-encoded Ruby strings as the <code>typeUnicodeText</code> AE type. If the string does not contain valid UTF8 data, a TypeError will be raised.</p>
 
 <div class="hilitebox">
 <p>You can enable a degree of UTF8 support in Ruby's <code>String</code> class via the Jcode module (included in Ruby's standard library). To use Jcode, add the following lines to the start of your Ruby scripts, irb sessions, etc.:</p>
@@ -96,24 +99,29 @@ $KCODE = "UTF8"</code></pre>
 
 <h3>Filesystem references</h3>
 
-<p>The <code>:Alias</code> AE type represents a filesystem object, and will continue to point to that object even if it's renamed or moved to another location on the same disk. The <code>:FSRef</code> and <code>:FileURL</code> types represent a filesystem location. Both can represent existing locations; the <code>:FileURL</code> type can also be used to specify locations that don't already exist.</p>
+<p>The <code>typeAlias</code> AE type represents a filesystem object, and will continue to point to that object even if it's renamed or moved to another location on the same disk. The <code>typeFSRef</code> and <code>typeFileURL</code> types represent a filesystem location. Both can represent existing locations; the <code>typeFileURL</code> type can also be used to specify locations that don't already exist.</p>
 
 <p>FSSpecs are also supported for sake of backwards-compatibility with older Carbon applications that sometimes still use them. They're deprecated in OS X, however, due to lack of proper Unicode and long filename support, and their use is discouraged.</p>
 
 <p>Note that appscript unpacks FSRefs, FileURLs and FSSpecs as <code>MacTypes::FileURL</code> objects; users do not normally need to worry about this. <code>MacTypes::FileURL</code> objects created in Ruby will always pack as type <code>:FileURL</code>, however. See the <a href="../mactypes-manual/index.html">mactypes manual</a> for more information on <code>MacTypes::Alias</code> and <code>MacTypes::FileURL</code>.</p>
 
-<p>When asking an application to coerce a return value into a file type you must specify the exact AE type (<code>:Alias</code>, <code>:FSRef</code>, <code>:FileURL</code>, or <code>:FSSpec</code>) in the <code>get</code> command. e.g. To get a <code>MacTypes::FileURL</code> object for the current user's home folder, you would normally use:</p>
+<p>When asking an application to coerce a return value into a file type you must specify the exact type (<code>:alias</code>, <code>:file_url</code>, <code>:file_ref</code>, or <code>:file_specification</code>) in the <code>get</code> command. e.g. To get a <code>MacTypes::FileURL</code> object for the current user's home folder, you would usually use:</p>
 
-<pre><code>AS.app('Finder').home.get(type=:FileURL)</code></pre>
+<pre><code>AS.app('Finder').home.get(:result_type=&gt;:file_url)</code></pre>
 
 <p>Also be aware that some applications may not support coercions to all AE file types; you'll need to experiment to find out which coercions are supported.</p>
 
 
 <h3>Records</h3>
 
-<p>The <code>:Record</code> AE type is a struct-like data structure containing zero or more properties. Appscript represents AE records as Ruby hashes. The keys in this hash are usually symbols representing appscript-style property names, although they may also be <code>AEM::AEType</code> values or strings.</p>
+<p>The <code>typeAERecord</code> AE type is a struct-like data structure containing zero or more properties. Appscript represents AE records as Ruby hashes. The keys in this hash are usually symbols representing appscript-style property names, although they may also be <code>AEM::AEType</code> values or strings.</p>
 
-<p>If a hash contains a <code>:class</code> (or <code>AEM::AEType.new('pcls')</code>) key, appscript will pack the remaining items into an AE record, then coerce it to the type specified by the 'class' property. Similarly, when unpacking an record-like AEDesc with a custom type code, appscript will unpack it as a hash with the type represented by a a <code>:class</code> item.</p>
+<p>If a hash contains a <code>:class_</code> (or <code>AEM::AEType.new('pcls')</code>) key, appscript will pack the remaining items into an AE record, then coerce it to the type specified by this 'class' property. Similarly, when unpacking an record-like AEDesc with a custom type code, appscript will unpack it as a hash with the type represented by a <code>:class_</code> entry.</p>
+
+
+<h3>Types and enumerators</h3>
+
+<p>The <code>typeType</code> and <code>typeEnumerated</code> AE types are unpacked as Ruby symbols when the corresponding terminology is available, otherwise they are unpacked as <code>AEM::AEType</code> and <code>AEM::AEEnum</code> respectively.</td></tr>
 
 
 <h3>Unit types</h3>

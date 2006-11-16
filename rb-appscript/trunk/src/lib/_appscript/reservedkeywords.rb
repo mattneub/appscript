@@ -52,6 +52,7 @@ ReservedKeywords = [
 	"ge",
 	"gt",
 	"hash",
+	"help",
 	"id",
 	"ignore",
 	"inspect",

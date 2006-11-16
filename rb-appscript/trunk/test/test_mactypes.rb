@@ -1,7 +1,7 @@
 #!/usr/local/bin/ruby
 
 require 'test/unit'
-require "mactypes"
+require "_aem/mactypes"
 
 
 class TC_MacTypes < Test::Unit::TestCase

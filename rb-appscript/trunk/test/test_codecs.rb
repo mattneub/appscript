@@ -4,7 +4,6 @@ require 'test/unit'
 require 'aem'
 require 'kae'
 require 'ae'
-require 'mactypes'
 
 def num(s)
 	if [1].pack('s') == "\001\000" # host system is i386
