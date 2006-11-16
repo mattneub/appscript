@@ -39,7 +39,7 @@ kPyAppscriptReservedWords = """
 # - names of properties and methods used in AS::Application and AS::Reference classes
 # - names of built-in keyword arguments in AS::Reference._send
 
-kRbAppscriptReservedWords = ReservedKeywords = [
+kRbAppscriptReservedWords = [
 	"==",
 	"===",
 	"=~",
@@ -89,6 +89,7 @@ kRbAppscriptReservedWords = ReservedKeywords = [
 	"ge",
 	"gt",
 	"hash",
+	"help",
 	"id",
 	"ignore",
 	"inspect",

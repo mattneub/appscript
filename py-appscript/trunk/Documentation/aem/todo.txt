@@ -2,6 +2,23 @@ TO DO
 
 - make sure all constants are represented in CarbonX.kAE, then remove 'k' (constants.py) module
 
+kAECaseConsiderMask           = 0x00000001
+kAEDiacriticConsiderMask      = 0x00000002
+kAEWhiteSpaceConsiderMask     = 0x00000004
+kAEHyphensConsiderMask        = 0x00000008
+kAEExpansionConsiderMask      = 0x00000010
+kAEPunctuationConsiderMask    = 0x00000020
+kASConsiderRepliesConsiderMask = 0x00000040
+kASNumericStringsConsiderMask = 0x00000080
+kAECaseIgnoreMask             = 0x00010000
+kAEDiacriticIgnoreMask        = 0x00020000
+kAEWhiteSpaceIgnoreMask       = 0x00040000
+kAEHyphensIgnoreMask          = 0x00080000
+kAEExpansionIgnoreMask        = 0x00100000
+kAEPunctuationIgnoreMask      = 0x00200000
+kASConsiderRepliesIgnoreMask  = 0x00400000
+kASNumericStringsIgnoreMask   = 0x00800000
+
 
 - following should work but doesn't:
 
