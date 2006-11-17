@@ -108,7 +108,7 @@ kAE.keyAcceptTimeoutAttr
 'subj' # subject attribute</code></pre>
 
 
-<p>The value of the <code>'cons'</code> attribute should be a list containing zero or more <code>AEType</code> instances with the following codes:</p> 
+<p>The value of the <code>'cons'</code> attribute should be a list containing zero or more <code>AEEnum</code> instances with the following codes:</p> 
 
 <pre><code>kAE.kAECase
 kAE.kAEDiacritic
@@ -124,22 +124,8 @@ kAE.kASNumericStrings</code></pre>
 
 <p>The value of the <code>'csig'</code> attribute should be an integer composed from the sum of zero or more of the following bit masks:</p>
 
-<pre><code>kAECaseConsiderMask           = 0x00000001
-kAEDiacriticConsiderMask      = 0x00000002
-kAEWhiteSpaceConsiderMask     = 0x00000004
-kAEHyphensConsiderMask        = 0x00000008
-kAEExpansionConsiderMask      = 0x00000010
-kAEPunctuationConsiderMask    = 0x00000020
-kASConsiderRepliesConsiderMask = 0x00000040
-kASNumericStringsConsiderMask = 0x00000080
-kAECaseIgnoreMask             = 0x00010000
-kAEDiacriticIgnoreMask        = 0x00020000
-kAEWhiteSpaceIgnoreMask       = 0x00040000
-kAEHyphensIgnoreMask          = 0x00080000
-kAEExpansionIgnoreMask        = 0x00100000
-kAEPunctuationIgnoreMask      = 0x00200000
-kASConsiderRepliesIgnoreMask  = 0x00400000
-kASNumericStringsIgnoreMask   = 0x00800000</code></pre>
+<pre><code>kAE.kAECaseConsiderMaskkAE.kAEDiacriticConsiderMaskkAE.kAEWhiteSpaceConsiderMaskkAE.kAEHyphensConsiderMaskkAE.kAEExpansionConsiderMaskkAE.kAEPunctuationConsiderMaskkAE.kASConsiderRepliesConsiderMaskkAE.kASNumericStringsConsiderMask
+kAE.kAECaseIgnoreMaskkAE.kAEDiacriticIgnoreMaskkAE.kAEWhiteSpaceIgnoreMaskkAE.kAEHyphensIgnoreMaskkAE.kAEExpansionIgnoreMaskkAE.kAEPunctuationIgnoreMaskkAE.kASConsiderRepliesIgnoreMaskkAE.kASNumericStringsIgnoreMask</code></pre>
 
 
 <h3>Send flag constants</h3>
