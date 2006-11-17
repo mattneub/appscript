@@ -405,7 +405,7 @@ module AS
 			rescue => e
 				if e.is_a?(AEM::CommandError)
 					if [-600, -609].include?(e.number) and @AS_app_data.path
-						if not @AS_app_data.target.running?
+						if not AEM::Application.is_running?(@AS_app_data.path)
 							if code == 'ascrnoop'
 								AEM::Application.launch(@AS_app_data.path)
 							elsif code != 'aevtoapp'

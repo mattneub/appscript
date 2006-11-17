@@ -109,8 +109,15 @@ module AEM
 			return new(nil, Connect::CurrentApp, [:current])
 		end
 	
+		#######
+		# utility methods;
+		
 		def Application.launch(path)
 			Connect.launch_app(path)
+		end
+		
+		def Application.is_running?(path)
+			return Connect.is_running?(path)
 		end
 		
 		#######
@@ -134,12 +141,6 @@ module AEM
 		alias_method :eql?, :== 
 		
 		# (hash is provided by readable @hash attribute)
-		
-		def running? # true/false or nil if unknown
-			if @_path
-				return Connect.running?(@_path)
-			end
-		end
 		
 		def reconnect
 			if @_path

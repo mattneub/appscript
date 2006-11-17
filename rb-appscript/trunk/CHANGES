@@ -1,4 +1,4 @@
-2006-11-16 -- ???
+2006-11-17 -- ???
 
 - removed path expansion in FindApp#byName, MacFile::Alias#at, MacFile::FileURL#at
 
@@ -111,6 +111,10 @@
 - 'help' is now a reserved word (though is not currently implemented)
 
 - Attempting to pack invalid UTF8 strings now raises TypeError instead of AEM::NotUTF8TextError
+
+- changed AEM::Application#running? to AEM::Application.is_running?(path)
+
+- added aem manual
 
 
 2006-10-23 -- 0.1.6

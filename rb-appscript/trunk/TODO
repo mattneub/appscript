@@ -1,17 +1,34 @@
 TO DO
 
-- improve error reporting; e.g. pack/unpack errors in aem/codecs.rb could have better descriptions and/or represented by a CodecsError class; ae/aem/appscript-defined exception classes aren't quite idiomatic Ruby
+- improve error reporting; e.g. pack/unpack errors in aem/codecs.rb could have better descriptions and/or represented by a TypeError(?) class
 
 - pack/unpack support for application types
 
-- any other types to add to defaultterminology.rb?
+- what constants need to be added to kae.rb?
 
+  typeKernelProcessID = 'kpid',
+  typeMachPort = 'port'
+  typeApplicationBundleID = 'bund'
+
+  'csig' enums
+
+  Attribute keys:
+  'cons' # ignore text attributes
+  'csig' # consider/ignore text attributes
+  'subj' # subject attribute
+
+  see if it's poss. to regenerate from header files
+
+
+- Connect.local_app_by_pid can just use an AEDesc of typeKernelProcessID
 
 - allow users to extract a generic ref from a real ref (to_generic) for comparison purposes. Or vice-versa?
 
 - implement built-in help system by bridging to py-appscript
 
 - see if it's possible to work better with irb's autocomplete (autocomplete support is currently limited to start of a reference)
+
+- ae/aem/appscript-defined exception classes aren't quite idiomatic Ruby
 
 - finish commenting source code
 
@@ -24,8 +41,6 @@ TO DO
 - profiling
 
 - finish writing tests
-
-- port aem manual
 
 - finish problem apps chapter (see comments in HTML file)
 
