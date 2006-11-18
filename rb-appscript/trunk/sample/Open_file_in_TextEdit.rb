@@ -4,4 +4,6 @@
 
 require "appscript"
 
-AS.app('TextEdit').open(MacTypes::Alias.path('/Users/NAME/ReadMe.txt'))
+te = AS.app('TextEdit')
+te.activate
+te.open(MacTypes::Alias.path('/Users/has/ReadMe.txt'))

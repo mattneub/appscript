@@ -17,6 +17,9 @@ class TC_MacTypes < Test::Unit::TestCase
 		# make alias
 		f = MacTypes::Alias.path(@path1)
 		
+		
+		assert_equal(MacTypes::Alias.path(@path1), f)
+		
 		# get path
 		# note that initial /tmp/codecs-test... path will automatically change to /private/tmp/codecs-test...
 		p1 = '/private'+@path1

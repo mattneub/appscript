@@ -1,26 +1,8 @@
 TO DO
 
-- improve error reporting; e.g. pack/unpack errors in aem/codecs.rb could have better descriptions and/or represented by a TypeError(?) class
+- pack/unpack support for application types (note: packing would be a bit tricky, since app('foo') could also indicate a reference, in which case it should be packed as a null desc; unpacking might be a bit clumsy, and would (at least in theory) require a by_desc/by_aem_application method to be added to AS::Application to handle typeMachPort, other types could be converted to paths/creator codes/urls/etc. ok though)
 
-- pack/unpack support for application types
-
-- what constants need to be added to kae.rb?
-
-  typeKernelProcessID = 'kpid',
-  typeMachPort = 'port'
-  typeApplicationBundleID = 'bund'
-
-  'csig' enums
-
-  Attribute keys:
-  'cons' # ignore text attributes
-  'csig' # consider/ignore text attributes
-  'subj' # subject attribute
-
-  see if it's poss. to regenerate from header files
-
-
-- Connect.local_app_by_pid can just use an AEDesc of typeKernelProcessID
+- remove rbAE_pidToPsn from rbae.c? (no longer used by connect.rb)
 
 - allow users to extract a generic ref from a real ref (to_generic) for comparison purposes. Or vice-versa?
 
@@ -35,8 +17,6 @@ TO DO
 - would be nice if MacFile::FileNotFoundError always showed the failed path (this'd need a bit of Alias Manager glue added to the ae extension)
 
 - include an example project (or source for) that uses ruby2exe to build a standalone 'applet'
-
-- MacTypes::Alias, MacTypes::FileURL should support ==, eql? and hash
 
 - profiling
 

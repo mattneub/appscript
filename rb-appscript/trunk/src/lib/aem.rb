@@ -20,7 +20,6 @@ module AEM
 	
 	Codecs = Codecs
 	DefaultCodecs = DefaultCodecs
-	NotUTF8TextError = NotUTF8TextError
 	MacOSError = AE::MacOSError
 	
 	AEDesc = AE::AEDesc
@@ -30,7 +29,6 @@ module AEM
 	AEEnum = TypeWrappers::AEEnum
 	AEProp = TypeWrappers::AEProp
 	AEKey = TypeWrappers::AEKey
-	AEEventName = TypeWrappers::AEEventName
 	
 	CommandError = Send::CommandError
 	

@@ -1,4 +1,4 @@
-2006-11-17 -- ???
+2006-11-18 -- 0.2.0
 
 - removed path expansion in FindApp#byName, MacFile::Alias#at, MacFile::FileURL#at
 
@@ -20,7 +20,7 @@
 
 - added sample scripts: Build_iTunes_playlist_for_local_files.rb, Simple_Finder_GUI_Scripting.rb
 
-- now always packs a 'subj' attribute; this is normally a null descriptor. (Note: AS always seems to include a subj attribute for the make command. Photoshop CS2's make command requires either an 'at' parameter or 'subj' attribute and throws an error if it doesn't get one. Including a subj attribute by default should hopefully prevent any complaints.) [BB]
+- now always packs a subject attribute (KAE::TypeSubjectAttr); this is normally a null descriptor. (Note: AS includes a subject attribute for commands whose direct parameter isn't a reference, e.g. make. Photoshop CS2's make command requires either an 'at' parameter or subject attribute and throws an error if it doesn't get one. Including a subject attribute by default should hopefully prevent any complaints.) [BB]
 
 - removed built-in :telltarget argument to simplify the API a bit. Now, if a command is called on a reference and already has a direct parameter, the reference is packed as the subject attribute instead. Also, 'telltarget' is no longer a reserved word.
 
@@ -98,9 +98,9 @@
 
 - added MacTypes::Units class
 
-- fixed appscript reference rendering bug where property/element names could get muddled (e.g. 'document' property would appear as 'documents')
+- added add_unit_types method to Codecs class, allowing additional unit type definitions to be added
 
-- fixed endian bug when packing/unpacking AEM::AEEventName (now always big-endian)
+- fixed appscript reference rendering bug where property/element names could get muddled (e.g. 'document' property would appear as 'documents')
 
 - fixed wierd rendering bug where rendered references would be invisible if client script contained an 'app' method of its own (Ruby was invoking this instead of ReferenceRenderer#method_missing)
 
@@ -115,6 +115,19 @@
 - changed AEM::Application#running? to AEM::Application.is_running?(path)
 
 - added aem manual
+
+- replaced big if...elsif... block in Codecs#pack with case block
+
+- removed AEM::AEEventName (the 'evnt' type, cEventIdentifier, is used by OSAGetHandlerNames)
+
+- updated kae.rb; now contains constants scraped from the following OS X 10.4u SDK frameworks: 
+	AE.framework (all headers)
+	Carbon.framework (AEInteraction.h only)
+	OpenScripting.framework (all headers except FinderRegistry.h)
+
+- Connect.local_app_by_pid now returns an AEDesc of typeKernelProcessID
+
+- added basic support for equality tests and hashing to MacFile::Alias and MacFile::URL. Note that it only tests for exact data equality; two objects that identify the same filesystem object/location by different means, using paths of different case, etc. will test as false.
 
 
 2006-10-23 -- 0.1.6

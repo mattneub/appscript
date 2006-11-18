@@ -437,7 +437,7 @@ rbAE_launchApplication(VALUE self, VALUE path, VALUE firstEvent, VALUE flags)
 }
 
 static VALUE
-rbAE_pidToPsn(VALUE self, VALUE pid)
+rbAE_pidToPsn(VALUE self, VALUE pid) // TO DO: not currently used by aem/appscript; delete?
 {
 	OSStatus err = 0;
 	ProcessSerialNumber psn;

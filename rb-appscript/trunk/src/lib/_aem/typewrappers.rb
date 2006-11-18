@@ -5,13 +5,12 @@
 module TypeWrappers
 	
 	class AETypeBase
-		Length = 4
 		
 		attr_reader :code
 		
 		def initialize(code)
-			if not code.is_a?(String) or code.length != self.class::Length
-				raise ArgumentError, "Code must be a #{self.class::Length}-character string: #{code}"
+			if not (code.is_a?(String) and code.length == 4)
+				raise ArgumentError, "Code must be a four-character string: #{code}"
 			end
 			@code = code
 		end
@@ -53,11 +52,6 @@ module TypeWrappers
 	
 	class AEKey < AETypeBase
 		Name = 'AEKey'
-	end
-	
-	class AEEventName < AETypeBase
-		Length = 8
-		Name = 'AEEventName'
 	end
 
 end

@@ -181,7 +181,7 @@ module DefaultTerminology
 	
 	##
 	
-	TypeByCode = Types.clone.extend(Enums)
+	TypeByCode = Types.clone.update(Enums)
 
 	TypeByName = {}
 	Types.each { |code, name| TypeByName[name] = AEM::AEType.new(code) }

@@ -17,6 +17,9 @@ require "_aem/mactypes"
 
 
 class UnitTypeCodecs
+	# Provides pack and unpack methods for converting between MacTypes::Units instances
+	# and AE unit types. Each Codecs instance is allocated its own UnitTypeCodecs instance,
+	#
 
 	DefaultUnitTypes = [
 		[:centimeters, KAE::TypeCentimeters],
@@ -62,14 +65,14 @@ class UnitTypeCodecs
 		add_types(DefaultUnitTypes)
 	end
 	
-	def add_types(typedefs)
-		# typedefs is a list of lists, where each sublist is of form:
+	def add_types(type_defs)
+		# type_defs is a list of lists, where each sublist is of form:
 		#	[typename, typecode, packproc, unpackproc]
 		# or:
 		#	[typename, typecode, packproc, unpackproc]
 		# If optional packproc and unpackproc are omitted, default pack/unpack procs
 		# are used instead; these pack/unpack AEDesc data as a double precision float.
-		typedefs.each do |name, code, packer, unpacker|
+		type_defs.each do |name, code, packer, unpacker|
 			@type_by_name[name] = [code, (packer or DefaultPacker)]
 			@type_by_code[code] = [name, (unpacker or DefaultUnpacker)]
 		end
@@ -118,6 +121,11 @@ end
 
 
 class Codecs
+	# Provides pack and unpack methods for converting data between Ruby and AE types.
+	#
+	# May be subclassed to extend/alter its behaviour (e.g. the appscript layer does this).
+	# Conversions that are most likely to be modified (e.g. for packing and and unpacking
+	# references, records, types and enums) are exposed as overrideable hook methods.
 	
 	extend([1].pack('s') == "\001\000" ? SmallEndianConverters : BigEndianConverters)
 
@@ -125,11 +133,14 @@ class Codecs
 		@unit_type_codecs = UnitTypeCodecs.new
 	end
 	
-	def addunits(types)
-		@unit_type_codecs.add_types(types)
+	def add_unit_types(type_defs)
+		# register custom unit type definitions with this Codecs instance
+		# e.g. Adobe apps define additional unit types (ciceros, pixels, etc.)
+		@unit_type_codecs.add_types(type_defs)
 	end
 	
 	######################################################################
+	# Subclasses could override these to provide their own reference roots if needed
 	
 	App = AEMReference::App
 	Con = AEMReference::Con
@@ -153,47 +164,54 @@ class Codecs
 	
 	
 	def pack(val) # clients may override this to replace existing packers
-		if val.is_a?(AEMReference::Base) then val.AEM_pack_self(self)
-		elsif val == nil then NullDesc
-		elsif val == true then TrueDesc
-		elsif val == false then FalseDesc
-		elsif val.is_a?(Fixnum) then AE::AEDesc.new(KAE::TypeSInt32, [val].pack('l'))
-		elsif val.is_a?(Bignum) then
-			if SInt32Bounds === val
-				AE::AEDesc.new(KAE::TypeSInt32, [val].pack('l')) 
-			elsif SInt64Bounds === val
-				AE::AEDesc.new(KAE::TypeSInt64, [val].pack('q'))
-			else
-				AE::AEDesc.new(KAE::TypeFloat, [val.to_f].pack('d'))
-			end
-		elsif val.is_a?(Float) then AE::AEDesc.new(KAE::TypeFloat, [val].pack('d'))
-		elsif val.is_a?(String) then 
-			begin
-				AE::AEDesc.new(KAE::TypeUTF8Text, val).coerce(KAE::TypeUnicodeText)
-			rescue AE::MacOSError => e
-				if e.to_i == -1700
-					raise TypeError, "Not valid UTF8 data: #{val.inspect}"
+		case val
+			when AEMReference::Base then val.AEM_pack_self(self)
+			when NilClass then NullDesc
+			when TrueClass then TrueDesc
+			when FalseClass then FalseDesc
+			when Fixnum then AE::AEDesc.new(KAE::TypeSInt32, [val].pack('l'))
+			when Bignum
+				if SInt32Bounds === val
+					AE::AEDesc.new(KAE::TypeSInt32, [val].pack('l')) 
+				elsif SInt64Bounds === val
+					AE::AEDesc.new(KAE::TypeSInt64, [val].pack('q'))
 				else
-					raise
+					AE::AEDesc.new(KAE::TypeFloat, [val.to_f].pack('d'))
 				end
-			end
-		elsif val.is_a?(Time) then
-			AE::AEDesc.new(KAE::TypeLongDateTime,
-					[AE.convert_unix_seconds_to_long_date_time(val.to_i)].pack('q'))
-		elsif val.is_a?(Array) then pack_array(val)
-		elsif val.is_a?(Hash) then pack_hash(val)
-		elsif val.is_a?(MacTypes::FileBase) then val.desc
-		elsif val.is_a?(TypeWrappers::AEType) then
-			AE::AEDesc.new(KAE::TypeType, Codecs.four_char_code(val.code))
-		elsif val.is_a?(TypeWrappers::AEEnum) then
-			AE::AEDesc.new(KAE::TypeEnumerated, Codecs.four_char_code(val.code))
-		elsif val.is_a?(TypeWrappers::AEProp) then 
-			AE::AEDesc.new(KAE::TypeProperty, Codecs.four_char_code(val.code))
-		elsif val.is_a?(TypeWrappers::AEKey) then
-			AE::AEDesc.new(KAE::TypeKeyword, Codecs.four_char_code(val.code))
-		elsif val.is_a?(TypeWrappers::AEEventName) then 
-			AE::AEDesc.new(KAE::TypeEventName, val.code)
-		elsif val.is_a?(AE::AEDesc) then val
+			when Float then AE::AEDesc.new(KAE::TypeFloat, [val].pack('d'))
+			when String then 
+				begin
+					# Note: while typeUnicodeText is deprecated (see AEDataModel.h), it's still the
+					# most commonly used Unicode type so is used here for compatibility's sake.
+					# typeUTF8Text was initially tried, but existing applications had problems with it; i.e.
+					# some apps make unsafe assumptions on what to expect based on AS's behaviour.
+					# Once AppleScript is using typeUTF8Text/typeUTF16ExternalRepresentation
+					# and existing applications don't choke, this code can be similarly upgraded.
+					# Note: while the BOM is optional in typeUnicodeText, it's not included by AS
+					# and some apps, e.g. iTunes 7, will handle it incorrectly, so it's omitted here.)
+					AE::AEDesc.new(KAE::TypeUTF8Text, val).coerce(KAE::TypeUnicodeText)
+				rescue AE::MacOSError => e
+					if e.to_i == -1700 # couldn't coerce to TypeUnicodeText
+						raise TypeError, "Not valid UTF8 data: #{val.inspect}"
+					else
+						raise
+					end
+				end
+			when Time
+				AE::AEDesc.new(KAE::TypeLongDateTime,
+						[AE.convert_unix_seconds_to_long_date_time(val.to_i)].pack('q'))
+			when Array then pack_array(val)
+			when Hash then pack_hash(val)
+			when MacTypes::FileBase then val.desc
+			when TypeWrappers::AEType then
+				AE::AEDesc.new(KAE::TypeType, Codecs.four_char_code(val.code))
+			when TypeWrappers::AEEnum then
+				AE::AEDesc.new(KAE::TypeEnumerated, Codecs.four_char_code(val.code))
+			when TypeWrappers::AEProp then 
+				AE::AEDesc.new(KAE::TypeProperty, Codecs.four_char_code(val.code))
+			when TypeWrappers::AEKey then
+				AE::AEDesc.new(KAE::TypeKeyword, Codecs.four_char_code(val.code))
+			when AE::AEDesc then val
 		else
 			did_pack, desc = @unit_type_codecs.pack(val)
 			if did_pack
@@ -271,15 +289,17 @@ class Codecs
 			when KAE::TypeIEEE32BitFloatingPoint then desc.data.unpack('f')[0]
 			when KAE::TypeIEEE64BitFloatingPoint then desc.data.unpack('d')[0]
 			when KAE::Type128BitFloatingPoint then 
-				unpack(desc.AECoerceDesc(KAE::TypeIEEE64BitFloatingPoint))[0]
+				desc.coerce(KAE::TypeIEEE64BitFloatingPoint).data.unpack('d')[0]
 			
-			when KAE::TypeChar then desc.coerce(KAE::TypeUTF8Text).data
-			when KAE::TypeIntlText then desc.coerce(KAE::TypeUTF8Text).data
 			when KAE::TypeUTF8Text then desc.data
-			when KAE::TypeUTF16ExternalRepresentation then desc.coerce(KAE::TypeUTF8Text).data
-			when KAE::TypeUnicodeText then desc.coerce(KAE::TypeUTF8Text).data
-			when KAE::TypeStyledText then desc.coerce(KAE::TypeUTF8Text).data
-			when KAE::TypeStyledUnicodeText then desc.coerce(KAE::TypeUTF8Text).data
+			when 
+					KAE::TypeUnicodeText,
+					KAE::TypeChar, 
+					KAE::TypeIntlText, 
+					KAE::TypeUTF16ExternalRepresentation,
+					KAE::TypeStyledText, 
+					KAE::TypeStyledUnicodeText
+				desc.coerce(KAE::TypeUTF8Text).data
 			
 			when KAE::TypeLongDateTime then
 				Time.at(AE.convert_long_date_time_to_unix_seconds(desc.data.unpack('q')[0]))
@@ -293,9 +313,11 @@ class Codecs
 			when KAE::TypeAERecord then unpack_aerecord(desc)
 			
 			when KAE::TypeAlias then MacTypes::Alias.desc(desc)
-			when KAE::TypeFSS then MacTypes::FileURL.desc(desc)
-			when KAE::TypeFSRef then MacTypes::FileURL.desc(desc)
-			when KAE::TypeFileURL then MacTypes::FileURL.desc(desc)
+			when 
+					KAE::TypeFileURL,
+					KAE::TypeFSRef,
+					KAE::TypeFSS
+				MacTypes::FileURL.desc(desc)
 			
 			when KAE::TypeQDPoint then desc.data.unpack('ss').reverse
 			when KAE::TypeQDRectangle then
@@ -307,7 +329,6 @@ class Codecs
 			when KAE::TypeEnumerated then unpack_enumerated(desc)
 			when KAE::TypeProperty then unpack_property(desc)
 			when KAE::TypeKeyword then unpack_keyword(desc)
-			when KAE::TypeEventName then unpack_event_name(desc)
 			
 			when KAE::TypeInsertionLoc then unpack_insertion_loc(desc)
 			when KAE::TypeObjectSpecifier then unpack_object_specifier(desc)
@@ -370,10 +391,6 @@ class Codecs
 	
 	def unpack_keyword(desc)
 		return TypeWrappers::AEKey.new(Codecs.four_char_code(desc.data))
-	end
-	
-	def unpack_event_name(desc)
-		return TypeWrappers::AEEventName.new(desc.data)
 	end
 	
 	#######

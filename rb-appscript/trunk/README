@@ -27,7 +27,7 @@ Please note that the version of Ruby included with Mac OS X 10.4 is missing the 
 ======================================================================
 NOTES
 
-- This distribution includes a simple command-line tool, rbosadict, for rendering rb-appscript formatted application dictionaries as HTML files. See the misc/rbosadict/README file for more information and installation instructions.
+- rb-appscript 0.2.0 contains a number of API changes from rb-appscript 0.1.x; see the CHANGES file and documentation for details
 
 ======================================================================
 AUTHOR

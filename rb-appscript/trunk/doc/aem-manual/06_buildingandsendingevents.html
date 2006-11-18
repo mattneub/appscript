@@ -69,7 +69,7 @@
 
 <h2>Constants</h2>
 
-<p>The following constants are defined in the <code>KAE</code> module, except where noted.</p>
+<p>The following constants are defined in the <code>KAE</code> module.</p>
 
 <h3>Common parameter keys</h3>
 
@@ -83,7 +83,7 @@ KAE::KeyAERequestedType</code></pre>
 
 <h3>Attribute keys</h3>
 
-<p>Most of the following attributes are already supplied by other means (e.g. keyEventClassAttr, keyEventIDAttr are supplied separately when creating an Apple event; keyTimeoutAttr when sending it) and are only of interest if unpacking AppleEvent descriptors manually. A few  may be used when passing an attributes dict to <code>Application#event</code> (<code>'cons'</code>, <code>'csig'</code>, <code>'subj'</code>):</p>
+<p>Most of the following attributes are already supplied by other means (e.g. keyEventClassAttr, keyEventIDAttr are supplied separately when creating an Apple event; keyTimeoutAttr when sending it) and are only of interest if unpacking AppleEvent descriptors manually. A few  may be used when passing an attributes dict to <code>Application#event</code> (<code>EnumConsiderations</code>, <code>EnumConsidsAndIgnores</code>, <code>KeySubjectAttr</code>):</p>
 <pre><code>KAE::KeyTransactionIDAttr
 KAE::KeyReturnIDAttr
 KAE::KeyEventClassAttr
@@ -95,12 +95,12 @@ KAE::KeyInteractLevelAttr
 KAE::KeyEventSourceAttr
 KAE::KeyOriginalAddressAttr
 KAE::KeyAcceptTimeoutAttr
-'cons' # ignore text attributes
-'csig' # consider/ignore text attributes
-'subj' # subject attribute</code></pre>
+KAE::EnumConsiderations
+KAE::EnumConsidsAndIgnores
+KAE::KeySubjectAttr</code></pre>
 
 
-<p>The value of the <code>'cons'</code> attribute should be a list containing zero or more <code>AEEnum</code> instances with the following codes:</p> 
+<p>The value of the <code>EnumConsiderations</code> attribute should be a list containing zero or more <code>AEEnum</code> instances with the following codes:</p> 
 
 <pre><code>KAE::KAECase
 KAE::KAEDiacritic
@@ -111,10 +111,10 @@ KAE::KAEPunctuation
 KAE::KASConsiderReplies
 KAE::KASNumericStrings</code></pre>
 
-<p>See the <a href="http://developer.apple.com/documentation/Carbon/Reference/Apple_Event_Manager/index.html">Apple Event Manager</a> API reference for more info. Note that the <code>'cons'</code> attribute is deprecated in favour of the <code>'csig'</code> attribute.</p>
+<p>See the <a href="http://developer.apple.com/documentation/Carbon/Reference/Apple_Event_Manager/index.html">Apple Event Manager</a> API reference for more info. Note that the <code>EnumConsiderations</code> attribute is deprecated in favour of the <code>EnumConsidsAndIgnores</code> attribute.</p>
 
 
-<p>The value of the <code>'csig'</code> attribute should be an integer composed from the sum of zero or more of the following bit masks:</p>
+<p>The value of the <code>EnumConsidsAndIgnores</code> attribute should be an integer composed from the sum of zero or more of the following bit masks:</p>
 
 <pre><code>KAE::KAECaseConsiderMaskKAE::KAEDiacriticConsiderMaskKAE::KAEWhiteSpaceConsiderMaskKAE::KAEHyphensConsiderMaskKAE::KAEExpansionConsiderMaskKAE::KAEPunctuationConsiderMaskKAE::KASConsiderRepliesConsiderMaskKAE::KASNumericStringsConsiderMask
 KAE::KAECaseIgnoreMaskKAE::KAEDiacriticIgnoreMaskKAE::KAEWhiteSpaceIgnoreMaskKAE::KAEHyphensIgnoreMaskKAE::KAEExpansionIgnoreMaskKAE::KAEPunctuationIgnoreMaskKAE::KASConsiderRepliesIgnoreMaskKAE::KASNumericStringsIgnoreMask</code></pre>

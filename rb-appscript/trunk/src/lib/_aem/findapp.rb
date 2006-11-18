@@ -3,6 +3,7 @@
 # Released under MIT License.
 
 module FindApp
+	# Support module for obtaining the full path to a local application given its name, bundle id or creator type. If application isn't found, an ApplicationNotFoundError exception is raised.
 
 	require "ae"
 	
@@ -30,9 +31,19 @@ module FindApp
 			end
 		end
 	end
+	
+	#######
 
-	def FindApp.by_name(name)
-		if name[0, 1] != '/'
+	def FindApp.by_name(name)		
+		# Find the application with the given name and return its full path. 
+		#
+		# Absolute paths are also accepted. An '.app' suffix is optional.
+		#
+		# Examples: 
+		#	FindApp.by_name('TextEdit')
+		#	FindApp.by_name('Finder.app')
+		#
+		if name[0, 1] != '/' # application name only, not its full path
 			begin
 				new_name = _find_app(nil, nil, name)
 			rescue ApplicationNotFoundError
@@ -53,10 +64,20 @@ module FindApp
 	end
 	
 	def FindApp.by_id(id)
+		# Find the application with the given bundle id and return its full path.
+		#
+		# Examples:
+		#	FindApp.by_id('com.apple.textedit')
+		#
 		return _find_app(nil, id, nil)
 	end
 	
 	def FindApp.by_creator(creator)
+		# Find the application with the given creator type and return its full path.
+		#
+		# Examples:
+		#	FindApp.by_creator('ttxt')
+		#
 		return _find_app(creator, nil, nil)
 	end
 end

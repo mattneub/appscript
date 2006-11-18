@@ -101,7 +101,7 @@ class TC_Codecs < Test::Unit::TestCase
 			assert_equal(data, d.data)
 			assert_equal(val, @c.unpack(d))
 		end
-		assert_raises(AEM::NotUTF8TextError) { @c.pack("\x88") } # non-valid UTF8 strings should raise error when coercing from typeUTF8Text to typeUnicodeText
+		assert_raises(TypeError) { @c.pack("\x88") } # non-valid UTF8 strings should raise error when coercing from typeUTF8Text to typeUnicodeText
 	end
 	
 	def test_date
@@ -134,7 +134,6 @@ class TC_Codecs < Test::Unit::TestCase
 			AEM::AEEnum.new('yes '),
 			AEM::AEProp.new('pnam'),
 			AEM::AEKey.new('ABCD'),
-			AEM::AEEventName.new('coregetd'),
 		].each do |val|
 			d = @c.pack(val)
 			val2 = @c.unpack(d)

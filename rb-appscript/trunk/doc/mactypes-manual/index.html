@@ -73,6 +73,11 @@ AS.app('TextEdit').open(f)
 # opens document in TextEdit</code></pre>
 
 
+<h3>Notes</h3>
+
+<p>Note that comparing an <code>Alias</code> object against an <code>FileURL</code> object always returns false, even if both point to the same location.</p>
+
+
 
 <h2><code>MacTypes::FileURL</code></h2>
 
@@ -89,6 +94,10 @@ AS.app('TextEdit').open(f)
                               of TypeFSS, TypeFSRef or TypeFileURL
 
     Methods:
+
+        ==
+
+        hash
     
         path -- returns POSIX path string
 
@@ -101,6 +110,7 @@ AS.app('TextEdit').open(f)
         to_alias -- returns a MacTypes::Alias object
     
         to_file_url -- returns a new MacTypes::FileURL object</code></pre>
+
 
 <h3>Examples</h3>
 
@@ -133,6 +143,8 @@ fs_spec = file_url.desc.coerce(KAE::TypeFSS)
 AS.app('older app').documents[1].save(:in => fs_spec)</code></pre>
 
 <p>When used in an application command, a <code>FileURL</code> object returned by appscript will always pack into the same <code>TypeFSRef</code>, <code>TypeFileURL</code> or <code>TypeFSS</code> AEDesc it was created from. A <code>FileURL</code> object returned by <code>FileURL.path</code>, <code>Alias#to_file_url</code> or <code>FileURL#to_file_url</code> will always pack into an AEDesc of <code>TypeFileURL</code>.</p>
+
+<p>Note that comparing <code>FileURL</code> objects only tests for exact data equality; two objects that identify the same filesystem location by different means (e.g.comparing a <code>FileURL</code> object that was created from an existing AEDesc of <code>TypeFSRef</code> against one created from scratch), using paths of different case, etc. will test as false.</p>
 
 <p>Note that AEDescs of <code>TypeFSRef</code> can represent existing filesystem locations only. AEDescs of <code>TypeFileURL</code> can represent both existing and non-existing locations. AEDescs of <code>TypeFSS</code> (FSSpecs) are deprecated on Mac OS X due to lack of proper Unicode and long filename support, and are retained for backwards compatibility with older applications only.</p>
 
