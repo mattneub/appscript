@@ -1,4 +1,4 @@
-2006-11-18 -- 0.2.0
+2006-11-19 -- 0.2.0
 
 - removed path expansion in FindApp#byName, MacFile::Alias#at, MacFile::FileURL#at
 
@@ -18,7 +18,7 @@
 
 - made Reference class's AS_appdata and AS_aemreference instance variables writeable as well as readable - this'll make it easier to inject workarounds (e.g. modified pack/unpack routines) for occasional application flaws
 
-- added sample scripts: Build_iTunes_playlist_for_local_files.rb, Simple_Finder_GUI_Scripting.rb
+- added sample scripts: Organize_Mail_messages.rb, Create_daily_iCal_todos.rb, Simple_Finder_GUI_Scripting.rb
 
 - now always packs a subject attribute (KAE::TypeSubjectAttr); this is normally a null descriptor. (Note: AS includes a subject attribute for commands whose direct parameter isn't a reference, e.g. make. Photoshop CS2's make command requires either an 'at' parameter or subject attribute and throws an error if it doesn't get one. Including a subject attribute by default should hopefully prevent any complaints.) [BB]
 
@@ -129,6 +129,8 @@
 
 - added basic support for equality tests and hashing to MacFile::Alias and MacFile::URL. Note that it only tests for exact data equality; two objects that identify the same filesystem object/location by different means, using paths of different case, etc. will test as false.
 
+- adjusted packing of 'make' command so that if target reference is typeObjectSpecifier then it's packed as the subject attribute but if it's typeInsertionLoc it's packed as an 'at' parameter (this avoids a bug in Cocoa Scripting where packing an insertion location as the subject attribute results in an error when CS tries to coerce it to an object specifier)
+
 
 2006-10-23 -- 0.1.6
 
@@ -159,6 +161,8 @@
 - removed MacFile::Alias#path and MacFile::FileURL#path (use #to_s instead)
 
 - added macfile manual
+
+- Connect.launch_app no longer waits for reply/error when sending a launch event to an already running application
 
 
 2006-10-18 -- 0.1.5

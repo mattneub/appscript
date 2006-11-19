@@ -380,11 +380,16 @@ module AS
 							atts['subj'] = @AS_aem_reference
 						end
 					elsif code == 'corecrel'
-						# if ref.make(...) contains no 'at' argument and target is a reference, use target reference for 'at' parameter
-						if params.has_key?('insh')
-							atts['subj'] = @AS_aem_reference
-						else
+						# this next bit is a bit tricky: 
+						# - While it should be possible to pack the target reference as a subject attribute, when the target is of typeInsertionLoc, CocoaScripting stupidly tries to coerce it to typeObjectSpecifier, which causes a coercion error.
+						# - While it should be possible to pack the target reference as the 'at' parameter, some less-well-designed applications won't accept this and require it to be supplied as a subject attribute (i.e. how AppleScript supplies it).
+						# One option is to follow the AppleScript approach and force users to always supply subject attributes as target references and 'at' parameters as 'at' parameters, but the syntax for the latter is clumsy and not backwards-compatible with a lot of existing appscript code (since earlier versions allowed the 'at' parameter to be given as the target reference). So for now we split the difference when deciding what to do with a target reference: if it's an insertion location then pack it as the 'at' parameter (where possible), otherwise pack it as the subject attribute (and if the application doesn't like that then it's up to the client to pack it as an 'at' parameter themselves).
+						#
+						# if ref.make(...) contains no 'at' argument and target is an insertion reference, use target reference for 'at' parameter...
+						if @AS_aem_reference.is_a?(AEMReference::InsertionSpecifier) and not params.has_key?('insh')
 							params['insh'] = @AS_aem_reference
+						else # ...otherwise pack the target reference as the subject attribute
+							atts['subj'] = @AS_aem_reference
 						end
 					elsif params.has_key?('----')
 						# if user has already supplied a direct parameter, pack that reference as the subject attribute

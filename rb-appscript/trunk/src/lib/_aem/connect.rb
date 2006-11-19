@@ -1,7 +1,9 @@
 #!/usr/local/bin/ruby
 # Copyright (C) 2006 HAS. 
 # Released under MIT License.
-	
+
+# TO DO: this module refers directly to Send::Event instead of going via the AEM::Application::Event hook, which might cause problems when used in an OSA component or other situation where client needs to customise all event creation and/or dispatch.
+
 module Connect
 	# Creates Apple event descriptor records of typeProcessSerialNumber, typeKernelProcessID and typeApplicationURL, used to specify the target application in Send::Event constructor.
 	
@@ -42,11 +44,11 @@ module Connect
 				raise
 			end
 		else # App is already running, so send it a 'launch' event
-			Send::Event.new(make_address_desc(psn), 'ascrnoop').send()
+			Send::Event.new(make_address_desc(psn), 'ascrnoop').send(60, KAE::KAENoReply)
 		end
 	end
 	
-	def Connect.running?(path)
+	def Connect.is_running?(path)
 		# Is a local application running?
 		begin
 			AE.psn_for_application_path(path)

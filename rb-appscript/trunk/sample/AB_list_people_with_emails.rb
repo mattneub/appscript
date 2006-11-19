@@ -4,5 +4,5 @@
 
 require "appscript"
 
-peopleRef = AS.app('Address Book').people[AS.its.emails.ne([])]
-p peopleRef.name.get.zip(peopleRef.emails.value.get)
+people_ref = AS.app('Address Book').people[AS.its.emails.ne([])]
+p people_ref.name.get.zip(people_ref.emails.value.get)

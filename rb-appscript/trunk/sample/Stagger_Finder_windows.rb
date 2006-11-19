@@ -7,9 +7,9 @@ require "appscript"
 x, y = 0, 44
 offset  = 22
 
-windowList = AS.app('Finder').windows.get
+window_list = AS.app('Finder').windows.get
 
-windowList.reverse.each do |window|
+window_list.reverse.each do |window|
     x1, y1, x2, y2 = window.bounds.get
     window.bounds.set([x, y, x2 - x1 + x, y2 - y1 + y])
     x += offset

@@ -4,9 +4,9 @@
 
 require "appscript"
 
-def printFolderTree(folder, indent='')
+def print_folder_tree(folder, indent='')
     puts indent + folder.name.get
-    folder.folders.get.each { |folder| printFolderTree(folder, indent + "\t") }
+    folder.folders.get.each { |folder| print_folder_tree(folder, indent + "\t") }
 end
 
-printFolderTree(AS.app('Finder').home.folders['Documents'])
+print_folder_tree(AS.app('Finder').home.folders['Documents'])

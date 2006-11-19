@@ -2,9 +2,8 @@
 # Copyright (C) 2006 HAS. 
 # Released under MIT License.
 
-# Note: unit type names have been altered to match built-in unit types in codecs.rb
-
 module DefaultTerminology
+	# Defines built-in terminology available for any application. When constructing the terminology tables for a particular application, the Terminology module will duplicate these tables and then add application-specific terms to create the finished lookup tables.
 
 	require "aem"
 	
@@ -25,9 +24,8 @@ module DefaultTerminology
 
 	Types = {
 		'****' => :anything,
-		'null' => :null,
+		
 		'bool' => :boolean,
-		'msng' => :missing_value,
 		
 		'shor' => :short_integer,
 		'long' => :integer,
@@ -35,6 +33,7 @@ module DefaultTerminology
 		'comp' => :double_integer,
 		
 		'fixd' => :fixed,
+		'lfxd' => :long_fixed,
 		'decm' => :decimal_struct,
 		
 		'sing' => :short_float,
@@ -78,7 +77,6 @@ module DefaultTerminology
 		'frct' => :fixed_rectangle,
 		'lpnt' => :long_point,
 		'lrct' => :long_rectangle,
-		'lfxd' => :long_fixed,
 		'lfpt' => :long_fixed_point,
 		'lfrc' => :long_fixed_rectangle,
 		
@@ -99,14 +97,28 @@ module DefaultTerminology
 		'enum' => :enumerator,
 		'prop' => :property,
 		
+		# AEAddressDesc types
+		
 		'port' => :mach_port,
 		'kpid' => :kernel_process_id,
 		'bund' => :application_bundle_id,
 		'psn ' => :process_serial_number,
 		'sign' => :application_signature,
 		'aprl' => :application_url,
+		
+		# misc.
+		
+		'msng' => :missing_value,
+		
+		'pcls' => :class_,
+		
+		'null' => :null,
+		
 		'mLoc' => :machine_location,
 		'mach' => :machine,
+		
+		'tdas' => :dash_style,
+		'trot' => :rotation,
 		
 		'suin' => :suite_info,
 		'gcli' => :class_info,
@@ -114,11 +126,6 @@ module DefaultTerminology
 		'elin' => :element_info,
 		'evin' => :event_info,
 		'pmin' => :parameter_info,
-		
-		'tdas' => :dash_style,
-		'trot' => :rotation,
-		
-		'pcls' => :class_,
 		
 		# unit types
 		
@@ -136,7 +143,7 @@ module DefaultTerminology
 		'sqyd' => :square_yards,
 		'sqmi' => :square_miles,
 		
-		'ccmt' => :cubic_centimeter,
+		'ccmt' => :cubic_centimeters,
 		'cmet' => :cubic_meters,
 		'cuin' => :cubic_inches,
 		'cfet' => :cubic_feet,
@@ -179,7 +186,8 @@ module DefaultTerminology
 		'sat ' => :Saturday,
 	}
 	
-	##
+	#######
+	# TypeByCode and TypeByName tables are used to convert Ruby Symbols to and from AEDescs of typeType, typeEnum and typeProperty.
 	
 	TypeByCode = Types.clone.update(Enums)
 
@@ -187,7 +195,10 @@ module DefaultTerminology
 	Types.each { |code, name| TypeByName[name] = AEM::AEType.new(code) }
 	Enums.each { |code, name| TypeByName[name] = AEM::AEEnum.new(code) }
 	
-	##
+	#######
+	# ReferenceByCode tables is used by ReferenceRenderer module to convert property and element four-char codes to human readable names
+	#
+	# ReferenceByName table is used to convert appscript-style references and commands to their aem equivalents
 	
 	ReferenceByCode = {
 		'pcls' => 'class_',
@@ -222,8 +233,10 @@ module DefaultTerminology
 				}]],
 	}
 
-	DefaultCommands = {} # {'quit' => 'aevtquit', 'activate' => 'miscactv',...}; used by Terminology._make_reference_table to check for any collisions between standard and application-defined commands
+	#######
+	# DefaultCommands; used by Terminology._make_reference_table to check for any collisions between standard and application-defined commands where the command names are the same but the codes are different
 	
+	DefaultCommands = {} # {'quit' => 'aevtquit', 'activate' => 'miscactv',...}
 	ReferenceByName.each do |name, info|
 		if info[0] == :command
 			DefaultCommands[name.to_s] = info[1][0]

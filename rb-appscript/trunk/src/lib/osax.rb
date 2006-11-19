@@ -3,6 +3,8 @@
 require "appscript"
 
 module OSAX
+
+	# Allows scripting additions (a.k.a. OSAXen) to be called from Ruby.
 	
 	######################################################################
 	# PRIVATE
@@ -50,9 +52,9 @@ module OSAX
 				@target = @_aem_application_class.current
 			end
 			begin
-				@target.event('ascrgdut').send(300) # make sure target application loads osaxen
+				@target.event('ascrgdut').send(300) # make sure target application has loaded event handlers for all installed OSAXen
 			rescue AEM::CommandError => e
-				if e.number != -1708
+				if e.number != -1708 # ignore 'event not handled' error
 					raise
 				end
 			end
@@ -68,10 +70,13 @@ module OSAX
 	######################################################################
 	
 	def OSAX.scripting_additions
+		# list names of all currently installed scripting additions
 		return OSAXNames
 	end
 	
 	def OSAX.osax(name, app_name=nil)
+		# convenience method; provides shortcut for creating a new ScriptingAddition instance;
+		# a target application's name or full path may optionally be given as well
 		addition = ScriptingAddition.new(name)
 		if app_name
 			addition = addition.by_name(app_name)
@@ -84,6 +89,10 @@ module OSAX
 		# Represents a single scripting addition.
 		
 		def initialize(name)
+			# name: string -- a scripting addition's name, e.g. "StandardAdditions";
+			#	basically its filename minus the '.osax' suffix
+			#
+			# Note that name is case-insensitive and an '.osax' suffix is ignored if given.
 			@_osax_name = name
 			if name.is_a?(OSAXData)
 				osax_data = name
@@ -116,7 +125,7 @@ module OSAX
 			begin
 				super
 			rescue AS::CommandError => e
-				if e.to_i == -1713
+				if e.to_i == -1713 # 'No user interaction allowed' error (e.g. user tried to send a 'display dialog' command to a non-GUI ruby process), so convert the target process to a full GUI process and try again
 					AE.transform_process_to_foreground_application
 					activate
 					super
@@ -130,22 +139,27 @@ module OSAX
 		# Clients can specify another application as target by calling one of the following methods:
 		
 		def by_name(name)
+			# name : string -- name or full path to application
 			return ScriptingAddition.new(OSAXData.new(FindApp.by_name(name), nil, nil, @_terms))
 		end
 		
 		def by_id(id)
+			# id : string -- bundle id of application
 			return ScriptingAddition.new(OSAXData.new(FindApp.by_id(id), nil, nil, @_terms))
 		end
 		
 		def by_creator(creator)
+			# creator : string -- four-character creator code of application
 			return ScriptingAddition.new(OSAXData.new(FindApp.by_creator(creator), nil, nil, @_terms))
 		end
 		
 		def by_pid(pid)
+			# pid : integer -- Unix process id
 			return ScriptingAddition.new(OSAXData.new(nil, pid, nil, @_terms))
 		end
 		
 		def by_url(url)
+			# url : string -- eppc URL of application
 			return ScriptingAddition.new(OSAXData.new(nil, nil, url, @_terms))
 		end
 		

@@ -23,7 +23,7 @@
 
 
 
-<h2>The <code>Application</code> class's <code>event</code> method</h2>
+<h2>The <code>Application#event</code> method</h2>
 
 <p>The <code>Application#event</code> method is used to create new Apple events targetted at the specified application.</p>
 
@@ -31,7 +31,7 @@
         ...
 
         event(event_code, params={}, atts={}, return_id=KAE.KAutoGenerateReturnID,
-                codecs=nil) -- construct an Apple event
+                codecs=DefaultCodecs) -- construct an Apple event
             event_code : string -- 8-letter code indicating event's class and id,
                     e.g. 'coregetd'
             params : hash -- a hash of form {AE_code=&gt;anything,...} containing
@@ -39,9 +39,8 @@
             atts : hash -- a hash of form {AE_code=&gt;anything,...} containing
                     zero or more event attributes
             return_id : integer  -- reply event's ID
-            codecs : Codecs | nil -- custom codecs to use when packing/
-                    unpacking this event; if nil, codecs supplied in
-                    Application constructor are used
+            codecs : Codecs -- codecs object to use when packing/unpacking
+                    attributes and parameters for this event and its reply
             Result : Event -- a ready-to-send Apple event</code></pre>
 
 

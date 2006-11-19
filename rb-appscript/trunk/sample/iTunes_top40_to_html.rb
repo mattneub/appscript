@@ -23,7 +23,7 @@ tmpl = TemplateText.new <<END
 	<tr><th>Played</th><th>Album</th><th>Artist</th></tr>
 	</thead>
 	<tbody>
-	<tr id="tableRow"><td id="tableColumn"></td></tr>
+	<tr id="table_row"><td id="table_column"></td></tr>
 	</tbody>
 </table>
 </body>
@@ -32,7 +32,7 @@ END
 
 # Choose the file to write
 sa = OSAX.osax('StandardAdditions')
-outFile = sa.choose_file_name(:default_name=>'My iTunes Top 40.html')
+out_file = sa.choose_file_name(:default_name=>'My iTunes Top 40.html')
 
 # Get the played count, album and name for every track in iTunes
 tracks = AS.app('iTunes').library_playlists[1].tracks
@@ -42,16 +42,16 @@ top40 = info.sort.reverse[0, 40]
 
 # Assemble input data for Amrita
 data = {
-	:tableRow=>top40.collect { |rowData| {:tableColumn=>rowData} }
+	:table_row=>top40.collect { |row_data| {:table_column=>row_data} }
 }
 
 # Render HTML file
 tmpl.prettyprint = true
-File.open(outFile.to_s, 'w') { |f| tmpl.expand(f, data) }
+File.open(out_file.to_s, 'w') { |f| tmpl.expand(f, data) }
 
 # Open file in Safari for viewing
 safari = AS.app('Safari')
 safari.activate
-safari.open(outFile)
+safari.open(out_file)
 
 

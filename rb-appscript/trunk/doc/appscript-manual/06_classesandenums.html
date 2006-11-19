@@ -49,14 +49,16 @@ AEM::AEEnum.new('xyz ')</code></pre>
 
 <table width=100% summary="AE-Ruby type mappings">
 <thead>
-<tr><th>AE type</th><th>appscript type name</th><th>Ruby type</th></tr>
+<tr><th>AE type</th><th>appscript name</th><th>Ruby class</th></tr>
 </thead>
 <tbody>
 <tr><td><code>typeNull</code></td><td><code>:null</code></td><td><code>NilClass</code></td></tr>
 <tr><td><code>typeBoolean</code></td><td><code>:boolean</code></td><td><code>TrueClass/FalseClass</code></td></tr>
 <tr><td><code>typeInteger</code></td><td><code>:integer</code></td><td><code>Fixnum/Bignum</code></td></tr>
 <tr><td><code>typeFloat</code></td><td><code>:float</code></td><td><code>Float</code></td></tr>
-<tr><td><code>typeChar</code></td><td><code>:string</code></td><td><code>String</code></td></tr>
+<tr><td><code>typeChar</code> *</td><td><code>:string</code></td><td><code>String</code></td></tr>
+<tr><td><code>typeStyledText</code> *</td><td><code>:styled_text</code></td><td><code>String</code></td></tr>
+<tr><td><code>typeIntlText</code> *</td><td><code>:international_text</code></td><td><code>String</code></td></tr>
 <tr><td><code>typeUnicodeText</code></td><td><code>:unicode_text</code></td><td><code>String</code></td></tr>
 <tr><td><code>typeAEList</code></td><td><code>:list</code></td><td><code>Array</code></td></tr>
 <tr><td><code>typeAERecord</code></td><td><code>:record</code></td><td><code>Hash</code></td></tr>
@@ -64,26 +66,30 @@ AEM::AEEnum.new('xyz ')</code></pre>
 <tr><td><code>typeAlias</code></td><td><code>:alias</code></td><td><code>MacTypes::Alias</code></td></tr>
 <tr><td><code>typeFileURL</code></td><td><code>:file_url</code></td><td><code>MacTypes::FileURL</code></td></tr>
 <tr><td><code>typeFSRef</code></td><td><code>:file_ref</code></td><td><code>MacTypes::FileURL</code></td></tr>
-<tr><td><code>typeFSS</code></td><td><code>:file_specification</code></td><td><code>MacTypes::FileURL</code></td></tr>
+<tr><td><code>typeFSS</code> *</td><td><code>:file_specification</code></td><td><code>MacTypes::FileURL</code></td></tr>
 <tr><td><code>typeObjectSpecifier</code></td><td><code>:reference</code></td><td><code>AS::Reference</code></td></tr>
 <tr><td><code>typeInsertionLoc</code></td><td><code>:location_reference</code></td><td><code>AS::Reference</code></td></tr>
 <tr><td><code>typeType</code></td><td><code>:type_class</code></td><td><code>Symbol</code></td></tr>
 <tr><td><code>typeEnumerated</code></td><td><code>:enumerator</code></td><td><code>Symbol</code></td></tr>
-<tr><td><small>unit types</small></td><td><small>unit type names</small></td><td><code>MacTypes::Units</code></td></tr>
+<tr><td><small>unit types; e.g. </small> <code>typeFeet</code></td><td><small>unit names; e.g.</small> <code>:feet</code></td><td><code>MacTypes::Units</code></td></tr>
 </tbody>
 </table>
+
+<p>(Note that types marked with '*' are officially deprecated and/or their use discouraged in Mac OS X. They remain supported to ensure backwards compatibility with older applications that may use them.)</p>
 
 
 <h2>Type mapping notes</h2>
 
+<p>While AEM-Ruby type conversions generally work quite seamlessly, it is sometimes useful to know some of the details involved, particularly when troubleshooting code that deals with older or buggy applications.</p>
+
 <h3>Numbers</h3>
 
-<p>When packing a <code>Bignum</code>, appscript will pack it either as a 32-bit integer, 64-bit integer, or 64-bit float, depending on the value's size.</p>
+<p>When packing a <code>Bignum</code>, appscript will pack it either as a 32-bit integer (most preferred), 64-bit integer, or 64-bit float (least preferred), depending on the value's size.</p>
 
 
 <h3>Strings</h3>
 
-<p>Because Ruby lacks a native Unicode class, appscript unpacks the <code>typeChar</code> and <code>typeUnicodeText</code> AE types as UTF8-encoded Ruby strings.</p>
+<p>Because Ruby lacks a native Unicode class, appscript unpacks all text-related AE types (<code>typeChar</code>, <code>typeUnicodeText</code>, etc.) as UTF8-encoded Ruby strings.</p>
 
 <p>Appscript packs UTF8-encoded Ruby strings as the <code>typeUnicodeText</code> AE type. If the string does not contain valid UTF8 data, a TypeError will be raised.</p>
 
@@ -95,6 +101,7 @@ $KCODE = "UTF8"</code></pre>
 <p>This will improve the display of non-ASCII characters in irb, amongst other things.</p>
 
 </div>
+<p>Note that while <code>typeUnicodeText</code> is formally deprecated in Mac OS X 10.4+ in favour of <code>typeUTF8Text</code> and <code>typeUTF16ExternalRepresentation</code>, it is still in common usage so appscript continues to use it to ensure the broadest compatibility with existing scriptable applications.</p>
 
 
 <h3>Filesystem references</h3>
@@ -141,11 +148,11 @@ $KCODE = "UTF8"</code></pre>
 :square_feet                   :ounces
 :square_yards                  :pounds
 :square_miles                  
-                               :celsius
-:cubic_centimeters             :fahrenheit
-:cubic_meters                  :kelvin</code></pre>
+                               :degrees_Celsius
+:cubic_centimeters             :degrees_Fahrenheit
+:cubic_meters                  :degrees_Kelvin</code></pre>
 
-<p>Values are represented by instances of the <code>MacTypes::Units</code> class, e.g. <code>MacTypes::Units.inches(3.0)</code>. See the <a href="../mactypes-manual/index.html">mactypes manual</a> for more information on <code>MacTypes::Units</code>.</p>
+<p>Values are represented by instances of the <code>MacTypes::Units</code> class, e.g. <code>MacTypes::Units.inches(3.0)</code>. See the <a href="../mactypes-manual/index.html">mactypes manual</a> for more information.</p>
 
 
 <h3>Miscellaneous types</h3>
