@@ -1,4 +1,4 @@
-#!/usr/local/bin/ruby
+#!/usr/bin/env ruby
 
 # Set iChat's status message to the name of the currently selected
 # iTunes track.

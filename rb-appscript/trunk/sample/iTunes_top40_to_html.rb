@@ -1,4 +1,4 @@
-#!/usr/local/bin/ruby
+#!/usr/bin/env ruby
 
 # This script renders the track and album names of the  top 40 most played
 # iTunes tracks to an HTML file, then opens it in Safari.
@@ -14,13 +14,20 @@ include Amrita
 tmpl = TemplateText.new <<END
 <html>
 <head>
-<title>My iTunes Top 40</title>
+<title> iTunes Top 40 Tracks</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style type="text/css" media="all">
+	body {padding:0; margin:0;}
+	table {color:black; background-color:#448; width:100%; padding:2px;}
+	th, td {padding:2px; border-width:0;}
+	th {color:#fff; background-color:#114;}
+	td {color:black; background-color:#bbd;}
+</style>
 </head>
 <body>
 <table border="1">
 	<thead>
-	<tr><th>Played</th><th>Album</th><th>Artist</th></tr>
+	<tr><th>#</th><th>Track</th><th>Album</th></tr>
 	</thead>
 	<tbody>
 	<tr id="table_row"><td id="table_column"></td></tr>
@@ -34,9 +41,9 @@ END
 sa = OSAX.osax('StandardAdditions')
 out_file = sa.choose_file_name(:default_name=>'My iTunes Top 40.html')
 
-# Get the played count, album and name for every track in iTunes
+# Get the played count, name and album for every track in iTunes
 tracks = AS.app('iTunes').library_playlists[1].tracks
-info = tracks.played_count.get.zip(tracks.album.get, tracks.name.get)
+info = tracks.played_count.get.zip(tracks.name.get, tracks.album.get)
 # Extract the top 40 most played entries
 top40 = info.sort.reverse[0, 40]
 
