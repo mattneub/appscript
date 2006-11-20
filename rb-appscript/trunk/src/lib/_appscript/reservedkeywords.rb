@@ -2,6 +2,8 @@
 # Copyright (C) 2006 HAS. 
 # Released under MIT License.
 
+# This list is mirrored in ch.6 of the appscript manual and in py-appscript's osaterminology.makeidentifier module
+
 ReservedKeywords = [
 	"==",
 	"===",
@@ -19,6 +21,7 @@ ReservedKeywords = [
 	"_call",
 	"_resolve_range_boundary",
 	"_send_command",
+	"abort_transaction",
 	"after",
 	"and",
 	"any",

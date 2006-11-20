@@ -125,9 +125,9 @@ set(reference, :to =&gt; value) -- Set an object's data.
 
 <h2>Transaction support</h2>
 
-<p>Application objects implement two additional methods, <code>start_transaction</code> and <code>end_transaction</code> that allow a sequence of related commands to be handled as a single operation by applications that support transactions, e.g. FileMaker Pro. Once the application object's <code>start_transaction</code> method is called, all subsequent commands to that application will be sent as part of the same transaction until <code>end_transaction</code> is called.</p>
+<p>Application objects implement three additional methods, <code>start_transaction</code>, <code>end_transaction</code> and <code>abort_transaction</code> that allow a sequence of related commands to be handled as a single operation by applications that support transactions, e.g. FileMaker Pro. Once the application object's <code>start_transaction</code> method is called, all subsequent commands to that application will be sent as part of the same transaction until <code>end_transaction</code> or <code>abort_transaction</code> is called.</p>
 
-<p class="hilitebox">Remember to call <code>end_transaction</code> at the end of every transaction. (This includes transactions interrupted by a raised exception.)</p>
+<p class="hilitebox">Remember to call <code>end_transaction</code> or <code>abort_transaction</code> at the end of every transaction. If a transaction is accidentally left open, appscript will try to end it automatically when the application object is garbage-collected, but this is not guaranteed to succeed.</p>
 
 
 <h2>Local application launching notes</h2>

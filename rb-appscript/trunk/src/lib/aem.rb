@@ -89,7 +89,7 @@ module AEM
 			ObjectSpace.define_finalizer(WeakRef.new(self), proc do
 				transaction_id = @@_transaction_ids_by_app_no.delete(app_number)
 				if transaction_id != KAE::KAnyTransactionID
-					self.class::Event(@_address, 'miscendt', {}, {}, transaction_id).send
+					self.class::Event.new(@_address, 'miscendt', {}, {}, transaction_id).send(60, KAE::KAENoReply)
 				end
 			end)
 		end
@@ -181,13 +181,24 @@ module AEM
 			return self.class::Event.new(@_address, event, params, atts, @_transaction, return_id, codecs)
 		end
 		
-		def start_transaction
+		def start_transaction(session=nil)
 			# Start a new transaction.
 			if @_transaction != KAE::KAnyTransactionID
 				raise RuntimeError, "Transaction is already active."
 			end
-			@_transaction = self.class::Event(@_address, 'miscbegi').send
+			@_transaction = self.class::Event.new(@_address, 'miscbegi', session != nil ? {'----' => session} : {}).send
 			@@_transaction_ids_by_app_no[@app_number] = @_transaction
+			return
+		end
+		
+		def abort_transaction
+			# Abort the current transaction.
+			if @_transaction == KAE::KAnyTransactionID
+				raise RuntimeError, "No transaction is active."
+			end
+			self.class::Event.new(@_address, 'miscttrm', {}, {}, @_transaction).send
+			@_transaction = KAE::KAnyTransactionID
+			@@_transaction_ids_by_app_no[@app_number] = KAE::KAnyTransactionID
 			return
 		end
 		
@@ -196,7 +207,7 @@ module AEM
 			if @_transaction == KAE::KAnyTransactionID
 				raise RuntimeError, "No transaction is active."
 			end
-			self.class::Event(@_address, 'miscendt', {}, {}, @_transaction).send
+			self.class::Event.new(@_address, 'miscendt', {}, {}, @_transaction).send
 			@_transaction = KAE::KAnyTransactionID
 			@@_transaction_ids_by_app_no[@app_number] = KAE::KAnyTransactionID
 			return

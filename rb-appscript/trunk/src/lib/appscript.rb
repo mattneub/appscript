@@ -713,8 +713,12 @@ module AS
 		
 		#
 		
-		def start_transaction
-			@AS_app_data.target.start_transaction
+		def start_transaction(session=nil)
+			@AS_app_data.target.start_transaction(session)
+		end
+		
+		def abort_transaction
+			@AS_app_data.target.abort_transaction
 		end
 		
 		def end_transaction

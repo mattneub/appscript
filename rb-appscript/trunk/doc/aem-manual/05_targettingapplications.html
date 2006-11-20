@@ -64,9 +64,11 @@
         start_transaction -- start a new transaction; all Events
                 constructed after start_transaction is called will
                 belong to the same transaction until end_transaction
-                is called [4]
+                or abort_transaction is called
 
-        end_transaction -- end the current transaction [4]
+        end_transaction -- end the current transaction
+
+        abort_transaction -- abort the current transaction
 
         reconnect -- Make sure this Application object has a valid
                 AEAddressDesc for the target application, relaunching

@@ -265,7 +265,7 @@ module Terminology
 	end
 	
 	def Terminology.tables_for_aetes(aetes)
-		classes, enums, properties, elements, commands = TerminologyParser.build_tables_for_aetes(aetes.delete_if { |aete| aete == nil or aete.type != 'aete' })
+		classes, enums, properties, elements, commands = TerminologyParser.build_tables_for_aetes(aetes.delete_if { |aete| not (aete.is_a?(AE::AEDesc) and aete.type == 'aete') })
 		return _make_type_table(classes, enums, properties) + _make_reference_table(properties, elements, commands)
 	end
 	
