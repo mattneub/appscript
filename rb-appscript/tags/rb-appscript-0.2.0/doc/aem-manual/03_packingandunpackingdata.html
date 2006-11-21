@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<title>aem | 3. Packing and unpacking data</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<style type="text/css" media="all"><!--@import url(full.css);--></style>
+
+</head>
+<body>
+
+<h1>3. Packing and unpacking data</h1>
+
+<!-- top navigation -->
+<div class="navbar">
+	<a href="02_apioverview.html">Previous</a> | <a href="index.html">Up</a> | <a href="04_references.html">Next</a>
+</div>
+
+<!-- content -->
+<div id="content">
+
+
+<h2>Codecs</h2>
+
+<p>The <code>AEM::Codecs</code> class provides methods for converting Python data to <code>AE::AEDesc</code> objects, and vice-versa.</p>
+
+<pre><code>Codecs
+
+    Constructor:
+        new
+
+    Methods:
+
+        pack(data) -- convert Ruby data to an AEDesc; will raise
+                a TypeError if data's type/class is unsupported
+            data : anything
+            Result : AEDesc
+
+        unpack(desc) -- convert an AEDesc to Ruby data; will return
+                the AEDesc unchanged if it's an unsupported type
+            desc : AEDesc
+            Result : anything
+
+        add_unit_types(types) -- register custom unit type definitions
+            types : list -- a list of lists, where each sublist is of form
+                    [name, code] or [name, code, pack_proc, unpack_proc]</code></pre>
+
+
+
+
+<!-- <h3>Notes</h3>
+
+TO DO: customisation options: subclassing and extending pack/unpack, overriding individual encoder/decoder methods and packUnknown/unpackUnknown; when to instantiate/when to modify; notes on appscript integration; notes on differences to py-appscript Codecs? notes on add_unit_types
+
+-->
+
+
+
+<h2>AE types</h2>
+
+<p>The Apple Event Manager defines several types for representing type/class names, enumerator names, etc. that have no direct equivalent in Python. Accordingly, aem defines several classes to represent these types on the Python side. All share a common abstract base class, <code>AETypeBase</code>:</p>
+
+<pre><code>AETypeBase -- Abstract base class
+
+    Constructor:
+        new(code)
+            code : str -- a four-character Apple event code
+
+    Methods:
+        code
+            Result : str -- the four-character code
+
+
+AEType &lt; AETypeBase -- represents an AE object of typeType
+
+
+AEEnum &lt; AETypeBase -- represents an AE object of typeEnumeration
+
+
+AEProp &lt; AETypeBase -- represents an AE object of typeProperty
+
+
+AEKey &lt; AETypeBase -- represents an AE object of typeKeyword</code></pre>
+
+
+
+</div>
+
+<!-- bottom navigation -->
+<div class="navbar">
+	<a href="02_apioverview.html">Previous</a> | <a href="index.html">Up</a> | <a href="04_references.html">Next</a>
+</div>
+
+<!--footer-->
+<p class="footer">&copy; 2006 HAS</p>
+</body>
+</html>

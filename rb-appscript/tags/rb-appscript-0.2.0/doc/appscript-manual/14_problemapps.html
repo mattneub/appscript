@@ -1,0 +1,193 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<title>appscript | 14. Dealing With Problem Applications</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<style type="text/css" media="all"><!--@import url(full.css);--></style>
+
+</head>
+<body>
+
+<h1>14. Dealing With Problem Applications</h1>
+
+<!-- top navigation -->
+<div class="navbar">
+	<a href="13_performanceissues.html">Previous</a> | <a href="index.html">Up</a> | <a href="15_notes.html">Next</a>
+	
+</div>
+
+<!-- content -->
+<div id="content">
+
+<p>Appscript provides a number of mechanisms for dealing with problematic applications. The following topics are currently covered:</p>
+
+<ul>
+<li><a href="#defective_terminology">Dealing with defective terminology</a></li>
+<li><a href="#non_stay_open_applications">Scripting non-stay-open applications</a></li>
+</ul>
+
+
+<!-- TO DO:
+- patching AS_app_data codecs
+- adding application-specific unit types
+- FSRef/FileURL/FSSpec, string/unicode/international text compatibility issues with older apps 
+-->
+
+
+<h2><a name="defective_terminology"></a>Dealing with defective terminology</h2>
+
+
+<p>There are two ways to work around missing or incorrect terminology: use <code>aem</code> or use the <code>dump</code> tool.</p>
+
+<h3>Use aem</h3>
+
+
+<p>If faulty terminology prevents you from correctly constructing an appscript reference or command, one solution is to use the lower-level aem module, which uses raw codes instead of human-readable names. (You can use the <a href="http://sourceforge.net/project/showfiles.php?group_id=175009">ASDictionary</a> application to obtain a plain text listing of raw codes from an application's terminology resource.)</p>
+
+<p>Note that you can obtain an aem reference from an existing appscript reference by calling its <code>AS_aem_reference</code> method. You can also pass an aem reference as a parameter to an appscript command. (You cannot use an appscript reference in an aem event, however; you have to extract its aem reference and use that.)</p>
+
+<p>For example:</p>
+
+<pre><code>aem_ref = AS.app('TextEdit').documents[1].text.AS_aem_reference
+
+# aem_ref contains an aem reference:
+#     app.elements('docu').by_index(1).elements('ctxt')
+
+app('TextEdit').get(aem_ref)</code></pre>
+
+
+<p class="hilitebox">Note that the rb-aem documentation is not yet available; for now, refer to the py-aem documentation (rb-aem's API is virtually identical to py-aem's) and rb-aem source code for more information.</p>
+
+
+
+<h3>Use dump</h3>
+
+<p>Another way to deal with buggy or imcomplete application terminology is to export it as a Ruby module and correct it by hand. Appscript can then use the terminology data from this module instead of the broken terminology from the application itself.</p>
+
+<p>Exporting an application's terminology is done using the <code>dump.rb</code> script located in the <code>misc</code> folder. This script is designed to be run from the command line, and takes three arguments: the name or path of the application whose terminology you wish to export, followed by the new module's Ruby name and file path. For example:</p>
+
+<pre><code>ruby dump.rb iCal.app ICalTerminology ~/ical_terms.rb</code></pre>
+
+<p>The dump tool will generate a new Ruby module similar to the following:</p>
+
+<pre><code>module ICalTerminology
+	Version = 1.1
+	Path = "/Applications/iCal.app"
+
+	Classes = [
+		["application", "capp"],
+		["attachment", "atts"],
+		["attendee", "wrea"],
+		...
+	]
+
+	Enumerators = [
+		["accepted", "E6ap"],
+		["ask", "ask "],
+		...
+	]
+
+	Properties = [
+		["allday_event", "wrad"],
+		["bounds", "pbnd"],
+		...
+	]
+
+	Elements = [
+		["applications", "capp"],
+		["attachment", "atts"],
+		...
+	]
+
+	Commands = [
+		["GetURL", "GURLGURL", [
+		]],
+		["close", "coreclos", [
+			["saving", "savo"],
+			["saving_in", "kfil"],
+		]],
+		...
+	]
+end</code></pre>
+
+<p>Every terminology module contains the following constants:</p>
+
+<dl>
+<dt>Version</dt>
+<dd>Indicates the terminology module's format. This is currently 1.1.</dd>
+
+<dt>Path</dt>
+<dd>The application from which this terminology was obtained.</dd>
+
+<dt>Classes</dt>
+<dd>A list of class names and their corresponding four-character codes as name-code pairs, e.g. <code>["document", "docu"]</code>.</dd>
+
+<dt>Enumerators</dt>
+<dd>A list of enumerator names and their corresponding four-character codes as name-code pairs, e.g. <code>["yes", "yes "]</code>.</dd>
+
+<dt>Properties</dt>
+<dd>A list of property names and their corresponding four-character codes as name-code pairs, e.g. <code>["name", "pnam"]</code>.</dd>
+
+<dt>Elements</dt>
+<dd>A list of element names and their corresponding four-character codes as name-code pairs, e.g. <code>["documents", "docu"]</code>. Note that this list should be identical to the <code>Classes</code> list, except that each element name should be the plural form of the corresponding class name.</dd>
+
+<dt>Commands</dt>
+<dd>A list of command names and their corresponding eight-character codes, followed by a list of keyword argument names and their corresponding four-character codes as name-code pairs, e.g. <code>["make", "corecrel", [["new", "kocl"],...]]</code>.</dd>
+</dl>
+
+<p>You can edit any of the five terminology lists as needed, e.g. to add missing class and element definitions, to correct faulty four-character codes, etc. (Make sure any changes are correctly formatted as appscript doesn't perform any special error checking when reading data from this module.) Once the changes are complete, place the module file somewhere on Ruby's module search path (e.g. in <code>/usr/lib/ruby/site_ruby/1.8</code>) so it can be imported into scripts when needed.</p>
+
+<p>To use a terminology module, first import it as normal. Then, when creating a new application object for the problem application, pass this module to the constructor call as its second argument (or first argument if it's the <code>current</code> constructor). For example:</p>
+
+<pre><code>require "appscript"
+require "ical_terms"
+
+ical = AS.app('iCal', ICalTerminology)
+...</code></pre>
+
+<p>Finally, remember to file a bug report with the application's developer so that they can fix the problem in a future release!</p>
+
+
+
+
+<h2><a name="non_stay_open_applications">Scripting non-stay-open applications</h2>
+
+<p>When scripting AppleScript applets and other applications that take only a single <code>run</code> or <code>open</code> event, scripts must take some additional steps to avoid problems:<p>
+
+<ol>
+<li>When creating an application object, the <code>:terms</code> argument must be <code>false</code>. This will prevent appscript from repeatedly starting the application in an (unsuccessful) attempt to retrieve its terminology.</li>
+
+<li>When sending an <code>open</code> event, the application must first be started using the <code>launch</code> command to avoid it receiving the usual <code>run</code> event upon start-up.</li>
+
+<li>Since non-stay-open applications don't reply to commands, the <code>run</code>/<code>open</code> command's <code>:wait_reply</code> argument must be <code>false</code> to prevent appscript waiting for a non-existent response.</li>
+</ol>
+
+<p>Examples:</p>
+
+<pre><code>require "appscript"
+require "macfile"
+
+# Run
+AS.app('Foo', false).run(:wait_reply => false)
+
+# Open
+bar = AS.app('Bar', false)
+bar.launch
+bar.open([MacFile::Alias.path('/path/to/item 1'), ...], :wait_reply => false)</code></pre>
+
+
+
+</div>
+
+<!-- bottom navigation -->
+<div class="navbar">
+	<a href="13_performanceissues.html">Previous</a> | <a href="index.html">Up</a> | <a href="15_notes.html">Next</a>
+	
+</div>
+
+<!--footer-->
+<p class="footer">&copy; 2006 HAS</p>
+</body>
+</html>
