@@ -13,7 +13,7 @@ class ReferenceRenderer
 	
 	def initialize(app_data)
 		@_app_data = app_data
-		@result = "AS"
+		@result = ""
 	end
 	
 	def _format(val)
@@ -73,24 +73,24 @@ class ReferenceRenderer
 	
 	def app
 		if @_app_data.path
-			@result += ".app(#{@_app_data.path.inspect})"
+			@result = "app(#{@_app_data.path.inspect})"
 		elsif @_app_data.pid
-			@result += ".app.by_pid(#{@_app_data.pid.inspect})"
+			@result = "app.by_pid(#{@_app_data.pid.inspect})"
 		elsif @_app_data.url
-			@result += ".app.by_url(#{@_app_data.url.inspect})"
+			@result = "app.by_url(#{@_app_data.url.inspect})"
 		else
-			@result += ".app.current"
+			@result = "app.current"
 		end
 		return self
 	end
 	
 	def con
-		@result += ".con"
+		@result = "con"
 		return self
 	end
 	
 	def its
-		@result += ".its"
+		@result = "its"
 		return self
 	end
 	

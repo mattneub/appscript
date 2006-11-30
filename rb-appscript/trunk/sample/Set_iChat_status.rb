@@ -7,14 +7,15 @@
 # <http://developer.apple.com/cocoa/applescriptforapps.html>
 
 require "appscript"
+include Appscript
 
 begin
-	track_name = AS.app("iTunes").current_track.name.get
-rescue AS::CommandError => e
+	track_name = app("iTunes").current_track.name.get
+rescue CommandError => e
 	if e.to_i == -1728 # Can't get reference.
 		track_name = 'No track selected.'
 	else
 		raise
 	end
 end
-AS.app("iChat").status_message.set(track_name)
+app("iChat").status_message.set(track_name)

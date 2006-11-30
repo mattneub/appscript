@@ -50,7 +50,7 @@
 
 <p>For example:</p>
 
-<pre><code>aem_ref = AS.app('TextEdit').documents[1].text.AS_aem_reference
+<pre><code>aem_ref = app('TextEdit').documents[1].text.AS_aem_reference
 
 # aem_ref contains an aem reference:
 #     app.elements('docu').by_index(1).elements('ctxt')
@@ -144,7 +144,7 @@ end</code></pre>
 <pre><code>require "appscript"
 require "ical_terms"
 
-ical = AS.app('iCal', ICalTerminology)
+ical = Appscript.app('iCal', ICalTerminology)
 ...</code></pre>
 
 <p>Finally, remember to file a bug report with the application's developer so that they can fix the problem in a future release!</p>
@@ -167,13 +167,12 @@ ical = AS.app('iCal', ICalTerminology)
 <p>Examples:</p>
 
 <pre><code>require "appscript"
-require "macfile"
 
 # Run
-AS.app('Foo', false).run(:wait_reply => false)
+Appscript.app('Foo', false).run(:wait_reply => false)
 
 # Open
-bar = AS.app('Bar', false)
+bar = Appscript.app('Bar', false)
 bar.launch
 bar.open([MacFile::Alias.path('/path/to/item 1'), ...], :wait_reply => false)</code></pre>
 

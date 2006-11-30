@@ -23,108 +23,109 @@
 <h2>Application objects</h2>
 
 <pre><code>require "appscript"
+include Appscript
 
 # application &quot;Finder&quot;
-AS.app('Finder')
+app('Finder')
 
 # application &quot;Macintosh HD:Applications:TextEdit.app:&quot;
-AS.app('/Applications/TextEdit.app')</code></pre>
+app('/Applications/TextEdit.app')</code></pre>
 
 
 <h2>Property References</h2>
 
 <pre><code># a reference to startup disk of application &quot;Finder&quot;
-AS.app('Finder').startup_disk
+app('Finder').startup_disk
 
 # a reference to name of folder 1 of home of application &quot;Finder&quot;
-AS.app('Finder').home.folders[1].name
+app('Finder').home.folders[1].name
 
 # a reference to name of every item of home of application &quot;Finder&quot;
-AS.app('Finder').home.items.name
+app('Finder').home.items.name
 
 # a reference to text of every document of application &quot;TextEdit&quot;
-AS.app('TextEdit').documents.text
+app('TextEdit').documents.text
 
 # a reference to color of character 1 of every paragraph of text &not;
 #     of document 1 of application &quot;TextEdit&quot;
-AS.app('TextEdit').documents[1].text.paragraphs.characters[1].color</code></pre>
+app('TextEdit').documents[1].text.paragraphs.characters[1].color</code></pre>
 
 
 <h2>All Elements References</h2>
 
 <pre><code># a reference to disks of application &quot;Finder&quot;
-AS.app('Finder').disks
+app('Finder').disks
 
 # a reference to every word of every paragraph of text of every document &not;
 #     of application &quot;TextEdit&quot;
-AS.app('TextEdit').documents.text.paragraphs.words</code></pre>
+app('TextEdit').documents.text.paragraphs.words</code></pre>
 
 
 <h2>Single Element References</h2>
 
 <pre><code># a reference to disk 1 of application &quot;Finder&quot;
-AS.app('Finder').disks[1]
+app('Finder').disks[1]
 
 # a reference to file &quot;ReadMe.txt&quot; of folder &quot;Documents&quot; of home of application &quot;Finder&quot;
-AS.app('Finder').home.folders['Documents'].files['ReadMe.txt']
+app('Finder').home.folders['Documents'].files['ReadMe.txt']
 
 # a reference to paragraph -1 of text of document 1 of application &quot;TextEdit&quot;
-AS.app('TextEdit').documents[1].text.paragraphs[-1]
+app('TextEdit').documents[1].text.paragraphs[-1]
 
 # a reference to middle paragraph of text of last document of application &quot;TextEdit&quot;
-AS.app('TextEdit').documents.last.text.paragraphs.middle
+app('TextEdit').documents.last.text.paragraphs.middle
 
 # a reference to any file of home of application &quot;Finder&quot;
-AS.app('Finder').home.files.any</code></pre>
+app('Finder').home.files.any</code></pre>
 
 
 <h2>Relative References</h2>
 
 <pre><code># a reference to paragraph before paragraph 6 of text of document 1 of application &quot;TextEdit&quot;
-AS.app('TextEdit').documents[1].text.paragraphs[6].previous(:paragraph)
+app('TextEdit').documents[1].text.paragraphs[6].previous(:paragraph)
 
 # a reference to paragraph after character 30 of document 1 of application &quot;Tex-Edit Plus&quot;
-AS.app('Tex-Edit Plus').documents[1].characters[30].next(:paragraph)</code></pre>
+app('Tex-Edit Plus').documents[1].characters[30].next(:paragraph)</code></pre>
 
 
 <h2>Element Range References</h2>
 
 <pre><code># a reference to words 1 thru 4 of text of document 1 of application &quot;TextEdit&quot;
-AS.app('TextEdit').documents[1].text.words[1, 4]
+app('TextEdit').documents[1].text.words[1, 4]
 
 # a reference to paragraphs 2 thru -1 of text of document 1 of application &quot;TextEdit&quot;
-AS.app('TextEdit').documents[1].text.paragraphs[2, -1]
+app('TextEdit').documents[1].text.paragraphs[2, -1]
 
 # a reference to folders &quot;Documents&quot; thru &quot;Music&quot; of home of application &quot;Finder&quot;
-AS.app('Finder').home.folders['Documents', 'Music']
+app('Finder').home.folders['Documents', 'Music']
 
 # a reference to text (word 3) thru (paragraph 7) of document 1 of application &quot;Tex-Edit Plus&quot;
-AS.app('Tex-Edit Plus').documents[1].text[AS.con.words[3], AS.con.paragraphs[7]]</code></pre>
+app('Tex-Edit Plus').documents[1].text[con.words[3], con.paragraphs[7]]</code></pre>
 
 
 <h2>Filter References</h2>
 
 <pre><code># a reference to every document of application &quot;TextEdit&quot; whose text is &quot;\n&quot;
-AS.app('TextEdit').documents[AS.its.text.eq("\n")]
+app('TextEdit').documents[its.text.eq("\n")]
 
 # a reference to every paragraph of document 1 of application &quot;Tex-Edit Plus&quot; &not;
 #     whose first character is last character
-AS.app('Tex-Edit Plus').documents[1].paragraphs[
-    AS.its.characters.first.eq(AS.its.characters.last)]
+app('Tex-Edit Plus').documents[1].paragraphs[
+    its.characters.first.eq(its.characters.last)]
 
 # a reference to every file of folder &quot;Documents&quot; of home of application &quot;Finder&quot; &not;
 #     whose name extension is &quot;txt&quot; and size < 10240
-AS.app('Finder').home.folders['Documents'].files[
-    AS.its.name_extension.eq('txt').AND(AS.its.size.lt(10240))]</code></pre>
+app('Finder').home.folders['Documents'].files[
+    its.name_extension.eq('txt').AND(its.size.lt(10240))]</code></pre>
 
 
 <h2>Insertion Location References</h2>
 
 <pre><code># a reference to end of documents of application &quot;TextEdit&quot;
-AS.app('TextEdit').documents.end
+app('TextEdit').documents.end
 
 # a reference to before paragraph 1 of text of document 1 of application &quot;TextEdit&quot;
-AS.app('TextEdit').documents[1].text.paragraphs[1].before</code></pre>
+app('TextEdit').documents[1].text.paragraphs[1].before</code></pre>
 
 
 

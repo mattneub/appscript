@@ -7,7 +7,7 @@ require "appscript"
 class TC_AppscriptReferences < Test::Unit::TestCase
 
 	def setup
-		@te = AS.app('TextEdit')
+		@te = Appscript.app('TextEdit')
 		@s = @te.to_s
 	end
 
@@ -34,53 +34,53 @@ class TC_AppscriptReferences < Test::Unit::TestCase
 			[@te.documents.last, @s+'.documents.last', nil],
 			[@te.documents.any, @s+'.documents.any', nil],
 			
-			[AS.con.documents[3], 'AS.con.documents[3]', nil],
+			[Appscript.con.documents[3], 'con.documents[3]', nil],
 			
 			[@te.documents[
-					AS.con.documents[3],
-					AS.con.documents['foo']], 
+					Appscript.con.documents[3],
+					Appscript.con.documents['foo']], 
 					@s+'.documents[' +
-					'AS.con.documents[3], ' +
-					'AS.con.documents["foo"]]', nil],
+					'con.documents[3], ' +
+					'con.documents["foo"]]', nil],
 			
 			
-			[AS.its.name.eq('foo').and(AS.its.words.eq([])), 
-					'AS.its.name.eq("foo").and(AS.its.words.eq([]))', nil],
+			[Appscript.its.name.eq('foo').and(Appscript.its.words.eq([])), 
+					'its.name.eq("foo").and(its.words.eq([]))', nil],
 			
-			[AS.its.words.ne([]), 
-					'AS.its.words.ne([])', 
-					AS.its.words.eq([]).not], # i.e. there isn't a KAENotEqual operator, so not-equal tests are actually packed as an equal test followed by not test
+			[Appscript.its.words.ne([]), 
+					'its.words.ne([])', 
+					Appscript.its.words.eq([]).not], # i.e. there isn't a KAENotEqual operator, so not-equal tests are actually packed as an equal test followed by not test
 					
-			[AS.its.words.eq(nil), 'AS.its.words.eq(nil)', nil],
-			[AS.its.words.size.gt(0), 
-					'AS.its.words.size.gt(0)', nil],
-			[AS.its.words.le(''), 'AS.its.words.le("")', nil],
-			[AS.its.words.starts_with('foo').not, 
-					'AS.its.words.starts_with("foo").not', nil],
+			[Appscript.its.words.eq(nil), 'its.words.eq(nil)', nil],
+			[Appscript.its.words.size.gt(0), 
+					'its.words.size.gt(0)', nil],
+			[Appscript.its.words.le(''), 'its.words.le("")', nil],
+			[Appscript.its.words.starts_with('foo').not, 
+					'its.words.starts_with("foo").not', nil],
 			
 			
-			[AS.its.words.contains('foo'), 'AS.its.words.contains("foo")', nil],
-			[AS.its.words.is_in('foo'), 'AS.its.words.is_in("foo")', nil],
+			[Appscript.its.words.contains('foo'), 'its.words.contains("foo")', nil],
+			[Appscript.its.words.is_in('foo'), 'its.words.is_in("foo")', nil],
 			
-			[@te.documents[AS.its.size.ge(42)], 
-					@s+'.documents[AS.its.size.ge(42)]', nil],
+			[@te.documents[Appscript.its.size.ge(42)], 
+					@s+'.documents[its.size.ge(42)]', nil],
 			
 			[@te.documents[1, 'foo'], 
-					@s+'.documents[AS.con.documents[1], AS.con.documents["foo"]]', 
-					@te.documents[AS.con.documents[1], AS.con.documents['foo']]],
+					@s+'.documents[con.documents[1], con.documents["foo"]]', 
+					@te.documents[Appscript.con.documents[1], Appscript.con.documents['foo']]],
 			
 			[@te.documents[1].text \
 					.paragraphs.characters[
-							AS.con.characters[3], 
-							AS.con.characters[55]
+							Appscript.con.characters[3], 
+							Appscript.con.characters[55]
 					].next(:character).after,
 					@s+'.documents[1].text.paragraphs.characters' +
-					'[AS.con.characters[3], AS.con.characters[55]]' +
+					'[con.characters[3], con.characters[55]]' +
 					'.next(:character).after', nil],
 			
-			[AS.its.name.ne('foo').and(AS.its.words.eq([])).not,
-					'AS.its.name.ne("foo").and(AS.its.words.eq([])).not',
-					AS.its.name.eq('foo').not.and(AS.its.words.eq([])).not],
+			[Appscript.its.name.ne('foo').and(Appscript.its.words.eq([])).not,
+					'its.name.ne("foo").and(its.words.eq([])).not',
+					Appscript.its.name.eq('foo').not.and(Appscript.its.words.eq([])).not],
 			
 			[@te.documents.start, @s+'.documents.start', nil],
 			[@te.documents.end, @s+'.documents.end', nil],
@@ -92,7 +92,7 @@ class TC_AppscriptReferences < Test::Unit::TestCase
 			d = @te.AS_app_data.pack(val)
 			val = unpacked_version ? unpacked_version : val
 			val2 = @te.AS_app_data.unpack(d)
-			if val.class == @te.AS_app_data.unpack(d).class # note: AS::Reference and AS::GenericReference currently aren't comparable with each other, so the next test would always fail for those
+			if val.class == @te.AS_app_data.unpack(d).class # note: Appscript::Reference and Appscript::GenericReference currently aren't comparable with each other, so the next test would always fail for those
 				assert_equal(val, val2)
 				assert_block { val.eql?(val2) }
 			end

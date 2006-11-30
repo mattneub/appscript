@@ -3,7 +3,8 @@
 # Opens a file in TextEdit. (Demonstrates mactypes module usage.)
 
 require "appscript"
+include Appscript
 
-te = AS.app('TextEdit')
+te = app('TextEdit')
 te.activate
 te.open(MacTypes::Alias.path('/Users/USERNAME/ReadMe.txt'))

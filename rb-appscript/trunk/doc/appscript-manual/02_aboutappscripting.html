@@ -52,11 +52,11 @@
 
 <p><img src="finder_to_textedit_event.gif" alt="Sending Apple event from Finder to TextEdit" /></p>
 
-<p>With suitable bindings, scripting languages can also create and send Apple events. For example, when the code <code>AS.app('iTunes').play</code> is executed in a Ruby interpreter, a <code>hook/Play</code> event is sent from the interpreter to iTunes, instructing it to start playing:</p>
+<p>With suitable bindings, scripting languages can also create and send Apple events. For example, when the code <code>app('iTunes').play</code> is executed in a Ruby interpreter, a <code>hook/Play</code> event is sent from the interpreter to iTunes, instructing it to start playing:</p>
 
 <p><img src="ruby_to_itunes_event.gif" alt="Sending Apple event from Ruby to iTunes"/></p>
 
-<p>Applications may respond to an incoming Apple event by sending a reply event back to the client application. The reply event may contain either a return value, if there is one, or an error description if it was unable to handle the event as requested. For example, executing the command <code>AS.app('TextEdit').name.get</code> in a Ruby interpreter sends TextEdit a <code>code/getd</code> event containing an object specifier identifying the <code>name</code> property of its root <code>application</code> object. TextEdit processes this event, then sends a reply event containing the string '<tt>TextEdit</tt>' back to the Ruby interpreter, where it is displayed as the command's result. This exchange is usually performed synchronously, appearing to the user as a simple remote procedure call. Asynchronous messaging is also supported, though is not normally used in application scripting.</p>
+<p>Applications may respond to an incoming Apple event by sending a reply event back to the client application. The reply event may contain either a return value, if there is one, or an error description if it was unable to handle the event as requested. For example, executing the command <code>app('TextEdit').name.get</code> in a Ruby interpreter sends TextEdit a <code>code/getd</code> event containing an object specifier identifying the <code>name</code> property of its root <code>application</code> object. TextEdit processes this event, then sends a reply event containing the string '<tt>TextEdit</tt>' back to the Ruby interpreter, where it is displayed as the command's result. This exchange is usually performed synchronously, appearing to the user as a simple remote procedure call. Asynchronous messaging is also supported, though is not normally used in application scripting.</p>
 
 
 <h2>What is a scriptable application?</h2>
@@ -203,8 +203,8 @@ app('TextEdit').documents[1].text.paragraphs</code></pre>
 
 <li>using appscript:
 
-<pre><code>AS.app('TextEdit').documents.text.paragraphs[
-    AS.its.ne("\n")].characters[1].size.set(24)</code></pre>
+<pre><code>app('TextEdit').documents.text.paragraphs[
+    its.ne("\n")].characters[1].size.set(24)</code></pre>
 </li>
 </ul>
 

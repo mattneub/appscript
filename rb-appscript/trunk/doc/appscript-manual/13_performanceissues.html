@@ -38,6 +38,7 @@
 
 <p>While iterating over application objects and manipulating each in turn is a common technique, it's also the slowest by far:</p>
 <pre><code>require "appscript"
+include Appscript
 
 desiredEmail = 'sam.brown@foo.com'
 
@@ -57,9 +58,10 @@ p foundNames</code></pre>
 
 <p>In this case, the entire search can be performed using a single complex query sent to Address Book via a single Apple event:</p>
 <pre><code>require "appscript"
+include Appscript
 
-desiredEmail = 'sam.brown@foo.com'p AS.app('Address Book').people[
-        AS.its.emails.value.contains(desiredEmail)
+desiredEmail = 'sam.brown@foo.com'p app('Address Book').people[
+        its.emails.value.contains(desiredEmail)
         ].name.get</code></pre>
 
 <p>To explain:</p>
@@ -78,16 +80,17 @@ desiredEmail = 'sam.brown@foo.com'p AS.app('Address Book').people[
 <p>While AEOM queries can be surprisingly powerful, there are still many problems too complex for the application to evaluate entirely by itself. For example, let's say that you want to obtain the name of every person who has an email addresses that uses a particular domain name. Unfortunately, this test is too complex to express as a single AEOM query; however, it can still be solved reasonably efficiently by obtaining all the data from the application up-front and processing it locally. For this we need: 1. the name of every person in the Address Book, and 2. each person's email addresses. Fortunately, each of these can be expressed in a single query, allowing all this data to be retrieved using just two <code>get</code> commands.</p>
 
 <pre><code>require "appscript"
+include Appscript
 
 desiredDomain = 'foo.com'
 
 domainPattern = Regexp.new(Regexp.escape('@'+desiredDomain) + '$')
 
 # get a list of name strings
-names = AS.app('Address Book').people.name.get
+names = app('Address Book').people.name.get
 
 # a list of lists of email strings
-emailsOfEveryPerson = AS.app('Address Book').people.emails.value.get
+emailsOfEveryPerson = app('Address Book').people.emails.value.get
 
 result = []
 names.zip(emailsOfEveryPerson).each do |name, emails|

@@ -5,12 +5,13 @@
 # that uses standard window class terminology.)
 
 require "appscript"
+include Appscript
 
 x, y = 0, 44
 offset  = 22
 
 # Get list of window references, ignoring any minimised windows
-window_list = AS.app('Finder').windows[AS.its.collapsed.not].get
+window_list = app('Finder').windows[its.collapsed.not].get
 
 # Move windows while preserving their original sizes
 window_list.reverse.each do |window|

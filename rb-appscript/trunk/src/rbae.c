@@ -436,17 +436,6 @@ rbAE_launchApplication(VALUE self, VALUE path, VALUE firstEvent, VALUE flags)
 	return rb_ary_new3(2, INT2NUM(psn.highLongOfPSN), INT2NUM(psn.lowLongOfPSN));
 }
 
-static VALUE
-rbAE_pidToPsn(VALUE self, VALUE pid) // TO DO: not currently used by aem/appscript; delete?
-{
-	OSStatus err = 0;
-	ProcessSerialNumber psn;
-	
-	err = GetProcessForPID((pid_t)NUM2INT(pid), &psn);
-	if (err != noErr) rbAE_raiseMacOSError("Can't convert PID to PSN.", err);
-	return rb_ary_new3(2, INT2NUM(psn.highLongOfPSN), INT2NUM(psn.lowLongOfPSN));
-}
-
 /**********************************************************************/
 // Date conversion
 
@@ -737,7 +726,6 @@ Init_ae (void)
 	rb_define_module_function(mAE, "find_application", rbAE_findApplication, 3);
 	rb_define_module_function(mAE, "psn_for_application_path", rbAE_psnForApplicationPath, 1);
 	rb_define_module_function(mAE, "launch_application", rbAE_launchApplication, 3);
-	rb_define_module_function(mAE, "pid_to_psn", rbAE_pidToPsn, 1);
 
 	rb_define_module_function(mAE, "convert_long_date_time_to_unix_seconds", 
 							  rbAE_convertLongDateTimeToUnixSeconds, 1);

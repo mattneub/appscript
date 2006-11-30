@@ -6,6 +6,7 @@
 # Requires the Amrita templating engine: http://amrita.sourceforge.jp
 
 require 'appscript'
+include Appscript
 require 'osax'
 require "amrita/template"
 include Amrita
@@ -42,7 +43,7 @@ sa = OSAX.osax('StandardAdditions')
 out_file = sa.choose_file_name(:default_name=>'My iTunes Top 40.html')
 
 # Get the played count, name and album for every track in iTunes
-tracks = AS.app('iTunes').library_playlists[1].tracks
+tracks = app('iTunes').library_playlists[1].tracks
 info = tracks.played_count.get.zip(tracks.name.get, tracks.album.get)
 # Extract the top 40 most played entries
 top40 = info.sort.reverse[0, 40]
@@ -57,7 +58,7 @@ tmpl.prettyprint = true
 File.open(out_file.to_s, 'w') { |f| tmpl.expand(f, data) }
 
 # Open file in Safari for viewing
-safari = AS.app('Safari')
+safari = app('Safari')
 safari.activate
 safari.open(out_file)
 

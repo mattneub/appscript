@@ -12,8 +12,9 @@
 # incoming messages from this sender directly into this mailbox.
 
 require "appscript"
+include Appscript
 
-mail = AS.app('Mail')
+mail = app('Mail')
 
 # get the current selection in Mail and make sure it's an email message
 selection = mail.selection.get
@@ -47,7 +48,7 @@ if not mail.rules[folder_name].exists
 	new_rule = mail.rules[1].after.make(:new=>:rule, :with_properties=>{
 			:name=>folder_name, 
 			:should_move_message=>true,
-			:move_message=>AS.app.mailboxes[folder_name],
+			:move_message=>app.mailboxes[folder_name],
 			:stop_evaluating_rules=>true})
 	new_rule.make(:new=>:rule_condition, :with_properties=>{
 			:expression=>address,

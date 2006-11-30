@@ -1,3 +1,20 @@
+2006-11-29 -- 0.2.1
+
+- renamed AS module to Appscript. An 'AS' alias is temporarily provided for backwards compatibility but this will be removed in a future release. Users should update their scripts accordingly.
+
+- _appscript/referencerenderer.rb no longer prefixes 'AS.' to reference representation strings
+
+- added #app, #con and #its instance methods to Appscript module to allow clients to include appscript methods and classes in other modules via 'include Appscript'; updated sample scripts and documentation to show this
+
+- OSAX.scripting_additions now returns unique sorted names
+
+- added MacTypes::Alias.url, MacTypes::Alias#url, MacTypes::File_URL.url, MacTypes::File_URL#url methods for working with file url strings
+
+- OSAX::ScriptingAddition#to_s and #inspect now render scripting addition's name correctly
+
+- removed unused AE.pid_to_psn method
+
+
 2006-11-20 -- 0.2.0
 
 - removed path expansion in FindApp#byName, MacFile::Alias#at, MacFile::FileURL#at

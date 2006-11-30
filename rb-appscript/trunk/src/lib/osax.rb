@@ -20,22 +20,22 @@ module OSAX
 	OSAXCache = {}
 	OSAXNames = []
 	
-	se = AS.app('System Events')
+	se = Appscript.app('System Events')
 	[se.system_domain, se.local_domain, se.user_domain].each do |domain|
 		osaxen = domain.scripting_additions_folder.files[
-				AS.its.file_type.eq('osax').or(AS.its.name_extension.eq('osax'))]
+				Appscript.its.file_type.eq('osax').or(Appscript.its.name_extension.eq('osax'))]
 		osaxen.name.get.zip(osaxen.POSIX_path.get).each do |name, path|
 			name = name.sub(/(?i)\.osax$/, '') # remove name extension, if any
 			OSAXNames.push(name)
 			OSAXCache[name.downcase] = [path, nil]
 		end
 	end
-	OSAXNames.sort.uniq
+	OSAXNames.sort!.uniq!
 	
 	#######
 	# modified AppData class
 	
-	class OSAXData < AS::AppData
+	class OSAXData < Appscript::AppData
 	
 		def initialize(name, pid, url, terms)
 			super(AEM::Application, name, pid, url, terms)
@@ -59,7 +59,7 @@ module OSAX
 				end
 			end
 			@type_by_code, @type_by_name, @reference_by_code, @reference_by_name = @_terms
-			extend(AS::AppDataAccessors)
+			extend(Appscript::AppDataAccessors)
 		end
 	
 	end
@@ -85,19 +85,18 @@ module OSAX
 	end
 	
 	
-	class ScriptingAddition < AS::Reference
+	class ScriptingAddition < Appscript::Reference
 		# Represents a single scripting addition.
 		
-		def initialize(name)
+		def initialize(name, osax_data=nil)
 			# name: string -- a scripting addition's name, e.g. "StandardAdditions";
 			#	basically its filename minus the '.osax' suffix
 			#
 			# Note that name is case-insensitive and an '.osax' suffix is ignored if given.
 			@_osax_name = name
-			if name.is_a?(OSAXData)
-				osax_data = name
-			else
-				path, terms = OSAXCache[name.downcase.sub(/(?i)\.osax$/, '')]
+			if not osax_data
+				osax_name = name.downcase.sub(/(?i)\.osax$/, '')
+				path, terms = OSAXCache[osax_name]
 				if not path
 					raise ArgumentError, "Scripting addition not found: #{name.inspect}"
 				end
@@ -105,7 +104,7 @@ module OSAX
 					@_terms = terms
 				else
 					desc = AE.get_app_terminology(path).coerce(KAE::TypeAEList)
-					@_terms = OSAXCache[name.downcase][1] = \
+					@_terms = OSAXCache[osax_name][1] = \
 							Terminology.tables_for_aetes(DefaultCodecs.unpack(desc))
 				end
 				osax_data = OSAXData.new(nil, nil, nil, @_terms)
@@ -124,7 +123,7 @@ module OSAX
 		def method_missing(name, *args)
 			begin
 				super
-			rescue AS::CommandError => e
+			rescue Appscript::CommandError => e
 				if e.to_i == -1713 # 'No user interaction allowed' error (e.g. user tried to send a 'display dialog' command to a non-GUI ruby process), so convert the target process to a full GUI process and try again
 					AE.transform_process_to_foreground_application
 					activate
@@ -140,31 +139,34 @@ module OSAX
 		
 		def by_name(name)
 			# name : string -- name or full path to application
-			return ScriptingAddition.new(OSAXData.new(FindApp.by_name(name), nil, nil, @_terms))
+			return ScriptingAddition.new(@_osax_name, 
+					OSAXData.new(FindApp.by_name(name), nil, nil, @_terms))
 		end
 		
 		def by_id(id)
 			# id : string -- bundle id of application
-			return ScriptingAddition.new(OSAXData.new(FindApp.by_id(id), nil, nil, @_terms))
+			return ScriptingAddition.new(@_osax_name, 
+					OSAXData.new(FindApp.by_id(id), nil, nil, @_terms))
 		end
 		
 		def by_creator(creator)
 			# creator : string -- four-character creator code of application
-			return ScriptingAddition.new(OSAXData.new(FindApp.by_creator(creator), nil, nil, @_terms))
+			return ScriptingAddition.new(@_osax_name, 
+					OSAXData.new(FindApp.by_creator(creator), nil, nil, @_terms))
 		end
 		
 		def by_pid(pid)
 			# pid : integer -- Unix process id
-			return ScriptingAddition.new(OSAXData.new(nil, pid, nil, @_terms))
+			return ScriptingAddition.new(@_osax_name, OSAXData.new(nil, pid, nil, @_terms))
 		end
 		
 		def by_url(url)
 			# url : string -- eppc URL of application
-			return ScriptingAddition.new(OSAXData.new(nil, nil, url, @_terms))
+			return ScriptingAddition.new(@_osax_name, OSAXData.new(nil, nil, url, @_terms))
 		end
 		
 		def current
-			return ScriptingAddition.new(OSAXData.new(nil, nil, nil, @_terms))
+			return ScriptingAddition.new(@_osax_name, OSAXData.new(nil, nil, nil, @_terms))
 		end
 	end
 	

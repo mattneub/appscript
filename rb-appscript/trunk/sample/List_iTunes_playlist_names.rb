@@ -3,5 +3,6 @@
 # List names of playlists in iTunes.
 
 require "appscript"
+include Appscript
 
-p AS.app('iTunes').sources[1].user_playlists.name.get
+p app('iTunes').sources[1].user_playlists.name.get

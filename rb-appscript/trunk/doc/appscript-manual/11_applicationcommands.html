@@ -29,7 +29,7 @@
 
 <p>Both direct and keyword parameters are optional.</p>
 
-<p>Application commands are implemented by the application's top-level <code>application</code> object (represented by an <code>AS::Application</code> instance). For convenience, appscript also makes application commands available as methods on every reference. If a command is called upon a reference rather than an Application object, that reference will be taken as the application's direct parameter (with one or two caveats; see the Special Cases section below).</p>
+<p>Application commands are implemented by the application's top-level <code>application</code> object (represented by an <code>Appscript::Application</code> instance). For convenience, appscript also makes application commands available as methods on every reference. If a command is called upon a reference rather than an Application object, that reference will be taken as the application's direct parameter (with one or two caveats; see the Special Cases section below).</p>
 
 <p>The command's direct parameter can be any value; the application's dictionary will (usually) indicate the appropriate types. A command can have a maximum of one direct parameter; if more than one is given, an error will occur. Keyword parameters are specified as a <code>Hash</code> object whose keys are symbols representing the parameter names:</p>
 
@@ -83,25 +83,25 @@
 <h2>Examples</h2>
 
 <pre><code># tell application &quot;TextEdit&quot; to activate
-AS.app('TextEdit').activate
+app('TextEdit').activate
 
 # tell application &quot;TextEdit&quot; to open fileRefList
-AS.app('TextEdit').open(fileRefList)
+app('TextEdit').open(fileRefList)
 
 # tell application &quot;Finder&quot; to get version
-AS.app('Finder').version.get
+app('Finder').version.get
 
 # tell application &quot;Finder&quot; to set name of file &quot;foo.txt&quot; of home to &quot;bar.txt&quot;
-AS.app('Finder').home.files['foo.txt'].name.set('bar.txt')
+app('Finder').home.files['foo.txt'].name.set('bar.txt')
 
 # tell application &quot;TextEdit&quot; to count (text of first document) each paragraph
-AS.app('TextEdit').documents.first.text.count(:each =&gt; :paragraph)
+app('TextEdit').documents.first.text.count(:each =&gt; :paragraph)
 
 # tell application &quot;TextEdit&quot; to make new document at end of documents
-AS.app('TextEdit').documents.end.make(:new =&gt; :document)
+app('TextEdit').documents.end.make(:new =&gt; :document)
 
 # tell application &quot;Finder&quot; to get items of home as alias list
-AS.app('Finder').home.items.get(:result_type =&gt; :alias)</code></pre>
+app('Finder').home.items.get(:result_type =&gt; :alias)</code></pre>
 
 
 
@@ -155,13 +155,13 @@ AS.app('Finder').home.items.get(:result_type =&gt; :alias)</code></pre>
 
 <p>Unlike AppleScript, which implicitly sends a <code>get</code> command to any unresolved application object references at the end of evaluating an expression, appscript only resolves a reference when it receives an appropriate command. For example:</p>
 
-<pre><code>foo = AS.app('Finder').disks</code></pre>
+<pre><code>foo = app('Finder').disks</code></pre>
 
 <p>is <em>not</em> equivalent to:</p>
 
 <pre><code>set foo to disks of application &quot;Finder&quot;</code></pre>
 
-<p>even though the two may look similar. In the first case, the value assigned to variable <code>foo</code> is a reference, <code>AS.app('Finder').disks</code>. In the second, AppleScript evaluates the <code>disks of application &quot;Finder&quot;</code> reference by performing an implicit <code>get</code> command before assigning the result, a <em>list</em> containing one or more references (one to each disk currently mounted), to variable <code>foo</code>. To assign an unresolved reference to a variable in AppleScript, the reference must be preceded by the <code>a reference to</code> operator. For example:</p>
+<p>even though the two may look similar. In the first case, the value assigned to variable <code>foo</code> is a reference, <code>app('Finder').disks</code>. In the second, AppleScript evaluates the <code>disks of application &quot;Finder&quot;</code> reference by performing an implicit <code>get</code> command before assigning the result, a <em>list</em> containing one or more references (one to each disk currently mounted), to variable <code>foo</code>. To assign an unresolved reference to a variable in AppleScript, the reference must be preceded by the <code>a reference to</code> operator. For example:</p>
 
 <ul>
 <li><p>Getting a reference to all disks:</p>
@@ -170,9 +170,9 @@ AS.app('Finder').home.items.get(:result_type =&gt; :alias)</code></pre>
 return foo
 --&gt; a reference to every disk of application &quot;Finder&quot;</code></pre>
 
-<pre><code>foo = AS.app('Finder').disks
+<pre><code>foo = app('Finder').disks
 print foo
---&gt; AS.app('Finder').disks</code></pre></li>
+--&gt; app('Finder').disks</code></pre></li>
 
 
 <li><p>Getting a list of references to each disk:</p>
@@ -181,9 +181,9 @@ print foo
 return foo
 --&gt; {disk &quot;Mac HD&quot; of application &quot;Finder&quot;, disk &quot;ZIP-100&quot; of application &quot;Finder&quot;}</code></pre>
 
-<pre><code>foo = AS.app('Finder').disks.get
+<pre><code>foo = app('Finder').disks.get
 print foo
---&gt; [AS.app('Finder').disks['Mac HD'], AS.app('Finder').disks['ZIP-100']]</code></pre>
+--&gt; [app('Finder').disks['Mac HD'], app('Finder').disks['ZIP-100']]</code></pre>
 
 </li>
 </ul>

@@ -26,7 +26,7 @@
 
 <p>For example, to get the value of the first paragraph of the topmost document in TextEdit:</p>
 
-<pre><code>AS.app('TextEdit').documents[1].paragraphs[1].get</code></pre>
+<pre><code>app('TextEdit').documents[1].paragraphs[1].get</code></pre>
 
 <p>This is equivalent to the AppleScript statement:</p>
 
@@ -53,8 +53,9 @@ end tell</code></pre>
 <pre><code>#!/usr/bin/env ruby
 
 require "appscript"
+include Appscript
 
-AS.app('TextEdit').documents.end.make(
+app('TextEdit').documents.end.make(
     :new => :document,
     :with_properties => {:text => "Hello World!\n"}
     )</code></pre>

@@ -13,16 +13,18 @@ module MacTypes
 	class FileBase
 	
 		URLPrefix = 'file://localhost'
+		URLPatt = Regexp.new('file://(?:.*?)(/.*)', Regexp::IGNORECASE)
 	
 		def FileBase._path_to_url(path)
 			return URLPrefix + path.gsub(/[^a-zA-Z0-9_.-\/]/) { |c| "%%%02x" % c[0] }
 		end
 	
 		def FileBase._url_to_path(url)
-			if url[0, URLPrefix.length] != URLPrefix
+			match = url.match(URLPatt)
+			if not match
 				raise ArgumentError, "Not a file:// URL."
 			end
-			return url[URLPrefix.length, url.length].gsub(/%../) { |s| "%c" % s[1,2].hex }
+			return match[1].gsub(/%../) { |s| "%c" % s[1,2].hex }
 		end
 		
 		def FileBase._coerce(desc, type, path=nil)
@@ -78,6 +80,11 @@ module MacTypes
 					KAE::TypeAlias, path))
 		end
 		
+		def Alias.url(url)
+			# Make Alias object from file URL. Note: only the path portion of the URL is used; the domain will always be localhost.
+			return Alias.path(_url_to_path(url))
+		end
+		
 		def Alias.desc(desc)
 			# Make Alias object from CarbonX.AE.AEDesc of typeAlias. Note: descriptor type is not checked; clients are responsible for passing the correct type as other types will cause unexpected problems/errors.
 			return new(desc)
@@ -88,6 +95,11 @@ module MacTypes
 		def desc
 			# Return AEDesc of typeAlias. If clients want a different type, they can subsequently call this AEDesc's coerce method.
 			return @desc
+		end
+		
+		def url
+			# Get as URL string.
+			return desc.coerce(KAE::TypeFileURL).data
 		end
 		
 		def path
@@ -131,6 +143,11 @@ module MacTypes
 			return new(path, nil)
 		end
 		
+		def FileURL.url(url)
+			# Make FileURL object from file URL. Note: only the path portion of the URL is used; the domain will always be localhost.
+			return FileURL.path(_url_to_path(url))
+		end
+		
 		def FileURL.desc(desc)
 			# Make FileURL object from AEDesc of typeFSS, typeFSRef, typeFileURL. Note: descriptor type is not checked; clients are responsible for passing the correct type as other types will cause unexpected problems/errors.
 			return new(nil, desc)
@@ -144,6 +161,11 @@ module MacTypes
 				@desc = AE::AEDesc.new(KAE::TypeFileURL, FileBase._path_to_url(@path))
 			end
 			return @desc
+		end
+		
+		def url
+			# Get as URL string.
+			return desc.coerce(KAE::TypeFileURL).data
 		end
 		
 		def path

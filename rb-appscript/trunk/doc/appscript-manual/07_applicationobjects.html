@@ -25,21 +25,21 @@
 
 <p>Before you can communicate with a scriptable application you must call one of the following methods to create an application object:</p>
 
-<pre><code>AS.app.by_name(name) # name or POSIX path of local application
+<pre><code>app.by_name(name) # name or POSIX path of local application
 
-AS.app.by_id(id) # bundle ID for a local application
+app.by_id(id) # bundle ID for a local application
 
-AS.app.by_creator(creator) # 4-character creator type for a local application
+app.by_creator(creator) # 4-character creator type for a local application
 
-AS.app.by_pid(pid) # Unix process id for a local process
+app.by_pid(pid) # Unix process id for a local process
 
-AS.app.by_url(url) # eppc URL for a remote process
+app.by_url(url) # eppc URL for a remote process
 
-AS.app.current # the host process</code></pre>
+app.current # the host process</code></pre>
 
-<p>For convenience, the most commonly used form, <code>AS.app.by_name(name)</code>, can be shortened to:</p>
+<p>For convenience, the most commonly used form, <code>app.by_name(name)</code>, can be shortened to:</p>
 
-<pre><code>AS.app(name)</code></pre>
+<pre><code>app(name)</code></pre>
 
 
 <p>To target an application you must supply one of the following arguments:</p>
@@ -65,20 +65,21 @@ AS.app.current # the host process</code></pre>
 <p>Examples:</p>
 
 <pre><code>require "appscript"
+include Appscript
 
-ical = AS.app('iCal')
+ical = app('iCal')
 
-textedit = AS.app('TextEdit.app')
+textedit = app('TextEdit.app')
 
-safari = AS.app('/Applications/Safari')
+safari = app('/Applications/Safari')
 
-addressbook = AS.app.by_id('com.apple.addressbook')
+addressbook = app.by_id('com.apple.addressbook')
 
-quicktimeplayer = AS.app.by_creator('TVOD')
+quicktimeplayer = app.by_creator('TVOD')
 
-finder = AS.app.by_url('eppc://192.168.10.1/Finder')
+finder = app.by_url('eppc://192.168.10.1/Finder')
 
-itunes = AS.app.by_url('eppc://Jan%20Smith@G4.local/iTunes')</code></pre>
+itunes = app.by_url('eppc://Jan%20Smith@G4.local/iTunes')</code></pre>
 
 
 <h2>Basic commands</h2>
@@ -146,7 +147,7 @@ set(reference, :to =&gt; value) -- Set an object's data.
 
 <p>When appscript launches a non-running application, it normally sends it a <code>run</code> command as part of the launching process. If you wish to avoid this, you should start the application by sending it a <code>launch</code> command before doing anything else. For example:</p>
 
-<pre><code>te = AS.app('TextEdit')
+<pre><code>te = app('TextEdit')
 te.launch
 # other TextEdit-related code goes here...</code></pre>
 

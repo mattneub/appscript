@@ -117,11 +117,11 @@ paragraphs[-1].previous(:character)</code></pre>
 
 <p>Range references select all elements between and including two references indicating the start and end of the range. The start and end references are normally declared relative to the container of the elements being selected. Appscript defines an object, <code>con</code> (short for 'container'), to indicate this container; for example, to indicate the third paragraph of the currrent container object:</p>
 
-<pre><code>AS.con.paragraphs[3]</code></pre>
+<pre><code>con.paragraphs[3]</code></pre>
 
 <p>For convenience, the range reference also allows start and end references to be written in shorthand form where their element class is the same as the elements being selected; thus:</p>
 
-<pre><code>ref.paragraphs[AS.con.paragraphs[3], AS.con.paragraphs[-1]]</code></pre>
+<pre><code>ref.paragraphs[con.paragraphs[3], con.paragraphs[-1]]</code></pre>
 
 <p>can also be written as:</p>
 
@@ -129,7 +129,7 @@ paragraphs[-1].previous(:character)</code></pre>
 
 <p>Some applications can handle more complex range references. For example, the following will work in Tex-Edit Plus:</p>
 
-<pre><code>ref.words[AS.con.characters[5], AS.con.paragraphs[-2]]</code></pre>
+<pre><code>ref.words[con.characters[5], con.paragraphs[-2]]</code></pre>
 
 <p>Syntax:</p>
 <pre><code>elements[start, end]
@@ -139,7 +139,7 @@ paragraphs[-1].previous(:character)</code></pre>
 <p>Examples:</p>
 <pre><code>folders['Documents', 'Movies']
 documents[1, 3]
-text[AS.con.characters[5], AS.con.words[-2]]</code></pre>
+text[con.characters[5], con.words[-2]]</code></pre>
 
 <p class="hilitebox">Note: ranges are specified as [start-position, <em>end-position</em>] (AEM-style ranges), not [start-position, <em>length</em>] (Ruby-style ranges).</p>
 
@@ -154,9 +154,9 @@ text[AS.con.characters[5], AS.con.words[-2]]</code></pre>
 <ul>
 <li><p>A reference to each element being tested, represented by appscript's <code>its</code> object. This object supports all valid reference forms, allowing you to construct references to its properties and elements. For example:</p>
 	
-<pre><code>AS.its
-AS.its.size
-AS.its.words.first</code></pre></li>
+<pre><code>its
+its.size
+its.words.first</code></pre></li>
 
 <li><p>One or more conditional tests, implemented as methods on the reference being tested. Each method takes a test reference or a value as their sole argument.</p>
 
@@ -178,12 +178,12 @@ reference.is_not_in(value)
         value : reference or value</code></pre>
 
 <p>Examples:</p>
-<pre><code>AS.its.eq('')
-AS.its.size.gt(1024)
-AS.its.words.first.starts_with('A')
-AS.its.characters.first.eq(AS.its.characters.last)</code></pre>
+<pre><code>its.eq('')
+its.size.gt(1024)
+its.words.first.starts_with('A')
+its.characters.first.eq(its.characters.last)</code></pre>
 
-<p>Note that Boolean comparison tests can be written as either <code>reference.eq(true)</code> or just <code>reference</code>, e.g. <code>folderRef.files[AS.its.locked]</code></p></li>
+<p>Note that Boolean comparison tests can be written as either <code>reference.eq(true)</code> or just <code>reference</code>, e.g. <code>folderRef.files[its.locked]</code></p></li>
 
 <li><p>Zero or more logical tests, implemented as properties/methods on conditional tests. The <code>and</code> and <code>or</code> methods take one or more conditional or logic tests as arguments.</p>
 
@@ -193,9 +193,9 @@ test.or(test, ...)
 test.not</code></pre>
 
 <p>Examples:</p>
-<pre><code>AS.its.eq('').not
-AS.its.size.gt(1024).and(its.size.lt(10240))
-AS.its.words[1].starts_with('A').or(
+<pre><code>its.eq('').not
+its.size.gt(1024).and(its.size.lt(10240))
+its.words[1].starts_with('A').or(
     its.words[2].contains('ce'),
     its.words[1].eq('Foo'))</code></pre></li>
 </ul>

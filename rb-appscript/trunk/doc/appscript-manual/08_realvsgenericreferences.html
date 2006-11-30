@@ -27,45 +27,45 @@
 
 <p>A real reference begins with an <code>app</code> call, followed by a <code>by_name</code>, <code>by_id</code>, <code>by_creator</code>, <code>by_pid</code>, <code>by_url</code> call that identifies the application whose object(s) it refers to, e.g.:</p>
 
-<pre><code>AS.app.by_name('TextEdit').documents.end
-AS.app.by_url('eppc://my-mac.local/Finder').home.folders.name</code></pre>
+<pre><code>app.by_name('TextEdit').documents.end
+app.by_url('eppc://my-mac.local/Finder').home.folders.name</code></pre>
 
-<p>(Remember than <code>AS.app.by_name('TextEdit')</code> can be shortened to <code>AS.app('TextEdit')</code> for convenience.</p>
+<p>(Remember than <code>app.by_name('TextEdit')</code> can be shortened to <code>app('TextEdit')</code> for convenience.</p>
 
 <p>A generic reference begins with <code>app</code>, <code>con</code> or <code>its</code> and does not identify the application to which it relates, e.g.:</p>
 
-<pre><code>AS.app.documents.end
-AS.con.word[3]
-AS.its.name.starts_with('d')</code></pre>
+<pre><code>app.documents.end
+con.word[3]
+its.name.starts_with('d')</code></pre>
 
 <p>Generic references are only evaluated when used used within real references, either as selectors:</p>
 
-<pre><code>AS.app('Finder').home.folders[<em>AS.its.name.starts_with('d')</em>].get
+<pre><code>app('Finder').home.folders[<em>its.name.starts_with('d')</em>].get
 
-AS.app('Tex-Edit Plus').windows[1].text[<em>AS.con.words[2]</em>, <em>AS.con.words[-2]</em>].get</code></pre>
+app('Tex-Edit Plus').windows[1].text[<em>con.words[2]</em>, <em>con.words[-2]</em>].get</code></pre>
 
 <p>or as command parameters:</p>
 
-<pre><code>AS.app('TextEdit').make(
+<pre><code>app('TextEdit').make(
     :new =&gt; :word, 
-    :at =&gt; <em>AS.app.documents[1].words.end</em>, 
+    :at =&gt; <em>app.documents[1].words.end</em>, 
     :with_data =&gt; 'Hello')
 
-AS.app('Finder').desktop.duplicate(
-    :to =&gt; <em>AS.app.home.folders['Desktop Copy']</em>)</code></pre>
+app('Finder').desktop.duplicate(
+    :to =&gt; <em>app.home.folders['Desktop Copy']</em>)</code></pre>
 
 
 <h2>Comparing and hashing references</h2>
 
 <p>Application references can be compared for equality and are hashable (so can be used as dictionary keys). For two real references to be considered equal, both must have the same application path or url and reference structure. Examples:</p>
 
-<pre><code>puts AS.app('TextEdit').documents[1] == \
-    AS.app.by_id('com.apple.textedit').documents[1].get
+<pre><code>puts app('TextEdit').documents[1] == \
+    app.by_id('com.apple.textedit').documents[1].get
 # Result: true; both references evaluate to the same
 #     application path and reference
 
-puts AS.app('Finder').home == AS.app('Finder').home.get
-# Result: false; AS.app('Finder').home.get returns a
+puts app('Finder').home == app('Finder').home.get
+# Result: false; app('Finder').home.get returns a
 #     different reference to the same location</code></pre>
 
 <p>For two generic references to be equal, both must have the same reference structure. Note that comparing generic references to real references will always return a false result.</p>

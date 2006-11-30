@@ -2,8 +2,6 @@ TO DO
 
 - pack/unpack support for application types (note: packing would be a bit tricky, since app('foo') could also indicate a reference, in which case it should be packed as a null desc; unpacking might be a bit clumsy, and would (at least in theory) require a by_desc/by_aem_application method to be added to AS::Application to handle typeMachPort, other types could be converted to paths/creator codes/urls/etc. ok though)
 
-- remove rbAE_pidToPsn from rbae.c? (no longer used by connect.rb)
-
 - allow users to extract a generic ref from a real ref (to_generic) for comparison purposes. Or vice-versa?
 
 - implement built-in help system by bridging to py-appscript
@@ -11,8 +9,6 @@ TO DO
 - see if it's possible to work better with irb's autocomplete (autocomplete support is currently limited to start of a reference)
 
 - ae/aem/appscript-defined exception classes aren't quite idiomatic Ruby
-
-- finish commenting source code
 
 - would be nice if MacFile::FileNotFoundError always showed the failed path (this'd need a bit of Alias Manager glue added to the ae extension)
 

@@ -3,8 +3,9 @@
 # Demonstrates various references and commands in action.
 
 require "appscript"
+include Appscript
 
-textedit = AS.app('TextEdit') # get an application object for TextEdit
+textedit = app('TextEdit') # get an application object for TextEdit
 
 
 # tell application "TextEdit" to activate
@@ -102,12 +103,12 @@ p textedit.documents[1].text.paragraphs.get
 
 # tell application "TextEdit" to get every paragraph of document 1 
 #         where it is not "\n" -- get non-empty paragraphs
-p textedit.documents[1].paragraphs[AS.its.ne("\n")].get
+p textedit.documents[1].paragraphs[its.ne("\n")].get
 
 
 # tell application "TextEdit" to get text of every document 
 #         whose text begins with "H"
-p textedit.documents[AS.its.text.starts_with('H')].text.get
+p textedit.documents[its.text.starts_with('H')].text.get
 
 
 
@@ -117,10 +118,10 @@ p textedit.documents[AS.its.text.starts_with('H')].text.get
 #  # tell application "Tex-Edit Plus" to get words (character 5) 
 #  #         thru (paragraph 9) of document 1
 #  p app('Tex-Edit Plus').documents[1] \
-#           .words[AS.con.characters[5], AS.con.paragraphs[9]].get
+#           .words[con.characters[5], con.paragraphs[9]].get
 #
 #
 #  # tell application "Tex-Edit Plus" to get every word of text 
 #  #         of document 1 whose color is {0, 0, 0}
 #  p app('Tex-Edit Plus').documents[1].text.paragraphs \
-#          [AS.its.color.equals((0, 0, 0))].get
+#          [its.color.equals((0, 0, 0))].get

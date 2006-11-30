@@ -3,7 +3,8 @@
 # Hello world in TextEdit.
 
 require "appscript"
+include Appscript
 
-te = AS.app('TextEdit')
+te = app('TextEdit')
 te.activate
 te.documents.end.make(:new => :document, :with_properties => {:text => "Hello World!\n"})

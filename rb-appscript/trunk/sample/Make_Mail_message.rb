@@ -3,6 +3,7 @@
 # Compose an outgoing message in Apple's Mail.app.
 
 require "appscript"
+include Appscript
 
 def make_message(addresses, subject, content, show_window=false)
 	# Make an outgoing message in Mail.
@@ -11,7 +12,7 @@ def make_message(addresses, subject, content, show_window=false)
 	# 	content : unicode -- the message content
 	# 	show_window : Boolean -- show message window in Mail
 	# Result : reference -- reference to the new outgoing message
-	mail = AS.app('Mail')
+	mail = app('Mail')
 	msg = mail.make(
 			:new => :outgoing_message, 
 			:with_properties => {:visible => show_window})

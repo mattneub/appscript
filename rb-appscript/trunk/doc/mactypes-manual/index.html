@@ -37,20 +37,28 @@
 <pre><code>Alias -- a persistent reference to a filesystem object
     Constructors:
 
-        Alias.path(path) -- make Alias object from POSIX path
+        Alias.path(path) -- make Alias object from POSIX path string
+
+        Alias.url(url) -- make Alias object from a local file:// URL string
     
         Alias.desc(desc) -- make Alias object from an AE::AEDesc
                             of TypeAlias
 
     Methods:
+
+        ==
+
+        hash
+    
+        inspect
     
         path -- returns POSIX path string to the object's current location
+
+        url -- returns file:// URL string to the object's current location
 
         desc -- returns AE::AEDesc of TypeAlias
 
         to_s -- synonym for #path
-    
-        inspect -- returns string representation of Alias object
     
         to_alias -- returns self
     
@@ -66,10 +74,13 @@ f = MacTypes::Alias.path('/Users/foo/some file')
 puts f.to_s
 # /Users/foo/some file
 
+puts f.url
+# file://localhost/Users/foo/some%20file
+
 puts f.inspect
 # MacTypes::Alias.path("/Users/foo/some file")
 
-AS.app('TextEdit').open(f)
+Appscript.app('TextEdit').open(f)
 # opens document in TextEdit</code></pre>
 
 
@@ -88,7 +99,9 @@ AS.app('TextEdit').open(f)
 <pre><code>FileURL -- identifies a fixed filesystem location
     Constructors:
 
-        FileURL.path(path) -- make FileURL object from POSIX path
+        FileURL.path(path) -- make FileURL object from POSIX path string
+
+        FileURL.url(url) -- make FileURL object from a local file:// URL string
     
         FileURL.desc(desc) -- make FileURL object from an AE::AEDesc
                               of TypeFSS, TypeFSRef or TypeFileURL
@@ -99,13 +112,15 @@ AS.app('TextEdit').open(f)
 
         hash
     
+        inspect
+    
         path -- returns POSIX path string
+
+        url -- returns file:// URL string
 
         desc -- returns AE::AEDesc of TypeFSRef, TypeFSS or TypeFileURL
 
         to_s -- synonym for #path
-    
-        inspect -- returns string representation of FileURL object
     
         to_alias -- returns a MacTypes::Alias object
     
@@ -121,10 +136,13 @@ f = MacTypes::FileURL.path('/Users/foo/new file')
 puts f.to_s
 # /Users/foo/new file
 
+puts f.url
+# file://localhost/Users/foo/some%20file
+
 puts f.inspect
 # MacTypes::FileURL.path("/Users/foo/new file")
 
-AS.app('TextEdit').documents[1].save(:in => f)
+Appscript.app('TextEdit').documents[1].save(:in => f)
 # saves front TextEdit document at the given location</code></pre>
 
 
@@ -140,7 +158,7 @@ file_url = MacTypes::FileURL.path('/Users/foo/new file')
 
 fs_spec = file_url.desc.coerce(KAE::TypeFSS)
 
-AS.app('older app').documents[1].save(:in => fs_spec)</code></pre>
+Appscript.app('older app').documents[1].save(:in => fs_spec)</code></pre>
 
 <p>When used in an application command, a <code>FileURL</code> object returned by appscript will always pack into the same <code>TypeFSRef</code>, <code>TypeFileURL</code> or <code>TypeFSS</code> AEDesc it was created from. A <code>FileURL</code> object returned by <code>FileURL.path</code>, <code>Alias#to_file_url</code> or <code>FileURL#to_file_url</code> will always pack into an AEDesc of <code>TypeFileURL</code>.</p>
 

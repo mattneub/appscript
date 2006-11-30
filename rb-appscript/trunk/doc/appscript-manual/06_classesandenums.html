@@ -67,8 +67,8 @@ AEM::AEEnum.new('xyz ')</code></pre>
 <tr><td><code>typeFileURL</code></td><td><code>:file_url</code></td><td><code>MacTypes::FileURL</code></td></tr>
 <tr><td><code>typeFSRef</code></td><td><code>:file_ref</code></td><td><code>MacTypes::FileURL</code></td></tr>
 <tr><td><code>typeFSS</code> *</td><td><code>:file_specification</code></td><td><code>MacTypes::FileURL</code></td></tr>
-<tr><td><code>typeObjectSpecifier</code></td><td><code>:reference</code></td><td><code>AS::Reference</code></td></tr>
-<tr><td><code>typeInsertionLoc</code></td><td><code>:location_reference</code></td><td><code>AS::Reference</code></td></tr>
+<tr><td><code>typeObjectSpecifier</code></td><td><code>:reference</code></td><td><code>Appscript::Reference</code></td></tr>
+<tr><td><code>typeInsertionLoc</code></td><td><code>:location_reference</code></td><td><code>Appscript::Reference</code></td></tr>
 <tr><td><code>typeType</code></td><td><code>:type_class</code></td><td><code>Symbol</code></td></tr>
 <tr><td><code>typeEnumerated</code></td><td><code>:enumerator</code></td><td><code>Symbol</code></td></tr>
 <tr><td><small>unit types; e.g. </small> <code>typeFeet</code></td><td><small>unit names; e.g.</small> <code>:feet</code></td><td><code>MacTypes::Units</code></td></tr>
@@ -114,7 +114,7 @@ $KCODE = "UTF8"</code></pre>
 
 <p>When asking an application to coerce a return value into a file type you must specify the exact type (<code>:alias</code>, <code>:file_url</code>, <code>:file_ref</code>, or <code>:file_specification</code>) in the <code>get</code> command. e.g. To get a <code>MacTypes::FileURL</code> object for the current user's home folder, you would usually use:</p>
 
-<pre><code>AS.app('Finder').home.get(:result_type=&gt;:file_url)</code></pre>
+<pre><code>app('Finder').home.get(:result_type=&gt;:file_url)</code></pre>
 
 <p>Also be aware that some applications may not support coercions to all AE file types; you'll need to experiment to find out which coercions are supported.</p>
 

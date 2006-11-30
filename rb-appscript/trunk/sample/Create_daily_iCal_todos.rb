@@ -26,8 +26,9 @@
 
 
 require "appscript"
+include Appscript
 
-ICal = AS.app("iCal")
+ICal = app("iCal")
 
 # The calendar in which recurring todo items should appear:
 ToDoCalendarName = "Personal"
@@ -38,8 +39,8 @@ def create_to_do(summary_text)
     midnight = Time.local(now.year(), now.month(), now.day())
     to_dos = ICal.calendars[ToDoCalendarName].todos
     # don't create an item if it already exists for today!
-    if to_dos[AS.its.due_date.ge(midnight).and(
-            AS.its.summary.eq(summary_text))].count < 1
+    if to_dos[its.due_date.ge(midnight).and(
+            its.summary.eq(summary_text))].count < 1
         to_dos.end.make(:new=>:todo, :with_properties=>{
                 :due_date=>midnight, :summary=>summary_text})
     end

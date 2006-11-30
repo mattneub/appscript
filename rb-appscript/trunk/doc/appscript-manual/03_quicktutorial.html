@@ -35,15 +35,17 @@ irb(main):001:0&gt;</code></pre>
 
 <h3>Target TextEdit</h3>
 
-<p>The first step is to import the appscript module, <code>AS</code>, which exports the following functions and classes: <code>app</code>, <code>con</code>, <code>its</code>, <code>CommandError</code> and <code>ApplicationNotFoundError</code>.</p>
+<p>The first step is to import the appscript module, <code>Appscript</code>, which provides the following functions and classes: <code>app</code>, <code>con</code>, <code>its</code>, <code>CommandError</code> and <code>ApplicationNotFoundError</code>.</p>
 
 <pre><code>irb&gt; require "appscript"
-=&gt; true</code></pre>
+=&gt; true
+irb&gt; include Appscript
+=&gt; Object</code></pre>
 
 <p>Once appscript is imported, the first thing to do is to create new <code>app</code> object, identifying the application to be manipulated, and assign it to a variable, <code>te</code>, for easy reuse:</p>
 
-<pre><code>irb&gt; te = AS.app('TextEdit')
-=&gt; AS.app("/Applications/TextEdit.app")</code></pre>
+<pre><code>irb&gt; te = app('TextEdit')
+=&gt; app("/Applications/TextEdit.app")</code></pre>
 
 <p>The application may be identified by name, path, bundle ID, creator type, Unix process id, or, if running remotely, URL. If the application is identified by name, path, bundle ID or creator type and is not already running, it will be launched automatically for you.</p>
 
@@ -52,7 +54,7 @@ irb(main):001:0&gt;</code></pre>
 <p>First, create a new TextEdit document by making a new <code>document</code> object. This is done using the <code>make</code> command, passing it a single keyword parameter, <code>:new =&gt; :document</code>, indicating the type of object to create:</p>
 
 <pre><code>irb&gt; te.make(:new =&gt; :document)
-=&gt; AS.app("/Applications/TextEdit.app").documents[1]</code></pre>
+=&gt; app("/Applications/TextEdit.app").documents[1]</code></pre>
 
 <p>Notice that keyword parameters are specified as an inline Hash with symbols as keys. The <a href="11_applicationcommands.html">Application Commands</a> chapter will discuss appscript's command syntax in more detail.</p>
 
@@ -61,7 +63,7 @@ irb(main):001:0&gt;</code></pre>
 <p>As you can see, the <code>make</code> command returns a reference identifying the newly-created object. This reference can be assigned to a variable for easy reuse. Use the <code>make</code> command to create another document, this time assigning its result to a variable, <code>doc</code>:</p>
 
 <pre><code>irb&gt; doc = te.make(:new =&gt; :document)
-=&gt; AS.app("/Applications/TextEdit.app").documents[1]</code></pre>
+=&gt; app("/Applications/TextEdit.app").documents[1]</code></pre>
 
 <h3>Set the document's content</h3>
 
@@ -91,7 +93,7 @@ irb(main):001:0&gt;</code></pre>
 
 <pre><code>te.documents[1].text</code></pre>
 
-<p>the result is another reference, <code>AS.app("/Applications/TextEdit.app").documents[1].text</code>, not the value being referenced (<tt>'Hello World'</tt>). To get the value being referenced, you have to pass the reference as the direct argument to TextEdit's <code>get</code> command:</p>
+<p>the result is another reference, <code>app("/Applications/TextEdit.app").documents[1].text</code>, not the value being referenced (<tt>'Hello World'</tt>). To get the value being referenced, you have to pass the reference as the direct argument to TextEdit's <code>get</code> command:</p>
 
 <pre><code>irb&gt; te.get(doc.text)
 =&gt; "Hello World!"</code></pre>
@@ -106,10 +108,10 @@ irb(main):001:0&gt;</code></pre>
 <pre><code>irb&gt; doc.text.get
 =&gt; "Hello World!"
 irb&gt; te.documents[1].get
-=&gt; AS.app("/Applications/TextEdit.app").documents[1]
+=&gt; app("/Applications/TextEdit.app").documents[1]
 irb&gt; te.documents.get
-=&gt; [AS.app("/Applications/TextEdit.app").documents[1], 
-    AS.app("/Applications/TextEdit.app").documents[2]]
+=&gt; [app("/Applications/TextEdit.app").documents[1], 
+    app("/Applications/TextEdit.app").documents[2]]
 irb&gt; te.documents.text.get
 =&gt; ["Hello World", ""]</code></pre>
 
@@ -120,9 +122,9 @@ irb&gt; te.documents.text.get
 <p>The above exercise uses two commands to create a new TextEdit document containing the text '<tt>Hello World</tt>'. It is also possible to perform both operations using the <code>make</code> command alone by passing the value for the new document's <code>text</code> property via the <code>make</code> command's optional <code>with_properties</code> parameter:</p> 
 
 <pre><code>irb&gt; te.make(:new =&gt; :document, :with_properties =&gt; {:text =&gt; 'Hello World'})
-=&gt; AS.app('/Applications/TextEdit.app').documents[1]</code></pre>
+=&gt; app('/Applications/TextEdit.app').documents[1]</code></pre>
 
-<p>Incidentally, you might note that every time the <code>make</code> command is used, it returns a reference to document <em>1</em>. TextEdit identifies its <code>document</code> objects according to the stacking order of their windows, with document 1 being frontmost. When the window stacking order changes, whether as a result of a script command or GUI-based interaction, so does the order of their corresponding <code>document</code> objects. This means that a previously created reference such as <code>AS.app('/Applications/TextEdit.app').documents[1]</code> may now identify a different <code>document</code> object to before! Some applications prefer to return references that identify objects by name or unique ID rather than index to reduce or eliminate the potential for confusion, but it's an issue you should be aware of, particularly with long-running scripts where there is greater opportunity for unexpected third-party interactions to throw a spanner in the works.</p>
+<p>Incidentally, you might note that every time the <code>make</code> command is used, it returns a reference to document <em>1</em>. TextEdit identifies its <code>document</code> objects according to the stacking order of their windows, with document 1 being frontmost. When the window stacking order changes, whether as a result of a script command or GUI-based interaction, so does the order of their corresponding <code>document</code> objects. This means that a previously created reference such as <code>app('/Applications/TextEdit.app').documents[1]</code> may now identify a different <code>document</code> object to before! Some applications prefer to return references that identify objects by name or unique ID rather than index to reduce or eliminate the potential for confusion, but it's an issue you should be aware of, particularly with long-running scripts where there is greater opportunity for unexpected third-party interactions to throw a spanner in the works.</p>
 
 
 <h3>More on manipulating <code>text</code></h3>

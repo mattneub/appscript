@@ -28,11 +28,11 @@
 
 <pre><code># tell application "Finder" to get name of every folder of home
 
-AS.app('Finder').get(AS.app.home.folders.name)</code></pre>
+app('Finder').get(app.home.folders.name)</code></pre>
 
 <p>Note that if the direct parameter is omitted from the argument list, the reference that the command is invoked on is used instead. For example, the above example would normally be written as:</p>
 
-<pre><code>AS.app('Finder').home.folders.name.get</code></pre>
+<pre><code>app('Finder').home.folders.name.get</code></pre>
 
 
 <h2><code>set</code></h2>
@@ -41,7 +41,7 @@ AS.app('Finder').get(AS.app.home.folders.name)</code></pre>
 
 <pre><code># tell application "TextEdit" to set text of document 1 to "Hello World"
 
-AS.app('TextEdit').documents[1].text.set('Hello World')</code></pre>
+app('TextEdit').documents[1].text.set('Hello World')</code></pre>
 
 
 <h2><code>count</code></h2>
@@ -50,13 +50,13 @@ AS.app('TextEdit').documents[1].text.set('Hello World')</code></pre>
 
 <pre><code># tell application "TextEdit" to count words of document 1
 
-AS.app('TextEdit').documents[1].words.count</code></pre>
+app('TextEdit').documents[1].words.count</code></pre>
 
 <p>Count the items in the current user's home folder:</p>
 
 <pre><code>#tell application "Finder" to count items of home
 
-AS.app('Finder').home.count(:each =&gt; :item)</code></pre>
+app('Finder').home.count(:each =&gt; :item)</code></pre>
 
 <p>(Note that the <code>each</code> parameter is required in Finder's <code>count</code> command.)</p>
 
@@ -68,7 +68,7 @@ AS.app('Finder').home.count(:each =&gt; :item)</code></pre>
 <pre><code># tell application "TextEdit" to make new document &not;
 #     with properties {text:"Hello World\n"}
 
-AS.app('TextEdit').make(
+app('TextEdit').make(
     :new =&gt; :document,
     :with_properties =&gt; {:text =&gt; "Hello World\n"})</code></pre>
 
@@ -78,14 +78,14 @@ AS.app('TextEdit').make(
 #     at end of text of document 1 &not;
 #     with properties {text:"Yesterday\nToday\nTomorrow\n"}
 
-AS.app('TextEdit').make(
+app('TextEdit').make(
     :new =&gt; :paragraph,
-    :at =&gt; AS.app.documents[1].text.end,
+    :at =&gt; app.documents[1].text.end,
     :with_data =&gt; "Yesterday\nToday\nTomorrow\n")</code></pre>
 
 <p>Note that the <code>make</code> command's <code>at</code> parameter can be omitted for convenience, in which case the reference that the command is invoked on is used instead:</p>
 
-<pre><code>AS.app('TextEdit').documents[1].text.end.make(
+<pre><code>app('TextEdit').documents[1].text.end.make(
     :new =&gt; :paragraph,
     :with_data =&gt; "Yesterday\nToday\nTomorrow\n")</code></pre>
 
@@ -97,8 +97,8 @@ AS.app('TextEdit').make(
 <pre><code># tell application "Finder" to &not;
 #     duplicate folder "Projects" of home to disk "Work" with replacing
 
-AS.app('Finder').home.folders['Projects'].duplicate(
-    :to =&gt; AS.app.disks['Backup'], :replacing =&gt; true)</code></pre>
+app('Finder').home.folders['Projects'].duplicate(
+    :to =&gt; app.disks['Backup'], :replacing =&gt; true)</code></pre>
 
 
 <h2><code>add</code></h2>
@@ -109,9 +109,9 @@ AS.app('Finder').home.folders['Projects'].duplicate(
 #     every person whose birth date is not missing value &not;
 #     to group "Birthdays"
 
-AS.app('Address Book').people[
-    AS.its.birth_date.ne(:missing_value)
-    ].add(:to =&gt; AS.app.groups['Birthdays'])</code></pre>
+app('Address Book').people[
+    its.birth_date.ne(:missing_value)
+    ].add(:to =&gt; app.groups['Birthdays'])</code></pre>
 
 
 

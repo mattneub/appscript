@@ -4,7 +4,7 @@
 
 require "_aem/mactypes"
 
-module AS
+module Appscript
 	# The following methods and classes are of interest to end users:
 	# app, con, its, CommandError, ApplicationNotFoundError
 	# Other classes are only of interest to implementors who need to hook in their own code.
@@ -182,7 +182,7 @@ module AS
 		end
 				
 		def unpack_contains_comp_descriptor(op1, op2)
-			if op1.is_a?(AS::Reference) and op1.AS_aem_reference.AEM_root == AEMReference::Its
+			if op1.is_a?(Appscript::Reference) and op1.AS_aem_reference.AEM_root == AEMReference::Its
 				return op1.contains(op2)
 			else
 				return super
@@ -219,7 +219,7 @@ module AS
 		end
 	
 		def to_s
-			s= 'AS.' + @_call[0]
+			s= @_call[0]
 			@_call[1, @_call.length].each do |name, args|					if name == :[]
 					if args.length == 1
 						s += "[#{args[0]}]"
@@ -272,7 +272,7 @@ module AS
 			if selector == nil
 				selector = value_if_none
 			end
-			if selector.is_a?(AS::GenericReference)
+			if selector.is_a?(Appscript::GenericReference)
 				return selector.AS_resolve(@AS_app_data).AS_aem_reference
 			elsif selector.is_a?(Reference)
 				return selector.AS_aem_reference
@@ -400,7 +400,7 @@ module AS
 					end
 				end
 #			rescue => e
-#				raise AS::CommandError.new(self, name, args, e)
+#				raise Appscript::CommandError.new(self, name, args, e)
 #			end
 			# build and send the Apple event, returning its result, if any
 			begin
@@ -541,7 +541,7 @@ module AS
 						self._resolve_range_boundary(end_range_selector, -1))
 			elsif selector.is_a?(String)
 				 new_ref = @AS_aem_reference.by_name(selector)
-			elsif selector.is_a?(AS::GenericReference)
+			elsif selector.is_a?(Appscript::GenericReference)
 				new_ref = @AS_aem_reference.by_filter(
 						selector.AS_resolve(@AS_app_data).AS_aem_reference)
 			else
@@ -771,9 +771,9 @@ module AS
 	
 	#######
 	
-	AS_App = AS::GenericApplication.new(Application)
-	AS_Con = AS::GenericReference.new(['con'])
-	AS_Its = AS::GenericReference.new(['its'])
+	AS_App = Appscript::GenericApplication.new(Application)
+	AS_Con = Appscript::GenericReference.new(['con'])
+	AS_Its = Appscript::GenericReference.new(['its'])
 	
 	
 	######################################################################
@@ -781,7 +781,7 @@ module AS
 	######################################################################
 	# public (note: Application & GenericApplication classes may also be accessed if subclassing Application class is required)
 	
-	def AS.app(*args)
+	def Appscript.app(*args)
 		if args == []
 			return AS_App
 		else
@@ -789,11 +789,29 @@ module AS
 		end
 	end
 
-	def AS.con
+	def Appscript.con
 		return AS_Con
 	end
 	
-	def AS.its
+	def Appscript.its
+		return AS_Its
+	end
+	
+	# also define app, con, its as instance methods so that clients can 'include Appscript'
+	
+	def app(*args)
+		if args == []
+			return AS_App
+		else
+			return AS_App.by_name(*args)
+		end
+	end
+
+	def con
+		return AS_Con
+	end
+	
+	def its
 		return AS_Its
 	end
 	
@@ -828,3 +846,5 @@ module AS
 	
 	ApplicationNotFoundError = FindApp::ApplicationNotFoundError
 end
+
+AS = Appscript # backwards compatibility # TO DO: remove in 0.3.0
