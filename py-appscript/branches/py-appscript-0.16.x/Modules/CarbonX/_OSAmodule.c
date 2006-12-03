@@ -5,7 +5,7 @@
 
 #include "Python.h"
 
-#include "pymactoolbox.h"
+#include "carbonxtoolbox.c"
 
 /* Macro to test whether a weak-loaded CFM function exists */
 #define PyMac_PRECHECK(rtn) do { if ( &rtn == NULL )  {\
@@ -172,7 +172,7 @@ static PyObject *OSAObj_OSALoad(OSAComponentInstanceObject *_self, PyObject *_ar
 	PyMac_PRECHECK(OSALoad);
 #endif
 	if (!PyArg_ParseTuple(_args, "O&l",
-	                      AEDesc_Convert, &scriptData,
+	                      AEDescX_Convert, &scriptData,
 	                      &modeFlags))
 		return NULL;
 	_err = OSALoad(_self->ob_itself,
@@ -208,7 +208,7 @@ static PyObject *OSAObj_OSAStore(OSAComponentInstanceObject *_self, PyObject *_a
 	                &resultingScriptData);
 	if (_err != noErr) return PyMac_Error(_err);
 	_res = Py_BuildValue("O&",
-	                     AEDesc_New, &resultingScriptData);
+	                     AEDescX_New, &resultingScriptData);
 	return _res;
 }
 
@@ -262,7 +262,7 @@ static PyObject *OSAObj_OSADisplay(OSAComponentInstanceObject *_self, PyObject *
 	                  &resultingText);
 	if (_err != noErr) return PyMac_Error(_err);
 	_res = Py_BuildValue("O&",
-	                     AEDesc_New, &resultingText);
+	                     AEDescX_New, &resultingText);
 	return _res;
 }
 
@@ -286,7 +286,7 @@ static PyObject *OSAObj_OSAScriptError(OSAComponentInstanceObject *_self, PyObje
 	                      &resultingErrorDescription);
 	if (_err != noErr) return PyMac_Error(_err);
 	_res = Py_BuildValue("O&",
-	                     AEDesc_New, &resultingErrorDescription);
+	                     AEDescX_New, &resultingErrorDescription);
 	return _res;
 }
 
@@ -372,7 +372,7 @@ static PyObject *OSAObj_OSAScriptingComponentName(OSAComponentInstanceObject *_s
 	                                 &resultingScriptingComponentName);
 	if (_err != noErr) return PyMac_Error(_err);
 	_res = Py_BuildValue("O&",
-	                     AEDesc_New, &resultingScriptingComponentName);
+	                     AEDescX_New, &resultingScriptingComponentName);
 	return _res;
 }
 
@@ -387,7 +387,7 @@ static PyObject *OSAObj_OSACompile(OSAComponentInstanceObject *_self, PyObject *
 	PyMac_PRECHECK(OSACompile);
 #endif
 	if (!PyArg_ParseTuple(_args, "O&ll",
-	                      AEDesc_Convert, &sourceData,
+	                      AEDescX_Convert, &sourceData,
 	                      &modeFlags,
 						  &previousAndResultingScriptID)) // FIXED
 		return NULL;
@@ -442,7 +442,7 @@ static PyObject *OSAObj_OSAGetSource(OSAComponentInstanceObject *_self, PyObject
 	                    &resultingSourceData);
 	if (_err != noErr) return PyMac_Error(_err);
 	_res = Py_BuildValue("O&",
-	                     AEDesc_New, &resultingSourceData);
+	                     AEDescX_New, &resultingSourceData);
 	return _res;
 }
 
@@ -457,7 +457,7 @@ static PyObject *OSAObj_OSACoerceFromDesc(OSAComponentInstanceObject *_self, PyO
 	PyMac_PRECHECK(OSACoerceFromDesc);
 #endif
 	if (!PyArg_ParseTuple(_args, "O&l",
-	                      AEDesc_Convert, &scriptData,
+	                      AEDescX_Convert, &scriptData,
 	                      &modeFlags))
 		return NULL;
 	_err = OSACoerceFromDesc(_self->ob_itself,
@@ -493,7 +493,7 @@ static PyObject *OSAObj_OSACoerceToDesc(OSAComponentInstanceObject *_self, PyObj
 	                       &result);
 	if (_err != noErr) return PyMac_Error(_err);
 	_res = Py_BuildValue("O&",
-	                     AEDesc_New, &result);
+	                     AEDescX_New, &result);
 	return _res;
 }
 
@@ -506,7 +506,7 @@ static PyObject *OSAObj_OSASetDefaultTarget(OSAComponentInstanceObject *_self, P
 	PyMac_PRECHECK(OSASetDefaultTarget);
 #endif
 	if (!PyArg_ParseTuple(_args, "O&",
-	                      AEDesc_Convert, &target))
+	                      AEDescX_Convert, &target))
 		return NULL;
 	_err = OSASetDefaultTarget(_self->ob_itself,
 	                           &target);
@@ -566,7 +566,7 @@ static PyObject *OSAObj_OSALoadExecute(OSAComponentInstanceObject *_self, PyObje
 	PyMac_PRECHECK(OSALoadExecute);
 #endif
 	if (!PyArg_ParseTuple(_args, "O&ll",
-	                      AEDesc_Convert, &scriptData,
+	                      AEDescX_Convert, &scriptData,
 	                      &contextID,
 	                      &modeFlags))
 		return NULL;
@@ -593,7 +593,7 @@ static PyObject *OSAObj_OSACompileExecute(OSAComponentInstanceObject *_self, PyO
 	PyMac_PRECHECK(OSACompileExecute);
 #endif
 	if (!PyArg_ParseTuple(_args, "O&ll",
-	                      AEDesc_Convert, &sourceData,
+	                      AEDescX_Convert, &sourceData,
 	                      &contextID,
 	                      &modeFlags))
 		return NULL;
@@ -621,7 +621,7 @@ static PyObject *OSAObj_OSADoScript(OSAComponentInstanceObject *_self, PyObject 
 	PyMac_PRECHECK(OSADoScript);
 #endif
 	if (!PyArg_ParseTuple(_args, "O&lO&l",
-	                      AEDesc_Convert, &sourceData,
+	                      AEDescX_Convert, &sourceData,
 	                      &contextID,
 	                      PyMac_GetOSType, &desiredType,
 	                      &modeFlags))
@@ -634,7 +634,7 @@ static PyObject *OSAObj_OSADoScript(OSAComponentInstanceObject *_self, PyObject 
 	                   &resultingText);
 	if (_err != noErr) return PyMac_Error(_err);
 	_res = Py_BuildValue("O&",
-	                     AEDesc_New, &resultingText);
+	                     AEDescX_New, &resultingText);
 	return _res;
 }
 
@@ -689,7 +689,7 @@ static PyObject *OSAObj_OSAAvailableDialects(OSAComponentInstanceObject *_self, 
 	                            &resultingDialectInfoList);
 	if (_err != noErr) return PyMac_Error(_err);
 	_res = Py_BuildValue("O&",
-	                     AEDesc_New, &resultingDialectInfoList);
+	                     AEDescX_New, &resultingDialectInfoList);
 	return _res;
 }
 
@@ -713,7 +713,7 @@ static PyObject *OSAObj_OSAGetDialectInfo(OSAComponentInstanceObject *_self, PyO
 	                         &resultingDialectInfo);
 	if (_err != noErr) return PyMac_Error(_err);
 	_res = Py_BuildValue("O&",
-	                     AEDesc_New, &resultingDialectInfo);
+	                     AEDescX_New, &resultingDialectInfo);
 	return _res;
 }
 
@@ -731,7 +731,7 @@ static PyObject *OSAObj_OSAAvailableDialectCodeList(OSAComponentInstanceObject *
 	                                   &resultingDialectCodeList);
 	if (_err != noErr) return PyMac_Error(_err);
 	_res = Py_BuildValue("O&",
-	                     AEDesc_New, &resultingDialectCodeList);
+	                     AEDescX_New, &resultingDialectCodeList);
 	return _res;
 }
 
@@ -747,7 +747,7 @@ static PyObject *OSAObj_OSAExecuteEvent(OSAComponentInstanceObject *_self, PyObj
 	PyMac_PRECHECK(OSAExecuteEvent);
 #endif
 	if (!PyArg_ParseTuple(_args, "O&ll",
-	                      AEDesc_Convert, &theAppleEvent,
+	                      AEDescX_Convert, &theAppleEvent,
 	                      &contextID,
 	                      &modeFlags))
 		return NULL;
@@ -774,10 +774,10 @@ static PyObject *OSAObj_OSADoEvent(OSAComponentInstanceObject *_self, PyObject *
 	PyMac_PRECHECK(OSADoEvent);
 #endif
 	if (!PyArg_ParseTuple(_args, "O&llO&",
-	                      AEDesc_Convert, &theAppleEvent,
+	                      AEDescX_Convert, &theAppleEvent,
 	                      &contextID,
 	                      &modeFlags,
-						  AEDesc_Convert, &reply)) // FIXED
+						  AEDescX_Convert, &reply)) // FIXED
 		return NULL;
 	_err = OSADoEvent(_self->ob_itself,
 	                  &theAppleEvent,
@@ -801,7 +801,7 @@ static PyObject *OSAObj_OSAMakeContext(OSAComponentInstanceObject *_self, PyObje
 	PyMac_PRECHECK(OSAMakeContext);
 #endif
 	if (!PyArg_ParseTuple(_args, "O&l",
-	                      AEDesc_Convert, &contextName,
+	                      AEDescX_Convert, &contextName,
 	                      &parentContext))
 		return NULL;
 	_err = OSAMakeContext(_self->ob_itself,
@@ -1137,7 +1137,7 @@ static PyObject *OSAObj_OSAGetHandler(OSAComponentInstanceObject *_self, PyObjec
 	if (!PyArg_ParseTuple(_args, "llO&",
 	                      &modeFlags,
 						  &contextID,
-	                      AEDesc_Convert, &handlerName))
+	                      AEDescX_Convert, &handlerName))
 		return NULL;
 	_err = OSAGetHandler(_self->ob_itself,
 						 modeFlags,
@@ -1171,7 +1171,7 @@ static PyObject *OSAObj_OSAGetHandlerNames(OSAComponentInstanceObject *_self, Py
 							  &resultingHandlerNames);
 	if (_err != noErr) return PyMac_Error(_err);
 	_res = Py_BuildValue("O&",
-	                     AEDesc_New, &resultingHandlerNames);
+	                     AEDescX_New, &resultingHandlerNames);
 	return _res;
 }
 
@@ -1190,7 +1190,7 @@ static PyObject *OSAObj_OSAGetProperty(OSAComponentInstanceObject *_self, PyObje
 	if (!PyArg_ParseTuple(_args, "llO&",
 	                      &modeFlags,
 						  &contextID,
-	                      AEDesc_Convert, &variableName))
+	                      AEDescX_Convert, &variableName))
 		return NULL;
 	_err = OSAGetProperty(_self->ob_itself,
 						  modeFlags,
@@ -1224,7 +1224,7 @@ static PyObject *OSAObj_OSAGetPropertyNames(OSAComponentInstanceObject *_self, P
 							   &resultingPropertyNames);
 	if (_err != noErr) return PyMac_Error(_err);
 	_res = Py_BuildValue("O&",
-	                     AEDesc_New, &resultingPropertyNames);
+	                     AEDescX_New, &resultingPropertyNames);
 	return _res;
 }
 
@@ -1243,7 +1243,7 @@ static PyObject *OSAObj_OSASetHandler(OSAComponentInstanceObject *_self, PyObjec
 	if (!PyArg_ParseTuple(_args, "llO&l",
 	                      &modeFlags,
 						  &contextID,
-	                      AEDesc_Convert, &handlerName,
+	                      AEDescX_Convert, &handlerName,
 						  &compiledScriptID))
 		return NULL;
 	_err = OSASetHandler(_self->ob_itself,
@@ -1272,7 +1272,7 @@ static PyObject *OSAObj_OSASetProperty(OSAComponentInstanceObject *_self, PyObje
 	if (!PyArg_ParseTuple(_args, "llO&l",
 	                      &modeFlags,
 						  &contextID,
-	                      AEDesc_Convert, &variableName,
+	                      AEDescX_Convert, &variableName,
 						  &scriptValueID))
 		return NULL;
 	_err = OSASetProperty(_self->ob_itself,
@@ -1415,7 +1415,7 @@ static PyObject *OSAObj_OSADoScriptFile(OSAComponentInstanceObject *_self, PyObj
 						   &resultingText);
 	if (_err != noErr) return PyMac_Error(_err);
 	_res = Py_BuildValue("O&",
-	                     AEDesc_New, &resultingText);
+	                     AEDescX_New, &resultingText);
 	return _res;
 #else
 	PyErr_SetString(PyExc_NotImplementedError, "OSADoScriptFile not supported before OS 10.3.");
@@ -1434,7 +1434,7 @@ static PyObject *OSAObj_OSAGetScriptingComponentFromStored(OSAComponentInstanceO
 	PyMac_PRECHECK(OSAGetScriptingComponentFromStored);
 #endif
 	if (!PyArg_ParseTuple(_args, "O&",
-	                      AEDesc_Convert, &scriptData))
+	                      AEDescX_Convert, &scriptData))
 		return NULL;
 	_err = OSAGetScriptingComponentFromStored(_self->ob_itself,
 											  &scriptData,
@@ -1611,7 +1611,7 @@ static PyObject *OSAObj_ASGetSourceStyleNames(OSAComponentInstanceObject *_self,
 								 &resultingSourceStyleNamesList);
 	if (_err != noErr) return PyMac_Error(_err);
 	_res = Py_BuildValue("O&",
-	                     AEDesc_New, &resultingSourceStyleNamesList);
+	                     AEDescX_New, &resultingSourceStyleNamesList);
 	return _res;
 }
 
@@ -1635,7 +1635,7 @@ static PyObject *OSAObj_ASGetSourceStyles(OSAComponentInstanceObject *_self, PyO
 							  &formatList);
 	if (_err != noErr) return PyMac_Error(_err);
 	_res = Py_BuildValue("O&",
-	                     AEDesc_New, &formatList);
+	                     AEDescX_New, &formatList);
 	return _res;
 }
 
@@ -1651,7 +1651,7 @@ static PyObject *OSAObj_ASSetSourceStyles(OSAComponentInstanceObject *_self, PyO
 #endif
 	CheckComponentSubtype(kAppleScriptSubtype);
 	if (!PyArg_ParseTuple(_args, "O&",
-	                      AEDesc_Convert, &formatList))
+	                      AEDescX_Convert, &formatList))
 		return NULL;
 	sourceStyles = (STHandle)NewHandleClear(sizeof(STElement) * kASNumberOfSourceStyles);
 	_err = OSA_StyleDescToRec(formatList, &sourceStyles);
@@ -1971,7 +1971,7 @@ PyObject *CreateAppleEventUPPWrapper_call(UPPWrapperObject *self, PyObject *args
 	if (!PyArg_ParseTuple(args, "O&O&O&hl",
 	                      PyMac_GetOSType, &theAEEventClass,
 	                      PyMac_GetOSType, &theAEEventID,
-	                      AEDesc_Convert, &target,
+	                      AEDescX_Convert, &target,
 	                      &returnID,
 	                      &transactionID))
 		return NULL;
@@ -1985,7 +1985,7 @@ PyObject *CreateAppleEventUPPWrapper_call(UPPWrapperObject *self, PyObject *args
 									   (OSACreateAppleEventUPP)self->procUPP);
 	if (err != noErr) return PyMac_Error(err);
 	return Py_BuildValue("O&",
-						 AEDesc_New, &result);
+						 AEDescX_New, &result);
 }
 
 
@@ -2046,7 +2046,7 @@ PyObject *SendUPPWrapper_call(UPPWrapperObject *self, PyObject *args, PyObject *
 	PyMac_PRECHECK(InvokeOSASendUPP);
 #endif
 	if (!PyArg_ParseTuple(args, "O&lhl",
-	                      AEDesc_Convert, &theAppleEvent,
+	                      AEDescX_Convert, &theAppleEvent,
 	                      &sendMode,
 	                      &sendPriority,
 	                      &timeOutInTicks))
@@ -2062,7 +2062,7 @@ PyObject *SendUPPWrapper_call(UPPWrapperObject *self, PyObject *args, PyObject *
 						   (OSASendUPP)self->procUPP);
 	if (err != noErr) return PyMac_Error(err);
 	return Py_BuildValue("O&",
-						 AEDesc_New, &reply);
+						 AEDescX_New, &reply);
 }
 
 
@@ -2121,8 +2121,8 @@ PyObject *EventHandlerUPPWrapper_call(UPPWrapperObject *self, PyObject *args, Py
 	PyMac_PRECHECK(InvokeAEEventHandlerUPP);
 #endif
 	if (!PyArg_ParseTuple(args, "O&O&",
-	                      AEDesc_Convert, &theAppleEvent,
-	                      AEDesc_Convert, &reply))
+	                      AEDescX_Convert, &theAppleEvent,
+	                      AEDescX_Convert, &reply))
 		return NULL;
 	err = InvokeAEEventHandlerUPP(&theAppleEvent,
 								  &reply,
@@ -2213,7 +2213,7 @@ GenericCreateAppleEventFunction(AEEventClass theAEEventClass,
 	args = Py_BuildValue("O&O&O&hl",
 								PyMac_BuildOSType, theAEEventClass,
 								PyMac_BuildOSType, theAEEventID,
-								AEDesc_New, target,
+								AEDescX_New, target,
 								returnID,
 								transactionID);
 	if (args == NULL) {
@@ -2263,7 +2263,7 @@ GenericSendFunction(const AppleEvent *theAppleEvent,
 
 	state = PyGILState_Ensure();
 	args = Py_BuildValue("O&lhl",
-							AEDesc_New, theAppleEvent,
+							AEDescX_New, theAppleEvent,
 							sendMode,
 							sendPriority,
 							timeOutInTicks);
@@ -2309,7 +2309,7 @@ GenericEventHandlerFunction(const AppleEvent *theAppleEvent,
 
 	state = PyGILState_Ensure();
 	args = Py_BuildValue("(O&)",
-						 AEDesc_New, theAppleEvent);
+						 AEDescX_New, theAppleEvent);
 	if (args == NULL) {
 		PySys_WriteStderr("An error occurred in ResumeDispatchProc.\n");
 		PyErr_Print();

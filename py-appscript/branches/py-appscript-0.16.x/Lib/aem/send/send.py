@@ -99,7 +99,7 @@ class Event(object):
 		except MacOS.Error, err: # an OS-level error occurred
 			if not (self._eventCode == 'aevtquit' and err[0] == -609): # Ignore invalid connection error (-609) when quitting
 				#print 'QUIT609'
-				raise CommandError(err[0], err[1:] and err[1] or '', None)
+				raise CommandError(err[0], err.args[1:] and err[1] or '', None)
 		else: # decode application's reply, if any
 			if replyEvent.type != kAE.typeNull:
 				eventResult = dict([replyEvent.AEGetNthDesc(i + 1, kAE.typeWildCard) 
@@ -132,10 +132,14 @@ class CommandError(MacOS.Error):
 	"""
 	
 	def __init__(self, number, message, raw):
-		import StringIO, traceback
-		s = StringIO.StringIO()
-		traceback.print_exc(file=s)
-		self.trace = s.getvalue()
+		# TO DO: delete traceback code once testing/debugging complete
+		import StringIO, traceback, sys
+		if sys.exc_info() != (None, None, None):
+			s = StringIO.StringIO()
+			traceback.print_exc(file=s)
+			self.trace = s.getvalue()
+		else:
+			self.trace = None
 		MacOS.Error.__init__(self, *(message and [number, message] or [number]))
 		self.number, self.message, self.raw = number, message, raw
 	

@@ -21,14 +21,47 @@ from keywordwrapper import Keyword
 ######################################################################
 # Codecs
 
+_keyAECompOperator = aem.AEType(kAE.keyAECompOperator)
+_keyAEObject1 = aem.AEType(kAE.keyAEObject1)
+_keyAEObject2 = aem.AEType(kAE.keyAEObject2)
+
+_kTypeCompDescriptorOperators = {
+		kAE.kAEGreaterThan: 'AS__gt__',
+		kAE.kAEGreaterThanEquals: 'AS__ge__',
+		kAE.kAEEquals: 'AS__eq__',
+		kAE.kAELessThan: 'AS__lt__',
+		kAE.kAELessThanEquals: 'AS__le__',
+		kAE.kAEBeginsWith: 'startswith',
+		kAE.kAEEndsWith: 'endswith',
+		kAE.kAEContains: 'contains'
+}
+
+
+#######
+
 _lowLevelCodecs = aem.Codecs()
 
 # Terminology-aware pack/unpack functions used by the AppData class.
 # These replace the default aem pack/unpack functions, which don't understand appscript Keyword and Reference objects.
 
+_classKeyword = Keyword('class_')
+_classType = aem.AEType('pcls')
+
 def _packDict(val, codec):
 	# Pack dictionary whose keys are strings (e.g. 'foo'), Keywords (e.g. k.name) or AETypes (e.g. AEType('pnam').
 	record = AECreateList('', True)
+	if val.has_key(_classKeyword) or val.has_key(_classType):
+		# if hash contains a 'class' property containing a class name, coerce the AEDesc to that class
+		newval = val.copy()
+		if newval.has_key(_classKeyword):
+			value = newval.pop(_classKeyword)
+		else:
+			value = newval.pop(_classType)
+		if isinstance(value, Keyword): # get the corresponding AEType (assuming there is one)
+			value = codec.typebyname.get(value, value)
+		if isinstance(value, aem.AEType): # coerce the record to the desired type
+			record = record.coerce(value.code)
+			val = newval
 	usrf = None
 	for key, value in val.items():
 		if isinstance(key, Keyword):
@@ -75,6 +108,22 @@ def _unpackReference(desc, codecs):
 	return Reference(codecs, _lowLevelCodecs.unpack(desc))
 
 
+def _unpackCompDescriptor(desc, codecs):
+	# need to do some typechecking when unpacking 'contains' comparisons, so have to override the low-level unpacker
+	rec = codecs.unpack(desc.AECoerceDesc(kAE.typeAERecord))
+	operator = _kTypeCompDescriptorOperators[rec[_keyAECompOperator].code]
+	op1 = rec[_keyAEObject1]
+	op2 = rec[_keyAEObject2]
+	if operator == 'contains':
+		if isinstance(op1, Reference) and op1.AS_aemreference.AEM_root() == aem.its:
+			return op1.contains(op2)
+		elif isinstance(op2, Reference) and op2.AS_aemreference.AEM_root() == aem.its:
+			return op2.isin(op1)
+		else:
+			return _lowLevelCodecs.unpack(desc)
+	else:
+		return getattr(op1, operator)(op2)
+
 ##
 
 _appscriptEncoders = {
@@ -89,6 +138,7 @@ _appscriptDecoders = {
 		kAE.typeAERecord: _unpackAERecord,
 		kAE.typeObjectSpecifier: _unpackReference,
 		kAE.typeInsertionLoc: _unpackReference,
+		kAE.typeCompDescriptor: _unpackCompDescriptor,
 		}
 
 
@@ -144,7 +194,7 @@ class AppData(aem.Codecs):
 ######################################################################
 # Considering/ignoring constants
 
-def _packUInt64(n): # used to pack csig attributes
+def _packUInt32(n): # used to pack csig attributes
 	return AECreateDesc(kAE.typeUInt32, struct.pack('L', n))
 
 # 'csig' attribute flags (see ASRegistry.h; note: there's no option for 'numeric strings' in 10.4)
@@ -161,7 +211,7 @@ _ignoreEnums = [
 # default cons, csig attributes
 
 _defaultConsiderations =  _lowLevelCodecs.pack([aem.AEType('case')])
-_defaultConsidsAndIgnores = _packUInt64(aem.k.CaseIgnore)
+_defaultConsidsAndIgnores = _packUInt32(aem.k.CaseIgnore)
 
 
 ######################################################################
@@ -218,7 +268,7 @@ class Command(_Base):
 				csig = 0
 				for option, considerMask, ignoreMask in _ignoreEnums:
 					csig += option in ignoreOptions and ignoreMask or considerMask
-				atts['csig'] = _packUInt64(csig)
+				atts['csig'] = _packUInt32(csig)
 			# optionally specify 'subj' attribute, for dealing with dodgy apps that require one
 			if keywordArgs.has_key('telltarget'):
 				atts['subj'] = keywordArgs.pop('telltarget')
@@ -517,10 +567,14 @@ class CommandError(Exception):
 			trace : str -- internal traceback (for debugging appscript)
 	"""
 	def __init__(self, command, parameters, realerror):
-		import StringIO, traceback
-		s = StringIO.StringIO()
-		traceback.print_exc(file=s)
-		self.trace = s.getvalue()
+		# TO DO: delete traceback code once testing/debugging complete
+		import StringIO, traceback, sys
+		if sys.exc_info() != (None, None, None):
+			s = StringIO.StringIO()
+			traceback.print_exc(file=s)
+			self.trace = s.getvalue()
+		else:
+			self.trace = None
 		self.command, self. parameters, self.realerror = command, parameters, realerror
 		Exception.__init__(self, command, parameters, realerror)
 	

@@ -1,5 +1,26 @@
 HISTORY
 
+2006-08-16 -- 0.16.2
+
+- fixed unpacking of comparison descriptors
+
+- no longer raises error -192 when getting an aete from an application that doesn't have one
+
+- terminology module now times out after 30 seconds (was 120) when getting application aete via ascrgdte event
+
+- addressed compatibility issue in terminology module so that an ambiguous keyword is used as both a class name and an enumerator name (e.g. k.workbook in Excel) will now be packed as typeType (same as in AppleScript), not typeEnumerated
+
+- fixed problem where temporary traceback code in CommandError.__init__ could cause an error in Python 2.5
+
+- when packing dicts containing a k.class_ or AEType('pcls') property, the remaining properties are packed and the record is coerced to the type indicated by the 'class' property (i.e. same as in AppleScript)
+
+- where property and element names are the same (e.g. file, text in BBEdit), appscript now packs this as a property specifier, unless the name is 'text', in which case it's packed as an elements specifier (i.e. [hopefully] same as AppleScript)
+
+- fixed bug in help system when getting terminology for remote apps
+
+- help system now provides proper error message when resolving a reference for an application that doesn't define an 'application' class in its dictionary
+
+
 2006-08-16 -- 0.16.1
 
 - unbroke terminologyparser on i386

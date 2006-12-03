@@ -71,9 +71,10 @@ _errors = { # Following error descriptions are mostly cribbed from AppleScript L
 	-1729: "Object counting procedure returned a negative count.",
 	-1730: "Container specified was an empty list.",
 	-1731: "Unknown object type.",
+	-1739: "Attempting to perform an invalid operation on a null descriptor.",
 	# Application scripting errors
 	-10000: "Apple event handler failed.",
-	-10001: "errAETypeError",
+	-10001: "Type error.",
 	-10002: "Invalid key form.",
 	-10003: "Can't set reference to given value. Access not allowed.",
 	-10004: "A privilege violation occurred.",
@@ -88,9 +89,9 @@ _errors = { # Following error descriptions are mostly cribbed from AppleScript L
 	-10013: "There is no user selection.",
 	-10014: "Handler only handles single objects.",
 	-10015: "Can't undo the previous Apple event or user action.",
-	-10023: "errAENotAnEnumMember",
-	-10024: "errAECantPutThatThere",
-	-10025: "errAEPropertiesClash",
+	-10023: "Enumerated value is not allowed for this property.",
+	-10024: "Class can't be an element of container.",
+	-10025: "Illegal combination of properties settings.",
 }
 
 

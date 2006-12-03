@@ -89,8 +89,7 @@ def _unpackEventAttributes(event):
 	for code, name in _eventAttributes:
 		try:
 			attributes[name] = _standardCodecs.unpack(event.AEGetAttributeDesc(code, kAE.typeWildCard))
-		except Exception, e:
-			print e
+		except Exception:
 			pass
 	return attributes
 

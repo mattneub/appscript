@@ -7,6 +7,7 @@
 
 from aem import AEType, AEEnum, Application
 from osaterminology import appscripttypedefs
+from CarbonX.AE import AEDesc
 
 from terminologyparser import buildtablesforaetes
 from keywordwrapper import Keyword
@@ -97,7 +98,7 @@ def _makeTypeTable(classes, enums, properties):
 	# Each parameter is of format [[name, code], ...]
 	typebycode = _typebycode.copy()
 	typebyname = _typebyname.copy()
-	for klass, table in [(AEType, classes), (AEEnum, enums), (AEType, properties)]: # note: packing properties as AEProp causes problems when the same name is used for both a class and a property, and the property's definition masks the class's one (e.g. Finder's 'file'); if an AEProp is passed where an AEType is expected, it can cause an error as it's not what the receiving app expects. (Whereas they may be more tolerant of an AEType being passed where an AEProp is expected.) Also, note that AppleScript always seems to pack property names as typeType, so we should be ok following its lead here.
+	for klass, table in [(AEType, properties), (AEEnum, enums), (AEType, classes)]: # note: packing properties as AEProp causes problems when the same name is used for both a class and a property, and the property's definition masks the class's one (e.g. Finder's 'file'); if an AEProp is passed where an AEType is expected, it can cause an error as it's not what the receiving app expects. (Whereas they may be more tolerant of an AEType being passed where an AEProp is expected.) Also, note that AppleScript always seems to pack property names as typeType, so we should be ok following its lead here.
 		for name, code in table:
 			# TO DO: decide where best to apply AE keyword escaping, language keyword escaping
 			# TO DO: make sure same collision avoidance is done in help terminology (i.e. need to centralise all this stuff in a single osaterminology module)
@@ -115,10 +116,13 @@ def _makeReferenceTable(properties, elements, commands):
 	# Last parameter is of format [name, code, direct arg type, [[arg code, arg name], ...]]
 	referencebycode = _referencebycode.copy()
 	referencebyname = _referencebyname.copy()
-	for kind, table in [(kProperty, properties), (kElement, elements)]: # note that when an element and a property have the same name and code, we want to pack as an all-elements specifier (this is what AS does)
+	for kind, table in [(kElement, elements), (kProperty, properties)]:
+		# note: if property and element names are same (e.g. 'file' in BBEdit), will pack as property specifier unless it's a special case (i.e. see :text below). Note that there is currently no way to override this, i.e. to force appscript to pack it as an all-elements specifier instead (in AS, this would be done by prepending the 'every' keyword), so clients would need to use aem for that (but could add an 'all' method to Reference class if there was demand for a built-in workaround)
 		for name, code in table:
 			referencebycode[kind+code] = (kind, name)
 			referencebyname[name] = (kind, code)
+	if referencebyname.has_key('text'): # special case: AppleScript always packs 'text of...' as all-elements specifier
+		referencebyname['text'] = (kElement, referencebyname[name][1])
 	if commands:
 		for name, code, args in commands[::-1]: # if two commands have same name but different codes, only the first definition should be used (iterating over the commands list in reverse ensures this)
 			# TO DO: make sure same collision avoidance is done in help terminology (i.e. need to centralise all this stuff in a single osaterminology module)
@@ -136,6 +140,20 @@ def _makeReferenceTable(properties, elements, commands):
 defaulttypesbycode= _typebycode # used by help system
 
 
+def getaetedata(path=None, url=None):
+	"""Get aetes from local/remote app via an ascrgdte event; result is a list of byte strings."""
+	try:
+		aetes = Application(path, url).event('ascrgdte', {'----':0}).send(60 * 30)
+	except Exception, e: # (e.g.application not running)
+		if isinstance(e, CommandError) and e.number == -192:
+			aetes = []
+		else:
+			raise RuntimeError, "Can't get terminology for application (%s): %s" % (path or url, e)
+	if not isinstance(aetes, list):
+		aetes = [aetes]
+	return [aete.data for aete in aetes if isinstance(aete, AEDesc) and aete.type == 'aete']
+
+
 def tablesfordata(terms):
 	"""Build terminology tables from a dumped terminology module."""
 	return _makeTypeTable(terms.classes, terms.enums, terms.properties) \
@@ -144,45 +162,8 @@ def tablesfordata(terms):
 
 def tablesforapp(path=None, url=None):
 	if not _terminologyCache.has_key(path or url):
-		try:
-			aetes = Application(path, url).event('ascrgdte', {'----':0}).send()
-		except Exception, e: # (e.g.application not running)
-			raise RuntimeError, "Can't get terminology for application (%s): %s" % (path or url, e)
-		if not isinstance(aetes, list):
-			aetes = [aetes]
-		#print [aete.data for aete in aetes if aete.type == 'aete']
-		classes, enums, properties, elements, commands = buildtablesforaetes([aete.data for aete in aetes if aete.type == 'aete'])
+		classes, enums, properties, elements, commands = buildtablesforaetes(getaetedata(path, url))
 		_terminologyCache[path or url] = _makeTypeTable(classes, enums, properties) + _makeReferenceTable(properties, elements, commands)
 	return _terminologyCache[path or url]
 
 
-######################################################################
-# TEST
-######################################################################
-
-if __name__ == '__main__':
-	#for t in tablesforlocalapp('/Applications/TextEdit.app'):
-	#	print t, '\n\n'
-#	tablesforapp(url='eppc://mini.local/TextEdit')
-#	_terminologyCache.clear()
-	from time import time as t
-	d=tablesforapp('/Applications/textedit.app')
-	tt=t()
-#	d=tablesforapp(url='eppc://mini.local/TextEdit')
-	print t()-tt
-	'''
-	from aem import Codecs
-	import InDesignCS2 as i
-	c=Codecs()
-	o=c.pack((i.classes, i.enums, i.properties, i.elements, i.commands))
-	tt=t()
-	c.unpack(o)
-	d = tablesfordata(i)
-	print t()-tt
-	'''
-	if 1:
-		from pprint import pprint
-		for n in d:
-			pprint(n)
-			print
-			print

@@ -244,6 +244,8 @@ NOTES
 
 - Do not mix CarbonX.AE/Carbon.OSA with Carbon.AE/Carbon.OSA-based code as types and functions defined by one are incompatible with types and functions defined by the other. Doing so will result in TypeErrors.
 
+- Note that CarbonX.AE's AEInstallSpecialHandler and AERemoveSpecialHandler functions are broken due to incorrect implementation and should not be used.
+
 ----------------------------------------------------------------------
 THANKS
 

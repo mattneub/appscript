@@ -1,5 +1,9 @@
 HISTORY
 
+2006-12-03 -- 0.2.5
+- eliminated AEDesc_New, AEDesc_Convert conflicts between Carbon.AE and CarbonX.AE
+- added AECheckIsRecord() method to AEDesc
+
 2006-07-21 -- 0.2.4
 - added AESendMessage method to AEDesc
 

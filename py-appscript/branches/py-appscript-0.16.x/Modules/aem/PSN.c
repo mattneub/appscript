@@ -5,7 +5,7 @@
 */
 
 #include "Python.h"
-#include "pymactoolbox.h"
+#include "../CarbonX/carbonxtoolbox.c"
 #include <Carbon/Carbon.h>
 
 
@@ -53,7 +53,7 @@ PSN_LaunchApplication(PyObject* self, PyObject* args)
 	
 	if (!PyArg_ParseTuple(args, "O&O&H", 
 						  PyMac_GetFSSpec, &fss,
-						  AEDesc_Convert, &firstEvent,
+						  AEDescX_Convert, &firstEvent,
 						  &flags))
 		return NULL;
 	err = AECoerceDesc(&firstEvent, typeAppParameters, &paraDesc);

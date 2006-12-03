@@ -36,6 +36,15 @@ class Codecs:
 	def packfailed(self, data):
 		raise TypeError, "Can't pack data into an AEDesc (unsupported type): %r" % data
 	
+	def unpackunknown(self, desc):
+		"""Clients may override this to provide additional unpackers."""
+		if desc.AECheckIsRecord():
+			rec = desc.AECoerceDesc('reco')
+			rec.AEPutParamDesc('pcls', self.pack(AEType(desc.type)))
+			return self.unpack(rec)
+		else:
+			return desc
+	
 	def pack(self, data):
 		"""Pack Python data.
 			data : anything -- a Python value
@@ -57,5 +66,9 @@ class Codecs:
 			desc : CarbonX.AE.AEDesc -- an Apple event descriptor
 			Result : anything -- a Python value, or the AEDesc object if no decoder is found
 		"""
-		return self.decoders.get(desc.type, lambda desc, codecs: desc)(desc, self)
+		decoder = self.decoders.get(desc.type)
+		if decoder:
+			return decoder(desc, self)
+		else:
+			return self.unpackunknown(desc)
 

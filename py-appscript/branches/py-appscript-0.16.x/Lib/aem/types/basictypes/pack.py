@@ -22,14 +22,19 @@ _macEpoch = datetime.datetime(1904, 1, 1) # used in packing datetime objects as 
 _macEpochT = time.mktime(_macEpoch.timetuple())
 _shortMacEpoch = _macEpoch.date() # used in packing date objects as AEDesc typeLongDateTime
 
+_trueDesc = AECreateDesc(kAE.typeTrue, '')
+_falseDesc = AECreateDesc(kAE.typeFalse, '')
+
 #######
 # Packing functions
 
 def _packLong(val, codecs):
-	try:
-		return AECreateDesc(kAE.typeSInt64, struct.pack('q', val)) # pack as typeSInt64 if possible (non-lossy)
-	except OverflowError:
-		return codecs.pack(float(val)) # otherwise pack as typeFloat (lossy)
+	if (-2**31) <= val < (2**31): # pack as typeSInt32 if possible (non-lossy)
+		return codecs.pack(int(val))
+	elif (-2**63) <= val < (2**63): # else pack as typeSInt64 if possible (non-lossy)
+		return AECreateDesc(kAE.typeSInt64, struct.pack('q', val))
+	else: # else pack as typeFloat (lossy)
+		return codecs.pack(float(val))
 
 def _packList(val, codecs):
 	lst = AECreateList('', False)
@@ -43,7 +48,13 @@ def _packDict(val, codecs):
 	usrf = None
 	for key, value in val.items():
 		if isinstance(key, (AEType, AEProp)):
-			record.AEPutParamDesc(key.code, codecs.pack(value))
+			if key.code == 'pcls': # AS packs records that contain a 'class' property by coercing the packed record to that type at the end
+				try:
+					record = record.AECoerceDesc(value.code)
+				except:
+					record.AEPutParamDesc(key.code, codecs.pack(value))
+			else:
+				record.AEPutParamDesc(key.code, codecs.pack(value))
 		else:
 			if not usrf:
 				usrf = AECreateList('', False)
@@ -83,12 +94,12 @@ def _packStructTime(val, codecs):
 encoders = {
 	AEDesc: lambda val, codecs: val,
 	types.NoneType: lambda val, codecs: _kNullDesc,
-	types.BooleanType: lambda val, codecs: AECreateDesc(kAE.typeBoolean, '\0\1'[val]),
+	types.BooleanType: lambda val, codecs: val and _trueDesc or _falseDesc,
 	types.IntType: lambda val, codecs: AECreateDesc(kAE.typeSInt32, struct.pack('l', val)),
 	types.LongType: _packLong,
 	types.FloatType: lambda val, codecs: AECreateDesc(kAE.typeFloat, struct.pack('d', val)),
 	types.StringType: lambda val, codecs: AECreateDesc(kAE.typeChar, val),
-	types.UnicodeType: lambda val, codecs: AECreateDesc(kAE.typeUnicodeText, val.encode('utf16')), # TO DO: check if there's any issues with including BOM in typeUnicodeText; decide if typeUTF16ExternalRepresentation should be used instead
+	types.UnicodeType: lambda val, codecs: AECreateDesc(kAE.typeUnicodeText, val.encode('utf16')[2:]), # note: optional BOM is omitted as this causes problems with stupid apps like iTunes 7 that don't handle BOMs correctly; note: while typeUnicodeText is not recommended as of OS 10.4, it's still being used rather than typeUTF8Text or typeUTF16ExternalRepresentation to provide compatibility with not-so-well-designed applications that may have problems with these newer types
 	types.ListType: _packList,
 	types.TupleType: _packList,
 	types.DictionaryType: _packDict,

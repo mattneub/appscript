@@ -36,7 +36,6 @@ _runEvent = Event(_nullAddressDesc, 'aevtoapp').AEM_event
 
 def _psnForApplicationPath(path):
 	# Search through running processes until one with matching path is found. Raises MacOS error -600 if app isn't running.
-	path = path.lower()
 	highPSN, lowPSN, fsRef = PSN.GetNextProcess(0, 0) # kNoProcess
 	while 1:
 		try:

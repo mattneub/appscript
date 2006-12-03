@@ -225,14 +225,16 @@ _parsers = {'applescript':AppleScriptParser, 'appscript':AppscriptParser}
 ######################################################################
 # Main
 
-def parsestring(aetes, path='', style='appscript'): # TO DO: rename parsedata
+def parsedata(aetes, path='', style='appscript'):
+	# aetes : list of string -- aete data as a list of zero or more byte strings
 	p = _parsers[style](path)
 	aeteparser.parse(aetes, p)
 	return p.result()
+parsestring = parsedata # TO DO: delete, and update clients to use parsedata instead of parsestring
 
 
 def parselang(code='ascr', style='appscript'):
-	return parsestring(getterminology.getaeut(code), '', style)
+	return parsedata(getterminology.getaeut(code), '', style)
 
 
 def parsefile(paths, style='appscript'):
@@ -243,11 +245,11 @@ def parsefile(paths, style='appscript'):
 		f = file(path)
 		aetes.append(f.read())
 		f.close()
-	return parsestring(aetes, paths[0], style)
+	return parsedata(aetes, paths[0], style)
 	
 
 def parseapp(path, style='appscript'):
-	return parsestring(getterminology.getaete(path), path, style)
+	return parsedata(getterminology.getaete(path), path, style)
 
 
 # TEST

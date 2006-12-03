@@ -34,9 +34,6 @@ class _ComparisonTest(Test):
 		self._operand1 = operand1
 		self._operand2 = operand2
 	
-	def __eq__(self, v):
-		return (self.__class__ == v.__class__) and (self._operand1 == v._operand1) and (self._operand2 == v._operand2)
-	
 	def __repr__(self):
 		return '%r.%s(%r)' % (self._operand1, self._name, self._operand2)
 
@@ -110,9 +107,6 @@ class _LogicalTest(Test):
 	"""Subclassed by logical test classes."""
 	def __init__(self, operands):
 		self._operands = operands
-	
-	def __eq__(self, v):
-		return (self.__class__ == v.__class__) and (self._operands == v._operands)
 		
 	def __repr__(self):
 		return '%r.%s(%s)' % (self._operands[0], self._name, repr(list(self._operands[1:]))[1:-1])
