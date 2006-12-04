@@ -503,9 +503,9 @@ module Appscript
 			selector_type, code = @AS_app_data.reference_by_name[name]
 			case selector_type
 				when :property
-					return Reference.new(self.AS_app_data, self.AS_aem_reference.property(code))
+					return Reference.new(@AS_app_data, @AS_aem_reference.property(code))
 				when :element
-					return Reference.new(self.AS_app_data, self.AS_aem_reference.elements(code))
+					return Reference.new(@AS_app_data, @AS_aem_reference.elements(code))
 				when :command
 					return _send_command(args, name, code[0], code[1])
 			else
@@ -536,7 +536,7 @@ module Appscript
 		
 		def [](selector, end_range_selector=nil)
 			if end_range_selector != nil
-				new_ref = self.AS_aem_reference.by_range(
+				new_ref = @AS_aem_reference.by_range(
 						self._resolve_range_boundary(selector, 1),
 						self._resolve_range_boundary(end_range_selector, -1))
 			elsif selector.is_a?(String)
@@ -547,7 +547,7 @@ module Appscript
 			else
 				new_ref = @AS_aem_reference.by_index(selector)
 			end
-			return Reference.new(self.AS_app_data, new_ref)
+			return Reference.new(@AS_app_data, new_ref)
 		end
 		
 		def first

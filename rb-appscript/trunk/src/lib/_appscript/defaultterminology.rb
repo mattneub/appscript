@@ -201,8 +201,8 @@ module DefaultTerminology
 	# ReferenceByName table is used to convert appscript-style references and commands to their aem equivalents
 	
 	ReferenceByCode = {
-		'pcls' => 'class_',
-		'ID  ' => 'id_',
+		'ppcls' => 'class_',
+		'pID  ' => 'id_',
 	}
 	
 	ReferenceByName = {
