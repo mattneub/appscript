@@ -52,6 +52,10 @@ class _Ordinal:
 	def __init__(self, code):
 		self.code = code
 
+class _Range:
+	def __init__(self, range):
+		self.range = range
+
 
 def _descToDict(desc): # Shallow unpack an AEDesc # TO DO: is this still needed? Or can we just coerce to record and do a normal unpack?
 	desc = desc.AECoerceDesc(kAE.typeAERecord) # needed in 10.3, otherwise the next line raises MacOS.Error(-1704) (annoying, as it makes unpacking references 5% slower)
@@ -61,7 +65,7 @@ def _descToDict(desc): # Shallow unpack an AEDesc # TO DO: is this still needed?
 #######
 # performance optimised unpacking of object specifiers by doing a shallow unpack now and a full unpack only if needed (e.g. when __repr__ is called)
 
-def _unpackDeferredObjectSpecifier(desc, codecs):
+def _unpackDeferredObjectSpecifier(desc, codecs): # TO DO: rename _unpackObjectSpecifier
 	rec = _descToDict(desc)
 	keyForm = codecs.unpack(rec[kAE.keyAEKeyForm]).code
 	if keyForm in [kAE.formPropertyID, kAE.formAbsolutePosition, kAE.formName, kAE.formUniqueID]:
@@ -92,7 +96,7 @@ def _unpackDeferredObjectSpecifier(desc, codecs):
 #######
 # full recursive unpacking of object specifiers; recreates an 'app'/'con'/'its' based aem reference from the ground up
 
-def _unpackObjectSpecifier(desc, codecs): # TO DECIDE: what, if any, type/value checking should be done here?
+def _unpackObjectSpecifier(desc, codecs): # TO DO: rename _fullyUnpackObjectSpecifier
 	rec = _descToDict(desc)
 	want = codecs.unpack(rec[kAE.keyAEDesiredClass]).code # 4-letter code indicating element class
 	keyForm = codecs.unpack(rec[kAE.keyAEKeyForm]).code # 4-letter code indicating Specifier type
@@ -125,8 +129,7 @@ def _unpackObjectSpecifier(desc, codecs): # TO DECIDE: what, if any, type/value 
 		elif keyForm == kAE.formUniqueID:
 			return ref.byid(key)
 		elif keyForm == kAE.formRange:
-			rec = _descToDict(key)
-			return ref.byrange(codecs.unpack(rec[kAE.keyAERangeStart]), codecs.unpack(rec[kAE.keyAERangeStop]))
+			return ref.byrange(*key.range)
 		elif keyForm == kAE.formTest:
 			return ref.byfilter(key)
 	raise TypeError
@@ -158,6 +161,10 @@ def _unpackLogicalDescriptor(desc, codecs):
 	operands = codecs.unpack(rec[kAE.keyAELogicalTerms])
 	return operator == 'NOT' and operands[0].NOT or getattr(operands[0], operator)(*operands[1:])
 
+def _unpackRangeDescriptor(desc, codecs):
+	rec = _descToDict(desc)
+	return _Range([codecs.unpack(rec[kAE.keyAERangeStart]), codecs.unpack(rec[kAE.keyAERangeStop])])
+
 
 ######################################################################
 # PUBLIC
@@ -165,11 +172,12 @@ def _unpackLogicalDescriptor(desc, codecs):
 
 osdecoders = {
 	kAE.typeInsertionLoc: _unpackInsertionLoc,
-	kAE.typeObjectSpecifier: _unpackDeferredObjectSpecifier, #_unpackObjectSpecifier,#
+	kAE.typeObjectSpecifier: _unpackDeferredObjectSpecifier,
 	kAE.typeAbsoluteOrdinal: lambda desc,codecs: _Ordinal(fourCharCode(desc.data)),
 	kAE.typeCurrentContainer: lambda desc, codecs: codecs.con,
 	kAE.typeObjectBeingExamined: lambda desc, codecs: codecs.its,
 	kAE.typeCompDescriptor: _unpackCompDescriptor,
 	kAE.typeLogicalDescriptor: _unpackLogicalDescriptor,
+	kAE.typeRangeDescriptor: _unpackRangeDescriptor,
 }
 

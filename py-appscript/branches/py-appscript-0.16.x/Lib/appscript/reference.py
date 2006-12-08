@@ -58,9 +58,9 @@ def _packDict(val, codec):
 		else:
 			value = newval.pop(_classType)
 		if isinstance(value, Keyword): # get the corresponding AEType (assuming there is one)
-			value = codec.typebyname.get(value, value)
+			value = codec.typebyname.get(value.name, value)
 		if isinstance(value, aem.AEType): # coerce the record to the desired type
-			record = record.coerce(value.code)
+			record = record.AECoerceDesc(value.code)
 			val = newval
 	usrf = None
 	for key, value in val.items():

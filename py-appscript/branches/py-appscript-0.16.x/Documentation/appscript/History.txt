@@ -20,6 +20,10 @@ HISTORY
 
 - help system now provides proper error message when resolving a reference for an application that doesn't define an 'application' class in its dictionary
 
+- setup.py now uses setuptools if available, reverting to plain distutils if not
+
+- setup.py now reverts to using plain distutils when bdist_mpkg is unavailable instead of raising ImportError (note that setuptools and py2app are also required when using bdist_mpkg)
+
 
 2006-08-16 -- 0.16.1
 

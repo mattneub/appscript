@@ -5,7 +5,7 @@
 (C) 2004 HAS
 """
 
-from aem import AEType, AEEnum, Application
+from aem import AEType, AEEnum, Application, CommandError
 from osaterminology import appscripttypedefs
 from CarbonX.AE import AEDesc
 
@@ -122,7 +122,7 @@ def _makeReferenceTable(properties, elements, commands):
 			referencebycode[kind+code] = (kind, name)
 			referencebyname[name] = (kind, code)
 	if referencebyname.has_key('text'): # special case: AppleScript always packs 'text of...' as all-elements specifier
-		referencebyname['text'] = (kElement, referencebyname[name][1])
+		referencebyname['text'] = (kElement, referencebyname['text'][1])
 	if commands:
 		for name, code, args in commands[::-1]: # if two commands have same name but different codes, only the first definition should be used (iterating over the commands list in reverse ensures this)
 			# TO DO: make sure same collision avoidance is done in help terminology (i.e. need to centralise all this stuff in a single osaterminology module)
