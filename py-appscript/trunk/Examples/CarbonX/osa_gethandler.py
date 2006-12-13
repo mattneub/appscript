@@ -1,4 +1,4 @@
-#!/usr/bin/env pythonw
+#!/usr/local/bin/python
 
 from Carbon.Cm import OpenDefaultComponent
 from CarbonX.OSA import OSAComponentInstance

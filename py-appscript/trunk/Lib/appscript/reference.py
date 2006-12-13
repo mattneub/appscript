@@ -44,9 +44,24 @@ _lowLevelCodecs = aem.Codecs()
 # Terminology-aware pack/unpack functions used by the AppData class.
 # These replace the default aem pack/unpack functions, which don't understand appscript Keyword and Reference objects.
 
+_classKeyword = Keyword('class_')
+_classType = aem.AEType('pcls')
+
 def _packDict(val, codec):
 	# Pack dictionary whose keys are strings (e.g. 'foo'), Keywords (e.g. k.name) or AETypes (e.g. AEType('pnam').
 	record = AECreateList('', True)
+	if val.has_key(_classKeyword) or val.has_key(_classType):
+		# if hash contains a 'class' property containing a class name, coerce the AEDesc to that class
+		newval = val.copy()
+		if newval.has_key(_classKeyword):
+			value = newval.pop(_classKeyword)
+		else:
+			value = newval.pop(_classType)
+		if isinstance(value, Keyword): # get the corresponding AEType (assuming there is one)
+			value = codec.typebyname.get(value.name, value)
+		if isinstance(value, aem.AEType): # coerce the record to the desired type
+			record = record.AECoerceDesc(value.code)
+			val = newval
 	usrf = None
 	for key, value in val.items():
 		if isinstance(key, Keyword):
@@ -153,7 +168,9 @@ class AppData(aem.Codecs):
 			self.typebycode, self.typebyname, self.referencebycode, self.referencebyname = tablesforapp(path, url)
 		elif terms == False: # use built-in terminology only (e.g. use this when running AppleScript applets)
 			self.typebycode, self.typebyname, self.referencebycode, self.referencebyname = defaulttables
-		else: # use user-supplied terminology module
+		elif isinstance(terms, tuple): # ready-to-use tables
+			self.typebycode, self.typebyname, self.referencebycode, self.referencebyname = terms
+		else: # use user-supplied terminology module; note: bad input may cause infinite recursion for some reason
 			self.typebycode, self.typebyname, self.referencebycode, self.referencebyname = tablesfordata(terms)
 	
 	def pack(self, data):
@@ -474,7 +491,7 @@ class Application(Reference):
 	
 	_Application = aem.Application # overridable hook; appscript.Application subclasses can modify creating and/or sending Apple events by using custom aem.Application and aem.Event classes # Note: subclassing this class is now a bit trickier due to introduction of generic 'app'; clients need to import this class directly, subclass it, and then create their own GenericApp instance to use in place of the standard version.
 	
-	def __init__(self, name=None, id=None, creator=None, url=None, terms=True):
+	def __init__(self, name=None, id=None, creator=None, url=None, terms=True): # TO DO: pid
 		"""
 			app(name=None, id=None, creator=None, url=None, terms=True)
 				name : str -- name or path of application, e.g. 'TextEdit', 'TextEdit.app', '/Applications/Textedit.app'
@@ -482,7 +499,7 @@ class Application(Reference):
 				creator : str -- 4-character creator type of application, e.g. 'ttxt'
 				terms : module | bool -- if a module, get terminology from it; if True, get terminology from target application; if False, use built-in terminology only
     		"""
-		if len([i for i in [name, id, creator, url] if i]) != 1:
+		if len([i for i in [name, id, creator, url] if i]) > 1:
 			raise TypeError, 'app() requires a single name/id/creator/url argument.'
 		if name:
 			path = aem.findapp.byname(name)

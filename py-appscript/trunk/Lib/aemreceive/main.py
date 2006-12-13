@@ -8,7 +8,7 @@ from traceback import print_exc
 from CarbonX import AE, kAE
 import MacOS
 
-import macfile
+import mactypes
 import aem
 
 from typedefs import buildDefs
@@ -89,8 +89,7 @@ def _unpackEventAttributes(event):
 	for code, name in _eventAttributes:
 		try:
 			attributes[name] = _standardCodecs.unpack(event.AEGetAttributeDesc(code, kAE.typeWildCard))
-		except Exception, e:
-			print e
+		except Exception:
 			pass
 	return attributes
 
@@ -215,9 +214,9 @@ _extraCoercions = [
 		(True, kAE.typeBoolean, _coerceBoolAndNum),
 		(3, kAE.typeInteger, _coerceBoolAndNum),
 		(3.1, kAE.typeFloat, _coerceBoolAndNum),
-		(macfile.File('/').fsalias, kAE.typeAlias, _coerceFileTypes),
-		(macfile.File('/').fsref, kAE.typeFSRef, _coerceFileTypes),
-		(macfile.File('/').fsspec, kAE.typeFSS, _coerceFileTypes),
+		(mactypes.File('/').fsalias, kAE.typeAlias, _coerceFileTypes),
+		(mactypes.File('/').fsref, kAE.typeFSRef, _coerceFileTypes),
+		(mactypes.File('/').fsspec, kAE.typeFSS, _coerceFileTypes),
 		]
 
 

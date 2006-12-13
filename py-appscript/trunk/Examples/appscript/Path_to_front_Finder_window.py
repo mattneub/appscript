@@ -10,7 +10,7 @@ if w.exists(): # is there a Finder window open?
 else:
     folder = app('Finder').desktop # get desktop's folder
 if folder:
-    path = folder.get(resulttype=k.FSRef).path # appscript returns FSRef as macfile.File
+    path = folder.get(resulttype=k.FSRef).path # appscript returns FSRef as mactypes.File
 else:
     path = None
 print path

@@ -8,7 +8,7 @@ A simple Apple event handling framework for Python-based applications.
 ======================================================================
 DESCRIPTION
 
-(Note: PyObjC-based applications should use the Cocoa APIs instead.)
+(Note: PyObjC-based applications can use the Cocoa APIs instead.)
 
 ======================================================================
 CONSTANTS
@@ -160,18 +160,6 @@ installcoercionhandler(
 		kAE.typeType, 
 		kAE.typeUnicodeText)
 
-======================================================================
-TO DO
-
-- Check attributes unpacker obtains all known attributes.
-
-
-======================================================================
-NOTES
-
-- IMPORTANT: The Apple Event Manager requires a connection to the Window Manager in order to create and send Apple events, so all aem-based scripts must be executed within a GUI process such as a Python IDE, a py2app-based application or pythonw.
-
-If a Window Manager connection is not available, appscript will raise a RuntimeError upon import. For example, when running scripts from the command line, always use pythonw, not python, otherwise an error will occur.
 
 ======================================================================
 COPYRIGHT

@@ -1,7 +1,7 @@
 #!/usr/local/bin/python
 
 import unittest, struct, datetime
-import aem, macfile
+import aem, mactypes
 from CarbonX import AE, kAE
 
 isSmallEndian = struct.pack('H', 1) == "\001\000"
@@ -106,11 +106,11 @@ class TC_Codecs(unittest.TestCase):
 	
 	def test_file(self):
 		path = '/Applications/TextEdit.app'
-		d = self.c.pack(macfile.Alias(path))
+		d = self.c.pack(mactypes.Alias(path))
 		self.assertEqual(path, self.c.unpack(d).path)
 		
 		path = '/Applications/TextEdit.app'
-		d = self.c.pack(macfile.File(path))
+		d = self.c.pack(mactypes.File(path))
 		self.assertEqual(path, self.c.unpack(d).path)
 	
 	def test_typewrappers(self):

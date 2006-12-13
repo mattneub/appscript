@@ -73,7 +73,12 @@ class ReferenceResolver:
 	
 	def __init__(self, terms):
 		self._terms = terms # an osadictionary.Dictionary instance
-		self.containingClass = terms.classes().byname('application').full()
+		try:
+			applicationTerms = terms.classes().byname('application')
+		except:
+			raise HelpError, "Can't resolve this reference. " \
+					"(Application's dictionary doesn't define an 'application' class.)"
+		self.containingClass = applicationTerms.full()
 		self.propertyOrElement = None
 	
 	def _updateContainingClass(self):
@@ -161,8 +166,7 @@ For example, to print an overview of TextEdit, a description of its make command
 		if path:
 			self.terms = aeteparser.parseapp(path)
 		else:
-			from remoteterminology import getRemoteAetes
-			self.terms = aeteparser.parsedata(getRemoteAetes(url))
+			self.terms = aeteparser.parsedata(terminology.getaetedata(url=url))
 	
 	
 	def overview(self):

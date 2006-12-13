@@ -144,6 +144,21 @@ static PyObject *AEDesc_AECountItems(AEDescObject *_self, PyObject *_args)
 	return _res;
 }
 
+static PyObject *AEDesc_AECheckIsRecord(AEDescObject *_self, PyObject *_args)
+{
+	PyObject *_res = NULL;
+	Boolean isRecord;
+#ifndef AECheckIsRecord
+	PyMac_PRECHECK(AECheckIsRecord);
+#endif
+	if (!PyArg_ParseTuple(_args, ""))
+		return NULL;
+	isRecord = AECheckIsRecord(&_self->ob_itself);
+	_res = Py_BuildValue("b",
+	                     isRecord);
+	return _res;
+}
+
 static PyObject *AEDesc_AEPutPtr(AEDescObject *_self, PyObject *_args)
 {
 	PyObject *_res = NULL;
@@ -867,6 +882,8 @@ static PyMethodDef AEDesc_methods[] = {
 	 PyDoc_STR("() -> (AEDesc result)")},
 	{"AECountItems", (PyCFunction)AEDesc_AECountItems, 1,
 	 PyDoc_STR("() -> (long theCount)")},
+	{"AECheckIsRecord", (PyCFunction)AEDesc_AECheckIsRecord, 1,
+	 PyDoc_STR("() -> (Boolean isRecord)")},
 	{"AEPutPtr", (PyCFunction)AEDesc_AEPutPtr, 1,
 	 PyDoc_STR("(long index, DescType typeCode, Buffer dataPtr) -> None")},
 	{"AEPutDesc", (PyCFunction)AEDesc_AEPutDesc, 1,

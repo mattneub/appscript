@@ -36,6 +36,9 @@ class DeferredSpecifier(base.BASE):
 	def __repr__(self):
 		return repr(self._realRef())
 	
+	def __eq__(self, v):
+		return self._realRef() == v
+	
 	def AEM_root(self):
 		return self._realRef().AEM_root()
 	

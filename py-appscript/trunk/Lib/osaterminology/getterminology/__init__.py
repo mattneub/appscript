@@ -5,6 +5,7 @@
 
 import MacOS
 from aem import Codecs
+from CarbonX.AE import AEDesc
 
 import OSATerminology as _osat
 
@@ -15,7 +16,19 @@ __all__ = ['getsdef', 'getaete', 'getaeut']
 ######################################################################
 
 _codecs = Codecs()
-_codecs.decoders['aete'] = _codecs.decoders['aeut'] = lambda desc,app: desc.data
+
+def _extract(fn, type):
+	try:
+		desc = fn()
+	except MacOS.Error, err:
+		if err.args[0] != -192: # re-raise unless aete resource not found
+			raise
+		return []
+	else:
+		lst = _codecs.unpack(desc)
+		if not isinstance(lst, list):
+			lst = [lst]
+		return [val.data for val in lst if isinstance(val, AEDesc) and val.type == type]
 
 
 ######################################################################
@@ -34,24 +47,12 @@ def getaete(path):
 		path : str | unicode | FSSpec -- full path to app
 		Result : list of str -- zero or more strings of binary aete data
 	"""
-	try:
-		desc = _osat.GetAppTerminology(path)[0]
-	except MacOS.Error, err:
-		if err.args[0] == -192: # aete resource not found
-			aetes = []
-		else:
-			raise
-	else:
-		aetes = _codecs.unpack(desc)
-		if not isinstance(aetes, list):
-			aetes = [aetes]
-		aetes = [aete for aete in aetes if aete != None] # AS applets don't raise error -192 for some reason
-	return aetes
+	return _extract((lambda: _osat.GetAppTerminology(path)[0]), 'aete')
 
 def getaeut(code='ascr'):
 	"""Get a scripting component's built-in terminology (aeut)
 		code : str -- 4-letter code indication component subtype (default: AppleScript)
-		Result : str -- binary aeut data
+		Result : list of str -- zero or more strings of binary aeut data
 	"""
-	return _codecs.unpack(_osat.GetSysTerminology(code))
+	return _extract((lambda: _osat.GetSysTerminology(code)), 'aeut')
 

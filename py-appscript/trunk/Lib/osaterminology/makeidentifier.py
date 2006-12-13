@@ -20,14 +20,14 @@ import keyword, string, sets
 # - names of built-in keyword arguments in reference.Command.__call__
 
 kPyAppscriptReservedWords = """
-		timeout waitreply resulttype ignore telltarget
+		timeout waitreply resulttype ignore
 		ID previous next
 		start end before after
 		first last middle any
 		startswith endswith contains isin
 		doesnotstartwith doesnotendwith doesnotcontain isnotin
 		AND OR NOT
-		starttransaction endtransaction
+		starttransaction endtransaction aborttransaction
 		help
 		""".split() + keyword.kwlist
 
@@ -56,6 +56,7 @@ kRbAppscriptReservedWords = [
 	"_call",
 	"_resolve_range_boundary",
 	"_send_command",
+	"abort_transaction",
 	"after",
 	"and",
 	"any",

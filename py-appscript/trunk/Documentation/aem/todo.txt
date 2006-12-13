@@ -26,9 +26,6 @@ kASNumericStringsIgnoreMask   = 0x00800000
 	# aem.send.send.CommandError: CommandError -1799: Mac OS error code -1799
 
 
-- better error reporting (i.e. CommandError should allow clients to obtain type, object, application, etc. information when available)
-
-
 - Any other Python/AE type/class unpack routines needed? (See [e.g.] AEDataModel.h) e.g.:
 
 	unpack:
@@ -44,7 +41,7 @@ What about packing/unpacking application identifiers?
 - Should typeStyledText, typeStyledUnicodeText be coerced and decoded as typeUnicodeText? (Note: this is a lossy conversion that throws away style info.) Or should we define a unicode subclass that retains style info?
 
 
-- decide how to support sending AEs from non-main threads: either have aem/user manage Mach ports (tricky to do automatically, tedious to do manually), or create a fresh port each time (speed impact seems to be negligble; any other issues?) Note: aem is now using the latter approach, although this decision has not yet been finalised; if any unexpected problems arise, this will need to be changed.
+- decide how to support sending AEs from non-main threads: either have aem/user manage Mach ports (tricky to do automatically, tedious to do manually), or create a fresh port each time (speed impact seems to be negligble; any other issues?)
 
 
 - support for default 'open' events (i.e. where aevtodoc event is passed via LaunchApplication)

@@ -1,16 +1,16 @@
 try:
 	from setuptools import setup, Extension
 except ImportError:
-		print "Note: couldn't import setuptools so using distutils instead. Option to build .mpkg is also unavailable."
+		print "Note: couldn't import setuptools so using distutils instead. bdist_mpkg option is also unavailable."
 		from distutils.core import setup, Extension
-		cmdclass = {}
+		kargs = {}
 else:
 	try:
 		from bdist_mpkg.cmd_bdist_mpkg import bdist_mpkg as _bdist_mpkg
 		from py2app.util import skipjunk
 	except ImportError:
-		print "Note: couldn't import bdist_mpkg/py2app so option to build .mpkg is unavailable."
-		cmdclass = {}
+		print "Note: couldn't import bdist_mpkg/py2app so bdist_mpkg option option is unavailable."
+		kargs = {}
 	else:
 	
 		CUSTOM_SCHEMES= dict(
@@ -42,12 +42,14 @@ else:
 					kw['condition'] = skipjunk
 				return _bdist_mpkg.copy_tree(self, *args, **kw)
 		
-		cmdclass = { 'bdist_mpkg': appscript_bdist_mpkg }
+		kargs = dict(
+				cmdclass={'bdist_mpkg': appscript_bdist_mpkg},
+				zip_safe=False)
 		
 
 setup(
 		name = "appscript",
-		version = "0.16.2",
+		version = "0.17.0",
 		description = "appscript and related modules",
 		author = "HAS",
 		author_email='',
@@ -88,13 +90,13 @@ setup(
 			'osaterminology/getterminology',
 			'osaterminology/renderers',
 			'osaterminology/sax',
-			'osax',
 		],
 		py_modules=[
-			'macfile',
+			'mactypes',
 			'osascript',
+			'osax',
 		],
 		extra_path = "aeosa",
 		package_dir = { '': 'Lib' },
-		cmdclass = cmdclass,
+		**kargs
 )

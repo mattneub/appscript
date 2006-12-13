@@ -83,6 +83,7 @@ class TC_AEMReferences(unittest.TestCase):
 			self.assertEqual(res, str(val))
 			d = DefaultCodecs.pack(val)
 			val = unpackedVersion and unpackedVersion or val
+			#print val, d
 			val2 = DefaultCodecs.unpack(d)
 			self.assertEqual(val, val2)
 			val2 = DefaultCodecs.unpack(d)

@@ -66,14 +66,13 @@ AETypeBase -- Abstract base class
 
     Constructor:
         __init__(self, code)
-            code : str -- a four-character Apple event code,
-                    or eight-character code for AEEventName
+            code : str -- a four-character Apple event code
 
     Properties:
         code : str (read-only) -- Apple event code</code></pre>
 
 
-<p>The five concrete classes are:</p>
+<p>The four concrete classes are:</p>
 
 <pre><code>AEType(AETypeBase) -- represents an AE object of typeType
 
@@ -84,10 +83,7 @@ AEEnum(AETypeBase) -- represents an AE object of typeEnumeration
 AEProp(AETypeBase) -- represents an AE object of typeProperty
 
 
-AEKey(AETypeBase) -- represents an AE object of typeKeyword
-
-
-AEEventName(AETypeBase) -- represents an AE object of type 'evnt'</code></pre>
+AEKey(AETypeBase) -- represents an AE object of typeKeyword</code></pre>
 
 
 

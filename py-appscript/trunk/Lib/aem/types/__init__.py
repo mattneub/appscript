@@ -3,10 +3,10 @@
 (C) 2005 HAS
 """
 
-from basictypes import AETypeBase, AEType, AEEnum, AEProp, AEKey, AEEventName, encoders, decoders
+from basictypes import AETypeBase, AEType, AEEnum, AEProp, AEKey, encoders, decoders, UnitTypeCodecs
 from objectspecifiers import app, con, its, Specifier, Test, osdecoders
 
-__all__ = ['Codecs', 'AETypeBase', 'AEType', 'AEEnum', 'AEProp', 'AEKey', 'AEEventName', 'app', 'con', 'its']
+__all__ = ['Codecs', 'AETypeBase', 'AEType', 'AEEnum', 'AEProp', 'AEKey', 'app', 'con', 'its']
 
 ######################################################################
 # PRIVATE
@@ -32,9 +32,32 @@ class Codecs:
 		# Clients may add/remove/replace encoder and decoder items:
 		self.encoders = encoders.copy()
 		self.decoders = decoders.copy()
+		self._unittypecodecs = UnitTypeCodecs()
 	
-	def packfailed(self, data):
+	##
+	
+	def addunittypes(self, typedefs):
+		"""Register custom unit type definitions with this Codecs instance
+			e.g. Adobe apps define additional unit types (ciceros, pixels, etc.)
+		"""
+		self._unittypecodecs.addtypes(typedefs)
+	
+	##
+	
+	def packunknown(self, data):
+		"""Clients may override this to provide additional packers."""
 		raise TypeError, "Can't pack data into an AEDesc (unsupported type): %r" % data
+	
+	def unpackunknown(self, desc):
+		"""Clients may override this to provide additional unpackers."""
+		if desc.AECheckIsRecord():
+			rec = desc.AECoerceDesc('reco')
+			rec.AEPutParamDesc('pcls', self.pack(AEType(desc.type)))
+			return self.unpack(rec)
+		else:
+			return desc
+	
+	##
 	
 	def pack(self, data):
 		"""Pack Python data.
@@ -50,12 +73,24 @@ class Codecs:
 				for type, encoder in self.encoders.items(): # slower but more thorough lookup that can handle subtypes/subclasses
 					if isinstance(data, type):
 						return encoder(data, self)
-				self.packfailed(data)
+				didpack, desc = self._unittypecodecs.pack(data)
+				if didpack:
+					return desc
+				else:
+					self.packunknown(data)
 	
 	def unpack(self, desc):
 		"""Unpack an Apple event descriptor.
 			desc : CarbonX.AE.AEDesc -- an Apple event descriptor
 			Result : anything -- a Python value, or the AEDesc object if no decoder is found
 		"""
-		return self.decoders.get(desc.type, lambda desc, codecs: desc)(desc, self)
+		decoder = self.decoders.get(desc.type)
+		if decoder:
+			return decoder(desc, self)
+		else:
+			didunpack, val = self._unittypecodecs.unpack(desc)
+			if didunpack:
+				return val
+			else:
+				return self.unpackunknown(desc)
 

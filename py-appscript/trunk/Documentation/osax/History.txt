@@ -1,0 +1,4 @@
+HISTORY
+
+2006-11-28 -- 0.2.0
+- completely rewritten

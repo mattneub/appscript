@@ -1,10 +1,10 @@
-#!/usr/local/bin/pythonw
+#!/usr/local/bin/python
 
 from osax import *
 
+sa = OSAX('StandardAdditions')
 
-osax('sysobeep', {'----':3})
+sa.beep(2)
 
-beep(2)
-
-displaydialog('hello')
+sa.activate()
+sa.display_dialog('hello')

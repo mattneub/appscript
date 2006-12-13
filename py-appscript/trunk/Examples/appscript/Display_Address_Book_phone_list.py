@@ -3,7 +3,7 @@
 import os
 from HTMLTemplate import Template
 from appscript import *
-import macfile
+import mactypes
 
 #######
 # Template
@@ -64,4 +64,4 @@ def listPeopleWithPhones():
 page = template.render(listPeopleWithPhones())
 path = os.tmpnam() + '.html'
 write(path, page)
-app('Safari').open(macfile.Alias('/private' + path))
+app('Safari').open(mactypes.Alias('/private' + path))

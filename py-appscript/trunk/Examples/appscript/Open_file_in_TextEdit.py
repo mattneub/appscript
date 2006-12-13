@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
 from appscript import *
-import macfile
+import mactypes
 
-app('TextEdit').open(macfile.Alias('/Users/has/ReadMe.txt'))
+app('TextEdit').open(mactypes.Alias('/Users/has/ReadMe.txt'))

@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<title>osax</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<style type="text/css" media="all"><!--@import url(../appscript/full.css);--></style>
+
+</head>
+<body>
+
+<h1>osax</h1>
+
+<!-- top navigation -->
+<div class="navbar">
+    <a href="index.html">Up</a>
+</div>
+
+<!-- content -->
+<div id="content">
+<h2>What is osax?</h2>
+
+<p>The <code>osax</code> module provides an easy way to call scripting additions (a.k.a. OSAXen) from Python. It exports a single public class, <code>OSAX</code>, and a single variable, <code>scriptingadditions</code>. For convenience, it also re-exports appscript's <code>ApplicationNotFoundError</code> and <code>CommandError</code> classes and <code>k</code> variable.</p>
+
+<p>The <code>OSAX</code> class represents a single scripting addition. It is similar to an appscript application object, except that it defines commands for the specified scripting addition instead of the application's normal commands. </p>
+
+<p>Once you've created a <code>OSAX</code> instance, you can invoke its commands in exactly the same way as you would call a scriptable application's commands in appscript.</p>
+
+<p>For example:</p>
+
+<pre><code>import osax
+
+sa = osax.OSAX("StandardAdditions")
+
+sa.say("Hello world", using="Victoria")</code></pre>
+
+<p>The default application commands (<code>run</code>, <code>activate</code>, <code>quit</code>, etc.) are also available; see the appscript manual for details on those.</p>
+
+<p>By default, <code>OSAX</code> objects are targetted at the current application. You can specify another application by supplying one of the following optional keyword arguments: <code>name</code>, <code>id</code>, <code>creator</code> or <code>url</code>. These arguments are the same as for appscript.</p>
+
+
+
+<h2><code>osax.scriptingadditions</code></h2>
+
+<p>The <code>scriptingadditions</code> variable lists the names of all installed scripting additions:</p>
+
+<pre><code>import osax
+
+print osax.scriptingadditions
+# Result: ["Digital Hub Scripting", "StandardAdditions", ...]</code></pre>
+
+
+<h2><code>osax.OSAX</code></h2>
+
+<p>The <code>OSAX</code> class represents a single scripting addition and its target application. <code>OSAX</code> is a subclass of appscript's <code>Application</code> class, and its constructor is the same except for the addition of :</p>
+
+<pre><code>OSAX(osaxname, name=None, id=None, creator=None, url=None, terms=True)
+    osaxname : str -- name of scripting addition, e.g. 'StandardAdditions'
+    name : str -- name or path of application, e.g. 'System Events',
+           '/Applications/System Events.app'
+    id : str -- bundle id of application, e.g. 'com.apple.systemevents'
+    creator : str -- 4-character creator type of application, e.g. 'sevs'
+    url : str -- eppc URL of remote process, e.g. 'eppc://G5.local/System%20Events'</code></pre>
+
+
+<h2>Examples</h2>
+
+<pre><code>from osax import *
+
+# Create a new OSAX object:
+
+sa = OSAX("StandardAdditions")
+
+
+# Call some commands:
+
+sa.beep()
+
+print sa.path_to(k.scripts_folder)
+# Result: mactypes.Alias(u"/Users/foo/Library/Scripts/")
+
+print sa.display_dialog("Python says hello!",
+                        buttons=["Hi!", "Howdy!", "Duuuude!"],
+                        default_button=3)
+# Result: {k.button_returned: u"Howdy!"}</code></pre>
+
+
+<!-- TO DO: need to sort out appscript first
+
+<h2>Notes</h2>
+
+<p>When using scripting addition commands that require GUI access (e.g. <code>display_dialog</code>) targetted at the command-line Python interpreter, the osax module will automatically convert the non-GUI interpreter process into a full GUI process to allow these commands to operate correctly. If you want to avoid this, target these commands at a faceless GUI application such as System Events instead:</p>
+
+<pre><code>sa = OSAX.osax("StandardAdditions", "System Events")
+sa.activate # give focus to System Events
+p sa.display_dialog("Python says hello!",
+                    :buttons=&gt;["Hi!", "Howdy!", "Duuuude!"],
+                    :default_button=&gt;3)
+# Result: {:button_returned=&gt;"Duuuude!"}</code></pre>
+-->
+
+
+</div>
+
+<!-- bottom navigation -->
+<div class="navbar">
+    <a href="index.html">Up</a>
+</div>
+
+<!--footer-->
+<p class="footer">&copy; 2006 HAS</p>
+</body>
+</html>

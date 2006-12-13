@@ -1,10 +1,13 @@
 HISTORY
 
-2006-11-15 -- ???
-- 'filter' is no longer a reserved word
+2006-12-?? -- 0.10.0
+- 'filter', 'telltarget' no longer reserved words
+- 'aborttransaction' is now a reserved word
 - added rb-appscript support to makeidentifier, typerenderers and other modules
 - typerenderers no longer prefixes class names
 - removed pathname expansion in quickdoc, htmldoc
+- changed AERegistry-style keywords to AS-style (e.g. k.MissingValue -> k.missing_value)
+- getaeut now always returns a list of str
 
 2006-08-26 -- 0.9.2
 - fixed problem in osadictionary where iterating over Nodes instances ignored the current visibility settings and always yielded every item

@@ -1,12 +1,23 @@
 HISTORY
 
-2006-11-12 -- ???
+2006-12-?? -- 0.12.0
+
+- changed aem.launch into static method of aem.Application class
+
+-removed pathname expansion in findapp.byname
+
+- removed AEEventName
+
+- in aem.Codecs, renamed packfailed method to packunknown and added unpackunknown method
+
+- added aem.types.basictypes.unittypes module, and added addunittypes method to aem.Codecs
+
+
+2006-12-03 -- 0.11.1
 
 - no longer includes BOM when packing AEDescs of typeUnicodeText as this caused problems with applications that don't handle BOMs correctly (e.g. iTunes 7)
 
 - no longer errors when packing Python longs on Python 2.5
-
-- now allocates and disposes a new Mach port each time an event is sent. This seems a bit wasteful; however, the performance hit is negligible, and it avoids the complexities of managing Mach ports (either manually or automatically) in multi-threaded situations. Hopefully no unexpected problems (memory leaks, etc.) will turn up with this approach; if they do, a different arrangement will have to be found.
 
 - comparing aem references now works correctly; before, comparing equivalent references for equality could return False if one had been previously unpacked (i.e. DeferredSpecifier objects weren't being taken account of)
 
@@ -14,25 +25,23 @@ HISTORY
 
 - fixed endian bugs when unpacking first/middle/last/any/all specifiers, insertion loc specifiers and comparison and logic tests
 
-- kAEContains comparison descriptors now unpack correctly as 'op2.isin(op1)' when first operator isn't an its-based aem reference
-
 - fixed problem in aem.send.send where slicing an Exception object causes an error on Python 2.5 (now uses 'err.args[1:]' instead of 'err[1:]'); previously on 2.5, aem was failing to raise a CommandError in response to an Apple Event Manager-raised error when sending an event.
 
 - fixed minor case-sensitivity issue in findapp ('.app' suffixes were previously assumed to always be lowercase)
 
 - fixed case-sensitivity issue in aem.send.connect._psnForApplicationPath (previously it lowercased file paths)
 
-- changed aem.launch into static method of aem.Application class
-
 - fixed problem where temporary traceback code in CommandError.__init__ could cause an error in Python 2.5
 
--removed pathname expansion in findapp.byname
+- now packs Booleans as typeTrue/typeFalse (same as AppleScript)
 
-- fixed endian bug when packing/unpacking aem.AEEventName (now always big-endian)
+- when packing dicts containing an AEType('pcls') (class) property, the remaining properties are packed and the record is coerced to the type indicated by the 'class' property (i.e. same as in AppleScript)
 
-- setup.py now supports setuptools
+- AERecord-style descs with unrecognised types are now unpacked as dicts with the custom type stored as an AEType under an AEType('pcls') (class) key
 
-- setup.py now reverts to using distutils when bdist_mpkg or setuptools is unavailable instead of raising ImportError
+- minor improvements to aem.send.error message strings
+
+- kAEContains comparison descriptors now unpack correctly as 'op2.isin(op1)' when first operator isn't an its-based aem reference
 
 
 2006-08-08 -- 0.11.0

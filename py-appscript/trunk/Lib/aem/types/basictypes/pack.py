@@ -8,9 +8,9 @@ from Carbon import File
 from CarbonX import kAE
 from CarbonX.AE import AEDesc, AECreateDesc, AECreateList
 
-import macfile
+import mactypes
 
-from typewrappers import AEType, AEEnum, AEProp, AEKey, AEEventName
+from typewrappers import AEType, AEEnum, AEProp, AEKey
 
 
 ######################################################################
@@ -21,6 +21,9 @@ _kNullDesc = AECreateDesc(kAE.typeNull, '')
 _macEpoch = datetime.datetime(1904, 1, 1) # used in packing datetime objects as AEDesc typeLongDateTime
 _macEpochT = time.mktime(_macEpoch.timetuple())
 _shortMacEpoch = _macEpoch.date() # used in packing date objects as AEDesc typeLongDateTime
+
+_trueDesc = AECreateDesc(kAE.typeTrue, '')
+_falseDesc = AECreateDesc(kAE.typeFalse, '')
 
 #######
 
@@ -53,7 +56,13 @@ def _packDict(val, codecs):
 	usrf = None
 	for key, value in val.items():
 		if isinstance(key, (AEType, AEProp)):
-			record.AEPutParamDesc(key.code, codecs.pack(value))
+			if key.code == 'pcls': # AS packs records that contain a 'class' property by coercing the packed record to that type at the end
+				try:
+					record = record.AECoerceDesc(value.code)
+				except:
+					record.AEPutParamDesc(key.code, codecs.pack(value))
+			else:
+				record.AEPutParamDesc(key.code, codecs.pack(value))
 		else:
 			if not usrf:
 				usrf = AECreateList('', False)
@@ -93,7 +102,7 @@ def _packStructTime(val, codecs):
 encoders = {
 	AEDesc: lambda val, codecs: val,
 	types.NoneType: lambda val, codecs: _kNullDesc,
-	types.BooleanType: lambda val, codecs: AECreateDesc(kAE.typeBoolean, '\0\1'[val]),
+	types.BooleanType: lambda val, codecs: val and _trueDesc or _falseDesc,
 	types.IntType: lambda val, codecs: AECreateDesc(kAE.typeSInt32, struct.pack('l', val)),
 	types.LongType: _packLong,
 	types.FloatType: lambda val, codecs: AECreateDesc(kAE.typeFloat, struct.pack('d', val)),
@@ -109,13 +118,12 @@ encoders = {
 	File.AliasType: lambda val, codecs: AECreateDesc(kAE.typeAlias, val.data),
 	File.FSSpecType: lambda val, codecs: AECreateDesc(kAE.typeFSS, val.data),
 	File.FSRefType: lambda val, codecs: AECreateDesc(kAE.typeFSRef, val.data),
-	macfile.Alias: lambda val, codecs: val.aedesc,
-	macfile.File: lambda val, codecs: val.aedesc,
+	mactypes.Alias: lambda val, codecs: val.aedesc,
+	mactypes.File: lambda val, codecs: val.aedesc,
 	# ensure correct endianness in following
 	AEType: lambda val, codecs: AECreateDesc(kAE.typeType, fourCharCode(val.code)),
 	AEEnum: lambda val, codecs: AECreateDesc(kAE.typeEnumeration, fourCharCode(val.code)),
 	AEProp: lambda val, codecs: AECreateDesc(kAE.typeProperty, fourCharCode(val.code)),
 	AEKey: lambda val, codecs: AECreateDesc(kAE.typeKeyword, fourCharCode(val.code)),
-	AEEventName: lambda val, codecs: AECreateDesc('evnt', val.code),
 }
 

@@ -7,11 +7,12 @@
 
 from aem import AEType, AEEnum, Application, CommandError
 from osaterminology import appscripttypedefs
+from CarbonX.AE import AEDesc
 
 from terminologyparser import buildtablesforaetes
 from keywordwrapper import Keyword
 
-__all__ = ['tablesforapp', 'tablesfordata', 'kProperty', 'kElement', 'kCommand', 'defaulttypesbycode']
+__all__ = ['tablesforapp', 'tablesfordata', 'tablesforaetes', 'kProperty', 'kElement', 'kCommand', 'defaulttypesbycode', 'defaulttables', 'getaetedata']
 
 
 ######################################################################
@@ -45,10 +46,7 @@ for _, enumerators in appscripttypedefs.enumerations:
 	for name, code in enumerators:
 		_typebyname[name] = AEEnum(code)
 		_typebycode[code] = Keyword(name)
-for defs in [
-		appscripttypedefs.alltypes, 
-		appscripttypedefs.commontypes, 
-		appscripttypedefs.properties]:
+for defs in [appscripttypedefs.types, appscripttypedefs.properties]:
 	for name, code in defs:
 		_typebyname[name] = AEType(code)
 		_typebycode[code] = Keyword(name)
@@ -115,10 +113,13 @@ def _makeReferenceTable(properties, elements, commands):
 	# Last parameter is of format [name, code, direct arg type, [[arg code, arg name], ...]]
 	referencebycode = _referencebycode.copy()
 	referencebyname = _referencebyname.copy()
-	for kind, table in [(kProperty, properties), (kElement, elements)]: # note that when an element and a property have the same name and code, we want to pack as an all-elements specifier (this is what AS does)
+	for kind, table in [(kElement, elements), (kProperty, properties)]:
+		# note: if property and element names are same (e.g. 'file' in BBEdit), will pack as property specifier unless it's a special case (i.e. see :text below). Note that there is currently no way to override this, i.e. to force appscript to pack it as an all-elements specifier instead (in AS, this would be done by prepending the 'every' keyword), so clients would need to use aem for that (but could add an 'all' method to Reference class if there was demand for a built-in workaround)
 		for name, code in table:
 			referencebycode[kind+code] = (kind, name)
 			referencebyname[name] = (kind, code)
+	if referencebyname.has_key('text'): # special case: AppleScript always packs 'text of...' as all-elements specifier
+		referencebyname['text'] = (kElement, referencebyname['text'][1])
 	if commands:
 		for name, code, args in commands[::-1]: # if two commands have same name but different codes, only the first definition should be used (iterating over the commands list in reverse ensures this)
 			# TO DO: make sure same collision avoidance is done in help terminology (i.e. need to centralise all this stuff in a single osaterminology module)
@@ -133,32 +134,43 @@ def _makeReferenceTable(properties, elements, commands):
 # PUBLIC
 ######################################################################
 
-defaulttypesbycode= _typebycode # used by help system
+defaulttypesbycode= _typebycode # used by help system # TO DO: delete and use defaulttables instead
 
 
 defaulttables = _makeTypeTable([], [], []) + _makeReferenceTable([], [], [])
 
 
-def tablesfordata(terms):
-	"""Build terminology tables from a dumped terminology module."""
+def getaetedata(path=None, url=None):
+	"""Get aetes from local/remote app via an ascrgdte event; result is a list of byte strings."""
+	try:
+		aetes = Application(path, url).event('ascrgdte', {'----':0}).send(60 * 30)
+	except Exception, e: # (e.g.application not running)
+		if isinstance(e, CommandError) and e.number == -192:
+			aetes = []
+		else:
+			raise RuntimeError, "Can't get terminology for application (%s): %s" % (path or url, e)
+	if not isinstance(aetes, list):
+		aetes = [aetes]
+	return [aete.data for aete in aetes if isinstance(aete, AEDesc) and aete.type == 'aete']
+
+
+def tablesforaetes(aetes): # TO DO: rename tablesforaetedata
+	"""Build terminology tables from a list of unpacked aete byte strings.
+		Result : tuple of dict -- (typebycode, typebyname, referencebycode, referencebyname)"""
+	classes, enums, properties, elements, commands = buildtablesforaetes(aetes)
+	return _makeTypeTable(classes, enums, properties) + _makeReferenceTable(properties, elements, commands)
+
+
+def tablesfordata(terms): # TO DO: rename tablesforterminologymodule
+	"""Build terminology tables from a dumped terminology module.
+		Result : tuple of dict -- (typebycode, typebyname, referencebycode, referencebyname)"""
 	return _makeTypeTable(terms.classes, terms.enums, terms.properties) \
 			+ _makeReferenceTable(terms.properties, terms.elements, terms.commands)
 
 
-def tablesforapp(path=None, url=None):
+def tablesforapp(path=None, url=None): # TO DO: pid
 	if not _terminologyCache.has_key(path or url):
-		try:
-			aetes = Application(path, url).event('ascrgdte', {'----':0}).send(60 * 30)
-		except Exception, e: # (e.g.application not running)
-			if isinstance(e, CommandError) and e.number == -192:
-				aetes = []
-			else:
-				raise RuntimeError, "Can't get terminology for application (%s): %s" % (path or url, e)
-		if not isinstance(aetes, list):
-			aetes = [aetes]
-		#print [aete.data for aete in aetes if aete.type == 'aete']
-		classes, enums, properties, elements, commands = buildtablesforaetes([aete.data for aete in aetes if aete.type == 'aete'])
-		_terminologyCache[path or url] = _makeTypeTable(classes, enums, properties) + _makeReferenceTable(properties, elements, commands)
+		_terminologyCache[path or url] = tablesforaetes(getaetedata(path, url))
 	return _terminologyCache[path or url]
 
 

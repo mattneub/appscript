@@ -1,6 +1,6 @@
-"""macfile -- User-friendly Alias and File wrapper classes for MacPython.
+"""mactypes -- Defines user-friendly wrapper classes for Mac OS datatypes that don't have a suitable Python equivalent.
 
-(C) 2005 HAS
+(C) 2006 HAS
 
 - File encompasses FSRefs/FSSpecs/FileURLs to save user from having to deal with them directly. Files refer to specific locations on the filesystem which may or may not already exist. (Note that FSRefs and FSSpecs are only obtainable from a File object when it specifies an existing filesystem path; FSRefs by design, FSSpecs due to flaws in the Carbon.File extension's implementation.)
 
@@ -11,13 +11,13 @@ Both classes provide a variety of constructors and read-only properties for gett
 """
 
 from urlparse import urlparse, urlunparse
-from urllib import quote, unquote # TO TO: should we use pathname2url, url2pathname instead (what's the difference?)
+from urllib import quote, unquote
 from CarbonX.AE import AECreateDesc
 from CarbonX import kAE
 import Carbon.File
 import MacOS
 
-__all__ = ['Alias', 'File']
+__all__ = ['Alias', 'File', 'Units']
 
 ######################################################################
 # PRIVATE
@@ -95,15 +95,15 @@ class Alias(_Base):
 	# Instance methods
 	
 	def __repr__(self):
-		return 'macfile.Alias(%r)' % unicode(self.fsref.as_pathname(), 'utf8')
+		return 'mactypes.Alias(%r)' % unicode(self.fsref.as_pathname(), 'utf8')
 	
 	# Properties
 	
 	path = property(lambda self: unicode(self._alias.FSResolveAlias(None)[0].as_pathname(), 'utf8'), _ro, doc="Get as POSIX path.")
 	
-	file = property(lambda self: File.makewithfsref(self.fsref), _ro, doc="Get as macfile.File.")
+	file = property(lambda self: File.makewithfsref(self.fsref), _ro, doc="Get as mactypes.File.")
 	
-	alias = property(lambda self: self, _ro, doc="Get as macfile.Alias (i.e. itself).")
+	alias = property(lambda self: self, _ro, doc="Get as mactypes.Alias (i.e. itself).")
 	
 	fsref = property(lambda self: self._alias.FSResolveAlias(None)[0], _ro, doc="Get as Carbon.File.FSRef.")
 	
@@ -174,7 +174,7 @@ class File(_Base):
 	# Instance methods
 	
 	def __repr__(self):
-		return 'macfile.File(%r)' % self._path
+		return 'mactypes.File(%r)' % self._path
 	
 	# Properties
 	
@@ -186,9 +186,9 @@ class File(_Base):
 		return self._url
 	url = property(url, _ro, doc="Get as file URL.")
 	
-	file = property(lambda self: self, _ro, doc="Get as macfile.File (i.e. itself).")
+	file = property(lambda self: self, _ro, doc="Get as mactypes.File (i.e. itself).")
 	
-	alias = property(lambda self: Alias.makewithfsref(self.fsref), _ro, doc="Get as macfile.Alias.")
+	alias = property(lambda self: Alias.makewithfsref(self.fsref), _ro, doc="Get as mactypes.Alias.")
 	
 	def fsref(self):
 		if self._fsref:
@@ -224,4 +224,46 @@ class File(_Base):
 				self._desc = AECreateDesc(_typeFileURL, self.url)
 		return self._desc
 	aedesc = property(aedesc, _ro, doc="Get as CarbonX.AE.AEDesc.")
+
+
+
+#######
+
+class Units:
+	"""Represents a measurement; e.g. 3 inches, 98.5 degrees Fahrenheit.
+	
+	The AEM defines a standard set of unit types; some applications may define additional types for their own use. This wrapper stores the raw unit type and value data; aem/appscript Codecs objects will convert this to/from an AEDesc, or raise an error if the unit type is unrecognised.
+	"""
+	
+	def __init__(self, value, type):
+		"""
+			value : int | float -- the unit value, e.g. 3
+			type : str -- the unit type name, e.g. 'inches'
+		"""
+		self._value = value
+		self._type = type
+	
+	value = property(lambda self: self._value, _ro, doc="Get unit value, e.g. 3.")
+	type = property(lambda self: self._type, _ro, doc="Get unit type, e.g. 'inches'")
+	
+	def __eq__(self, val):
+		return self.__class__ == val.__class__ and self._value == val.value and self._type == val.type
+	
+	def __ne__(self, val):
+		return not self == val
+	
+	def __hash__(self):
+		return hash((self.value, self.type))
+	
+	def __repr__(self):
+		return 'mactypes.Units(%r, %r)' % (self.value, self.type)
+	
+	def __str__(self):
+		return '%r %s' % (self.value, self.type)
+	
+	def __int__(self):
+		return int(self.value)
+	
+	def __float__(self):
+		return float(self.value)
 

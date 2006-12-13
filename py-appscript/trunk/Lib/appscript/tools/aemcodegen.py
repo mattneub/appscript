@@ -80,7 +80,7 @@ class app(_reference.Application):
 
 if __name__ == '__main__':
 	app('Finder.app').home.folders[1].name.set('foo')
-	from macfile import *
+	from mactypes import *
 	app('Finder').folders[File('/Users/has')].items[2:5].get(resulttype=k.Alias)
 	f = app(id='com.apple.finder')
 	f.home.files[1].duplicate(to=f.desktop)

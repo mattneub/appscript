@@ -7,9 +7,9 @@ import struct, datetime
 from CarbonX import kAE
 from codecs import BOM_UTF16_LE
 
-import macfile
+import mactypes
 
-from typewrappers import AEType, AEEnum, AEProp, AEKey, AEEventName
+from typewrappers import AEType, AEEnum, AEProp, AEKey
 
 
 ######################################################################
@@ -101,10 +101,10 @@ decoders = {
 	kAE.typeAEList: _unpackAEList,
 	kAE.typeAERecord: _unpackAERecord,
 	kAE.typeVersion: lambda desc,codecs: '%i.%i.%i' % ((ord(desc.data[0]),) + divmod(ord(desc.data[1]), 16)), # Cocoa apps use unicode strings for version numbers, so return as string for consistency; (note: typeVersion always big-endian)
-	kAE.typeAlias: lambda desc,codecs: macfile.Alias.makewithaedesc(desc),
-	kAE.typeFSS: lambda desc,codecs: macfile.File.makewithaedesc(desc),
-	kAE.typeFSRef: lambda desc,codecs: macfile.File.makewithaedesc(desc),
-	_typeFileURL: lambda desc,codecs: macfile.File.makewithaedesc(desc),
+	kAE.typeAlias: lambda desc,codecs: mactypes.Alias.makewithaedesc(desc),
+	kAE.typeFSS: lambda desc,codecs: mactypes.File.makewithaedesc(desc),
+	kAE.typeFSRef: lambda desc,codecs: mactypes.File.makewithaedesc(desc),
+	_typeFileURL: lambda desc,codecs: mactypes.File.makewithaedesc(desc),
 	kAE.typeQDPoint: _unpackQDPoint,
 	kAE.typeQDRectangle: _unpackQDRect, 
 	kAE.typeRGBColor: lambda desc,codecs: struct.unpack('HHH', desc.data),
@@ -113,7 +113,6 @@ decoders = {
 	kAE.typeEnumeration: lambda desc,codecs: AEEnum(fourCharCode(desc.data)),
 	kAE.typeProperty: lambda desc,codecs: AEProp(fourCharCode(desc.data)),
 	kAE.typeKeyword: lambda desc,codecs: AEKey(fourCharCode(desc.data)),
-	'evnt': lambda desc,codecs: AEEventName(desc.data), # event name
 	
 	kAE.typeStyledText: lambda desc,codecs: _unpackUnicodeText(desc.AECoerceDesc(kAE.typeUnicodeText), codecs),
 	kAE.typeStyledUnicodeText: lambda desc,codecs: _unpackUnicodeText(desc.AECoerceDesc(kAE.typeUnicodeText), codecs),

@@ -1,5 +1,9 @@
 TO DO
 
+- Replace CarbonX.AE's AEInstallSpecialHandler and AERemoveSpecialHandler functions with stubs that raise NotImplementedError. (See <http://developer.apple.com/documentation/mac/IAC/IAC-118.html> for more info.)
+
+- fix malloc warnings in OSA extension in Python 2.5
+
 - close component instance upon OSAObj_dealloc()
 
 - OSALoadFile should probably take storable as argument as well as return it as a result

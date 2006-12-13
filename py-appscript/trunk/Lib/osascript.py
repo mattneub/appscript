@@ -12,6 +12,8 @@ __all__ = ['Interpreter', 'ScriptError']
 
 ######################################################################
 
+# TO DO: define EventIdentifier class to replace AEEventName class (see ASRegistry.h -> cEventIdentifier, OSAGetHandlerNames)
+
 # TO DO: squelch error -2700s (or handle some other way?) # not sure what this refers to  (-2700 = unknown error)
 
 # TO DO: OSA Value class and Interpreter.newvalue(); alternatively, allow multiple return types to be specified as [optional] arg to source(), run(), call(), etc.
