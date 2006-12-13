@@ -233,6 +233,7 @@ rbAE_AEDesc_isRecord(VALUE self)
 	return AECheckIsRecord(&(AEDESC_OF(self))) ? Qtrue : Qfalse;
 }
 
+
 static VALUE
 rbAE_AEDesc_coerce(VALUE self, VALUE type)
 {
@@ -243,6 +244,7 @@ rbAE_AEDesc_coerce(VALUE self, VALUE type)
 	if (err != noErr) rbAE_raiseMacOSError("Can't coerce AEDesc.", err);
 	return rbAE_wrapAEDesc(&desc);
 }
+
 
 static VALUE
 rbAE_AEDesc_length(VALUE self)
@@ -255,6 +257,8 @@ rbAE_AEDesc_length(VALUE self)
 	return INT2NUM(length);
 }
 
+
+/*******/
 
 static VALUE
 rbAE_AEDesc_putItem(VALUE self, VALUE index, VALUE desc)
@@ -295,8 +299,10 @@ rbAE_AEDesc_putAttr(VALUE self, VALUE key, VALUE desc)
 }
 
 
+/*******/
+
 static VALUE
-rbAE_AEDesc_get(VALUE self, VALUE index, VALUE type)
+rbAE_AEDesc_getItem(VALUE self, VALUE index, VALUE type)
 {
 	OSErr err = noErr;
 	AEKeyword key;
@@ -314,6 +320,38 @@ rbAE_AEDesc_get(VALUE self, VALUE index, VALUE type)
 					   rbAE_wrapAEDesc(&desc));
 }
 
+
+static VALUE
+rbAE_AEDesc_getParam(VALUE self, VALUE key, VALUE type)
+{
+	OSErr err = noErr;
+	AEDesc desc;
+	
+	err = AEGetParamDesc(&(AEDESC_OF(self)),
+					   rbStringToDescType(key),
+					   rbStringToDescType(type),
+					   &desc);
+	if (err != noErr) rbAE_raiseMacOSError("Can't get parameter from AEDesc.", err);
+	return rbAE_wrapAEDesc(&desc);
+}
+
+
+static VALUE
+rbAE_AEDesc_getAttr(VALUE self, VALUE key, VALUE type)
+{
+	OSErr err = noErr;
+	AEDesc desc;
+	
+	err = AEGetAttributeDesc(&(AEDESC_OF(self)),
+					   rbStringToDescType(key),
+					   rbStringToDescType(type),
+					   &desc);
+	if (err != noErr) rbAE_raiseMacOSError("Can't get attribute from AEDesc.", err);
+	return rbAE_wrapAEDesc(&desc);
+}
+
+
+/*******/
 
 static VALUE
 rbAE_AEDesc_send(VALUE self, VALUE sendMode, VALUE timeout)
@@ -706,7 +744,9 @@ Init_ae (void)
 	rb_define_method(cAEDesc, "put_item", rbAE_AEDesc_putItem, 2);
 	rb_define_method(cAEDesc, "put_param", rbAE_AEDesc_putParam, 2);
 	rb_define_method(cAEDesc, "put_attr", rbAE_AEDesc_putAttr, 2);
-	rb_define_method(cAEDesc, "get", rbAE_AEDesc_get, 2);
+	rb_define_method(cAEDesc, "get_item", rbAE_AEDesc_getItem, 2);
+	rb_define_method(cAEDesc, "get_param", rbAE_AEDesc_getParam, 2);
+	rb_define_method(cAEDesc, "get_attr", rbAE_AEDesc_getAttr, 2);
 	rb_define_method(cAEDesc, "send", rbAE_AEDesc_send, 2);
 	
 	// AE::MacOSError

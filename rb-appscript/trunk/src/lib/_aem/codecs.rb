@@ -69,7 +69,7 @@ class UnitTypeCodecs
 		# type_defs is a list of lists, where each sublist is of form:
 		#	[typename, typecode, packproc, unpackproc]
 		# or:
-		#	[typename, typecode, packproc, unpackproc]
+		#	[typename, typecode]
 		# If optional packproc and unpackproc are omitted, default pack/unpack procs
 		# are used instead; these pack/unpack AEDesc data as a double precision float.
 		type_defs.each do |name, code, packer, unpacker|
@@ -354,7 +354,7 @@ class Codecs
 	def unpack_aelist(desc)
 		lst = []
 		desc.length().times do |i|
-			lst.push(unpack(desc.get(i + 1, KAE::TypeWildCard)[1]))
+			lst.push(unpack(desc.get_item(i + 1, KAE::TypeWildCard)[1]))
 		end
 		return lst
 	end
@@ -362,7 +362,7 @@ class Codecs
 	def unpack_aerecord(desc)
 		dct = {}
 		desc.length().times do |i|
-			key, value = desc.get(i + 1, KAE::TypeWildCard)
+			key, value = desc.get_item(i + 1, KAE::TypeWildCard)
 			if key == 'usrf'
 				lst = unpack_aelist(value)
 				(lst.length / 2).times do |i|
@@ -409,16 +409,6 @@ class Codecs
 		def initialize(code)
 			@code = code
 		end
-	end
-	
-	def _desc_to_hash(desc)
-		desc = desc.coerce(KAE::TypeAERecord)
-		h = {}
-		desc.length.times do |i|
-			k, v = desc.get(i + 1, KAE::TypeWildCard)
-			h[k] = v
-		end
-		return h
 	end
 	
 	#######
@@ -473,11 +463,10 @@ class Codecs
 			when KAE::TypeCurrentContainer then return self.class::Con
 			when KAE::TypeObjectBeingExamined then return self.class::Its
 		end
-		rec = _desc_to_hash(desc)
-		want = unpack(rec[KAE::KeyAEDesiredClass]).code 
-		key_form = unpack(rec[KAE::KeyAEKeyForm]).code
-		key = unpack(rec[KAE::KeyAEKeyData])
-		ref = unpack(rec[KAE::KeyAEContainer])
+		want = unpack(desc.get_param(KAE::KeyAEDesiredClass, KAE::TypeType)).code 
+		key_form = unpack(desc.get_param(KAE::KeyAEKeyForm, KAE::TypeEnumeration)).code
+		key = unpack(desc.get_param(KAE::KeyAEKeyData, KAE::TypeWildCard))
+		ref = unpack(desc.get_param(KAE::KeyAEContainer, KAE::TypeWildCard))
 		if ref == nil
 			ref = self.class::App
 		end
@@ -522,12 +511,11 @@ class Codecs
 	
 	def unpack_object_specifier(desc) 
 		# defers full unpacking of [most] object specifiers for efficiency
-		rec = _desc_to_hash(desc)
-		key_form = unpack(rec[KAE::KeyAEKeyForm]).code
+		key_form = unpack(desc.get_param(KAE::KeyAEKeyForm, KAE::TypeEnumeration)).code
 		if [KAE::FormPropertyID, KAE::FormAbsolutePosition, KAE::FormName, KAE::FormUniqueID].include?(key_form)
-			want = unpack(rec[KAE::KeyAEDesiredClass]).code
-			key = unpack(rec[KAE::KeyAEKeyData])
-			container = AEMReference::DeferredSpecifier.new(rec[KAE::KeyAEContainer], self)
+			want = unpack(desc.get_param(KAE::KeyAEDesiredClass, KAE::TypeType)).code
+			key = unpack(desc.get_param(KAE::KeyAEKeyData, KAE::TypeWildCard))
+			container = AEMReference::DeferredSpecifier.new(desc.get_param(KAE::KeyAEContainer, KAE::TypeWildCard), self)
 			if key_form == KAE::FormPropertyID
 				ref = AEMReference::Property.new(want, container, key.code)
 			elsif key_form == KAE::FormAbsolutePosition
@@ -555,8 +543,7 @@ class Codecs
 			
 	
 	def unpack_insertion_loc(desc)
-		rec = _desc_to_hash(desc)
-		return unpack_object_specifier(rec[KAE::KeyAEObject]).send(InsertionLocEnums[rec[KAE::KeyAEPosition].data])
+		return unpack_object_specifier(desc.get_param(KAE::KeyAEObject, KAE::TypeWildCard)).send(InsertionLocEnums[desc.get_param(KAE::KeyAEPosition, KAE::TypeEnumeration).data])
 	end
 	
 	##
@@ -588,10 +575,9 @@ class Codecs
 	end
 	
 	def unpack_comp_descriptor(desc)
-		rec = _desc_to_hash(desc)
-		operator = ComparisonEnums[rec[KAE::KeyAECompOperator].data]
-		op1 = unpack(rec[KAE::KeyAEObject1])
-		op2 = unpack(rec[KAE::KeyAEObject2])
+		operator = ComparisonEnums[desc.get_param(KAE::KeyAECompOperator, KAE::TypeEnumeration).data]
+		op1 = unpack(desc.get_param(KAE::KeyAEObject1, KAE::TypeWildCard))
+		op2 = unpack(desc.get_param(KAE::KeyAEObject2, KAE::TypeWildCard))
 		if operator == 'contains'
 			return unpack_contains_comp_descriptor(op1, op2)
 		else
@@ -600,15 +586,14 @@ class Codecs
 	end
 	
 	def unpack_logical_descriptor(desc)
-		rec = _desc_to_hash(desc)
-		operator = LogicalEnums[rec[KAE::KeyAELogicalOperator].data]
-		operands = unpack(rec[KAE::KeyAELogicalTerms])
+		operator = LogicalEnums[desc.get_param(KAE::KeyAELogicalOperator, KAE::TypeEnumeration).data]
+		operands = unpack(desc.get_param(KAE::KeyAELogicalTerms, KAE::TypeAEList))
 		return operands[0].send(operator, *operands[1, operands.length])
 	end
 	
 	def unpack_range_descriptor(desc)
-		rec = _desc_to_hash(desc)
-		return Range.new([unpack(rec[KAE::KeyAERangeStart]), unpack(rec[KAE::KeyAERangeStop])])
+		return Range.new([unpack(desc.get_param(KAE::KeyAERangeStart, KAE::TypeWildCard)),
+				unpack(desc.get_param(KAE::KeyAERangeStop, KAE::TypeWildCard))])
 	end
 	
 end

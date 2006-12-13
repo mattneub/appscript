@@ -160,7 +160,7 @@ module Appscript
 		def unpack_aerecord(desc)
 			dct = {}
 			desc.length().times do |i|
-				key, value = desc.get(i + 1, KAE::TypeWildCard)
+				key, value = desc.get_item(i + 1, KAE::TypeWildCard)
 				if key == 'usrf'
 					lst = unpack_aelist(value)
 					(lst.length / 2).times do |i|
@@ -509,23 +509,6 @@ module Appscript
 				when :command
 					return _send_command(args, name, code[0], code[1])
 			else
-				# convenience shortcuts # TO DO: decide if these should be kept or not; note: if enabled, reserved keywords list will need to be expanded to include methods whose names end in '?' and '='
-				# - if name ends with '?', remove that and look up again; if property/element found, make new reference and send it a 'get' event, else raise 'unknown' error
-				# - if name ends with '=', remove that and look up again; if property/element found, make new reference and send it a 'set' event, else raise 'unknown' error
-				#name_str = name.to_s
-				#modifier = name_str[-1, 1]
-				#if modifier == '?' or modifier == '=' and name_str.length > 0
-				#	new_name = name_str.chop.intern
-				#	selector_type, code = @AS_app_data.reference_by_name[new_name]
-				#	if [:property, :element].include?(selector_type) and
-				#		case modifier
-				#			when '?'
-				#				return self.send(new_name, *args).get
-				#			when '='
-				#				return self.send(new_name, *args).set(*args)
-				#		end
-				#	end
-				#end
 				msg = "Unknown property, element or command: '#{name}'"
 				if @AS_app_data.reference_by_name.has_key?("#{name}_".intern)
 					msg += " (Did you mean '#{name}_'?)"

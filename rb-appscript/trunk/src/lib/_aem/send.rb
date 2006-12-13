@@ -159,7 +159,7 @@ module Send
 		end
 		
 		def _send_apple_event(flags, timeout)
-			# Hook method; may be overridden to customise how events are sent.
+			#ÊHook method; may be overridden to customise how events are sent.
 			return @AEM_event.send(flags, timeout)
 		end
 		
@@ -193,7 +193,7 @@ module Send
 				if reply_event.type != KAE::TypeNull
 					event_result = {}
 					reply_event.length.times do |i|
-						key, value = reply_event.get(i + 1, KAE::TypeWildCard)
+						key, value = reply_event.get_item(i + 1, KAE::TypeWildCard)
 						event_result[key] = value
 					end
 					if event_result.has_key?(KAE::KeyErrorNumber) # The application raised an error.
