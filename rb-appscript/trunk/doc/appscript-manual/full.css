@@ -17,5 +17,4 @@ th {text-align:left; font-size:0.95em; color:#225; background-color:#ccd;}
 thead {background-color:#ccd;}
 /*links*/a:link {color:#225; background-color:transparent;}a:visited  {color:#555; background-color:transparent;}/*footer*/.footer {font-weight:bold; color:#fd6; background-color:#225; padding: 2.5em 10px 0.8em; margin:0; text-align:left; font-size:0.8em}/* navigation*/.navbar {font-size:0.85em; font-weight:bold; color:#114; background-color: #fe9; padding: 0.25em 10px; margin:4em 0 0; border:solid #225; border-width: 1px;}
 
-h1+.navbar {margin-top:0;
-}
+h1+.navbar {margin-top:0;}

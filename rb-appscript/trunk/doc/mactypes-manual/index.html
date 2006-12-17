@@ -22,7 +22,7 @@
 <div id="content">
 <h2>What is mactypes?</h2>
 
-<p>The mactypes module provides user-friendly wrappers for OS X Alias and File objects, commonly used by scriptable applications to identify filesystem objects and locations, and for unit type values used by some applications to represent lengths, etc. It is automatically imported when requiring appscript, aem or osax.</p>
+<p>The mactypes module provides user-friendly wrappers for OS X Alias and FileURL objects, commonly used by scriptable applications to identify filesystem objects and locations, and for unit type values used by some applications to represent lengths, etc. It is automatically imported when requiring appscript, aem or osax.</p>
 
 <p class="hilitebox">Note that most scriptable applications do not use or understand POSIX paths, and while the Apple Event Manager does provide some built-in coercions for converting between path strings and alias/file objects, these work with HFS paths only. Therefore, when specifying files and folders to scriptable applications, use <code>MacTypes::Alias</code> and <code>MacTypes::FileURL</code> objects - not path strings - unless otherwise indicated.</p>
 
@@ -86,7 +86,7 @@ Appscript.app('TextEdit').open(f)
 
 <h3>Notes</h3>
 
-<p>Note that comparing an <code>Alias</code> object against an <code>FileURL</code> object always returns false, even if both point to the same location.</p>
+<p>Note that comparing an <code>Alias</code> object against a <code>FileURL</code> object always returns false, even if both point to the same location.</p>
 
 
 
