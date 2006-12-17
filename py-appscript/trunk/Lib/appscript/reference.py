@@ -177,7 +177,6 @@ class AppData(aem.Codecs):
 		elif terms == False: # use built-in terminology only (e.g. use this when running AppleScript applets)
 			terms = defaulttables
 		elif not isinstance(terms, tuple): # use user-supplied terminology module
-			# note: bad input may cause infinite recursion
 			terms = tablesformodule(terms)
 		self.typebycode, self.typebyname, self.referencebycode, self.referencebyname = terms
 	
@@ -532,12 +531,13 @@ class Application(Reference):
 		if self._realAppData is None: # initialise AppData the first time it's actually needed
 			try:
 				self._realAppData = AppData(self._Application, self._path, self._pid, self._url, self._terms)
-			except Exception, e:
+			except:
+				# For some reason, allowing the original exception to propagate here results in an infinite recursion error, so trap it, print it, then throw a general RuntimeError.
 				import sys, traceback
-				print >> sys.stderr, '(A problem occured in AS_appdata; see first traceback for actual error.)'
+				print >> sys.stderr, 'Traceback for AS_appdata error:'
 				traceback.print_exc()
-				print >> sys.stderr, '\n\n\n'
-				return 0 # raising an error here (presumably due to bugs) causes Python to go into infinite recursion, so return a bad value instead; that'll throw a [misleading] error downstream
+				print >> sys.stderr
+				raise RuntimeError, 'An error occured in AS_appdata.'
 		return self._realAppData
 	
 	def _setAppData(self, val):
