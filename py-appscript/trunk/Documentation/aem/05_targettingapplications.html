@@ -25,7 +25,7 @@
 
 <h2>The <code>Application</code> class</h2>
 
-<p>The <code>Application</code> class represents an application to which Apple events will be sent. Its constructor allows applications to be identified in one of four ways: by full path, by eppc URL, by custom <code>AEAddressDesc</code>, or the host application if no other value is given. Its main method, <code>event</code>, is used to construct the Apple events to send. Several utility methods are also provided.</p>
+<p>The <code>Application</code> class represents an application to which Apple events will be sent. Its constructor allows applications to be identified in one of five ways: by full path, by eppc URL, by Unix process id, by custom <code>AEAddressDesc</code>, or the host application if no other value is given. Its main method, <code>event</code>, is used to construct the Apple events to send. Several utility methods are also provided.</p>
 
 <pre><code>Application -- the target application
 
@@ -44,9 +44,12 @@
     
     Methods:
 
-        __init__(self, path=None, url=None, desc=None, codecs=aem.types.Codecs())
+        __init__(self, path=None, pid=None, url=None, desc=None,
+                codecs=aem.Codecs())
             path : string | None -- full path to local application
                     (e.g. '/Applications/TextEdit.app')
+            pid : integer | None -- Unix process id for local process
+                    (e.g. 95)
             url : string | None -- url for remote process
                     (e.g. 'eppc://user:pass@0.0.0.1/TextEdit')
             desc : AEAddressDesc | None -- AEAddressDesc for application
@@ -60,7 +63,7 @@
                 belong to the same transaction until endtransaction()
                 is called [4]
 
-        endtransaction(self) -- end the current transaction [4]
+        endtransaction(self) -- end the current transaction
 
 <!--TO DO: next bit is wrong-->
 

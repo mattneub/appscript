@@ -1,23 +1,6 @@
 TO DO
 
-- make sure all constants are represented in CarbonX.kAE, then remove 'k' (constants.py) module
-
-kAECaseConsiderMask           = 0x00000001
-kAEDiacriticConsiderMask      = 0x00000002
-kAEWhiteSpaceConsiderMask     = 0x00000004
-kAEHyphensConsiderMask        = 0x00000008
-kAEExpansionConsiderMask      = 0x00000010
-kAEPunctuationConsiderMask    = 0x00000020
-kASConsiderRepliesConsiderMask = 0x00000040
-kASNumericStringsConsiderMask = 0x00000080
-kAECaseIgnoreMask             = 0x00010000
-kAEDiacriticIgnoreMask        = 0x00020000
-kAEWhiteSpaceIgnoreMask       = 0x00040000
-kAEHyphensIgnoreMask          = 0x00080000
-kAEExpansionIgnoreMask        = 0x00100000
-kAEPunctuationIgnoreMask      = 0x00200000
-kASConsiderRepliesIgnoreMask  = 0x00400000
-kASNumericStringsIgnoreMask   = 0x00800000
+- decide naming scheme for unit types
 
 
 - following should work but doesn't:
@@ -38,28 +21,10 @@ kASNumericStringsIgnoreMask   = 0x00800000
 What about packing/unpacking application identifiers?
 
 
-- Should typeStyledText, typeStyledUnicodeText be coerced and decoded as typeUnicodeText? (Note: this is a lossy conversion that throws away style info.) Or should we define a unicode subclass that retains style info?
-
-
 - decide how to support sending AEs from non-main threads: either have aem/user manage Mach ports (tricky to do automatically, tedious to do manually), or create a fresh port each time (speed impact seems to be negligble; any other issues?)
 
 
 - support for default 'open' events (i.e. where aevtodoc event is passed via LaunchApplication)
-
-
-- support creating Application instances by PID:
-
-Obtains the process serial number from a Unix PID.
-
-OSStatus GetProcessForPID(
-   pid_t                  pid,
-   ProcessSerialNumber *  psn); 
-Parameters
-pid
-The Unix process ID (PID).
-
-psn
-On return, psn points to the process serial number.
 
 
 - find a way to avoid GUI process starting when running from python2.4/python2.5; calling Process Manager functions (GetNextEvent, GetProcessBundleLocation, LaunchApplication) seems to trigger this. e.g. Might be BSD APIs that could be used instead, in which case could use AEAddressDescs of typeKernelProcessID ('kpid')
@@ -90,3 +55,6 @@ print its == its.eq(True)
 
 
 - decide whether to use typeUnicodeText or typeUTF16ExternalRepresentation when packing Unicode text (i.e. former is not recommended due to endianness issues, but latter may not be as backwards-compatible). Note: will stick with typeUnicodeText for compatibility's sake for the time being as some less-well applications appear to have problems with other types
+
+
+- Should typeStyledText, typeStyledUnicodeText be coerced and decoded as typeUnicodeText? (Note: this is a lossy conversion that throws away style info.) Or should we define a unicode subclass that retains style info? Note: styled text support is very spotty and limited to typeStyledText (typeStyledUnicodeText is unimplemented and deprecated), so  leaving current behaviour as-is (i.e. unpack as unstyled unicode).

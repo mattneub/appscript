@@ -1,5 +1,7 @@
 TO DO
 
+- Finish HTML documentation
+
 - Allow comparison of File objects specifying non-existent files/folders/disks. (Currently throws MacOS error.)
 
 - Allow Alias and File objects to be created using relative POSIX paths? Or is it best (i.e. safest) to insist on absolute paths and leave user to perform any other expansions for themselves?

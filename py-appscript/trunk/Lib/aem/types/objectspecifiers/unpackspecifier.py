@@ -57,49 +57,14 @@ class _Range:
 		self.range = range
 
 
-def _descToDict(desc): # Shallow unpack an AEDesc # TO DO: is this still needed? Or can we just coerce to record and do a normal unpack?
-	desc = desc.AECoerceDesc(kAE.typeAERecord) # needed in 10.3, otherwise the next line raises MacOS.Error(-1704) (annoying, as it makes unpacking references 5% slower)
-	return dict([desc.AEGetNthDesc(i + 1, kAE.typeWildCard) for i in range(desc.AECountItems())])
-
-
 #######
 
-def _unpackObjectSpecifier(desc, codecs):
-	# performance-optimise unpacking of object specifiers by doing a shallow unpack now, if possible, and a full unpack later on only if needed (e.g. when __repr__ is called)
-	rec = _descToDict(desc)
-	keyForm = codecs.unpack(rec[kAE.keyAEKeyForm]).code
-	if keyForm in [kAE.formPropertyID, kAE.formAbsolutePosition, kAE.formName, kAE.formUniqueID]:
-		want = codecs.unpack(rec[kAE.keyAEDesiredClass]).code # 4-letter code indicating element class
-		key = codecs.unpack(rec[kAE.keyAEKeyData]) # value indicating which object(s) to select
-		container = specifier.DeferredSpecifier(rec[kAE.keyAEContainer], codecs)
-		if keyForm == kAE.formPropertyID:
-			ref = specifier.Property(want, container, key.code)
-		elif keyForm == kAE.formAbsolutePosition:
-			if isinstance(key, _Ordinal):
-				if key.code == kAE.kAEAll:
-					ref = specifier.AllElements(want, container)
-				else:
-					keyname = {kAE.kAEFirst: 'first', kAE.kAELast: 'last', kAE.kAEMiddle: 'middle', kAE.kAEAny: 'any'}[key.code]
-					ref = specifier.ElementByOrdinal(want, specifier.UnkeyedElements(want, container), key, keyname)
-			else:
-				ref = specifier.ElementByIndex(want, specifier.UnkeyedElements(want, container), key)
-		elif keyForm == kAE.formName:
-			ref = specifier.ElementByName(want, specifier.UnkeyedElements(want, container), key)
-		elif keyForm == kAE.formUniqueID:
-			ref = specifier.ElementByID(want, specifier.UnkeyedElements(want, container), key)
-		ref.AEM_packSelf = lambda codecs:desc
-		return ref
-	else: # do full unpack of more complex, rarely returned reference forms
-		return _fullyUnpackObjectSpecifier(desc, codecs)
-
-
 def _fullyUnpackObjectSpecifier(desc, codecs):
-	# full recursive unpacking of object specifiers; recreates an 'app'/'con'/'its' based aem reference from the ground up
-	rec = _descToDict(desc)
-	want = codecs.unpack(rec[kAE.keyAEDesiredClass]).code # 4-letter code indicating element class
-	keyForm = codecs.unpack(rec[kAE.keyAEKeyForm]).code # 4-letter code indicating Specifier type
-	key = codecs.unpack(rec[kAE.keyAEKeyData]) # value indicating which object(s) to select
-	ref = codecs.unpack(rec[kAE.keyAEContainer]) or codecs.app # recursively unpack container structure
+	# This function performs a full recursive unpacking of object specifiers, reconstructing an 'app'/'con'/'its' based aem reference from the ground up.
+	want = codecs.unpack(desc.AEGetParamDesc(kAE.keyAEDesiredClass, kAE.typeType)).code # 4-letter code indicating element class
+	keyForm = codecs.unpack(desc.AEGetParamDesc(kAE.keyAEKeyForm, kAE.typeEnumeration)).code # 4-letter code indicating Specifier type
+	key = codecs.unpack(desc.AEGetParamDesc(kAE.keyAEKeyData, kAE.typeWildCard)) # value indicating which object(s) to select
+	ref = codecs.unpack(desc.AEGetParamDesc(kAE.keyAEContainer, kAE.typeWildCard)) or codecs.app # recursively unpack container structure
 	# print want, keyForm, key, ref # DEBUG
 	if keyForm == kAE.formPropertyID: # property specifier
 		return ref.property(key.code)
@@ -132,19 +97,48 @@ def _fullyUnpackObjectSpecifier(desc, codecs):
 			return ref.byfilter(key)
 	raise TypeError
 
-##
+
+#######
+
+def _unpackObjectSpecifier(desc, codecs):
+	# This function performance-optimises the unpacking of some object specifiers by only doing a shallow unpack where only the topmost descriptor is unpacked.
+	# The container AEDesc is retained as-is, allowing a full recursive unpack to be performed later on only if needed (e.g. if the __repr__ method is called).
+	# For simplicity, only the commonly encountered forms are optimised this way; forms that are rarely returned by applications (e.g. typeRange) are always fully unpacked.
+	keyForm = codecs.unpack(desc.AEGetParamDesc(kAE.keyAEKeyForm, kAE.typeEnumeration)).code
+	if keyForm in [kAE.formPropertyID, kAE.formAbsolutePosition, kAE.formName, kAE.formUniqueID]:
+		want = codecs.unpack(desc.AEGetParamDesc(kAE.keyAEDesiredClass, kAE.typeType)).code # 4-letter code indicating element class
+		key = codecs.unpack(desc.AEGetParamDesc(kAE.keyAEKeyData, kAE.typeWildCard)) # value indicating which object(s) to select
+		container = specifier.DeferredSpecifier(desc.AEGetParamDesc(kAE.keyAEContainer, kAE.typeWildCard), codecs)
+		if keyForm == kAE.formPropertyID:
+			ref = specifier.Property(want, container, key.code)
+		elif keyForm == kAE.formAbsolutePosition:
+			if isinstance(key, _Ordinal):
+				if key.code == kAE.kAEAll:
+					ref = specifier.AllElements(want, container)
+				else:
+					keyname = {kAE.kAEFirst: 'first', kAE.kAELast: 'last', kAE.kAEMiddle: 'middle', kAE.kAEAny: 'any'}[key.code]
+					ref = specifier.ElementByOrdinal(want, specifier.UnkeyedElements(want, container), key, keyname)
+			else:
+				ref = specifier.ElementByIndex(want, specifier.UnkeyedElements(want, container), key)
+		elif keyForm == kAE.formName:
+			ref = specifier.ElementByName(want, specifier.UnkeyedElements(want, container), key)
+		elif keyForm == kAE.formUniqueID:
+			ref = specifier.ElementByID(want, specifier.UnkeyedElements(want, container), key)
+		ref.AEM_packSelf = lambda codecs:desc
+		return ref
+	else: # do full unpack of more complex, rarely returned reference forms
+		return _fullyUnpackObjectSpecifier(desc, codecs)
+
 
 def _unpackInsertionLoc(desc, codecs):
-	rec = _descToDict(desc)
-	return getattr(_fullyUnpackObjectSpecifier(rec[kAE.keyAEObject], codecs), 
-			_kInsertionLocSelectors[rec[kAE.keyAEPosition].data])
+	return getattr(_fullyUnpackObjectSpecifier(desc.AEGetParamDesc(kAE.keyAEObject, kAE.typeWildCard), codecs), 
+			_kInsertionLocSelectors[desc.AEGetParamDesc(kAE.keyAEPosition, kAE.typeEnumeration).data])
 
 
 def _unpackCompDescriptor(desc, codecs):
-	rec = _descToDict(desc)
-	operator = _kTypeCompDescriptorOperators[rec[kAE.keyAECompOperator].data]
-	op1 = codecs.unpack(rec[kAE.keyAEObject1])
-	op2 = codecs.unpack(rec[kAE.keyAEObject2])
+	operator = _kTypeCompDescriptorOperators[desc.AEGetParamDesc(kAE.keyAECompOperator, kAE.typeEnumeration).data]
+	op1 = codecs.unpack(desc.AEGetParamDesc(kAE.keyAEObject1, kAE.typeWildCard))
+	op2 = codecs.unpack(desc.AEGetParamDesc(kAE.keyAEObject2, kAE.typeWildCard))
 	if operator == 'contains':
 		if isinstance(op1, base.BASE) and op1.AEM_root() == specifier.its:
 			return op1.contains(op2)
@@ -154,14 +148,13 @@ def _unpackCompDescriptor(desc, codecs):
 
 
 def _unpackLogicalDescriptor(desc, codecs):
-	rec = _descToDict(desc)
-	operator = _kTypeLogicalDescriptorOperators[rec[kAE.keyAELogicalOperator].data]
-	operands = codecs.unpack(rec[kAE.keyAELogicalTerms])
+	operator = _kTypeLogicalDescriptorOperators[desc.AEGetParamDesc(kAE.keyAELogicalOperator, kAE.typeEnumeration).data]
+	operands = codecs.unpack(desc.AEGetParamDesc(kAE.keyAELogicalTerms, kAE.typeAEList))
 	return operator == 'NOT' and operands[0].NOT or getattr(operands[0], operator)(*operands[1:])
 
 def _unpackRangeDescriptor(desc, codecs):
-	rec = _descToDict(desc)
-	return _Range([codecs.unpack(rec[kAE.keyAERangeStart]), codecs.unpack(rec[kAE.keyAERangeStop])])
+	return _Range([codecs.unpack(desc.AEGetParamDesc(kAE.keyAERangeStart, kAE.typeWildCard)), 
+			codecs.unpack(desc.AEGetParamDesc(kAE.keyAERangeStop, kAE.typeWildCard))])
 
 
 ######################################################################

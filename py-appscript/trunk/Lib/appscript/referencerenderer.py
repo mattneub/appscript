@@ -13,11 +13,13 @@ class _Formatter:
 	def __init__(self, appData):
 		self._appData = appData
 		if self._appData.path:
-			self._root = 'app(%r)' % self._appData.path
+			self.root = 'app(%r)' % self._appData.path
+		elif self._appData.pid:
+			self.root = 'app(pid=%r)' % self._appData.pid
 		elif self._appData.url:
-			self._root = 'app(url=%r)' % self._appData.url
+			self.root = 'app(url=%r)' % self._appData.url
 		else:
-			self._root = 'app()'
+			self.root = 'app()'
 		self.result = ''
 	
 	def _format(self, val):
@@ -68,7 +70,7 @@ class _Formatter:
 	
 	def __getattr__(self, name):
 		if name == 'app':
-			self.result += self._root
+			self.result += self.root
 		elif name == 'NOT':
 			self.result = '(%s).NOT' % self.result
 		else:
@@ -130,7 +132,7 @@ class _Formatter:
 # PUBLIC
 ######################################################################
 
-def renderreference(appData, aemRef):
+def renderreference(appdata, aemreference):
 	"""Take an aem reference, e.g.:
 	
 		app.elements('docu').byindex(1).property('ctxt')
@@ -141,10 +143,10 @@ def renderreference(appData, aemRef):
 		
 	Used by Reference.__repr__().
 	"""
-	f = _Formatter(appData)
+	f = _Formatter(appdata)
 	try:
-		aemRef.AEM_resolve(f)
+		aemreference.AEM_resolve(f)
 	except:
-		return repr(aemRef)
+		return '%r.AS_newreference(%r)' % (f.root, aemreference)
 	return f.result
 	

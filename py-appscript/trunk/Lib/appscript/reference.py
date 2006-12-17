@@ -11,7 +11,7 @@ from CarbonX.AE import AECreateList, AECreateDesc
 import aem
 
 from genericreference import GenericReference
-from terminology import tablesforapp, tablesfordata, defaulttables, kProperty, kElement, kCommand
+from terminology import tablesforapp, aetedataforapp, aetedataforapp, defaulttables, kProperty, kElement, kCommand
 from referencerenderer import renderreference
 from keywordwrapper import Keyword
 
@@ -153,25 +153,33 @@ class AppData(aem.Codecs):
 		- help system
 	"""
 	
-	def __init__(self, aemApplicationClass, path, url, terms):
+	def __init__(self, aemApplicationClass, path, pid, url, terms):
+		"""
+			aemApplicationClass : class -- aem.Application or equivalent
+			path : str
+			pid : int
+			url : str
+			terms : bool | module | tuple
+		"""
 		# initialise codecs
 		aem.Codecs.__init__(self)
 		self.encoders.update(_appscriptEncoders)
 		self.decoders.update(_appscriptDecoders)
 		# retain path/url for display purposes
 		self.path = path
+		self.pid = pid
 		self.url = url
 		# initialise aem.Application instance
-		self.target = aemApplicationClass(path, url)
+		self.target = aemApplicationClass(path, pid, url)
 		# initialise translation tables
 		if terms == True: # obtain terminology from application
-			self.typebycode, self.typebyname, self.referencebycode, self.referencebyname = tablesforapp(path, url)
+			terms= tablesforapp(self.target)
 		elif terms == False: # use built-in terminology only (e.g. use this when running AppleScript applets)
-			self.typebycode, self.typebyname, self.referencebycode, self.referencebyname = defaulttables
-		elif isinstance(terms, tuple): # ready-to-use tables
-			self.typebycode, self.typebyname, self.referencebycode, self.referencebyname = terms
-		else: # use user-supplied terminology module; note: bad input may cause infinite recursion for some reason
-			self.typebycode, self.typebyname, self.referencebycode, self.referencebyname = tablesfordata(terms)
+			terms = defaulttables
+		elif not isinstance(terms, tuple): # use user-supplied terminology module
+			# note: bad input may cause infinite recursion
+			terms = tablesformodule(terms)
+		self.typebycode, self.typebyname, self.referencebycode, self.referencebyname = terms
 	
 	def pack(self, data):
 		if isinstance(data, GenericReference):
@@ -190,7 +198,7 @@ class AppData(aem.Codecs):
 	def help(self, flags, ref):
 		# Stub method; initialises Help object and replaces itself with a real help() function the first time it's called.
 		from helpsystem import Help
-		helpObj = Help(self.path, self.url)
+		helpObj = Help(aetedataforapp(app))
 		self.help = lambda flags, ref: helpObj.help(flags, ref) # replace stub method with real help
 		return self.help(flags, ref) # call real help. Note that help system is responsible for providing a return value (usually the same reference it was called upon, but it may modify this).
 
@@ -491,12 +499,13 @@ class Application(Reference):
 	
 	_Application = aem.Application # overridable hook; appscript.Application subclasses can modify creating and/or sending Apple events by using custom aem.Application and aem.Event classes # Note: subclassing this class is now a bit trickier due to introduction of generic 'app'; clients need to import this class directly, subclass it, and then create their own GenericApp instance to use in place of the standard version.
 	
-	def __init__(self, name=None, id=None, creator=None, url=None, terms=True): # TO DO: pid
+	def __init__(self, name=None, id=None, creator=None, pid=None, url=None, terms=True):
 		"""
-			app(name=None, id=None, creator=None, url=None, terms=True)
+			app(name=None, id=None, creator=None, pid=None, url=None, terms=True)
 				name : str -- name or path of application, e.g. 'TextEdit', 'TextEdit.app', '/Applications/Textedit.app'
 				id : str -- bundle id of application, e.g. 'com.apple.textedit'
 				creator : str -- 4-character creator type of application, e.g. 'ttxt'
+				pid : int -- Unix process id, e.g. 95
 				terms : module | bool -- if a module, get terminology from it; if True, get terminology from target application; if False, use built-in terminology only
     		"""
 		if len([i for i in [name, id, creator, url] if i]) > 1:
@@ -515,19 +524,23 @@ class Application(Reference):
 		# will launch TE without it creating any new documents (i.e. app receives 'ascrnoop' as its first event), but:
 		#     te = app('TextEdit'); d = app.documents; te.launch()
 		# will launch TE normally (i.e. app receives 'aevtoapp' as its first event), causing it to open a new, empty window.
-		self._path, self._url, self._terms = path, url, terms
+		self._path, self._pid, self._url, self._terms = path, pid, url, terms
 		self._realAppData = None
 		Reference.__init__(self, None, aem.app)
 	
 	def _getAppData(self):
 		if self._realAppData is None: # initialise AppData the first time it's actually needed
-			self._realAppData = AppData(self._Application, self._path, self._url, self._terms)
+			self._realAppData = AppData(self._Application, self._path, self._pid, self._url, self._terms)
 		return self._realAppData
 	
 	def _setAppData(self, val):
 		pass # ignore base class trying to assign None to self.AS_appdata
 	
 	AS_appdata = property(_getAppData, _setAppData)
+	
+	def AS_newreference(self, aemreference):
+		"""Create a new appscript reference from an aem reference."""
+		return Reference(self.AS_appdata, aemreference)
 	
 	def starttransaction(self):
 		self.AS_appdata.target.starttransaction()

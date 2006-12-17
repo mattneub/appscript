@@ -20,17 +20,17 @@ class UnitTypeCodecs:
 		['yards', kAE.typeYards],
 		['miles', kAE.typeMiles],
 		
-		['square_meters', kAE.typeSquareMeters],
-		['square_kilometers', kAE.typeSquareKilometers],
-		['square_feet', kAE.typeSquareFeet],
-		['square_yards', kAE.typeSquareYards],
-		['square_miles', kAE.typeSquareMiles],
+		['square meters', kAE.typeSquareMeters],
+		['square kilometers', kAE.typeSquareKilometers],
+		['square feet', kAE.typeSquareFeet],
+		['square yards', kAE.typeSquareYards],
+		['square miles', kAE.typeSquareMiles],
 		
-		['cubic_centimeters', kAE.typeCubicCentimeter],
-		['cubic_meters', kAE.typeCubicMeters],
-		['cubic_inches', kAE.typeCubicInches],
-		['cubic_feet', kAE.typeCubicFeet],
-		['cubic_yards', kAE.typeCubicYards],
+		['cubic centimeters', kAE.typeCubicCentimeter],
+		['cubic meters', kAE.typeCubicMeters],
+		['cubic inches', kAE.typeCubicInches],
+		['cubic feet', kAE.typeCubicFeet],
+		['cubic yards', kAE.typeCubicYards],
 		
 		['liters', kAE.typeLiters],
 		['quarts', kAE.typeQuarts],
@@ -41,9 +41,9 @@ class UnitTypeCodecs:
 		['ounces', kAE.typeOunces],
 		['pounds', kAE.typePounds],
 		
-		['degrees_Celsius', kAE.typeDegreesC],
-		['degrees_Fahrenheit', kAE.typeDegreesF],
-		['degrees_Kelvin', kAE.typeDegreesK],
+		['degrees Celsius', kAE.typeDegreesC],
+		['degrees Fahrenheit', kAE.typeDegreesF],
+		['degrees Kelvin', kAE.typeDegreesK],
 	]
 	
 	##

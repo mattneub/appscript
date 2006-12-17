@@ -161,13 +161,13 @@ For example, to print an overview of TextEdit, a description of its make command
     app('TextEdit.app').help('-o -d make -i document')"""
 	
 	
-	def __init__(self, path, url, out=_Out()):
+	def __init__(self, aetes, out=_Out()):
+		"""
+			aetes : list of str --
+			out : anything -- any file-like object that implements a write(str) method
+		"""
+		self.terms = aeteparser.parsedata(aetes)
 		self.output = out
-		if path:
-			self.terms = aeteparser.parseapp(path)
-		else:
-			self.terms = aeteparser.parsedata(terminology.getaetedata(url=url))
-	
 	
 	def overview(self):
 		print >> self.output, 'Overview:\n'
@@ -175,7 +175,8 @@ For example, to print an overview of TextEdit, a description of its make command
 	
 	def keywords(self):
 		print >> self.output, 'Built-in keywords:\n'
-		names = terminology.defaulttypesbycode.values()
+		typebycode = terminology.defaulttables[0]
+		names = typebycode.values()
 		names.sort(lambda a,b:cmp(a.name.lower(), b.name.lower()))
 		for name in names:
 			print >> self.output, '    %s' % name

@@ -12,6 +12,12 @@ HISTORY
 
 - added aem.types.basictypes.unittypes module, and added addunittypes method to aem.Codecs
 
+- removed 'k' module (aem.send.constants); clients should use CarbonX.kAE/kOSA instead
+
+- HTMLised manual
+
+- can now create Application instances by Unix PID
+
 
 2006-12-03 -- 0.11.1
 

@@ -27,9 +27,9 @@
 <pre><code>from appscript import *
 
 # AEM-defined data types:
-k.Boolean
-k.Unicode
-k.List
+k.boolean
+k.unicode_text
+k.list
 
 # Application-defined class names:
 k.document
@@ -47,26 +47,96 @@ k.ask</code></pre>
 
 <h2>Common AE types</h2>
 
-<table width=100%>
+<table width="100%" summary="AE-Ruby type mappings">
 <thead>
-<tr><th>AE type</th><th>Python type</th></tr>
+<tr><th>AE type</th><th>appscript name</th><th>Python type</th></tr>
 </thead>
 <tbody>
-<tr><td><code>k.Null</code></td><td><code>types.NoneType</code></td></tr><tr><td><code>k.Boolean</code></td><td><code>bool</code></td></tr><tr><td><code>k.Integer</code></td><td><code>int</code></td></tr><tr><td><code>k.Float</code></td><td><code>float</code></td></tr><tr><td><code>k.String</code></td><td><code>str</code></td></tr><tr><td><code>k.Unicode</code></td><td><code>unicode</code></td></tr><tr><td><code>k.List</code></td><td><code>list</code></td></tr><tr><td><code>k.Record</code></td><td><code>dict</code></td></tr><tr><td><code>k.Date</code></td><td><code>datetime.datetime</code></td></tr><tr><td><code>k.Alias</code></td><td><code>macfile.Alias</code></td></tr><tr><td><code>k.FSRef</code></td><td><code>macfile.File</code></td></tr><tr><td><code>k.FileURL</code></td><td><code>macfile.File</code></td></tr>
-<tr><td><code>k.Reference</code></td><td><small>appscript reference</small></td></tr>
-<tr><td><code>k.InsertionRef</code></td><td><small>appscript insertion reference</small></td></tr>
+<tr><td><code>typeNull</code></td><td><code>k.null</code></td><td><code>types.NoneType</code></td></tr><tr><td><code>typeBoolean</code><td><code>k.boolean</code></td><td><code>bool</code></td></tr><tr><td><code>typeInteger</code></td><td><code>k.integer</code></td><td><code>int</code></td></tr><tr><td><code>typeFloat</code></td><td><code>k.float</code></td><td><code>float</code></td></tr><tr><td><code>typeChar</code> *</td><td><code>k.string</code></td><td><code>str</code></td></tr>
+<tr><td><code>typeStyledText</code> *</td><td><code>k.styled_text</code></td><td><code>unicode</code></td></tr>
+<tr><td><code>typeIntlText</code> *</td><td><code>k.international_text</code></td><td><code>unicode</code></td></tr><tr><td><code>typeUnicodeText</code></td><td><code>k.unicode_text</code></td><td><code>unicode</code></td></tr><tr><td><code>typeAEList</code></td><td><code>k.list</code></td><td><code>list</code></td></tr><tr><td><code>typeAERecord</code></td><td><code>k.record</code></td><td><code>dict</code></td></tr><tr><td><code>typeLongDateTime</code></td><td><code>k.date</code></td><td><code>datetime.datetime</code></td></tr><tr><td><code>typeAlias</code></td><td><code>k.alias</code></td><td><code>macfile.Alias</code></td></tr><tr><td><code>typeFileURL</code></td><td><code>k.file_url</code></td><td><code>macfile.File</code></td></tr><tr><td><code>typeFSRef</code></td><td><code>k.file_ref</code></td><td><code>macfile.File</code></td></tr><tr><td><code>typeFSS</code></td><td><code>k.file_specification</code></td><td><code>macfile.File</code></td></tr>
+<tr><td><code>typeObjectSpecifier</code></td><td><code>k.reference</code></td><td><small>appscript reference</small></td></tr>
+<tr><td><code>typeInsertionLoc</code></td><td><code>k.location_reference</code></td><td><small>appscript insertion reference</small></td></tr>
+<tr><td><code>typeType</code></td><td><code>k.type_class</code></td><td><small>appscript keyword</small></td></tr>
+<tr><td><code>typeEnumerated</code></td><td><code>k.enumerator</code></td><td><small>appscript keyword</small></td></tr>
+<tr><td><small>unit types; e.g. </small> <code>typeFeet</code></td><td><small>unit names; e.g.</small> <code>'feet'</code></td><td><code>mactypes.Units</code></td></tr>
 </tbody>
 </table>
 
+<p>(Note that types marked with '*' are officially deprecated and/or their use discouraged in Mac OS X. They remain supported to ensure backwards compatibility with older applications that may use them.)</p>
 
-<ul>
-<li>The <code>k.Record</code> AE type is a struct-like data structure which appscript represents as a dict with [in most cases] appscript keywords as its keys.</li>
-<li>The <code>k.Alias</code> AE type corresponds to the <code>Carbon.File.Alias</code> Python type; appscript unpacks this type as a <code>macfile.Alias</code> object for ease of use.</li>
-<li>The <code>k.FSRef</code> type corresponds to the <code>Carbon.File.FSRef</code> Python type; appscript unpacks this type as a <code>macfile.File</code> object for ease of use.</li>
-<li>The <code>k.FileURL</code> type can be used to specify non-existent filesystem locations.</li>
-<li>While FSSpecs are supported they are deprecated by Apple and not recommended for use where other types can be used instead. Appscript unpacks a <code>k.FSSpec</code> value by first coercing it to a <code>k.FileURL</code> type and then unpacking it as a <code>macfile.File</code> object. Note that <code>Carbon.File.FSSpec</code> objects can't properly refer to non-existent filesystem locations due to limitations in the <code>Carbon.File</code> extension as well as the limitations of the FSSpec structure itself.</li>
-<li>While appscript unpacks all filesystem-related AE types as either <code>macfile.Alias</code> or <code>macfile.File</code>, don't forget that when asking an application to coerce a return value into a file type you must specify the exact file type (<code>k.Alias</code>, <code>k.FSRef</code>, <code>k.FileURL</code>, or <code>k.FSSpec</code>) in the <code>get()</code>. e.g. To get a <code>macfile.File</code> object for the current user's home folder, use <code>app('Finder').home.get(type=k.FSRef)</code>, not <code>app('Finder').home.get(type=k.File)</code> - <code>k.File</code> is not a known AE type and will cause an error. Also be aware that some applications may not support coercions to all AE file types; you'll need to experiment to find out which coercions are supported.</li>
-<li>The Apple Event Manager defines many other AE types which are included by appscript for completeness. A few of these types are of occasional interest, the rest can simply be ignored.</li>
+
+<h2>Type mapping notes</h2>
+
+<p>While AEM-Python type conversions generally work quite seamlessly, it is sometimes useful to know some of the details involved, particularly when troubleshooting code that deals with older or buggy applications.</p>
+
+<h3>Numbers</h3>
+
+<p>When packing a Python <code>long</code>, appscript will pack it either as a 32-bit integer (most preferred), 64-bit integer, or 64-bit float (least preferred), depending on the value's size.</p>
+
+
+<h3>Strings</h3>
+
+<p>Note that while <code>typeUnicodeText</code> is formally deprecated in Mac OS X 10.4+ in favour of <code>typeUTF8Text</code> and <code>typeUTF16ExternalRepresentation</code>, it is still in common usage so appscript continues to use it to ensure the broadest compatibility with existing scriptable applications.</p>
+
+
+<h3>Filesystem references</h3>
+
+<p>The <code>typeAlias</code> AE type represents a filesystem object, and will continue to point to that object even if it's renamed or moved to another location on the same disk. The <code>typeFSRef</code> and <code>typeFileURL</code> types represent a filesystem location. Both can represent existing locations; the <code>typeFileURL</code> type can also be used to specify locations that don't already exist.</p>
+
+<p>The <code>typeAlias</code> AE type corresponds to the <code>Carbon.File.Alias</code> Python type. Appscript unpacks this type as a <code>mactypes.Alias</code> object for ease of use.</p>
+
+<p>The <code>typeFSRef</code> AE type corresponds to the <code>Carbon.File.FSRef</code> Python type, while the <code>typeFSS</code> AE type corresponds to <code>Carbon.File.FSSpec</code>. Appscript unpacks these AE types as <code>mactypes.File</code> objects for ease of use.</p>
+
+<p>While FSSpecs are supported they are deprecated by Apple and not recommended for use where other types can be used instead. and then unpacking it as a <code>macfile.File</code> object. Note that <code>Carbon.File.FSSpec</code> objects can't properly refer to non-existent filesystem locations due to limitations in the <code>Carbon.File</code> extension as well as the limitations of the FSSpec structure itself.</p>
+
+<p>While appscript unpacks all filesystem-related AE types as either <code>macfile.Alias</code> or <code>macfile.File</code>, don't forget that when asking an application to coerce a return value into a file type you must specify the exact file type (<code>k.alias</code>, <code>k.file_url</code>, <code>k.file_ref</code>, or <code>k.file_specification</code>) in the <code>get</code> command. e.g. To get a <code>macfile.File</code> object for the current user's home folder, you would usually use:</p>
+
+<pre><code>app('Finder').home.get(type=k.file_url)</code></pre>
+
+<p>Also be aware that some applications may not support coercions to all AE file types; you'll need to experiment to find out which coercions are supported.</p>
+
+
+<h3>Records</h3>
+
+<p>The <code>typeAERecord</code> AE type is a struct-like data structure containing zero or more properties. Appscript represents AE records as Python dicts. The keys in this dict are usually appscript keywords (e.g. <code>k.name</code>) representing appscript-style property names, although they may also be <code>aem.AEType</code> values or strings.</p>
+
+<p>If a dict contains a <code>k.class_</code> (or <code>aem.AEType('pcls')</code>) key, appscript will pack the remaining items into an AE record, then coerce it to the type specified by this 'class' property. Similarly, when unpacking an record-like AEDesc with a custom type code, appscript will unpack it as a hash with the type represented by a <code>k.class_</code> entry.</p>
+
+
+<h3>Types and enumerators</h3>
+
+<p>The <code>typeType</code> and <code>typeEnumerated</code> AE types are unpacked as appscript keywords (e.g. <code>k.document</code>) when the corresponding terminology is available, otherwise they are unpacked as <code>aem.AEType</code> and <code>aem.AEEnum</code> respectively.</td></tr>
+
+
+<h3>Unit types</h3>
+
+<p>The following unit types are defined as standard:</p>
+
+<pre><code>'centimeters'                  'cubic inches'
+'meters'                       'cubic feet'
+'kilometers'                   'cubic yards'
+'inches'                       
+'feet'                         'liters'
+'yards'                        'quarts'
+'miles'                        'gallons'
+                              
+'square meters'                'grams'
+'square kilometers'            'kilograms'
+'square feet'                  'ounces'
+'square yards'                 'pounds'
+'square miles'                 
+                               'degrees Celsius'
+'cubic centimeters'            'degrees Fahrenheit'
+'cubic meters'                 'degrees Kelvin'</code></pre>
+
+<p>Values are represented by instances of the <code>mactypes.Units</code> class, e.g. <code>mactypes.Units(3.0, 'inches')</code>. See the <a href="../mactypes/index.html">mactypes manual</a> for more information.</p>
+
+
+<h3>Miscellaneous types</h3>
+
+<p>The Apple Event Manager defines many other AE types whose names and codes are defined by appscript for completeness. A few of these types are of occasional interest to users, the rest can simply be ignored. In most cases, values of these types will be represented by raw <code>CarbonX.AE.AEDesc</code> instances as appscript doesn't automatically convert them to native objects.</p>
+
 </ul>
 
 </div>

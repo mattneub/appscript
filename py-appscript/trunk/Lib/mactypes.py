@@ -24,8 +24,6 @@ __all__ = ['Alias', 'File', 'Units']
 ######################################################################
 # Constants
 
-_typeFileURL = 'furl'
-
 _diffVolErr = -1303
 _errFSRefsDifferent = -1420
 
@@ -161,10 +159,10 @@ class File(_Base):
 		"""Make File object from CarbonX.AE.AEDesc of typeFSS, typeFSRef, typeFileURL.
 			Note: behaviour for other descriptor types is undefined: typeAlias will cause problems, others will probably fail.
 		"""
-		if desc.type == _typeFileURL:
+		if desc.type == kAE.typeFileURL:
 			url = desc.data
 		else:
-			url = desc.AECoerceDesc(_typeFileURL).data
+			url = desc.AECoerceDesc(kAE.typeFileURL).data
 		obj = klass(unicode(unquote(urlparse(url)[2]), 'utf8'))
 		obj._url = url
 		obj._desc = desc
@@ -217,11 +215,11 @@ class File(_Base):
 	def aedesc(self):
 		if self._desc is None:
 			if self._fsref:
-				self._desc = AECreateDesc(k.typeFSRef, self._fsref.data)
+				self._desc = AECreateDesc(kAE.typeFSRef, self._fsref.data)
 			elif self._fsspec:
-				self._desc = AECreateDesc(k.typeFSS, self._fsspec.data)
+				self._desc = AECreateDesc(kAE.typeFSS, self._fsspec.data)
 			else:
-				self._desc = AECreateDesc(_typeFileURL, self.url)
+				self._desc = AECreateDesc(kAE.typeFileURL, self.url)
 		return self._desc
 	aedesc = property(aedesc, _ro, doc="Get as CarbonX.AE.AEDesc.")
 

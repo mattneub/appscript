@@ -77,21 +77,21 @@
 
 <h2>Constants</h2>
 
-<p>The following constants are defined in the <code>kAE</code> module, except where noted.</p>
+<p>Most of the following constants are defined in the <code>CarbonX.kAE</code> module, with the remainder defined in the <code>CarbonX.kOSA</code> module.</p>
 
 <h3>Common parameter keys</h3>
 
 <pre><code>kAE.keyDirectObject
 kAE.keyAERequestedType</code></pre>
 
-<p>(The value for a keyAERequestedType parameter should be an <code>AEType</code> instance.)</p>
+<p>(The value for a <code>keyAERequestedType</code> parameter should be an <code>AEType</code> instance.)</p>
 
 <p>Other parameter keys are defined by individual applications.</p>
 
 
 <h3>Attribute keys</h3>
 
-<p>Most of the following attributes are already supplied by other means (e.g. keyEventClassAttr, keyEventIDAttr are supplied separately when creating an Apple event; keyTimeoutAttr when sending it) and are only of interest if unpacking AppleEvent descriptors manually. A few  may be used when passing an attributes dict to <code>Application.event</code> (<code>'cons'</code>, <code>'csig'</code>, <code>'subj'</code>):</p>
+<p>Most of the following attributes are already supplied by other means (e.g. keyEventClassAttr, keyEventIDAttr are supplied separately when creating an Apple event; keyTimeoutAttr when sending it) and are only of interest if unpacking AppleEvent descriptors manually. A few  may be used when passing an attributes dict to <code>Application.event</code> (<code>enumConsiderations</code>, <code>enumConsidsAndIgnores</code>, <code>keySubjectAttr</code>):</p>
 <pre><code>kAE.keyTransactionIDAttr
 kAE.keyReturnIDAttr
 kAE.keyEventClassAttr
@@ -103,12 +103,12 @@ kAE.keyInteractLevelAttr
 kAE.keyEventSourceAttr
 kAE.keyOriginalAddressAttr
 kAE.keyAcceptTimeoutAttr
-'cons' # ignore text attributes
-'csig' # consider/ignore text attributes
-'subj' # subject attribute</code></pre>
+kOSA.enumConsiderations
+kOSA.enumConsidsAndIgnores
+kOSA.keySubjectAttr</code></pre>
 
 
-<p>The value of the <code>'cons'</code> attribute should be a list containing zero or more <code>AEEnum</code> instances with the following codes:</p> 
+<p>The value of the <code>enumConsiderations</code> attribute should be a list containing zero or more <code>AEEnum</code> instances with the following codes:</p> 
 
 <pre><code>kAE.kAECase
 kAE.kAEDiacritic
@@ -119,32 +119,32 @@ kAE.kAEPunctuation
 kAE.kASConsiderReplies
 kAE.kASNumericStrings</code></pre>
 
-<p>See the <a href="http://developer.apple.com/documentation/Carbon/Reference/Apple_Event_Manager/index.html">Apple Event Manager</a> API reference for more info. Note that the <code>'cons'</code> attribute is deprecated in favour of the <code>'csig'</code> attribute.</p>
+<p>See the <a href="http://developer.apple.com/documentation/Carbon/Reference/Apple_Event_Manager/index.html">Apple Event Manager</a> API reference for more info. Note that the <code>enumConsiderations</code> attribute is deprecated in favour of the <code>enumConsidsAndIgnores</code> attribute.</p>
 
 
-<p>The value of the <code>'csig'</code> attribute should be an integer composed from the sum of zero or more of the following bit masks:</p>
+<p>The value of the <code>enumConsidsAndIgnores</code> attribute should be an integer composed from the sum of zero or more of the following bit masks:</p>
 
-<pre><code>kAE.kAECaseConsiderMaskkAE.kAEDiacriticConsiderMaskkAE.kAEWhiteSpaceConsiderMaskkAE.kAEHyphensConsiderMaskkAE.kAEExpansionConsiderMaskkAE.kAEPunctuationConsiderMaskkAE.kASConsiderRepliesConsiderMaskkAE.kASNumericStringsConsiderMask
-kAE.kAECaseIgnoreMaskkAE.kAEDiacriticIgnoreMaskkAE.kAEWhiteSpaceIgnoreMaskkAE.kAEHyphensIgnoreMaskkAE.kAEExpansionIgnoreMaskkAE.kAEPunctuationIgnoreMaskkAE.kASConsiderRepliesIgnoreMaskkAE.kASNumericStringsIgnoreMask</code></pre>
+<pre><code>kOSA.kAECaseConsiderMaskkOSA.kAEDiacriticConsiderMaskkOSA.kAEWhiteSpaceConsiderMaskkOSA.kAEHyphensConsiderMaskkOSA.kAEExpansionConsiderMaskkOSA.kAEPunctuationConsiderMaskkOSA.kASConsiderRepliesConsiderMaskkOSA.kASNumericStringsConsiderMask
+kOSA.kAECaseIgnoreMaskkOSA.kAEDiacriticIgnoreMaskkOSA.kAEWhiteSpaceIgnoreMaskkOSA.kAEHyphensIgnoreMaskkOSA.kAEExpansionIgnoreMaskkOSA.kAEPunctuationIgnoreMaskkOSA.kASConsiderRepliesIgnoreMaskkOSA.kASNumericStringsIgnoreMask</code></pre>
 
 
 <h3>Send flag constants</h3>
 
 <p>The value of the <code>send</code> method's <code>flags</code> argument should be an integer composed from the sum of zero or more of the following bit masks:</p>
 
-<pre><code>kAENoReply
-kAEQueueReply
-kAEWaitReply
+<pre><code>kAE.kAENoReply
+kAE.kAEQueueReply
+kAE.kAEWaitReply
 
-kAEDontReconnect
+kAE.kAEDontReconnect
 
-kAEWantReceipt
+kAE.kAEWantReceipt
 
-kAENeverInteract
-kAECanInteract
-kAEAlwaysInteract
+kAE.kAENeverInteract
+kAE.kAECanInteract
+kAE.kAEAlwaysInteract
 
-kAECanSwitchLayer</code></pre>
+kAE.kAECanSwitchLayer</code></pre>
 
 <p>See the <a href="http://developer.apple.com/documentation/Carbon/Reference/Apple_Event_Manager/apple_event_manager_ref/chapter_1.4_section_6.html">Apple Event Manager</a> API reference for details.</p>
 

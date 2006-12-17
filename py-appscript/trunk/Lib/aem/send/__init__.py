@@ -11,9 +11,7 @@ from aem.types import Codecs
 import connect
 from send import *
 
-import constants as k # re-export
-
-__all__ = ['Application', 'CommandError', 'k', 'Event']
+__all__ = ['Application', 'CommandError', 'Event']
 
 ######################################################################
 # PRIVATE
@@ -32,39 +30,56 @@ class Application:
 
 	_transaction = _kAnyTransactionID = kAE.kAnyTransactionID # (we need to keep a local copy of this constant to avoid upsetting Application.__del__() at cleanup time, otherwise it may be disposed of before __del__() has a chance to use it)
 	
-	def __init__(self, path=None, url=None, desc=None, codecs= _defaultCodecs):
+	def __init__(self, path=None, pid=None, url=None, desc=None, codecs= _defaultCodecs):
 		"""
-			path : string | None -- full path to local application
-			url : string | None -- url for remote process
+			path : str | None -- full path to local application
+			pid : int | None -- Unix process id for local process
+			url : str | None -- url for remote process
 			desc : AEAddressDesc | None -- AEAddressDesc for application
 			codecs : Codecs -- used to convert Python values to AEDescs and vice-versa
 			
 			Notes: 
-				- If no path, url or aedesc is given, target will be 'current application'.
-				- If path is given, application will be launched automatically; if url or desc is given, user is responsible for ensuring application is running before sending it events.
+				- If no path, pid, url or aedesc is given, target will be 'current application'.
+				- If path is given, application will be launched automatically; if pid, url or desc is given, user is responsible for ensuring application is running before sending it any events.
 		"""
 		self._codecs = codecs
 		self._path = path
 		if path:
 			self._address = connect.localapp(path)
-			self._identity = (path, 0, 0, 0)
+			self.AEM_identity = ('path', path)
+		elif pid:
+			self._address = connect.localappbypid(pid)
+			self.AEM_identity = ('pid', pid)
 		elif url:
 			self._address = connect.remoteapp(url)
-			self._identity = (0, url, 0, 0)
+			self.AEM_identity = ('url', url)
 		elif desc:
 			self._address = desc
-			self._identity = (0, 0, desc.type, desc.data)
+			self.AEM_identity = ('desc', (desc.type, desc.data))
 		else:
 			self._address = connect.currentapp
+			self.AEM_identity = ('current', None)
+	
+	def __repr__(self):
+		args = []
+		if self.AEM_identity[0] == 'desc':
+			args.append('desc=%r' % self._address)
+		elif self.AEM_identity[0] != 'current':
+			args.append('%s=%r' % self.AEM_identity)
+		if self._codecs != _defaultCodecs:
+			args.append('codecs=%r' % self._codecs)
+		return 'aem.Application(%s)' % ', '.join(args)
+			
+	__str__ == __repr__
 	
 	def __eq__(self, val):
-		return self.__class__ == val.__class__ and self._identity == val._identity
+		return self.__class__ == val.__class__ and self.AEM_identity == val.AEM_identity
 	
 	def __ne__(self, val):
 		return not self == val
 	
 	def __hash__(self):
-		return hash(self._identity)
+		return hash(self.AEM_identity)
 	
 	def __del__(self):
 		if self._transaction != self._kAnyTransactionID: # If user forgot to close a transaction before throwing away the Application object that opened it, try to close it for them. Otherwise application will be left in mid-transaction, preventing anyone else from using it.
@@ -74,7 +89,7 @@ class Application:
 	
 	launch = staticmethod(connect.launchapp)
 	
-	def isrunning(self):
+	def isrunning(self): # TO DO: make staticmethod
 		"""Is application running? 
 		
 		Note: this only works for Application objects specified by path, not by URL or AEDesc.

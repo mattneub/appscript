@@ -105,6 +105,14 @@ def localapp(path):
 	return _makePSNAddressDesc(psn)
 
 
+def localappbypid(pid):
+	"""Make an AEAddressDesc identifying a local process.
+		pid : integer -- Unix process id
+		Result : AEAddressDesc
+	"""
+	return AECreateDesc(kAE.typeKernelProcessID, struct.pack('L', pid))
+
+
 def remoteapp(url):
 	"""Make an AEAddressDesc identifying a running application on another machine.
 		url : string -- URL for remote application, e.g. 'eppc://user:password@0.0.0.1/TextEdit'

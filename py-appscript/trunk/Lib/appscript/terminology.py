@@ -5,14 +5,14 @@
 (C) 2004 HAS
 """
 
-from aem import AEType, AEEnum, Application, CommandError
+from aem import AEType, AEEnum, CommandError
 from osaterminology import appscripttypedefs
 from CarbonX.AE import AEDesc
 
 from terminologyparser import buildtablesforaetes
 from keywordwrapper import Keyword
 
-__all__ = ['tablesforapp', 'tablesfordata', 'tablesforaetes', 'kProperty', 'kElement', 'kCommand', 'defaulttypesbycode', 'defaulttables', 'getaetedata']
+__all__ = ['tablesforapp', 'tablesformodule', 'tablesforaetedata', 'kProperty', 'kElement', 'kCommand', 'defaulttables', 'aetedataforapp']
 
 
 ######################################################################
@@ -134,16 +134,14 @@ def _makeReferenceTable(properties, elements, commands):
 # PUBLIC
 ######################################################################
 
-defaulttypesbycode= _typebycode # used by help system # TO DO: delete and use defaulttables instead
+
+defaulttables = _makeTypeTable([], [], []) + _makeReferenceTable([], [], []) # (typebycode, typebyname, referencebycode, referencebyname)
 
 
-defaulttables = _makeTypeTable([], [], []) + _makeReferenceTable([], [], [])
-
-
-def getaetedata(path=None, url=None):
+def aetedataforapp(app):
 	"""Get aetes from local/remote app via an ascrgdte event; result is a list of byte strings."""
 	try:
-		aetes = Application(path, url).event('ascrgdte', {'----':0}).send(60 * 30)
+		aetes = app.event('ascrgdte', {'----':0}).send(60 * 30)
 	except Exception, e: # (e.g.application not running)
 		if isinstance(e, CommandError) and e.number == -192:
 			aetes = []
@@ -154,23 +152,29 @@ def getaetedata(path=None, url=None):
 	return [aete.data for aete in aetes if isinstance(aete, AEDesc) and aete.type == 'aete']
 
 
-def tablesforaetes(aetes): # TO DO: rename tablesforaetedata
+def tablesforaetedata(aetes): # TO DO: rename tablesforaetedata
 	"""Build terminology tables from a list of unpacked aete byte strings.
-		Result : tuple of dict -- (typebycode, typebyname, referencebycode, referencebyname)"""
+		Result : tuple of dict -- (typebycode, typebyname, referencebycode, referencebyname)
+	"""
 	classes, enums, properties, elements, commands = buildtablesforaetes(aetes)
 	return _makeTypeTable(classes, enums, properties) + _makeReferenceTable(properties, elements, commands)
 
 
-def tablesfordata(terms): # TO DO: rename tablesforterminologymodule
+def tablesformodule(terms):
 	"""Build terminology tables from a dumped terminology module.
-		Result : tuple of dict -- (typebycode, typebyname, referencebycode, referencebyname)"""
+		Result : tuple of dict -- (typebycode, typebyname, referencebycode, referencebyname)
+	"""
 	return _makeTypeTable(terms.classes, terms.enums, terms.properties) \
 			+ _makeReferenceTable(terms.properties, terms.elements, terms.commands)
 
 
-def tablesforapp(path=None, url=None): # TO DO: pid
-	if not _terminologyCache.has_key(path or url):
-		_terminologyCache[path or url] = tablesforaetes(getaetedata(path, url))
-	return _terminologyCache[path or url]
+def tablesforapp(app):
+	"""Build terminology tables for an application.
+		app : aem.Application
+		Result : tuple of dict -- (typebycode, typebyname, referencebycode, referencebyname)
+	"""
+	if not _terminologyCache.has_key(app.AEM_identity):
+		_terminologyCache[app.AEM_identity] = tablesforaetedata(aetedataforapp(app))
+	return _terminologyCache[app.AEM_identity]
 
 

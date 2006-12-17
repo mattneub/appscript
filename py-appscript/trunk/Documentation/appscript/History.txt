@@ -10,6 +10,16 @@ HISTORY
 
 - added note to Problem Apps chapter on sending run and open events to non-stay-open applications
 
+- added optional pid argument to Application.__init__
+
+- modified terminology module API; now uses the aem.Application instance from AppData.target when sending ascrgdte event (note: clients that customise Application._Application, e.g. aemcodegen, will need to take this into account)
+
+- added Application.AS_newreference
+
+- referencerenderer now displays accurate representation of an appscript reference when appscript-style representation is unavailable (previously rendered the appscript reference as an aem-style reference string, which was misleading)
+
+
+
 
 2006-08-16 -- 0.16.2
 

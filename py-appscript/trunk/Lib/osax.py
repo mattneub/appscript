@@ -10,7 +10,7 @@ from appscript import reference, terminology
 import aem
 from osaterminology.getterminology import getaete
 
-__all__ = ['ApplicationNotFoundError', 'OSAX','CommandError', 'k', 'scriptingadditions']
+__all__ = ['ApplicationNotFoundError', 'ScriptingAddition','CommandError', 'k', 'scriptingadditions']
 
 
 ######################################################################
@@ -45,7 +45,7 @@ scriptingadditions.sort()
 
 # TO DO: subclass AppData to support help() for osax?
 
-class OSAX(reference.Application):
+class ScriptingAddition(reference.Application):
 
 	def __init__(self, osaxname, name=None, id=None, creator=None, url=None, terms=None): # TO DO: pid
 		self._osaxname = osaxname
@@ -75,7 +75,4 @@ class OSAX(reference.Application):
 			return "ScriptingAddition(%r)" % self._osaxname
 		
 	__repr__ = __str__
-
-
-#  OSAX('StandardAdditions').say('hello world')
 
