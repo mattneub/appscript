@@ -18,6 +18,8 @@ HISTORY
 
 - referencerenderer now displays accurate representation of an appscript reference when appscript-style representation is unavailable (previously rendered the appscript reference as an aem-style reference string, which was misleading)
 
+- added __version__ attribute
+
 
 
 

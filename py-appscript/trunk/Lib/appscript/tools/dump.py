@@ -40,7 +40,7 @@ def dump(apppath, modulepath):
 	print >> f, 'path = %r' % apppath
 	for key, value in atts:
 		if key[0] != '_':
-			print >> f, '\n%s = \\\n' % key,
+			print >> f, '\n%s = \\' % key
 			pprint(value, f)
 	f.close()
 

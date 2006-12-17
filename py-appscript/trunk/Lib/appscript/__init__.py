@@ -3,6 +3,8 @@
 (C) 2004 HAS
 """
 
+__version__ = '0.17.0'
+
 __all__ = ['ApplicationNotFoundError', 'app','CommandError', 'con', 'its', 'k']
 
 from aem.findapp import ApplicationNotFoundError

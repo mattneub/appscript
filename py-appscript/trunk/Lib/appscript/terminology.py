@@ -146,7 +146,7 @@ def aetedataforapp(app):
 		if isinstance(e, CommandError) and e.number == -192:
 			aetes = []
 		else:
-			raise RuntimeError, "Can't get terminology for application (%s): %s" % (path or url, e)
+			raise RuntimeError, "Can't get terminology for application (%r): %s" % (app, e)
 	if not isinstance(aetes, list):
 		aetes = [aetes]
 	return [aete.data for aete in aetes if isinstance(aete, AEDesc) and aete.type == 'aete']

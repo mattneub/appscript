@@ -6,7 +6,7 @@ Lots of syntactic sugar allows users to construct query-based references using f
 
 import struct
 
-from CarbonX import kAE
+from CarbonX import kAE, kOSA
 from CarbonX.AE import AECreateList, AECreateDesc
 import aem
 
@@ -212,18 +212,18 @@ def _packUInt32(n): # used to pack csig attributes
 # 'csig' attribute flags (see ASRegistry.h; note: there's no option for 'numeric strings' in 10.4)
 
 _ignoreEnums = [
-	(Keyword('case'), aem.k.CaseConsider,aem.k.CaseIgnore),
-	(Keyword('diacriticals'), aem.k.DiacriticConsider,aem.k.DiacriticIgnore),
-	(Keyword('whitespace'), aem.k.WhiteSpaceConsider,aem.k.WhiteSpaceIgnore),
-	(Keyword('hyphens'), aem.k.HyphensConsider,aem.k.HyphensIgnore),
-	(Keyword('expansion'), aem.k.ExpansionConsider,aem.k.ExpansionIgnore),
-	(Keyword('punctuation'), aem.k.PunctuationConsider,aem.k.PunctuationIgnore),
+	(Keyword('case'), kOSA.kAECaseConsiderMask, kOSA.kAECaseIgnoreMask),
+	(Keyword('diacriticals'), kOSA.kAEDiacriticConsiderMask, kOSA.kAEDiacriticIgnoreMask),
+	(Keyword('whitespace'), kOSA.kAEWhiteSpaceConsiderMask, kOSA.kAEWhiteSpaceIgnoreMask),
+	(Keyword('hyphens'), kOSA.kAEHyphensConsiderMask, kOSA.kAEHyphensIgnoreMask),
+	(Keyword('expansion'), kOSA.kAEExpansionConsiderMask, kOSA.kAEExpansionIgnoreMask),
+	(Keyword('punctuation'), kOSA.kAEPunctuationConsiderMask, kOSA.kAEPunctuationIgnoreMask),
 	]
 
 # default cons, csig attributes
 
-_defaultConsiderations =  _lowLevelCodecs.pack([aem.AEType('case')])
-_defaultConsidsAndIgnores = _packUInt32(aem.k.CaseIgnore)
+_defaultConsiderations =  _lowLevelCodecs.pack([aem.AEEnum(kOSA.kAECase)])
+_defaultConsidsAndIgnores = _packUInt32(kOSA.kAECaseIgnoreMask)
 
 
 ######################################################################
@@ -264,11 +264,11 @@ class Command(_Base):
 			# get user-specified timeout, if any
 			timeout = int(keywordArgs.pop('timeout', 60)) # appscript's default is 60 sec
 			if timeout <= 0:
-				timeout = aem.k.NoTimeout
+				timeout = kAE.kNoTimeOut
 			else:
 				timeout *= 60 # convert to ticks
 			# ignore application's reply?
-			sendFlags = keywordArgs.pop('waitreply', True) and aem.k.WaitReply or aem.k.NoReply
+			sendFlags = keywordArgs.pop('waitreply', True) and kAE.kAEWaitReply or kAE.kAENoReply
 			atts, params = {}, {}
 			# add considering/ignoring attributes (note: most apps currently ignore these)
 			ignoreOptions = keywordArgs.pop('ignore', None)
@@ -530,7 +530,14 @@ class Application(Reference):
 	
 	def _getAppData(self):
 		if self._realAppData is None: # initialise AppData the first time it's actually needed
-			self._realAppData = AppData(self._Application, self._path, self._pid, self._url, self._terms)
+			try:
+				self._realAppData = AppData(self._Application, self._path, self._pid, self._url, self._terms)
+			except Exception, e:
+				import sys, traceback
+				print >> sys.stderr, '(A problem occured in AS_appdata; see first traceback for actual error.)'
+				traceback.print_exc()
+				print >> sys.stderr, '\n\n\n'
+				return 0 # raising an error here (presumably due to bugs) causes Python to go into infinite recursion, so return a bad value instead; that'll throw a [misleading] error downstream
 		return self._realAppData
 	
 	def _setAppData(self, val):

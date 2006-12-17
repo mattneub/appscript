@@ -70,7 +70,7 @@ class Application:
 			args.append('codecs=%r' % self._codecs)
 		return 'aem.Application(%s)' % ', '.join(args)
 			
-	__str__ == __repr__
+	__str__ = __repr__
 	
 	def __eq__(self, val):
 		return self.__class__ == val.__class__ and self.AEM_identity == val.AEM_identity
