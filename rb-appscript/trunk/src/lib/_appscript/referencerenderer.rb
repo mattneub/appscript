@@ -122,7 +122,7 @@ class ReferenceRenderer
 			aem_reference.AEM_resolve(f)
 			return f.result
 		rescue
-			return aem_reference.inspect
+			return "#{new(app_data).app.result}.AS_new_reference(#{aem_reference.inspect})"
 		end
 	end
 

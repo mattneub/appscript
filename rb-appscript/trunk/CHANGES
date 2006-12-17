@@ -1,10 +1,14 @@
-2006-12-13 -- ???
+2006-12-17 -- ???
 
 - added 'p' prefixes to 'pcls' and 'ID  ' keys in DefaultTerminology::ReferenceByCode (minor bugfix)
 
 - in AE::AEDesc, renamed #get to #get_item and added #get_param and #get_attr methods
 
 - improved unpacking of object specifiers and other reference-related AEDescs (10-20% faster)
+
+- added Appscript::Application#AS_new_reference
+
+- referencerenderer now displays accurate representation of an appscript reference when appscript-style representation is unavailable (previously rendered the appscript reference as an aem-style reference string, which was misleading)
 
 
 2006-11-29 -- 0.2.1

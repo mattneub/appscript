@@ -696,6 +696,10 @@ module Appscript
 		
 		#
 		
+		def AS_new_reference(aem_reference)
+			return Reference(@AS_app_data, aem_reference)
+		end
+		
 		def start_transaction(session=nil)
 			@AS_app_data.target.start_transaction(session)
 		end
