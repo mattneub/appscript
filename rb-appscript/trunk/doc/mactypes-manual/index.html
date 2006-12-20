@@ -209,6 +209,27 @@ MacTypes::Alias.path('/some/non/existent/location')
 
         to_s -- returns the measurement as a string, e.g. "3.5 centimeters"</code></pre>
 
+<p>The following unit types are defined as standard:</p>
+
+<pre><code>:centimeters                   :cubic_inches
+:meters                        :cubic_feet
+:kilometers                    :cubic_yards
+:inches                        
+:feet                          :liters
+:yards                         :quarts
+:miles                         :gallons
+                               
+:square_meters                 :grams
+:square_kilometers             :kilograms
+:square_feet                   :ounces
+:square_yards                  :pounds
+:square_miles                  
+                               :degrees_Celsius
+:cubic_centimeters             :degrees_Fahrenheit
+:cubic_meters                  :degrees_Kelvin</code></pre>
+
+<p>Additional application-specific unit types can be added if needed.</p>
+
 <p>For convenience, the <code>Units</code> class also implements an additional class method, <code>Units.method_missing</code>, to allow new values to be created using the unit of measurement as the constructor call, e.g.:</p>
 
 <pre><code>MacTypes::Units.new(14, :inches)</code></pre>
@@ -216,8 +237,6 @@ MacTypes::Alias.path('/some/non/existent/location')
 <p>can also be written as:</p>
 
 <pre><code>MacTypes::Units.inches(14)</code></pre>
-
-<p>See the <a href="../appscript-manual/06_classesandenums.html">Classes and Enumerated Types</a> chapter of the appscript manual for a full list of unit types built into aem/appscript. Additional application-specific unit types can be added if needed.</p>
 
 
 </div>

@@ -302,109 +302,103 @@ module Appscript
 		
 		# default cons, csig attributes
 		
-		DefaultConsiderations =  AEM::DefaultCodecs.pack([AEM::AEType.new('case')])
+		DefaultConsiderations =  AEM::DefaultCodecs.pack([AEM::AEEnum.new(KAE::KAECase)])
 		DefaultConsidersAndIgnores = _pack_uint32(KAE::KAECaseIgnoreMask)
 		
 		##
 		
 		def _send_command(args, name, code, labelled_arg_terms)
-	#		puts "Calling command #{name} \n\twith args #{args.inspect},\n\treference #{self}\n\tinfo #{code.inspect}, #{labelled_arg_terms.inspect}\n\n"
-#			begin # TO DO: enable error handling block once debugging is completed
-				atts = {'subj' => nil}
-				params = {}
-				case args.length
-					when 0
-						keyword_args = {}
-					when 1 # note: if a command takes a hash as its direct parameter, user must pass {} as a second arg otherwise hash will be assumed to be keyword parameters
-						if args[0].is_a?(Hash)
-							keyword_args = args[0]
-						else
-							params['----'] = args[0]
-							keyword_args = {}
-						end
-					when 2
-						params['----'], keyword_args = args
-				else
-					raise ArgumentError, "Too many direct parameters."
-				end
-				if not keyword_args.is_a?(Hash)
-					raise ArgumentError, "Second argument must be a Hash containing zero or more keyword parameters."
-				end
-				# get user-specified timeout, if any
-				timeout = (keyword_args.delete(:timeout) {60}).to_i
-				if timeout <= 0
-					timeout = KAE::KNoTimeOut
-				else
-					timeout *= 60
-				end
-				# default send flags
-				send_flags = KAE::KAECanSwitchLayer
-				# ignore application's reply?
-				send_flags += keyword_args.delete(:wait_reply) == false ? KAE::KAENoReply : KAE::KAEWaitReply
-				# add considering/ignoring attributes
-				ignore_options = keyword_args.delete(:ignore)
-				if ignore_options == nil
-					atts['cons'] = DefaultConsiderations
-					atts['csig'] = DefaultConsidersAndIgnores
-				else
-					atts['cons'] = ignore_options
-					csig = 0
-					IgnoreEnums.each do |option, consider_mask, ignore_mask|
-						csig += ignore_options.include?(option) ? ignore_mask : consider_mask
-					end
-					atts['csig'] = Reference._pack_uint32(csig)
-				end
-				# optionally specify return value type
-				if keyword_args.has_key?(:result_type)
-					params['rtyp'] = keyword_args.delete(:result_type)
-				end
-				# extract labelled parameters, if any
-				keyword_args.each do |param_name, param_value|
-					param_code = labelled_arg_terms[param_name]
-					if param_code == nil
-						raise ArgumentError, "Unknown keyword parameter: #{param_name.inspect}"
-					end
-					params[param_code] = param_value
-				end
-				# apply special cases
-				# Note: appscript does not replicate every little AppleScript quirk when packing event attributes and parameters (e.g. AS always packs a make command's tell block as the subject attribute, and always includes an each parameter in count commands), but should provide sufficient consistency with AS's habits and give good usability in their own right.
-				if @AS_aem_reference != AEM.app # If command is called on a Reference, rather than an Application...
-					if code == 'coresetd'
-						#  if ref.set(...) contains no 'to' argument, use direct argument for 'to' parameter and target reference for direct parameter
-						if params.has_key?('----') and not params.has_key?('data')
-							params['data'] = params['----']
-							params['----'] = @AS_aem_reference
-						elsif not params.has_key?('----')
-							params['----'] = @AS_aem_reference
-						else
-							atts['subj'] = @AS_aem_reference
-						end
-					elsif code == 'corecrel'
-						# this next bit is a bit tricky: 
-						# - While it should be possible to pack the target reference as a subject attribute, when the target is of typeInsertionLoc, CocoaScripting stupidly tries to coerce it to typeObjectSpecifier, which causes a coercion error.
-						# - While it should be possible to pack the target reference as the 'at' parameter, some less-well-designed applications won't accept this and require it to be supplied as a subject attribute (i.e. how AppleScript supplies it).
-						# One option is to follow the AppleScript approach and force users to always supply subject attributes as target references and 'at' parameters as 'at' parameters, but the syntax for the latter is clumsy and not backwards-compatible with a lot of existing appscript code (since earlier versions allowed the 'at' parameter to be given as the target reference). So for now we split the difference when deciding what to do with a target reference: if it's an insertion location then pack it as the 'at' parameter (where possible), otherwise pack it as the subject attribute (and if the application doesn't like that then it's up to the client to pack it as an 'at' parameter themselves).
-						#
-						# if ref.make(...) contains no 'at' argument and target is an insertion reference, use target reference for 'at' parameter...
-						if @AS_aem_reference.is_a?(AEMReference::InsertionSpecifier) and not params.has_key?('insh')
-							params['insh'] = @AS_aem_reference
-						else # ...otherwise pack the target reference as the subject attribute
-							atts['subj'] = @AS_aem_reference
-						end
-					elsif params.has_key?('----')
-						# if user has already supplied a direct parameter, pack that reference as the subject attribute
-						atts['subj'] = @AS_aem_reference
+			atts = {'subj' => nil}
+			params = {}
+			case args.length
+				when 0
+					keyword_args = {}
+				when 1 # note: if a command takes a hash as its direct parameter, user must pass {} as a second arg otherwise hash will be assumed to be keyword parameters
+					if args[0].is_a?(Hash)
+						keyword_args = args[0]
 					else
-						# pack that reference as the direct parameter
-						params['----'] = @AS_aem_reference
+						params['----'] = args[0]
+						keyword_args = {}
 					end
+				when 2
+					params['----'], keyword_args = args
+			else
+				raise ArgumentError, "Too many direct parameters."
+			end
+			if not keyword_args.is_a?(Hash)
+				raise ArgumentError, "Second argument must be a Hash containing zero or more keyword parameters."
+			end
+			# get user-specified timeout, if any
+			timeout = (keyword_args.delete(:timeout) {60}).to_i
+			if timeout <= 0
+				timeout = KAE::KNoTimeOut
+			else
+				timeout *= 60
+			end
+			# default send flags
+			send_flags = KAE::KAECanSwitchLayer
+			# ignore application's reply?
+			send_flags += keyword_args.delete(:wait_reply) == false ? KAE::KAENoReply : KAE::KAEWaitReply
+			# add considering/ignoring attributes
+			ignore_options = keyword_args.delete(:ignore)
+			if ignore_options == nil
+				atts['cons'] = DefaultConsiderations
+				atts['csig'] = DefaultConsidersAndIgnores
+			else
+				atts['cons'] = ignore_options
+				csig = 0
+				IgnoreEnums.each do |option, consider_mask, ignore_mask|
+					csig += ignore_options.include?(option) ? ignore_mask : consider_mask
 				end
-#			rescue => e
-#				raise Appscript::CommandError.new(self, name, args, e)
-#			end
+				atts['csig'] = Reference._pack_uint32(csig)
+			end
+			# optionally specify return value type
+			if keyword_args.has_key?(:result_type)
+				params['rtyp'] = keyword_args.delete(:result_type)
+			end
+			# extract labelled parameters, if any
+			keyword_args.each do |param_name, param_value|
+				param_code = labelled_arg_terms[param_name]
+				if param_code == nil
+					raise ArgumentError, "Unknown keyword parameter: #{param_name.inspect}"
+				end
+				params[param_code] = param_value
+			end
+			# apply special cases
+			# Note: appscript does not replicate every little AppleScript quirk when packing event attributes and parameters (e.g. AS always packs a make command's tell block as the subject attribute, and always includes an each parameter in count commands), but should provide sufficient consistency with AS's habits and give good usability in their own right.
+			if @AS_aem_reference != AEM.app # If command is called on a Reference, rather than an Application...
+				if code == 'coresetd'
+					#  if ref.set(...) contains no 'to' argument, use direct argument for 'to' parameter and target reference for direct parameter
+					if params.has_key?('----') and not params.has_key?('data')
+						params['data'] = params['----']
+						params['----'] = @AS_aem_reference
+					elsif not params.has_key?('----')
+						params['----'] = @AS_aem_reference
+					else
+						atts['subj'] = @AS_aem_reference
+					end
+				elsif code == 'corecrel'
+					# this next bit is a bit tricky: 
+					# - While it should be possible to pack the target reference as a subject attribute, when the target is of typeInsertionLoc, CocoaScripting stupidly tries to coerce it to typeObjectSpecifier, which causes a coercion error.
+					# - While it should be possible to pack the target reference as the 'at' parameter, some less-well-designed applications won't accept this and require it to be supplied as a subject attribute (i.e. how AppleScript supplies it).
+					# One option is to follow the AppleScript approach and force users to always supply subject attributes as target references and 'at' parameters as 'at' parameters, but the syntax for the latter is clumsy and not backwards-compatible with a lot of existing appscript code (since earlier versions allowed the 'at' parameter to be given as the target reference). So for now we split the difference when deciding what to do with a target reference: if it's an insertion location then pack it as the 'at' parameter (where possible), otherwise pack it as the subject attribute (and if the application doesn't like that then it's up to the client to pack it as an 'at' parameter themselves).
+					#
+					# if ref.make(...) contains no 'at' argument and target is an insertion reference, use target reference for 'at' parameter...
+					if @AS_aem_reference.is_a?(AEMReference::InsertionSpecifier) and not params.has_key?('insh')
+						params['insh'] = @AS_aem_reference
+					else # ...otherwise pack the target reference as the subject attribute
+						atts['subj'] = @AS_aem_reference
+					end
+				elsif params.has_key?('----')
+					# if user has already supplied a direct parameter, pack that reference as the subject attribute
+					atts['subj'] = @AS_aem_reference
+				else
+					# pack that reference as the direct parameter
+					params['----'] = @AS_aem_reference
+				end
+			end
 			# build and send the Apple event, returning its result, if any
 			begin
-				# puts 'SENDING EVENT: ' + [code, params, atts, timeout, send_flags].inspect
 				return @AS_app_data.target.event(code, params, atts, 
 						KAE::KAutoGenerateReturnID, @AS_app_data).send(timeout, send_flags)
 			rescue => e
