@@ -152,7 +152,7 @@ def aetedataforapp(app):
 	return [aete.data for aete in aetes if isinstance(aete, AEDesc) and aete.type == 'aete']
 
 
-def tablesforaetedata(aetes): # TO DO: rename tablesforaetedata
+def tablesforaetedata(aetes):
 	"""Build terminology tables from a list of unpacked aete byte strings.
 		Result : tuple of dict -- (typebycode, typebyname, referencebycode, referencebyname)
 	"""

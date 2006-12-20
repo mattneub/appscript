@@ -32,12 +32,9 @@
     resulttype : None | Keyword -- AE type to coerce return value to (e.g. k.FSRef)
     ignore : None | list of Keyword -- string characteristics to ignore
                                        when evaluating references [1]
-    telltarget : None | reference -- reference to use as the event's subject [2]
     Result : anything -- value returned by application, if any</code></pre>
 
 <p>[1] Introduced in OS 10.4. Note that most applications currently ignore this setting and use default behaviour (ignore case). The Keyword list should contain zero or more of the following enumerators: <code>k.case</code>, <code>k.diacriticals</code>, <code>k.expansion</code>, <code>k.hyphens</code>, <code>k.punctuation</code>, <code>k.whitespace</code>.</p>
-
-<p>[2] A compatibility feature for use in dealing with problem applications that require a subject ('subj') attribute to be specified. <em>Requiring</em> a subject attribute violates the Scripting Interface Guidelines, but some applications do so anyway so use the <code>telltarget</code> argument when dealing with those. (In an AppleScript-generated Apple event, the subject attribute is a reference specified by a tell block that cannot be packed as the direct parameter, either because the command already has a direct parameter or doesn't have one.)</p>
 
 <p>Examples:</p>
 

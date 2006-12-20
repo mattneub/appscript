@@ -15,10 +15,8 @@ __all__ = ['typebycode', 'enumerationbycode']
 
 typebycode = {}
 
-for defs in [appscripttypedefs.alltypes, 
-		appscripttypedefs.commontypes, 
-		appscripttypedefs.pseudotypes,
-		appscripttypedefs.remappedtypes]:
+for defs in [appscripttypedefs.types, 
+		appscripttypedefs.pseudotypes]:
 	for name, code in defs:
 		typebycode[code] = name
 

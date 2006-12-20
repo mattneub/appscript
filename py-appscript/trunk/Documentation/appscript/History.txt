@@ -20,7 +20,11 @@ HISTORY
 
 - added __version__ attribute
 
+- reference.Command.__call__ now only raises CommandError for errors raised when sending an event; errors that occur while packing it are individually reported
 
+- now always packs a subject attribute (typeSubjectAttr); this is normally a null descriptor. (Note: AS includes a subject attribute for commands whose direct parameter isn't a reference, e.g. make. Photoshop CS2's make command requires either an 'at' parameter or subject attribute and throws an error if it doesn't get one. Including a subject attribute by default should hopefully prevent any complaints.)
+
+- removed built-in 'telltarget' argument to simplify the API a bit. Now, if a command is called on a reference and already has a direct parameter, the reference is packed as the subject attribute instead. Also, 'telltarget' is no longer a reserved word.
 
 
 2006-08-16 -- 0.16.2

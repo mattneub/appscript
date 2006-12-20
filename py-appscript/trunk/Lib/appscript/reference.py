@@ -197,7 +197,7 @@ class AppData(aem.Codecs):
 	def help(self, flags, ref):
 		# Stub method; initialises Help object and replaces itself with a real help() function the first time it's called.
 		from helpsystem import Help
-		helpObj = Help(aetedataforapp(app))
+		helpObj = Help(aetedataforapp(self.target))
 		self.help = lambda flags, ref: helpObj.help(flags, ref) # replace stub method with real help
 		return self.help(flags, ref) # call real help. Note that help system is responsible for providing a return value (usually the same reference it was called upon, but it may modify this).
 
@@ -257,67 +257,68 @@ class Command(_Base):
 	
 	def __call__(self, *args, **kargs):
 		keywordArgs = kargs.copy()
+		if len(args) > 1:
+			raise TypeError, "Command received more than one direct parameter %r." % (args,)
+		# get user-specified timeout, if any
+		timeout = int(keywordArgs.pop('timeout', 60)) # appscript's default is 60 sec
+		if timeout <= 0:
+			timeout = kAE.kNoTimeOut
+		else:
+			timeout *= 60 # convert to ticks
+		# ignore application's reply?
+		sendFlags = keywordArgs.pop('waitreply', True) and kAE.kAEWaitReply or kAE.kAENoReply
+		atts, params = {'subj':None}, {}
+		# add considering/ignoring attributes (note: most apps currently ignore these)
+		ignoreOptions = keywordArgs.pop('ignore', None)
+		if ignoreOptions is None:
+			atts['cons'] = _defaultConsiderations # 'csig' obsoletes 'cons', but latter is retained for compatibility
+			atts['csig'] = _defaultConsidsAndIgnores
+		else:
+			atts['cons'] = ignoreOptions
+			csig = 0
+			for option, considerMask, ignoreMask in _ignoreEnums:
+				csig += option in ignoreOptions and ignoreMask or considerMask
+			atts['csig'] = _packUInt32(csig)
+		# optionally have application supply return value as specified type
+		if keywordArgs.has_key('resulttype'):
+			params['rtyp'] = keywordArgs.pop('resulttype')
+		# add direct parameter, if any
+		if args:
+			params['----'] = args[0]
+		# extract Apple event's labelled parameters, if any
 		try:
-			if len(args) > 1:
-				raise TypeError, "Command received more than one direct parameter %r." % (args,)
-			# get user-specified timeout, if any
-			timeout = int(keywordArgs.pop('timeout', 60)) # appscript's default is 60 sec
-			if timeout <= 0:
-				timeout = kAE.kNoTimeOut
-			else:
-				timeout *= 60 # convert to ticks
-			# ignore application's reply?
-			sendFlags = keywordArgs.pop('waitreply', True) and kAE.kAEWaitReply or kAE.kAENoReply
-			atts, params = {}, {}
-			# add considering/ignoring attributes (note: most apps currently ignore these)
-			ignoreOptions = keywordArgs.pop('ignore', None)
-			if ignoreOptions is None:
-				atts['cons'] = _defaultConsiderations # 'csig' obsoletes 'cons', but latter is retained for compatibility
-				atts['csig'] = _defaultConsidsAndIgnores
-			else:
-				atts['cons'] = ignoreOptions
-				csig = 0
-				for option, considerMask, ignoreMask in _ignoreEnums:
-					csig += option in ignoreOptions and ignoreMask or considerMask
-				atts['csig'] = _packUInt32(csig)
-			# optionally specify 'subj' attribute, for dealing with dodgy apps that require one
-			if keywordArgs.has_key('telltarget'):
-				atts['subj'] = keywordArgs.pop('telltarget')
-			# optionally have application supply return value as specified type
-			if keywordArgs.has_key('resulttype'):
-				params['rtyp'] = keywordArgs.pop('resulttype')
-			# add direct parameter, if any
-			if args:
-				params['----'] = args[0]
-			# extract Apple event's labelled parameters, if any
-			try:
-				for name, value in keywordArgs.items():
-					params[self._labelledArgTerms[name]] = value
-			except KeyError:
-				raise TypeError, 'Unknown keyword argument %r.' % name
-			# apply special cases for certain commands (make, set, any command that takes target object specifier as its direct parameter); appscript provides these as a convenience to users, making its syntax more concise, OO-like and nicer to use
-			if self._aemreference is not aem.app:
-				if self._code == 'corecrel':
-					# Special case: if ref.make(...) contains no 'at' argument and target is a reference, use target reference for 'at' parameter
-					if params.has_key('insh'):
-						raise TypeError, "Too many direct parameters: 'make' command was called on a reference but already has an 'at' parameter."
-					params['insh'] = self._aemreference
-				elif self._code == 'coresetd':
-					# Special case: if ref.set(...) contains no 'to' argument, use direct argument for 'to' parameter and target reference for direct parameter
-					if  params.has_key('----') and not params.has_key('data'):
-						params['data'] = params['----']
-						params['----'] = self._aemreference
-					elif not params.has_key('----'):
-						params['----'] = self._aemreference
-					else:
-						raise TypeError, "Too many direct parameters: 'set' command was called on a reference but already has a direct parameter."
-				else:
-					# Special case: if command is called on a reference and user hasn't already supplied a direct parameter, use that reference as direct parameter
-					if params.has_key('----'):
-						raise TypeError, "Too many direct parameters: command was called on a reference but already has a direct parameter."
+			for name, value in keywordArgs.items():
+				params[self._labelledArgTerms[name]] = value
+		except KeyError:
+			raise TypeError, 'Unknown keyword argument %r.' % name
+		# apply special cases for certain commands (make, set, any command that takes target object specifier as its direct parameter); appscript provides these as a convenience to users, making its syntax more concise, OO-like and nicer to use
+		if self._aemreference is not aem.app:
+			if self._code == 'coresetd':
+				# Special case: if ref.set(...) contains no 'to' argument, use direct argument for 'to' parameter and target reference for direct parameter
+				if  params.has_key('----') and not params.has_key('data'):
+					params['data'] = params['----']
 					params['----'] = self._aemreference
-		except Exception, e:
-			raise CommandError(self, (args, kargs), e)
+				elif not params.has_key('----'):
+					params['----'] = self._aemreference
+				else:
+					atts['subj'] = self._aemreference
+			elif self._code == 'corecrel':
+				# this next bit is a bit tricky: 
+				# - While it should be possible to pack the target reference as a subject attribute, when the target is of typeInsertionLoc, CocoaScripting stupidly tries to coerce it to typeObjectSpecifier, which causes a coercion error.
+				# - While it should be possible to pack the target reference as the 'at' parameter, some less-well-designed applications won't accept this and require it to be supplied as a subject attribute (i.e. how AppleScript supplies it).
+				# One option is to follow the AppleScript approach and force users to always supply subject attributes as target references and 'at' parameters as 'at' parameters, but the syntax for the latter is clumsy and not backwards-compatible with a lot of existing appscript code (since earlier versions allowed the 'at' parameter to be given as the target reference). So for now we split the difference when deciding what to do with a target reference: if it's an insertion location then pack it as the 'at' parameter (where possible), otherwise pack it as the subject attribute (and if the application doesn't like that then it's up to the client to pack it as an 'at' parameter themselves).
+				#
+				# if ref.make(...) contains no 'at' argument and target is an insertion reference, use target reference for 'at' parameter...
+				if isinstance(self._aemreference, aem.types.objectspecifiers.specifier.InsertionSpecifier) and not params.has_key('insh'):
+					params['insh'] = self._aemreference
+				else: # ...otherwise pack the target reference as the subject attribute
+					atts['subj'] = self._aemreference
+			elif params.has_key('----'):
+				# if user has already supplied a direct parameter, pack that reference as the subject attribute
+					atts['subj'] = self._aemreference
+				else:
+					# pack that reference as the direct parameter
+					params['----'] = self._aemreference
 		# build and send the Apple event, returning its result, if any
 		try:
 			return self.AS_appdata.target.event(self._code, params, atts, codecs=self.AS_appdata).send(timeout, sendFlags)
@@ -531,13 +532,13 @@ class Application(Reference):
 		if self._realAppData is None: # initialise AppData the first time it's actually needed
 			try:
 				self._realAppData = AppData(self._Application, self._path, self._pid, self._url, self._terms)
-			except:
-				# For some reason, allowing the original exception to propagate here results in an infinite recursion error, so trap it, print it, then throw a general RuntimeError.
+			except: # kludge to trap and report any errors that occur while initialising AppData object
+				# Note: for some reason, allowing the original exception to propagate beyond here results in an infinite recursion error, so trap it, print it, then throw a general RuntimeError.
 				import sys, traceback
 				print >> sys.stderr, 'Traceback for AS_appdata error:'
 				traceback.print_exc()
 				print >> sys.stderr
-				raise RuntimeError, 'An error occured in AS_appdata.'
+				raise RuntimeError, 'An error occured while initialising AS_appdata.'
 		return self._realAppData
 	
 	def _setAppData(self, val):

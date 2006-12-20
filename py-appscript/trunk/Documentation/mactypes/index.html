@@ -197,14 +197,33 @@ app('older app').documents[1].save(in_=f.fsspec)</code></pre>
 
         type : str -- returns the unit of measurement</code></pre>
 
+<p>The following unit types are defined as standard:</p>
+
+<pre><code>'centimeters'                  'cubic inches'
+'meters'                       'cubic feet'
+'kilometers'                   'cubic yards'
+'inches'                       
+'feet'                         'liters'
+'yards'                        'quarts'
+'miles'                        'gallons'
+                              
+'square meters'                'grams'
+'square kilometers'            'kilograms'
+'square feet'                  'ounces'
+'square yards'                 'pounds'
+'square miles'                 
+                               'degrees Celsius'
+'cubic centimeters'            'degrees Fahrenheit'
+'cubic meters'                 'degrees Kelvin'</code></pre>
+
+<p>Additional application-specific unit types can be added if needed.</p>
+
 
 <h3>Examples</h3>
 
 <pre><code>mactypes.Units(14, 'inches')</code></pre>
 
 <pre><code>mactypes.Units(3.5, 'square meters')</code></pre>
-
-<p>See the <a href="../appscript/06_classesandenums.html">Classes and Enumerated Types</a> chapter of the appscript manual for a full list of unit types built into aem/appscript. Additional application-specific unit types can be added if needed.</p>
 
 
 </div>

@@ -184,7 +184,7 @@ pseudotypes = [ # non-concrete types that are only used for documentation purpos
 ]
 
 
-properties = [
+properties = [ # TO DO: needed?
 		# some apps (e.g. Jaguar Finder) may not define a 'class' property in their dictionaries
 		# defined here since it may be used as a key in record-like structures
 		('class_', 'pcls'),
