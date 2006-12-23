@@ -125,13 +125,7 @@ app('Finder').home.items.get(:result_type =&gt; :alias)</code></pre>
 
 <pre><code>reference.command(direct_parameter[, keyword_parameters])</code></pre>
 
-<p>the reference upon which it is called will be packed as a 'subject' attribute. For example, if the <code>make</code> command is called on a reference, the application will use that reference as its insertion location if there is no <code>at</code> keyword parameter given; i.e.:</p>
-
-<pre><code>insertion_location.make(:new =&gt; some_class)</code></pre>
-
-<p>instead of:</p>
-
-<pre><code>application.make(:new =&gt; some_class, :at =&gt; insertion_location)</code></pre></li>
+<p>the reference upon which it is called will be packed as the Apple event's 'subject' attribute (<code>keySubjectAttr</code>).</p></li>
 
 
 <li><p>When the <code>set</code> command is called on a reference, its <code>to</code> parameter can be written as a direct parameter; i.e.:</p>
@@ -148,6 +142,17 @@ app('Finder').home.items.get(:result_type =&gt; :alias)</code></pre>
 
 <p>The first form is preferred, although all three are supported.</p></li>
 
+
+<li><p>If the <code>make</code> command is called on an insertion location reference, appscript will pack that reference as the Apple event's <code>at</code> parameter if it doesn't already have one; i.e.:</p>
+
+<pre><code>insertion_location.make(:new =&gt; some_class)</code></pre>
+
+<p>is equivalent to:</p>
+
+<pre><code>application.make(:new =&gt; some_class, :at =&gt; insertion_location)</code></pre>
+
+<p>If the <code>make</code> command is called on an object reference, appscript will pack that reference as the Apple event's 'subject' attribute. (Note that some applications may not handle the subject attribute correctly, in which case the reference should be passed as the <code>make</code> command's <code>at</code> parameter instead.)</p></li>
+
 </ol>
 
 
@@ -155,39 +160,36 @@ app('Finder').home.items.get(:result_type =&gt; :alias)</code></pre>
 
 <p>Unlike AppleScript, which implicitly sends a <code>get</code> command to any unresolved application object references at the end of evaluating an expression, appscript only resolves a reference when it receives an appropriate command. For example:</p>
 
-<pre><code>foo = app('Finder').disks</code></pre>
+<pre><code>d = app('TextEdit').documents</code></pre>
 
-<p>is <em>not</em> equivalent to:</p>
+<p>is <em>not</em> the same as:</p>
 
-<pre><code>set foo to disks of application &quot;Finder&quot;</code></pre>
+<pre><code>set d to documents of app &quot;TextEdit&quot;</code></pre>
 
-<p>even though the two may look similar. In the first case, the value assigned to variable <code>foo</code> is a reference, <code>app('Finder').disks</code>. In the second, AppleScript evaluates the <code>disks of application &quot;Finder&quot;</code> reference by performing an implicit <code>get</code> command before assigning the result, a <em>list</em> containing one or more references (one to each disk currently mounted), to variable <code>foo</code>. To assign an unresolved reference to a variable in AppleScript, the reference must be preceded by the <code>a reference to</code> operator. For example:</p>
+<p>even though the two may look similar. In the first case, the value assigned to <code>d</code> is an appscript reference: <code>app('TextEdit').documents</code>. In the second, AppleScript evaluates the <code>documents of app &quot;TextEdit&quot;</code> reference by performing an implicit <code>get</code> command and then assigning its result, a list of references to individual documents, to <code>d</code>. To obtain the original reference as an AppleScript value, the literal reference must be preceded by an <code>a reference to</code> operator as shown below.</p>
 
-<ul>
-<li><p>Getting a reference to all disks:</p>
+<p>To get a single reference to all documents:</p>
 
-<pre><code>set foo to a reference to every disk of application &quot;Finder&quot;
-return foo
---&gt; a reference to every disk of application &quot;Finder&quot;</code></pre>
-
-<pre><code>foo = app('Finder').disks
-print foo
---&gt; app('Finder').disks</code></pre></li>
+<pre><code>set d to a reference to documents of app &quot;TextEdit&quot;
+return d
+--&gt; a reference to documents of app &quot;TextEdit&quot;
 
 
-<li><p>Getting a list of references to each disk:</p>
+d = app('TextEdit').documents
+print d
+--&gt; app('TextEdit').documents</code></pre>
 
-<pre><code>set foo to get every disk of application &quot;Finder&quot; -- (the 'get' is optional here)
-return foo
---&gt; {disk &quot;Mac HD&quot; of application &quot;Finder&quot;, disk &quot;ZIP-100&quot; of application &quot;Finder&quot;}</code></pre>
 
-<pre><code>foo = app('Finder').disks.get
-print foo
---&gt; [app('Finder').disks['Mac HD'], app('Finder').disks['ZIP-100']]</code></pre>
+<p>To get a list of references to each document:</p>
 
-</li>
-</ul>
+<pre><code>set d to get documents of app &quot;TextEdit&quot; -- (explicit 'get' is optional)
+return d
+--&gt; {document 1 of app &quot;TextEdit&quot;, document 2 of app &quot;TextEdit&quot;}
 
+
+d = app('TextEdit').documents.get -- (explicit 'get' is required)
+print d
+--&gt; [app('TextEdit').documents[1], app('TextEdit').documents[2]]</code></pre>
 
 
 </div>

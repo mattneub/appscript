@@ -52,8 +52,8 @@ textedit.<em>documents</em>.<em>paragraphs</em>.<em>words</em></code></pre>
 <h3>by Name</h3>
 	
 <p>Syntax:</p>
-<pre><code>elements[specifier]
-        specifier : String -- name of object (as matches its 'name' property)</code></pre>
+<pre><code>elements[selector]
+        selector : String -- name of object (as matches its 'name' property)</code></pre>
 		
 <p>Examples:</p>
 <pre><code>disks['Macintosh HD']
@@ -65,8 +65,8 @@ files['index.html']</code></pre>
 <h3>by Index</h3>
 	
 <p>Syntax:</p>
-<pre><code>elements[specifier]
-        specifier : Fixnum | Bignum -- index of object</code></pre>
+<pre><code>elements[selector]
+        selector : Fixnum | Bignum -- index of object</code></pre>
 		
 <p>Examples:</p>
 <pre><code>words[3]
@@ -78,8 +78,8 @@ items[-1]</code></pre>
 <h3>by ID</h3>
 
 <p>Syntax:</p>
-<pre><code>elements.ID(specifier)
-        specifier : anything -- object's id</code></pre>
+<pre><code>elements.ID(selector)
+        selector : anything -- object's id</code></pre>
 
 <p>Examples:</p>
 <pre><code>windows.ID(4321)</code></pre>
@@ -102,9 +102,9 @@ files.any</code></pre>
 <h3>by Relative Position</h3>
 
 <p>Syntax:</p>
-<pre><code>elements[specifier].previous(class) -- nearest element of a given class to appear 
+<pre><code>elements[selector].previous(class) -- nearest element of a given class to appear 
                                        before the specified element
-elements[specifier].next(class) -- nearest element of a given class to appear 
+elements[selector].next(class) -- nearest element of a given class to appear 
                                    after the specified element
         class : Symbol -- class of element (see <a href="4_classesandenums.html">Classes and Enumerated Types</a>)</code></pre>
 
@@ -209,8 +209,8 @@ its.words[1].starts_with('A').or(
 <p>Syntax:</p>
 <pre><code>elements.start
 elements.end
-elements[specifier].before
-elements[specifier].after</code></pre>
+elements[selector].before
+elements[selector].after</code></pre>
 	
 <p>Examples:</p>
 <pre><code>documents.end
