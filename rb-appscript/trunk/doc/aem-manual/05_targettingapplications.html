@@ -37,7 +37,7 @@
 
         is_running?(path) -- Is an application currently running?
             path : string -- application's path, e.g. '/Applications/iCal.app'
-            Result : bool
+            Result : boolean
     
     Constructors:
 
@@ -61,10 +61,12 @@
 
         event(...) -- construct an Apple event (see next chapter for details)
 
-        start_transaction -- start a new transaction; all Events
-                constructed after start_transaction is called will
-                belong to the same transaction until end_transaction
-                or abort_transaction is called
+        start_transaction(session=nil) -- start a new transaction;
+                all Events constructed after start_transaction is
+                called will belong to the same transaction until
+                end_transaction or abort_transaction is called
+            session : anything -- optional value identifying the 
+                    specific session (where supported)
 
         end_transaction -- end the current transaction
 
