@@ -85,16 +85,16 @@ class Application:
 		if self._transaction != self._kAnyTransactionID: # If user forgot to close a transaction before throwing away the Application object that opened it, try to close it for them. Otherwise application will be left in mid-transaction, preventing anyone else from using it.
 			self.endtransaction()
 	
-	##
+	#######
+	# Utility functions; placed here for convenience
 	
+	# Launch a local application without sending it the usual 'run' event (aevtoapp):
 	launch = staticmethod(connect.launchapp)
 	
-	def isrunning(self): # TO DO: make staticmethod
-		"""Is application running? 
-		
-		Note: this only works for Application objects specified by path, not by URL or AEDesc.
-		"""
-		return connect.isrunning(self._path)
+	# Check if a local application specified by path is running:
+	isrunning = staticmethod(connect.isrunning)
+	
+	#######
 	
 	def reconnect(self):
 		"""If application has quit since this Application object was created, its AEAddressDesc is no longer valid so this Application object will not work even when application is restarted. reconnect() will update this Application object's AEAddressDesc so it's valid again.
@@ -116,11 +116,19 @@ class Application:
 		"""
 		return self._Event(self._address, event, params, atts, self._transaction, returnid, codecs or self._codecs)
 	
-	def starttransaction(self):
+	def starttransaction(self, session=None):
 		"""Start a transaction."""
 		if self._transaction != self._kAnyTransactionID:
 			raise RuntimeError, "Transaction is already active."
-		self._transaction = self._Event(self._address, 'miscbegi', codecs=_defaultCodecs).send()
+		self._transaction = self._Event(self._address, 'miscbegi', 
+				session is not None and {'----':session} or {}, codecs=_defaultCodecs).send()
+	
+	def aborttransaction(self):
+		"""Abort the current transaction."""
+		if self._transaction == self._kAnyTransactionID:
+			raise RuntimeError, "No transaction is active."
+		self._Event(self._address, 'miscttrm', transaction=self._transaction).send()
+		self._transaction = self._kAnyTransactionID
 	
 	def endtransaction(self):
 		"""End the current transaction."""

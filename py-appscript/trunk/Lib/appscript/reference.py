@@ -315,10 +315,10 @@ class Command(_Base):
 					atts['subj'] = self._aemreference
 			elif params.has_key('----'):
 				# if user has already supplied a direct parameter, pack that reference as the subject attribute
-					atts['subj'] = self._aemreference
-				else:
-					# pack that reference as the direct parameter
-					params['----'] = self._aemreference
+				atts['subj'] = self._aemreference
+			else:
+				# pack that reference as the direct parameter
+				params['----'] = self._aemreference
 		# build and send the Apple event, returning its result, if any
 		try:
 			return self.AS_appdata.target.event(self._code, params, atts, codecs=self.AS_appdata).send(timeout, sendFlags)
@@ -328,7 +328,7 @@ class Command(_Base):
 				if e.number in [-600, -609] and self.AS_appdata.path: # event was sent to a local app for which we no longer have a valid address (i.e. the application has quit since this aem.Application object was made).
 					# - If application is running under a new process id, we just update the aem.Application object and resend the event.
 					# - If application isn't running, then we see if the event being sent is one of those allowed to relaunch the application (i.e. 'run' or 'launch'). If it is, the aplication is relaunched, the process id updated and the event resent; if not, the error is rethrown.
-					if not self.AS_appdata.target.isrunning():
+					if not self.AS_appdata.target.isrunning(self.AS_appdata.path):
 						if self._code == 'ascrnoop':
 							aem.Application.launch(self.AS_appdata.path) # relaunch app in background
 						elif self._code != 'aevtoapp': # only 'launch' and 'run' are allowed to restart a local application that's been quit
@@ -550,8 +550,11 @@ class Application(Reference):
 		"""Create a new appscript reference from an aem reference."""
 		return Reference(self.AS_appdata, aemreference)
 	
-	def starttransaction(self):
-		self.AS_appdata.target.starttransaction()
+	def starttransaction(self, session=None):
+		self.AS_appdata.target.starttransaction(session)
+	
+	def aborttransaction(self):
+		self.AS_appdata.target.aborttransaction()
 	
 	def endtransaction(self):
 		self.AS_appdata.target.endtransaction()
