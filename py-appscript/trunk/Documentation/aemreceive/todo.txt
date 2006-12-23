@@ -19,3 +19,5 @@ TO DO
 - add convenience installrunhandler, installopenhandler, installreopenhandler, installquithandler functions? (An installidlehandler would be nice, but problematic unless CarbonEvt grows support for Carbon timers.)
 
 - check attributes unpacker obtains all known attributes.
+
+- kArgMissingValue -- allow missing value constant to be specified as an acceptable parameter type, e.g. ArgMultiChoice(kAE.typeUnicodeText, kArgMissingValue)

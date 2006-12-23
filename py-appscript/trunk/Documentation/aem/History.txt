@@ -18,6 +18,10 @@ HISTORY
 
 - can now create Application instances by Unix PID
 
+- changed Application.isrunning to staticmethod
+
+- added Application.aborttransaction method, and added optional 'session' argument to Application.starttransaction
+
 
 2006-12-03 -- 0.11.1
 

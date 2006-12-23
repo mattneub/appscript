@@ -40,7 +40,12 @@
         launch(path) -- launch an application in background if not
                 already running, and send it a 'ascrnoop' event
             path : FSRef | str -- path to application, 
-                e.g. '/Applications/TextEdit.app'
+                    e.g. '/Applications/TextEdit.app'
+
+        isrunning(path) -- is the specifed application currently running?
+            path : FSRef | str -- application's path,
+                    e.g. '/Applications/iCal.app'
+            Result : bool
     
     Methods:
 
@@ -58,31 +63,27 @@
 
         event(...) -- construct an Apple event (see next chapter for details)
 
-        starttransaction(self) -- start a new transaction; all Events
-                constructed after starttransaction() is called will
-                belong to the same transaction until endtransaction()
-                is called [4]
+        starttransaction(self, session=None) -- start a new transaction;
+                all Events constructed after starttransaction() is called will
+                belong to the same transaction until aborttransaction() or
+                endtransaction() is called
+            session : anything -- optional value identifying the 
+                    specific session (where supported)
 
         endtransaction(self) -- end the current transaction
 
-<!--TO DO: next bit is wrong-->
-
-        isrunning(self) -- Is the targetted application currently running?
-                (Note: this only works for Application objects specified
-                by path, not by URL or AEDesc.)
-            Result : bool -- False if target application is not running
-                    or is running under a different process ID, else True
+        aborttransaction(self) -- abort the current transaction
 
         reconnect(self) -- Make sure this Application object has the current
                 process ID for the target application, relaunching the
                 target application if it's not currently running.
                 (Note: this only works for Application objects specified
-                by path, not by URL or AEDesc.)</code></pre>
+                by path, not by PID, URL or AEDesc.)</code></pre>
 
 
 <h2>Creating <code>Application</code> objects</h2>
 
-<p>When creating a new <code>Application</code> object, at most only one of the following arguments should be given: <code>path</code>, <code>url</code> or <code>desc</code>. If none are given, the current application (host process) is targetted.</p>
+<p>When creating a new <code>Application</code> object, at most only one of the following arguments should be given: <code>path</code>, <code>pid</code>, <code>url</code> or <code>desc</code>. If none are given, the current application (host process) is targetted.</p>
 
 <p>When targetting a local application by path, the full path to the application (or application bundle) must be given, including a <code>.app</code> suffix if present. Note that aem identifies local applications by process serial number for reliability. If the target application is not already running when a new <code>Application</code> instance is created, it will be started automatically so that a PSN can be acquired.</p>
 
@@ -120,7 +121,7 @@ typeProcessSerialNumber</code></pre>
 
 <p>Because local applications are identified by process serial number, an existing <code>Application</code> object created using the <code>path</code> argument will no longer hold a valid <code>AEAddressDesc</code> if the target application quits. Sending events to an invalid address will cause a <code>CommandError</code> -600 ("application isn't running") or -609 ("connection is invalid") to be raised.</p>
 
-<p>The <code>isrunning</code> method can be used to check if a local application is running or not. (It doesn't check if the <code>Application</code> object's <code>AEAddressDesc</code> is valid or not.)</p>
+<p>The <code>isrunning</code> static method can be used to check if a local application is running or not, given its full path.</p>
 
 <p>Calling the <code>reconnect</code> method will create a new <code>AEAddressDesc</code> for an existing <code>Application</code> object. If the application is not running at the time, it will be started automatically.</p>
 

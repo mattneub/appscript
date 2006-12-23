@@ -14,7 +14,7 @@
 
 <!-- top navigation -->
 <div class="navbar">
-	<a href="06_classesandenums.html">Previous</a> | <a href="index.html">Up</a> | <a href="08_objectreferences.html">Next</a>
+	<a href="06_classesandenums.html">Previous</a> | <a href="index.html">Up</a> | <a href="08_realvsgenericreferences.html">Next</a>
 	
 </div>
 
@@ -29,34 +29,36 @@
 
 <p>The arguments to this call are as follows:</p>
 
-<pre><code>app(name=None, id=None, creator=None, url=None, terms=None)
+<pre><code>app(name=None, id=None, creator=None, pid=None, url=None, terms=None)
     name : str -- name or POSIX path of local application
     id : str -- bundle id for a local application
     creator : str -- 4-character creator type for a local application
-    url : str -- eppc URL for a remote running application
+    pid : int -- Unix process id for a local process
+    url : str -- eppc URL for a remote process
     terms : module | bool -- if a module, get terminology from it;
             if True, get terminology from target application;
             if False, use built-in terminology only</code></pre>
 
-<p>To target a local application you must supply <em>one</em> of the following arguments:</p>
+<p>To target an application you must supply at most <em>one</em> of the following arguments:</p>
 
 <dl>
 <dt><code>name</code></dt>
 <dd>The application's filename or POSIX path, e.g. <code>'TextEdit'</code>, <code>'TextEdit.app'</code>, <code>'/Applications/TextEdit.app'</code>. Where a filename is provided, appscript uses LaunchServices to locate the application. Paths beginning with <code>~</code>, e.g. <code>'~/Dev/MyApp.app'</code>, will be expanded automatically. An <code>.app</code> suffix is optional. For example, given the name <code>'TextEdit'</code>, appscript will first search for an application with that exact name. If none is found, it'll automatically add a <code>.app</code> suffix (<code>'TextEdit.app'</code>) and try again.</dd>
 
 <dt><code>id</code></dt>
-<dd>The application's bundle id, e.g. <code>'com.apple.textedit'</code>. Cocoa applications often have unique bundle ids.</dd> 
+<dd>The application's bundle id, e.g. <code>'com.apple.textedit'</code>. Cocoa applications often have unique bundle ids.</dd>
 
 <dt><code>creator</code></dt>
 <dd>A four-character string containing the application's creator type, e.g. <code>'ttxt'</code>. Older Carbon-based applications and some Cocoa-based applications have unique creator types.</dd>
-</dl>
 
-<p>To target an application running on another machine, you must supply the following argument:</p>
+<dt><code>pid</code></dt>
+<dd>A valid Unix process id, e.g. <code>5678</code>.</dd>
 
-<dl>
 <dt><code>url</code></dt>
 <dd>A URL of form <code>eppc://[user[:password]@host/Application%20Name[?[uid=#]&[pid=#]</code>, e.g. <code>eppc://johnsmith:foobar@office-mac.local/TextEdit?uid=501</code>. The host name/IP address and the process name (case-sensitive) are required. The username and password are optional: if omitted, the OS will obtain this information from the user's keychain or display a dialog asking the user to input one or both values. The user id and process id are also optional; if the process id is given, the process name will be ignored.</dd>
 </dl>
+
+<p>If none of these arguments is given, the host process (current application) is targetted.</p>
 
 
 <p>Examples:</p>
@@ -131,9 +133,13 @@ set(reference, to) -- Set an object's data.
 
 <h2>Transaction support</h2>
 
-<p>Application objects implement two additional methods, <code>starttransaction()</code> and <code>endtransaction()</code> that allow a sequence of related commands to be handled as a single operation by applications that support transactions, e.g. FileMaker Pro. Once the application object's <code>starttransaction()</code> method is called, all subsequent commands to that application will be sent as part of the same transaction until <code>endtransaction()</code> is called.</p>
+<p>Application objects implement three additional methods, <code>starttransaction</code>, <code>endtransaction</code> and <code>aborttransaction</code> that allow a sequence of related commands to be handled as a single operation by applications that support transactions, e.g. FileMaker Pro.</p>
 
-<p class="hilitebox">Remember to call <code>endtransaction()</code> at the end of every transaction. (This includes transactions interrupted by a raised exception.)</p>
+<p>Once the application object's <code>starttransaction</code> method is called, all subsequent commands to that application will be sent as part of the same transaction until <code>endtransaction</code> or <code>aborttransaction</code> is called.</p>
+
+<p>The <code>starttransaction</code> method takes an optional <code>session</code> argument that indicates the specific transaction session to open (in applications that support this).</p>
+
+<p class="hilitebox">Remember to call <code>endtransaction</code> or <code>aborttransaction</code> at the end of every transaction. (This includes transactions interrupted by a raised exception.) If a transaction is accidentally left open, appscript will try to end it automatically when the application object is garbage-collected, but this is not guaranteed to succeed.</p>
 
 
 <h2>Local application launching notes</h2>
@@ -178,7 +184,7 @@ te.launch()
 
 <!-- bottom navigation -->
 <div class="navbar">
-	<a href="06_classesandenums.html">Previous</a> | <a href="index.html">Up</a> | <a href="08_objectreferences.html">Next</a>
+	<a href="06_classesandenums.html">Previous</a> | <a href="index.html">Up</a> | <a href="08_realvsgenericreferences.html">Next</a>
 	
 </div>
 
