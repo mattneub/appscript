@@ -56,7 +56,7 @@ class UnitTypeCodecs
 		[:degrees_Kelvin, KAE::TypeDegreesK],
 	]
 	
-	DefaultPacker = proc { |value, code| AE::AEDesc.new(code, [value].pack('d')) }
+	DefaultPacker = proc { |units, code| AE::AEDesc.new(code, [units.value].pack('d')) }
 	DefaultUnpacker = proc { |desc, name| MacTypes::Units.new(desc.data.unpack('d')[0], name) }
 
 	def initialize
@@ -81,7 +81,7 @@ class UnitTypeCodecs
 	def pack(val)
 		if val.is_a?(MacTypes::Units)
 			code, packer = @type_by_name.fetch(val.type) { |val| raise IndexError, "Unknown unit type: #{val.inspect}" }
-			return [true, packer.call(val.value, code)]
+			return [true, packer.call(val, code)]
 		else
 			return [false, val]
 		end
