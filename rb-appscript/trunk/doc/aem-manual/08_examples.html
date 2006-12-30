@@ -21,7 +21,7 @@
 <div id="content">
 
 
-<h2>Identifying Applications</h2>
+<h2>Identifying applications</h2>
 
 <pre><code># application "Macintosh HD:Applications:TextEdit.app"
 textedit = AEM::Application.by_path('/Applications/TextEdit.app')
@@ -33,7 +33,7 @@ textedit = AEM::Application.by_path(FindApp.by_name('TextEdit'))
 textedit = AEM::Application.by_url('eppc://my-mac.local/TextEdit')</code></pre>
 
 
-<h2>Building References</h2>
+<h2>Building references</h2>
 
 <pre><code># name (of application)
 AEM.app.property('pnam')
@@ -53,7 +53,7 @@ AEM.app.elements('docu').first.elements('cpar').by_range(
 AEM.app.elements('docu').by_index(1).elements('cpar').by_filter(AEM.its.ne("\n"))</code></pre>
 
 
-<h2>Sending Events</h2>
+<h2>Sending events</h2>
 
 <pre><code># quit TextEdit
 textedit.event('corequit').send

@@ -32,7 +32,7 @@ app('Finder')
 app('/Applications/TextEdit.app')</code></pre>
 
 
-<h2>Property References</h2>
+<h2>Property references</h2>
 
 <pre><code># a reference to startup disk of application &quot;Finder&quot;
 app('Finder').startup_disk
@@ -51,7 +51,7 @@ app('TextEdit').documents.text
 app('TextEdit').documents[1].text.paragraphs.characters[1].color</code></pre>
 
 
-<h2>All Elements References</h2>
+<h2>All elements references</h2>
 
 <pre><code># a reference to disks of application &quot;Finder&quot;
 app('Finder').disks
@@ -61,7 +61,7 @@ app('Finder').disks
 app('TextEdit').documents.text.paragraphs.words</code></pre>
 
 
-<h2>Single Element References</h2>
+<h2>Single element references</h2>
 
 <pre><code># a reference to disk 1 of application &quot;Finder&quot;
 app('Finder').disks[1]
@@ -79,7 +79,7 @@ app('TextEdit').documents.last.text.paragraphs.middle
 app('Finder').home.files.any</code></pre>
 
 
-<h2>Relative References</h2>
+<h2>Relative references</h2>
 
 <pre><code># a reference to paragraph before paragraph 6 of text of document 1 of application &quot;TextEdit&quot;
 app('TextEdit').documents[1].text.paragraphs[6].previous(:paragraph)
@@ -88,7 +88,7 @@ app('TextEdit').documents[1].text.paragraphs[6].previous(:paragraph)
 app('Tex-Edit Plus').documents[1].characters[30].next(:paragraph)</code></pre>
 
 
-<h2>Element Range References</h2>
+<h2>Element range references</h2>
 
 <pre><code># a reference to words 1 thru 4 of text of document 1 of application &quot;TextEdit&quot;
 app('TextEdit').documents[1].text.words[1, 4]
@@ -103,7 +103,7 @@ app('Finder').home.folders['Documents', 'Music']
 app('Tex-Edit Plus').documents[1].text[con.words[3], con.paragraphs[7]]</code></pre>
 
 
-<h2>Filter References</h2>
+<h2>Filter references</h2>
 
 <pre><code># a reference to every document of application &quot;TextEdit&quot; whose text is &quot;\n&quot;
 app('TextEdit').documents[its.text.eq("\n")]
@@ -119,7 +119,7 @@ app('Finder').home.folders['Documents'].files[
     its.name_extension.eq('txt').AND(its.size.lt(10240))]</code></pre>
 
 
-<h2>Insertion Location References</h2>
+<h2>Insertion location references</h2>
 
 <pre><code># a reference to end of documents of application &quot;TextEdit&quot;
 app('TextEdit').documents.end
