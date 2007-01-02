@@ -166,24 +166,24 @@ p ref
         after
             Result : InsertionSpecifier
 
-        property(property_code)
-            property_code : str -- four-char code
+        property(code)
+            code : str -- four-char property code, e.g. 'pnam'
             Result : Property
 
         user_property(name)
             name : str
             Result : UserProperty
 
-        elements(class_code)
-            class_code : str -- four-char code
+        elements(ccode)
+            code : str -- four-char class code, e.g. 'docu'
             Result : AllElements
 
-        previous(class_code)
-            class_code : str -- four-char code
+        previous(code)
+            code : str -- four-char class code
             Result : Element
 
-        next(class_code)
-            class_code : str -- four-char code
+        next(code)
+            code : str -- four-char class code
             Result : Element
         
         -- Note: following methods are for use on
@@ -273,13 +273,13 @@ p ref
             key : anything -- the object's unique id
             Result : ElementByID
 
-        by_range(start_ref, end_ref)
-            start_ref : Element -- an app- or con-based reference
-            end_ref : Element -- an app- or con-based reference
+        by_range(start, stop)
+            start : Element -- an app- or con-based reference
+            stop : Element -- an app- or con-based reference
             Result : ElementByRange
 
-        by_filter(testref)
-            test_ref : Test -- an its-based reference
+        by_filter(test)
+            test : Test -- an its-based reference
             Result : ElementsByFilter</code></pre>
 
 

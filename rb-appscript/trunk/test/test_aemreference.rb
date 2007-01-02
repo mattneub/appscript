@@ -103,9 +103,9 @@ class TC_AEMReferences < Test::Unit::TestCase
 		assert_not_equal(AEMReference::App.elements('ctxt').property('ctxt'), AEMReference::App.property('ctxt').property('ctxt'))
 		assert_not_equal(AEMReference::App.elements('ctxt').property('ctxt'), 333)
 		assert_not_equal(333, AEMReference::App.property('ctxt').property('ctxt'))
-		# by-range and by-filter references do basic type checking to ensure a reference is given
-		assert_raises(TypeError) { AEMReference::App.elements('docu').by_range(1, 2) }
-		assert_raises(TypeError) { AEMReference::App.elements('docu').by_filter(1) }
+#		# by-range and by-filter references do basic type checking to ensure a reference is given
+#		assert_raises(TypeError) { AEMReference::App.elements('docu').by_range(1, 2) }
+#		assert_raises(TypeError) { AEMReference::App.elements('docu').by_filter(1) }
 		
 	end
 end

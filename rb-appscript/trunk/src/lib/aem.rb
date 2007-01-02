@@ -58,8 +58,7 @@ module AEM
 		require "weakref"
 		
 		private_class_method :new
-		attr_reader :hash, :identity
-		protected :identity
+		attr_reader :hash, :identity, :address_desc
 		
 		#######
 		# Workaround for lack of proper destructors in Ruby; see #initialize method.
@@ -80,7 +79,7 @@ module AEM
 			# identity is used by #inspect, #hash, #==
 			@_transaction = KAE::KAnyTransactionID
 			@_path = path
-			@_address = address_desc
+			@address_desc = address_desc
 			@identity = identity
 			@hash = identity.hash
 			# workaround for lack of proper destructors; if a transaction is still open when Application instance is garbage collected, the following finalizer will automatically close it. Note: object IDs were different for some reason, so class maintains its own unique ids.
@@ -89,7 +88,7 @@ module AEM
 			ObjectSpace.define_finalizer(WeakRef.new(self), proc do
 				transaction_id = @@_transaction_ids_by_app_no.delete(app_number)
 				if transaction_id != KAE::KAnyTransactionID
-					self.class::Event.new(@_address, 'miscendt', {}, {}, transaction_id).send(60, KAE::KAENoReply)
+					self.class::Event.new(@address_desc, 'miscendt', {}, {}, transaction_id).send(60, KAE::KAENoReply)
 				end
 			end)
 		end
@@ -166,7 +165,7 @@ module AEM
 			# Note that this only works for Application objects created via the by_path constructor. 
 			# Also note that any Event objects created prior to calling #reconnect will still be invalid.
 			if @_path
-				@_address = Connect.local_app(@_path)
+				@address_desc = Connect.local_app(@_path)
 			end
 			return
 		end
@@ -178,7 +177,7 @@ module AEM
 			#	atts : hash -- a dict of form {AE_code:anything,...} containing zero or more event attributes (event info)
 			#	return_id : integer  -- reply event's ID
 			#	codecs : Codecs -- codecs object to use when packing/unpacking this event
-			return self.class::Event.new(@_address, event, params, atts, @_transaction, return_id, codecs)
+			return self.class::Event.new(@address_desc, event, params, atts, @_transaction, return_id, codecs)
 		end
 		
 		def start_transaction(session=nil)
@@ -186,7 +185,7 @@ module AEM
 			if @_transaction != KAE::KAnyTransactionID
 				raise RuntimeError, "Transaction is already active."
 			end
-			@_transaction = self.class::Event.new(@_address, 'miscbegi', session != nil ? {'----' => session} : {}).send
+			@_transaction = self.class::Event.new(@address_desc, 'miscbegi', session != nil ? {'----' => session} : {}).send
 			@@_transaction_ids_by_app_no[@app_number] = @_transaction
 			return
 		end
@@ -196,7 +195,7 @@ module AEM
 			if @_transaction == KAE::KAnyTransactionID
 				raise RuntimeError, "No transaction is active."
 			end
-			self.class::Event.new(@_address, 'miscttrm', {}, {}, @_transaction).send
+			self.class::Event.new(@address_desc, 'miscttrm', {}, {}, @_transaction).send
 			@_transaction = KAE::KAnyTransactionID
 			@@_transaction_ids_by_app_no[@app_number] = KAE::KAnyTransactionID
 			return
@@ -207,7 +206,7 @@ module AEM
 			if @_transaction == KAE::KAnyTransactionID
 				raise RuntimeError, "No transaction is active."
 			end
-			self.class::Event.new(@_address, 'miscendt', {}, {}, @_transaction).send
+			self.class::Event.new(@address_desc, 'miscendt', {}, {}, @_transaction).send
 			@_transaction = KAE::KAnyTransactionID
 			@@_transaction_ids_by_app_no[@app_number] = KAE::KAnyTransactionID
 			return

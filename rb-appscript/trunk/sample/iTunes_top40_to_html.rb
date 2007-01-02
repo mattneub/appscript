@@ -40,7 +40,7 @@ END
 
 # Choose the file to write
 sa = OSAX.osax('StandardAdditions')
-out_file = sa.choose_file_name(:default_name=>'My iTunes Top 40.html')
+out_file = sa.choose_file_name(:default_name=>'My-iTunes-Top-40.html')
 
 # Get the played count, name and album for every track in iTunes
 tracks = app('iTunes').library_playlists[1].tracks
@@ -58,8 +58,11 @@ tmpl.prettyprint = true
 File.open(out_file.to_s, 'w') { |f| tmpl.expand(f, data) }
 
 # Open file in Safari for viewing
-safari = app('Safari')
-safari.activate
-safari.open(out_file)
+# safari = app('Safari')
+# safari.activate
+# safari.open(out_file)
+
+# Open file in default web browser for viewing
+sa.open_location(out_file.url)
 
 

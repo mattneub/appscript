@@ -71,7 +71,7 @@ module AEMReference
 			@result = []
 		end
 		
-		def method_missing(name, *args)
+		def send(name, *args)
 			self.result.push([name] + args)
 			return self
 		end
@@ -182,8 +182,7 @@ module AEMReference
 		end
 		
 		def AEM_resolve(obj)
-			return @_container.AEM_resolve(obj).send(@_keyname)
-		end
+			return @_container.AEM_resolve(obj).send(@_keyname)		end
 	end
 	
 	
@@ -298,33 +297,33 @@ module AEMReference
 		# property represents a one-to-one relationship, e.g. textedit.documents[1].text.end is valid
 			
 		def start
-			return InsertionSpecifier.new(self, Beginning, 'start')
+			return InsertionSpecifier.new(self, Beginning, :start)
 		end
 		
 		def end
-			return InsertionSpecifier.new(self, End, 'end')
+			return InsertionSpecifier.new(self, End, :end)
 		end
 		
 		def before
-			return InsertionSpecifier.new(self, Before, 'before')
+			return InsertionSpecifier.new(self, Before, :before)
 		end
 		
 		def after
-			return InsertionSpecifier.new(self, After, 'after')
+			return InsertionSpecifier.new(self, After, :after)
 		end
 		
 		# Property and element references can be used on any type of object reference:
 		
-		def property(propertycode)
-			return Property.new(KAE::CProperty, self, propertycode)
+		def property(code)
+			return Property.new(KAE::CProperty, self, code)
 		end
 		
-		def userproperty(name)
+		def user_property(name)
 			return UserProperty.new(KAE::CProperty, self, name)
 		end
 		
-		def elements(elementcode)
-			return AllElements.new(elementcode, self)
+		def elements(code)
+			return AllElements.new(code, self)
 		end
 	
 		# Relative position references
@@ -333,12 +332,12 @@ module AEMReference
 		# simplifies the class structure a bit. As with all reference forms, it's mostly left to the client to
 		# ensure the references they construct can be understood by the target application.
 		
-		def previous(elementcode)
-			return ElementByRelativePosition.new(elementcode, self, Previous, 'previous')
+		def previous(code)
+			return ElementByRelativePosition.new(code, self, Previous, :previous)
 		end
 		
-		def next(elementcode)
-			return ElementByRelativePosition.new(elementcode, self, Next, 'next')
+		def next(code)
+			return ElementByRelativePosition.new(code, self, Next, :next)
 		end
 	end
 	
@@ -352,7 +351,7 @@ module AEMReference
 
 		# Syntax: ref.property(code)
 			
-		By = 'property'
+		By = :property
 		KeyForm = AEMReference.pack_enum(KAE::FormPropertyID)
 		
 		def _pack_key(codecs)
@@ -360,7 +359,7 @@ module AEMReference
 		end
 		
 		def AEM_resolve(obj)
-			return @_container.AEM_resolve(obj).property(@_key)
+			return @_container.AEM_resolve(obj).send(:property, @_key)
 		end
 	end
 	
@@ -371,17 +370,17 @@ module AEMReference
 		# Scriptable applications shouldn't use this reference form, but OSA script applets can.
 		# Note that OSA languages may have additional rules regarding case sensitivity/conversion.
 	
-		# Syntax: ref.userproperty(name)
+		# Syntax: ref.user_property(name)
 	
-		By = 'userproperty'
-		KeyForm = AEMReference.pack_enum('usrp')
+		By = :user_property
+		KeyForm = AEMReference.pack_enum(KAE::FormUserPropertyID)
 		
 		def _pack_key(codecs)
 			return codecs.pack(@_key).coerce(KAE::TypeChar)
 		end
 		
 		def AEM_resolve(obj)
-			return @_container.AEM_resolve(obj).userproperty(@_key)
+			return @_container.AEM_resolve(obj).send(:user_property, @_key)
 		end
 	end
 	
@@ -417,7 +416,7 @@ module AEMReference
 		
 		# Syntax: elements_ref.by_name(string)
 		
-		By = 'by_name'
+		By = :by_name
 		KeyForm = AEMReference.pack_enum(KAE::FormName)
 	end
 	
@@ -429,7 +428,7 @@ module AEMReference
 		
 		# Note that a few apps (e.g. Finder) may allow other values as well (e.g. Aliases/FSRefs)
 		
-		By = 'by_index'
+		By = :by_index
 		KeyForm = AEMReference.pack_enum(KAE::FormAbsolutePosition)
 	end
 	
@@ -439,7 +438,7 @@ module AEMReference
 		
 		# Syntax: elements_ref.by_id(anything)
 		
-		By = 'by_id'
+		By = :by_id
 		KeyForm = AEMReference.pack_enum(KAE::FormUniqueID)
 	end
 	
@@ -511,19 +510,19 @@ module AEMReference
 		Any = AEMReference.pack_absolute_ordinal(KAE::KAEAny)
 		
 		def first
-			return ElementByOrdinal.new(@AEM_want, self, First, 'first')
+			return ElementByOrdinal.new(@AEM_want, self, First, :first)
 		end
 		
 		def middle
-			return ElementByOrdinal.new(@AEM_want, self, Middle, 'middle')
+			return ElementByOrdinal.new(@AEM_want, self, Middle, :middle)
 		end
 		
 		def last
-			return ElementByOrdinal.new(@AEM_want, self, Last, 'last')
+			return ElementByOrdinal.new(@AEM_want, self, Last, :last)
 		end
 		
 		def any
-			return ElementByOrdinal.new(@AEM_want, self, Any, 'any')
+			return ElementByOrdinal.new(@AEM_want, self, Any, :any)
 		end
 		
 		def by_name(name)
@@ -542,8 +541,8 @@ module AEMReference
 			return ElementsByRange.new(@AEM_want, self, [start, stop])
 		end
 		
-		def by_filter(expression)
-			return ElementsByFilter.new(@AEM_want, self, expression)
+		def by_filter(test)
+			return ElementsByFilter.new(@AEM_want, self, test)
 		end
 	end
 	
@@ -581,7 +580,7 @@ module AEMReference
 		end
 		
 		def AEM_resolve(obj)
-			return @_container.AEM_resolve(obj).by_range(*@_key)
+			return @_container.AEM_resolve(obj).send(:by_range, *@_key)
 		end
 	end
 	
@@ -617,7 +616,7 @@ module AEMReference
 		end
 		
 		def AEM_resolve(obj)
-			return @_container.AEM_resolve(obj).by_filter(@_key)
+			return @_container.AEM_resolve(obj).send(:by_filter, @_key)
 		end
 	end
 	
@@ -721,7 +720,7 @@ module AEMReference
 		end
 		
 		def AEM_resolve(obj)
-			return @_container.AEM_resolve(obj).elements(@AEM_want)
+			return @_container.AEM_resolve(obj).send(:elements, @AEM_want)
 		end
 	end
 	
@@ -819,22 +818,22 @@ module AEMReference
 	
 	
 	class GreaterThan < ComparisonTest
-		Name = 'gt'
+		Name = :gt
 		Operator = AEMReference.pack_enum(KAE::KAEGreaterThan)
 	end
 	
 	class GreaterOrEquals < ComparisonTest
-		Name = 'ge'
+		Name = :ge
 		Operator = AEMReference.pack_enum(KAE::KAEGreaterThanEquals)
 	end
 	
 	class Equals < ComparisonTest
-		Name = 'eq'
+		Name = :eq
 		Operator = AEMReference.pack_enum(KAE::KAEEquals)
 	end
 	
 	class NotEquals < Equals
-		Name = 'ne'
+		Name = :ne
 		OperatorNOT = AEMReference.pack_enum(KAE::KAENOT)
 		
 		def AEM_pack_self(codecs)
@@ -843,32 +842,32 @@ module AEMReference
 	end
 	
 	class LessThan < ComparisonTest
-		Name = 'lt'
+		Name = :lt
 		Operator = AEMReference.pack_enum(KAE::KAELessThan)
 	end
 	
 	class LessOrEquals < ComparisonTest
-		Name = 'le'
+		Name = :le
 		Operator = AEMReference.pack_enum(KAE::KAELessThanEquals)
 	end
 	
 	class StartsWith < ComparisonTest
-		Name = 'starts_with'
+		Name = :starts_with
 		Operator = AEMReference.pack_enum(KAE::KAEBeginsWith)
 	end
 	
 	class EndsWith < ComparisonTest
-		Name = 'ends_with'
+		Name = :ends_with
 		Operator = AEMReference.pack_enum(KAE::KAEEndsWith)
 	end
 	
 	class Contains < ComparisonTest
-		Name = 'contains'
+		Name = :contains
 		Operator = AEMReference.pack_enum(KAE::KAEContains)
 	end
 	
 	class IsIn < Contains
-		Name = 'is_in'
+		Name = :is_in
 	
 		def AEM_pack_self(codecs)
 			return AEMReference.pack_list_as(KAE::TypeCompDescriptor, [
@@ -911,24 +910,24 @@ module AEMReference
 	
 	class AND < LogicalTest
 		Operator = AEMReference.pack_enum(KAE::KAEAND)
-		Name = 'and'
+		Name = :and
 	end
 	
 	class OR < LogicalTest
 		Operator = AEMReference.pack_enum(KAE::KAEOR)
-		Name = 'or'
+		Name = :or
 	end
 	
 	class NOT < LogicalTest
 		Operator = AEMReference.pack_enum(KAE::KAENOT)
-		Name = 'not'
+		Name = :not
 			
 		def to_s
 			return "#{@_operands[0].inspect}.not"
 		end
 		
 		def AEM_resolve(obj)
-			return @_operands[0].AEM_resolve(obj).not
+			return @_operands[0].AEM_resolve(obj).send(:not)
 		end
 	end
 	
@@ -971,7 +970,7 @@ module AEMReference
 		
 		# Syntax: app
 		
-		Name = 'app'
+		Name = :app
 		Type = AE::AEDesc.new(KAE::TypeNull, '')
 	end
 	
@@ -981,7 +980,7 @@ module AEMReference
 		
 		# Syntax: con
 		
-		Name = 'con'
+		Name = :con
 		Type = AE::AEDesc.new(KAE::TypeCurrentContainer, '')
 	end
 	
@@ -991,7 +990,7 @@ module AEMReference
 		
 		# Syntax: its
 		
-		Name = 'its'
+		Name = :its
 		Type = AE::AEDesc.new(KAE::TypeObjectBeingExamined, '')
 	end
 	

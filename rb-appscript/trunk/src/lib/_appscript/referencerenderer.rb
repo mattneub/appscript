@@ -24,6 +24,8 @@ class ReferenceRenderer
 		end
 	end
 	
+	##
+	
 	def property(code)
 		name = @_app_data.reference_by_code.fetch('p'+code) { @_app_data.reference_by_code.fetch('e'+code) }
 		@result += ".#{name}"
@@ -71,15 +73,16 @@ class ReferenceRenderer
 		return self
 	end
 	
+	##
+	
 	def app
-		if @_app_data.path
-			@result = "app(#{@_app_data.path.inspect})"
-		elsif @_app_data.pid
-			@result = "app.by_pid(#{@_app_data.pid.inspect})"
-		elsif @_app_data.url
-			@result = "app.by_url(#{@_app_data.url.inspect})"
+		case @_app_data.constructor
+			when :current
+				@result = "app.current"
+			when :by_path
+				@result = "app(#{@_app_data.app_identifier.inspect})"
 		else
-			@result = "app.current"
+			@result = "app.#{@_app_data.constructor}(#{@_app_data.app_identifier.inspect})"
 		end
 		return self
 	end
@@ -94,12 +97,114 @@ class ReferenceRenderer
 		return self
 	end
 	
-	def method_missing(name, *args)
-		if args.length > 0
-			@result += ".#{name.to_s}(#{(args.map { |arg| arg.inspect }).join(', ')})"
-		else
-			@result += ".#{name.to_s}"
-		end
+	##
+	
+	def start
+		@result += ".start"
+		return self
+	end
+	
+	def end
+		@result += ".end"
+		return self
+	end
+	
+	def before
+		@result += ".before"
+		return self
+	end
+	
+	def after
+		@result += ".after"
+		return self
+	end
+	
+	##
+	
+	def first
+		@result += ".first"
+		return self
+	end
+	
+	def middle
+		@result += ".middle"
+		return self
+	end
+	
+	def last
+		@result += ".last"
+		return self
+	end
+	
+	def any
+		@result += ".any"
+		return self
+	end
+	
+	##
+	
+	def gt(val)
+		@result += ".gt(#{_format(val)})"
+		return self
+	end
+	
+	def ge(val)
+		@result += ".ge(#{_format(val)})"
+		return self
+	end
+	
+	def eq(val)
+		@result += ".eq(#{_format(val)})"
+		return self
+	end
+	
+	def ne(val)
+		@result += ".ne(#{_format(val)})"
+		return self
+	end
+	
+	def lt(val)
+		@result += ".lt(#{_format(val)})"
+		return self
+	end
+	
+	def le(val)
+		@result += ".le(#{_format(val)})"
+		return self
+	end
+	
+	def starts_with(val)
+		@result += ".starts_with(#{_format(val)})"
+		return self
+	end
+	
+	def ends_with(val)
+		@result += ".ends_with(#{_format(val)})"
+		return self
+	end
+	
+	def contains(val)
+		@result += ".contains(#{_format(val)})"
+		return self
+	end
+	
+	def is_in(val)
+		@result += ".is_in(#{_format(val)})"
+		return self
+	end
+	
+	def and(*operands)
+		@result += ".and(#{(operands.map { |val| _format(val) }).join(', ')})"
+		return self
+	end
+	
+	def or(*operands)
+		@result += ".or(#{(operands.map { |val| _format(val) }).join(', ')})"
+		return self
+	end
+	
+	def not
+		@result += ".not"
 		return self
 	end
 	

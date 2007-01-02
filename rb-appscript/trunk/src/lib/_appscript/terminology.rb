@@ -279,20 +279,11 @@ module Terminology
 			+ _make_reference_table(terms::Properties, terms::Elements, terms::Commands)
 	end
 	
-	def Terminology.tables_for_app(path, pid, url)
-		if not @@_terminology_cache.has_key?([path, pid, url])
+	def Terminology.tables_for_app(aem_app)
+		if not @@_terminology_cache.has_key?(aem_app.identity)
 			begin
-				if path
-					app = AEM::Application.by_path(path)
-				elsif pid
-					app = AEM::Application.by_pid(pid)
-				elsif url
-					app = AEM::Application.by_url(url)
-				else
-					app = AEM::Application.current
-				end
 				begin
-					aetes = app.event('ascrgdte', {'----' => 0}).send(30 * 60)
+					aetes = aem_app.event('ascrgdte', {'----' => 0}).send(60 * 60)
 				rescue AEM::CommandError => e
 					if  e.number == -192 # aete resource not found
 						aetes = []
@@ -304,11 +295,11 @@ module Terminology
 					aetes = [aetes]
 				end
 			rescue => err
-				raise RuntimeError, "Can't get terminology for application (#{path or pid or url}): #{err}"
+				raise RuntimeError, "Can't get terminology for application (#{aem_app}): #{err}"
 			end
-			@@_terminology_cache[[path, pid, url]] = Terminology.tables_for_aetes(aetes)
+			@@_terminology_cache[aem_app.identity] = Terminology.tables_for_aetes(aetes)
 		end
-		return @@_terminology_cache[[path, pid, url]]
+		return @@_terminology_cache[aem_app.identity]
 	end
 end
 

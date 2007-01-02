@@ -24,34 +24,36 @@ module Appscript
 	
 	class AppData < AEM::Codecs
 	
-		attr_reader :path, :pid, :url
+		attr_reader :constructor, :app_identifier, :reference_codecs
+		attr_writer :reference_codecs
 	
-		def initialize(aem_application_class, path, pid, url, terms)
+		def initialize(aem_application_class, constructor, app_identifier, terms)
 			super()
-			@_aem_application_class = aem_application_class
-			@_terms = terms
-			@path = path
-			@pid = pid
-			@url = url
+			@_aem_application_class = aem_application_class # AEM::Application class or subclass to use when constructing target
+			@_terms = terms # user-supplied terminology tables/true/false
+			@constructor = constructor # name of AEM::Application constructor to use/:by_aem_app
+			@app_identifier = app_identifier # argument for AEM::Application constructor
+			@reference_codecs = AEM::Codecs.new # low-level Codecs object used to unpack references; used by AppData#unpack_object_specifier, AppData#unpack_insertion_loc. Note: this is a bit kludgy, and it's be better to use AppData for all unpacking, but it should be 'good enough' in practice.
 		end
 		
-		def _connect # initialize AEM::Application instance and terminology tables the first time they are needed
-			if @path
-				@target = @_aem_application_class.by_path(@path)
-			elsif @pid
-				@target = @_aem_application_class.by_pid(@pid)
-			elsif @url
-				@target = @_aem_application_class.by_url(@url)
+		def connect # initialize AEM::Application instance and terminology tables the first time they are needed
+			case @constructor
+				when :by_aem_app
+					@target = @aem_app
+				when :current
+					@target = @_aem_application_class.current
 			else
-				@target = @_aem_application_class.current
+				@target = @_aem_application_class.send(@constructor, @app_identifier)
 			end
 			case @_terms
 				when true # obtain terminology from application
-					@type_by_code, @type_by_name, @reference_by_code, @reference_by_name = Terminology.tables_for_app(@path, @pid, @url)
+					@type_by_code, @type_by_name, @reference_by_code, @reference_by_name = Terminology.tables_for_app(@target)
 				when false # use built-in terminology only (e.g. use this when running AppleScript applets)
 					@type_by_code, @type_by_name, @reference_by_code, @reference_by_name = Terminology.default_tables
 				when nil # [developer-only] make Application#methods return names of built-in methods only (needed to generate reservedkeywords.rb file)
 					@type_by_code, @type_by_name, @reference_by_code, @reference_by_name = {}, {}, {}, {}
+				when Array # ready-to-use terminology tables
+					@type_by_code, @type_by_name, @reference_by_code, @reference_by_name = @_terms
 			else # @_terms is [assumed to be] a module containing dumped terminology, so use that
 				@type_by_code, @type_by_name, @reference_by_code, @reference_by_name = Terminology.tables_for_module(@_terms)
 			end
@@ -61,27 +63,27 @@ module Appscript
 		#######
 		
 		def target
-			_connect
+			connect
 			return @target
 		end
 		
 		def type_by_name
-			_connect
+			connect
 			return @type_by_name
 		end
 		
 		def type_by_code
-			_connect
+			connect
 			return @type_by_code
 		end
 		
 		def reference_by_name
-			_connect
+			connect
 			return @reference_by_name
 		end
 		
 		def reference_by_code
-			_connect
+			connect
 			return @reference_by_code
 		end
 		
@@ -101,7 +103,7 @@ module Appscript
 		
 		##
 		
-		ClassType = AEM::AEType.new('pcls')
+		ClassType = AEM::AEType.new(KAE::PClass)
 		
 		def pack_hash(val)
 			record = AE::AEDesc.new_list(true)
@@ -137,7 +139,7 @@ module Appscript
 				end
 			end
 			if usrf
-				record.put_param('usrf', usrf)
+				record.put_param(KAE::KeyASUserRecordFields, usrf)
 			end
 			return record
 		end
@@ -161,7 +163,7 @@ module Appscript
 			dct = {}
 			desc.length().times do |i|
 				key, value = desc.get_item(i + 1, KAE::TypeWildCard)
-				if key == 'usrf'
+				if key == KAE::KeyASUserRecordFields
 					lst = unpack_aelist(value)
 					(lst.length / 2).times do |i|
 						dct[lst[i * 2]] = lst[i * 2 + 1]
@@ -174,18 +176,39 @@ module Appscript
 		end
 		
 		def unpack_object_specifier(desc)
-			return Reference.new(self, DefaultCodecs.unpack_object_specifier(desc))
+			return Reference.new(self, @reference_codecs.unpack(desc))
 		end
 		
 		def unpack_insertion_loc(desc)
-			return Reference.new(self, DefaultCodecs.unpack_insertion_loc(desc))
+			return Reference.new(self, @reference_codecs.unpack(desc))
 		end
 				
-		def unpack_contains_comp_descriptor(op1, op2)
+		def unpack_contains_comp_descriptor(op1, op2) # TO DO: is this needed?
 			if op1.is_a?(Appscript::Reference) and op1.AS_aem_reference.AEM_root == AEMReference::Its
 				return op1.contains(op2)
 			else
 				return super
+			end
+		end
+		
+		def unpack_unknown(desc)
+			return case desc.type
+				when KAE::TypeApplicationBundleID
+					Appscript.app.by_id(desc.data)
+				when KAE::TypeApplicationURL
+					if desc.data[0, 4] == 'file' # workaround for converting AEAddressDescs containing file:// URLs to application paths, since AEAddressDescs containing file URLs don't seem to work correctly
+						Appscript.app(MacTypes::FileURL.url(desc.data).path)
+					else # presumably contains an eppc:// URL
+						Appscript.app.by_url(desc.data)
+					end
+				when KAE::TypeApplSignature
+					Appscript.app.by_creator(AEM::Codecs.four_char_code(desc.data))
+				when KAE::TypeKernelProcessID
+					Appscript.app.by_pid(desc.data.unpack('L')[0])
+				when KAE::TypeMachPort, KAE::TypeProcessSerialNumber
+					Appscript.app.by_aem_app(AEM::Application.by_desc(desc))
+			else
+				super
 			end
 		end
 	end
@@ -215,7 +238,7 @@ module Appscript
 		end
 		
 		def method_missing(name, *args)
-			return AS::GenericReference.new(@_call + [[name, args]])
+			return Appscript::GenericReference.new(@_call + [[name, args]])
 		end
 	
 		def to_s
@@ -259,7 +282,7 @@ module Appscript
 	
 		# users may occasionally require access to the following for creating workarounds to problem apps
 		# note: calling #AS_app_data on a newly created application object will return an AppData instance
-		# that is not yet fully initialised, so remember to call its #_connect method before use
+		# that is not yet fully initialised, so remember to call its #connect method before use
 		attr_reader :AS_aem_reference, :AS_app_data
 		attr_writer :AS_aem_reference, :AS_app_data
 	
@@ -308,7 +331,7 @@ module Appscript
 		##
 		
 		def _send_command(args, name, code, labelled_arg_terms)
-			atts = {'subj' => nil}
+			atts = {KAE::KeySubjectAttr => nil}
 			params = {}
 			case args.length
 				when 0
@@ -317,11 +340,11 @@ module Appscript
 					if args[0].is_a?(Hash)
 						keyword_args = args[0]
 					else
-						params['----'] = args[0]
+						params[KAE::KeyDirectObject] = args[0]
 						keyword_args = {}
 					end
 				when 2
-					params['----'], keyword_args = args
+					params[KAE::KeyDirectObject], keyword_args = args
 			else
 				raise ArgumentError, "Too many direct parameters."
 			end
@@ -342,19 +365,19 @@ module Appscript
 			# add considering/ignoring attributes
 			ignore_options = keyword_args.delete(:ignore)
 			if ignore_options == nil
-				atts['cons'] = DefaultConsiderations
-				atts['csig'] = DefaultConsidersAndIgnores
+				atts[KAE::EnumConsiderations] = DefaultConsiderations
+				atts[KAE::EnumConsidsAndIgnores] = DefaultConsidersAndIgnores
 			else
-				atts['cons'] = ignore_options
+				atts[KAE::EnumConsiderations] = ignore_options
 				csig = 0
 				IgnoreEnums.each do |option, consider_mask, ignore_mask|
 					csig += ignore_options.include?(option) ? ignore_mask : consider_mask
 				end
-				atts['csig'] = Reference._pack_uint32(csig)
+				atts[KAE::EnumConsidsAndIgnores] = Reference._pack_uint32(csig)
 			end
 			# optionally specify return value type
 			if keyword_args.has_key?(:result_type)
-				params['rtyp'] = keyword_args.delete(:result_type)
+				params[KAE::KeyAERequestedType] = keyword_args.delete(:result_type)
 			end
 			# extract labelled parameters, if any
 			keyword_args.each do |param_name, param_value|
@@ -369,13 +392,13 @@ module Appscript
 			if @AS_aem_reference != AEM.app # If command is called on a Reference, rather than an Application...
 				if code == 'coresetd'
 					#  if ref.set(...) contains no 'to' argument, use direct argument for 'to' parameter and target reference for direct parameter
-					if params.has_key?('----') and not params.has_key?('data')
-						params['data'] = params['----']
-						params['----'] = @AS_aem_reference
-					elsif not params.has_key?('----')
-						params['----'] = @AS_aem_reference
+					if params.has_key?(KAE::KeyDirectObject) and not params.has_key?(KAE::KeyAEData)
+						params[KAE::KeyAEData] = params[KAE::KeyDirectObject]
+						params[KAE::KeyDirectObject] = @AS_aem_reference
+					elsif not params.has_key?(KAE::KeyDirectObject)
+						params[KAE::KeyDirectObject] = @AS_aem_reference
 					else
-						atts['subj'] = @AS_aem_reference
+						atts[KAE::KeySubjectAttr] = @AS_aem_reference
 					end
 				elsif code == 'corecrel'
 					# this next bit is a bit tricky: 
@@ -384,17 +407,18 @@ module Appscript
 					# One option is to follow the AppleScript approach and force users to always supply subject attributes as target references and 'at' parameters as 'at' parameters, but the syntax for the latter is clumsy and not backwards-compatible with a lot of existing appscript code (since earlier versions allowed the 'at' parameter to be given as the target reference). So for now we split the difference when deciding what to do with a target reference: if it's an insertion location then pack it as the 'at' parameter (where possible), otherwise pack it as the subject attribute (and if the application doesn't like that then it's up to the client to pack it as an 'at' parameter themselves).
 					#
 					# if ref.make(...) contains no 'at' argument and target is an insertion reference, use target reference for 'at' parameter...
-					if @AS_aem_reference.is_a?(AEMReference::InsertionSpecifier) and not params.has_key?('insh')
-						params['insh'] = @AS_aem_reference
+					if @AS_aem_reference.is_a?(AEMReference::InsertionSpecifier) \
+							and not params.has_key?(KAE::KeyAEInsertHere)
+						params[KAE::KeyAEInsertHere] = @AS_aem_reference
 					else # ...otherwise pack the target reference as the subject attribute
-						atts['subj'] = @AS_aem_reference
+						atts[KAE::KeySubjectAttr] = @AS_aem_reference
 					end
-				elsif params.has_key?('----')
+				elsif params.has_key?(KAE::KeyDirectObject)
 					# if user has already supplied a direct parameter, pack that reference as the subject attribute
-					atts['subj'] = @AS_aem_reference
+					atts[KAE::KeySubjectAttr] = @AS_aem_reference
 				else
 					# pack that reference as the direct parameter
-					params['----'] = @AS_aem_reference
+					params[KAE::KeyDirectObject] = @AS_aem_reference
 				end
 			end
 			# build and send the Apple event, returning its result, if any
@@ -403,10 +427,10 @@ module Appscript
 						KAE::KAutoGenerateReturnID, @AS_app_data).send(timeout, send_flags)
 			rescue => e
 				if e.is_a?(AEM::CommandError)
-					if [-600, -609].include?(e.number) and @AS_app_data.path
-						if not AEM::Application.is_running?(@AS_app_data.path)
+					if [-600, -609].include?(e.number) and @AS_app_data.constructor == :by_path
+						if not AEM::Application.is_running?(@AS_app_data.app_identifier)
 							if code == 'ascrnoop'
-								AEM::Application.launch(@AS_app_data.path)
+								AEM::Application.launch(@AS_app_data.app_identifier)
 							elsif code != 'aevtoapp'
 								raise CommandError.new(self, name, args, e)
 							end
@@ -658,40 +682,48 @@ module Appscript
 			return AEM::Application
 		end
 		
-		def initialize(path, pid, url, terms)
-			super(AppData.new(_aem_application_class, path, pid, url, terms), AEM.app)
+		def initialize(constructor, app_identifier, terms)
+			super(AppData.new(_aem_application_class, constructor, app_identifier, terms), AEM.app)
 		end
 		
 		# constructors
 		
 		def Application.by_name(name, terms=true)
-			return new(FindApp.by_name(name), nil, nil, terms)
+			return new(:by_path, FindApp.by_name(name), terms)
 		end
 		
 		def Application.by_id(id, terms=true)
-			return new(FindApp.by_id(id), nil, nil, terms)
+			return new(:by_path, FindApp.by_id(id), terms)
 		end
 		
 		def Application.by_creator(creator, terms=true)
-			return new(FindApp.by_creator(creator), nil, nil, terms)
+			return new(:by_path, FindApp.by_creator(creator), terms)
 		end
 		
 		def Application.by_pid(pid, terms=true)
-			return new(nil, pid, nil, terms)
+			return new(:by_pid, pid, terms)
 		end
 		
 		def Application.by_url(url, terms=true)
-			return new(nil, nil, url, terms)
+			return new(:by_url, url, terms)
+		end
+		
+		def Application.by_aem_app(aem_app, terms=true)
+			return new(:by_aem_app, aem_app, terms)
 		end
 		
 		def Application.current(terms=true)
-			return new(nil, nil, nil, terms)
+			return new(:current, nil, terms)
 		end
 		
 		#
 		
-		def AS_new_reference(aem_reference)
-			return Reference.new(@AS_app_data, aem_reference)
+		def AS_new_reference(ref)
+			if ref.is_a?(Appscript::GenericReference)
+				return ref.AS_resolve(@AS_app_data)
+			else
+				return Reference.new(@AS_app_data, ref)
+			end
 		end
 		
 		def start_transaction(session=nil)
@@ -707,8 +739,8 @@ module Appscript
 		end
 		
 		def launch
-			if @AS_app_data.path
-				AEM::Application.launch(@AS_app_data.path)
+			if @AS_app_data.constructor == :by_path
+				AEM::Application.launch(@AS_app_data.app_identifier)
 				@AS_app_data.target.reconnect
 			else
 				@AS_app_data.target.event('ascrnoop').send # will send launch event to app if already running; else will error
@@ -743,6 +775,10 @@ module Appscript
 		
 		def by_url(url, terms=true)
 			return @_app_class.by_url(url, terms)
+		end
+		
+		def by_aem_app(aem_app, terms=true)
+			return @_app_class.by_aem_app(aem_app, terms)
 		end
 		
 		def current(terms=true)
@@ -827,5 +863,3 @@ module Appscript
 	
 	ApplicationNotFoundError = FindApp::ApplicationNotFoundError
 end
-
-AS = Appscript # backwards compatibility # TO DO: remove in 0.3.0

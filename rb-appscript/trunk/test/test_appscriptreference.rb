@@ -3,7 +3,6 @@
 require 'test/unit'
 require "appscript"
 
-
 class TC_AppscriptReferences < Test::Unit::TestCase
 
 	def setup
@@ -13,6 +12,16 @@ class TC_AppscriptReferences < Test::Unit::TestCase
 
 	def test_reference_forms
 		[
+			
+			[@te.documents[
+					Appscript.con.documents[3],
+					Appscript.con.documents['foo']], 
+					@s+'.documents[' +
+					'con.documents[3], ' +
+					'con.documents["foo"]]', nil],
+					
+					
+					
 			[@te.text, @s+'.text', nil],
 			
 			[@te.documents, @s+'.documents', nil],
@@ -35,13 +44,6 @@ class TC_AppscriptReferences < Test::Unit::TestCase
 			[@te.documents.any, @s+'.documents.any', nil],
 			
 			[Appscript.con.documents[3], 'con.documents[3]', nil],
-			
-			[@te.documents[
-					Appscript.con.documents[3],
-					Appscript.con.documents['foo']], 
-					@s+'.documents[' +
-					'con.documents[3], ' +
-					'con.documents["foo"]]', nil],
 			
 			
 			[Appscript.its.name.eq('foo').and(Appscript.its.words.eq([])), 

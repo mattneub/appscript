@@ -1,4 +1,4 @@
-2006-12-17 -- ???
+2007-01-02 -- 0.2.?
 
 - added 'p' prefixes to 'pcls' and 'ID  ' keys in DefaultTerminology::ReferenceByCode (minor bugfix)
 
@@ -6,9 +6,27 @@
 
 - improved unpacking of object specifiers and other reference-related AEDescs (10-20% faster)
 
-- added Appscript::Application#AS_new_reference
+- added Appscript::Application#AS_new_reference; this takes a generic/aem reference and returns an appscript reference
 
 - referencerenderer now displays accurate representation of an appscript reference when appscript-style representation is unavailable (previously rendered the appscript reference as an aem-style reference string, which was misleading)
+
+- tweaked APIs for UnitTypeCodecs' pack/unpack procs
+
+- moved problem apps chapter to website
+
+- renamed aem's #userproperty method to #user_property
+
+- modified AEM_resolve to dispatch method calls via #send. Client objects should now either implement all aem reference methods OR a send(name, *args) method. Clients should avoid using method_missing as that can cause problems if client code includes methods into Object, as those injected methods may then be called instead of method_missing.
+
+- appscript now unpacks AEAddressDescs as Appscript::Application instances (note: as with AppleScript, this behaviour is asymmetrical since application objects always pack as null descs, i.e. they're treated as references when packing)
+
+- added Appscript::Application#by_aem_app method for converting AEM::Application instances to appscript application objects
+
+- removed 'AS' alias; client scripts should refer to Appscript module
+
+- iTunes_top40_to_html.rb sample script now opens resulting HTML file in user's default web browser
+
+- removed MacTypes::Units.method_missing for safety
 
 
 2006-11-29 -- 0.2.1

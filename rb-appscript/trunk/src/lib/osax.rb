@@ -20,7 +20,7 @@ module OSAX
 	OSAXCache = {}
 	OSAXNames = []
 	
-	se = Appscript.app('System Events')
+	se = Appscript.app.by_id('com.apple.systemevents')
 	[se.system_domain, se.local_domain, se.user_domain].each do |domain|
 		osaxen = domain.scripting_additions_folder.files[
 				Appscript.its.file_type.eq('osax').or(Appscript.its.name_extension.eq('osax'))]
@@ -37,29 +37,19 @@ module OSAX
 	
 	class OSAXData < Appscript::AppData
 	
-		def initialize(name, pid, url, terms)
-			super(AEM::Application, name, pid, url, terms)
+		def initialize(constructor, app_identifier, terms)
+			super(AEM::Application, constructor, app_identifier, terms)
 		end
 	
-		def _connect
-			if @path
-				@target = @_aem_application_class.by_path(@path)
-			elsif @pid
-				@target = @_aem_application_class.by_pid(@pid)
-			elsif @url
-				@target = @_aem_application_class.by_url(@url)
-			else
-				@target = @_aem_application_class.current
-			end
+		def connect
+			super
 			begin
-				@target.event('ascrgdut').send(300) # make sure target application has loaded event handlers for all installed OSAXen
+				@target.event('ascrgdut').send(60 * 60) # make sure target application has loaded event handlers for all installed OSAXen
 			rescue AEM::CommandError => e
 				if e.number != -1708 # ignore 'event not handled' error
 					raise
 				end
 			end
-			@type_by_code, @type_by_name, @reference_by_code, @reference_by_name = @_terms
-			extend(Appscript::AppDataAccessors)
 		end
 	
 	end
@@ -107,7 +97,7 @@ module OSAX
 					@_terms = OSAXCache[osax_name][1] = \
 							Terminology.tables_for_aetes(DefaultCodecs.unpack(desc))
 				end
-				osax_data = OSAXData.new(nil, nil, nil, @_terms)
+				osax_data = OSAXData.new(:current, nil, @_terms)
 			end
 			super(osax_data, AEM.app)
 		end
@@ -140,33 +130,38 @@ module OSAX
 		def by_name(name)
 			# name : string -- name or full path to application
 			return ScriptingAddition.new(@_osax_name, 
-					OSAXData.new(FindApp.by_name(name), nil, nil, @_terms))
+					OSAXData.new(:by_path, FindApp.by_name(name), @_terms))
 		end
 		
 		def by_id(id)
 			# id : string -- bundle id of application
 			return ScriptingAddition.new(@_osax_name, 
-					OSAXData.new(FindApp.by_id(id), nil, nil, @_terms))
+					OSAXData.new(:by_path, FindApp.by_id(id), @_terms))
 		end
 		
 		def by_creator(creator)
 			# creator : string -- four-character creator code of application
 			return ScriptingAddition.new(@_osax_name, 
-					OSAXData.new(FindApp.by_creator(creator), nil, nil, @_terms))
+					OSAXData.new(:by_path, FindApp.by_creator(creator), @_terms))
 		end
 		
 		def by_pid(pid)
 			# pid : integer -- Unix process id
-			return ScriptingAddition.new(@_osax_name, OSAXData.new(nil, pid, nil, @_terms))
+			return ScriptingAddition.new(@_osax_name, OSAXData.new(:by_pid, pid, @_terms))
 		end
 		
 		def by_url(url)
 			# url : string -- eppc URL of application
-			return ScriptingAddition.new(@_osax_name, OSAXData.new(nil, nil, url, @_terms))
+			return ScriptingAddition.new(@_osax_name, OSAXData.new(:by_url, nil, @_terms))
+		end
+		
+		def by_aem_app(aem_app)
+			# aem_app : AEM::Application -- an AEM::Application instance
+			return ScriptingAddition.new(@_osax_name, OSAXData.new(:by_aem_app, aem_app, @_terms))
 		end
 		
 		def current
-			return ScriptingAddition.new(@_osax_name, OSAXData.new(nil, nil, nil, @_terms))
+			return ScriptingAddition.new(@_osax_name, OSAXData.new(:current, nil, @_terms))
 		end
 	end
 	

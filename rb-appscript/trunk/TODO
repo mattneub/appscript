@@ -1,10 +1,6 @@
 TO DO
 
-- when packing 'subj' attribute for 'make' commands, pack target reference as 'as' parameter as well if one doesn't already exist? Or could this cause problems?
-
-- pack/unpack support for application types (note: packing would be a bit tricky, since app('foo') could also indicate a reference, in which case it should be packed as a null desc; unpacking might be a bit clumsy, and would (at least in theory) require a by_desc/by_aem_application method to be added to AS::Application to handle typeMachPort, other types could be converted to paths/creator codes/urls/etc. ok though)
-
-- allow users to extract a generic ref from a real ref (to_generic) for comparison purposes. Or vice-versa?
+- protect Reference, GenericReference missing_method usage from dangerously unsafe Object namespace!!!
 
 - implement built-in help system by bridging to py-appscript
 

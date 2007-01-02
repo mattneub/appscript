@@ -37,11 +37,12 @@
 
 <li>Names that match the methods already defined on appscript's Application and Reference classes have an underscore appended. The reserved method names are:
 
-<pre><code>abort_transaction             instance_variable_set
-after                         instance_variables
-and                           is_in
-any                           is_not_in
-before                        keywords
+<pre><code>abort_transaction             instance_variable_get
+after                         instance_variable_set
+and                           instance_variables
+any                           is_in
+before                        is_not_in
+by_aem_app                    keywords
 by_creator                    last
 by_id                         launch
 by_name                       le
@@ -73,8 +74,7 @@ ID                            to_a
 id                            to_s
 ignore                        type
 inspect                       untaint
-instance_eval                 wait_reply
-instance_variable_get</code></pre>
+instance_eval                 wait_reply</code></pre>
 </div>
 </li>
 </ul>

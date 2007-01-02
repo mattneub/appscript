@@ -237,7 +237,7 @@ class Codecs
 		usrf = nil
 		val.each do | key, value |
 			if key.is_a?(TypeWrappers::AETypeBase)
-				if key.code == 'pcls' # AS packs records that contain a 'class' property by coercing the packed record to that type at the end
+				if key.code == KAE::PClass # AS packs records that contain a 'class' property by coercing the packed record to that type at the end
 					begin
 						record = record.coerce(value.code)
 					rescue
@@ -255,7 +255,7 @@ class Codecs
 			end
 		end
 		if usrf
-			record.put_param('usrf', usrf)
+			record.put_param(KAE::KeyASUserRecordFields, usrf)
 		end
 		return record
 	end
@@ -266,7 +266,7 @@ class Codecs
 	def unpack_unknown(desc) # clients may override this to provide additional unpackers
 		if desc.is_record? # if it's a record-like structure with an unknown/unsupported type then unpack it as a hash, including the original type info as a 'class' property
 			rec = desc.coerce(KAE::TypeAERecord)
-			rec.put_param('pcls', pack(TypeWrappers::AEType.new(desc.type)))
+			rec.put_param(KAE::PClass, pack(TypeWrappers::AEType.new(desc.type)))
 			unpack(rec)
 		else # else return unchanged
 			desc
@@ -332,13 +332,10 @@ class Codecs
 			
 			when KAE::TypeInsertionLoc then unpack_insertion_loc(desc)
 			when KAE::TypeObjectSpecifier then unpack_object_specifier(desc)
-			when KAE::TypeAbsoluteOrdinal then unpack_absolute_ordinal(desc)
 			when KAE::TypeCurrentContainer then unpack_current_container(desc)
 			when KAE::TypeObjectBeingExamined then unpack_object_being_examined(desc)
 			when KAE::TypeCompDescriptor then unpack_comp_descriptor(desc)
 			when KAE::TypeLogicalDescriptor then unpack_logical_descriptor(desc)
-			when KAE::TypeRangeDescriptor then unpack_range_descriptor(desc)
-			
 		else
 			did_unpack, val = @unit_type_codecs.unpack(desc)
 			if did_unpack
@@ -363,7 +360,7 @@ class Codecs
 		dct = {}
 		desc.length().times do |i|
 			key, value = desc.get_item(i + 1, KAE::TypeWildCard)
-			if key == 'usrf'
+			if key == KAE::KeyASUserRecordFields
 				lst = unpack_aelist(value)
 				(lst.length / 2).times do |i|
 					dct[lst[i * 2]] = lst[i * 2 + 1]
@@ -394,41 +391,22 @@ class Codecs
 	end
 	
 	#######
+	# Lookup tables for converting enumerator, ordinal codes to aem reference method names.
+	# Used by unpack_object_specifier, fully_unpack_object_specifier to construct aem references.
 	
-	class Range
-		attr_reader :range
-		
-		def initialize(range)
-			@range = range
-		end
-	end
-	
-	class Ordinal
-		attr_reader :code
-		
-		def initialize(code)
-			@code = code
-		end
-	end
-	
-	#######
-	
-	FullUnpackOrdinals = {
-			KAE::KAEFirst => 'first', 
-			KAE::KAELast => 'last', 
-			KAE::KAEMiddle => 'middle', 
-			KAE::KAEAny => 'any',
+	AbsoluteOrdinals = {
+			Codecs.four_char_code(KAE::KAEFirst) => 'first', 
+			Codecs.four_char_code(KAE::KAELast) => 'last', 
+			Codecs.four_char_code(KAE::KAEMiddle) => 'middle', 
+			Codecs.four_char_code(KAE::KAEAny) => 'any',
 			}
 	
-	DeferredUnpackOrdinals = {
-			KAE::KAEFirst => ['first', AEMReference::MultipleElements::First],
-			KAE::KAELast => ['last', AEMReference::MultipleElements::Last],
-			KAE::KAEMiddle => ['middle', AEMReference::MultipleElements::Middle],
-			KAE::KAEAny => ['any', AEMReference::MultipleElements::Any],
-			}
+	AllAbsoluteOrdinal = Codecs.four_char_code(KAE::KAEAll)
 	
-	# InsertionLoc keys and comparison and logic comparison operators aren't unpacked before use,
-	# so need to call four_char_codes to swap bytes here.
+	RelativePositionEnums = {
+			Codecs.four_char_code(KAE::KAEPrevious) => 'previous', 
+			Codecs.four_char_code(KAE::KAENext) => 'next', 
+			}
 	
 	InsertionLocEnums = {
 			Codecs.four_char_code(KAE::KAEBefore) => 'before', 
@@ -456,89 +434,89 @@ class Codecs
 	
 	#######
 	
-	def fully_unpack_object_specifier(desc) 
-		# Codecs.unpack_object_specifier and DeferredSpecifier._real_ref will call this when needed
+	def fully_unpack_object_specifier(desc)
+		# Recursively unpack an object specifier and all of its container descs.
+		# (Note: Codecs#unpack_object_specifier and AEMReference::DeferredSpecifier#_real_ref will call this when needed.)
 		case desc.type
+			when KAE::TypeObjectSpecifier
+				want = Codecs.four_char_code(desc.get_param(KAE::KeyAEDesiredClass, KAE::TypeType).data)
+				key_form = Codecs.four_char_code(desc.get_param(KAE::KeyAEKeyForm, KAE::TypeEnumeration).data)
+				key = desc.get_param(KAE::KeyAEKeyData, KAE::TypeWildCard)
+				ref = fully_unpack_object_specifier(desc.get_param(KAE::KeyAEContainer, KAE::TypeWildCard))
+				case key_form
+					when KAE::FormPropertyID
+						return ref.property(Codecs.four_char_code(key.data))
+					when KAE::FormUserPropertyID
+						return ref.userproperty(unpack(key))
+					when KAE::FormRelativePosition
+						return ref.send(RelativePositionEnums[key.data], want)
+				else
+					ref = ref.elements(want)
+					case key_form
+						when KAE::FormAbsolutePosition
+							if key.type == KAE::TypeAbsoluteOrdinal
+								if key.data == AllAbsoluteOrdinal
+									return ref
+								else
+									return ref.send(AbsoluteOrdinals[key.data])
+								end
+							else
+								return ref.by_index(unpack(key))
+							end
+						when KAE::FormName
+							return ref.by_name(unpack(key))
+						when KAE::FormUniqueID
+							return ref.by_id(unpack(key))
+						when KAE::FormRange
+							return ref.by_range(
+									unpack(key.get_param(KAE::KeyAERangeStart, KAE::TypeWildCard)),
+									unpack(key.get_param(KAE::KeyAERangeStop, KAE::TypeWildCard)))
+						when KAE::FormTest
+							return ref.by_filter(unpack(key))
+					end
+				end
+				raise TypeError
 			when KAE::TypeNull then return self.class::App
 			when KAE::TypeCurrentContainer then return self.class::Con
 			when KAE::TypeObjectBeingExamined then return self.class::Its
-		end
-		want = unpack(desc.get_param(KAE::KeyAEDesiredClass, KAE::TypeType)).code 
-		key_form = unpack(desc.get_param(KAE::KeyAEKeyForm, KAE::TypeEnumeration)).code
-		key = unpack(desc.get_param(KAE::KeyAEKeyData, KAE::TypeWildCard))
-		ref = unpack(desc.get_param(KAE::KeyAEContainer, KAE::TypeWildCard))
-		if ref == nil
-			ref = self.class::App
-		end
-		if key_form == KAE::FormPropertyID
-			return ref.property(key.code)
-		elsif key_form == 'usrp'
-			return ref.userproperty(key)
-		elsif key_form == KAE::FormRelativePosition
-			if key.code == KAE::KAEPrevious
-				return ref.previous(want)
-			elsif key.code == KAE::KAENext
-				return ref.next(want)
-			else
-				raise RuntimeError, "Bad relative position selector: #{key}"
-			end
 		else
-			ref = ref.elements(want)
-			if key_form == KAE::FormName
-				return ref.by_name(key)
-			elsif key_form == KAE::FormAbsolutePosition
-				if key.is_a?(Ordinal)
-					if key.code == KAE::KAEAll
-						return ref
-					else
-						return ref.send(FullUnpackOrdinals[key.code])
-					end
-				else
-					return ref.by_index(key)
-				end
-			elsif key_form == KAE::FormUniqueID
-				return ref.by_id(key)
-			elsif key_form == KAE::FormRange
-				return ref.by_range(*key.range)
-			elsif key_form == KAE::FormTest
-				return ref.by_filter(key)
-			end
+			return unpack(desc)
 		end
-		raise TypeError
 	end
 	
 	##
 	
-	def unpack_object_specifier(desc) 
-		# defers full unpacking of [most] object specifiers for efficiency
-		key_form = unpack(desc.get_param(KAE::KeyAEKeyForm, KAE::TypeEnumeration)).code
+	def unpack_object_specifier(desc)
+		# Shallow-unpack an object specifier, retaining the container AEDesc as-is.
+		# (i.e. Defers full unpacking of [most] object specifiers for efficiency.)
+		key_form = Codecs.four_char_code(desc.get_param(KAE::KeyAEKeyForm, KAE::TypeEnumeration).data)
 		if [KAE::FormPropertyID, KAE::FormAbsolutePosition, KAE::FormName, KAE::FormUniqueID].include?(key_form)
-			want = unpack(desc.get_param(KAE::KeyAEDesiredClass, KAE::TypeType)).code
-			key = unpack(desc.get_param(KAE::KeyAEKeyData, KAE::TypeWildCard))
+			want = Codecs.four_char_code(desc.get_param(KAE::KeyAEDesiredClass, KAE::TypeType).data)
+			key = desc.get_param(KAE::KeyAEKeyData, KAE::TypeWildCard)
 			container = AEMReference::DeferredSpecifier.new(desc.get_param(KAE::KeyAEContainer, KAE::TypeWildCard), self)
-			if key_form == KAE::FormPropertyID
-				ref = AEMReference::Property.new(want, container, key.code)
-			elsif key_form == KAE::FormAbsolutePosition
-				if key.is_a?(Ordinal)
-					if key.code == KAE::KAEAll
-						ref = AEMReference::AllElements.new(want, container)
+			case key_form
+				when KAE::FormPropertyID
+					ref = AEMReference::Property.new(want, container, Codecs.four_char_code(key.data))
+				when KAE::FormAbsolutePosition
+					if key.type == KAE::TypeAbsoluteOrdinal
+						if key.data == AllAbsoluteOrdinal
+							ref = AEMReference::AllElements.new(want, container)
+						else
+							ref = fully_unpack_object_specifier(desc) # do a full unpack of rarely returned reference forms
+						end
 					else
-						keyname, key = DeferredUnpackOrdinals[key.code]
-						ref = AEMReference::ElementByOrdinal.new(want, AEMReference::UnkeyedElements.new(want, container), key, keyname)
+						ref = AEMReference::ElementByIndex.new(want, AEMReference::UnkeyedElements.new(want, container), unpack(key))
 					end
-				else
-					ref = AEMReference::ElementByIndex.new(want, AEMReference::UnkeyedElements.new(want, container), key)
-				end
-			elsif key_form == KAE::FormName
-				ref = AEMReference::ElementByName.new(want, AEMReference::UnkeyedElements.new(want, container), key)
-			elsif key_form == KAE::FormUniqueID
-				ref = AEMReference::ElementByID.new(want, AEMReference::UnkeyedElements.new(want, container), key)
+				when KAE::FormName
+					ref = AEMReference::ElementByName.new(want, AEMReference::UnkeyedElements.new(want, container), unpack(key))
+				when KAE::FormUniqueID
+					ref = AEMReference::ElementByID.new(want, AEMReference::UnkeyedElements.new(want, container), unpack(key))
 			end
-			ref.AEM_set_desc(desc) # retain existing AEDesc for efficiency
-			return ref
-		else # do full unpack of more complex, rarely returned reference forms
-			return fully_unpack_object_specifier(desc)
+		else
+			ref = fully_unpack_object_specifier(desc) # do a full unpack of more complex, rarely returned reference forms
 		end
+		ref.AEM_set_desc(desc) # retain existing AEDesc for efficiency
+		return ref
 	end
 			
 	
@@ -547,10 +525,6 @@ class Codecs
 	end
 	
 	##
-	
-	def unpack_absolute_ordinal(desc)
-		return Ordinal.new(Codecs.four_char_code(desc.data))
-	end
 	
 	def unpack_current_container(desc)
 		return Con
@@ -589,11 +563,6 @@ class Codecs
 		operator = LogicalEnums[desc.get_param(KAE::KeyAELogicalOperator, KAE::TypeEnumeration).data]
 		operands = unpack(desc.get_param(KAE::KeyAELogicalTerms, KAE::TypeAEList))
 		return operands[0].send(operator, *operands[1, operands.length])
-	end
-	
-	def unpack_range_descriptor(desc)
-		return Range.new([unpack(desc.get_param(KAE::KeyAERangeStart, KAE::TypeWildCard)),
-				unpack(desc.get_param(KAE::KeyAERangeStop, KAE::TypeWildCard))])
 	end
 	
 end
