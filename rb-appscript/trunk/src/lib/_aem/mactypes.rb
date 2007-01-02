@@ -207,10 +207,6 @@ module MacTypes
 		# The AEM defines a standard set of unit types; some applications may define additional types for their own use. This wrapper stores the raw unit type and value data; aem/appscript Codecs objects will convert this to/from an AEDesc, or raise an error if the unit type is unrecognised.
 	
 		attr_reader :value, :type
-	
-		def Units.method_missing(name, value)
-			return new(value, name)
-		end
 		
 		def initialize(value, type)
 			@value = value
