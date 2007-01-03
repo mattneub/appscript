@@ -13,6 +13,7 @@ module Appscript
 	require "aem"
 	require "_appscript/referencerenderer"
 	require "_appscript/terminology"
+	require "_appscript/safeobject"
 	
 	######################################################################
 	# APPDATA
@@ -218,7 +219,7 @@ module Appscript
 	# GENERIC REFERENCE
 	######################################################################
 	
-	class GenericReference
+	class GenericReference < SafeObject
 	
 		attr_reader :_call
 		protected :_call
@@ -278,7 +279,7 @@ module Appscript
 	# REFERENCE
 	######################################################################
 	
-	class Reference
+	class Reference < SafeObject
 	
 		# users may occasionally require access to the following for creating workarounds to problem apps
 		# note: calling #AS_app_data on a newly created application object will return an AppData instance

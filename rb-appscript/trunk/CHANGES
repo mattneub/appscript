@@ -1,4 +1,4 @@
-2007-01-02 -- 0.2.?
+2007-01-03 -- 0.?.?
 
 - added 'p' prefixes to 'pcls' and 'ID  ' keys in DefaultTerminology::ReferenceByCode (minor bugfix)
 
@@ -26,7 +26,9 @@
 
 - iTunes_top40_to_html.rb sample script now opens resulting HTML file in user's default web browser
 
-- removed MacTypes::Units.method_missing for safety
+- removed MacTypes::Units.method_missing
+
+- Appscript::Reference and Appscript::GenericReference now inherit SafeObject class to prevent any third-party methods included in Object/Class/Method by clients from showing up in Reference/GenericReference and interfering with method_missing's behaviour. Note that the safeobject module installs traps on
 
 
 2006-11-29 -- 0.2.1
