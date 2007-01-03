@@ -33,15 +33,6 @@ class TC_Codecs(unittest.TestCase):
 		self.assertEqual(None, self.c.unpack(d))
 	
 	def test_bool(self):
-		for val, data in [
-				[True, "\001"],
-				[False, "\000"]
-				]:
-			d = self.c.pack(val)
-			self.assertEqual(kAE.typeBoolean, d.type)
-			self.assertEqual(1, len(d.data))
-			self.assertEqual(data, d.data)
-			self.assertEqual(val, self.c.unpack(d))
 		self.assertEqual(True, self.c.unpack(AE.AECreateDesc(kAE.typeBoolean, "\xfe")))
 		self.assertEqual(True, self.c.unpack(AE.AECreateDesc(kAE.typeTrue, '')))
 		self.assertEqual(False, self.c.unpack(AE.AECreateDesc(kAE.typeFalse, '')))
@@ -119,7 +110,6 @@ class TC_Codecs(unittest.TestCase):
 				aem.AEEnum('yes '),
 				aem.AEProp('pnam'),
 				aem.AEKey('ABCD'),
-				aem.AEEventName('coregetd'),
 				]:
 			d = self.c.pack(val)
 			val2 = self.c.unpack(d)
