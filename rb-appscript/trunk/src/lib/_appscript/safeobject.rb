@@ -63,6 +63,8 @@
 # PUBLIC
 ######################################################################
 
+require '_appscript/reservedkeywords'
+
 class SafeObject
 
 	EXCLUDE = ReservedKeywords + [
@@ -149,7 +151,7 @@ class SafeObject
 	end
 
 	public_instance_methods(true).each { |m| hide(m) }
-	private_instance_methods(true).each { |m| hide(m) }
+	#private_instance_methods(true).each { |m| hide(m) }
 	protected_instance_methods(true).each { |m| hide(m) }
 
 end
@@ -162,40 +164,27 @@ end
 # Since Ruby is very dynamic, methods added to the ancestors of
 # SafeObject after SafeObject is defined will show up in the
 # list of available SafeObject methods. We handle this by defining
-# hooks in Object, Kernel and Module that will hide any defined.
-
-module Kernel
-	class << self
-		madded = method(:method_added)
-		define_method(:method_added) do |name|
-			r = madded.call(name)
-			return r if self != Kernel
-			SafeObject.hide(name)
-			r
-		end
-	end
-end
-
-class Object
-	class << self
-		madded = method(:method_added)
-		define_method(:method_added) do |name|
-			r = madded.call(name)
-			return r if self != Object
-			SafeObject.hide(name)
-			r
-		end
-	end
-end
+# hooks in Module that will hide any defined.
 
 class Module
-	mappended = method(:included)
+	madded = method(:method_added)
+	define_method(:method_added) do |name|
+		# puts "ADDED    %-32s %s" % [name, self]
+		r = madded.call(name)
+		if self == Object
+			SafeObject.hide(name)
+		end
+		return r
+	end
+	mincluded = method(:included)
 	define_method(:included) do |mod|
-		r = mappended.call(mod) if mappended
-		return r if mod != Object
-		public_instance_methods(true).each { |name| SafeObject.hide(name) }
-		private_instance_methods(true).each { |name| SafeObject.hide(name) }
-		public_instance_methods(true).each { |name| SafeObject.hide(name) }
-		r
+		r = mincluded.call(mod)
+		# puts "INCLUDED %-32s %s" % [mod, self]
+		if mod == Object
+			public_instance_methods(true).each { |name| SafeObject.hide(name) }
+			#private_instance_methods(true).each { |name| SafeObject.hide(name) }
+			protected_instance_methods(true).each { |name| SafeObject.hide(name) }
+		end
+		return r
 	end
 end

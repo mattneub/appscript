@@ -1,5 +1,13 @@
 2007-01-03 -- 0.?.?
 
+- removed 'AS' alias; client scripts should refer to Appscript module, e.g.:
+
+	textedit = AS.app('TextEdit')
+
+should be changed to:
+
+	textedit = Appscript.app('TextEdit')
+
 - added 'p' prefixes to 'pcls' and 'ID  ' keys in DefaultTerminology::ReferenceByCode (minor bugfix)
 
 - in AE::AEDesc, renamed #get to #get_item and added #get_param and #get_attr methods
@@ -22,13 +30,13 @@
 
 - added Appscript::Application#by_aem_app method for converting AEM::Application instances to appscript application objects
 
-- removed 'AS' alias; client scripts should refer to Appscript module
-
 - iTunes_top40_to_html.rb sample script now opens resulting HTML file in user's default web browser
 
 - removed MacTypes::Units.method_missing
 
-- Appscript::Reference and Appscript::GenericReference now inherit SafeObject class to prevent any third-party methods included in Object/Class/Method by clients from showing up in Reference/GenericReference and interfering with method_missing's behaviour. Note that the safeobject module installs traps on
+- Appscript::Reference and Appscript::GenericReference now inherit from SafeObject class (based on BasicObject class <http://facets.rubyforge.org>) to prevent any third-party methods added to base classes from showing up in Reference/GenericReference and interfering with method_missing's behaviour. Note that _appscript/safeobject.rb installs traps on Module#method_added and Module#included in order to detect any changes during runtime.
+
+- added OSAX#osax and OSAX#scripting_addition to allow these methods to be included for convenience
 
 
 2006-11-29 -- 0.2.1

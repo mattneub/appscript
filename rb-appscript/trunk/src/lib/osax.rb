@@ -74,6 +74,17 @@ module OSAX
 		return addition
 	end
 	
+	# allow methods to be included via 'include OSAX'
+	
+	def scripting_additions
+		return OSAX.scripting_additions
+	end
+	
+	def osax(*args)
+		return OSAX.osax(*args)
+	end
+	
+	#######
 	
 	class ScriptingAddition < Appscript::Reference
 		# Represents a single scripting addition.
