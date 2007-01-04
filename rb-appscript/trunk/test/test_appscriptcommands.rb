@@ -50,12 +50,21 @@ class TC_AppscriptNewApp < Test::Unit::TestCase
 		assert_raises(Appscript::ApplicationNotFoundError) { Appscript.app.by_id('!@$o') }
 	end
 	
+	def test_by_pid
+		pid = `top -l1 | grep Finder | awk '{ print $1 }'`.to_i
+		a = Appscript.app.by_pid(pid)
+		assert_instance_of(Appscript::Reference, a.name)
+		assert_equal("app.by_pid(#{pid})", a.to_s)
+		assert_equal('Finder', a.name.get)
+	end
+	
 	def test_by_aem_app
 		a = Appscript.app.by_aem_app(AEM::Application.by_path('/Applications/TextEdit.app'))
 		assert_instance_of(Appscript::Reference, a.name)
 		assert_equal('app.by_aem_app(AEM::Application.by_path("/Applications/TextEdit.app"))', a.to_s)
 	end
 end
+
 
 class TC_AppscriptCommands < Test::Unit::TestCase
 

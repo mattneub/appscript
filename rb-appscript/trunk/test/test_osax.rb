@@ -42,7 +42,8 @@ class TC_OSAX < Test::Unit::TestCase
 	end
 	
 	def test_5
-		sa = OSAX.osax('Standardadditions').by_pid(Process.ppid)
+		sa = OSAX.osax('Standardadditions').by_pid(`top -l1 | grep Finder | awk '{ print $1 }'`.to_i)
+		assert_equal(MacTypes::Alias.path("/System/Library/CoreServices/Finder.app/"), sa.path_to(nil))
 		assert_equal(65, sa.ASCII_number('A'))
 	end
 
