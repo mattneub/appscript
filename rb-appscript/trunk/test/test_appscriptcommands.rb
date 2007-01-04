@@ -44,13 +44,16 @@ class TC_AppscriptNewApp < Test::Unit::TestCase
 	end
 
 	def test_by_creator
-		assert_equal('app("/Applications/TextEdit.app")', Appscript.app.by_creator('ttxt').to_s)
+		a = Appscript.app.by_creator('ttxt')
+		assert_instance_of(Appscript::Reference, a.name)
+		assert_equal('app("/Applications/TextEdit.app")', a.to_s)
 		assert_raises(Appscript::ApplicationNotFoundError) { Appscript.app.by_id('!@$o') }
 	end
 	
-	def test_by_aem_app	
-		assert_equal('app.by_aem_app(AEM::Application.by_path("/Applications/TextEdit.app"))',
-				Appscript.app.by_aem_app(AEM::Application.by_path('/Applications/TextEdit.app')).to_s)
+	def test_by_aem_app
+		a = Appscript.app.by_aem_app(AEM::Application.by_path('/Applications/TextEdit.app'))
+		assert_instance_of(Appscript::Reference, a.name)
+		assert_equal('app.by_aem_app(AEM::Application.by_path("/Applications/TextEdit.app"))', a.to_s)
 	end
 end
 

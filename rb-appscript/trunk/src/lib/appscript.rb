@@ -40,7 +40,7 @@ module Appscript
 		def connect # initialize AEM::Application instance and terminology tables the first time they are needed
 			case @constructor
 				when :by_aem_app
-					@target = @aem_app
+					@target = @app_identifier
 				when :current
 					@target = @_aem_application_class.current
 			else

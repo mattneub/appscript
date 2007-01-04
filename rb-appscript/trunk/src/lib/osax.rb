@@ -163,7 +163,7 @@ module OSAX
 		
 		def by_url(url)
 			# url : string -- eppc URL of application
-			return ScriptingAddition.new(@_osax_name, OSAXData.new(:by_url, nil, @_terms))
+			return ScriptingAddition.new(@_osax_name, OSAXData.new(:by_url, url, @_terms))
 		end
 		
 		def by_aem_app(aem_app)
