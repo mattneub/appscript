@@ -86,8 +86,7 @@ Appscript.app('TextEdit').open(f)
 
 <h3>Notes</h3>
 
-<p>Note that comparing an <code>Alias</code> object against a <code>FileURL</code> object always returns false, even if both point to the same location.</p>
-
+<p>Comparing an <code>Alias</code> object against a <code>FileURL</code> object always returns false, even if both point to the same location.</p>
 
 
 <h2><code>MacTypes::FileURL</code></h2>
@@ -162,7 +161,7 @@ Appscript.app('older app').documents[1].save(:in => fs_spec)</code></pre>
 
 <p>When used in an application command, a <code>FileURL</code> object returned by appscript will always pack into the same <code>TypeFSRef</code>, <code>TypeFileURL</code> or <code>TypeFSS</code> AEDesc it was created from. A <code>FileURL</code> object returned by <code>FileURL.path</code>, <code>Alias#to_file_url</code> or <code>FileURL#to_file_url</code> will always pack into an AEDesc of <code>TypeFileURL</code>.</p>
 
-<p>Note that comparing <code>FileURL</code> objects only tests for exact data equality; two objects that identify the same filesystem location by different means (e.g.comparing a <code>FileURL</code> object that was created from an existing AEDesc of <code>TypeFSRef</code> against one created from scratch), using paths of different case, etc. will test as false.</p>
+<p>When comparing <code>FileURL</code> objects for equality, be aware that <code>FileURL#==</code> always performs case-sensitive comparisons, regardless of how the underlying filesystem handles case-[in]sensitivity.</p>
 
 <p>Note that AEDescs of <code>TypeFSRef</code> can represent existing filesystem locations only. AEDescs of <code>TypeFileURL</code> can represent both existing and non-existing locations. AEDescs of <code>TypeFSS</code> (FSSpecs) are deprecated on Mac OS X due to lack of proper Unicode and long filename support, and are retained for backwards compatibility with older applications only.</p>
 

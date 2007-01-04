@@ -58,7 +58,7 @@ module FindApp
 			name += '.app'
 		end
 		if not FileTest.exist?(name)
-			raise RuntimeError, name
+			raise ApplicationNotFoundError.new(nil, nil, name), "Application #{name.inspect} not found."
 		end
 		return name
 	end

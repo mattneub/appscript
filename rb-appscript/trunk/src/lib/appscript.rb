@@ -219,7 +219,7 @@ module Appscript
 	# GENERIC REFERENCE
 	######################################################################
 	
-	class GenericReference < SafeObject
+	class GenericReference < AS_SafeObject
 	
 		attr_reader :_call
 		protected :_call
@@ -279,7 +279,7 @@ module Appscript
 	# REFERENCE
 	######################################################################
 	
-	class Reference < SafeObject
+	class Reference < AS_SafeObject
 	
 		# users may occasionally require access to the following for creating workarounds to problem apps
 		# note: calling #AS_app_data on a newly created application object will return an AppData instance

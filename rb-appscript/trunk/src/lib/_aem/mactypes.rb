@@ -13,7 +13,7 @@ module MacTypes
 	class FileBase
 	
 		URLPrefix = 'file://localhost'
-		URLPatt = Regexp.new('file://(?:.*?)(/.*)', Regexp::IGNORECASE)
+		URLPatt = Regexp.new('file://.*?(/.*)', Regexp::IGNORECASE)
 	
 		def FileBase._path_to_url(path)
 			return URLPrefix + path.gsub(/[^a-zA-Z0-9_.-\/]/) { |c| "%%%02x" % c[0] }
@@ -44,10 +44,7 @@ module MacTypes
 		end
 		
 		def ==(val)
-			return (self.equal?(val) or (
-					self.class == val.class and 
-					self.desc.type == val.desc.type and
-					self.desc.data == self.desc.data))
+			return (self.equal?(val) or (self.class == val.class and self.url == val.url))
 		end
 		
 		alias_method :eql?, :==

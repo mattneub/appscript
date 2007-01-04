@@ -30,17 +30,17 @@
 # # X.name was called
 # # /tmp/tmpscript:13: undefined method `get' for 999:Fixnum (NoMethodError)
 
-# The SafeObject class undefines any methods not on the EXCLUDE safe list; traps are
-# then set on Object, Class and Module to detect any subsequent method additions and
-# immediately remove those from SafeObject as well.
+# The AS_SafeObject class undefines any methods not on the EXCLUDE safe list; traps are
+# then applied to Module#method_added and Module#included to detect any subsequent
+# method additions and immediately remove those from AS_SafeObject as well.
 
-# Frankly, having to insert traps in other users' runtimes is a pretty ghastly business, but 
+# Having to insert traps into other users' runtimes isn't exactly an ideal solution, but 
 # unless/until Ruby comes up with a safe, sane system for including modules in main that
-# doesn't pollute every other namespace as well, it may be the only practical solution short
-# of a major redesign+rewrite of the appscript module to use metaclasses (c.f. js-appscript) 
-# instead of method_missing. Which isn't desireable as it'd be much more complicated to 
-# implement, slower to initialise, and less elegant to use (since GenericReferences would
-# have to be dropped).
+# doesn't pollute every other namespace as well, it may be the only practical solution. The
+# only other alternative would be a major redesign+rewrite of the appscript module to use 
+# metaclasses (c.f. js-appscript) instead of method_missing, but this is not really desireable
+# as it'd be much more complicated to implement, slower to initialise, and less elegant to
+# use (since GenericReferences would have to be dropped).
 
 ######################################################################
 # ORIGINAL COPYRIGHT
@@ -65,7 +65,7 @@
 
 require '_appscript/reservedkeywords'
 
-class SafeObject
+class AS_SafeObject
 
 	EXCLUDE = ReservedKeywords + [
 		"Array",
@@ -162,29 +162,29 @@ end
 # PRIVATE
 ######################################################################
 # Since Ruby is very dynamic, methods added to the ancestors of
-# SafeObject after SafeObject is defined will show up in the
-# list of available SafeObject methods. We handle this by defining
+# AS_SafeObject after AS_SafeObject is defined will show up in the
+# list of available AS_SafeObject methods. We handle this by defining
 # hooks in Module that will hide any defined.
 
 class Module
 	madded = method(:method_added)
 	define_method(:method_added) do |name|
 		# puts "ADDED    %-32s %s" % [name, self]
-		r = madded.call(name)
+		result = madded.call(name)
 		if self == Object
-			SafeObject.hide(name)
+			AS_SafeObject.hide(name)
 		end
-		return r
+		return result
 	end
 	mincluded = method(:included)
 	define_method(:included) do |mod|
-		r = mincluded.call(mod)
+		result = mincluded.call(mod)
 		# puts "INCLUDED %-32s %s" % [mod, self]
 		if mod == Object
-			public_instance_methods(true).each { |name| SafeObject.hide(name) }
-			#private_instance_methods(true).each { |name| SafeObject.hide(name) }
-			protected_instance_methods(true).each { |name| SafeObject.hide(name) }
+			public_instance_methods(true).each { |name| AS_SafeObject.hide(name) }
+			#private_instance_methods(true).each { |name| AS_SafeObject.hide(name) }
+			protected_instance_methods(true).each { |name| AS_SafeObject.hide(name) }
 		end
-		return r
+		return result
 	end
 end

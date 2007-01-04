@@ -46,6 +46,9 @@ class TC_MacTypes < Test::Unit::TestCase
 		`rm #{@path2}`
 		assert_raises(MacTypes::FileNotFoundError) { f.to_s } # File not found.
 		assert_raises(MacTypes::FileNotFoundError) { f.to_file_url } # File not found.
+		
+		assert_equal(MacTypes::Alias.path("/Library/Scripts/"), MacTypes::Alias.path("/Library/Scripts/"))
+		assert_not_equal(MacTypes::Alias.path("/Library/Scripts/"), MacTypes::Alias.path("/Applications/"))
 	end
 
 
@@ -62,6 +65,9 @@ class TC_MacTypes < Test::Unit::TestCase
 
 		# check a not-found error is raised if getting Alias for a filesystem object that doesn't exist
 		assert_raises(MacTypes::FileNotFoundError) { g.to_alias } # File "/non/existent path" not found.
-
+		
+		assert_equal(MacTypes::FileURL.path("/Library/Scripts/"), MacTypes::FileURL.path("/Library/Scripts/"))
+		assert_not_equal(MacTypes::FileURL.path("/Library/Scripts/"), MacTypes::FileURL.path("/Applications/"))
+		assert_not_equal(MacTypes::FileURL.path("/Library/Scripts/"), MacTypes::Alias.path("/Library/Scripts/"))
 	end
 end

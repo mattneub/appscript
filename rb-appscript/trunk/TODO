@@ -1,6 +1,6 @@
 TO DO
 
-- see if there's a way to provide safe base classes for Appscript::Reference and Appscript::GenericReference that doesn't require kludging traps into Object, Class and Module. (e.g. Could an alternative base class be implemented in C to act as a buffer between the two?)
+- see if there's a way to provide a SafeObject base class for Appscript::Reference and Appscript::GenericReference that doesn't require adding traps to Module. (e.g. Could an alternative base class be implemented in C to act as a buffer between the two?)
 
 - implement built-in help system by bridging to py-appscript
 

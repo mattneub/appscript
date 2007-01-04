@@ -1,4 +1,4 @@
-2007-01-03 -- 0.?.?
+2007-01-04 -- 0.3.0
 
 - removed 'AS' alias; client scripts should refer to Appscript module, e.g.:
 
@@ -37,6 +37,12 @@ should be changed to:
 - Appscript::Reference and Appscript::GenericReference now inherit from SafeObject class (based on BasicObject class <http://facets.rubyforge.org>) to prevent any third-party methods added to base classes from showing up in Reference/GenericReference and interfering with method_missing's behaviour. Note that _appscript/safeobject.rb installs traps on Module#method_added and Module#included in order to detect any changes during runtime.
 
 - added OSAX#osax and OSAX#scripting_addition to allow these methods to be included for convenience
+
+- FindApp.by_name now always raises ApplicationNotFoundError when application not found (previously sometimes raised RuntimeError
+
+- added more tests
+
+- fixed bug in MacTypes::FileBase#== where comparing two Alias/FileURL objects with different paths would return true, not false, and generally improved its behaviour
 
 
 2006-11-29 -- 0.2.1
