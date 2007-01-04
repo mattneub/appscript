@@ -37,8 +37,8 @@ module OSAX
 	
 	class OSAXData < Appscript::AppData
 	
-		def initialize(constructor, app_identifier, terms)
-			super(AEM::Application, constructor, app_identifier, terms)
+		def initialize(constructor, identifier, terms)
+			super(AEM::Application, constructor, identifier, terms)
 		end
 	
 		def connect

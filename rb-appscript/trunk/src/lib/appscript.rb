@@ -25,26 +25,26 @@ module Appscript
 	
 	class AppData < AEM::Codecs
 	
-		attr_reader :constructor, :app_identifier, :reference_codecs
+		attr_reader :constructor, :identifier, :reference_codecs
 		attr_writer :reference_codecs
 	
-		def initialize(aem_application_class, constructor, app_identifier, terms)
+		def initialize(aem_application_class, constructor, identifier, terms)
 			super()
 			@_aem_application_class = aem_application_class # AEM::Application class or subclass to use when constructing target
 			@_terms = terms # user-supplied terminology tables/true/false
 			@constructor = constructor # name of AEM::Application constructor to use/:by_aem_app
-			@app_identifier = app_identifier # argument for AEM::Application constructor
+			@identifier = identifier # argument for AEM::Application constructor
 			@reference_codecs = AEM::Codecs.new # low-level Codecs object used to unpack references; used by AppData#unpack_object_specifier, AppData#unpack_insertion_loc. Note: this is a bit kludgy, and it's be better to use AppData for all unpacking, but it should be 'good enough' in practice.
 		end
 		
 		def connect # initialize AEM::Application instance and terminology tables the first time they are needed
 			case @constructor
 				when :by_aem_app
-					@target = @app_identifier
+					@target = @identifier
 				when :current
 					@target = @_aem_application_class.current
 			else
-				@target = @_aem_application_class.send(@constructor, @app_identifier)
+				@target = @_aem_application_class.send(@constructor, @identifier)
 			end
 			case @_terms
 				when true # obtain terminology from application
@@ -429,9 +429,9 @@ module Appscript
 			rescue => e
 				if e.is_a?(AEM::CommandError)
 					if [-600, -609].include?(e.number) and @AS_app_data.constructor == :by_path
-						if not AEM::Application.is_running?(@AS_app_data.app_identifier)
+						if not AEM::Application.is_running?(@AS_app_data.identifier)
 							if code == 'ascrnoop'
-								AEM::Application.launch(@AS_app_data.app_identifier)
+								AEM::Application.launch(@AS_app_data.identifier)
 							elsif code != 'aevtoapp'
 								raise CommandError.new(self, name, args, e)
 							end
@@ -683,8 +683,8 @@ module Appscript
 			return AEM::Application
 		end
 		
-		def initialize(constructor, app_identifier, terms)
-			super(AppData.new(_aem_application_class, constructor, app_identifier, terms), AEM.app)
+		def initialize(constructor, identifier, terms)
+			super(AppData.new(_aem_application_class, constructor, identifier, terms), AEM.app)
 		end
 		
 		# constructors
@@ -741,7 +741,7 @@ module Appscript
 		
 		def launch
 			if @AS_app_data.constructor == :by_path
-				AEM::Application.launch(@AS_app_data.app_identifier)
+				AEM::Application.launch(@AS_app_data.identifier)
 				@AS_app_data.target.reconnect
 			else
 				@AS_app_data.target.event('ascrnoop').send # will send launch event to app if already running; else will error
