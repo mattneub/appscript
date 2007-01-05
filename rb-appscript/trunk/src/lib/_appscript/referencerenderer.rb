@@ -80,9 +80,9 @@ class ReferenceRenderer
 			when :current
 				@result = "app.current"
 			when :by_path
-				@result = "app(#{@_app_data.app_identifier.inspect})"
+				@result = "app(#{@_app_data.identifier.inspect})"
 		else
-			@result = "app.#{@_app_data.constructor}(#{@_app_data.app_identifier.inspect})"
+			@result = "app.#{@_app_data.constructor}(#{@_app_data.identifier.inspect})"
 		end
 		return self
 	end
