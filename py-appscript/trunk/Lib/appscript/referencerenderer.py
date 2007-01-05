@@ -12,14 +12,12 @@ from aem.types import Specifier, Test
 class _Formatter:
 	def __init__(self, appData):
 		self._appData = appData
-		if self._appData.path:
-			self.root = 'app(%r)' % self._appData.path
-		elif self._appData.pid:
-			self.root = 'app(pid=%r)' % self._appData.pid
-		elif self._appData.url:
-			self.root = 'app(url=%r)' % self._appData.url
-		else:
+		if self._appData.constructor == 'current':
 			self.root = 'app()'
+		elif self._appData.constructor == 'path':
+			self.root = 'app(%r)' % self._appData.identifier
+		else:
+			self.root = 'app(%s=%r)' % (self._appData.constructor, self._appData.identifier)
 		self.result = ''
 	
 	def _format(self, val):

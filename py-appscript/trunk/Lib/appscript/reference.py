@@ -4,14 +4,15 @@ Lots of syntactic sugar allows users to construct query-based references using f
 
 (C) 2004 HAS"""
 
-import struct
+import struct, MacOS
 
 from CarbonX import kAE, kOSA
 from CarbonX.AE import AECreateList, AECreateDesc
-import aem
+import aem, mactypes
 
 from genericreference import GenericReference
-from terminology import tablesforapp, aetedataforapp, aetedataforapp, defaulttables, kProperty, kElement, kCommand
+import terminology
+from terminology import kProperty, kElement
 from referencerenderer import renderreference
 from keywordwrapper import Keyword
 
@@ -108,7 +109,7 @@ def _unpackReference(desc, codecs):
 	return Reference(codecs, _lowLevelCodecs.unpack(desc))
 
 
-def _unpackCompDescriptor(desc, codecs):
+def _unpackCompDescriptor(desc, codecs): # TO DO: is this needed?
 	# need to do some typechecking when unpacking 'contains' comparisons, so have to override the low-level unpacker
 	rec = codecs.unpack(desc.AECoerceDesc(kAE.typeAERecord))
 	operator = _kTypeCompDescriptorOperators[rec[_keyAECompOperator].code]
@@ -126,6 +127,26 @@ def _unpackCompDescriptor(desc, codecs):
 
 ##
 
+def _unpackApplicationByID(desc, codecs):
+	return app(id=desc.data)
+
+def _unpackApplicationByURL(desc, codecs):
+	if desc.data.startswith('file'): # workaround for converting AEAddressDescs containing file:// URLs to application paths, since AEAddressDescs containing file URLs don't seem to work correctly
+		return app(mactypes.File.makewithurl(desc.data).path)
+	else: # presumably contains an eppc:// URL
+		return app(url=desc.data)
+
+def _unpackApplicationBySignature(desc, codecs):
+	return app(creator=struct.pack('>L', struct.unpack('L', desc.data)[0]))
+
+def _unpackApplicationByPID(desc, codecs):
+	return app(pid=struct.unpack('L', desc.data)[0])
+
+def _unpackApplicationByDesc(desc, codecs):
+	return app(aemapp=aem.Application(desc=desc))
+
+##
+
 _appscriptEncoders = {
 		dict: _packDict,
 		}
@@ -139,6 +160,13 @@ _appscriptDecoders = {
 		kAE.typeObjectSpecifier: _unpackReference,
 		kAE.typeInsertionLoc: _unpackReference,
 		kAE.typeCompDescriptor: _unpackCompDescriptor,
+		# AEAddressDesc types
+		kAE.typeApplicationBundleID: _unpackApplicationByID,
+		kAE.typeApplicationURL: _unpackApplicationByURL,
+		kAE.typeApplSignature: _unpackApplicationBySignature,
+		kAE.typeKernelProcessID: _unpackApplicationByPID,
+		kAE.typeMachPort: _unpackApplicationByDesc,
+		kAE.typeProcessSerialNumber: _unpackApplicationByDesc,
 		}
 
 
@@ -153,33 +181,51 @@ class AppData(aem.Codecs):
 		- help system
 	"""
 	
-	def __init__(self, aemApplicationClass, path, pid, url, terms):
+	def __init__(self, aemApplicationClass, constructor, identifier, terms):
 		"""
 			aemApplicationClass : class -- aem.Application or equivalent
-			path : str
-			pid : int
-			url : str
+			constructor : str -- indicates how to construct the aem.Application instance ('path', 'pid', 'url', 'aemapp', 'current')
+			identifier : any -- value identifying the target application (its type is dependent on constructor parameter)
 			terms : bool | module | tuple
 		"""
 		# initialise codecs
 		aem.Codecs.__init__(self)
 		self.encoders.update(_appscriptEncoders)
 		self.decoders.update(_appscriptDecoders)
-		# retain path/url for display purposes
-		self.path = path
-		self.pid = pid
-		self.url = url
-		# initialise aem.Application instance
-		self.target = aemApplicationClass(path, pid, url)
-		# initialise translation tables
-		if terms == True: # obtain terminology from application
-			terms= tablesforapp(self.target)
-		elif terms == False: # use built-in terminology only (e.g. use this when running AppleScript applets)
-			terms = defaulttables
-		elif not isinstance(terms, tuple): # use user-supplied terminology module
-			terms = tablesformodule(terms)
-		self.typebycode, self.typebyname, self.referencebycode, self.referencebyname = terms
+		# store parameters for later use
+		self._aemApplicationClass = aemApplicationClass
+		self.constructor, self.identifier = constructor, identifier
+		self._terms = terms
 	
+	def connect(self):
+		"""Initialises application target and terminology lookup tables.
+		
+		Called automatically the first time clients retrieve target, typebycode, typebyname,
+		referencebycode, referencebyname; clients should not need to call it themselves.
+		"""
+		# initialise target (by default an aem.Application instance)
+		if self.constructor == 'aemapp':
+			self.target = self.identifier
+		elif self.constructor == 'current':
+			self.target = self._aemApplicationClass()
+		else:
+			self.target = self._aemApplicationClass(**{self.constructor: self.identifier})
+		# initialise translation tables
+		if self._terms == True: # obtain terminology from application
+			self._terms = terminology.tablesforapp(self.target)
+		elif self._terms == False: # use built-in terminology only (e.g. use this when running AppleScript applets)
+			self._terms = terminology.defaulttables
+		elif not isinstance(self._terms, tuple): # use user-supplied terminology module
+			self._terms = terminology.tablesformodule(self._terms)
+		self.typebycode, self.typebyname, self.referencebycode, self.referencebyname = self._terms
+		return self
+	
+	target = property(lambda self: self.connect().target)
+	typebycode = property(lambda self: self.connect().typebycode)
+	typebyname = property(lambda self: self.connect().typebyname)
+	referencebycode = property(lambda self: self.connect().referencebycode)
+	referencebyname = property(lambda self: self.connect().referencebyname)
+
 	def pack(self, data):
 		if isinstance(data, GenericReference):
 			data = data.AS_resolve(Reference, self)
@@ -197,7 +243,7 @@ class AppData(aem.Codecs):
 	def help(self, flags, ref):
 		# Stub method; initialises Help object and replaces itself with a real help() function the first time it's called.
 		from helpsystem import Help
-		helpObj = Help(aetedataforapp(self.target))
+		helpObj = Help(terminology.aetedataforapp(self.target))
 		self.help = lambda flags, ref: helpObj.help(flags, ref) # replace stub method with real help
 		return self.help(flags, ref) # call real help. Note that help system is responsible for providing a return value (usually the same reference it was called upon, but it may modify this).
 
@@ -499,52 +545,40 @@ class Application(Reference):
 	
 	_Application = aem.Application # overridable hook; appscript.Application subclasses can modify creating and/or sending Apple events by using custom aem.Application and aem.Event classes # Note: subclassing this class is now a bit trickier due to introduction of generic 'app'; clients need to import this class directly, subclass it, and then create their own GenericApp instance to use in place of the standard version.
 	
-	def __init__(self, name=None, id=None, creator=None, pid=None, url=None, terms=True):
+	def __init__(self, name=None, id=None, creator=None, pid=None, url=None, aemapp=None, terms=True):
 		"""
 			app(name=None, id=None, creator=None, pid=None, url=None, terms=True)
 				name : str -- name or path of application, e.g. 'TextEdit', 'TextEdit.app', '/Applications/Textedit.app'
 				id : str -- bundle id of application, e.g. 'com.apple.textedit'
 				creator : str -- 4-character creator type of application, e.g. 'ttxt'
-				pid : int -- Unix process id, e.g. 95
+				pid : int -- Unix process id, e.g. 955
+				url : str -- eppc:// URL, e.g. eppc://G4.local/TextEdit'
+				aemapp : aem.Application
 				terms : module | bool -- if a module, get terminology from it; if True, get terminology from target application; if False, use built-in terminology only
     		"""
-		if len([i for i in [name, id, creator, url] if i]) > 1:
-			raise TypeError, 'app() requires a single name/id/creator/url argument.'
+		if len([i for i in [name, id, creator, pid, url, aemapp] if i]) > 1:
+			raise TypeError, 'app() received more than one of the following arguments: name, id, creator, pid, url, aemapp'
 		if name:
-			path = aem.findapp.byname(name)
+			constructor, identifier = 'path', aem.findapp.byname(name)
 		elif id:
-			path = aem.findapp.byid(id)
+			constructor, identifier = 'path',  aem.findapp.byid(id)
 		elif creator:
-			path = aem.findapp.bycreator(creator)
+			constructor, identifier = 'path',  aem.findapp.bycreator(creator)
+		elif pid:
+			constructor, identifier = 'pid', pid
+		elif url:
+			constructor, identifier = 'url', url
+		elif aemapp:
+			constructor, identifier = 'aemapp', aemapp
 		else:
-			path = None
+			constructor, identifier = 'current', None
 		# Defer initialisation of AppData until it's needed. This allows user to call launch() on a non-running application without the application being launched by aem.Application, which automatically launches local applications in order to construct an AEAddressDesc of typeProcessSerialNumber.
 		# launch()'s usefulness is somewhat limited, since constructing a real app-based reference will also launch the application normally in order to get its terminology. So to actually launch an application, you have to use launch() before constructing any real references to its objects; i.e.:
 		#     te = app('TextEdit'); te.launch(); d = app.documents
 		# will launch TE without it creating any new documents (i.e. app receives 'ascrnoop' as its first event), but:
 		#     te = app('TextEdit'); d = app.documents; te.launch()
 		# will launch TE normally (i.e. app receives 'aevtoapp' as its first event), causing it to open a new, empty window.
-		self._path, self._pid, self._url, self._terms = path, pid, url, terms
-		self._realAppData = None
-		Reference.__init__(self, None, aem.app)
-	
-	def _getAppData(self):
-		if self._realAppData is None: # initialise AppData the first time it's actually needed
-			try:
-				self._realAppData = AppData(self._Application, self._path, self._pid, self._url, self._terms)
-			except: # kludge to trap and report any errors that occur while initialising AppData object
-				# Note: for some reason, allowing the original exception to propagate beyond here results in an infinite recursion error, so trap it, print it, then throw a general RuntimeError.
-				import sys, traceback
-				print >> sys.stderr, 'Traceback for AS_appdata error:'
-				traceback.print_exc()
-				print >> sys.stderr
-				raise RuntimeError, 'An error occured while initialising AS_appdata.'
-		return self._realAppData
-	
-	def _setAppData(self, val):
-		pass # ignore base class trying to assign None to self.AS_appdata
-	
-	AS_appdata = property(_getAppData, _setAppData)
+		Reference.__init__(self, AppData(self._Application, constructor, identifier, terms), aem.app)
 	
 	def AS_newreference(self, aemreference):
 		"""Create a new appscript reference from an aem reference."""
@@ -560,9 +594,12 @@ class Application(Reference):
 		self.AS_appdata.target.endtransaction()
 	
 	def launch(self):
-		"""Launch a non-running application in the background and send it a 'launch' event. Note: this only works for local apps."""
-		aem.Application.launch(self._path)
-		self.AS_appdata.target.reconnect() # make sure aem.Application object's AEAddressDesc is up to date
+		"""Launch a non-running application in the background and send it a 'launch' event. Note: this will only launch non-running apps that are specified by name/path/bundle id/creator type. Apps specified by other means will be still sent a launch event if already running, but an error will occur if they're not."""
+		if self.AS_appdata.constructor == 'path':
+			aem.Application.launch(self.AS_appdata.identifier)
+			self.AS_appdata.target.reconnect() # make sure aem.Application object's AEAddressDesc is up to date
+		else:
+			self.AS_appdata.target.event('ascrnoop').send() # will send launch event to app if already running; else will error
 
 
 #######
@@ -602,6 +639,14 @@ class CommandError(Exception):
 			self.trace = None
 		self.command, self. parameters, self.realerror = command, parameters, realerror
 		Exception.__init__(self, command, parameters, realerror)
+		
+	def __int__(self):
+		if isinstance(self.realerror, aem.CommandError):
+			return int(self.realerror)
+		elif isinstance(self.realerror, MacOS.Error):
+			return self.realerror[0]
+		else:
+			return -2700
 	
 	def __repr__(self):
 		return 'appscript.CommandError(%r, %r, %r)' % (self.command, self. parameters, self.realerror)

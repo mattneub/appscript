@@ -124,7 +124,7 @@ class Parser:
 			code = self.word()
 			self._ptr += 1 + ord(self._str[self._ptr]) # description string
 			self._ptr += self._ptr & 1 # align
-			self.enumerators[code] = (name, code)
+			self.enumerators[code + name] = (name, code)
 
 	
 	def parseSuite(self):

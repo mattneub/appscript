@@ -64,6 +64,8 @@ class Application:
 		args = []
 		if self.AEM_identity[0] == 'desc':
 			args.append('desc=%r' % self._address)
+		elif self.AEM_identity[0] == 'path':
+			args.append(repr(self.AEM_identity[1]))
 		elif self.AEM_identity[0] != 'current':
 			args.append('%s=%r' % self.AEM_identity)
 		if self._codecs != _defaultCodecs:

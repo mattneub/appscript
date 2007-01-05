@@ -145,6 +145,9 @@ class CommandError(MacOS.Error):
 	
 	def __repr__(self):
 		return "aem.CommandError(%r, %r, %r)" % (self.number, self.message, self.raw)
+		
+	def __int__(self):
+		return self.number
 	
 	def __str__(self):
 		message = self.message

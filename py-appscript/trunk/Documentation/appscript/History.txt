@@ -1,6 +1,6 @@
 HISTORY
 
-2006-12-?? -- 0.17.0
+2006-01-?? -- 0.17.0
 
 - removed 'filter' method; 'filter' is no longer a reserved word. Users will need to update any scripts that use apps with a 'filter' keyword (e.g. Photoshop has a 'filter' command) to change 'filter_' -> 'filter'.
 
@@ -10,7 +10,7 @@ HISTORY
 
 - added note to Problem Apps chapter on sending run and open events to non-stay-open applications
 
-- added optional pid argument to Application.__init__
+- added optional pid, aemapp arguments to Application.__init__
 
 - modified terminology module API; now uses the aem.Application instance from AppData.target when sending ascrgdte event (note: clients that customise Application._Application, e.g. aemcodegen, will need to take this into account)
 
@@ -27,6 +27,16 @@ HISTORY
 - removed built-in 'telltarget' argument to simplify the API a bit. Now, if a command is called on a reference and already has a direct parameter, the reference is packed as the subject attribute instead. Also, 'telltarget' is no longer a reserved word.
 
 - added Application.aborttransaction method, and added optional 'session' argument to Application.starttransaction
+
+- modified AppData API ('path', 'pid', 'url' variables are replaced by 'constructor', 'identifier' variables)
+
+- changed the way that AppData is initialised on first use
+
+- modified terminologyparser so that enumerator synonyms are preserved
+
+- added tests
+
+- added CommandError.__int__
 
 
 2006-08-16 -- 0.16.2

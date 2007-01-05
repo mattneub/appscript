@@ -26,7 +26,7 @@ scriptingadditions = [] # names of all currently available osaxen
 
 _osaxcache = {} # a dict of form: {'osax name': ['/path/to/osax', cached_terms_or_None], ...}
 
-_se = app('System Events')
+_se = app(id='com.apple.systemevents')
 for domain in [_se.system_domain, _se.local_domain, _se.user_domain]:
 	osaxen = domain.scripting_additions_folder.files[
 			(its.file_type == 'osax').OR(its.name_extension == 'osax')]
@@ -39,40 +39,51 @@ for domain in [_se.system_domain, _se.local_domain, _se.user_domain]:
 scriptingadditions.sort()
 
 
+class _OSAXHelp:
+	def __init__(self, osaxpath):
+		self.osaxpath = osaxpath
+		self.helpobj = None
+	
+	def __call__(self, flags, ref):
+		if not self.helpobj:
+			from appscript import helpsystem
+			self.helpobj = helpsystem.Help(getaete(self.osaxpath))
+		return self.helpobj.help(flags, ref)
+
+
 ######################################################################
 # PUBLIC
 ######################################################################
 
-# TO DO: subclass AppData to support help() for osax?
-
 class ScriptingAddition(reference.Application):
 
-	def __init__(self, osaxname, name=None, id=None, creator=None, url=None, terms=None): # TO DO: pid
+	def __init__(self, osaxname, name=None, id=None, creator=None, pid=None, url=None, aemapp=None, terms=True):
 		self._osaxname = osaxname
 		osaxname = osaxname.lower()
 		if osaxname.endswith('.osax'):
 			osaxname = osaxname[:-5]
-		if not terms:
+		if terms == True:
 			try:
 				osaxpath, terms = _osaxcache[osaxname]
 			except KeyError:
 				raise KeyError, "Scripting addition not found: %r" % self._osaxname
 			if not terms:
-				terms = _osaxcache[osaxname][1] = terminology.tablesforaetes(getaete(osaxpath))
-		reference.Application.__init__(self, name, id, creator, url, terms)
+				terms = _osaxcache[osaxname][1] = terminology.tablesforaetedata(getaete(osaxpath))
+		reference.Application.__init__(self, name, id, creator, pid, url, aemapp, terms)
 		try:
 			self.AS_appdata.target.event('ascrgdut').send(300) # make sure target application has loaded event handlers for all installed OSAXen
 		except aem.CommandError, e:
 			if e.number != -1708: # ignore 'event not handled' error
 				raise
+		self.AS_appdata.help = _OSAXHelp(_osaxcache[osaxname][0])
 		
 	def __str__(self):
-		if self.AS_appdata.path:
-			return "ScriptingAddition(%r, name=%r)" % (self._osaxname, self.AS_appdata.path)
-		elif self.AS_appdata.url:
-			return "ScriptingAddition(%r, url=%r)" % (self._osaxname, self.AS_appdata.url)
+		if self.AS_appdata.constructor == 'current':
+			return 'ScriptingAddition(%r)' % self._osaxname
+		elif self.AS_appdata.constructor == 'path':
+			return 'ScriptingAddition(%r, %r)' % (self._osaxname, self.AS_appdata.identifier)
 		else:
-			return "ScriptingAddition(%r)" % self._osaxname
+			return 'ScriptingAddition(%r, %s=%r)' % (self._osaxname, self.AS_appdata.constructor, self.AS_appdata.identifier)
 		
 	__repr__ = __str__
 
