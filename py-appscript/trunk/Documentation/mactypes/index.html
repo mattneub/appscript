@@ -34,24 +34,32 @@
 
 <h3>Methods</h3>
 
-<pre><code>Alias -- A persistent reference to a filesystem object. Aliases keep track of filesystem
-        objects as they're moved around the disk or renamed. Provides a variety of
-        properties and constructors for converting to and from other MacPython types.
+<pre><code>Alias -- A persistent reference to a filesystem object. Aliases keep
+        track of filesystem objects as they're moved around the disk
+        or renamed. Provides a variety of properties and constructors
+        for converting to and from other MacPython types.
 
     Constructors:
 
         Alias(path) -- make Alias object from POSIX path
-    
-        Alias.makewithfsref(fsref) -- make Alias object from Carbon.File.FSRef
-    
-        Alias.makewithfsalias(alias) -- make Alias object from Carbon.File.Alias
 
-        Alias.makewithaedesc(desc) -- make Alias object from an AEDesc of typeAlias
-                (typeFSS, typeFSRef, typeFileURL should also be acceptable)
+        Alias.makewithurl(url) -- make Alias object from file URL
+    
+        Alias.makewithfsref(fsref) -- make Alias object from
+                Carbon.File.FSRef
+    
+        Alias.makewithfsalias(alias) -- make Alias object from
+                Carbon.File.Alias
+
+        Alias.makewithaedesc(desc) -- make Alias object from an
+                AEDesc of typeAlias (typeFSS, typeFSRef, typeFileURL
+                should also be acceptable)
 
     Properties:
 
         path : unicode -- POSIX path
+
+        url : string -- file URL
 
         file : macfile.File
 
@@ -98,9 +106,11 @@ Alias('/some/non/existent/location')
 
 <h3>Methods</h3>
 
-<pre><code>File -- A reference to a fixed filesystem location. May be deterministic/non-deterministic
-        depending on the type of object it's constructed from. Provides a variety of
-        properties and constructors for converting to and from other MacPython types.
+<pre><code>File -- A reference to a fixed filesystem location. May be
+        deterministic/non-deterministic depending on the type of
+        object it's constructed from. Provides a variety of
+        properties and constructors for converting to and from
+        other MacPython types.
 
     Constructors:
 
@@ -108,12 +118,14 @@ Alias('/some/non/existent/location')
 
         File.makewithurl(url) -- make File object from file URL
 
-        File.makewithfsref(fsref) -- make File object from Carbon.File.FSRef
+        File.makewithfsref(fsref) -- make File object from
+                Carbon.File.FSRef
     
-        File.makewithfsspec(alias) -- make File object from legacy Carbon.File.FSSpec
+        File.makewithfsspec(alias) -- make File object from legacy
+                Carbon.File.FSSpec
 
-        File.makewithaedesc(desc) -- make File object from CarbonX.AE.AEDesc of
-                typeFSS, typeFSRef, typeFileURL
+        File.makewithaedesc(desc) -- make File object from
+                CarbonX.AE.AEDesc of typeFSS, typeFSRef, typeFileURL
 
     Properties:
 
@@ -167,16 +179,11 @@ f = File('/Users/foo/new file')
 
 app('older app').documents[1].save(in_=f.fsspec)</code></pre>
 
+<p>When used in an application command, a <code>File</code> object returned by appscript will always pack into the same <code>typeFSRef</code>, <code>typeFileURL</code> or <code>typeFSS</code> AEDesc it was created from. A <code>File</code> object created using the default constructor will always pack into an AEDesc of <code>typeFileURL</code>.</p>
 
-<!-- TO DO
-
-<p>When used in an application command, a <code>FileURL</code> object returned by appscript will always pack into the same <code>TypeFSRef</code>, <code>TypeFileURL</code> or <code>TypeFSS</code> AEDesc it was created from. A <code>FileURL</code> object returned by <code>FileURL.path</code>, <code>Alias#to_file_url</code> or <code>FileURL#to_file_url</code> will always pack into an AEDesc of <code>TypeFileURL</code>.</p>
-
-<p>Note that comparing <code>FileURL</code> objects only tests for exact data equality; two objects that identify the same filesystem location by different means (e.g.comparing a <code>FileURL</code> object that was created from an existing AEDesc of <code>TypeFSRef</code> against one created from scratch), using paths of different case, etc. will test as false.</p>
+<p>When comparing <code>File</code> objects, <code>File.__eq__</code> will use OS routines to test for equality if both items exist, otherwise it will perform a case-sensitive comparison of file paths.</p>
 
 <p>Note that AEDescs of <code>typeFSRef</code> can represent existing filesystem locations only. AEDescs of <code>typeFileURL</code> can represent both existing and non-existing locations. AEDescs of <code>typeFSS</code> (FSSpecs) are deprecated on Mac OS X due to lack of proper Unicode and long filename support, and are retained for backwards compatibility with older applications only.</p>
-
--->
 
 
 <h2><code>mactypes.Units</code></h2>
@@ -199,22 +206,22 @@ app('older app').documents[1].save(in_=f.fsspec)</code></pre>
 
 <p>The following unit types are defined as standard:</p>
 
-<pre><code>'centimeters'                  'cubic inches'
-'meters'                       'cubic feet'
-'kilometers'                   'cubic yards'
+<pre><code>'centimeters'                  'cubic_inches'
+'meters'                       'cubic_feet'
+'kilometers'                   'cubic_yards'
 'inches'                       
 'feet'                         'liters'
 'yards'                        'quarts'
 'miles'                        'gallons'
                               
-'square meters'                'grams'
-'square kilometers'            'kilograms'
-'square feet'                  'ounces'
-'square yards'                 'pounds'
-'square miles'                 
-                               'degrees Celsius'
-'cubic centimeters'            'degrees Fahrenheit'
-'cubic meters'                 'degrees Kelvin'</code></pre>
+'square_meters'                'grams'
+'square_kilometers'            'kilograms'
+'square_feet'                  'ounces'
+'square_yards'                 'pounds'
+'square_miles'                 
+                               'degrees_Celsius'
+'cubic_centimeters'            'degrees_Fahrenheit'
+'cubic_meters'                 'degrees_Kelvin'</code></pre>
 
 <p>Additional application-specific unit types can be added if needed.</p>
 
@@ -223,7 +230,7 @@ app('older app').documents[1].save(in_=f.fsspec)</code></pre>
 
 <pre><code>mactypes.Units(14, 'inches')</code></pre>
 
-<pre><code>mactypes.Units(3.5, 'square meters')</code></pre>
+<pre><code>mactypes.Units(3.5, 'square_meters')</code></pre>
 
 
 </div>

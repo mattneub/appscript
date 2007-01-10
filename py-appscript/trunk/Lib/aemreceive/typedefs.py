@@ -35,7 +35,7 @@ class ArgDef:
 
 class ArgDesc(ArgDef):
 	def AEM_unpack(self, desc, codecs):
-		return desc
+		return True, desc
 
 kArgDesc = ArgDesc()
 

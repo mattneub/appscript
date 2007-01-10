@@ -13,19 +13,7 @@ TO DO
 - Introspection support. Users should be able to examine both references' structure and obtain terminology for the referenced properties and elements.
 
 
-- aemcodegen should probably show 'subj' attribute
-
-
-- Finish Problem Apps chapter
-
-
-- Improve osadict to provide htmldoc export option, interactive option
-
-
-- Get all documentation online.
-
-
-- Proper tests.
+- More tests.
 
 
 - See modules for additional TO DO/TO CHECK/TO DECIDE comments.

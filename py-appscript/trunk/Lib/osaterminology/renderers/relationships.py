@@ -1,7 +1,6 @@
 #!/usr/bin/env pythonw
 
 from sys import stdout
-from osaterminology.dom import aeteparser
 
 ######################################################################
 # PRIVATE
@@ -84,20 +83,4 @@ class RelationshipGrapher:
 		klass = self.terms.classes().byname(classname)
 		self.renderer.add(classname, None, False, False)
 		render(klass, [], maxdepth)
-
-
-######################################################################
-# TEST
-######################################################################
-
-if __name__ == '__main__':
-	#p = '/Applications/TextEdit.app'
-	p = '/System/Library/CoreServices/Finder.app'
-#	p = '/System/Library/CoreServices/System Events.app'
-	#p = '/Applications/Automator.app'
-	#p = '/Applications/Microsoft Office X/Microsoft Word'
-	
-	terms = aeteparser.parseapp(p, style='applescript')
-	o = RelationshipGrapher(terms, TextRenderer())
-	o.draw(maxdepth=5) # 'folder'
 

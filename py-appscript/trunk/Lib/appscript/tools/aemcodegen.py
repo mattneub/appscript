@@ -37,12 +37,15 @@ class _Base:
 
 
 class _Event(_Base):
-	def __init__(self, repr, codecs):
+	def __init__(self, repr, realEvent, codecs):
 		self._repr = repr
+		self._realEvent = realEvent
 		self._codecs = codecs
 	
 	def send(self, *args, **kargs):
 		print >> outputfile, '%s.send(%s)\n' % (self._repr, self._encfmt(args, kargs))
+		if sendevents:
+			return self._realEvent.send(*args, **kargs)
 
 
 class _Application(_Base):
@@ -53,14 +56,13 @@ class _Application(_Base):
 	AEM_identity = property(lambda self:self._realApp.AEM_identity)
 	
 	def event(self, event, *args, **kargs):
+		realEvent = self._realApp.event(event, *args, **kargs)
 		if event == 'ascrgdte':
-			return self._realApp.event(event, *args, **kargs)
+			return realEvent
 		else:
-			args = (event,) + args
-			if kargs.get('resulttype', 0) is None:
-				del kargs['resulttype']
 			self._codecs = kargs.pop('codecs')
-			return _Event('%s.event(%s)' % (self._repr, self._encfmt(args, kargs)), self._codecs)
+			args = (event,) + args
+			return _Event('%s.event(%s)' % (self._repr, self._encfmt(args, kargs)), realEvent, self._codecs)
 	
 	def starttransaction(self):
 		print >> outputfile, self._repr + '.starttransaction()\n'
@@ -71,6 +73,8 @@ class _Application(_Base):
 
 #######
 # PUBLIC
+
+sendevents = False
 
 outputfile = _sys.stdout # user may replace this
 

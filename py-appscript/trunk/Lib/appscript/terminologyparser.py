@@ -17,8 +17,8 @@ from struct import pack, unpack
 ######################################################################
 
 class Parser:
-	def __init__(self):
-		self.convert = getconverter('py-appscript')
+	def __init__(self, style):
+		self.convert = getconverter(style)
 		# terminology tables (items are stored by code to eliminate duplicates)
 		self.enumerators = {}
 		self.properties = {}
@@ -168,10 +168,10 @@ class LittleEndianParser(Parser):
 # PUBLIC
 ######################################################################
 
-def buildtablesforaetes(aetes):
+def buildtablesforaetes(aetes, style='py-appscript'):
 	if pack("H", 1) == '\x00\x01': # is it big-endian?
-		return Parser().parse(aetes)
+		return Parser(style).parse(aetes)
 	else:
-		return LittleEndianParser().parse(aetes)
+		return LittleEndianParser(style).parse(aetes)
 
 

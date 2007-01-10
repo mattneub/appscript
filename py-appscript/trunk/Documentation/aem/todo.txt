@@ -1,8 +1,5 @@
 TO DO
 
-- decide naming scheme for unit types
-
-
 - following should work but doesn't:
 
 	Application('/System/Library/CoreServices/Finder.app').event('coregetd', {'----': app.elements('pcap')}).send()
@@ -17,8 +14,6 @@ TO DO
 	- typeExtended ? Float80; coerce to type128BitFloatingPoint and decode that? # non-preferred
 	- typeAEText ?
 	- typeTextStyles
-
-What about packing/unpacking application identifiers?
 
 
 - decide how to support sending AEs from non-main threads: either have aem/user manage Mach ports (tricky to do automatically, tedious to do manually), or create a fresh port each time (speed impact seems to be negligble; any other issues?)

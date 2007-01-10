@@ -9,11 +9,11 @@
 
 # TO DO: add option flag allowing overlapped definitions to be ignored when rendering collapsed/full definitions
 
-# __all__ = ['SummaryRenderer', 'FullRenderer']
+# __all__ = ['IndexRenderer', 'SummaryRenderer', 'FullRenderer']
 
 import sys
 
-from typerenderers import typerenderers
+from typerenderers import gettyperenderer
 
 
 ######################################################################
@@ -38,6 +38,10 @@ class IndexRenderer:
 	
 	def draw_dictionary(self, o):
 		print >> self._out, o.name, 'Dictionary\n'
+		print >> self._out, '  Suites:'
+		for name in o.suites().names():
+			print >> self._out, '    %s' % name
+		print >> self._out
 		for title, items in [('Commands', o.commands()), ('Classes', o.classes())]:
 			print >> self._out, '  %s:' % title
 			names = items.names()
@@ -66,7 +70,7 @@ class IndexRenderer:
 
 class SummaryRenderer:
 	def __init__(self, style='appscript', options=[], out=_out):
-		self.typerenderer = typerenderers[style]()
+		self.typerenderer = gettyperenderer(style)
 		self._out = out
 		self._in = ''
 		self.collapse = 'collapse' in options
@@ -81,9 +85,7 @@ class SummaryRenderer:
 		self._in = self._in[2:]
 	
 	def desc(self, o):
-		import re
 		s = o.description
-#		if s[32:]: s=re.match( '^.{,32}\s|^.{,32}', s).group()+'...' # TEST
 		return s and ' -- '+s or ''
 	
 	##

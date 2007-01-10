@@ -73,7 +73,8 @@ class TC_appscriptCommands(unittest.TestCase):
 	
 	def test_commands_1(self):
 		self.assertEqual('TextEdit', self.te.name.get())
-		d = self.te.make(new=appscript.k.document, with_properties={appscript.k.text:'test test_commands'})
+		d = self.te.make(new=appscript.k.document, at=appscript.app.documents.end, 
+				with_properties={appscript.k.text:'test test_commands'})
 		self.assertEqual(appscript.reference.Reference, d.__class__)
 		d.text.end.make(new=appscript.k.word, with_data=' test2')
 		self.assertEqual('test test_commands test2', d.text.get())

@@ -5,11 +5,14 @@
 
 from pprint import pprint
 from sys import stdout
+from StringIO import StringIO
+
+import aem
 
 from osaterminology.dom import aeteparser
 from osaterminology.renderers import textdoc, inheritance, relationships
 
-import reference, terminology
+import reference, terminologyparser
 
 __all__ = ['Help']
 
@@ -45,7 +48,7 @@ class CommandDecorator:
 		return repr(self._ref)
 	
 	def __call__(self, *args, **kargs):
-		print >> self._helpObj.output, '=' * 78, '\nAppscript Help\n\nCommand:'
+		print >> self._helpObj.output, '=' * 78, '\nHelp\n\nCommand:'
 		print >> self._helpObj.output, self._ref.AS_formatCommand((args, kargs))
 		try:
 			res = self._ref(*args, **kargs)
@@ -77,7 +80,7 @@ class ReferenceResolver:
 			applicationTerms = terms.classes().byname('application')
 		except:
 			raise HelpError, "Can't resolve this reference. " \
-					"(Application's dictionary doesn't define an 'application' class.)"
+					"(Dictionary doesn't define an 'application' class.)"
 		self.containingClass = applicationTerms.full()
 		self.propertyOrElement = None
 	
@@ -120,6 +123,15 @@ class ReferenceResolver:
 		return self
 
 
+#######
+
+class ReferenceStub:
+	AS_aemreference = aem.app
+	
+	def __nonzero__(self):
+		return False
+
+
 ######################################################################
 # PUBLIC
 ######################################################################
@@ -137,13 +149,14 @@ Syntax:
 
 The optional flags argument is a string containing one or more of the following:
 
-    -h -- information on help()
-    -o -- overview of all supported classes and commands
-    -k -- list all built-in type and enumerator names
-    -r [class-name] -- one-to-one and one-to-many relationships for specific class/current reference
-    -i [class-name] -- inheritance tree for all classes/specific class
-    -s [property-or-element-name] -- state of properties and elements of object(s) currently referenced
-    -t [class-or-command-name] -- terminology for specific class/command or current reference/command
+    -h -- show this help
+    -o -- overview of all suites, classes and commands
+    -k -- list all built-in keywords (type names)
+    -u [suite-name] -- summary of named suite or all suites
+    -t [class-or-command-name] -- terminology for named class/command or current reference/command
+    -i [class-name] -- inheritance tree for named class or all classes
+    -r [class-name] -- one-to-one and one-to-many relationships for named class or current reference
+    -s [property-or-element-name] -- values of properties and elements of object(s) currently referenced
 
     Values shown in brackets are optional.
 
@@ -158,57 +171,83 @@ Notes:
 
 For example, to print an overview of TextEdit, a description of its make command and the inheritance tree for its document class:
 
-    app('TextEdit.app').help('-o -d make -i document')"""
+    app('TextEdit.app').help('-o -t make -i document')"""
 	
 	
-	def __init__(self, aetes, out=_Out()):
+	def __init__(self, aetes, appname, style='py-appscript', out=_Out()):
 		"""
-			aetes : list of str --
+			aetes : list of str -- list of aete data as byte strings
 			out : anything -- any file-like object that implements a write(str) method
 		"""
-		self.terms = aeteparser.parsedata(aetes)
+		self.terms = aeteparser.parsedata(aetes, appname, style)
+		self.style = style
 		self.output = out
 	
 	def overview(self):
 		print >> self.output, 'Overview:\n'
-		textdoc.IndexRenderer(out=self.output).draw(self.terms)
+		textdoc.IndexRenderer(style=self.style, out=self.output).draw(self.terms)
+	
+	def suite(self, suiteName=''):
+		if suiteName:
+			if not self.terms.suites().exists(suiteName):
+				raise HelpError('No information available for suite %r.' % suiteName)
+			s = 'Summary of %s'
+			if not suiteName.lower().endswith('suite'):
+				s += ' suite'
+			terms = self.terms.suites().byname(suiteName)
+			print >> self.output, (s + ':\n') % terms.name
+		else:
+			print >> self.output, 'Summary of all suites:\n'
+			terms = self.terms
+		textdoc.SummaryRenderer(style=self.style, out=self.output).draw(terms)
 	
 	def keywords(self):
-		print >> self.output, 'Built-in keywords:\n'
-		typebycode = terminology.defaulttables[0]
-		names = typebycode.values()
-		names.sort(lambda a,b:cmp(a.name.lower(), b.name.lower()))
-		for name in names:
+		print >> self.output, 'Built-in keywords (type names):\n'
+		if self.style == 'applescript':
+			from osaterminology.dom import applescripttypes
+			typenames = applescripttypes.typebyname.keys()
+		else:
+			from osaterminology import appscripttypedefs
+			formatter = {'appscript': 'k.%s', 'py-appscript': 'k.%s', 'rb-appscript': ':%s'}[self.style]
+			typenames = [formatter % name for name, code in appscripttypedefs.types]
+		typenames.sort(lambda a,b:cmp(a.lower(), b.lower()))
+		for name in typenames:
 			print >> self.output, '    %s' % name
 		
 		
 	def command(self, name):
-		try:
-			command = self.terms.commands().byname(name)
-		except KeyError: # application terminology doesn't define this command (e.g. Required Suite or get/set)
-			raise HelpError('No terminology available for command %r.' % name)
-		else:
-			print >> self.output,'Terminology for %s command\n\nCommand:' % command.name,
-			textdoc.FullRenderer(options=['full'], out=self.output).draw(command)
+		command = self.terms.commands().byname(name)
+		s = StringIO()
+		print >> s, 'Terminology for %s command\n\nCommand:' % command.name,
+		textdoc.FullRenderer(style=self.style, options=['full'], out=s).draw(command)
+		print >> self.output, s.getvalue()
 	
 	
 	def klass(self, name):
 		klass = self.terms.classes().byname(name).full()
-		print >> self.output, 'Terminology for %s class\n\nClass:' % klass.name,
-		textdoc.FullRenderer(options=['full'], out=self.output).draw(klass)
+		s = StringIO()
+		print >> s, 'Terminology for %s class\n\nClass:' % klass.name,
+		textdoc.FullRenderer(style=self.style, options=['full'], out=s).draw(klass)
+		print >> self.output, s.getvalue()
 	
 	
 	def property(self, p):
-		print >> self.output, 'Property:',
-		textdoc.FullRenderer(options=['full'], out=self.output).draw(p)
+		s = StringIO()
+		print >> s, 'Property:',
+		textdoc.FullRenderer(style=self.style, options=['full'], out=s).draw(p)
+		print >> self.output, s.getvalue()
 	
 	def element(self, e):
-		print >> self.output, 'Element:',
-		textdoc.FullRenderer(options=['full'], out=self.output).draw(e)
+		s = StringIO()
+		print >> s, 'Element:',
+		textdoc.FullRenderer(style=self.style, options=['full'], out=s).draw(e)
+		print >> self.output, s.getvalue()
 	
 	
 	def inheritance(self, className=''):
 		if className:
+			if not self.terms.classes().exists(className):
+				raise HelpError('No information available for class %r.' % className)
 			print >> self.output, 'Inheritance for %s class\n' % className
 		else:
 			print >> self.output, 'Inheritance for all classes:\n'
@@ -218,6 +257,8 @@ For example, to print an overview of TextEdit, a description of its make command
 
 	def relationships(self, ref, className=''):
 		if className:
+			if not self.terms.classes().exists(className):
+				raise HelpError('No information available for class %r.' % className)
 			print >> self.output, 'Relationships for %s class\n' % className
 		else:
 			definition = self._resolveRef(ref).propertyOrElement
@@ -230,10 +271,7 @@ For example, to print an overview of TextEdit, a description of its make command
 			else:
 				print >> self.output, 'Relationships for application class\n'
 				className = 'application'
-		if className:
-			relationships.RelationshipGrapher(self.terms, relationships.TextRenderer(self.output)).draw(className, 2)
-		else:
-			print >> self.output, 'None found.\n' % ref
+		relationships.RelationshipGrapher(self.terms, relationships.TextRenderer(self.output)).draw(className, 2)
 		print >> self.output
 
 	
@@ -247,12 +285,12 @@ For example, to print an overview of TextEdit, a description of its make command
 	
 	def _terminologyForClassOrCommand(self, ref, name=None):
 		if name:
-			if name in self.terms.commands().names():
+			if self.terms.commands().exists(name):
 				self.command(name)
-			elif name in self.terms.classes().names():
+			elif self.terms.classes().exists(name):
 				self.klass(name)
 			else:
-				raise HelpError('No terminology available for class/command %r.' % name)
+				raise HelpError('No information available for class/command %r.' % name)
 		else:
 			print >> self.output, 'Description of reference\n'
 			if isinstance(ref, reference.Command):
@@ -325,51 +363,49 @@ For example, to print an overview of TextEdit, a description of its make command
 		print >> self.output, self._helpManual
 
 	##
-	kNoArg, kOptArg, kReqArg = 0, 1, 2
 	
 	_handlers = {
 			# (requires reference?, takes no/optional/required argument?, function)
-			'h':(False, kNoArg, _manual),
-			'o':(False, kNoArg, overview),
-			'r':(True, kOptArg, relationships),
-			'i':(False, kOptArg, inheritance),
-			's':(True, kOptArg, _stateForRef),
-			't':(True, kOptArg, _terminologyForClassOrCommand),
-			'k':(False, kNoArg, keywords),
-			# TO DO: allow user to get reference's dictionary (-d)
-			# TO DO: allow user to get 'parent' reference (-p)
-			# TO DO: allow user to get reference info (-x)
+			'h':(False, False, _manual),
+			'o':(False, False, overview),
+			'r':(True, True, relationships),
+			'i':(False, True, inheritance),
+			's':(True, True, _stateForRef),
+			't':(True, True, _terminologyForClassOrCommand),
+			'k':(False, False, keywords),
+			'u':(False, True, suite),
 			}
 
 
 
-	def help(self, flags, ref): # main call
+	def help(self, flags, ref=ReferenceStub()): # main call
 		result = ref
 		if not isinstance(flags, basestring): # assume flags arg contains file/StringIO/etc. object to write help to
 			self.output = flags
 		else:
 			tokens = flags.split()
-			print >> self.output, '=' * 78 + '\nAppscript Help (%s)\n' % ' '.join(tokens)
-			print >> self.output, 'Reference: %r' % ref
+			print >> self.output, '=' * 78 + '\nHelp (%s)' % ' '.join(tokens)
+			if ref:
+				print >> self.output, '\nReference: %r' % ref
 			i = 0
 			while i < len(tokens):
 				print >> self.output, '\n' + '-' * 78
 				token = tokens[i]
 				try:
-					requiresRef, flag, fn = self._handlers[token[1:]]
+					requiresRef, optArg, fn = self._handlers[token[1:]]
 				except KeyError:
-					print >> self.output, 'Unknown request: %r\n' % token
+					print >> self.output, 'Unknown option: %r\n' % token
 				else:
 					args = []
 					if requiresRef:
 						args.append(ref)
-					if flag == self.kReqArg or flag == self.kOptArg and i+1 < len(tokens) and not tokens[i+1].startswith('-'):
-						i += 1
-						try:
-							word = tokens[i]
-						except IndexError:
-							word = ''
-						args.append(word)
+					if optArg:
+						word = []
+						while i + 1 < len(tokens) and not tokens[i + 1].startswith('-'):
+							i += 1
+							word.append(tokens[i])
+						if word:
+							args.append(' '.join(word))
 					try:
 						wrapper = fn(self, *args)
 					except HelpError, e:
@@ -384,6 +420,4 @@ For example, to print an overview of TextEdit, a description of its make command
 				i += 1
 			print >> self.output, '\n' + '=' * 78
 		return result
-
-
 

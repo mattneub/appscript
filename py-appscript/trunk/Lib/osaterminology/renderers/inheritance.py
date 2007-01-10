@@ -1,7 +1,6 @@
 #!/usr/bin/env pythonw
 
 from sys import stdout
-from osaterminology.dom import aeteparser
 
 ######################################################################
 # PRIVATE
@@ -122,26 +121,4 @@ class InheritanceGrapher:
 			for klass in self.terms.classes():
 				if not [o for o in klass.parents() if o.kind == 'class']: # is it a root class? (ignores invalid superclasses, e.g. Mail 2.0.7)
 					self._renderSubclasses([klass.name], [])
-
-
-######################################################################
-# TEST
-######################################################################
-
-if __name__ == '__main__':
-#	p = '/Applications/TextEdit.app'
-#	p = '/System/Library/CoreServices/Finder.app'
-#	p = '/Applications/Automator.app'
-	#p = '/Applications/Microsoft Office X/Microsoft Word'
-	p = '/Applications/ical.app'
-	
-	terms = aeteparser.parseapp(p)
-	o = InheritanceGrapher(terms, TextRenderer())
-	
-	from time import time as t
-	#tt=t()
-	o.draw()
-	print '\n\n\n'
-	o.draw('window') #
-	#print t()-tt
 

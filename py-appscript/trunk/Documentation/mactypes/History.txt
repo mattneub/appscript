@@ -6,6 +6,8 @@ HISTORY
 - added Units class
 - fixed some non-existent identifiers (k instead of kAE)
 - HTMLised documentation
+- File objects now perform (case-sensitive) comparisons for non-existent files
+- added makewithurl class method, url instance method to Alias class
 
 2006-03-10 -- 0.2.1
 - changed from LGPL to MIT license

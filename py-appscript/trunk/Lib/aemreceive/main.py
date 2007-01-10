@@ -38,19 +38,20 @@ class Codecs(aem.Codecs):
 _standardCodecs = Codecs()  # default codecs for unpacking incoming events' attribute and parameter data and packing result/error data into reply events
 
 _eventAttributes = [
-	(aem.k.TransactionID, 'TransactionID'),
-	(aem.k.ReturnID, 'ReturnID'),
-	(aem.k.EventClass, 'EventClass'),
-	(aem.k.EventID, 'EventID'),
-	(aem.k.Address, 'Address'),
-	(aem.k.OptionalKeyword, 'OptionalKeyword'),
-	(aem.k.Timeout, 'Timeout'),
-	(aem.k.InteractLevel, 'InteractLevel'),
-	(aem.k.EventSource, 'EventSource'),
-	(aem.k.OriginalAddress, 'OriginalAddress'),
-	(aem.k.AcceptTimeout, 'AcceptTimeout'),
-	(aem.k.Subject, 'Subject'),
-	(aem.k.Ignore, 'Ignore'),
+	(kAE.keyTransactionIDAttr, 'TransactionID'),
+	(kAE.keyReturnIDAttr, 'ReturnID'),
+	(kAE.keyEventClassAttr, 'EventClass'),
+	(kAE.keyEventIDAttr, 'EventID'),
+	(kAE.keyAddressAttr, 'Address'),
+	(kAE.keyOptionalKeywordAttr, 'OptionalKeyword'),
+	(kAE.keyTimeoutAttr, 'Timeout'),
+	(kAE.keyInteractLevelAttr, 'InteractLevel'),
+	(kAE.keyEventSourceAttr, 'EventSource'),
+	(kAE.keyOriginalAddressAttr, 'OriginalAddress'),
+	(kAE.keyAcceptTimeoutAttr, 'AcceptTimeout'),
+	('subj', 'Subject'),
+	('cons', 'Ignore'),
+	('csig', 'ConsiderIgnore'),
 	]
 
 _attributesArgName = 'attributes'

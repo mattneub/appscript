@@ -26,11 +26,17 @@ scriptingadditions = [] # names of all currently available osaxen
 
 _osaxcache = {} # a dict of form: {'osax name': ['/path/to/osax', cached_terms_or_None], ...}
 
-_se = app(id='com.apple.systemevents')
-for domain in [_se.system_domain, _se.local_domain, _se.user_domain]:
-	osaxen = domain.scripting_additions_folder.files[
-			(its.file_type == 'osax').OR(its.name_extension == 'osax')]
-	for name, path in zip(osaxen.name(), osaxen.POSIX_path()):
+#_se = app(id='com.apple.systemevents')
+_se = aem.Application(aem.findapp.byid('com.apple.systemevents'))
+#for domain in [_se.system_domain, _se.local_domain, _se.user_domain]:
+for domain in ['flds', 'fldl', 'fldu']:
+#	osaxen = domain.scripting_additions_folder.files[
+#			(its.file_type == 'osax').OR(its.name_extension == 'osax')]
+	osaxen = aem.app.property(domain).property('$scr').elements('file').byfilter(
+			aem.its.property('asty').eq('osax').OR(aem.its.property('extn').eq('osax')))
+#	for name, path in zip(osaxen.name(), osaxen.POSIX_path()):
+	for name, path in zip(_se.event('coregetd', {'----': osaxen.property('pnam')}).send(), 
+			_se.event('coregetd', {'----': osaxen.property('posx')}).send()):
 		if name.lower().endswith('.osax'):
 			name = name[:-5]
 		if not _osaxcache.has_key(name.lower()):
@@ -47,7 +53,7 @@ class _OSAXHelp:
 	def __call__(self, flags, ref):
 		if not self.helpobj:
 			from appscript import helpsystem
-			self.helpobj = helpsystem.Help(getaete(self.osaxpath))
+			self.helpobj = helpsystem.Help(getaete(self.osaxpath), self.osaxpath)
 		return self.helpobj.help(flags, ref)
 
 

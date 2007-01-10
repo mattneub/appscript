@@ -24,6 +24,10 @@ __all__ = ['Alias', 'File', 'Units']
 ######################################################################
 # Constants
 
+_diskNotFound = -35
+_fileNotFound = -43
+_folderNotFound = -120
+
 _diffVolErr = -1303
 _errFSRefsDifferent = -1420
 
@@ -34,7 +38,7 @@ def _ro(*args):
 
 
 class _Base:
-	def __eq__(self, val): # TO DO: should also support comparisons of non-existent files
+	def __eq__(self, val):
 		if self.__class__ != val.__class__:
 			return False
 		try:
@@ -42,6 +46,8 @@ class _Base:
 		except MacOS.Error, err: # Dumb wrapper implementation raises 'not found' errors for non-matches instead of just returning True/False, so trap and handle these errors appropriately.
 			if err[0] in [_diffVolErr, _errFSRefsDifferent]:
 				return False
+			if err[0] in [_fileNotFound, _folderNotFound, _diskNotFound]:
+				return self.path == val.path
 			else:
 				raise
 		else:
@@ -68,6 +74,15 @@ class Alias(_Base):
 		if path is not _NoPath:
 			self._alias = Carbon.File.FSNewAlias(None, Carbon.File.FSRef(unicode(path)))
 		self._desc = None
+	
+	def makewithurl(klass, url):
+		"""Make File object from file URL."""
+		scheme, netloc, path = urlparse(url)[:3]
+		if scheme != 'file':
+			raise ValueError, 'Not a file URL.'
+		obj = klass(unicode(unquote(path), 'utf8'))
+		return obj
+	makewithurl = classmethod(makewithurl)
 	
 	def makewithfsref(klass, fsref):
 		"""Make Alias object from Carbon.File.FSRef."""
@@ -98,6 +113,8 @@ class Alias(_Base):
 	# Properties
 	
 	path = property(lambda self: unicode(self._alias.FSResolveAlias(None)[0].as_pathname(), 'utf8'), _ro, doc="Get as POSIX path.")
+	
+	url = property(lambda self: urlunparse(('file', 'localhost', quote(self.path.encode('utf8')), '', '', '')), _ro, doc="Get as file URL.")
 	
 	file = property(lambda self: File.makewithfsref(self.fsref), _ro, doc="Get as mactypes.File.")
 	
@@ -241,7 +258,7 @@ class Units:
 		self._value = value
 		self._type = type
 	
-	value = property(lambda self: self._value, _ro, doc="Get unit value, e.g. 3.")
+	value = property(lambda self: self._value, _ro, doc="Get unit value, e.g. 3")
 	type = property(lambda self: self._type, _ro, doc="Get unit type, e.g. 'inches'")
 	
 	def __eq__(self, val):
@@ -257,7 +274,7 @@ class Units:
 		return 'mactypes.Units(%r, %r)' % (self.value, self.type)
 	
 	def __str__(self):
-		return '%r %s' % (self.value, self.type)
+		return '%r %s' % (self.value, self.type.replace('_', ' '))
 	
 	def __int__(self):
 		return int(self.value)

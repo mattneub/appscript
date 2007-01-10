@@ -5,17 +5,14 @@
 (C) 2006 HAS
 """
 
-# TO DO: a useful effect would be highlighting related elements when hovering over an element name
-# would need to get list of children for each element class, then generate simple JS script on each
-
 from HTMLTemplate import Template
 
 from aem import findapp
 from osaterminology.dom import osadictionary
-from osaterminology.dom import aeteparser, sdefparser
-from typerenderers import typerenderers
+from osaterminology.dom import aeteparser
+from typerenderers import gettyperenderer
 
-#__all__ = ['doc']
+#__all__ = ['renderdictionary', 'doc']
 
 ######################################################################
 # PRIVATE - Template HTML
@@ -221,8 +218,6 @@ def encodeNonASCII(txt):
 
 def renderTemplate(node, terms, typeRenderer, options):
 	collapseClasses = 'collapse' in options
-	if 'showall' in options: # TO DO: document this
-		terms.setvisibility(osadictionary.kAll)
 	# render heading
 	node.title.content = node.heading.content = terms.name + ' terminology'
 	node.path.content = terms.path
@@ -404,27 +399,43 @@ _template = Template(renderTemplate, _html)
 # PUBLIC
 ######################################################################
 
-def doc(path, file, style='appscript', options=[], template=None):
-	"""Render an XHTML file listing a scriptable application's classes and commands.
-		path : str -- name or path to application
-		file : str -- HTML file's destination.
+def renderdictionary(terms, style='appscript', options=[], template=None):
+	"""Render a Dictionary object's classes and commands as an XHTML string.
+		terms : osaterminology.dom.osadictionary.Dictionary -- pre-parsed dictionary object
 		style : str -- keyword formatting style ('appscript' or 'applescript')
-		options : list of str -- formatting options ([] or ['collapse'])
+		options : list of str -- formatting options (zero or more of: 'collapse', 'showall')
 		template : str -- custom HTML template to use
+		Result : str -- HTML data, or empty string if no terminology was found
 	"""
-	if path.endswith('.sdef'):
-		terms = sdefparser.parsefile(path, style)
-	elif path.endswith('.aete'):
-		terms = aeteparser.parsefile(path, style)
-	else:
-		terms = aeteparser.parseapp(findapp.byname(path), style)
+	if 'showall' in options:
+		oldvis = terms.setvisibility(osadictionary.kAll)
 	if terms.suites():
 		if template:
 			tpl = Template(renderTemplate, template)
 		else:
 			tpl = _template
-		result = encodeNonASCII(tpl.render(terms, typerenderers[style](), options))
-		f = open(file, 'w')
+		html = encodeNonASCII(tpl.render(terms, gettyperenderer(style), options))
+	else:
+		html = ''
+	if 'showall' in options:
+		terms.setvisibility(oldvis)
+	return html
+
+
+def doc(apppath, outfile, style='appscript', options=[], template=None):
+	"""Render an XHTML file listing a scriptable application/scripting addition's classes and commands.
+		apppath : str -- name or path to application/path to scripting addition
+		outfile : str -- the file to write
+		style : str -- keyword formatting style ('py-appscript', 'rb-appscript' or 'applescript')
+		options : list of str -- formatting options (zero or more of: 'collapse', 'showall')
+		template : str -- custom HTML template to use
+		Result : bool -- False if no terminology was found and no file was written; else True
+	"""
+	terms = aeteparser.parseapp(findapp.byname(apppath), style)
+	result = renderdictionary(terms, style='appscript', options=[], template=None)
+	if result:
+		f = open(outfile, 'w')
 		f.write(str(result))
 		f.close()
+	return bool(result)
 

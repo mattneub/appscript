@@ -55,13 +55,18 @@ print osax.scriptingadditions
 
 <p>The <code>ScriptingAddition</code> class represents a single scripting addition and its target application. <code>ScriptingAddition</code> is a subclass of appscript's <code>Application</code> class, and its constructor is the same except for the addition of :</p>
 
-<pre><code>ScriptingAddition(osaxname, name=None, id=None, creator=None, url=None, terms=True)
-    osaxname : str -- name of scripting addition, e.g. 'StandardAdditions'
-    name : str -- name or path of application, e.g. 'System Events',
-           '/Applications/System Events.app'
-    id : str -- bundle id of application, e.g. 'com.apple.systemevents'
-    creator : str -- 4-character creator type of application, e.g. 'sevs'
-    url : str -- eppc URL of remote process, e.g. 'eppc://G5.local/System%20Events'</code></pre>
+<pre><code>ScriptingAddition(osaxname, name=None, id=None, creator=None,
+        url=None, terms=True)
+    osaxname : str -- name of scripting addition,
+            e.g. 'StandardAdditions'
+    name : str -- name or path of application, e.g. 'System Events', 
+            '/System/Library/CoreServices/System Events.app'
+    id : str -- bundle id of application,
+            e.g. 'com.apple.systemevents'
+    creator : str -- 4-character creator type of application,
+            e.g. 'sevs'
+    url : str -- eppc URL of remote process,
+            e.g. 'eppc://G5.local/System%20Events'</code></pre>
 
 
 <h2>Examples</h2>

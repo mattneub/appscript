@@ -38,6 +38,18 @@ HISTORY
 
 - added CommandError.__int__
 
+- removed expanduser usage in dump.py; 'path' attribute in exported modules now always contains full path
+
+- modified helpsystem to support multiple languages
+
+- added -u option to built-in help for displaying summary of suites
+
+- improved osadict now supports multiple formatting styles, HTML export, scripting additions, remote apps, interactive mode
+
+- built-in help no longer errors when target is current application
+
+- fixed bug in Command.AS_formatCommand that would cause CommandError.__str__ to fail silently if the failed command's direct parameter was a tuple
+
 
 2006-08-16 -- 0.16.2
 

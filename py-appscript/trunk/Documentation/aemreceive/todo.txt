@@ -4,7 +4,7 @@ TO DO
 
 - better handling of return values? (e.g. check return types match type specified in [terminology] definition) -- note: think it should be left to developer to return correct type(s), so probably scratch this
 
-- get standard event & coercion handlers; install/remove/get special event handlers -- TO DECIDE: are 'get' functions worth doing?
+- get standard event & coercion handlers -- TO DECIDE: are 'get' functions worth doing?
 
 - any other coercions to install as standard (e.g. unicode to int, real)
 

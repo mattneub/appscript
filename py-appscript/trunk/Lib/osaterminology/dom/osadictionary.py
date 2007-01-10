@@ -113,6 +113,12 @@ class Nodes(_Vis): # TO DO: rename
 		for node in self._real():
 			fn(node)
 
+	# TO DO: caching in following:
+	
+	def exists(self, name):
+		d = dict([(o.name.lower(), o) for o in self._real()])
+		return d.has_key(name.lower())
+		
 	def byname(self, name): 
 		# TO DO: add optional 'all' parameter as well? Or add allbyname() method? Or leave users to do this themselves?
 		d = dict([(o.name.lower(), o) for o in self._real()])

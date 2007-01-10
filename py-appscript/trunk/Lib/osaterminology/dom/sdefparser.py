@@ -90,7 +90,7 @@ class Handler(ContentHandler):
 	
 	def ascode(self, s):
 		if len(s) in [4, 8]:
-			return str(s)
+			return s.encode('MacRoman')
 		else:
 			return struct.pack('L', int(s, 16))
 	

@@ -12,44 +12,44 @@ class UnitTypeCodecs:
 	"""
 	
 	_defaultunittypes = [
-		['centimeters', kAE.typeCentimeters],
-		['meters', kAE.typeMeters],
-		['kilometers', kAE.typeKilometers],
-		['inches', kAE.typeInches],
-		['feet', kAE.typeFeet],
-		['yards', kAE.typeYards],
-		['miles', kAE.typeMiles],
+		('centimeters', 'cmtr'),
+		('meters', 'metr'),
+		('kilometers', 'kmtr'),
+		('inches', 'inch'),
+		('feet', 'feet'),
+		('yards', 'yard'),
+		('miles', 'mile'),
 		
-		['square meters', kAE.typeSquareMeters],
-		['square kilometers', kAE.typeSquareKilometers],
-		['square feet', kAE.typeSquareFeet],
-		['square yards', kAE.typeSquareYards],
-		['square miles', kAE.typeSquareMiles],
+		('square_meters', 'sqrm'),
+		('square_kilometers', 'sqkm'),
+		('square_feet', 'sqft'),
+		('square_yards', 'sqyd'),
+		('square_miles', 'sqmi'),
 		
-		['cubic centimeters', kAE.typeCubicCentimeter],
-		['cubic meters', kAE.typeCubicMeters],
-		['cubic inches', kAE.typeCubicInches],
-		['cubic feet', kAE.typeCubicFeet],
-		['cubic yards', kAE.typeCubicYards],
+		('cubic_centimeters', 'ccmt'),
+		('cubic_meters', 'cmet'),
+		('cubic_inches', 'cuin'),
+		('cubic_feet', 'cfet'),
+		('cubic_yards', 'cyrd'),
 		
-		['liters', kAE.typeLiters],
-		['quarts', kAE.typeQuarts],
-		['gallons', kAE.typeGallons],
+		('liters', 'litr'),
+		('quarts', 'qrts'),
+		('gallons', 'galn'),
 		
-		['grams', kAE.typeGrams],
-		['kilograms', kAE.typeKilograms],
-		['ounces', kAE.typeOunces],
-		['pounds', kAE.typePounds],
+		('grams', 'gram'),
+		('kilograms', 'kgrm'),
+		('ounces', 'ozs '),
+		('pounds', 'lbs '),
 		
-		['degrees Celsius', kAE.typeDegreesC],
-		['degrees Fahrenheit', kAE.typeDegreesF],
-		['degrees Kelvin', kAE.typeDegreesK],
+		('degrees_Celsius', 'degc'),
+		('degrees_Fahrenheit', 'degf'),
+		('degrees_Kelvin', 'degk'),
 	]
 	
 	##
 	
-	def _defaultpacker(self, value, code): 
-		return AE.AECreateDesc(code, pack('d', value))
+	def _defaultpacker(units, code): 
+		return AE.AECreateDesc(code, pack('d', units.value))
 	
 	def _defaultunpacker(self, desc, name):
 		return Units(unpack('d', desc.data)[0], name)
@@ -64,17 +64,17 @@ class UnitTypeCodecs:
 	def addtypes(self, typedefs):
 		""" Add application-specific unit type definitions to this UnitTypeCodecs instance.
 		
-			typedefs is a list of lists, where each sublist is of form:
-				[typename, typecode, packer, unpacker]
+			typedefs is a list of tuples, where each tuple is of form:
+				(typename, typecode, packer, unpacker)
 			or:
-				[typename, typecode]
+				(typename, typecode)
 			
 			If optional packer and unpacker functions are omitted, default pack/unpack functions
 			are used instead; these pack/unpack AEDesc data as a double precision float.
 		"""
 		for item in typedefs:
 			if len(item) == 2:
-				item = item + [self._defaultpacker, self._defaultunpacker]
+				item = item + (self._defaultpacker, self._defaultunpacker)
 			name, code, packer, unpacker = item
 			self._typebyname[name] = (code, packer)
 			self._typebycode[code] = (name, unpacker)
@@ -86,7 +86,7 @@ class UnitTypeCodecs:
 			except KeyError:
 				raise TypeError, 'Unknown unit type: %r' % val
 			else:
-				return True, packer(val.value, code)
+				return True, packer(val, code)
 		else:
 			return False, val
 	

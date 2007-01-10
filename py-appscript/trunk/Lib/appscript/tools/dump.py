@@ -15,7 +15,6 @@ Note that dumped terminologies have no effect on appscript's built-in help syste
 which obtains its terminology data separately.
 """
 
-from os.path import expanduser
 from pprint import pprint
 from sys import argv
 
@@ -33,9 +32,10 @@ def dump(apppath, modulepath):
 		apppath : str -- name or path of application
 		modulepath : str -- path to generated module
 	"""
-	tables = buildtablesforaetes(getaete(findapp.byname(apppath)))
+	apppath = findapp.byname(apppath)
+	tables = buildtablesforaetes(getaete(apppath))
 	atts = zip(('classes', 'enums', 'properties', 'elements', 'commands'), tables)
-	f = file(expanduser(modulepath), 'w')
+	f = file(modulepath, 'w')
 	print >> f, 'version = 1.1'
 	print >> f, 'path = %r' % apppath
 	for key, value in atts:

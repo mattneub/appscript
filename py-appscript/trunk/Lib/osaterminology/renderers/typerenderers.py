@@ -2,7 +2,6 @@
 
 from osaterminology.dom.osadictionary import kAll, Nodes
 
-
 ######################################################################
 
 
@@ -85,11 +84,19 @@ class ApplescriptTypeRenderer(TypeRendererBase):
 
 ######################################################################
 
-
 typerenderers = {
 	'applescript': ApplescriptTypeRenderer,
 	'appscript': PyAppscriptTypeRenderer,
 	'py-appscript': PyAppscriptTypeRenderer,
 	'rb-appscript': RbAppscriptTypeRenderer,
 	}
+
+######################################################################
+
+
+def gettyperenderer(name):
+	try:
+		return typerenderers[name]()
+	except KeyError:
+		raise KeyError, "Couldn't find a type renderer named %r." % name
 

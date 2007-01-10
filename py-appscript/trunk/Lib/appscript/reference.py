@@ -243,7 +243,7 @@ class AppData(aem.Codecs):
 	def help(self, flags, ref):
 		# Stub method; initialises Help object and replaces itself with a real help() function the first time it's called.
 		from helpsystem import Help
-		helpObj = Help(terminology.aetedataforapp(self.target))
+		helpObj = Help(terminology.aetedataforapp(self.target), self.identifier or 'Current Application')
 		self.help = lambda flags, ref: helpObj.help(flags, ref) # replace stub method with real help
 		return self.help(flags, ref) # call real help. Note that help system is responsible for providing a return value (usually the same reference it was called upon, but it may modify this).
 
@@ -389,7 +389,7 @@ class Command(_Base):
 			raise CommandError(self, (args, kargs), e)
 	
 	def AS_formatCommand(self, args):
-		return '%r(%s)' % (self, ', '.join(['%r' % i for i in args[0]] + ['%s=%r' % i for i in args[1].items()]))
+		return '%r(%s)' % (self, ', '.join(['%r' % (v,) for v in args[0]] + ['%s=%r' % (k, v) for (k, v) in args[1].items()]))
 		
 
 ######################################################################

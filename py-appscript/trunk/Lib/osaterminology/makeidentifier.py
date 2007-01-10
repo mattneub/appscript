@@ -19,17 +19,38 @@ import keyword, string, sets
 # - names of properties and methods used in reference.Application and reference.Reference classes
 # - names of built-in keyword arguments in reference.Command.__call__
 
-kPyAppscriptReservedWords = """
-		timeout waitreply resulttype ignore
-		ID previous next
-		start end before after
-		first last middle any
-		startswith endswith contains isin
-		doesnotstartwith doesnotendwith doesnotcontain isnotin
-		AND OR NOT
-		starttransaction endtransaction aborttransaction
-		help
-		""".split() + keyword.kwlist
+kPyAppscriptReservedWords = [
+	"ID",
+	"start",
+	"end",
+	"before",
+	"after",
+	"previous",
+	"next",
+	"first",
+	"middle",
+	"last",
+	"any",
+	"startswith",
+	"endswith",
+	"contains",
+	"isin",
+	"doesnotstartwith",
+	"doesnotendwith",
+	"doesnotcontain",
+	"isnotin",
+	"AND",
+	"NOT",
+	"OR",
+	"starttransaction",
+	"aborttransaction",
+	"endtransaction",
+	"resulttype",
+	"ignore",
+	"timeout",
+	"waitreply"
+	"help",
+	 ] + keyword.kwlist
 
 
 # rb-appscript
@@ -189,6 +210,7 @@ _pyconverter = Converter().convert
 
 
 _converters = {
+	'applescript': lambda s:s,
 	'appscript': _pyconverter,
 	'py-appscript': _pyconverter,
 	'rb-appscript': Converter(kRbAppscriptReservedWords).convert,
