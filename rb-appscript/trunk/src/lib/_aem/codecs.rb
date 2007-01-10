@@ -166,19 +166,9 @@ class Codecs
 	def pack(val) # clients may override this to replace existing packers
 		case val
 			when AEMReference::Base then val.AEM_pack_self(self)
-			when NilClass then NullDesc
-			when TrueClass then TrueDesc
-			when FalseClass then FalseDesc
+			
 			when Fixnum then AE::AEDesc.new(KAE::TypeSInt32, [val].pack('l'))
-			when Bignum
-				if SInt32Bounds === val
-					AE::AEDesc.new(KAE::TypeSInt32, [val].pack('l')) 
-				elsif SInt64Bounds === val
-					AE::AEDesc.new(KAE::TypeSInt64, [val].pack('q'))
-				else
-					AE::AEDesc.new(KAE::TypeFloat, [val.to_f].pack('d'))
-				end
-			when Float then AE::AEDesc.new(KAE::TypeFloat, [val].pack('d'))
+			
 			when String then 
 				begin
 					# Note: while typeUnicodeText is deprecated (see AEDataModel.h), it's still the
@@ -197,12 +187,21 @@ class Codecs
 						raise
 					end
 				end
+			
+			when TrueClass then TrueDesc
+			when FalseClass then FalseDesc
+			
+			when Float then AE::AEDesc.new(KAE::TypeFloat, [val].pack('d'))
+			
 			when Time
 				AE::AEDesc.new(KAE::TypeLongDateTime,
 						[AE.convert_unix_seconds_to_long_date_time(val.to_i)].pack('q'))
+			
 			when Array then pack_array(val)
 			when Hash then pack_hash(val)
+			
 			when MacTypes::FileBase then val.desc
+			
 			when TypeWrappers::AEType then
 				AE::AEDesc.new(KAE::TypeType, Codecs.four_char_code(val.code))
 			when TypeWrappers::AEEnum then
@@ -211,7 +210,19 @@ class Codecs
 				AE::AEDesc.new(KAE::TypeProperty, Codecs.four_char_code(val.code))
 			when TypeWrappers::AEKey then
 				AE::AEDesc.new(KAE::TypeKeyword, Codecs.four_char_code(val.code))
+			
 			when AE::AEDesc then val
+			
+			when Bignum
+				if SInt32Bounds === val
+					AE::AEDesc.new(KAE::TypeSInt32, [val].pack('l')) 
+				elsif SInt64Bounds === val
+					AE::AEDesc.new(KAE::TypeSInt64, [val].pack('q'))
+				else
+					AE::AEDesc.new(KAE::TypeFloat, [val.to_f].pack('d'))
+				end
+				
+			when NilClass then NullDesc
 		else
 			did_pack, desc = @unit_type_codecs.pack(val)
 			if did_pack
@@ -277,37 +288,24 @@ class Codecs
 	def unpack(desc) # clients may override this to replace existing unpackers
 		return case desc.type
 			
-			when KAE::TypeNull then nil
-			when KAE::TypeBoolean then desc.data != "\000"
-			when KAE::TypeFalse then false
-			when KAE::TypeTrue then true
+			when KAE::TypeObjectSpecifier then unpack_object_specifier(desc)
 			
-			when KAE::TypeSInt16 then desc.data.unpack('s')[0]
 			when KAE::TypeSInt32 then desc.data.unpack('l')[0]
-			when KAE::TypeUInt32 then desc.data.unpack('L')[0]
-			when KAE::TypeSInt64 then desc.data.unpack('q')[0]
-			when KAE::TypeIEEE32BitFloatingPoint then desc.data.unpack('f')[0]
 			when KAE::TypeIEEE64BitFloatingPoint then desc.data.unpack('d')[0]
-			when KAE::Type128BitFloatingPoint then 
-				desc.coerce(KAE::TypeIEEE64BitFloatingPoint).data.unpack('d')[0]
 			
-			when KAE::TypeUTF8Text then desc.data
 			when 
 					KAE::TypeUnicodeText,
 					KAE::TypeChar, 
 					KAE::TypeIntlText, 
 					KAE::TypeUTF16ExternalRepresentation,
-					KAE::TypeStyledText, 
-					KAE::TypeStyledUnicodeText
+					KAE::TypeStyledText
 				desc.coerce(KAE::TypeUTF8Text).data
+				
+			when KAE::TypeFalse then false
+			when KAE::TypeTrue then true
 			
 			when KAE::TypeLongDateTime then
 				Time.at(AE.convert_long_date_time_to_unix_seconds(desc.data.unpack('q')[0]))
-				
-			when KAE::TypeVersion
-				vers, lo = desc.data.unpack('CC')
-				subvers, patch = lo.divmod(16)
-				"#{vers}.#{subvers}.#{patch}"
 			
 			when KAE::TypeAEList then unpack_aelist(desc)
 			when KAE::TypeAERecord then unpack_aerecord(desc)
@@ -319,23 +317,41 @@ class Codecs
 					KAE::TypeFSS
 				MacTypes::FileURL.desc(desc)
 			
-			when KAE::TypeQDPoint then desc.data.unpack('ss').reverse
-			when KAE::TypeQDRectangle then
-				x1, y1, x2, y2 = desc.data.unpack('ssss')
-				[y1, x1, y2, x2]
-			when KAE::TypeRGBColor then desc.data.unpack('SSS')
-			
 			when KAE::TypeType then unpack_type(desc)
 			when KAE::TypeEnumerated then unpack_enumerated(desc)
 			when KAE::TypeProperty then unpack_property(desc)
 			when KAE::TypeKeyword then unpack_keyword(desc)
 			
+			when KAE::TypeSInt16 then desc.data.unpack('s')[0]
+			when KAE::TypeUInt32 then desc.data.unpack('L')[0]
+			when KAE::TypeSInt64 then desc.data.unpack('q')[0]
+			
+			when KAE::TypeNull then nil
+			
+			when KAE::TypeUTF8Text then desc.data
+			
 			when KAE::TypeInsertionLoc then unpack_insertion_loc(desc)
-			when KAE::TypeObjectSpecifier then unpack_object_specifier(desc)
 			when KAE::TypeCurrentContainer then unpack_current_container(desc)
 			when KAE::TypeObjectBeingExamined then unpack_object_being_examined(desc)
 			when KAE::TypeCompDescriptor then unpack_comp_descriptor(desc)
 			when KAE::TypeLogicalDescriptor then unpack_logical_descriptor(desc)
+			
+			when KAE::TypeIEEE32BitFloatingPoint then desc.data.unpack('f')[0]
+			when KAE::Type128BitFloatingPoint then 
+				desc.coerce(KAE::TypeIEEE64BitFloatingPoint).data.unpack('d')[0]
+			
+			when KAE::TypeQDPoint then desc.data.unpack('ss').reverse
+			when KAE::TypeQDRectangle then
+				x1, y1, x2, y2 = desc.data.unpack('ssss')
+				[y1, x1, y2, x2]
+			when KAE::TypeRGBColor then desc.data.unpack('SSS')
+				
+			when KAE::TypeVersion
+				vers, lo = desc.data.unpack('CC')
+				subvers, patch = lo.divmod(16)
+				"#{vers}.#{subvers}.#{patch}"
+				
+			when KAE::TypeBoolean then desc.data != "\000"
 		else
 			did_unpack, val = @unit_type_codecs.unpack(desc)
 			if did_unpack

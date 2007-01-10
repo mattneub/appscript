@@ -54,11 +54,20 @@ p OSAX.scripting_additions
 
 <h2><code>OSAX.osax</code></h2>
 
-<p>The <code>osax</code> function provides a convenient shortcut for creating new <code>ScriptingAddition</code> instances:</p>
+<p>The <code>osax</code> function provides a convenient shortcut for creating new <code>ScriptingAddition</code> instances.</p>
+
+<pre><code>osax(name='StandardAdditions', app_name=nil) -- convenience method for
+        creating a new ScriptingAddition instance
+    name : String -- scripting addition's name
+    app_name : String | nil -- target application's name/path, or nil
+            for current application
+    Result : ScriptingAddition</code></pre>
+
+<p>For example:</p>
 
 <pre><code>require "osax"
 
-sa = OSAX.osax("StandardAdditions")
+sa = OSAX.osax
 
 p sa
 # Result: #&lt;OSAX::ScriptingAddition
@@ -121,7 +130,7 @@ p sa
 
 # Create a new ScriptingAddition object:
 
-sa = OSAX.osax("StandardAdditions")
+sa = OSAX.osax
 
 
 # List all available commands:

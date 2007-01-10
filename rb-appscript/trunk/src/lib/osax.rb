@@ -64,9 +64,11 @@ module OSAX
 		return OSAXNames
 	end
 	
-	def OSAX.osax(name, app_name=nil)
-		# convenience method; provides shortcut for creating a new ScriptingAddition instance;
-		# a target application's name or full path may optionally be given as well
+	def OSAX.osax(name='StandardAdditions', app_name=nil)
+		# Convenience method for creating a new ScriptingAddition instance.
+		#	name : String -- scripting addition's name
+		#	app_name : String | nil -- target application's name/path, or nil for current application
+		#	Result : ScriptingAddition
 		addition = ScriptingAddition.new(name)
 		if app_name
 			addition = addition.by_name(app_name)

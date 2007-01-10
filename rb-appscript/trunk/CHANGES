@@ -1,4 +1,4 @@
-2007-01-04 -- 0.3.0
+2007-01-09 -- 0.3.0
 
 - removed 'AS' alias; client scripts should refer to Appscript module, e.g.:
 
@@ -14,6 +14,8 @@ should be changed to:
 
 - improved unpacking of object specifiers and other reference-related AEDescs (10-20% faster)
 
+- adjusted ordering of case blocks in Codecs#pack, #unpack to improve performance when packing/unpacking more commonly used types
+
 - added Appscript::Application#AS_new_reference; this takes a generic/aem reference and returns an appscript reference
 
 - referencerenderer now displays accurate representation of an appscript reference when appscript-style representation is unavailable (previously rendered the appscript reference as an aem-style reference string, which was misleading)
@@ -21,6 +23,8 @@ should be changed to:
 - tweaked APIs for UnitTypeCodecs' pack/unpack procs
 
 - moved problem apps chapter to website
+
+- added information on osadict to getting help chapter
 
 - renamed aem's #userproperty method to #user_property
 
@@ -43,6 +47,8 @@ should be changed to:
 - added more tests
 
 - fixed bug in MacTypes::FileBase#== where comparing two Alias/FileURL objects with different paths would return true, not false, and generally improved its behaviour
+
+- added default value ('StandardAdditions') for OSAX.osax's name argument
 
 
 2006-11-29 -- 0.2.1

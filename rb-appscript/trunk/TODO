@@ -2,23 +2,15 @@ TO DO
 
 - see if there's a way to provide a SafeObject base class for Appscript::Reference and Appscript::GenericReference that doesn't require adding traps to Module. (e.g. Could an alternative base class be implemented in C to act as a buffer between the two?)
 
-- implement built-in help system by bridging to py-appscript
-
 - see if it's possible to work better with irb's autocomplete (autocomplete support is currently limited to start of a reference)
 
 - ae/aem/appscript-defined exception classes aren't quite idiomatic Ruby
 
-- would be nice if MacFile::FileNotFoundError always showed the failed path (this'd need a bit of Alias Manager glue added to the ae extension)
-
 - include an example project (or source for) that uses ruby2exe to build a standalone 'applet'
-
-- profiling
 
 - finish writing tests
 
 - improve and polish documentation
-
-- finish problem apps chapter (see comments in HTML file)
 
 - see also TO DO items in source files
 

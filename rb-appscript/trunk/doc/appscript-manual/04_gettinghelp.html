@@ -20,16 +20,43 @@
 
 <!-- content -->
 <div id="content">
-<p>There are two ways to get information about applications' scripting interfaces: the ASDictionary application and introspection.</p>
+<p>There are several ways to get information about applications' scripting interfaces: the <code>osadict</code> command-line tool, the ASDictionary application, and introspection.</p>
+
+
+<h2>osadict</h2>
+
+<p>The <code>osadict</code> tool, bundled with the <a href="http://sourceforge.net/projects/appscript">py-appscript package</a>, can be used to export application dictionaries in HTML format, or browse them interactively from the command line.</p>
+
+<p>To view osadict's full documentation:</p>
+
+<pre><code>osadict -h</code></pre>
+
+<p>Use osadict's <code>-s</code> option or <code>default</code> command to set the formatting style for rb-appscript.</p>
+
+<p>Examples:</p>
+
+<pre><code># Export TextEdit's dictionary to HTML:
+osadict -Hs rb TextEdit.app > TextEdit.html
+
+# Browse iCal's dictionary:
+osadict -s rb eppc://remote-mac.local/iCal
+iCal&gt; -u
+iCal&gt; -t view_calendar
+iCal&gt; -t calendar -i calendar -r calendar
+iCal&gt; exit
+
+# View a Standard Additions command:
+osadict -Ns rb StandardAdditions -t display dialog</code></pre>
 
 
 <h2>ASDictionary</h2>
 
-<p>ASDictionary 0.7.1+ renders application terminology resources in plain text and HTML formats. You can obtain the latest version from the py-appscript project site (<a href="http://sourceforge.net/projects/appscript">http://sourceforge.net/projects/appscript</a>).</p>
+<p>ASDictionary, available from the <a href="http://sourceforge.net/projects/appscript"> py-appscript website</a>, renders application terminology resources in plain text and HTML formats. It provides a convenient drag-n-drop alternative to using the <code>osadict -H ...</code> command.</p>
+
 
 <h2>Introspection</h2>
 
-<p>Appscript Application and Reference objects provide several methods for obtaining information on the target application: </p>
+<p>Appscript's <code>Application</code> and <code>Reference</code> classes define several methods for obtaining information on the target application: </p>
 
 <dl>
 <dt><code>properties</code></dt>
