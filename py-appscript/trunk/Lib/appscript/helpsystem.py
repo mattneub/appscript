@@ -185,7 +185,7 @@ For example, to print an overview of TextEdit, a description of its make command
 	
 	def overview(self):
 		print >> self.output, 'Overview:\n'
-		textdoc.IndexRenderer(style=self.style, out=self.output).draw(self.terms)
+		textdoc.IndexRenderer(style=self.style, options=['sort', 'collapse'], out=self.output).draw(self.terms)
 	
 	def suite(self, suiteName=''):
 		if suiteName:

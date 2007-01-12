@@ -45,42 +45,47 @@ class RelationshipGrapher:
 	def __init__(self, terms, renderer):
 		self.terms = terms
 		self.renderer = renderer
+		self.relationshipcache = {}
 	
 	def _relationships(self, klass):
+		if not self.relationshipcache.has_key(klass.name):
 			klass = klass.full()
 			properties = [o for o in klass.properties() if o.type.realvalue().kind == 'class'] # TO DO: add isrelationship method to osadictionary.Property?
 			elements = list(klass.elements())
-			return properties, elements
+			self.relationshipcache[klass.name] = (properties, elements)
+		return self.relationshipcache[klass.name]
+	
+	def _hasrelationships(self, klass):
+		p, e = self._relationships(klass)
+		return bool(p or e)
 		
 	
 	def draw(self, classname='application', maxdepth=3):
-		def render(klass, visited, maxdepth): # TO DO: maxdepth support
+		def render(klass, visitedproperties, visitedelements, maxdepth):
 			properties, elements = self._relationships(klass)
 			if properties or elements:
-				allvisited = visited + [o.type for o in properties + elements] # a recurring relationship is shown in full at the shallowest level, and deeper repetitions of the same relationship are marked 'tbc' (e.g. in Finder, folders contain folders)
+				# a recurring relationship is shown in full at the shallowest level, and deeper repetitions of the same relationship are marked 'tbc' (e.g. in Finder, folders contain folders) to avoid duplication, so next two lines are used to keep track of repetitions
+				allvisitedproperties= visitedproperties + [o.type for o in properties]
+				allvisitedelements = visitedelements + [o.type for o in elements]
 				self.renderer.down()
 				for i, prop in enumerate(properties):
 					propclass = prop.type.realvalue() # TO DO: asking for realvalue is dodgy; need to ensure we get a class definition
-					iscontinued = prop.type in visited
-					if maxdepth < 2:
-						p, e = self._relationships(propclass)
-						iscontinued = iscontinued or p or e
+					iscontinued = (prop.type in visitedproperties or prop.type in allvisitedelements \
+							or maxdepth < 2) and self._hasrelationships(propclass)
 					self.renderer.add(prop.name, propclass.name, False,
 							i == len(properties) and not elements, iscontinued)
-					if not prop.type in visited and maxdepth > 1:
-						render(propclass, allvisited, maxdepth - 1)
+					if not iscontinued:
+						render(propclass, allvisitedproperties, allvisitedelements, maxdepth - 1)
 				for i, elem in enumerate(elements):
 					elemclass = elem.type.realvalue() # TO DO: asking for realvalue is dodgy; need to ensure we get a class definition
-					iscontinued = elem.type in visited
-					if maxdepth < 2:
-						p, e = self._relationships(elemclass)
-						iscontinued = iscontinued or p or e
+					iscontinued = (elem.type in visitedelements or maxdepth < 2) \
+							and self._hasrelationships(elemclass)
 					self.renderer.add(elem.name, None, True, 
 							i == len(elements), iscontinued)
-					if not elem.type in visited and maxdepth > 1:
-						render(elemclass, allvisited, maxdepth - 1)
+					if not iscontinued:
+						render(elemclass, allvisitedproperties, allvisitedelements, maxdepth - 1)
 				self.renderer.up()
 		klass = self.terms.classes().byname(classname)
 		self.renderer.add(classname, None, False, False)
-		render(klass, [], maxdepth)
+		render(klass, [], [], maxdepth)
 

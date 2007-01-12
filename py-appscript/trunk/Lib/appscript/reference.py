@@ -368,24 +368,22 @@ class Command(_Base):
 		# build and send the Apple event, returning its result, if any
 		try:
 			return self.AS_appdata.target.event(self._code, params, atts, codecs=self.AS_appdata).send(timeout, sendFlags)
-		except Exception, e:
-			#print 'ERR: %s <%r>' % (e, e)
-			if isinstance(e, aem.CommandError):
-				if e.number in [-600, -609] and self.AS_appdata.path: # event was sent to a local app for which we no longer have a valid address (i.e. the application has quit since this aem.Application object was made).
-					# - If application is running under a new process id, we just update the aem.Application object and resend the event.
-					# - If application isn't running, then we see if the event being sent is one of those allowed to relaunch the application (i.e. 'run' or 'launch'). If it is, the aplication is relaunched, the process id updated and the event resent; if not, the error is rethrown.
-					if not self.AS_appdata.target.isrunning(self.AS_appdata.path):
-						if self._code == 'ascrnoop':
-							aem.Application.launch(self.AS_appdata.path) # relaunch app in background
-						elif self._code != 'aevtoapp': # only 'launch' and 'run' are allowed to restart a local application that's been quit
-							raise CommandError(self, (args, kargs), e)
-					self.AS_appdata.target.reconnect() # update aem.Application object so it has a valid address for app
-					try:
-						return self.AS_appdata.target.event(self._code, params, atts, codecs=self.AS_appdata).send(timeout, sendFlags)
-					except Exception, e:
-						pass
-				elif e.number == -1708 and self._code == 'ascrnoop': # squelch 'not handled' error for 'launch' event
-					return
+		except aem.CommandError, e:
+			if e.number in [-600, -609] and self.AS_appdata.path: # event was sent to a local app for which we no longer have a valid address (i.e. the application has quit since this aem.Application object was made).
+				# - If application is running under a new process id, we just update the aem.Application object and resend the event.
+				# - If application isn't running, then we see if the event being sent is one of those allowed to relaunch the application (i.e. 'run' or 'launch'). If it is, the aplication is relaunched, the process id updated and the event resent; if not, the error is rethrown.
+				if not self.AS_appdata.target.isrunning(self.AS_appdata.path):
+					if self._code == 'ascrnoop':
+						aem.Application.launch(self.AS_appdata.path) # relaunch app in background
+					elif self._code != 'aevtoapp': # only 'launch' and 'run' are allowed to restart a local application that's been quit
+						raise CommandError(self, (args, kargs), e)
+				self.AS_appdata.target.reconnect() # update aem.Application object so it has a valid address for app
+				try:
+					return self.AS_appdata.target.event(self._code, params, atts, codecs=self.AS_appdata).send(timeout, sendFlags)
+				except Exception, e:
+					pass
+			elif e.number == -1708 and self._code == 'ascrnoop': # squelch 'not handled' error for 'launch' event
+				return
 			raise CommandError(self, (args, kargs), e)
 	
 	def AS_formatCommand(self, args):
@@ -626,17 +624,8 @@ class CommandError(Exception):
 			command : Command -- command reference
 			parameters : tuple -- two-item tuple containing tuple of positional args and dict of keyword args
 			realerror : Exception -- the original error raised
-			trace : str -- internal traceback (for debugging appscript)
 	"""
 	def __init__(self, command, parameters, realerror):
-		# TO DO: delete traceback code once testing/debugging complete
-		import StringIO, traceback, sys
-		if sys.exc_info() != (None, None, None):
-			s = StringIO.StringIO()
-			traceback.print_exc(file=s)
-			self.trace = s.getvalue()
-		else:
-			self.trace = None
 		self.command, self. parameters, self.realerror = command, parameters, realerror
 		Exception.__init__(self, command, parameters, realerror)
 		

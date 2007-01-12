@@ -131,11 +131,11 @@ DESCRIPTION
     
     -N         run viewer in non-interactive mode
 
-    -a         when used with -H option, shows all classes including hidden 
-               ones
+    -a         when used with -H option, also shows any hidden suites,
+               classes and commands in addition to visible ones
     
-    -c         when used with -H option, collapses classes that appear in
-               multiple suites into one
+    -c         when used with -H option, collapses identically named classes
+               that appear in multiple suites into a single definition
     
     -h         show this help
     
