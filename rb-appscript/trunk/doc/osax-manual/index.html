@@ -56,9 +56,10 @@ p OSAX.scripting_additions
 
 <p>The <code>osax</code> function provides a convenient shortcut for creating new <code>ScriptingAddition</code> instances.</p>
 
-<pre><code>osax(name='StandardAdditions', app_name=nil) -- convenience method for
+<pre><code>osax(name=nil, app_name=nil) -- convenience method for
         creating a new ScriptingAddition instance
-    name : String -- scripting addition's name
+    name : String | nil -- scripting addition's name
+            (nil = "StandardAdditions")
     app_name : String | nil -- target application's name/path, or nil
             for current application
     Result : ScriptingAddition</code></pre>
@@ -84,6 +85,18 @@ p sa
 
 <p>To specify applications by other means (e.g. URL), create a <code>ScriptingAddition</code> object first, then call the appropriate <code>by...</code> method.</p>
 
+<p>For convenience, if both arguments are nil then a <code>ScriptingAddition</code> object for StandardAdditions is created and returned. This object is also cached internally for efficiency and returned as-is in subsequent calls; thus, for example:</p>
+
+<pre><code>sa = osax
+sa.some_command
+sa.another_command</code></pre>
+
+<p>could also be written as:</p>
+
+<pre><code>osax.some_command
+osax.another_command</code></pre>
+
+<p>without the additional overhead of creating a new ScriptingAddition object each time.</p>
 
 
 

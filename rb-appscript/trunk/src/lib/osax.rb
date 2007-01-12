@@ -54,6 +54,8 @@ module OSAX
 	
 	end
 	
+	@_standard_additions = nil
+	
 	
 	######################################################################
 	# PUBLIC
@@ -64,14 +66,40 @@ module OSAX
 		return OSAXNames
 	end
 	
-	def OSAX.osax(name='StandardAdditions', app_name=nil)
+	def OSAX.osax(name=nil, app_name=nil)
 		# Convenience method for creating a new ScriptingAddition instance.
-		#	name : String -- scripting addition's name
+		#	name : String | nil -- scripting addition's name; nil = 'StandardAdditions'
 		#	app_name : String | nil -- target application's name/path, or nil for current application
 		#	Result : ScriptingAddition
-		addition = ScriptingAddition.new(name)
-		if app_name
-			addition = addition.by_name(app_name)
+		#
+		# If both arguments are nil, a ScriptingAddition object for StandardAdditions is created
+		# and returned. This object is cached for efficiency and returned in subsequent calls;
+		# thus clients can conveniently write (e.g):
+		#
+		#	osax.some_command
+		#	osax.another_command
+		#
+		# instead of:
+		#
+		#	sa = osax
+		#	sa.some_command
+		#	sa.another_command
+		#
+		# without the additional overhead of creating a new ScriptingAddition object each time.
+		#
+		if name == nil and app_name == nil
+			if @_standard_additions == nil
+				@_standard_additions = ScriptingAddition.new('StandardAdditions')
+			end
+			addition = @_standard_additions
+		else
+			if name == nil
+				name = 'StandardAdditions'
+			end
+			addition = ScriptingAddition.new(name)
+			if app_name
+				addition = addition.by_name(app_name)
+			end
 		end
 		return addition
 	end
