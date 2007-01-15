@@ -56,7 +56,7 @@ def listPeopleWithPhones():
     result = []
     for person in people:
         last, first, locations, numbers = person
-        name = ', '.join([s for s in (last, first) if s != k.MissingValue])
+        name = ', '.join([s for s in [last, first] if s != k.missing_value])
         result.append((name, zip(numbers, locations)))
     result.sort(lambda i, j: cmp(i[0].lower(), j[0].lower()))
     return result

@@ -95,15 +95,19 @@ def _makeTypeTable(classes, enums, properties):
 	# Each parameter is of format [[name, code], ...]
 	typebycode = _typebycode.copy()
 	typebyname = _typebyname.copy()
+	# TO DO: testing indicates that where name+code clashes occur, classes have highest priority, followed by properties, with enums last; currently this code gives higher priority to enums:
 	for klass, table in [(AEType, properties), (AEEnum, enums), (AEType, classes)]: # note: packing properties as AEProp causes problems when the same name is used for both a class and a property, and the property's definition masks the class's one (e.g. Finder's 'file'); if an AEProp is passed where an AEType is expected, it can cause an error as it's not what the receiving app expects. (Whereas they may be more tolerant of an AEType being passed where an AEProp is expected.) Also, note that AppleScript always seems to pack property names as typeType, so we should be ok following its lead here.
-		for name, code in table:
+		for i, (name, code) in enumerate(table):
 			# TO DO: decide where best to apply AE keyword escaping, language keyword escaping
 			# TO DO: make sure same collision avoidance is done in help terminology (i.e. need to centralise all this stuff in a single osaterminology module)
 			# If an application-defined name overlaps an existing type name but has a different code, append '_' to avoid collision:
 			if _typebyname.has_key(name) and _typebyname[name].code != code:
 				name += '_'
-			typebycode[code] = Keyword(name)
-			typebyname[name] = klass(code)
+			typebycode[code] = Keyword(name) # re. synonyms, if same code appears more than once then use name from last definition in list
+			name, code = table[-i - 1]
+			if _typebyname.has_key(name) and _typebyname[name].code != code:
+				name += '_'
+			typebyname[name] = klass(code) # if same name appears more than once then use code from first definition in list
 	return typebycode, typebyname
 
 
@@ -115,13 +119,14 @@ def _makeReferenceTable(properties, elements, commands):
 	referencebyname = _referencebyname.copy()
 	for kind, table in [(kElement, elements), (kProperty, properties)]:
 		# note: if property and element names are same (e.g. 'file' in BBEdit), will pack as property specifier unless it's a special case (i.e. see :text below). Note that there is currently no way to override this, i.e. to force appscript to pack it as an all-elements specifier instead (in AS, this would be done by prepending the 'every' keyword), so clients would need to use aem for that (but could add an 'all' method to Reference class if there was demand for a built-in workaround)
-		for name, code in table:
-			referencebycode[kind+code] = (kind, name)
-			referencebyname[name] = (kind, code)
+		for i, (name, code) in enumerate(table):
+			referencebycode[kind+code] = (kind, name) # re. synonyms, if same code appears more than once then use name from last definition in list
+			name, code = table[-i - 1]
+			referencebyname[name] = (kind, code) # if same name appears more than once then use code from first definition in list
 	if referencebyname.has_key('text'): # special case: AppleScript always packs 'text of...' as all-elements specifier
 		referencebyname['text'] = (kElement, referencebyname['text'][1])
 	if commands:
-		for name, code, args in commands[::-1]: # if two commands have same name but different codes, only the first definition should be used (iterating over the commands list in reverse ensures this)
+		for name, code, args in commands[::-1]: # re. synonyms, if two commands have same name but different codes, only the first definition should be used (iterating over the commands list in reverse ensures this)
 			# TO DO: make sure same collision avoidance is done in help terminology (i.e. need to centralise all this stuff in a single osaterminology module)
 			# Avoid collisions between default commands and application-defined commands with same name but different code (e.g. 'get' and 'set' in InDesign CS2):
 			if _defaultcommands.has_key(name) and code != _defaultcommands[name][1][0]:

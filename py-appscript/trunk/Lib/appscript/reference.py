@@ -440,7 +440,7 @@ class Reference(_Base):
 		try:
 			selectorType, code = self.AS_appdata.referencebyname[name]
 		except KeyError:
-			raise RuntimeError, "Unknown property, element or command: %r" % name
+			raise AttributeError, "Unknown property, element or command: %r" % name
 		if selectorType == kProperty:
 			return Reference(self.AS_appdata, self.AS_aemreference.property(code))
 		elif selectorType == kElement:
@@ -471,10 +471,22 @@ class Reference(_Base):
 	after = property(lambda self: Reference(self.AS_appdata, self.AS_aemreference.after))
 	
 	def previous(self, klass):
-		return Reference(self.AS_appdata, self.AS_aemreference.previous(self.AS_appdata.typebyname[klass.AS_name].code))
+		try:
+			aemtype = self.AS_appdata.typebyname[klass.AS_name]
+		except AttributeError: # can't get klass.AS_name
+			raise TypeError, "Not a keyword: %r" % name
+		except KeyError: # can't get typebyname[<name>]
+			raise ValueError, "Unknown class: %r" % name
+		return Reference(self.AS_appdata, self.AS_aemreference.previous(aemtype.code))
 	
 	def next(self, klass):
-		return Reference(self.AS_appdata, self.AS_aemreference.next(self.AS_appdata.typebyname[klass.AS_name].code))
+		try:
+			aemtype = self.AS_appdata.typebyname[klass.AS_name]
+		except AttributeError: # can't get klass.AS_name
+			raise TypeError, "Not a keyword: %r" % name
+		except KeyError: # can't get typebyname[<name>]
+			raise ValueError, "Unknown class: %r" % name
+		return Reference(self.AS_appdata, self.AS_aemreference.next(aemtype.code))
 	
 	def ID(self, id):
 		return Reference(self.AS_appdata, self.AS_aemreference.byid(id))

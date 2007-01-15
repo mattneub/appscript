@@ -9,7 +9,10 @@ The tables returned by this module are an intermediate format, suitable for expo
 from osaterminology.makeidentifier import getconverter
 from struct import pack, unpack
 
-# TO DO: what about synonyms?
+try:
+	set
+except NameError: # Python 2.3
+	from sets import Set as set
 
 
 ######################################################################
@@ -19,16 +22,23 @@ from struct import pack, unpack
 class Parser:
 	def __init__(self, style):
 		self.convert = getconverter(style)
-		# terminology tables (items are stored by code to eliminate duplicates)
-		self.enumerators = {}
-		self.properties = {}
-		# Note: overlapping command definitions (e.g. InDesign) should be processed as follows:
-		# - If their names and codes are the same, only the last definition is used; other definitions are ignored and will not compile.
-		# - If their names are the same but their codes are different, only the first definition is used; other definitions are ignored and will not compile.
-		# - If a dictionary-defined command has the same name but different code to a built-in definition, escape its name so it doesn't conflict with the default built-in definition.
+		# terminology tables; order is significant where synonym definitions occur
 		self.commands = {}
-		self._pluralClassNames = {}
-		self._singularClassNames = {}
+		self.properties = []
+		self.elements = []
+		self.classes = []
+		self.enumerators = []
+		# use sets to record previously found definitions, and avoid adding duplicates to lists
+		# (i.e. 'name+code not in <set>' is quicker than using 'name+code not in <list>')
+		self._foundProperties = set()
+		self._foundElements = set()
+		self._foundClasses = set()
+		self._foundEnumerators = set()
+		# ideally, aetes should define both singular and plural names for each class, but
+		# some define only one or the other so we need to fill in any missing ones afterwards
+		self._spareClassNames = {}
+		self._foundClassCodes = set()
+		self._foundElementCodes = set()
 		
 	def integer(self):
 		"""Read a 2-byte integer."""
@@ -65,7 +75,12 @@ class Parser:
 		self._ptr += 2 # flags integer
 		#
 		currentCommandArgs = []
-		self.commands[code] =(name, code, currentCommandArgs)
+		# Note: overlapping command definitions (e.g. InDesign) should be processed as follows:
+		# - If their names and codes are the same, only the last definition is used; other definitions are ignored and will not compile.
+		# - If their names are the same but their codes are different, only the first definition is used; other definitions are ignored and will not compile.
+		# - If a dictionary-defined command has the same name but different code to a built-in definition, escape its name so it doesn't conflict with the default built-in definition.
+		if not self.commands.has_key(name) or self.commands[name][1] == code:
+			self.commands[name] =(name, code, currentCommandArgs)
 		# add labelled args
 		for _ in range(self.integer()):
 			name = self.name()
@@ -94,18 +109,26 @@ class Parser:
 			self._ptr += self._ptr & 1 # align
 			flags = self.integer()
 			if propcode != 'c@#^': # not a superclass definition (see kAEInheritedProperties)
-				if flags & 1: # class name is plural (see kAESpecialClassProperties)
+				if flags & 1: # indicates class name is plural (see kAESpecialClassProperties)
 					isPlural = True
-				else:
-					self.properties[propcode] = (propname, propcode)
+				elif (propname + propcode) not in self._foundProperties:
+					self.properties.append((propname, propcode)) # preserve ordering
+					self._foundProperties.add(propname + propcode)
 		for _ in range(self.integer()): # skip elements
 			self._ptr += 4 # code word
 			count = self.integer()
 			self._ptr += 4 * count
 		if isPlural:
-			self._pluralClassNames[code] = (name, code)
+			if (name + code) not in self._foundElements:
+				self.elements.append((name, code))
+				self._foundElements.add(name + code)
+				self._foundElementCodes.add(code)
 		else:
-			self._singularClassNames[code] = (name, code)
+			if (name + code) not in self._foundClasses:
+				self.classes.append((name, code))
+				self._foundClasses.add(name + code)
+				self._foundClassCodes.add(code)
+		self._spareClassNames[code] = name
 	
 	
 	def parseComparison(self): # comparison info isn't used
@@ -124,7 +147,9 @@ class Parser:
 			code = self.word()
 			self._ptr += 1 + ord(self._str[self._ptr]) # description string
 			self._ptr += self._ptr & 1 # align
-			self.enumerators[code + name] = (name, code)
+			if (name + code) not in self._foundEnumerators:
+				self.enumerators.append((name, code))
+				self._foundEnumerators.add(name + code)
 
 	
 	def parseSuite(self):
@@ -148,12 +173,14 @@ class Parser:
 				self.parseSuite()
 			if not self._ptr == len(self._str):
 				raise RuntimeError, "aete was not fully parsed."
-		# singular names are preferred for the class table and plural names for the element table:
-		classes = self._pluralClassNames.copy()
-		classes.update(self._singularClassNames)
-		elements = self._singularClassNames.copy()
-		elements.update(self._pluralClassNames)
-		return [d.values() for d in [classes, self.enumerators, self.properties, elements, self.commands]]
+		# singular names are normally used in the classes table and plural names in the elements table. However, if an aete defines a singular name but not a plural name then the missing plural name is substituted with the singular name; and vice-versa if there's no singular equivalent for a plural name.
+		missingElements = self._foundClassCodes - self._foundElementCodes
+		missingClasses = self._foundElementCodes - self._foundClassCodes
+		for code in missingElements:
+			self.elements.append((self._spareClassNames[code], code))
+		for code in missingClasses:
+			self.classes.append((self._spareClassNames[code], code))
+		return (self.classes, self.enumerators, self.properties, self.elements, self.commands.values())
 
 
 class LittleEndianParser(Parser):

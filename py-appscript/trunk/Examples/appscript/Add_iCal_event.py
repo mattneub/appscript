@@ -11,7 +11,10 @@ start = datetime.time(19, 0, 0) # 7 pm
 end = datetime.time(21, 0, 0) # 9 pm
 summary = 'First pants, then shoes.'
 
-app('iCal').calendars[its.title == calendarName].events.end.make(
+# Note: iCal 1.x in OS 10.3 doesn't support by-name reference form, so use:
+# app('iCal').calendars[its.title == calendarName]... there
+
+app('iCal').calendars[calendarName].events.end.make(
         new=k.event, with_properties={
                 k.start_date: start, 
                 k.end_date: end, 

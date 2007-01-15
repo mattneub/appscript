@@ -1,6 +1,6 @@
 HISTORY
 
-2006-01-?? -- 0.17.0
+2006-01-15 -- 0.17.0
 
 - removed 'filter' method; 'filter' is no longer a reserved word. Users will need to update any scripts that use apps with a 'filter' keyword (e.g. Photoshop has a 'filter' command) to change 'filter_' -> 'filter'.
 
@@ -49,6 +49,12 @@ HISTORY
 - built-in help no longer errors when target is current application
 
 - fixed bug in Command.AS_formatCommand that would cause CommandError.__str__ to fail silently if the failed command's direct parameter was a tuple
+
+- Reference.__getattr__ now raises AttributeError, not RuntimeError, for unknown property/element/command names
+
+- improved error reporting in Reference.previous, Reference.next
+
+- improved handling of synonyms in terminology, terminologyparser modules (definitions with same codes but different names are now retained; previously only the last-found definition was retained). Still doesn't mimic AS's behaviour 100%, but it's difficult to get any closer without studying the original AS source code.
 
 
 2006-08-16 -- 0.16.2

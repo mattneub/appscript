@@ -15,7 +15,7 @@ class TC_OSAX(unittest.TestCase):
 		self.assertEqual(mactypes.Alias("/Library/Scripts/"), 
 				sa.path_to(osax.k.scripts_folder, from_=osax.k.local_domain))
 		
-		self.assertRaises(RuntimeError, getattr, sa, 'non_existent_command')
+		self.assertRaises(AttributeError, getattr, sa, 'non_existent_command')
 	
 	
 	def test_2(self):
