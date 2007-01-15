@@ -1,0 +1,62 @@
+The following non-backwards-compatible API changes have been made in appscript 0.17.0:
+
+----------------------------------------------------------------------
+
+Removed 'filter' method, e.g.:
+
+    app('Finder').files.filter(its.size > 1000)
+
+needs to be changed to:
+
+    app('Finder').files[its.size > 1000]
+
+----------------------------------------------------------------------
+
+Changed built-in AE type names, e.g.:
+
+    k.Alias
+    k.Unicode
+
+need to be changed to:
+
+    k.alias
+    k.unicode_text
+
+(See built-in help method's -k option for a current list of built-in keywords.)
+
+----------------------------------------------------------------------
+
+Removed special 'telltarget' argument, and modified other special-case rules for commands. This shouldn't affect most existing code, with a few exceptions; e.g.:
+
+    app('Finder').home.make(new=k.folder)
+
+needs to be changed to:
+
+    app('Finder').make(new=k.folder, at=app.home)
+
+as Finder doesn't respect the Apple event 'subject' attribute.
+
+----------------------------------------------------------------------
+
+Renamed macfile module to mactypes; e.g.:
+
+    macfile.Alias(...)
+
+needs to be changed to:
+
+    mactypes.Alias(...)
+
+----------------------------------------------------------------------
+
+Replaced osax package with new osax module, e.g.:
+
+    osax.displaydialog('Hello world!')
+
+needs to be changed to:
+
+    sa = osax.ScriptingAddition('StandardAdditions')
+    sa.display_dialog('Hello world!')
+
+----------------------------------------------------------------------
+
+Some changes to aem APIs; users accessing the aem APIs directly should see the aem manual for details.

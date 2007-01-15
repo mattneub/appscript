@@ -31,13 +31,13 @@
 
 <pre><code>import osax
 
-sa = osax.ScriptingAddition("StandardAdditions")
+sa = osax.ScriptingAddition()
 
 sa.say("Hello world", using="Victoria")</code></pre>
 
 <p>The default application commands (<code>run</code>, <code>activate</code>, <code>quit</code>, etc.) are also available; see the appscript manual for details on those.</p>
 
-<p>By default, <code>ScriptingAddition</code> objects are targetted at the current application. You can specify another application by supplying one of the following optional keyword arguments: <code>name</code>, <code>id</code>, <code>creator</code> or <code>url</code>. These arguments are the same as for appscript.</p>
+<p>By default, <code>ScriptingAddition</code> objects use StandardAdditions terminology and are targetted at the current application. You can specify the name of a different scripting addition via the constructor's <code>osaxname</code> argument. You can specify another application by supplying one of the following optional keyword arguments: <code>name</code>, <code>id</code>, <code>creator</code> or <code>url</code>. These arguments are the same as for appscript.</p>
 
 
 
@@ -53,12 +53,11 @@ print osax.scriptingadditions
 
 <h2><code>osax.ScriptingAddition</code></h2>
 
-<p>The <code>ScriptingAddition</code> class represents a single scripting addition and its target application. <code>ScriptingAddition</code> is a subclass of appscript's <code>Application</code> class, and its constructor is the same except for the addition of :</p>
+<p>The <code>ScriptingAddition</code> class represents a single scripting addition and its target application. <code>ScriptingAddition</code> is a subclass of appscript's <code>Application</code> class, and its constructor is the same apart from the additional <code>osaxname</code> argument:</p>
 
-<pre><code>ScriptingAddition(osaxname, name=None, id=None, creator=None,
-        url=None, terms=True)
-    osaxname : str -- name of scripting addition,
-            e.g. 'StandardAdditions'
+<pre><code>ScriptingAddition(osaxname="StandardAdditions",
+        name=None, id=None, creator=None, url=None, terms=True)
+    osaxname : str -- name of scripting addition
     name : str -- name or path of application, e.g. 'System Events', 
             '/System/Library/CoreServices/System Events.app'
     id : str -- bundle id of application,
@@ -75,7 +74,7 @@ print osax.scriptingadditions
 
 # Create a new ScriptingAddition object:
 
-sa = ScriptingAddition("StandardAdditions")
+sa = ScriptingAddition()
 
 
 # Call some commands:

@@ -63,7 +63,7 @@ class _OSAXHelp:
 
 class ScriptingAddition(reference.Application):
 
-	def __init__(self, osaxname, name=None, id=None, creator=None, pid=None, url=None, aemapp=None, terms=True):
+	def __init__(self, osaxname='StandardAdditions', name=None, id=None, creator=None, pid=None, url=None, aemapp=None, terms=True):
 		self._osaxname = osaxname
 		osaxname = osaxname.lower()
 		if osaxname.endswith('.osax'):
