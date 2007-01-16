@@ -92,7 +92,7 @@ _referencebyname.update(_defaultcommands)
 
 def _makeTypeTable(classes, enums, properties):
 	# Used for constructing k.keywords
-	# Each parameter is of format [[name, code], ...]
+	# Each argument is of format [[name, code], ...]
 	typebycode = _typebycode.copy()
 	typebyname = _typebyname.copy()
 	# TO DO: testing indicates that where name+code clashes occur, classes have highest priority, followed by properties, with enums last; currently this code gives higher priority to enums:
@@ -103,11 +103,11 @@ def _makeTypeTable(classes, enums, properties):
 			# If an application-defined name overlaps an existing type name but has a different code, append '_' to avoid collision:
 			if _typebyname.has_key(name) and _typebyname[name].code != code:
 				name += '_'
-			typebycode[code] = Keyword(name) # re. synonyms, if same code appears more than once then use name from last definition in list
+			typebycode[code] = Keyword(name) # to handle synonyms, if same code appears more than once then use name from last definition in list
 			name, code = table[-i - 1]
 			if _typebyname.has_key(name) and _typebyname[name].code != code:
 				name += '_'
-			typebyname[name] = klass(code) # if same name appears more than once then use code from first definition in list
+			typebyname[name] = klass(code) # to handle synonyms, if same name appears more than once then use code from first definition in list
 	return typebycode, typebyname
 
 
@@ -120,13 +120,13 @@ def _makeReferenceTable(properties, elements, commands):
 	for kind, table in [(kElement, elements), (kProperty, properties)]:
 		# note: if property and element names are same (e.g. 'file' in BBEdit), will pack as property specifier unless it's a special case (i.e. see :text below). Note that there is currently no way to override this, i.e. to force appscript to pack it as an all-elements specifier instead (in AS, this would be done by prepending the 'every' keyword), so clients would need to use aem for that (but could add an 'all' method to Reference class if there was demand for a built-in workaround)
 		for i, (name, code) in enumerate(table):
-			referencebycode[kind+code] = (kind, name) # re. synonyms, if same code appears more than once then use name from last definition in list
+			referencebycode[kind+code] = (kind, name) # to handle synonyms, if same code appears more than once then use name from last definition in list
 			name, code = table[-i - 1]
-			referencebyname[name] = (kind, code) # if same name appears more than once then use code from first definition in list
+			referencebyname[name] = (kind, code) # to handle synonyms, if same name appears more than once then use code from first definition in list
 	if referencebyname.has_key('text'): # special case: AppleScript always packs 'text of...' as all-elements specifier
 		referencebyname['text'] = (kElement, referencebyname['text'][1])
 	if commands:
-		for name, code, args in commands[::-1]: # re. synonyms, if two commands have same name but different codes, only the first definition should be used (iterating over the commands list in reverse ensures this)
+		for name, code, args in commands[::-1]: # to handle synonyms, if two commands have same name but different codes, only the first definition should be used (iterating over the commands list in reverse ensures this)
 			# TO DO: make sure same collision avoidance is done in help terminology (i.e. need to centralise all this stuff in a single osaterminology module)
 			# Avoid collisions between default commands and application-defined commands with same name but different code (e.g. 'get' and 'set' in InDesign CS2):
 			if _defaultcommands.has_key(name) and code != _defaultcommands[name][1][0]:

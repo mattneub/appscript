@@ -5,7 +5,13 @@
 (C) 2004 HAS
 """
 
-import keyword, string, sets
+import keyword, string
+
+try:
+	set
+except: # Python 2.3
+	from sets import Set as set
+
 
 ######################################################################
 # PRIVATE
@@ -180,7 +186,7 @@ class Converter:
 
 	def __init__(self, reservedWords=kPyAppscriptReservedWords):
 		self._cache = {}
-		self._reservedWords = sets.Set(reservedWords)
+		self._reservedWords = set(reservedWords)
 		
 	def convert(self, s):
 		"""Convert string to identifier.

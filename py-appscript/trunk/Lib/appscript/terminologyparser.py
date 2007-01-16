@@ -81,7 +81,7 @@ class Parser:
 		# - If a dictionary-defined command has the same name but different code to a built-in definition, escape its name so it doesn't conflict with the default built-in definition.
 		if not self.commands.has_key(name) or self.commands[name][1] == code:
 			self.commands[name] =(name, code, currentCommandArgs)
-		# add labelled args
+		# add labelled parameters
 		for _ in range(self.integer()):
 			name = self.name()
 			self._ptr += self._ptr & 1 # align
@@ -117,7 +117,7 @@ class Parser:
 		for _ in range(self.integer()): # skip elements
 			self._ptr += 4 # code word
 			count = self.integer()
-			self._ptr += 4 * count
+			self._ptr += 4 * count # reference forms
 		if isPlural:
 			if (name + code) not in self._foundElements:
 				self.elements.append((name, code))
