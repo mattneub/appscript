@@ -1,4 +1,4 @@
-2007-01-09 -- 0.3.0
+2007-01-16 -- 0.3.0
 
 - removed 'AS' alias; client scripts should refer to Appscript module, e.g.:
 
@@ -49,6 +49,10 @@ should be changed to:
 - fixed bug in MacTypes::FileBase#== where comparing two Alias/FileURL objects with different paths would return true, not false, and generally improved its behaviour
 
 - added default value ('StandardAdditions') for OSAX.osax's name argument
+
+- added Add_iCal_event.rb, Export_Address_Book_phone_numbers.rb examples; updated Hello_World.rb example to also demonstrate OSAX usage
+
+- improved handling of synonyms in Terminology, TerminologyParser modules (definitions with same codes but different names are now retained; previously only the last-found definition was retained). Still doesn't mimic AS's behaviour 100%, but it's difficult to get any closer without studying the original AS source code.
 
 
 2006-11-29 -- 0.2.1

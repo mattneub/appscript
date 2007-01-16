@@ -14,26 +14,43 @@ module TerminologyParser
 		@@_name_cache = {}
 		LegalFirst = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_'
 		LegalRest = LegalFirst + '0123456789'
+		@@_reserved_keywords = {} # ersatz set
+		ReservedKeywords.each { |name| @@_reserved_keywords[name] = nil }
 		
 		def initialize
-			@enumerators = {}
-			@properties = {}
+			# terminology tables; order is significant where synonym definitions occur
 			@commands = {}
-			@_plural_class_names = {}
-			@_singular_class_names = {}
+			@properties = []
+			@elements = []
+			@classes = []
+			@enumerators = []
+			# use ersatz sets to record previously found definitions, and avoid adding duplicates to lists
+			# (i.e. 'name+code not in <set>' is quicker than using 'name+code not in <list>')
+			@_found_properties = {} # set
+			@_found_elements = {} # set
+			@_found_classes = {} # set
+			@_found_enumerators = {} # set
+			# ideally, aetes should define both singular and plural names for each class, but
+			# some define only one or the other so we need to fill in any missing ones afterwards
+			@_spare_class_names = {} # names by code
+			@_found_class_codes = {} # set
+			@_found_element_codes = {} # set
 		end
 		
 		def _integer
+			# Read a 2-byte integer.
 			@_ptr += 2
 			return @_str[@_ptr - 2, 2].unpack('S')[0]
 		end
 		
 		def _word
+			# Read a 4-byte string (really a long, but represented as an 4-character 8-bit string for readability).
 			@_ptr += 4
-			return @_str[@_ptr - 4, 4]
+			return @_str[@_ptr - 4, 4] # big-endian
 		end
 		
 		def _name
+			# Read a MacRoman-encoded Pascal keyword string.
 			count = @_str[@_ptr]
 			@_ptr += 1 + count
 			s = @_str[@_ptr - count, count]
@@ -58,7 +75,7 @@ module TerminologyParser
 					end
 					legal = LegalRest
 				end
-				if res[0, 3] == 'AS_' or ReservedKeywords.include?(res) or res[0, 1] == '_'
+				if res[0, 3] == 'AS_' or @@_reserved_keywords.has_key?(res) or res[0, 1] == '_'
 					res += '_'
 				end
 				@@_name_cache[s] = res
@@ -70,96 +87,115 @@ module TerminologyParser
 		
 		def parse_command
 			name = _name
-			@_ptr += 1 + @_str[@_ptr]
-			@_ptr += @_ptr & 1
-			code = _word + _word
+			@_ptr += 1 + @_str[@_ptr] # description string
+			@_ptr += @_ptr & 1 # align
+			code = _word + _word # event class + event id
 			# skip result
-			@_ptr += 4
-			@_ptr += 1 + @_str[@_ptr]
-			@_ptr += @_ptr & 1
-			@_ptr += 2
-			# skip direct
-			@_ptr += 4
-			@_ptr += 1 + @_str[@_ptr]
-			@_ptr += @_ptr & 1
-			@_ptr += 2
+			@_ptr += 4 # datatype word
+			@_ptr += 1 + @_str[@_ptr] # description string
+			@_ptr += @_ptr & 1 # align
+			@_ptr += 2 # flags integer
+			# skip direct parameter
+			@_ptr += 4 # datatype word
+			@_ptr += 1 + @_str[@_ptr] # description string
+			@_ptr += @_ptr & 1 # align
+			@_ptr += 2 # flags integer
 			#
 			current_command_args = []
-			@commands[code] = [name, code, current_command_args]
-			# args
+			# Note: overlapping command definitions (e.g. InDesign) should be processed as follows:
+			# - If their names and codes are the same, only the last definition is used; other definitions are ignored and will not compile.
+			# - If their names are the same but their codes are different, only the first definition is used; other definitions are ignored and will not compile.
+			# - If a dictionary-defined command has the same name but different code to a built-in definition, escape its name so it doesn't conflict with the default built-in definition.
+			if not @commands.has_key?(name) or @commands[name][1] == code
+				@commands[name] = [name, code, current_command_args]
+			end
+			# add labelled parameters
 			_integer.times do
 				parameter_name = _name
-				@_ptr += @_ptr & 1
+				@_ptr += @_ptr & 1 # align
 				parameter_code = _word
-				@_ptr += 4
-				@_ptr += 1 + @_str[@_ptr]
-				@_ptr += @_ptr & 1
-				@_ptr += 2
+				@_ptr += 4 # datatype word
+				@_ptr += 1 + @_str[@_ptr] # description string
+				@_ptr += @_ptr & 1 # align
+				@_ptr += 2 # flags integer
 				current_command_args.push([parameter_name, parameter_code])
 			end
 		end
 		
 		def parse_class
 			name = _name
-			@_ptr += @_ptr & 1
+			@_ptr += @_ptr & 1 # align
 			code = _word
-			@_ptr += 1 + @_str[@_ptr]
-			@_ptr += @_ptr & 1
+			@_ptr += 1 + @_str[@_ptr] # description string
+			@_ptr += @_ptr & 1 # align
 			is_plural = false
-			_integer.times do
+			_integer.times do # properties
 				propname = _name
-				@_ptr += @_ptr & 1
+				@_ptr += @_ptr & 1 # align
 				propcode = _word
-				@_ptr += 4
-				@_ptr += 1 + @_str[@_ptr]
-				@_ptr += @_ptr & 1
+				@_ptr += 4 # datatype word
+				@_ptr += 1 + @_str[@_ptr] # description string
+				@_ptr += @_ptr & 1 # align
 				flags = _integer
-				if propcode != 'c@#^'
-					if flags & 1 == 1
+				if propcode != 'c@#^' # not a superclass definition (see kAEInheritedProperties)
+					if flags & 1 == 1 # indicates class name is plural (see kAESpecialClassProperties)
 						is_plural = true
-					else
-						@properties[propcode] = [propname, propcode]
+					elsif not @_found_properties.has_key?(propname + propcode)
+						@properties.push([propname, propcode]) # preserve ordering
+						@_found_properties[propname + propcode] = nil # add to found set
 					end
 				end
 			end
-			_integer.times do
-				@_ptr += 4
+			_integer.times do # skip elements
+				@_ptr += 4 # code word
 				count = _integer
-				@_ptr += 4 * count
+				@_ptr += 4 * count # reference forms
 			end
 			if is_plural
-				@_plural_class_names[code] = [name, code]
+				if not @_found_elements.has_key?(name + code)
+					@elements.push([name, code])
+					@_found_elements[name + code] = nil # add to found set
+					@_found_element_codes[code] = nil # add to found set
+				end
 			else
-				@_singular_class_names[code] = [name, code]
+				if not @_found_classes.has_key?(name + code)
+					@classes.push([name, code])
+					@_found_classes[name + code] = nil # add to found set
+					@_found_class_codes[code] = nil # add to found set
+				end
 			end
+			@_spare_class_names[code] = name
 		end
 		
-		def parse_comparison
-			@_ptr += 1 + @_str[@_ptr]
-			@_ptr += @_ptr & 1
-			@_ptr += 4
-			@_ptr += 1 + @_str[@_ptr]
-			@_ptr += @_ptr & 1
+		def parse_comparison # comparison info isn't used
+			@_ptr += 1 + @_str[@_ptr] # name string
+			@_ptr += @_ptr & 1 # align
+			@_ptr += 4 # code word
+			@_ptr += 1 + @_str[@_ptr] # description string
+			@_ptr += @_ptr & 1 # align
 		end
 		
 		def parse_enumeration
-			@_ptr += 4
-			_integer.times do
+			@_ptr += 4 # code word
+			_integer.times do # enumerators
 				name = _name
-				@_ptr += @_ptr & 1
+				@_ptr += @_ptr & 1 # align
 				code = _word
-				@_ptr += 1 + @_str[@_ptr]
-				@_ptr += @_ptr & 1
-				@enumerators[code + name] = [name, code]
+				@_ptr += 1 + @_str[@_ptr] # description string
+				@_ptr += @_ptr & 1 # align
+				if not @_found_enumerators.has_key?(name + code)
+					@enumerators.push([name, code])
+					@_found_enumerators[name + code] = nil # add to found set
+				end
 			end
 		end
 		
 		def parse_suite
-			@_ptr += 1 + @_str[@_ptr]
-			@_ptr += 1 + @_str[@_ptr]
-			@_ptr += @_ptr & 1
-			@_ptr += 4
-			@_ptr += 4
+			@_ptr += 1 + @_str[@_ptr] # name string
+			@_ptr += 1 + @_str[@_ptr] # description string
+			@_ptr += @_ptr & 1 # align
+			@_ptr += 4 # code word
+			@_ptr += 4 # level, version integers
 			_integer.times { parse_command }
 			_integer.times { parse_class }
 			_integer.times { parse_comparison }
@@ -169,24 +205,30 @@ module TerminologyParser
 		def parse(aetes)
 			aetes.each do |aete|
 				@_str = aete.data
-				@_ptr = 6
+				@_ptr = 6 # version, language, script integers
 				_integer.times { parse_suite }
 				if not @_ptr == @_str.length
 					raise RuntimeError, "aete was not fully parsed."
 				end
 			end
-			classes = @_plural_class_names.clone
-			classes.update(@_singular_class_names)
-			elements = @_singular_class_names.clone
-			elements.update(@_plural_class_names)
-			return [classes, @enumerators, @properties, elements, @commands].map! { |d| d.values }
+			# singular names are normally used in the classes table and plural names in the elements table. However, if an aete defines a singular name but not a plural name then the missing plural name is substituted with the singular name; and vice-versa if there's no singular equivalent for a plural name.
+			missing_elements = @_found_class_codes.keys - @_found_element_codes.keys
+			missing_classes = @_found_element_codes.keys - @_found_class_codes.keys
+			missing_elements.each do |code|
+				@elements.push([@_spare_class_names[code], code])
+			end
+			missing_classes.each do |code|
+				@classes.push([@_spare_class_names[code], code])
+			end
+			return [@classes, @enumerators, @properties, @elements, @commands.values]
 		end
 	end
 	
 	
 	class LittleEndianParser < BigEndianParser
 		def _word
-			return super.reverse
+			# Read a 4-byte string (really a long, but represented as an 4-character 8-bit string for readability).
+			return super.reverse # little-endian
 		end
 	end
 	
@@ -195,7 +237,7 @@ module TerminologyParser
 	# Public
 	
 	def TerminologyParser.build_tables_for_aetes(aetes)
-		if [1].pack('S') == "\000\001"
+		if [1].pack('S') == "\000\001" # is it big-endian?
 			return BigEndianParser.new.parse(aetes)
 		else
 			return LittleEndianParser.new.parse(aetes)
@@ -217,35 +259,47 @@ module Terminology
 	@@_terminology_cache = {}
 	
 	def Terminology._make_type_table(classes, enums, properties)
+		# builds tables used for converting symbols to/from AEType, AEEnums
 		type_by_code = DefaultTerminology::TypeByCode.clone
 		type_by_name = DefaultTerminology::TypeByName.clone
 		[[AEM::AEType, properties], [AEM::AEEnum, enums], [AEM::AEType, classes]].each do |klass, table|
-			table.each do |name, code|
+			table.each_with_index do |item, i|
+				name, code = item
+				# If an application-defined name overlaps an existing type name but has a different code, append '_' to avoid collision:
 				if DefaultTerminology::TypeByName.has_key?(name) and \
 						DefaultTerminology::TypeByName[name].code != code
 					name += '_'
 				end
-				type_by_code[code] = name.intern
-				type_by_name[name.intern] = klass.new(code)
+				type_by_code[code] = name.intern # to handle synonyms, if same code appears more than once then use name from last definition in list
+				name, code = table[-i - 1]
+				if DefaultTerminology::TypeByName.has_key?(name) and \
+						DefaultTerminology::TypeByName[name].code != code
+					name += '_'
+				end
+				type_by_name[name.intern] = klass.new(code) # to handle synonyms, if same name appears more than once then use code from first definition in list
 			end
 		end
 		return [type_by_code, type_by_name]
 	end
 	
 	def Terminology._make_reference_table(properties, elements, commands)
+		# builds tables used for constructing references and commands
 		reference_by_code = DefaultTerminology::ReferenceByCode.clone
 		reference_by_name = DefaultTerminology::ReferenceByName.clone
 		[[:element, elements, 'e'], [:property, properties, 'p']].each do |kind, table, prefix|
 			# note: if property and element names are same (e.g. 'file' in BBEdit), will pack as property specifier unless it's a special case (i.e. see :text below). Note that there is currently no way to override this, i.e. to force appscript to pack it as an all-elements specifier instead (in AS, this would be done by prepending the 'every' keyword), so clients would need to use aem for that (but could add an 'all' method to Reference class if there was demand for a built-in workaround)
-			table.each do |name, code|
-				reference_by_code[prefix + code] = name
-				reference_by_name[name.intern] = [kind, code]
+			table.each_with_index do |item, i|
+				name, code = item
+				reference_by_code[prefix + code] = name # to handle synonyms, if same code appears more than once then use name from last definition in list
+				name, code = table[-i - 1]
+				reference_by_name[name.intern] = [kind, code] # to handle synonyms, if same name appears more than once then use code from first definition in list
 			end
 		end
 		if reference_by_name.has_key?(:text) # special case: AppleScript always packs 'text of...' as all-elements specifier
 			reference_by_name[:text][0] = :element
 		end
-		commands.reverse.each do |name, code, args|
+		commands.reverse.each do |name, code, args| # to handle synonyms, if two commands have same name but different codes, only the first definition should be used (iterating over the commands list in reverse ensures this)
+			# Avoid collisions between default commands and application-defined commands with same name but different code (e.g. 'get' and 'set' in InDesign CS2):
 			if DefaultTerminology::DefaultCommands.has_key?(name) and \
 					code != DefaultTerminology::DefaultCommands[name]
 						name += '_'
@@ -261,10 +315,13 @@ module Terminology
 	# public
 	
 	def Terminology.default_tables
+		# [typebycode, typebyname, referencebycode, referencebyname]
 		return _make_type_table([], [], []) + _make_reference_table([], [], [])
 	end
 	
 	def Terminology.tables_for_aetes(aetes)
+		# Build terminology tables from a list of unpacked aete byte strings.
+		# Result : list of hash -- [typebycode, typebyname, referencebycode, referencebyname]
 		classes, enums, properties, elements, commands = TerminologyParser.build_tables_for_aetes(aetes.delete_if { |aete| not (aete.is_a?(AE::AEDesc) and aete.type == 'aete') })
 		return _make_type_table(classes, enums, properties) + _make_reference_table(properties, elements, commands)
 	end
@@ -272,6 +329,8 @@ module Terminology
 	##
 	
 	def Terminology.tables_for_module(terms)
+		# Build terminology tables from a dumped terminology module.
+		# Result : list of hash -- [typebycode, typebyname, referencebycode, referencebyname]
 		if terms::Version != 1.1
 			raise RuntimeError, "Unsupported terminology module version: #{terms::Version} (requires version 1.1)."
 		end
@@ -280,6 +339,9 @@ module Terminology
 	end
 	
 	def Terminology.tables_for_app(aem_app)
+		# Build terminology tables for an application.
+		# app : AEM::Application
+		# Result : list of hash -- [typebycode, typebyname, referencebycode, referencebyname]
 		if not @@_terminology_cache.has_key?(aem_app.identity)
 			begin
 				begin
