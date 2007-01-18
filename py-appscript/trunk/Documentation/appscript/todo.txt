@@ -1,13 +1,7 @@
 TO DO
 
 
-- app('Finder').processes() should now work but doesn't (error -1799 occurs). Find out why.
-
-
 - Relaunching an application immediately after quitting it often results in an invalid connection error (-609) as LaunchApplication is being called before the application has actually quit. Not sure if there's a practical solution to this - users may just have to live with it.
-
-
-- Allow multiple instances of same application to be launched and/or controlled.
 
 
 - Introspection support. Users should be able to examine both references' structure and obtain terminology for the referenced properties and elements.
@@ -23,5 +17,8 @@ TO DO
 Note: probably reject the following:
 
 - better type-checking for 'ignore' and 'resulttype' args?
+
+
+- Allow multiple instances of same application to be launched and/or controlled. (Currently clients can launch new instances themselves, then create Application objects using their PIDs.)
 
 

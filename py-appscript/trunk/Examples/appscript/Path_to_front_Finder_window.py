@@ -1,16 +1,22 @@
 #!/usr/bin/env python
 
+# Gets the path to the front Finder window, or to the Desktop folder if
+# no Finder windows are open.
+
 from appscript import *
 
-w = app('Finder').Finder_windows[1]
+finder = app('Finder')
+
+w = finder.Finder_windows[1]
+
 if w.exists(): # is there a Finder window open?
-    folder = w.target # get its target folder
-    if not folder.name.get(): # Computer window has no folder (its target is, oddly, app('Finder').folders(''))
-        folder = None
+    if w.target.class_.get() == k.computer_object:
+        # 'Computer' windows don't have a target folder, for obvious reasons.
+        raise RuntimeError, "Can't get path to 'Computer' window."
+    folder = w.target # get a reference to its target folder
 else:
-    folder = app('Finder').desktop # get desktop's folder
-if folder:
-    path = folder.get(resulttype=k.FSRef).path # appscript returns FSRef as mactypes.File
-else:
-    path = None
+    folder = finder.desktop # get a reference to the desktop folder
+
+path = folder.get(resulttype=k.alias).path # get folder's path
+
 print path

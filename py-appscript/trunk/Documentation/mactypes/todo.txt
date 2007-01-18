@@ -1,3 +1,1 @@
 TO DO
-
-- Decide if File objects should be completely non-deterministic; currently File objects created from an FSRef/AEDesc of typeFSRefwill retain and reuse that original object, which will cause problems if the specified item is subsequently moved or deleted. (FSSpecs may also have problems due to the way the Carbon.File extension is implemented.)

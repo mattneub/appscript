@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 
+# Get the name and URL of a Safari window.
+
 from appscript import app
 
-def infoForBrowserWindow(idx):
+def infoForBrowserWindow(idx=1):
     """Get name and URL of a Safari window. (Raises a RuntimeError
                 if window doesn't exist or is empty.)
         idx : integer -- index of window (1 = front)
@@ -20,4 +22,4 @@ def infoForBrowserWindow(idx):
 
 
 # test
-print infoForBrowserWindow(1)
+print infoForBrowserWindow()

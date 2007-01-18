@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 
+# Adds a zero-padded line number to every line in the front TextEdit document.
+
 from appscript import *
 from math import log10
 
-textRef = app('TextEdit').documents[1].text
+textref = app('TextEdit').documents[1].text
 
-lc = textRef.paragraphs.count()
+lc = textref.paragraphs.count()
 fstr = '%%.%ii ' % (int(log10(lc)) + 1)
 for i in range(lc):
-    textRef.paragraphs[i+1].characters.start.make(
+    textref.paragraphs[i+1].characters.start.make(
             new=k.character, with_data=fstr % i)

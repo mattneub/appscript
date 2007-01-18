@@ -1,11 +1,10 @@
-#!/usr/bin/env python
+#!/usr/bin/env pythonw
 
-from os.path import expanduser
+# Generates an HTML file listing all tracks in the current iTunes playlist.
+
 from HTMLTemplate import Template
 from appscript import *
-
-
-path = '~/itunes_albums_list.html' # The file to write to.
+from osax import *
 
 
 #######
@@ -80,15 +79,24 @@ def encodeNonASCII(txt):
     return ''.join(res)
 
 def write(path, txt):
-    f = open(expanduser(path), 'w')
+    f = open(path, 'w')
     f.write(txt)
     f.close()
-
+    
 
 #######
-# Render albums page
+# Main
 
+# Prompt user to specify HTML file to save to:
+sa = ScriptingAddition()
+sa.activate()
+outfile = sa.choose_file_name(default_name='iTunes_albums.html')
+
+# Render current playlist to HTML file:
 template = Template(render_template, html)
 playlist = app('iTunes').browser_windows[1].view.get()
 page = template.render(playlist)
-write(path, encodeNonASCII(page))
+write(outfile.path, encodeNonASCII(page))
+
+# Preview HTML file in user's default browser:
+sa.open_location(outfile.url)

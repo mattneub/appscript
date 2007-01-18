@@ -94,16 +94,7 @@ print sa.display_dialog("Python says hello!",
 
 <h2>Notes</h2>
 
-<p>When using scripting addition commands that require GUI access (e.g. <code>display_dialog</code>) targetted at the command-line Python interpreter, the osax module will automatically convert the non-GUI interpreter process into a full GUI process to allow these commands to operate correctly. If you want to avoid this, target these commands at a faceless GUI application such as System Events instead:</p>
-
-<pre><code>sa = OSAX.osax("StandardAdditions", "System Events")
-sa.activate # give focus to System Events
-p sa.display_dialog("Python says hello!",
-                    :buttons=&gt;["Hi!", "Howdy!", "Duuuude!"],
-                    :default_button=&gt;3)
-# Result: {:button_returned=&gt;"Duuuude!"}</code></pre>
--->
-
+<p>When sending scripting addition commands that require GUI access (e.g. <code>display_dialog</code>) to the Python 2.3 command-line interpreter, remember to use <code>pythonw</code>, not <code>python</code>, otherwise a "no user interaction allowed" error will occur. (This is not an issue when sending commands to normal GUI processes, or when using Python 2.4 or later.)</p>
 
 </div>
 

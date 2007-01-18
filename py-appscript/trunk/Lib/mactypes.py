@@ -201,7 +201,7 @@ class File(_Base):
 		return self._url
 	url = property(url, _ro, doc="Get as file URL.")
 	
-	file = property(lambda self: self, _ro, doc="Get as mactypes.File (i.e. itself).")
+	file = property(lambda self: File(self._path), _ro, doc="Get as mactypes.File.")
 	
 	alias = property(lambda self: Alias.makewithfsref(self.fsref), _ro, doc="Get as mactypes.Alias.")
 	

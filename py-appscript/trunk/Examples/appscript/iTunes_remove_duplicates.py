@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"""Removes duplicate tracks from the selected playlist."""
+# Removes duplicate tracks from the selected playlist.
 
 from appscript import *
 

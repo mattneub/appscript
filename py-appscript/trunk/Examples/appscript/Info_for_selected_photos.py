@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+# A simple function that gets information on every photo currently selected
+# in iPhoto.
+
 from appscript import *
 
 def infoForSelectedPhotos():

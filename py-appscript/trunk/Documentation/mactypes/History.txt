@@ -8,6 +8,7 @@ HISTORY
 - HTMLised documentation
 - File objects now perform (case-sensitive) comparisons for non-existent files
 - added makewithurl class method, url instance method to Alias class
+- File.file now returns a new File instance created using the current File object's path (i.e. new File object is non-deterministic and will pack as typeFileURL, even if the original File object was created from an FSRef/FSSpec)
 
 2006-03-10 -- 0.2.1
 - changed from LGPL to MIT license

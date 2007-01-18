@@ -3,7 +3,7 @@
 (C) 2005 HAS
 """
 
-from CarbonX import kAE
+from CarbonX import kAE, kOSA
 import MacOS
 
 from aem import AEType
@@ -38,6 +38,20 @@ class ArgDesc(ArgDef):
 		return True, desc
 
 kArgDesc = ArgDesc()
+
+
+class ArgMissingValue(ArgDef):
+	"""
+		Describes a 'missing value' constant.
+	"""
+	
+	def AEM_unpack(self, desc, codecs):
+		if desc.type == kAE.typeType and desc.data == kOSA.cMissingValue:
+			return True, codecs.unpack(desc)
+		else:
+			return False, EventHandlerError(-1704, "Not a 'missing value' constant.", desc)
+
+kArgMissingValue = ArgMissingValue()
 
 
 class ArgType(ArgDef):

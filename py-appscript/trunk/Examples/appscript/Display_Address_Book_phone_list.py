@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+# Displays an alphabetical list of all Address Book entries with phone numbers
+# in Safari.
+
 import os
 from HTMLTemplate import Template
 from appscript import *
@@ -15,13 +18,20 @@ html = '''<html>
     </head>
     <body>
         <table width="100%" cellpadding="4">
-            <tr node="rep:row" bgcolor="#FFC">
-                <td node="con:name">Foo, J</td>
-                <td>
-                    <span node="-rep:phone">%s (%s)</span>
-                    <br node="sep:phone" />
-                </td>
-            </tr>
+            <thead>
+                <tr>
+                    <th>Name</th><th>Numbers</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr node="rep:row" bgcolor="#FFC">
+                    <td node="con:name">Foo, J</td>
+                    <td>
+                        <span node="-rep:phone">%s (%s)</span>
+                        <br node="sep:phone" />
+                    </td>
+                </tr>
+            </tbody>
         </table>
     </body>
 </html>'''

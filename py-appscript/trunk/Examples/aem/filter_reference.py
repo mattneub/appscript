@@ -1,8 +1,10 @@
-#!/usr/bin/env pythonw
+#!/usr/bin/env python
 
 from aem import *
 
-print Application('/System/Library/CoreServices/Finder.app').event('coregetd', {'----': 
+# tell app "Finder" to get every item of home whose name starts with "d" and name is not "Documents"
+
+print Application(findapp.byname('Finder')).event('coregetd', {'----': 
 
 		app.property('home').elements('cobj').byfilter(
 

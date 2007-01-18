@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
-from appscript import app, k
+# Compose an outgoing message in Apple's Mail.app.
+
+from appscript import *
 
 def makeMessage(addresses, subject, content, showWindow=False):
     """Make an outgoing message in Mail.

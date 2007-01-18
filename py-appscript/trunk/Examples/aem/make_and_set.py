@@ -1,4 +1,4 @@
-#!/usr/bin/env pythonw
+#!/usr/bin/env python
 
 # create new TextEdit document containing 'Hello World' and current time
 
@@ -6,9 +6,12 @@ from time import strftime
 
 from aem import *
 
-textedit = Application('/Applications/TextEdit.app') # make AEAddressDesc
+textedit = Application('/Applications/TextEdit.app') # make Application object
 
 #######
+
+# tell app "TextEdit" to activate
+textedit.event('miscactv').send()
 
 # tell app "TextEdit" to make new document at end of documents with properties {text:"hello world\n\n\n\n"}
 e = textedit.event('corecrel', {

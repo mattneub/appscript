@@ -8,4 +8,4 @@ from CarbonX import kAE # re-export for convenience
 
 from main import kMissingValue, Codecs, installeventhandler, removeeventhandler, installcoercionhandler, removecoercionhandler
 from handlererror import EventHandlerError
-from typedefs import kArgDesc, ArgType, ArgListOf, ArgEnum, ArgMultiChoice
+from typedefs import kArgDesc, kArgMissingValue, ArgType, ArgListOf, ArgEnum, ArgMultiChoice

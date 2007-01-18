@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+# Cleans up iTunes' Library playlist by deleting tracks with missing files.
+
 # Modelled on Bob Ippolito's missingTrackFinder.py script. 
 #
 # Note: Bob says 'Be extra careful about running this if you have MP3s over a 
@@ -16,8 +18,8 @@ from appscript import *
 #	app('iTunes').sources['Library'].library_playlists['Library'] \
 #        .file_tracks[its.location == k.MissingValue].delete()
 #
-# Alas; iTunes' scripting support is a bit crap, so we have to do it the 
-# slow and tedious way instead:
+# Alas; iTunes' scripting support is a bit limited, so we have to do it 
+# the slow and tedious way instead:
 
 for track in app('iTunes').sources['Library'] \
             .library_playlists['Library'].file_tracks.get():

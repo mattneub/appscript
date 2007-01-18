@@ -5,7 +5,7 @@
 
 from StringIO import StringIO
 from traceback import print_exc
-from CarbonX import AE, kAE
+from CarbonX import AE, kAE, kOSA
 import MacOS
 
 import mactypes
@@ -49,9 +49,10 @@ _eventAttributes = [
 	(kAE.keyEventSourceAttr, 'EventSource'),
 	(kAE.keyOriginalAddressAttr, 'OriginalAddress'),
 	(kAE.keyAcceptTimeoutAttr, 'AcceptTimeout'),
-	('subj', 'Subject'),
-	('cons', 'Ignore'),
-	('csig', 'ConsiderIgnore'),
+	(kAE.keyReplyRequestedAttr, 'ReplyRequested'),
+	(kOSA.keySubjectAttr, 'Subject'),
+	(kOSA.enumConsiderations, 'Ignore'), # deprecated; use enumConsidsAndIgnores instead
+	(kOSA.enumConsidsAndIgnores, 'ConsiderIgnore'),
 	]
 
 _attributesArgName = 'attributes'
@@ -126,8 +127,8 @@ def _unpackAppleEvent(event, includeAttributes, requiredArgDefs, optionalArgDefs
 			except KeyError:
 				if code == kAE.keyAERequestedType: # event contains a 'desired result type' parameter but callback doesn't handle this explicitly, so have callback wrapper attempt to perform coercion automatically when packing result
 					desiredResultType = argValue
-				else:
-					raise EventHandlerError(-1721, "Parameter %r is not supported for this command." % code)
+				# else:
+				#	raise EventHandlerError(-1721, "Parameter %r is not supported for this command." % code) # Note: SIG says that any unrecognised parameters should be ignored
 			else:
 				kargs[argName] = _unpackValue(argValue, datatypes, codecs)
 	return kargs, desiredResultType

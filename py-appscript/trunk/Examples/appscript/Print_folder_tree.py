@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+# Prints the sub-folder hierarchy of a given folder as a list of folder names
+# indented according to depth.
+
 from appscript import *
 
 

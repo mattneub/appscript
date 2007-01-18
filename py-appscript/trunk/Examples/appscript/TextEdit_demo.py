@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+# Demonstrates various references and commands in action.
+
 from appscript import *
 
 textedit = app('TextEdit') # get an application object for TextEdit

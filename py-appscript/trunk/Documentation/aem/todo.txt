@@ -1,9 +1,12 @@
 TO DO
 
+
 - following should work but doesn't:
 
 	Application('/System/Library/CoreServices/Finder.app').event('coregetd', {'----': app.elements('pcap')}).send()
 	# aem.send.send.CommandError: CommandError -1799: Mac OS error code -1799
+
+(Might be related to keyAddressAttr/keyOriginalAddressAttr, as appscript packs these attributes differently to AppleScript.)
 
 
 - Any other Python/AE type/class unpack routines needed? (See [e.g.] AEDataModel.h) e.g.:
@@ -19,18 +22,17 @@ TO DO
 - decide how to support sending AEs from non-main threads: either have aem/user manage Mach ports (tricky to do automatically, tedious to do manually), or create a fresh port each time (speed impact seems to be negligble; any other issues?)
 
 
-- support for default 'open' events (i.e. where aevtodoc event is passed via LaunchApplication)
-
-
 - find a way to avoid GUI process starting when running from python2.4/python2.5; calling Process Manager functions (GetNextEvent, GetProcessBundleLocation, LaunchApplication) seems to trigger this. e.g. Might be BSD APIs that could be used instead, in which case could use AEAddressDescs of typeKernelProcessID ('kpid')
+
+
+- in CommandError, extract and report any kOSA... error parameters, if present (note: while the SIG does recommend providing this sort of additional error info, few applications actually bother to do so)
+
 
 ----------------------------------------------------------------------
 Following will probably be rejected as too hard or not important enough to do:
 
-- expose reply event unpacking routine, e.g. for unpacking OSADoEvent result?
 
-
-- add overrideable packfailed(), unpackfailed() methods to Codecs?
+- support for default 'open' events (i.e. where aevtodoc event is passed via LaunchApplication)
 
 
 - Reference comparisons should be case-insensitive, in keeping with how they're normally handled by applications. e.g.:

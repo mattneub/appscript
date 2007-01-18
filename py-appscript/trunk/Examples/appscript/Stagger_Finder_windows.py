@@ -1,5 +1,11 @@
 #!/usr/bin/env python
 
+# Rearranges Finder windows diagonally across screen with title bars one above
+# another.
+# 
+# (Could be adapted to work with any scriptable application that defines a
+#standard window class.)
+
 from appscript import *
 
 x, y = 0, 44

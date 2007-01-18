@@ -33,7 +33,8 @@ def dump(apppath, modulepath):
 		modulepath : str -- path to generated module
 	"""
 	apppath = findapp.byname(apppath)
-	tables = buildtablesforaetes(getaete(apppath))
+	aetes = [aete.data for aete in getaete(apppath) if isinstance(aete, AEDesc) and aete.type == 'aete']
+	tables = buildtablesforaetes(aetes)
 	atts = zip(('classes', 'enums', 'properties', 'elements', 'commands'), tables)
 	f = file(modulepath, 'w')
 	print >> f, 'version = 1.1'

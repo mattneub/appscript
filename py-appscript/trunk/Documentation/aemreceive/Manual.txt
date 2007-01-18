@@ -17,6 +17,8 @@ kMissingValue -- The 'missing value' constant. Event handlers that sometimes ret
 
 kArgDesc -- Used in installeventhandler where a parameter should be passed directly to eventcallback as an AEDesc without unpacking or typechecking
 
+kArgMissingValue -- Used in installeventhandler to indicate that a 'missing value' constant is an acceptable parameter, e.g. ArgMultiChoice(kAE.typeUnicodeText, kArgMissingValue)
+
 kAE -- aemreceive re-exports CarbonX's kAE constants module for convenience; contains a range of common AE type constants useful when declaring event parameters' types
 
 

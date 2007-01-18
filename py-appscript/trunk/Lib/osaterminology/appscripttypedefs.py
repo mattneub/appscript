@@ -34,8 +34,6 @@ types = [
 		('float_128bit', 'ldbl'),
 		
 		('string', 'TEXT'),
-		('c_string', 'cstr'),
-		('pascal_string', 'pstr'),
 		('styled_text', 'STXT'),
 		('text_style_info', 'tsty'),
 		('styled_clipboard_text', 'styl'),
@@ -43,7 +41,6 @@ types = [
 		('writing_code', 'psct'),
 		('international_writing_code', 'intl'),
 		('international_text', 'itxt'),
-		('styled_unicode_text', 'sutx'),
 		('unicode_text', 'utxt'),
   		('utf8_text', 'utf8'), # typeUTF8Text
 		('utf16_text', 'ut16'), # typeUTF16ExternalRepresentation
