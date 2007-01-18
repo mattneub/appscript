@@ -2,8 +2,6 @@
 # Copyright (C) 2006 HAS. 
 # Released under MIT License.
 
-# TO DO: this module refers directly to Send::Event instead of going via the AEM::Application::Event hook, which might cause problems when used in an OSA component or other situation where client needs to customise all event creation and/or dispatch.
-
 module Connect
 	# Creates Apple event descriptor records of typeProcessSerialNumber, typeKernelProcessID and typeApplicationURL, used to specify the target application in Send::Event constructor.
 	

@@ -322,7 +322,7 @@ module Terminology
 	def Terminology.tables_for_aetes(aetes)
 		# Build terminology tables from a list of unpacked aete byte strings.
 		# Result : list of hash -- [typebycode, typebyname, referencebycode, referencebyname]
-		classes, enums, properties, elements, commands = TerminologyParser.build_tables_for_aetes(aetes.delete_if { |aete| not (aete.is_a?(AE::AEDesc) and aete.type == 'aete') })
+		classes, enums, properties, elements, commands = TerminologyParser.build_tables_for_aetes(aetes.delete_if { |aete| not (aete.is_a?(AE::AEDesc) and aete.type == KAE::TypeAETE) })
 		return _make_type_table(classes, enums, properties) + _make_reference_table(properties, elements, commands)
 	end
 	
@@ -362,6 +362,58 @@ module Terminology
 			@@_terminology_cache[aem_app.identity] = Terminology.tables_for_aetes(aetes)
 		end
 		return @@_terminology_cache[aem_app.identity]
+	end
+	
+	#######
+	
+	def Terminology.dump(app_name, module_name, out_path)
+		# Export terminology tables as a Ruby module
+		# app_path : string -- name or path of application
+		# module_name : string -- name of generated module (must be a valid Ruby constant)
+		# out_path : string -- module file to write
+		app_path = FindApp.by_name(app_name)
+		if not /^[A-Z][A-Za-z0-9_]*$/ === module_name
+			raise RuntimeError, "Invalid module name."
+		end
+		# Write module
+		File.open(out_path, "w") do |f|
+			# Get aete(s)
+			begin
+				aetes = AEM::Codecs.new.unpack(AE.get_app_terminology(app_path).coerce(KAE::TypeAEList))
+			rescue AE::MacOSError => e
+				if  e.to_i == -192 # aete resource not found
+					raise RuntimeError, "No terminology found."
+				else
+					raise
+				end
+			end
+			aetes.delete_if { |aete| not (aete.is_a?(AE::AEDesc) and aete.type == KAE::TypeAETE) }
+			# Parse aete(s) into intermediate tables, suitable for use by Terminology#tables_for_module
+			tables = TerminologyParser.build_tables_for_aetes(aetes)
+			# Write module code
+			f.puts "module #{module_name}"
+			f.puts "\tVersion = 1.1"
+			f.puts "\tPath = #{app_path.inspect}"
+			f.puts
+			(["Classes", "Enumerators", "Properties", "Elements"].zip(tables[0,4])).each do |name, table|
+				f.puts "\t#{name} = ["
+				table.sort.each do |item|
+					f.puts "\t\t#{item.inspect},"
+				end
+				f.puts "\t]"
+				f.puts
+			end
+			f.puts "\tCommands = ["
+			tables[4].sort.each do |name, code, params|
+				f.puts "\t\t[#{name.inspect}, #{code.inspect}, ["
+					params.each do |item|
+						f.puts "\t\t\t#{item.inspect},"
+					end
+				f.puts "\t\t]],"
+			end
+			f.puts "\t]"
+			f.puts "end"
+		end
 	end
 end
 

@@ -5,5 +5,7 @@
 require "appscript"
 include Appscript
 
-w = app('Finder').Finder_windows[1].target.get
-w.files[its.name_extension.is_in(['htm', 'html'])].select
+finder = app('Finder')
+finder.activate
+folder = finder.Finder_windows[1].target.get
+folder.files[its.name_extension.is_in(['htm', 'html'])].select

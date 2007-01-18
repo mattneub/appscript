@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
-# Lists the name and email(s) of every person in Address Book with one or more email addresses.
+# Lists the name and email(s) of every person in Address Book with
+# one or more email addresses.
 
 require "appscript"
 include Appscript
