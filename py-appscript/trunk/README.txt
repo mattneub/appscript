@@ -1,8 +1,16 @@
 Appscript is packaged using the standard Python Distribution Utilities (a.k.a. Distutils). To install appscript, cd to the appscript-0.17.0 directory and run:
 
+	python setup.py install
+
+Setuptools will be used if available, otherwise the setup.py script will revert to distutils.
+
+If setuptools and bdist_mpkg are both installed, appscript can be installed by running the following command:
+
 	python setup.py bdist_mpkg --open
 
-Building appscript from source requires bdist_mpkg (http://undefined.org/python/) and the gcc compiler (supplied with Apple's Developer Tools).
+This will build and open a binary installer for the appscript packages, documentation and examples.
+
+Building appscript from source requires the gcc compiler (supplied with Apple's Developer Tools). Setuptools and bdist_mpkg are available from <http://cheeseshop.python.org/pypi>.
 
 Appscript requires MacPython 2.3 or later and Mac OS X 10.3 or later.
 
@@ -10,23 +18,9 @@ Appscript requires MacPython 2.3 or later and Mac OS X 10.3 or later.
 ======================================================================
 NOTES
 
-- This Distutils package will install aem, aemreceive, appscript, CarbonX, macfile, osaterminology and osax; these will all be installed in site-packages/aeosa. Previous versions of these packages will need to be removed manually before use.
+- The appscript API has undergone several non-backwards-compatible changes since 0.16.3. Please read the 'IMPORTANT - API CHANGES' file BEFORE installing appscript 0.17.0.
 
-- Documentation and examples should now be installed at /Developer/Python. (Previous versions were installed in /Applications/Utilities/appscript; these should be removed manually.)
-
-- ASTS has been dropped. Existing installations should be removed manually.
-
-- The appscript API has undergone several changes, including the following:
-
-	- the filter reference form syntax has changed from ref.filter(test) to ref[test]. You will need to update your scripts accordingly when upgrading from appscript 0.16.2 or earlier.
-
-	- 'filter' is no longer a reserved word so application-defined 'filter' keywords no longer have an underscore appended (e.g. Photoshop's 'filter' command is no longer written as 'filter_'). You will need to update your scripts accordingly when upgrading from appscript 0.16.2 or earlier.
-
-	- 'app' is no longer a class (only an issue if subclassing it/using it for typechecking purposes)
-
-- The aem and osaterminology packages have also undergone significant changes. See the documentation for details.
-
-- appscript 0.16.1+ uses 'ascrgdte' events to retrieve terminology for both local and remote applications (previous versions used OSAGetAppTerminology). Due to a bug in Cocoa Scripting (bug id #4677156), classes and commands defined in hidden 'tpnm' suites are lost, so class, property and command names that are only defined there won't be available to appscript (e.g. the obsoleted 'title' property in iCal 2's dictionary is missing, so scripts written to work on OS 10.3 will need to be modified to work on OS 10.4 and vice-versa).
+- Documentation and examples are installed at /Developer/Python.
 
 - Appscript and aem are now moving towards beta 1 status, so please report any problems you have either with the appscript bridge itself or with scripting individual applications. In particular, appscript is a bit more sensitive to application bugs and terminology flaws than AppleScript is, so will sometimes fail on tasks where AppleScript works; identifying these problem apps so that internal/external workarounds can be developed will be useful.
 

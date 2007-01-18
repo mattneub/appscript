@@ -2,7 +2,9 @@ API CHANGES
 
 Appscript 0.17.0 has undergone a number of non-backwards-compatible API changes in preparation for the 1.0.0 release.
 
-Users must delete older installed versions of appscript from site-packages before installing appscript 0.17.0, and update any existing scripts to work with the new version. A list of changes is given below.
+Users must delete older installed versions of appscript from site-packages before installing appscript 0.17.0, and update any existing scripts to work with the new version (see below for a list of required changes).
+
+(Users who are not ready to update their existing scripts should remain on appscript 0.16.3 until they are.)
 
 
 ----------------------------------------------------------------------
@@ -117,7 +119,5 @@ needs to be changed to:
 
 ----------------------------------------------------------------------
 Notes
-
-- Users who are not ready to update their existing scripts should remain on appscript 0.16.3 until they are.
 
 - No further API changes are planned for aem, appscript, mactypes and osax modules between the 0.17.0 and 1.0.0 releases.
