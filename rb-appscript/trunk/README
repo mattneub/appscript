@@ -27,7 +27,7 @@ Please note that the version of Ruby included with Mac OS X 10.4 is missing the 
 ======================================================================
 NOTES
 
-- rb-appscript 0.2.x contains a number of API changes from rb-appscript 0.1.x; see the CHANGES file and documentation for details
+- rb-appscript 0.3.0 contains a couple of API changes from rb-appscript 0.2.x; see the CHANGES file and documentation for details
 
 ======================================================================
 AUTHOR
