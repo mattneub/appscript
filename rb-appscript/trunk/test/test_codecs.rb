@@ -156,4 +156,17 @@ class TC_Codecs < Test::Unit::TestCase
 		d = @c.pack(val)
 		assert_equal(expected_val, @c.unpack(d))
 	end
+	
+	def test_units
+		val = MacTypes::Units.new(3.3, :inches)
+		assert_equal(:inches, val.type)
+		assert_equal(3.3, val.value)
+		d = @c.pack(val)
+		assert_equal('inch', d.type)
+		assert_equal(3.3, @c.unpack(d.coerce(KAE::TypeFloat)))
+		val2 = @c.unpack(d)
+		assert_equal(val, val2)
+		assert_equal(:inches, val2.type)
+		assert_equal(3.3, val2.value)
+	end
 end
