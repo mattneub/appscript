@@ -126,6 +126,18 @@ class TC_Codecs(unittest.TestCase):
 		expectedVal = {'foo': 1, aem.AEType('foob'): 2, aem.AEType('barr'): 3} # note that four-char-code keys are always unpacked as AEType
 		d = self.c.pack(val)
 		self.assertEqual(expectedVal, self.c.unpack(d))
+	
+	def test_units(self):
+		val = mactypes.Units(3.3, 'inches')
+		self.assertEqual('inches', val.type)
+		self.assertEqual(3.3, val.value)
+		d = self.c.pack(val)
+		self.assertEqual('inch', d.type)
+		self.assertEqual(3.3, self.c.unpack(d.AECoerceDesc(kAE.typeFloat)))
+		val2 = self.c.unpack(d)
+		self.assertEqual(val, val2)
+		self.assertEqual('inches', val2.type)
+		self.assertEqual(3.3, val2.value)
 
 
 if __name__ == '__main__':

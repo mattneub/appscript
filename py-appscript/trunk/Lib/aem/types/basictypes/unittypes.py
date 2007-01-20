@@ -48,7 +48,7 @@ class UnitTypeCodecs:
 	
 	##
 	
-	def _defaultpacker(units, code): 
+	def _defaultpacker(self, units, code): 
 		return AE.AECreateDesc(code, pack('d', units.value))
 	
 	def _defaultunpacker(self, desc, name):
