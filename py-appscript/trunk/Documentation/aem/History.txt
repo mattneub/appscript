@@ -1,6 +1,6 @@
 HISTORY
 
-2007-01-20 -- 0.?.?
+2007-01-20 -- 0.12.1
 
 - fixed bug in unittypes' _defaultpacker
 
