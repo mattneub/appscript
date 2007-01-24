@@ -49,6 +49,7 @@
 	[name_ retain];
 	name = name_;
 	code = code_;
+	hash = [name hash] + (unsigned)code;
 	return self;
 }
 
@@ -58,6 +59,10 @@
 
 - (OSType)code {
 	return code;
+}
+
+- (unsigned)hash {
+	return hash;
 }
 
 - (BOOL)isEqual:(id)anObject {
@@ -96,6 +101,7 @@
 	if (!self) return self;
 	classCode = classCode_;
 	parameters = [[NSMutableArray alloc] init];
+	hash = (unsigned)classCode + (unsigned)code;
 	return self;
 }
 
@@ -118,6 +124,10 @@
 
 - (NSArray *)parameters {
 	return (NSArray *)parameters;
+}
+
+- (unsigned)hash {
+	return hash;
 }
 
 - (BOOL)isEqual:(id)anObject {
@@ -153,15 +163,15 @@
 - (id)init {
 	self = [super init];
 	if (!self) return self;
-	commands = [[NSMutableDictionary alloc] init];
-	properties = [[NSMutableArray alloc] init];
-	elements = [[NSMutableArray alloc] init];
-	classes = [[NSMutableArray alloc] init];
+	commands    = [[NSMutableDictionary alloc] init];
+	properties  = [[NSMutableArray alloc] init];
+	elements    = [[NSMutableArray alloc] init];
+	classes     = [[NSMutableArray alloc] init];
 	enumerators = [[NSMutableArray alloc] init];
 	// following are used in -parse: to supply 'missing' singular/plural class names
 	classAndElementDefsByCode = [[NSMutableDictionary alloc] init];
-	foundClassCodes = [[NSMutableSet alloc] init];
-	foundElementCodes = [[NSMutableSet alloc] init];
+	foundClassCodes           = [[NSMutableSet alloc] init];
+	foundElementCodes         = [[NSMutableSet alloc] init];
 	return self;
 }
 
@@ -275,7 +285,7 @@
 	NSString *className, *propertyName, *code;
 	OSType classCode, propertyCode;
 	ASParserDef *classDef, *propertyDef;
-	Boolean isPlural = 0;
+	BOOL isPlural = NO;
 	short flags;
 	int i, n, m;
 	
@@ -305,7 +315,7 @@
 			propertyDef = [[ASParserDef alloc] initWithName: propertyName code: propertyCode];
 			if (flags & 1)
 				// class name is plural
-				isPlural = 1;
+				isPlural = YES;
 			else if (![properties containsObject: propertyDef])
 				// add to list of property definitions
 				[properties addObject: propertyDef];
@@ -327,9 +337,7 @@
 	}
 	// add either singular (class) or plural (element) name definition
 	classDef = [[ASParserDef alloc] initWithName: className code: classCode];
-	code = [[NSString alloc] initWithBytes: &classCode
-									length: 4
-								  encoding: NSMacOSRomanStringEncoding];
+	code = [[NSNumber alloc] initWithLong: classCode];
 	if (isPlural) {
 		if (![elements containsObject: classDef]) {
 			[elements addObject: classDef];
@@ -341,7 +349,7 @@
 			[foundClassCodes addObject: code];
 		}
 	}
-	[classAndElementDefsByCode setValue: classDef forKey: code];
+	[classAndElementDefsByCode setObject: classDef forKey: code];
 	[code release];
 	[classDef release];
 	[className release];
@@ -458,7 +466,7 @@
 			#ifdef DEBUG
 				NSLog(@"missing element: %@\n", code);
 			#endif
-			[elements addObject: [classAndElementDefsByCode valueForKey: code]];
+			[elements addObject: [classAndElementDefsByCode objectForKey: code]];
 		}
 	}
 	enumerator = [foundElementCodes objectEnumerator];
@@ -467,7 +475,7 @@
 			#ifdef DEBUG
 				NSLog(@"missing class: %@\n", code);
 			#endif
-			[classes addObject: [classAndElementDefsByCode valueForKey: code]];
+			[classes addObject: [classAndElementDefsByCode objectForKey: code]];
 		}
 	}
 }

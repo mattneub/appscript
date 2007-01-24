@@ -13,6 +13,7 @@
 @interface ASParserDef : NSObject {
 	NSString *name;
 	OSType code;
+	unsigned hash;
 }
 
 - (id)initWithName:(NSString*)name_ code:(OSType)code_;
@@ -28,6 +29,7 @@
 @interface ASParserCommandDef : ASParserDef {
 	OSType classCode;
 	NSMutableArray *parameters;
+	unsigned hash;
 }
 
 - (id)initWithName:(NSString*)name eventClass:(OSType)classCode_ eventID:(OSType)code_;
