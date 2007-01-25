@@ -81,22 +81,27 @@ typedef enum {kPropertyDef, kElementDef} ASReferenceType;
 	id converter;
 }
 
-- (void)addTypeTableDefinitions:(NSArray *)definitions ofType:(OSType)descType;
-
-- (void)addReferenceTableDefinitions:(NSArray *)definitions
-						 toNameTable:(NSMutableDictionary *)nameTable
-						   codeTable:(NSMutableDictionary *)codeTable;
+/*
+ * converter : AS keyword string to C identifer string converter; should implement:
+ *		-(NSString *)convert:(NSString *)name
+ *		-(NSString *)escape:(NSString *)name
+ */
+- (id)initWithKeywordConverter:(id)converter_;
 
 /*
  * data : ASParser or equivalent;
  *		should implement the following accessors:
  *				-classes, -enumerators, -properties, -elements, -commands
- * converter : AS keyword string to C identifer string converter;
- *		should implement -(NSString *)convert:(NSString *)name
  */
-- (id)initWithData:(id)data keywordConverter:(id)converter;
+- (id)addData:(id)data;
 
-- (id)initWithData:(id)data;
+// used internally:
+
+- (void)addTypeTableDefinitions:(NSArray *)definitions ofType:(OSType)descType;
+
+- (void)addReferenceTableDefinitions:(NSArray *)definitions
+						 toNameTable:(NSMutableDictionary *)nameTable
+						   codeTable:(NSMutableDictionary *)codeTable;
 
 // Lookup methods return YES/NO to indicate if lookup was successful.
 

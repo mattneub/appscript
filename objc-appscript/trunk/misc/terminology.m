@@ -89,8 +89,90 @@
 @implementation ASStringTerminology
 
 - (id)init {
-	return nil; // TO DO: build table containing default terminology only
+	id converter_;
+	
+	converter_ = [[ASNullConverter alloc] init];
+	self = [self initWithKeywordConverter: converter_];
+	[converter_ release];
+	return self; 
 }
+
+- (id)initWithKeywordConverter:(id)converter_ {
+	self = [super init];
+	if (!self) return self;
+	[converter_ retain];
+	converter = converter_;
+	// TO DO: create following tables by copying default tables containing built-in definitions
+	typeByName = [[NSMutableDictionary alloc] init];
+	typeByCode = [[NSMutableDictionary alloc] init];
+	propertyByName = [[NSMutableDictionary alloc] init];
+	propertyByCode = [[NSMutableDictionary alloc] init];
+	elementByName = [[NSMutableDictionary alloc] init];
+	elementByCode = [[NSMutableDictionary alloc] init];
+	commandByName = [[NSMutableDictionary alloc] init];
+	return self;
+}
+
+
+/* TO DO:
+ *	-(id)initWithDefaultTerminology:(ASStringTerminology *)terms; -- copies tables + converter from one ASStringTerminology object to another; default tables are then also used for collision checking
+ *
+ * OR:
+ *
+ *	-(id)setDefaultTerminology:(ASStringTerminology *)terms; -- copies tables from one ASStringTerminology object to another; default tables are then also used for collision checking
+ *
+ * OR:
+ *
+ * -(id)childTable; -- returns a new ASStringTerminology instance containing default table info
+ *
+ * -(id)copyWithZone:(NSZone *)zone -- allows a copy-and-extend approach
+ */
+
+- (id)addData:(id)data { // adds raw data from ASAeteParser or equivalent
+	NSEnumerator *enumerator;
+	ASParserCommandDef *parserCommandDef;
+	ASCommandDef *commandDef;
+
+	// build type tables
+	[self addTypeTableDefinitions: (NSArray *)[data properties] ofType: typeType];
+	[self addTypeTableDefinitions: (NSArray *)[data enumerators] ofType: typeEnumerated];
+	[self addTypeTableDefinitions: (NSArray *)[data classes] ofType: typeType];
+	// build reference tables
+	[self addReferenceTableDefinitions: (NSArray *)[data elements]
+						   toNameTable: elementByName
+							 codeTable: elementByCode];
+	[self addReferenceTableDefinitions: (NSArray *)[data properties]
+						   toNameTable: propertyByName
+						     codeTable: propertyByCode];
+	// TO DO: if property table contains a 'text' definition, move it to element table (AppleScript always packs 'text of...' as an all-elements specifier)
+	// build command table
+	enumerator = [[data commands] objectEnumerator];
+	while (parserCommandDef = [enumerator nextObject]) {
+		commandDef = [[ASCommandDef alloc] initWithEventClass: [parserCommandDef classCode]
+													  eventID: [parserCommandDef code]
+												   parameters: [parserCommandDef parameters]
+											 keywordConverter: converter];
+		[commandByName setObject: commandDef
+						  forKey: [converter convert: [parserCommandDef name]]];
+		[commandDef release];
+	}
+	return self;
+}
+
+- (void)dealloc {
+	[typeByName release];
+	[typeByCode release];
+	[propertyByName release];
+	[propertyByCode release];
+	[elementByName release];
+	[elementByCode release];
+	[commandByName release];
+	[converter release];
+	[super dealloc];
+}
+
+
+//
 
 - (void)addTypeTableDefinitions:(NSArray *)definitions ofType:(OSType)descType {
 	ASParserDef *parserDef;
@@ -119,7 +201,7 @@
 		// TO DO: escape definitions that semi-overlap built-in definitions? or resolve in some other way?
 		desc = [[NSAppleEventDescriptor alloc] initWithDescriptorType: descType
 																bytes: (void *)(&code)
-															   length: 4];
+															   length: sizeof(code)];
 		[typeByName setObject: desc forKey: name];
 		[desc release];
 	}
@@ -151,69 +233,6 @@
 		[nameTable setObject: codeObj forKey: name];
 		[codeObj release];
 	}
-}
-
-- (id)initWithData:(id)data keywordConverter:(id)converter_ {
-	NSEnumerator *enumerator;
-	ASParserCommandDef *parserCommandDef;
-	ASCommandDef *commandDef;
-	
-	self = [super init];
-	if (!self) return self;
-	[converter_ retain];
-	converter = converter_;
-	// TO DO: create following tables by copying default tables containing built-in definitions
-	typeByName = [[NSMutableDictionary alloc] init];
-	typeByCode = [[NSMutableDictionary alloc] init];
-	propertyByName = [[NSMutableDictionary alloc] init];
-	propertyByCode = [[NSMutableDictionary alloc] init];
-	elementByName = [[NSMutableDictionary alloc] init];
-	elementByCode = [[NSMutableDictionary alloc] init];
-	commandByName = [[NSMutableDictionary alloc] init];
-	// build type tables
-	[self addTypeTableDefinitions: (NSArray *)[data properties] ofType: typeType];
-	[self addTypeTableDefinitions: (NSArray *)[data enumerators] ofType: typeEnumerated];
-	[self addTypeTableDefinitions: (NSArray *)[data classes] ofType: typeType];
-	// build reference tables
-	[self addReferenceTableDefinitions: (NSArray *)[data elements]
-						   toNameTable: elementByName
-							 codeTable: elementByCode];
-	[self addReferenceTableDefinitions: (NSArray *)[data properties]
-						   toNameTable: propertyByName
-						     codeTable: propertyByCode];
-	// TO DO: if property table contains a 'text' definition, move it to element table (AppleScript always packs 'text of...' as an all-elements specifier)
-	// build command table
-	enumerator = [[data commands] objectEnumerator];
-	while (parserCommandDef = [enumerator nextObject]) {
-		commandDef = [[ASCommandDef alloc] initWithEventClass: [parserCommandDef classCode]
-													  eventID: [parserCommandDef code]
-												   parameters: [parserCommandDef parameters]
-											 keywordConverter: converter];
-		[commandByName setObject: commandDef
-						  forKey: [converter convert: [parserCommandDef name]]];
-		[commandDef release];
-	}
-	return self;
-}
-
-- (id)initWithData:(id)data {
-	id converter_;
-	
-	converter_ = [[ASNullConverter alloc] init];
-	self = [self initWithData: data keywordConverter: converter_];
-	return self;
-}
-
-- (void)dealloc {
-	[typeByName release];
-	[typeByCode release];
-	[propertyByName release];
-	[propertyByCode release];
-	[elementByName release];
-	[elementByCode release];
-	[commandByName release];
-	[converter release];
-	[super dealloc];
 }
 
 

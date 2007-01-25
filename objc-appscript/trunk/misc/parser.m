@@ -11,7 +11,7 @@
 
 // not defined in OpenScripting.h for some reason
 #ifndef kAEInheritedProperties
-	#define kAEInheritedProperties 'c@#^'
+#define kAEInheritedProperties 'c@#^'
 #endif
 
 // skip unneeded aete data
@@ -77,8 +77,8 @@
 	NSString *code_, *s;
 	
 	code_ = [[NSString alloc] initWithBytes: &code
-									length: 4
-								  encoding: NSMacOSRomanStringEncoding];
+									 length: sizeof(code)
+								   encoding: NSMacOSRomanStringEncoding];
 	s = [NSString stringWithFormat: @"<DEF '%@' '%@'>", [self name], code_];
 	[code_ release];
 	return s;
@@ -140,10 +140,10 @@
 	NSString *classCode_, *idCode, *s;
 	
 	classCode_ = [[NSString alloc] initWithBytes: &classCode
-										  length: 4
+										  length: sizeof(classCode)
 										encoding: NSMacOSRomanStringEncoding];
 	idCode = [[NSString alloc] initWithBytes: &code
-									  length: 4
+									  length: sizeof(code)
 									encoding: NSMacOSRomanStringEncoding];
 	s = [NSString stringWithFormat: @"<EVENT '%@' '%@%@' %@>", 
 			[self name], classCode_, idCode, [self parameters]];
