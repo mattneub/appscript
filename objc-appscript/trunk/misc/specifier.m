@@ -10,13 +10,7 @@
 
 /* TO DO:
  *
- * - improve -description formatting
- *
  * - how best to implement -resolve:? e.g. Better to invoke a '-(id)call:(SEL)name, ...' method (or similar) on a generic visitor object (i.e. smaller API is better for simpler tasks)? Or stick with current approach (i.e. larger API is arguably better for more complex tasks)? Note: could provide an abstract AEMResolverBase class that adapts from larger API to smaller API; that'd also allow subclasses to override individual methods they're interested in.
- *
- * - caching in -packSelf:
- *
- * AEMCodecs -pack: should return an autoreleased NSAppleEventDescriptor, or raise an exception if packing fails
  */
 
 
@@ -41,13 +35,47 @@
 														 bytes:&descData \
 														length:sizeof(descData)];
 
+// insertion locations
+static NSAppleEventDescriptor *kEnumBeginning,
+							  *kEnumEnd,
+							  *kEnumBefore,
+							  *kEnumAfter;
+
+// relative positions
+static NSAppleEventDescriptor *kEnumPrevious,
+							  *kEnumNext;
+
+// absolute ordinals
+static NSAppleEventDescriptor *kOrdinalFirst,
+							  *kOrdinalMiddle,
+							  *kOrdinalLast,
+							  *kOrdinalAny,
+							  *kOrdinalAll;
+
+// key forms
+static NSAppleEventDescriptor *kFormPropertyID,
+							  *kFormUserPropertyID,
+							  *kFormName,
+							  *kFormAbsolutePosition,
+							  *kFormUniqueID,
+							  *kFormRelativePosition,
+							  *kFormRange,
+							  *kFormTest;
+
+
+// prepacked value for keyDesiredClass for use by -packSelf: in property specifiers
+static NSAppleEventDescriptor *kClassProperty;
+
+// blank record used by -packSelf: to construct object specifiers
+static NSAppleEventDescriptor *kNullRecord;
+
 
 static BOOL specifierModuleIsInitialized = NO;
 
 void initSpecifierModule() {
 	OSType descData;
 	
-	NSLog(@"initialising specifier module\n");
+//	NSLog(@"initialising specifier module\n");
 	// insertion locations
 	ENUMERATOR(Beginning);
 	ENUMERATOR(End);
@@ -128,20 +156,9 @@ void disposeSpecifierModule() {
 - (id)app {
 	return self;
 }
-
-@end
-
-
-@implementation AEMCodecs
-
-- (NSAppleEventDescriptor *)pack:(id)object {
-	return [NSAppleEventDescriptor nullDescriptor];
-}
-
-- (id)unpack:(NSAppleEventDescriptor *)desc {
+- (id)pack:(id)obj {
 	return nil;
 }
-
 @end
 
 
@@ -323,10 +340,15 @@ void disposeSpecifierModule() {
 }
 
 
-// by-relative-position selectors // TO DO
+// by-relative-position selectors
 
-// - (AEMElementByRelativePositionSpecifier *)previous:(OSType)classCode;
-// - (AEMElementByRelativePositionSpecifier *)next:(OSType)classCode;
+- (id)previous:(OSType)classCode {
+	return nil; // TO DO
+}
+
+- (id)next:(OSType)classCode {
+	return nil; // TO DO
+}
 
 @end
 
@@ -538,7 +560,16 @@ void disposeSpecifierModule() {
 @end
 
 
-// TO DO: AEMElementByRelativePositionSpecifier (will inherit from AEMPositionSpecifierBase)
+/*
+ * note: AEMElementByRelativePositionSpecifier inherits from AEMPositionSpecifierBase,
+ * not AEMSingleElementSpecifierBase
+ */
+@implementation AEMElementByRelativePositionSpecifier
+
+// TO DO
+
+@end
+
 
 
 /**********************************************************************/
@@ -655,6 +686,10 @@ void disposeSpecifierModule() {
 
 // reserved methods
 
+- (id)trueSelf {
+	return container; // override default implementation to return the UnkeyedElements object stored inside of this AllElements instance
+}
+
 - (id)packSelf:(id)codecs {
 	if (!cachedDesc) {
 		cachedDesc = [kNullRecord coerceToDescriptorType: typeObjectSpecifier];
@@ -746,7 +781,7 @@ void disposeSpecifierModule() {
 	static AEMApplicationRoot *root;
 	
 	if (!root) {
-		NSLog(@"initialising AEMApplicationRoot\n");
+//		NSLog(@"initialising AEMApplicationRoot\n");
 		if (!specifierModuleIsInitialized)
 			initSpecifierModule();
 		root = [[AEMApplicationRoot alloc] initWithDescType: typeNull];

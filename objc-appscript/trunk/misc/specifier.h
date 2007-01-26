@@ -7,55 +7,20 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#include <Carbon/Carbon.h>
+#import <Carbon/Carbon.h>
 
 /**********************************************************************/
 
 
 #define AEMApp [AEMApplicationRoot reference]
 #define AEMCon [AEMCurrentContainerRoot reference]
-#define AEMIts [AEMObjectBeingExaminedRoot]
+#define AEMIts [AEMObjectBeingExaminedRoot reference]
 
 
 /**********************************************************************/
-// constants
+// initialise constants
 
-// insertion locations
-static NSAppleEventDescriptor *kEnumBeginning,
-							  *kEnumEnd,
-							  *kEnumBefore,
-							  *kEnumAfter;
-
-// relative positions
-static NSAppleEventDescriptor *kEnumPrevious,
-							  *kEnumNext;
-
-// absolute ordinals
-static NSAppleEventDescriptor *kOrdinalFirst,
-							  *kOrdinalMiddle,
-							  *kOrdinalLast,
-							  *kOrdinalAny,
-							  *kOrdinalAll;
-
-// key forms
-static NSAppleEventDescriptor *kFormPropertyID,
-							  *kFormUserPropertyID,
-							  *kFormName,
-							  *kFormAbsolutePosition,
-							  *kFormUniqueID,
-							  *kFormRelativePosition,
-							  *kFormRange,
-							  *kFormTest;
-
-
-// prepacked value for keyDesiredClass for use by -packSelf: in property specifiers
-static NSAppleEventDescriptor *kClassProperty;
-
-// blank record used by -packSelf: to construct object specifiers
-static NSAppleEventDescriptor *kNullRecord;
-
-
-void initSpecifierModule(void);
+void initSpecifierModule(void); // called automatically
 
 void disposeSpecifierModule(void);
 
@@ -66,15 +31,6 @@ void disposeSpecifierModule(void);
 @interface AEMResolver // TO DO
 
 - (id)app;
-
-@end
-
-
-@interface AEMCodecs : NSObject
-
-- (NSAppleEventDescriptor *)pack:(id)object;
-
-- (id)unpack:(NSAppleEventDescriptor *)desc;
 
 @end
 
@@ -158,10 +114,11 @@ void disposeSpecifierModule(void);
 - (id)userProperty:(NSString *)propertyName;
 - (id)elements:(OSType)classCode;
 
-// by-relative-position selectors // TO DO
+// by-relative-position selectors
 
-// - (AEMElementByRelativePositionSpecifier *)previous:(OSType)classCode;
-// - (AEMElementByRelativePositionSpecifier *)next:(OSType)classCode;
+// TO DO: specific return types
+- (id)previous:(OSType)classCode;
+- (id)next:(OSType)classCode;
 
 @end
 
@@ -204,7 +161,8 @@ void disposeSpecifierModule(void);
 @interface AEMElementByOrdinalSpecifier : AEMSingleElementSpecifierBase
 @end
 
-// TO DO: AEMElementByRelativePositionSpecifier
+@interface AEMElementByRelativePositionSpecifier : AEMPositionSpecifierBase
+@end
 
 
 /**********************************************************************/

@@ -5,7 +5,7 @@
 //
 
 #import "parser.h"
-#include <Carbon/Carbon.h>
+#import <Carbon/Carbon.h>
 
 //#define DEBUG 1
 
