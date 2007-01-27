@@ -1,9 +1,11 @@
 //
 //  codecs.h
+//  aem
+//
 //  Copyright (C) 2007 HAS
 //
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 #import <Carbon/Carbon.h>
 
 

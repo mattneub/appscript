@@ -1,12 +1,11 @@
 //
 //  terminology.h
-//  AppscriptTEST
+//  appscript
 //
-//  Created by Hamish Sanderson on 21/01/2007.
-//  Copyright 2007 __MyCompanyName__. All rights reserved.
+//  Copyright (C) 2007 HAS
 //
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 #import "parser.h"
 
 // TO DO: convert AS keywords to identifiers here, not parser; makes it easier to build multiple terminology tables for different clients

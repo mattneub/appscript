@@ -1,5 +1,6 @@
 //
 //  parser.m
+//  appscript
 //
 //  Copyright (C) 2007 HAS
 //

@@ -1,10 +1,11 @@
 //
 //  parser.h
+//  appscript
 //
 //  Copyright (C) 2007 HAS
 //
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 
 
 /**********************************************************************/

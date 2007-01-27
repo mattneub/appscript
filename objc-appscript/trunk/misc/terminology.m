@@ -1,9 +1,8 @@
 //
 //  terminology.m
-//  AppscriptTEST
+//  appscript
 //
-//  Created by Hamish Sanderson on 21/01/2007.
-//  Copyright 2007 __MyCompanyName__. All rights reserved.
+//  Copyright (C) 2007 HAS
 //
 
 #import "terminology.h"
