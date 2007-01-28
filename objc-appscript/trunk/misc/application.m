@@ -7,7 +7,7 @@
 
 #import "application.h"
 
-// TO DO: default error strings?
+// TO DO: default error message strings?
 
 
 /**********************************************************************/
@@ -15,7 +15,11 @@
 
 @implementation AEMEvent
 
-- (id)initWithEvent:(AEDesc *)event_
+/*
+ * Note: new AEMEvent instances are constructed by AEMApplication objects; 
+ * clients shouldn't instantiate this class directly.
+ */
+- (id)initWithEvent:(AppleEvent *)event_ // note: takes ownership of AppleEvent object
 			 codecs:(id)codecs_
 		   sendProc:(AEMSendProcPtr)sendProc_ {
 	self = [super init];
@@ -23,15 +27,19 @@
 	event = event_;
 	[codecs_ retain];
 	codecs = codecs_;
+	sendProc = sendProc_;
 	return self;
 }
 
 - (void)dealloc {
 	AEDisposeDesc(event);
+	free(event);
 	[codecs release];
 	[errorString release];
 	[super dealloc];
 }
+
+// Pack event's attributes and parameters, if any.
 
 - (id)setAttributePtr:(void *)dataPtr 
 				 size:(Size)dataSize
@@ -59,32 +67,59 @@
 	return err ? nil : self;
 }
 
-// TO DO: if sending event fails, -send should return nil and error info should be available from AEMEvent instance via -errorNumber, -errorString, etc.; also provide -raise convenience method that will raise an NSException describing the error 
+/*
+ * Send event.
+ *
+ * (Note: a single event can be sent multiple times if desired.)
+ *
+ * (Note: if an Apple Event Manager/application error occurs, these methods will return nil.
+ * Clients should test for this, then use the -errorNumber and -errorString methods to
+ * retrieve the error description.
+ */
 
 - (id)sendWithMode:(AESendMode)sendMode timeout:(long)timeoutInTicks {
-	AEDesc replyDesc;
-	NSAppleEventDescriptor *replyData, *result;
+	AEDesc replyDesc = {typeNull, NULL};
+	NSAppleEventDescriptor *desc, *replyData, *result;
 	
 	errorNumber = sendProc(event, &replyDesc, sendMode, timeoutInTicks);
 	if (errorNumber) {
+		if (errorNumber == -609) {
+			// ignore errors caused by application quitting normally after being sent a quit event
+			desc = [[NSAppleEventDescriptor alloc] initWithAEDescNoCopy: event];
+				if ([[desc attributeDescriptorForKeyword: keyEventClassAttr]
+								typeCodeValue] == kCoreEventClass
+						&& [[desc attributeDescriptorForKeyword: keyEventClassAttr]
+								typeCodeValue] == kAEQuitApplication) {
+					[desc release];
+					return [NSNull null];
+				}
+			[desc release];
+		}
+		// set error condition and return nil
 		[errorString release];
 		errorString = nil;
+//		NSLog(@"AEMEvent send error: %i\n", errorNumber);
 		return nil; // clients should check return value to determine if event failed
-	} else if (replyDesc.descriptorType != typeNull) {
+	}
+	if (replyDesc.descriptorType != typeNull) {
 		replyData = [[NSAppleEventDescriptor alloc] initWithAEDescNoCopy: &replyDesc];
 		result = [replyData paramDescriptorForKeyword: keyErrorNumber];
 		if (result) {
 			errorNumber = (OSErr)[result int32Value];
+//			NSLog(@"ErrorNumber %i\n", errorNumber);
 			if (errorNumber) { // Some apps (e.g. Finder) may return noErr on success, so ignore that.
-				[errorString release];
+				if (errorString) [errorString release];
+//				NSLog(@"getting error string");
 				errorString = [[replyData paramDescriptorForKeyword: keyErrorString] stringValue];
 				[errorString retain];
 				// TO DO: get any other error info
 				[replyData release];
+//				NSLog(@"AEMEvent application error: %i\n", errorNumber);
 				return nil; // clients should check return value to determine if event failed
 			}
 		}
-		result = [replyData paramDescriptorForKeyword: keyDirectObject];
+		result = [replyData paramDescriptorForKeyword: keyAEResult];
+//		NSLog(@"AEMEvent result: %@\n", result);
 		[replyData release];
 		if (result) return [codecs unpack: result];
 	}
@@ -102,6 +137,8 @@
 - (id)send {
 	return [self sendWithMode: kAEWaitReply timeout: kAEDefaultTimeout];
 }
+
+// Error reporting.
 
 - (OSErr)errorNumber {
 	return errorNumber;
@@ -199,7 +236,19 @@
 // display
 
 - (NSString *)description {
-	return @"AEMApplication"; // TO DO
+	pid_t pid;
+	switch (targetType) {
+		case kAEMTargetFile:
+		case kAEMTargetURL:
+			return [NSString stringWithFormat: @"<AEMApplication url=%@>", targetData];
+		case kAEMTargetPID:
+			[[addressDesc data] getBytes: &pid length: sizeof(pid_t)];
+			return [NSString stringWithFormat: @"<AEMApplication pid=%i>", pid];
+		case kAEMTargetCurrent:
+			return @"<AEMApplication current>";
+		default:
+			return [NSString stringWithFormat: @"<AEMApplication desc=%@>", addressDesc];
+	}
 }
 
 // clients can call following methods to modify standard create/send behaviours
@@ -223,11 +272,15 @@
 						 returnID:(AEReturnID)returnID
 						   codecs:(id)codecs {
 	OSErr err;
-	AEDesc event;
+	AppleEvent *appleEvent;
 	
-	err = createProc(classCode, code, [addressDesc aeDesc], returnID, transactionID, &event);
+	appleEvent = malloc(sizeof(AEDesc));
+	if (!appleEvent) return nil;
+	err = createProc(classCode, code, [addressDesc aeDesc], returnID, transactionID, appleEvent);
 	if (err) return nil;
-	return [[[AEMEvent alloc] initWithEvent: &event codecs: codecs sendProc: sendProc] autorelease];
+	return [[[AEMEvent alloc] initWithEvent: appleEvent
+									 codecs: codecs 
+								   sendProc: sendProc] autorelease];
 }
 
 - (AEMEvent *)eventWithEventClass:(AEEventClass)classCode

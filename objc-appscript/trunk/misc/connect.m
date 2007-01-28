@@ -44,7 +44,7 @@ OSStatus AEMFindPIDForApplication(NSURL *fileURL, pid_t *pid) { // TO DO: extern
 		err = GetNextProcess(&psn);
 		if (err) return err; // -600 = process not found
 		err = GetProcessBundleLocation(&psn, &found);
-	} while (err || !FSCompareFSRefs(&desired, &found));
+	} while (err || FSCompareFSRefs(&desired, &found));
 	err = GetProcessPID(&psn, pid);
 	if (err) return err;
 	return noErr;
@@ -114,7 +114,7 @@ NSAppleEventDescriptor* AEMAddressDescForLocalApplication(NSURL *fileURL) {
 		if (err != -600) return nil;
 		err = AEMLaunchApplication(fileURL, 
 								   nil,
-								   launchContinue & launchNoFileFlags & launchDontSwitch,
+								   launchContinue | launchNoFileFlags | launchDontSwitch,
 								   &pid);
 		if (err) return nil;
 	}

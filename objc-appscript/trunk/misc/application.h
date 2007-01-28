@@ -54,9 +54,16 @@ typedef enum {
 	NSString *errorString;
 }
 
-- (id)initWithEvent:(AEDesc *)event_
+/*
+ * Note: new AEMEvent instances are constructed by AEMApplication objects; 
+ * clients shouldn't instantiate this class directly.
+ */
+
+- (id)initWithEvent:(AppleEvent *)event_
 			 codecs:(id)codecs_
 		   sendProc:(AEMSendProcPtr)sendProc_;
+
+// Pack event's attributes and parameters, if any.
 
 - (id)setAttributePtr:(void *)dataPtr 
 				 size:(Size)dataSize
@@ -72,6 +79,16 @@ typedef enum {
 
 - (id)setParameter:(id)value forKeyword:(AEKeyword)key;
 
+/*
+ * Send event.
+ *
+ * (Note: a single event can be sent multiple times if desired.)
+ *
+ * (Note: if an Apple Event Manager/application error occurs, these methods will return nil.
+ * Clients should test for this, then use the -errorNumber and -errorString methods to
+ * retrieve the error description.
+ */
+
 - (id)sendWithMode:(AESendMode)sendMode timeout:(long)timeoutInTicks;
 
 - (id)sendWithTimeout:(long)timeoutInTicks;
@@ -80,9 +97,18 @@ typedef enum {
 
 - (id)send;
 
+/*
+ * Get error information for last event sent, assuming it failed.
+ */ 
+
 - (OSErr)errorNumber;
 
 - (NSString *)errorString;
+
+/*
+ * Convenience method for raising an exception containing error information
+ * for last event sent, assuming it failed.
+ */
 
 - (void)raise;
 
