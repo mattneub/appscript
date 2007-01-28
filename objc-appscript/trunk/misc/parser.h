@@ -6,6 +6,14 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <Carbon/Carbon.h>
+
+
+/**********************************************************************/
+// wrapper for OSAGetAppTerminology
+
+extern OSStatus AEMGetAppTerminology(NSURL *fileURL,
+									 NSAppleEventDescriptor **resultDesc);
 
 
 /**********************************************************************/
@@ -72,7 +80,7 @@
 - (void)parseEnumeration;
 - (void)parseSuite;
 
-- (void)parse:(NSAppleEventDescriptor *)aetes;
+- (ASAeteParser *)parse:(NSAppleEventDescriptor *)aetes;
 
 - (NSArray *)classes;
 - (NSArray *)enumerators;

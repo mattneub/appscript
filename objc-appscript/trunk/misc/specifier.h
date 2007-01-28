@@ -37,7 +37,7 @@ void disposeSpecifierModule(void);
 /**********************************************************************/
 // AEM reference base (shared by specifiers and tests)
 
-@interface AEMBase : NSObject
+@interface AEMQuery : NSObject
 
 /*
  * TO DO:
@@ -55,7 +55,7 @@ void disposeSpecifierModule(void);
 /*
  * Abstract base class for all object specifier classes.
  */
-@interface AEMSpecifier : AEMBase {
+@interface AEMSpecifier : AEMQuery {
 	AEMSpecifier *container;
 	NSAppleEventDescriptor *keyForm;
 	id key;

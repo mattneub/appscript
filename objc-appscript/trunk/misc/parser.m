@@ -6,9 +6,47 @@
 //
 
 #import "parser.h"
-#import <Carbon/Carbon.h>
 
 //#define DEBUG 1
+
+
+/**********************************************************************/
+
+/*
+ * On return, resultDesc contains an autoreleased NSAppleEventDescriptor
+ * containing zero or more aete descs.
+ */
+extern OSStatus AEMGetAppTerminology(NSURL *fileURL,
+									 NSAppleEventDescriptor **resultDesc) {
+	OSStatus err;
+	FSRef fsRef;
+	FSSpec fsSpec;
+	ComponentInstance defaultComponent;
+	Boolean didLaunch;
+	AEDesc *theDesc;
+	
+	theDesc = malloc(sizeof(AEDesc));
+	if (!CFURLGetFSRef((CFURLRef)fileURL, &fsRef)) return errFSBadFSRef;
+	err = FSGetCatalogInfo(&fsRef, kFSCatInfoNone, NULL, NULL, &fsSpec, NULL);
+	if (err) return err;
+	// need to initialise an OSA language component in order to call OSAGetAppTerminology
+	defaultComponent = OpenDefaultComponent(kOSAComponentType, kAppleScriptSubtype);
+	err = GetComponentInstanceError(defaultComponent);
+	if (err) return err;
+	err = OSAGetAppTerminology(defaultComponent, 
+							   kOSAModeNull,
+							   &fsSpec, 
+							   0, 
+							   &didLaunch, 
+							   theDesc);
+	if (err) return err;
+	*resultDesc = [[[NSAppleEventDescriptor alloc] initWithAEDescNoCopy: theDesc] autorelease];
+	return (*resultDesc) ? noErr : 1;
+}
+
+
+/**********************************************************************/
+
 
 // not defined in OpenScripting.h for some reason
 #ifndef kAEInheritedProperties
@@ -29,6 +67,7 @@
 		[NSException raise: @"Bad aete" \
 					format: @"Data ended prematurely (%i bytes expected, %i bytes read)", \
 							aeteSize, cursor];
+
 
 /**********************************************************************/
 
@@ -436,7 +475,7 @@
 	}
 }
 
-- (void)parse:(NSAppleEventDescriptor *)aetes {
+- (ASAeteParser *)parse:(NSAppleEventDescriptor *)aetes {
 	NSAppleEventDescriptor *aete;
 	NSEnumerator *enumerator;
 	NSData *data;
@@ -479,6 +518,7 @@
 			[classes addObject: [classAndElementDefsByCode objectForKey: code]];
 		}
 	}
+	return self;
 }
 
 - (NSArray *)classes {

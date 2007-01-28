@@ -7,8 +7,8 @@
 
 #import <Foundation/Foundation.h>
 #import <Carbon/Carbon.h>
-#import "codecs.m"
-#import "connect.m"
+#import "codecs.h"
+#import "connect.h"
 
 
 /**********************************************************************/

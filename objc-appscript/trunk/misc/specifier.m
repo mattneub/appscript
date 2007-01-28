@@ -25,7 +25,7 @@
 #define ORDINAL(name) \
 		descData = kAE##name; \
 		kOrdinal##name = [[NSAppleEventDescriptor alloc] initWithDescriptorType:typeAbsoluteOrdinal \
-														 bytes:&(descData) \
+														 bytes:&descData \
 														length:sizeof(descData)];
 
 #define KEY_FORM(name) \
@@ -71,10 +71,10 @@ static NSAppleEventDescriptor *kNullRecord;
 
 static BOOL specifierModuleIsInitialized = NO;
 
+
 void initSpecifierModule() {
 	OSType descData;
 	
-//	NSLog(@"initialising specifier module\n");
 	// insertion locations
 	ENUMERATOR(Beginning);
 	ENUMERATOR(End);
@@ -98,10 +98,6 @@ void initSpecifierModule() {
 	KEY_FORM(RelativePosition);
 	KEY_FORM(Range);
 	KEY_FORM(Test);
-	// reference roots // TO DO
-	// AEMApp
-	// AEMCon
-	// AEMIts
 	// miscellaneous
 	descData = cProperty;
 	kClassProperty = [[NSAppleEventDescriptor alloc] initWithDescriptorType:typeType
@@ -112,7 +108,7 @@ void initSpecifierModule() {
 }
 
 
-void disposeSpecifierModule() {
+void disposeSpecifierModule() { // TO DO: since frameworks are never unloaded, do we really need this?
 	// insertion locations
 	[kEnumBeginning release];
 	[kEnumEnd release];
@@ -136,10 +132,6 @@ void disposeSpecifierModule() {
 	[kFormRelativePosition release];
 	[kFormRange release];
 	[kFormTest release];
-	// reference roots // TO DO
-	// [AEMApp release];
-	// [AEMCon release];
-	// [AEMIts release];
 	// miscellaneous
 	[kClassProperty release];
 	[kNullRecord release];
@@ -150,11 +142,12 @@ void disposeSpecifierModule() {
 /**********************************************************************/
 
 
-@implementation AEMResolver // TO DO
+@implementation AEMResolver // TO DO: move to own module and finish
 
 - (id)app {
 	return self;
 }
+
 - (id)pack:(id)obj {
 	return nil;
 }
@@ -164,7 +157,7 @@ void disposeSpecifierModule() {
 /**********************************************************************/
 // AEM reference base (shared by specifiers and tests)
 
-@implementation AEMBase
+@implementation AEMQuery
 
 /*
  * TO DO:
@@ -191,8 +184,7 @@ void disposeSpecifierModule() {
 	container = container_;
 	[key_ retain];
 	key = key_;
-//	NSLog(@"<INIT AEMSpecifier (%@) %@, %@>\n", [self class], container, key);
-	return self; // TO DO: autorelease here? or individually? (only thing about autoreleasing is need to make sure AEMApp, etc. don't get dealloced by pool)
+	return self;
 }
 
 - (void)dealloc {
@@ -215,6 +207,8 @@ void disposeSpecifierModule() {
 	return nil;
 }
 
+// walk reference
+
 - (id)resolve:(id)object { // subclasses should override this
 	return nil;
 }
@@ -229,7 +223,8 @@ void disposeSpecifierModule() {
 /*
  * A reference to an element insertion point.
  *
- * key : NSAppleEventDescriptor of typeEnumerated
+ * key : NSAppleEventDescriptor of typeEnumerated, value:
+ *			 kEnumBeginning/kEnumEnd/kEnumBefore/kEnumAfter
  *
  */
 @implementation AEMInsertionSpecifier
@@ -291,7 +286,6 @@ void disposeSpecifierModule() {
 	self = [super initWithContainer:(AEMSpecifier *)container_ key:(id)key_];
 	if (!self) return self;
 	wantCode = wantCode_;
-//	NSLog(@"AEMPositionSpecifierBase init: %x\n", wantCode);
 	return self;
 }
 
@@ -619,7 +613,7 @@ void disposeSpecifierModule() {
 									  wantCode: wantCode] autorelease];
 }
 
-- (AEMElementByIndexSpecifier *)byIndex:(id)index { // normally NSNumber, but may occasionally be other types
+- (AEMElementByIndexSpecifier *)byIndex:(id)index { // index is normally NSNumber, but may occasionally be other types where target application accepts it (e.g. Finder also accepts typeAlias)
 	return [[[AEMElementByIndexSpecifier alloc]
 							 initWithContainer: self
 										   key: index
@@ -646,7 +640,7 @@ void disposeSpecifierModule() {
 	return nil;
 }
 
-- (id)byRange:(id)fromObject to:(id)toObject { // takes two con-based references, with other values being expanded as necessary
+- (id)byRange:(id)fromObject to:(id)toObject { // takes two con-based references (other values will be automatically expanded to con-based references)
 	return nil;
 }
 
@@ -686,7 +680,9 @@ void disposeSpecifierModule() {
 // reserved methods
 
 - (id)trueSelf {
-	return container; // override default implementation to return the UnkeyedElements object stored inside of this AllElements instance
+	// Overrides default implementation to return the UnkeyedElements object
+	// stored inside of this AllElements instance.
+	return container; 
 }
 
 - (id)packSelf:(id)codecs {
@@ -780,7 +776,6 @@ void disposeSpecifierModule() {
 	static AEMApplicationRoot *root;
 	
 	if (!root) {
-//		NSLog(@"initialising AEMApplicationRoot\n");
 		if (!specifierModuleIsInitialized)
 			initSpecifierModule();
 		root = [[AEMApplicationRoot alloc] initWithDescType: typeNull];

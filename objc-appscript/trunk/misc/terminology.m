@@ -14,18 +14,17 @@
 @implementation ASNullConverter
 
 - (NSString *)convert:(NSString *)name {
-	return name; // if returning a new name, autorelease it
+	return name;
 }
 
 - (NSString *)escape:(NSString *)name {
-	return name; // if returning a new name, autorelease it
+	return name;
 }
 
 @end
 
 
 /**********************************************************************/
-
 
 
 @implementation ASCommandDef

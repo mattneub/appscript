@@ -13,7 +13,8 @@
  * - unit types support
  * - AEMAlias, AEMFile (or map typeFileURL to NSURL/NSURL subclass?)
  * - AEMType, AEMEnum, etc.? or just leave clients to use NSAppleEventDescriptor?
- * - various pack/unpack type conversions
+ * - improve NSNumber packing
+ * - finish reference unpacking
  */
 
 /**********************************************************************/
@@ -63,8 +64,10 @@
 	UInt32 uint32;
 	SInt64 sint64;
 	double float64;
+	CFAbsoluteTime cfTime;
+	LongDateTime longDate;
 		
-	if ([anObject isKindOfClass: [AEMBase class]])
+	if ([anObject isKindOfClass: [AEMQuery class]])
 		return [anObject packSelf: self];
 	else if ([anObject isKindOfClass: [NSNumber class]]) {
 		if ([anObject isKindOfClass: [AEMBoolean class]])
@@ -100,8 +103,13 @@
 		}
 	} else if ([anObject isKindOfClass: [NSString class]])
 		return [NSAppleEventDescriptor descriptorWithString: anObject];
-	// TO DO: NSDate
-	else if ([anObject isKindOfClass: [NSArray class]])
+	else if ([anObject isKindOfClass: [NSDate class]]) {
+		cfTime = [anObject timeIntervalSinceReferenceDate];
+		if (UCConvertCFAbsoluteTimeToLongDateTime(cfTime, &longDate)) return nil;
+		return [NSAppleEventDescriptor descriptorWithDescriptorType: typeLongDateTime
+															  bytes: &longDate
+															 length: sizeof(longDate)];
+	} else if ([anObject isKindOfClass: [NSArray class]])
 		return [self packArray: anObject];
 	else if ([anObject isKindOfClass: [NSDictionary class]])
 		return [self packDictionary: anObject];
@@ -180,13 +188,24 @@
 
 
 - (id)unpack:(NSAppleEventDescriptor *)desc {
+	LongDateTime longTime;
+	CFAbsoluteTime cfTime;
+	Boolean boolean;
+	SInt16 sint16;
+	UInt32 uint32;
+	SInt64 sint64;
+	float float32;
+	double float64;
+	NSArray *array;
+	
 	switch ([desc descriptorType]) {
 		case typeObjectSpecifier:
 			return [self unpackObjectSpecifier: desc];
 		case typeSInt32:
 			return [NSNumber numberWithLong: [desc int32Value]];
 		case typeIEEE64BitFloatingPoint:
-			return nil; // TO DO
+			[[desc data] getBytes: &float64 length: sizeof(float64)];
+			return [NSNumber numberWithDouble: float64];
 		case typeChar: 
 		case typeIntlText:
 		case typeUTF8Text:
@@ -199,7 +218,9 @@
 		case typeTrue:
 			return AEMTrue;
 		case typeLongDateTime:
-			return nil; // TO DO: Time.at(AE.convert_long_date_time_to_unix_seconds(desc.data.unpack('q')[0]))
+			[[desc data] getBytes: &longTime length: sizeof(longTime)];
+			if (UCConvertLongDateTimeToCFAbsoluteTime(longTime, &cfTime)) return nil;
+			return [NSDate dateWithTimeIntervalSinceReferenceDate: cfTime];
 		case typeAEList:
 			return [self unpackAEList: desc];
 		case typeAERecord:
@@ -215,9 +236,14 @@
 		case typeKeyword:
 			return desc;
 		case typeSInt16:
+			[[desc data] getBytes: &sint16 length: sizeof(sint16)];
+			return [NSNumber numberWithShort: sint16];
 		case typeUInt32:
+			[[desc data] getBytes: &uint32 length: sizeof(uint32)];
+			return [NSNumber numberWithUnsignedLong: uint32];
 		case typeSInt64:
-			return nil; // TO DO
+			[[desc data] getBytes: &sint64 length: sizeof(sint64)];
+			return [NSNumber numberWithLongLong: sint64];
 		case typeNull:
 			return [NSNull null];
 		case typeInsertionLoc:
@@ -231,16 +257,30 @@
 		case typeLogicalDescriptor:
 			return [self unpackLogicalDescriptor: desc];
 		case typeIEEE32BitFloatingPoint:
+			[[desc data] getBytes: &float32 length: sizeof(float32)];
+			return [NSNumber numberWithDouble: float32];
 		case type128BitFloatingPoint:
+			[[[desc coerceToDescriptorType: typeIEEE64BitFloatingPoint] data] getBytes: &float64 
+																				length: sizeof(float64)];
+			return [NSNumber numberWithDouble: float64];
 		case typeQDPoint:
+			array = [self unpackAEList: [desc coerceToDescriptorType: typeAEList]];
+			return [NSArray arrayWithObjects: [array objectAtIndex: 1],
+											  [array objectAtIndex: 0]];
 		case typeQDRectangle:
-			return nil; // TO DO
+			array = [self unpackAEList: [desc coerceToDescriptorType: typeAEList]];
+			return [NSArray arrayWithObjects: [array objectAtIndex: 1],
+											  [array objectAtIndex: 0],
+											  [array objectAtIndex: 3],
+											  [array objectAtIndex: 2]];
 		case typeRGBColor:
 			return [self unpackAEList: [desc coerceToDescriptorType: typeAEList]];
 		case typeVersion:
 		case typeBoolean:
-				return nil; // TO DO
+			[[desc data] getBytes: &boolean length: sizeof(boolean)];
+			return boolean ? AEMTrue : AEMFalse;
 	}
+	// TO DO: unit types
 	return [self unpackUnknown: desc];
 }
 

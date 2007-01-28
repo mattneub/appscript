@@ -8,8 +8,6 @@
 #import <Foundation/Foundation.h>
 #import "parser.h"
 
-// TO DO: convert AS keywords to identifiers here, not parser; makes it easier to build multiple terminology tables for different clients
-
 
 /**********************************************************************/
 
