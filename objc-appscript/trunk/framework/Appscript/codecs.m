@@ -47,6 +47,7 @@
 	double float64;
 	CFAbsoluteTime cfTime;
 	LongDateTime longDate;
+	NSData *data;
 	NSAppleEventDescriptor *result;
 		
 	if ([anObject isKindOfClass: [AEMQuery class]])
@@ -98,8 +99,15 @@
 		result = [self packArray: anObject];
 	else if ([anObject isKindOfClass: [NSDictionary class]])
 		result = [self packDictionary: anObject];
-	// TO DO: Alias, File types
-	else if ([anObject isKindOfClass: [AEMTypeBase class]])
+	// TO DO: Alias, FSRef, FSSpec types
+	else if ([anObject isKindOfClass: [NSURL class]]) {
+		if ([anObject isFileURL]) {
+			data = [[anObject absoluteString] dataUsingEncoding: NSUTF8StringEncoding];
+			return [NSAppleEventDescriptor descriptorWithDescriptorType: typeUTF8Text
+																   data: data];
+		} else
+			return [self packUnknown: anObject];
+	} else if ([anObject isKindOfClass: [AEMTypeBase class]])
 		result = [anObject desc];
 	else if ([anObject isKindOfClass: [NSAppleEventDescriptor class]])
 		result = anObject;
@@ -190,6 +198,8 @@
 	SInt64 sint64;
 	float float32;
 	double float64;
+	NSString *string;
+	NSURL *url;
 	NSArray *array;
 	
 	switch ([desc descriptorType]) {
@@ -220,8 +230,14 @@
 		case typeAERecord:
 			return [self unpackAERecord: desc];
 		case typeAlias: 
+			return nil; // TO DO
 		case typeFileURL:
+			string = [[NSString alloc] initWithData: [desc data] encoding:NSUTF8StringEncoding];
+			url = [NSURL URLWithString: string];
+			[string release];
+			return url;
 		case typeFSRef:
+			return nil; // TO DO
 		case typeFSS:
 			return nil; // TO DO
 		case typeType:
