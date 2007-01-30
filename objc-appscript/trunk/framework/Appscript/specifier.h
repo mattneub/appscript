@@ -7,13 +7,15 @@
 
 #import <Foundation/Foundation.h>
 #import <Carbon/Carbon.h>
+#import "base.h"
+#import "test.h"
 
 /**********************************************************************/
 
 
-#define AEMApp [AEMApplicationRoot reference]
-#define AEMCon [AEMCurrentContainerRoot reference]
-#define AEMIts [AEMObjectBeingExaminedRoot reference]
+#define AEMApp [AEMApplicationRoot applicationRoot]
+#define AEMCon [AEMCurrentContainerRoot currentContainerRoot]
+#define AEMIts [AEMObjectBeingExaminedRoot objectBeingExaminedRoot]
 
 
 /**********************************************************************/
@@ -22,31 +24,6 @@
 void initSpecifierModule(void); // called automatically
 
 void disposeSpecifierModule(void);
-
-
-/**********************************************************************/
-
-
-@interface AEMResolver // TO DO
-
-- (id)app;
-
-@end
-
-
-/**********************************************************************/
-// AEM reference base (shared by specifiers and tests)
-
-@interface AEMQuery : NSObject
-
-/*
- * TO DO:
- *	- (unsigned)hash;
- *	- (BOOL)isEqual:(id)object;
- *	- (NSArray *)comparableData;
- */
- 
-@end
 
 
 /**********************************************************************/
@@ -59,7 +36,6 @@ void disposeSpecifierModule(void);
 	AEMSpecifier *container;
 	NSAppleEventDescriptor *keyForm;
 	id key;
-	NSAppleEventDescriptor *cachedDesc;
 }
 
 - (id)initWithContainer:(AEMSpecifier *)container_ key:(id)key_;
@@ -68,9 +44,6 @@ void disposeSpecifierModule(void);
 
 - (id)root;
 - (id)trueSelf;
-- (id)packSelf:(id)codecs;
-
--(id)resolve:(id)object;
 
 @end
 
@@ -97,7 +70,33 @@ void disposeSpecifierModule(void);
 
 - (id)initWithContainer:(AEMSpecifier *)container_ key:(id)key_ wantCode:(OSType)wantCode_;
 
-// TO DO: methods for constructing comparison and logic tests
+// Comparison and logic tests
+
+- (id)greaterThan:(id)object;
+
+- (id)greaterOrEquals:(id)object;
+
+- (id)equals:(id)object;
+
+- (id)notEquals:(id)object;
+
+- (id)lessThan:(id)object;
+
+- (id)lessOrEquals:(id)object;
+
+- (id)startsWith:(id)object;
+
+- (id)endsWith:(id)object;
+
+- (id)contains:(id)object;
+
+- (id)isIn:(id)object;
+
+- (id)AND:(id)remainingOperands;
+
+- (id)OR:(id)remainingOperands;
+
+- (id)NOT;
 
 // Insertion location selectors
 
@@ -228,17 +227,34 @@ void disposeSpecifierModule(void);
 
 @interface AEMReferenceRootBase : AEMPositionSpecifierBase
 
-+ (id)reference;
+// note: clients should avoid calling this initialiser directly; 
+// use AEMApp, AEMCon, AEMIts macros instead.
+- (id)initWithDescType:(DescType)descType;
 
 @end
 
 @interface AEMApplicationRoot : AEMReferenceRootBase
+
+// note: clients should avoid calling this initialiser directly; 
+// use AEMApp, AEMCon, AEMIts macros instead.
++ (id)applicationRoot;
+
 @end
 
 @interface AEMCurrentContainerRoot : AEMReferenceRootBase
+
+// note: clients should avoid calling this initialiser directly; 
+// use AEMApp, AEMCon, AEMIts macros instead.
++ (id)currentContainerRoot;
+
 @end
 
 @interface AEMObjectBeingExaminedRoot : AEMReferenceRootBase
+
+// note: clients should avoid calling this initialiser directly; 
+// use AEMApp, AEMCon, AEMIts macros instead.
++ (id)objectBeingExaminedRoot;
+
 @end
 
 

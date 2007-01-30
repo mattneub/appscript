@@ -16,6 +16,7 @@
 /**********************************************************************/
 // initialise/dispose constants
 
+
 #define ENUMERATOR(name) \
 		descData = kAE##name; \
 		kEnum##name = [[NSAppleEventDescriptor alloc] initWithDescriptorType:typeEnumerated \
@@ -65,11 +66,12 @@ static NSAppleEventDescriptor *kFormPropertyID,
 // prepacked value for keyDesiredClass for use by -packSelf: in property specifiers
 static NSAppleEventDescriptor *kClassProperty;
 
-// blank record used by -packSelf: to construct object specifiers
+
+// blank record used by -packSelf: to construct object specifier descriptors
 static NSAppleEventDescriptor *kNullRecord;
 
 
-static BOOL specifierModuleIsInitialized = NO;
+static BOOL specifierModulesAreInitialized = NO;
 
 
 void initSpecifierModule() {
@@ -104,7 +106,7 @@ void initSpecifierModule() {
 																	  bytes:&descData
 																	 length:sizeof(descData)];
 	kNullRecord = [[NSAppleEventDescriptor alloc] initRecordDescriptor];
-	specifierModuleIsInitialized = YES;
+	specifierModulesAreInitialized = YES;
 }
 
 
@@ -135,38 +137,8 @@ void disposeSpecifierModule() { // TO DO: since frameworks are never unloaded, d
 	// miscellaneous
 	[kClassProperty release];
 	[kNullRecord release];
-	specifierModuleIsInitialized = NO;
+	specifierModulesAreInitialized = NO;
 }
-
-
-/**********************************************************************/
-
-
-@implementation AEMResolver // TO DO: move to own module and finish
-
-- (id)app {
-	return self;
-}
-
-- (id)pack:(id)obj {
-	return nil;
-}
-@end
-
-
-/**********************************************************************/
-// AEM reference base (shared by specifiers and tests)
-
-@implementation AEMQuery
-
-/*
- * TO DO:
- *	- (unsigned)hash;
- *	- (BOOL)isEqual:(id)object;
- *	- (NSArray *)comparableData;
- */
- 
-@end
 
 
 /**********************************************************************/
@@ -203,16 +175,6 @@ void disposeSpecifierModule() { // TO DO: since frameworks are never unloaded, d
 	return self;
 }
 
-- (id)packSelf:(id)codecs { // subclasses should override this
-	return nil;
-}
-
-// walk reference
-
-- (id)resolve:(id)object { // subclasses should override this
-	return nil;
-}
-
 
 @end
 
@@ -244,7 +206,7 @@ void disposeSpecifierModule() { // TO DO: since frameworks are never unloaded, d
 	}
 }
 
-- (id)packSelf:(id)codecs {
+- (NSAppleEventDescriptor *)packSelf:(id)codecs {
 	if (!cachedDesc) {
 		cachedDesc = [kNullRecord coerceToDescriptorType: typeInsertionLoc];
 		[cachedDesc setDescriptor: [container packSelf: codecs] forKeyword: keyAEObject];
@@ -289,7 +251,68 @@ void disposeSpecifierModule() { // TO DO: since frameworks are never unloaded, d
 	return self;
 }
 
-// TO DO: methods for constructing comparison and logic tests
+// Comparison and logic tests
+
+- (id)greaterThan:(id)object {
+	return [[[AEMGreaterThan alloc] initWithOperand1: self operand2: object] autorelease];
+}
+
+- (id)greaterOrEquals:(id)object {
+	return [[[AEMGreaterOrEquals alloc] initWithOperand1: self operand2: object] autorelease];
+}
+
+- (id)equals:(id)object {
+	return [[[AEMEquals alloc] initWithOperand1: self operand2: object] autorelease];
+}
+
+- (id)notEquals:(id)object {
+	return [[[AEMNotEquals alloc] initWithOperand1: self operand2: object] autorelease];
+}
+
+- (id)lessThan:(id)object {
+	return [[[AEMLessThan alloc] initWithOperand1: self operand2: object] autorelease];
+}
+
+- (id)lessOrEquals:(id)object {
+	return [[[AEMLessOrEquals alloc] initWithOperand1: self operand2: object] autorelease];
+}
+
+- (id)startsWith:(id)object {
+	return [[[AEMStartsWith alloc] initWithOperand1: self operand2: object] autorelease];
+}
+
+- (id)endsWith:(id)object {
+	return [[[AEMEndsWith alloc] initWithOperand1: self operand2: object] autorelease];
+}
+
+- (id)contains:(id)object {
+	return [[[AEMContains alloc] initWithOperand1: self operand2: object] autorelease];
+}
+
+- (id)isIn:(id)object {
+	return [[[AEMIsIn alloc] initWithOperand1: self operand2: object] autorelease];
+}
+
+- (id)AND:(id)remainingOperands {
+	NSMutableArray *allOperands;
+	
+	allOperands = [NSMutableArray arrayWithObject: self];
+	[allOperands addObjectsFromArray: remainingOperands];
+	return [[[AEMAND alloc] initWithOperands: allOperands] autorelease];
+}
+
+- (id)OR:(id)remainingOperands {
+	NSMutableArray *allOperands;
+	
+	allOperands = [NSMutableArray arrayWithObject: self];
+	[allOperands addObjectsFromArray: remainingOperands];
+	return [[[AEMOR alloc] initWithOperands: allOperands] autorelease];
+}
+
+- (id)NOT {
+	return [[[AEMNOT alloc] initWithOperands: [NSArray arrayWithObject: self]] autorelease];
+}
+
 
 // Insertion location selectors
 
@@ -336,11 +359,17 @@ void disposeSpecifierModule() { // TO DO: since frameworks are never unloaded, d
 // by-relative-position selectors
 
 - (id)previous:(OSType)classCode {
-	return nil; // TO DO
+	return [[[AEMElementByRelativePositionSpecifier alloc]
+										initWithContainer: self
+													  key: kEnumPrevious
+												 wantCode: classCode] autorelease];
 }
 
 - (id)next:(OSType)classCode {
-	return nil; // TO DO
+	return [[[AEMElementByRelativePositionSpecifier alloc]
+										initWithContainer: self
+													  key: kEnumNext
+												 wantCode: classCode] autorelease];
 }
 
 @end
@@ -360,7 +389,7 @@ void disposeSpecifierModule() { // TO DO: since frameworks are never unloaded, d
 
 // reserved methods
 
-- (id)packSelf:(id)codecs {
+- (NSAppleEventDescriptor *)packSelf:(id)codecs {
 	if (!cachedDesc) {
 		cachedDesc = [kNullRecord coerceToDescriptorType: typeObjectSpecifier];
 		[cachedDesc setDescriptor: kClassProperty forKeyword: keyAEDesiredClass];
@@ -386,7 +415,7 @@ void disposeSpecifierModule() { // TO DO: since frameworks are never unloaded, d
 
 // reserved methods
 
-- (id)packSelf:(id)codecs {
+- (NSAppleEventDescriptor *)packSelf:(id)codecs {
 	if (!cachedDesc) {
 		cachedDesc = [kNullRecord coerceToDescriptorType: typeObjectSpecifier];
 		[cachedDesc setDescriptor: kClassProperty forKeyword: keyAEDesiredClass];
@@ -410,6 +439,10 @@ void disposeSpecifierModule() { // TO DO: since frameworks are never unloaded, d
 
 /*
  * Abstract base class for all single element specifiers
+ * (except AEMElementByRelativePositionSpecifier, which
+ * needs the original container reference as-is while
+ * the rest call its -trueSelf method to get rid of any
+ * all-elements specifiers)
  */
 @implementation AEMSingleElementSpecifierBase
 
@@ -428,7 +461,7 @@ void disposeSpecifierModule() { // TO DO: since frameworks are never unloaded, d
 
 // reserved methods
 
-- (id)packSelf:(id)codecs {
+- (NSAppleEventDescriptor *)packSelf:(id)codecs {
 	if (!cachedDesc) {
 		cachedDesc = [kNullRecord coerceToDescriptorType: typeObjectSpecifier];
 		[cachedDesc setDescriptor: [NSAppleEventDescriptor descriptorWithTypeCode: wantCode]
@@ -455,7 +488,7 @@ void disposeSpecifierModule() { // TO DO: since frameworks are never unloaded, d
 
 // reserved methods
 
-- (id)packSelf:(id)codecs {
+- (NSAppleEventDescriptor *)packSelf:(id)codecs {
 	if (!cachedDesc) {
 	cachedDesc = [kNullRecord coerceToDescriptorType: typeObjectSpecifier];
 	[cachedDesc setDescriptor: [NSAppleEventDescriptor descriptorWithTypeCode: wantCode]
@@ -482,7 +515,7 @@ void disposeSpecifierModule() { // TO DO: since frameworks are never unloaded, d
 
 // reserved methods
 
-- (id)packSelf:(id)codecs {
+- (NSAppleEventDescriptor *)packSelf:(id)codecs {
 	if (!cachedDesc) {
 		cachedDesc = [kNullRecord coerceToDescriptorType: typeObjectSpecifier];
 		[cachedDesc setDescriptor: [NSAppleEventDescriptor descriptorWithTypeCode: wantCode]
@@ -520,7 +553,7 @@ void disposeSpecifierModule() { // TO DO: since frameworks are never unloaded, d
 
 // reserved methods
 
-- (id)packSelf:(id)codecs {
+- (NSAppleEventDescriptor *)packSelf:(id)codecs {
 	if (!cachedDesc) {
 		cachedDesc = [kNullRecord coerceToDescriptorType: typeObjectSpecifier];
 		[cachedDesc setDescriptor: [NSAppleEventDescriptor descriptorWithTypeCode: wantCode]
@@ -553,13 +586,48 @@ void disposeSpecifierModule() { // TO DO: since frameworks are never unloaded, d
 @end
 
 
-/*
- * note: AEMElementByRelativePositionSpecifier inherits from AEMPositionSpecifierBase,
- * not AEMSingleElementSpecifierBase
- */
+
 @implementation AEMElementByRelativePositionSpecifier
 
-// TO DO
+- (NSString *)description {
+	switch ([key enumCodeValue]) {
+		case kAEPrevious:
+			return [NSString stringWithFormat: @"[%@ previous]", container];
+		case kAENext:
+			return [NSString stringWithFormat: @"[%@ next]", container];
+		default:
+			return nil;
+	}
+}
+
+// reserved methods
+
+- (NSAppleEventDescriptor *)packSelf:(id)codecs {
+	if (!cachedDesc) {
+		cachedDesc = [kNullRecord coerceToDescriptorType: typeObjectSpecifier];
+		[cachedDesc setDescriptor: [NSAppleEventDescriptor descriptorWithTypeCode: wantCode]
+					   forKeyword: keyAEDesiredClass];
+		[cachedDesc setDescriptor: kFormRelativePosition forKeyword: keyAEKeyForm];
+		[cachedDesc setDescriptor: key forKeyword: keyAEKeyData];
+		[cachedDesc setDescriptor: [container packSelf: codecs] forKeyword: keyAEContainer];
+	}
+	return cachedDesc;
+}
+
+
+-(id)resolve:(id)object { 
+	id result;
+	
+	result = [container resolve: object];
+	switch ([key enumCodeValue]) {
+		case kAEPrevious:
+			return [result previous: wantCode];
+		case kAENext:
+			return [result next: wantCode];
+		default:
+			return nil;
+	}
+}
 
 @end
 
@@ -685,7 +753,7 @@ void disposeSpecifierModule() { // TO DO: since frameworks are never unloaded, d
 	return container; 
 }
 
-- (id)packSelf:(id)codecs {
+- (NSAppleEventDescriptor *)packSelf:(id)codecs {
 	if (!cachedDesc) {
 		cachedDesc = [kNullRecord coerceToDescriptorType: typeObjectSpecifier];
 		[cachedDesc setDescriptor: [NSAppleEventDescriptor descriptorWithTypeCode: wantCode]
@@ -722,7 +790,7 @@ void disposeSpecifierModule() { // TO DO: since frameworks are never unloaded, d
 					coerceToDescriptorType: typeUnicodeText] stringValue]];
 }
 
-- (id)packSelf:(id)codecs {
+- (NSAppleEventDescriptor *)packSelf:(id)codecs {
 	return [container packSelf: codecs]; // forward to next container
 }
 
@@ -738,14 +806,12 @@ void disposeSpecifierModule() { // TO DO: since frameworks are never unloaded, d
 
 @implementation AEMReferenceRootBase
 
-+ (id)reference {
-	return nil;
-}
-
 - (id)init {
 	return nil;
 }
 
+// note: clients should avoid calling this initialiser directly; 
+// use AEMApp, AEMCon, AEMIts macros instead.
 - (id)initWithDescType:(DescType)descType {
 	self = [super initWithContainer: nil key: nil wantCode: '????'];
 	if (!self) return self;
@@ -760,7 +826,7 @@ void disposeSpecifierModule() { // TO DO: since frameworks are never unloaded, d
 	return self;
 }
 
-- (id)packSelf:(id)codecs {
+- (NSAppleEventDescriptor *)packSelf:(id)codecs {
 	return cachedDesc;
 }
 @end
@@ -768,16 +834,13 @@ void disposeSpecifierModule() { // TO DO: since frameworks are never unloaded, d
 
 @implementation AEMApplicationRoot
 
-- (id)init {
-	return nil;
-}
-
-+ (id)reference {
+// note: clients should avoid calling this initialiser directly; 
+// use AEMApp, AEMCon, AEMIts macros instead.
++ (id)applicationRoot {
 	static AEMApplicationRoot *root;
 	
 	if (!root) {
-		if (!specifierModuleIsInitialized)
-			initSpecifierModule();
+		if (!specifierModulesAreInitialized) initSpecifierModule();
 		root = [[AEMApplicationRoot alloc] initWithDescType: typeNull];
 	}
 	return root;
@@ -794,10 +857,55 @@ void disposeSpecifierModule() { // TO DO: since frameworks are never unloaded, d
 @end
 
 
-@implementation AEMCurrentContainerRoot // TO DO
+@implementation AEMCurrentContainerRoot
+
+// note: clients should avoid calling this initialiser directly; 
+// use AEMApp, AEMCon, AEMIts macros instead.
++ (id)currentContainerRoot {
+	static AEMCurrentContainerRoot *root;
+	
+	if (!root) {
+		if (!specifierModulesAreInitialized) initSpecifierModule();
+		root = [[AEMCurrentContainerRoot alloc] initWithDescType: typeCurrentContainer];
+	}
+	return root;
+}
+
+- (NSString *)description {
+	return @"AEMCon";
+}
+
+- (id)resolve:(id)object {
+	return [object con];
+}
+
 @end
 
 
-@implementation AEMObjectBeingExaminedRoot // TO DO
+@implementation AEMObjectBeingExaminedRoot
+
+// note: clients should avoid calling this initialiser directly; 
+// use AEMApp, AEMCon, AEMIts macros instead.
++ (id)objectBeingExaminedRoot {
+	static AEMObjectBeingExaminedRoot *root;
+	
+	if (!root) {
+		if (!specifierModulesAreInitialized) {
+			initSpecifierModule();
+			initTestModule();
+		}
+		root = [[AEMObjectBeingExaminedRoot alloc] initWithDescType: typeObjectBeingExamined];
+	}
+	return root;
+}
+
+- (NSString *)description {
+	return @"AEMIts";
+}
+
+- (id)resolve:(id)object {
+	return [object its];
+}
+
 @end
 

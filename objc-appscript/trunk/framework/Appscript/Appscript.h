@@ -6,8 +6,10 @@
  */
 
 #import "application.h"
+#import "base.h"
 #import "codecs.h"
 #import "specifier.h"
+#import "test.h"
 #import "types.h"
 
 #import "parser.h"
