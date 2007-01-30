@@ -1,9 +1,8 @@
 //
-//  resolver.h
-//  Appscript
+//  base.h
+//  aem
 //
-//  Created by Hamish Sanderson on 29/01/2007.
-//  Copyright 2007 __MyCompanyName__. All rights reserved.
+//  Copyright (C) 2007 HAS
 //
 
 

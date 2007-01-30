@@ -34,7 +34,6 @@ void disposeSpecifierModule(void);
  */
 @interface AEMSpecifier : AEMQuery {
 	AEMSpecifier *container;
-	NSAppleEventDescriptor *keyForm;
 	id key;
 }
 
@@ -188,8 +187,8 @@ void disposeSpecifierModule(void);
 // by-range selector
 
 // TO DO: specific return type
-- (id)at:(long)fromIndex to:(long)toIndex;
-- (id)byRange:(id)fromObject to:(id)toObject; // takes two con-based references, with other values being expanded as necessary
+- (id)at:(long)startIndex to:(long)endIndex;
+- (id)byRange:(id)startReference to:(id)endReference; // takes two con-based references, with other values being expanded as necessary
 
 // by-test selector
 
@@ -198,7 +197,15 @@ void disposeSpecifierModule(void);
 @end
 
 
-@interface AEMElementsByRangeSpecifier : AEMMultipleElementsSpecifierBase
+@interface AEMElementsByRangeSpecifier : AEMMultipleElementsSpecifierBase {
+	id startReference, endReference;
+}
+
+- (id)initWithContainer:(AEMSpecifier *)container_
+				  start:(id)startReference_
+					end:(id)endReference_
+			   wantCode:(OSType)wantCode_;
+
 @end
 
 

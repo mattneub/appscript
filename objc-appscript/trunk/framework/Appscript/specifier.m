@@ -67,6 +67,10 @@ static NSAppleEventDescriptor *kFormPropertyID,
 static NSAppleEventDescriptor *kClassProperty;
 
 
+// prepacked value for use by -init...: in by-test specifier
+static NSAppleEventDescriptor *kTypeTrue;
+
+
 // blank record used by -packSelf: to construct object specifier descriptors
 static NSAppleEventDescriptor *kNullRecord;
 
@@ -74,9 +78,10 @@ static NSAppleEventDescriptor *kNullRecord;
 static BOOL specifierModulesAreInitialized = NO;
 
 
-void initSpecifierModule() {
+void initSpecifierModule(void) {
 	OSType descData;
 	
+	initTestModule();
 	// insertion locations
 	ENUMERATOR(Beginning);
 	ENUMERATOR(End);
@@ -102,15 +107,19 @@ void initSpecifierModule() {
 	KEY_FORM(Test);
 	// miscellaneous
 	descData = cProperty;
-	kClassProperty = [[NSAppleEventDescriptor alloc] initWithDescriptorType:typeType
-																	  bytes:&descData
-																	 length:sizeof(descData)];
+	kClassProperty = [[NSAppleEventDescriptor alloc] initWithDescriptorType: typeType
+																	  bytes: &descData
+																	 length: sizeof(descData)];
 	kNullRecord = [[NSAppleEventDescriptor alloc] initRecordDescriptor];
+	kTypeTrue = [[NSAppleEventDescriptor alloc] initWithDescriptorType: typeTrue
+																 bytes: NULL
+																length: 0];
 	specifierModulesAreInitialized = YES;
 }
 
 
-void disposeSpecifierModule() { // TO DO: since frameworks are never unloaded, do we really need this?
+void disposeSpecifierModule(void) { // TO DO: since frameworks are never unloaded, do we really need this?
+	disposeTestModule();
 	// insertion locations
 	[kEnumBeginning release];
 	[kEnumEnd release];
@@ -137,6 +146,7 @@ void disposeSpecifierModule() { // TO DO: since frameworks are never unloaded, d
 	// miscellaneous
 	[kClassProperty release];
 	[kNullRecord release];
+	[kTypeTrue release];
 	specifierModulesAreInitialized = NO;
 }
 
@@ -592,9 +602,11 @@ void disposeSpecifierModule() { // TO DO: since frameworks are never unloaded, d
 - (NSString *)description {
 	switch ([key enumCodeValue]) {
 		case kAEPrevious:
-			return [NSString stringWithFormat: @"[%@ previous]", container];
+			return [NSString stringWithFormat: @"[%@ previous: %@]", container,
+					[[NSAppleEventDescriptor descriptorWithTypeCode: wantCode] stringValue]];
 		case kAENext:
-			return [NSString stringWithFormat: @"[%@ next]", container];
+			return [NSString stringWithFormat: @"[%@ next: %@]", container,
+					[[NSAppleEventDescriptor descriptorWithTypeCode: wantCode] stringValue]];
 		default:
 			return nil;
 	}
@@ -704,29 +716,137 @@ void disposeSpecifierModule() { // TO DO: since frameworks are never unloaded, d
 
 // by-range selector
 
-- (id)at:(long)fromIndex to:(long)toIndex {
-	return nil;
+- (id)at:(long)startIndex to:(long)endIndex {
+	return [[[AEMElementsByRangeSpecifier alloc]
+							  initWithContainer: self
+										  start: [[AEMCon elements: wantCode] at: startIndex]
+											end: [[AEMCon elements: wantCode] at: endIndex]
+									   wantCode: wantCode] autorelease];
 }
 
-- (id)byRange:(id)fromObject to:(id)toObject { // takes two con-based references (other values will be automatically expanded to con-based references)
-	return nil;
+// takes two app- or con-based references, expanding any other values as necessary
+- (id)byRange:(id)startReference to:(id)endReference { 
+	return [[[AEMElementsByRangeSpecifier alloc]
+							  initWithContainer: self
+										  start: startReference
+											end: endReference
+									   wantCode: wantCode] autorelease];
 }
 
 
 // by-test selector
 
 - (id)byTest:(id)testReference {
-	return nil;
+	return [[[AEMElementsByTestSpecifier alloc]
+							 initWithContainer: self
+										   key: testReference
+									  wantCode: wantCode] autorelease];
 }
 
 @end
 
 
 @implementation AEMElementsByRangeSpecifier
+
+- (id)initWithContainer:(AEMSpecifier *)container_
+				  start:(id)startReference_
+					end:(id)endReference_
+			   wantCode:(OSType)wantCode_ {
+	self = [super initWithContainer: [container_ trueSelf] key: nil wantCode: wantCode_];
+	if (!self) return self;
+	// expand non-reference values to con-based references
+	// (note: doesn't bother to check if references are app- or con-based;
+	//	will assume users are smart enough not to try passing its-based references)
+	if ([startReference_ isKindOfClass: [NSString class]])
+		startReference_ = [[AEMCon elements: wantCode_] byName: startReference_];
+	else if (![startReference_ isKindOfClass: [AEMSpecifier class]])
+		startReference_ = [[AEMCon elements: wantCode_] byIndex: startReference_];
+	if (![endReference_ isKindOfClass: [AEMSpecifier class]])
+		endReference_ = [[AEMCon elements: wantCode_] byName: endReference_];
+	else if (![endReference_ isKindOfClass: [AEMSpecifier class]])
+		endReference_ = [[AEMCon elements: wantCode_] byIndex: endReference_];
+	[startReference_ retain];
+	[endReference_ retain];
+	startReference = startReference_;
+	endReference = endReference_;
+	return self;
+}
+
+- (void)dealloc {
+	[startReference release];
+	[endReference release];
+	[super dealloc];
+}
+
+- (NSString *)description {
+	return [NSString stringWithFormat: @"[%@ byRange: %@ to: %@]",
+									   container,
+									   startReference,
+									   endReference];
+}
+
+// reserved methods
+
+- (NSAppleEventDescriptor *)packSelf:(id)codecs {
+	NSAppleEventDescriptor *keyDesc;
+	
+	if (!cachedDesc) {
+		keyDesc = [kNullRecord coerceToDescriptorType: typeRangeDescriptor];
+		[keyDesc setDescriptor: [codecs pack: startReference] forKeyword: keyAERangeStart];
+		[keyDesc setDescriptor: [codecs pack: endReference] forKeyword: keyAERangeStop];
+		cachedDesc = [kNullRecord coerceToDescriptorType: typeObjectSpecifier];
+		[cachedDesc setDescriptor: [NSAppleEventDescriptor descriptorWithTypeCode: wantCode]
+					   forKeyword: keyAEDesiredClass];
+		[cachedDesc setDescriptor: kFormRange forKeyword: keyAEKeyForm];
+		[cachedDesc setDescriptor: keyDesc forKeyword: keyAEKeyData];
+		[cachedDesc setDescriptor: [container packSelf: codecs] forKeyword: keyAEContainer];
+	}
+	return cachedDesc;
+}
+
+
+-(id)resolve:(id)object {
+	return [[container resolve: object] byRange: startReference to: endReference];
+}
+
 @end
 
 
 @implementation AEMElementsByTestSpecifier
+
+- (id)initWithContainer:(AEMSpecifier *)container_ key:(id)key_ wantCode:(OSType)wantCode_; {
+	if (![key_ isKindOfClass: [AEMTest class]]) {
+		if ([key_ isKindOfClass: [AEMSpecifier class]] && [key_ root] == AEMIts)
+			key_ = [key_ equals: kTypeTrue];
+		else
+			return nil; // not a test specifier
+	}
+	return [super initWithContainer: [container_ trueSelf] key: key_ wantCode: wantCode_];
+}
+
+- (NSString *)description {
+	return [NSString stringWithFormat: @"[%@ byTest: %@]", container, key];
+}
+
+// reserved methods
+
+- (NSAppleEventDescriptor *)packSelf:(id)codecs {
+	if (!cachedDesc) {
+		cachedDesc = [kNullRecord coerceToDescriptorType: typeObjectSpecifier];
+		[cachedDesc setDescriptor: [NSAppleEventDescriptor descriptorWithTypeCode: wantCode]
+					   forKeyword: keyAEDesiredClass];
+		[cachedDesc setDescriptor: kFormTest forKeyword: keyAEKeyForm];
+		[cachedDesc setDescriptor: [codecs pack: key] forKeyword: keyAEKeyData];
+		[cachedDesc setDescriptor: [container packSelf: codecs] forKeyword: keyAEContainer];
+	}
+	return cachedDesc;
+}
+
+
+-(id)resolve:(id)object { 
+	return [[container resolve: object] byTest: key];
+}
+
 @end
 
 
@@ -786,8 +906,7 @@ void disposeSpecifierModule() { // TO DO: since frameworks are never unloaded, d
 
 - (NSString *)description {
 	return [NSString stringWithFormat: @"[%@ elements: '%@']", container, 
-			[[[NSAppleEventDescriptor descriptorWithTypeCode: wantCode] 
-					coerceToDescriptorType: typeUnicodeText] stringValue]];
+			[[NSAppleEventDescriptor descriptorWithTypeCode: wantCode] stringValue]];
 }
 
 - (NSAppleEventDescriptor *)packSelf:(id)codecs {
@@ -890,10 +1009,7 @@ void disposeSpecifierModule() { // TO DO: since frameworks are never unloaded, d
 	static AEMObjectBeingExaminedRoot *root;
 	
 	if (!root) {
-		if (!specifierModulesAreInitialized) {
-			initSpecifierModule();
-			initTestModule();
-		}
+		if (!specifierModulesAreInitialized) initSpecifierModule();
 		root = [[AEMObjectBeingExaminedRoot alloc] initWithDescType: typeObjectBeingExamined];
 	}
 	return root;

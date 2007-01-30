@@ -47,15 +47,16 @@
 	double float64;
 	CFAbsoluteTime cfTime;
 	LongDateTime longDate;
+	NSAppleEventDescriptor *result;
 		
 	if ([anObject isKindOfClass: [AEMQuery class]])
-		return [anObject packSelf: self];
+		result = [anObject packSelf: self];
 	else if ([anObject isKindOfClass: [NSNumber class]]) {
 		if ([anObject isKindOfClass: [AEMBoolean class]])
 			if ([anObject boolValue])
-				return [NSAppleEventDescriptor descriptorWithBoolean: YES];
+				result = [NSAppleEventDescriptor descriptorWithBoolean: YES];
 			else
-				return [NSAppleEventDescriptor descriptorWithBoolean: NO];
+				result = [NSAppleEventDescriptor descriptorWithBoolean: NO];
 		switch (*[anObject objCType]) { // TO DO: for ILqQ, use SInt32 where possible; else use UInt32 where possible; else use SInt64 where possible; else use Float
 			case 'b':
 			case 'c':
@@ -64,45 +65,54 @@
 			case 'S':
 			case 'i':
 			case 'l':
-				return [NSAppleEventDescriptor descriptorWithInt32: [anObject longValue]];
+				result = [NSAppleEventDescriptor descriptorWithInt32: [anObject longValue]];
+				break;
 			case 'I':
 			case 'L':
 				uint32 = [anObject unsignedLongValue];
-				return [NSAppleEventDescriptor descriptorWithDescriptorType: typeUInt32
+				result = [NSAppleEventDescriptor descriptorWithDescriptorType: typeUInt32
 																	  bytes: &uint32
 																	 length: sizeof(uint32)];
+				break;
 			case 'q':
 				sint64 = [anObject longLongValue];
-				return [NSAppleEventDescriptor descriptorWithDescriptorType: typeSInt64
+				result = [NSAppleEventDescriptor descriptorWithDescriptorType: typeSInt64
 																	  bytes: &sint64
 																	 length: sizeof(sint64)];
+				break;
 			default: // f, d, Q
 				float64 = [anObject doubleValue];
-				return [NSAppleEventDescriptor descriptorWithDescriptorType: typeIEEE64BitFloatingPoint
+				result = [NSAppleEventDescriptor descriptorWithDescriptorType: typeIEEE64BitFloatingPoint
 																	  bytes: &float64
 																	 length: sizeof(float64)];
 		}
 	} else if ([anObject isKindOfClass: [NSString class]])
-		return [NSAppleEventDescriptor descriptorWithString: anObject];
+		result = [NSAppleEventDescriptor descriptorWithString: anObject];
 	else if ([anObject isKindOfClass: [NSDate class]]) {
 		cfTime = [anObject timeIntervalSinceReferenceDate];
-		if (UCConvertCFAbsoluteTimeToLongDateTime(cfTime, &longDate)) return nil;
-		return [NSAppleEventDescriptor descriptorWithDescriptorType: typeLongDateTime
-															  bytes: &longDate
-															 length: sizeof(longDate)];
+		if (!UCConvertCFAbsoluteTimeToLongDateTime(cfTime, &longDate))
+			result = [NSAppleEventDescriptor descriptorWithDescriptorType: typeLongDateTime
+																  bytes: &longDate
+																 length: sizeof(longDate)];
 	} else if ([anObject isKindOfClass: [NSArray class]])
-		return [self packArray: anObject];
+		result = [self packArray: anObject];
 	else if ([anObject isKindOfClass: [NSDictionary class]])
-		return [self packDictionary: anObject];
+		result = [self packDictionary: anObject];
 	// TO DO: Alias, File types
 	else if ([anObject isKindOfClass: [AEMTypeBase class]])
-		return [anObject desc];
+		result = [anObject desc];
 	else if ([anObject isKindOfClass: [NSAppleEventDescriptor class]])
-		return anObject;
+		result = anObject;
 	else if ([anObject isKindOfClass: [NSNull class]])
-		return [NSAppleEventDescriptor nullDescriptor];
+		result = [NSAppleEventDescriptor nullDescriptor];
 	// TO DO: unit types
-	return [self packUnknown: anObject];
+	else
+		result = [self packUnknown: anObject];
+	if (!result)
+		[NSException raise: @"CodecsError"
+					format: @"An unexpected error occurred while packing an %@ object: %@",
+							[anObject class], anObject];
+	return result;
 }
 
 
