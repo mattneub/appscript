@@ -99,11 +99,12 @@
 		result = [self packArray: anObject];
 	else if ([anObject isKindOfClass: [NSDictionary class]])
 		result = [self packDictionary: anObject];
-	// TO DO: Alias, FSRef, FSSpec types
+	else if ([anObject isKindOfClass: [AEMFileObject class]])
+		return [anObject desc];
 	else if ([anObject isKindOfClass: [NSURL class]]) {
 		if ([anObject isFileURL]) {
 			data = [[anObject absoluteString] dataUsingEncoding: NSUTF8StringEncoding];
-			return [NSAppleEventDescriptor descriptorWithDescriptorType: typeUTF8Text
+			return [NSAppleEventDescriptor descriptorWithDescriptorType: typeFileURL
 																   data: data];
 		} else
 			return [self packUnknown: anObject];
@@ -230,16 +231,16 @@
 		case typeAERecord:
 			return [self unpackAERecord: desc];
 		case typeAlias: 
-			return nil; // TO DO
+			return [AEMAlias aliasWithDescriptor: desc];
 		case typeFileURL:
-			string = [[NSString alloc] initWithData: [desc data] encoding:NSUTF8StringEncoding];
+			string = [[NSString alloc] initWithData: [desc data] encoding: NSUTF8StringEncoding];
 			url = [NSURL URLWithString: string];
 			[string release];
 			return url;
 		case typeFSRef:
-			return nil; // TO DO
+			return [AEMFSRef fsrefWithDescriptor: desc];
 		case typeFSS:
-			return nil; // TO DO
+			return [AEMFSSpec fsspecWithDescriptor: desc];
 		case typeType:
 			return [[[AEMType alloc] initWithDescriptorType: '\000\000\000\000'
 													   code: '\000\000\000\000'

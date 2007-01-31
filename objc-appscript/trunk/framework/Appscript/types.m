@@ -38,6 +38,134 @@
 
 
 /**********************************************************************/
+// Alias, FSRef, FSSpec wrappers
+
+
+@implementation AEMFileObject
+
+- (id)initWithPath:(NSString *)path {
+	return [self initWithFileURL: [NSURL fileURLWithPath: path]];
+}
+
+- (id)initWithFileURL:(NSURL *)url {
+	NSData *data;
+	NSAppleEventDescriptor *furl;
+	id result;
+	
+	if (![url isFileURL]) return nil;
+	data = [[url absoluteString] dataUsingEncoding: NSUTF8StringEncoding];
+	furl = [[NSAppleEventDescriptor alloc] initWithDescriptorType: typeFileURL
+															 data: data];
+	result = [self initWithDescriptor: furl];
+	[furl release];
+	return result;
+}
+
+- (id)initWithDescriptor:(NSAppleEventDescriptor *)desc_ {
+	self = [super init];
+	if (!self) return self;
+	desc = [[desc_ coerceToDescriptorType: [self descriptorType]] retain];
+	if (!desc) return nil; // failed coercion, e.g. due to creating an AEMAlias with a typeFileURL descriptor for a non-existent file
+	return self;
+}
+
+// TO DO: -hash, -isEqual:
+
+- (NSString *)description {
+	return [NSString stringWithFormat: @"<%@ %@>", [self class], [self path]];
+}
+
+- (NSString *)path {
+	return [[self url] path];
+}
+
+- (NSURL *)url {
+	NSData *data;
+	NSString *string;
+	NSURL *url;
+	
+	data = [[desc coerceToDescriptorType: typeFileURL] data];
+	string = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
+	url = [NSURL URLWithString: string];
+	[string release];
+	return url;
+}
+
+- (NSAppleEventDescriptor *)desc {
+	return desc;
+}
+
+- (DescType)descriptorType { // stub method; subclasses will override
+	return '????';
+}
+
+@end
+
+
+@implementation AEMAlias
+
++ (id)aliasWithPath:(NSString *)path {
+	return [[[AEMAlias alloc] initWithPath: path] autorelease];
+}
+
++ (id)aliasWithFileURL:(NSURL *)url {
+	return [[[AEMAlias alloc] initWithFileURL: url] autorelease];
+}
+
++ (id)aliasWithDescriptor:(NSAppleEventDescriptor *)desc_ {
+	return [[[AEMAlias alloc] initWithDescriptor: desc_] autorelease];
+}
+
+- (DescType)descriptorType {
+	return typeAlias;
+}
+
+@end
+
+
+@implementation AEMFSRef
+
++ (id)fsrefWithPath:(NSString *)path {
+	return [[[AEMFSRef alloc] initWithPath: path] autorelease];
+}
+
++ (id)fsrefWithFileURL:(NSURL *)url {
+	return [[[AEMFSRef alloc] initWithFileURL: url] autorelease];
+}
+
++ (id)fsrefWithDescriptor:(NSAppleEventDescriptor *)desc_ {
+	return [[[AEMFSRef alloc] initWithDescriptor: desc_] autorelease];
+}
+
+- (DescType)descriptorType {
+	return typeFSRef;
+}
+
+@end
+
+
+@implementation AEMFSSpec
+
++ (id)fsspecWithPath:(NSString *)path {
+	return [[[AEMFSSpec alloc] initWithPath: path] autorelease];
+}
+
++ (id)fsspecWithFileURL:(NSURL *)url {
+	return [[[AEMFSSpec alloc] initWithFileURL: url] autorelease];
+}
+
++ (id)fsspecWithDescriptor:(NSAppleEventDescriptor *)desc_ {
+	return [[[AEMFSSpec alloc] initWithDescriptor: desc_] autorelease];
+}
+
+- (DescType)descriptorType {
+	return typeFSS;
+}
+
+@end
+
+
+/**********************************************************************/
 // types, enums, etc.
 
 
