@@ -11,27 +11,45 @@
 /**********************************************************************/
 // Booleans
 
+static AEMBoolean *trueValue;
+static AEMBoolean *falseValue;
+
 
 @implementation AEMBoolean
 
 + (id)True {
-	static AEMBoolean *trueValue;
-	
 	if (!trueValue)
 		trueValue = [[AEMBoolean alloc] initWithBool: YES];
 	return trueValue;
 }
 
 + (id)False {
-	static AEMBoolean *falseValue;
-	
 	if (!falseValue)
 		falseValue = [[AEMBoolean alloc] initWithBool: NO];
 	return falseValue;
 }
 
+- (id)initWithBool:(BOOL)value {
+	self = [super init];
+	if (!self) return self;
+	boolValue = value;
+	cachedDesc = [[NSAppleEventDescriptor alloc]
+						 initWithDescriptorType: (value ? typeTrue : typeFalse)
+										  bytes: NULL
+										 length: 0];
+	return self;
+}
+
 - (NSString *)description {
-	return [self boolValue] ? @"True" : @"False";
+	return boolValue ? @"True" : @"False";
+}
+
+- (BOOL)boolValue {
+	return boolValue;
+}
+
+- (NSAppleEventDescriptor *)desc {
+	return cachedDesc;
 }
 
 @end

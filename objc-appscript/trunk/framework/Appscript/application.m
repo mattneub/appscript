@@ -55,6 +55,8 @@
 
 // Pack event's attributes and parameters, if any.
 
+// TO DO: these methods may need to check for nil values to protect against crashes (need to investigate further)
+
 - (id)setAttributePtr:(void *)dataPtr 
 				 size:(Size)dataSize
 	   descriptorType:(DescType)typeCode

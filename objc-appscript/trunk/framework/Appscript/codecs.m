@@ -52,12 +52,9 @@
 		
 	if ([anObject isKindOfClass: [AEMQuery class]])
 		result = [anObject packSelf: self];
+	else if ([anObject isKindOfClass: [AEMBoolean class]])
+		return [anObject desc];
 	else if ([anObject isKindOfClass: [NSNumber class]]) {
-		if ([anObject isKindOfClass: [AEMBoolean class]])
-			if ([anObject boolValue])
-				result = [NSAppleEventDescriptor descriptorWithBoolean: YES];
-			else
-				result = [NSAppleEventDescriptor descriptorWithBoolean: NO];
 		switch (*[anObject objCType]) { // TO DO: for ILqQ, use SInt32 where possible; else use UInt32 where possible; else use SInt64 where possible; else use Float
 			case 'b':
 			case 'c':
@@ -140,31 +137,38 @@
 
 - (NSAppleEventDescriptor *)packDictionary:(NSDictionary *)anObject {
 	NSEnumerator *enumerator;
-	NSAppleEventDescriptor *result, *value, *userProperties;
-	id key, valueObj;
+	NSAppleEventDescriptor *result, *coercedDesc, *valueDesc, *userProperties = nil;
+	id key, value;
 	OSType keyCode;
 	
 	enumerator = [anObject keyEnumerator];
 	result = [NSAppleEventDescriptor recordDescriptor];
 	while (key = [enumerator nextObject]) {
-		valueObj = [anObject objectForKey: key];
-		if (!valueObj) [NSException raise: @"BadDictionaryKey"
-								   format: @"Not an acceptable dictionary key: %@", key];
-		value = [self pack: valueObj];
+		value = [anObject objectForKey: key];
+		if (!value) [NSException raise: @"BadDictionaryKey"
+								format: @"Not an acceptable dictionary key: %@", key];
+		valueDesc = [self pack: value];
 		if ([key isKindOfClass: [AEMTypeBase class]]) {
 			keyCode = [key code];
-			if (keyCode == pClass)
+			if (keyCode == pClass && [valueDesc descriptorType] == typeType) {
 				// AS packs records that contain a 'class' property by coercing the record to that type
-				result = [result coerceToDescriptorType: [value typeCodeValue]];
-			else
-				[result setDescriptor: value forKeyword: keyCode];
+				coercedDesc = [result coerceToDescriptorType: [valueDesc typeCodeValue]];
+				if (coercedDesc)
+					result = coercedDesc;
+				else // coercion failed, so pack it as a regular record item instead
+					[result setDescriptor: valueDesc forKeyword: keyCode];
+				NSLog(@"coerced: %@\n", result);
+			} else
+				[result setDescriptor: valueDesc forKeyword: keyCode];
 		} else {
+			NSLog(@"pack userproper\n");
 			if (!userProperties)
 				userProperties = [NSAppleEventDescriptor listDescriptor];
 			[userProperties insertDescriptor: [self pack: key] atIndex: 0];
-			[userProperties insertDescriptor: value atIndex: 0];
+			[userProperties insertDescriptor: valueDesc atIndex: 0];
 		}
 	}
+	NSLog(@"record: %@ userprop: %@\n", result, userProperties);
 	if (userProperties)
 		[result setDescriptor: userProperties forKeyword: keyASUserRecordFields];
 	return result;
@@ -314,12 +318,12 @@
 - (id)unpackAERecord:(NSAppleEventDescriptor *)desc {
 	OSErr err = noErr;
 	NSMutableDictionary *result;
-	NSAppleEventDescriptor *keyDesc, *valueDesc;
-	NSArray *userProperties;
+	NSAppleEventDescriptor *valueDesc;
 	AEKeyword key;
 	const AEDesc *record;
-	AEDesc value;
+	AEDesc valueAEDesc;
 	int i, j, length, length2;
+	id value;
 	
 	result = [NSMutableDictionary dictionary];
 	length = [desc numberOfItems];
@@ -329,26 +333,25 @@
 						   i,
 						   typeWildCard,
 						   &key,
-						   &value);
+						   &valueAEDesc);
 		if (err != noErr) return nil; // don't think this will ever happen
-		keyDesc = [NSAppleEventDescriptor descriptorWithTypeCode: key];
-		valueDesc = [[NSAppleEventDescriptor alloc] initWithAEDescNoCopy: &value];
+		valueDesc = [[NSAppleEventDescriptor alloc] initWithAEDescNoCopy: &valueAEDesc];
+		value = [self unpack: valueDesc];
 		if (key == keyASUserRecordFields) {
-			userProperties = [self unpackAEList: valueDesc];
-			length2 = [userProperties count]; 
+			length2 = [value count]; 
 			for (j = 0; j < length2; j += 2)
-				[result setObject: [userProperties objectAtIndex: j]
-						   forKey: [userProperties objectAtIndex: j + 1]];
+				[result setObject: [value objectAtIndex: j]
+						   forKey: [value objectAtIndex: j + 1]];
 		} else
-			[result setObject: valueDesc forKey: [self unpackAERecordKey: keyDesc]]; 
+			[result setObject: value forKey: [self unpackAERecordKey: key]]; 
 		[valueDesc release];
 	}
 	return result;
 }
 
-- (id)unpackAERecordKey:(NSAppleEventDescriptor *)key {
+- (id)unpackAERecordKey:(AEKeyword)key {
 	// subclasses may override this to modify how record keys are unpacked
-	return key;
+	return [AEMType typeWithCode: key];
 }
 
 

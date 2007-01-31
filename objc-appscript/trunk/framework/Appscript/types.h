@@ -20,11 +20,21 @@
 // Boolean class represents AEDescs of typeTrue and typeFalse
 
 
-@interface AEMBoolean : NSNumber
+@interface AEMBoolean : NSObject {
+	BOOL boolValue;
+	NSAppleEventDescriptor *cachedDesc;
+}
 
 + (id)True;
 
 + (id)False;
+
+// client's shouldn't call -initWithBool: directly; use +True/+False (or AEMTrue/AEMFalse macros) instead
+- (id)initWithBool:(BOOL)boolValue_;
+
+- (BOOL)boolValue;
+
+- (NSAppleEventDescriptor *)desc;
 
 @end
 

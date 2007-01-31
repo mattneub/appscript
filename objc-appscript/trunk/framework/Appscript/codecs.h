@@ -38,7 +38,7 @@
 
 - (id)unpackAERecord:(NSAppleEventDescriptor *)desc;
 
-- (id)unpackAERecordKey:(NSAppleEventDescriptor *)desc;
+- (id)unpackAERecordKey:(AEKeyword)key;
 
 - (id)fullyUnpackObjectSpecifier:(NSAppleEventDescriptor *)desc;
 
