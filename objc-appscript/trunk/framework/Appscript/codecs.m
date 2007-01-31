@@ -99,7 +99,7 @@
 		result = [self packArray: anObject];
 	else if ([anObject isKindOfClass: [NSDictionary class]])
 		result = [self packDictionary: anObject];
-	else if ([anObject isKindOfClass: [AEMFileObject class]])
+	else if ([anObject isKindOfClass: [AEMFileBase class]])
 		return [anObject desc];
 	else if ([anObject isKindOfClass: [NSURL class]]) {
 		if ([anObject isFileURL]) {
@@ -242,21 +242,13 @@
 		case typeFSS:
 			return [AEMFSSpec fsspecWithDescriptor: desc];
 		case typeType:
-			return [[[AEMType alloc] initWithDescriptorType: '\000\000\000\000'
-													   code: '\000\000\000\000'
-													   desc: desc] autorelease];
+			return [[[AEMType alloc] initWithDescriptor: desc] autorelease];
 		case typeEnumerated:
-			return [[[AEMEnumerator alloc] initWithDescriptorType: '\000\000\000\000'
-															 code: '\000\000\000\000'
-															 desc: desc] autorelease];
+			return [[[AEMEnumerator alloc] initWithDescriptor: desc] autorelease];
 		case typeProperty:
-			return [[[AEMProperty alloc] initWithDescriptorType: '\000\000\000\000'
-														   code: '\000\000\000\000'
-														   desc: desc] autorelease];
+			return [[[AEMProperty alloc] initWithDescriptor: desc] autorelease];
 		case typeKeyword:
-			return [[[AEMKeyword alloc] initWithDescriptorType: '\000\000\000\000'
-														  code: '\000\000\000\000'
-														  desc: desc] autorelease];
+			return [[[AEMKeyword alloc] initWithDescriptor: desc] autorelease];
 		case typeSInt16:
 			[[desc data] getBytes: &sint16 length: sizeof(sint16)];
 			return [NSNumber numberWithShort: sint16];

@@ -40,8 +40,9 @@
 /**********************************************************************/
 // Alias, FSRef, FSSpec wrappers
 
+// TO DO: methods for working with Carbon Alias, FSRef, FSSpec types?
 
-@implementation AEMFileObject
+@implementation AEMFileBase
 
 - (id)initWithPath:(NSString *)path {
 	return [self initWithFileURL: [NSURL fileURLWithPath: path]];
@@ -188,6 +189,12 @@
 	return self;
 }
 
+- (id)initWithDescriptor:(NSAppleEventDescriptor *)desc {
+	return [self initWithDescriptorType: '\000\000\000\000'
+								   code: '\000\000\000\000'
+								   desc: desc];
+}
+
 - (id)initWithCode:(OSType)code_ { // subclasses should override this method
 	return nil;
 }
@@ -210,6 +217,8 @@
 }
 
 - (NSString *)description {
+	if (!type)
+		type = [cachedDesc descriptorType];
 	switch (type) {
 		case typeType:
 			return [NSString stringWithFormat: @"<AEMType %@>", [[self desc] stringValue]];

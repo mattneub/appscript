@@ -17,6 +17,7 @@
 
 
 /**********************************************************************/
+// Boolean class represents AEDescs of typeTrue and typeFalse
 
 
 @interface AEMBoolean : NSNumber
@@ -29,10 +30,10 @@
 
 
 /**********************************************************************/
-// Alias, FSRef, FSSpec wrappers
+// file object classes represent AEDescs of typeAlias, typeFSRef, typeFSSpec
 
-
-@interface AEMFileObject : NSObject {
+//abstract base class
+@interface AEMFileBase : NSObject {
 	NSAppleEventDescriptor *desc;
 }
 
@@ -53,7 +54,10 @@
 @end
 
 
-@interface AEMAlias : AEMFileObject
+/***********************************/
+// concrete classes
+
+@interface AEMAlias : AEMFileBase
 
 + (id)aliasWithPath:(NSString *)path;
 
@@ -64,7 +68,7 @@
 @end
 
 
-@interface AEMFSRef : AEMFileObject
+@interface AEMFSRef : AEMFileBase
 
 + (id)fsrefWithPath:(NSString *)path;
 
@@ -75,7 +79,7 @@
 @end
 
 
-@interface AEMFSSpec : AEMFileObject
+@interface AEMFSSpec : AEMFileBase
 
 + (id)fsspecWithPath:(NSString *)path;
 
@@ -88,7 +92,7 @@
 
 /**********************************************************************/
 
-
+// abstract base class for AEMType, AEMEnumerator, AEMProperty, AEMKeyword
 @interface AEMTypeBase : NSObject {
 	DescType type;
 	OSType code;
@@ -100,6 +104,8 @@
 						code:(OSType)code_
 						desc:(NSAppleEventDescriptor *)desc;
 
+- (id)initWithDescriptor:(NSAppleEventDescriptor *)desc; // normally called by AEMCodecs -unpack:, though clients could also use it to wrap any loose NSAppleEventDescriptor instances they might have. Note: doesn't verify descriptor's type before use; clients are responsible for providing an appropriate value.
+
 - (id)initWithCode:(OSType)code_; // stub method; subclasses will override this to provide concrete implementations 
 
 - (OSType)code;
@@ -110,6 +116,9 @@
 
 
 /***********************************/
+// concrete classes representing AEDescs of typeType, typeEnumerator, typeProperty, typeKeyword
+// note: unlike NSAppleEventDescriptor instances, instances of these classes are fully hashable
+// and comparable, so suitable for use as NSDictionary keys.
 
 @interface AEMType : AEMTypeBase
 
