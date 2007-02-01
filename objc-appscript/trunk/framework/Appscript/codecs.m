@@ -9,16 +9,13 @@
 
 /*
  * NOTES:
- * - NSAppleEventDescriptors don't work as dictionary keys; use AEMType/AEMProperty instead
+ * - NSAppleEventDescriptors don't work as dictionary keys; use AEMType/AEMProperty instead (or NSString for user-defined property names)
  */
 
 /*
  * TO DO:
  * - unit types support
- * - AEMAlias, AEMFile (or map typeFileURL to NSURL/NSURL subclass?)
- * - improve NSNumber packing
  * - finish reference unpacking
- * - find out what classes can be used as dictionary keys (note that NSAppleEventDescriptor can't)
  */
 
 
@@ -44,6 +41,7 @@
 - (NSAppleEventDescriptor *)pack:(id)anObject {
 	UInt32 uint32;
 	SInt64 sint64;
+	UInt64 uint64;
 	double float64;
 	CFAbsoluteTime cfTime;
 	LongDateTime longDate;
@@ -55,7 +53,12 @@
 	else if ([anObject isKindOfClass: [AEMBoolean class]])
 		return [anObject desc];
 	else if ([anObject isKindOfClass: [NSNumber class]]) {
-		switch (*[anObject objCType]) { // TO DO: for ILqQ, use SInt32 where possible; else use UInt32 where possible; else use SInt64 where possible; else use Float
+		switch (*[anObject objCType]) {
+			/*
+			 * note: for better compatibility with less well-designed applications that don't like
+			 * less common integer types (typeSInt64, typeUInt32, etc.), try to use typeInteger (SInt32)
+			 * and typeFloat (double) whenever possible
+			 */
 			case 'b':
 			case 'c':
 			case 'C':
@@ -63,26 +66,39 @@
 			case 'S':
 			case 'i':
 			case 'l':
-				result = [NSAppleEventDescriptor descriptorWithInt32: [anObject longValue]];
-				break;
+				packAsSInt32:
+					result = [NSAppleEventDescriptor descriptorWithInt32: [anObject longValue]];
+					break;
 			case 'I':
 			case 'L':
 				uint32 = [anObject unsignedLongValue];
+				if (uint32 < 0x7FFFFFFF)
+					goto packAsSInt32;
 				result = [NSAppleEventDescriptor descriptorWithDescriptorType: typeUInt32
 																	  bytes: &uint32
 																	 length: sizeof(uint32)];
 				break;
 			case 'q':
-				sint64 = [anObject longLongValue];
-				result = [NSAppleEventDescriptor descriptorWithDescriptorType: typeSInt64
-																	  bytes: &sint64
-																	 length: sizeof(sint64)];
-				break;
-			default: // f, d, Q
-				float64 = [anObject doubleValue];
-				result = [NSAppleEventDescriptor descriptorWithDescriptorType: typeIEEE64BitFloatingPoint
-																	  bytes: &float64
-																	 length: sizeof(float64)];
+				packAsSInt64:
+					sint64 = [anObject longLongValue];
+					if (sint64 >= 0x80000000 && sint64 < 0x7FFFFFFF)
+						goto packAsSInt32;
+					result = [NSAppleEventDescriptor descriptorWithDescriptorType: typeSInt64
+																		  bytes: &sint64
+																		 length: sizeof(sint64)];
+					break;
+			case 'Q':
+				uint64 = [anObject unsignedLongLongValue];
+				if (uint64 < 0x7FFFFFFF)
+					goto packAsSInt32;
+				else if (uint64 < pow(2, 63))
+					goto packAsSInt64;
+			default: // f, d
+				packAsDouble:
+					float64 = [anObject doubleValue];
+					result = [NSAppleEventDescriptor descriptorWithDescriptorType: typeIEEE64BitFloatingPoint
+																			bytes: &float64
+																		   length: sizeof(float64)];
 		}
 	} else if ([anObject isKindOfClass: [NSString class]])
 		result = [NSAppleEventDescriptor descriptorWithString: anObject];
@@ -349,8 +365,8 @@
 	return result;
 }
 
+// subclasses can override this method to change how record keys are unpacked:
 - (id)unpackAERecordKey:(AEKeyword)key {
-	// subclasses may override this to modify how record keys are unpacked
 	return [AEMType typeWithCode: key];
 }
 
