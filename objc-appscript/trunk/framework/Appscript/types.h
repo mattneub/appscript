@@ -102,7 +102,7 @@
 
 /**********************************************************************/
 
-// abstract base class for AEMType, AEMEnumerator, AEMProperty, AEMKeyword
+// abstract base class for AEMType, AEMEnum, AEMProperty, AEMKeyword
 @interface AEMTypeBase : NSObject {
 	DescType type;
 	OSType code;
@@ -137,9 +137,9 @@
 @end
 
 
-@interface AEMEnumerator : AEMTypeBase
+@interface AEMEnum : AEMTypeBase
 
-+ (id)enumeratorWithCode:(OSType)code_;
++ (id)enumWithCode:(OSType)code_;
 
 @end
 

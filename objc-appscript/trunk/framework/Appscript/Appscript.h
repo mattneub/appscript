@@ -13,4 +13,5 @@
 #import "types.h"
 
 #import "parser.h"
+#import "reference.h"
 #import "terminology.h"

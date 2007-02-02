@@ -8,28 +8,34 @@
 #import <Cocoa/Cocoa.h>
 #import "application.h"
 #import "specifier.h"
-#import "terminology.h"
+// #import "terminology.h"
+
+typedef enum {
+	kASTargetCurrent,
+	kASTargetName,
+	kASTargetPath,
+	kASTargetURL,
+	kASTargetPID,
+	kASTargetDescriptor,
+} ASTargetType;
 
 /*
  * 
  */
 @interface ASAppData : AEMCodecs {
-	id *terminology;
-	AEMTargetType targetType;
+	Class aemApplicationClass;
+	ASTargetType targetType;
 	id targetData;
 	AEMApplication *target;
 }
 
 - (id)initWithApplicationClass:(Class)appClass
-					targetType:(AEMTargetType *)type
-					targetData:(id)data
-						 terms:(id)terms;
+					targetType:(ASTargetType)type
+					targetData:(id)data;
 
 - (void)connect;
 
 - (id)target; // returns AEMApplication instance or equivalent
-
-- (id)terminology; // returns ASStringTerminology instance or equivalent
 
 @end
 
@@ -40,17 +46,55 @@
 /*
  * 
  */
-@interface ASType : NSObject {
+@interface ASConstant : NSObject {
 	NSString *name;
+	NSAppleEventDescriptor *desc;
 }
 
-- (id)initWithName:(NSString *)name;
+- (id)initWithName: (NSString *)name_ descriptor:(NSAppleEventDescriptor *)desc_;
 
 - (NSString *)name;
 
-- (NSAppleEventDescriptor *)pack:(id)anObject;
+- (OSType)code;
 
-// TO DO: override various pack..., unpack... methods
+- (NSAppleEventDescriptor *)desc;
+
+@end
+
+
+/**********************************************************************/
+// Command base
+
+
+@interface ASCommand : NSObject {
+	id AS_appData;
+	AEMEvent *AS_event;
+	AESendMode sendMode;
+}
+
++ (id)commandWithAppData:(id)appData
+			  eventClass:(AEEventClass)classCode
+				 eventID:(AEEventID)code
+		 directParameter:(id)directParameter
+		 parentReference:(id)parentReference;
+
+- (id)initWithAppData:(id)appData
+		   eventClass:(AEEventClass)classCode
+			  eventID:(AEEventID)code
+	  directParameter:(id)directParameter
+	  parentReference:(id)parentReference;
+
+// TO DO: attribute methods
+
+- (id)send;
+
+- (id)sendWithTimeout:(int)timeout;
+
+- (OSErr)errorNumber;
+
+- (NSString *)errorString;
+
+- (void)raise;
 
 @end
 
@@ -59,48 +103,18 @@
 // Reference base
 
 
-@interface ASReferenceBase : NSObject {
-	ASAppData *appData;
+@interface ASReference : NSObject {
+	id AS_appData;
+	id AS_aemReference;
 }
 
-- (ASReference)property:(NSString *)name;
-- (ASReference)element:(NSString *)name;
++ (id)referenceWithAppData:(id)appData aemReference:(id)aemReference;
 
-// ordinal selectors
+- (id)initWithAppData:(id)appData aemReference:(id)aemReference;
 
-- (ASReference)first;
-- (ASReference)middle;
-- (ASReference)last;
-- (ASReference)any;
+- (id)AS_appData;
 
-// by-index, by-name, by-id selectors
- 
-- (ASReference)at:(long)index;
-- (ASReference)byIndex:(id)index; // normally NSNumber, but may occasionally be other types
-- (ASReference)byName:(NSString *)name;
-- (ASReference)byName:(NSString *)name;
-- (ASReference)byID:(id)id_;
-
-// by-relative-position selectors
-
-- (ASReference)previous:(ASType *)class_;
-- (ASReference)next:(ASType *)class_
-
-// by-range selector
-
-- (ASReference)at:(long)fromIndex :(long)toIndex;
-- (ASReference)byRange:(id)fromObject :(id)toObject; // takes two con-based references, with other values being expanded as necessary
-
-// by-test selector
-
-- (ASReference)byTest:(ASReference)testReference;
-
-// insertion location selectors
-
-- (ASReference)beginning;
-- (ASReference)end;
-- (ASReference)before;
-- (ASReference)after;
-
+- (id)AS_aemReference;
 
 @end
+

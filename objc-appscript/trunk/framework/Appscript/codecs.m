@@ -264,7 +264,7 @@
 		case typeType:
 			return [[[AEMType alloc] initWithDescriptor: desc] autorelease];
 		case typeEnumerated:
-			return [[[AEMEnumerator alloc] initWithDescriptor: desc] autorelease];
+			return [[[AEMEnum alloc] initWithDescriptor: desc] autorelease];
 		case typeProperty:
 			return [[[AEMProperty alloc] initWithDescriptor: desc] autorelease];
 		case typeKeyword:

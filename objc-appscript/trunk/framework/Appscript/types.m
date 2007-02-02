@@ -288,10 +288,10 @@ static AEMBoolean *falseValue;
 @end
 
 
-@implementation AEMEnumerator
+@implementation AEMEnum
 
-+ (id)enumeratorWithCode:(OSType)code_ {
-	return [[[AEMEnumerator alloc] initWithCode: code_] autorelease];
++ (id)enumWithCode:(OSType)code_ {
+	return [[[AEMEnum alloc] initWithCode: code_] autorelease];
 }
 
 - (id)initWithCode:(OSType)code_ {

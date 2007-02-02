@@ -11,6 +11,8 @@
 		4F25FAC30B6E79CE0050D532 /* base.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F25FAC10B6E79CE0050D532 /* base.m */; };
 		4F4856680B6E8204005264DC /* test.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F4856660B6E8204005264DC /* test.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4F4856690B6E8204005264DC /* test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F4856670B6E8204005264DC /* test.m */; };
+		4F7CA9050B727AE5007010CE /* reference.h in Headers */ = {isa = PBXBuildFile; fileRef = 4FDCB2F30B6D0CD0009534FD /* reference.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4F7CA9060B727AE5007010CE /* reference.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FDCB2F40B6D0CD0009534FD /* reference.m */; };
 		4FDCB2E00B6D0BAF009534FD /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4FDCB2DE0B6D0BAF009534FD /* Carbon.framework */; };
 		4FDCB2E10B6D0BAF009534FD /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4FDCB2DF0B6D0BAF009534FD /* CoreFoundation.framework */; };
 		4FDCB2E20B6D0BCB009534FD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0867D69BFE84028FC02AAC07 /* Foundation.framework */; };
@@ -224,6 +226,7 @@
 				4FDCB4B20B6D5F21009534FD /* types.h in Headers */,
 				4F25FAC20B6E79CE0050D532 /* base.h in Headers */,
 				4F4856680B6E8204005264DC /* test.h in Headers */,
+				4F7CA9050B727AE5007010CE /* reference.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -298,6 +301,7 @@
 				4FDCB4B30B6D5F21009534FD /* types.m in Sources */,
 				4F25FAC30B6E79CE0050D532 /* base.m in Sources */,
 				4F4856690B6E8204005264DC /* test.m in Sources */,
+				4F7CA9060B727AE5007010CE /* reference.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
