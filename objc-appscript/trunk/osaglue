@@ -528,7 +528,7 @@ prefix = args[0]
 # get tables
 
 if args[1:]:
-	apppath = findapp.byname(args[0])
+	apppath = findapp.byname(args[1])
 	typebycode, typebyname, referencebycode, referencebyname = \
 			terminology.tablesforapp(Application(apppath), 'objc-appscript')
 else:
