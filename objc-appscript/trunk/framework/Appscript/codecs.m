@@ -153,7 +153,7 @@
 
 - (NSAppleEventDescriptor *)packDictionary:(NSDictionary *)anObject {
 	NSEnumerator *enumerator;
-	NSAppleEventDescriptor *result, *coercedDesc, *valueDesc, *userProperties = nil;
+	NSAppleEventDescriptor *result, *coercedDesc, *keyDesc, *valueDesc, *userProperties = nil;
 	id key, value;
 	OSType keyCode;
 	
@@ -163,9 +163,11 @@
 		value = [anObject objectForKey: key];
 		if (!value) [NSException raise: @"BadDictionaryKey"
 								format: @"Not an acceptable dictionary key: %@", key];
+		keyDesc = [self pack: key];
 		valueDesc = [self pack: value];
-		if ([key isKindOfClass: [AEMTypeBase class]]) {
-			keyCode = [key code];
+		keyCode = [keyDesc descriptorType];
+		if (keyCode == typeType || keyCode == typeProperty) {
+			keyCode = [keyDesc typeCodeValue];
 			if (keyCode == pClass && [valueDesc descriptorType] == typeType) {
 				// AS packs records that contain a 'class' property by coercing the record to that type
 				coercedDesc = [result coerceToDescriptorType: [valueDesc typeCodeValue]];
@@ -173,18 +175,15 @@
 					result = coercedDesc;
 				else // coercion failed, so pack it as a regular record item instead
 					[result setDescriptor: valueDesc forKeyword: keyCode];
-				NSLog(@"coerced: %@\n", result);
 			} else
 				[result setDescriptor: valueDesc forKeyword: keyCode];
 		} else {
-			NSLog(@"pack userproper\n");
 			if (!userProperties)
 				userProperties = [NSAppleEventDescriptor listDescriptor];
-			[userProperties insertDescriptor: [self pack: key] atIndex: 0];
+			[userProperties insertDescriptor: keyDesc atIndex: 0]; // i.e. with 1-indexed AEDescs, index 0 = 'append'
 			[userProperties insertDescriptor: valueDesc atIndex: 0];
 		}
 	}
-	NSLog(@"record: %@ userprop: %@\n", result, userProperties);
 	if (userProperties)
 		[result setDescriptor: userProperties forKeyword: keyASUserRecordFields];
 	return result;
@@ -262,13 +261,13 @@
 		case typeFSS:
 			return [AEMFSSpec fsspecWithDescriptor: desc];
 		case typeType:
-			return [[[AEMType alloc] initWithDescriptor: desc] autorelease];
+			return [self unpackType: desc];
 		case typeEnumerated:
-			return [[[AEMEnum alloc] initWithDescriptor: desc] autorelease];
+			return [self unpackEnum: desc];
 		case typeProperty:
-			return [[[AEMProperty alloc] initWithDescriptor: desc] autorelease];
+			return [self unpackProperty: desc];
 		case typeKeyword:
-			return [[[AEMKeyword alloc] initWithDescriptor: desc] autorelease];
+			return [self unpackKeyword: desc];
 		case typeSInt16:
 			[[desc data] getBytes: &sint16 length: sizeof(sint16)];
 			return [NSNumber numberWithShort: sint16];
@@ -368,6 +367,23 @@
 // subclasses can override this method to change how record keys are unpacked:
 - (id)unpackAERecordKey:(AEKeyword)key {
 	return [AEMType typeWithCode: key];
+}
+
+
+- (id)unpackType:(NSAppleEventDescriptor *)desc {
+	return [[[AEMType alloc] initWithDescriptor: desc] autorelease];
+}
+
+- (id)unpackEnum:(NSAppleEventDescriptor *)desc {
+	return [[[AEMEnum alloc] initWithDescriptor: desc] autorelease];
+}
+
+- (id)unpackProperty:(NSAppleEventDescriptor *)desc {
+	return [[[AEMProperty alloc] initWithDescriptor: desc] autorelease];
+}
+
+- (id)unpackKeyword:(NSAppleEventDescriptor *)desc {
+	return [[[AEMKeyword alloc] initWithDescriptor: desc] autorelease];
 }
 
 

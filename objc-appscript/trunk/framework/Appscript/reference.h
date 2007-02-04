@@ -5,10 +5,10 @@
 //  Copyright (C) 2007 HAS
 //
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 #import "application.h"
+#import "constant.h"
 #import "specifier.h"
-// #import "terminology.h"
 
 typedef enum {
 	kASTargetCurrent,
@@ -23,41 +23,21 @@ typedef enum {
  * 
  */
 @interface ASAppData : AEMCodecs {
-	Class aemApplicationClass;
+	Class aemApplicationClass, constantClass, referenceClass;
 	ASTargetType targetType;
 	id targetData;
 	AEMApplication *target;
 }
 
 - (id)initWithApplicationClass:(Class)appClass
+				 constantClass:(Class)constClass
+				referenceClass:(Class)refClass
 					targetType:(ASTargetType)type
 					targetData:(id)data;
 
 - (void)connect;
 
 - (id)target; // returns AEMApplication instance or equivalent
-
-@end
-
-
-/**********************************************************************/
-//
-
-/*
- * 
- */
-@interface ASConstant : NSObject {
-	NSString *name;
-	NSAppleEventDescriptor *desc;
-}
-
-- (id)initWithName: (NSString *)name_ descriptor:(NSAppleEventDescriptor *)desc_;
-
-- (NSString *)name;
-
-- (OSType)code;
-
-- (NSAppleEventDescriptor *)desc;
 
 @end
 
@@ -112,9 +92,12 @@ typedef enum {
 
 - (id)initWithAppData:(id)appData aemReference:(id)aemReference;
 
+- (NSAppleEventDescriptor *)AS_packSelf:(id)codecs;
+
 - (id)AS_appData;
 
 - (id)AS_aemReference;
 
 @end
+
 

@@ -12,6 +12,8 @@
 #import "test.h"
 #import "types.h"
 
+#import "constant.h"
 #import "parser.h"
 #import "reference.h"
+#import "referencerenderer.h"
 #import "terminology.h"

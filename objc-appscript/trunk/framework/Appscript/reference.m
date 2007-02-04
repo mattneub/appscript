@@ -14,11 +14,15 @@
 @implementation ASAppData
 
 - (id)initWithApplicationClass:(Class)appClass
+				 constantClass:(Class)constClass
+				referenceClass:(Class)refClass
 					targetType:(ASTargetType)type
 					targetData:(id)data {
 	self = [super init];
 	if (!self) return self;
 	aemApplicationClass = appClass;
+	constantClass = constClass;
+	referenceClass = refClass;
 	targetType = type;
 	targetData = [data retain];
 	return self;
@@ -34,14 +38,19 @@
 	switch (targetType) {
 		case kASTargetCurrent:
 			target = [[aemApplicationClass alloc] init];
+			break;
 		case kASTargetName:
 			target = [[aemApplicationClass alloc] initWithURL: AEMFindAppWithName(targetData)];
+			break;
 		case kASTargetPath:
 			target = [[aemApplicationClass alloc] initWithPath: targetData];
+			break;
 		case kASTargetURL:
 			target = [[aemApplicationClass alloc] initWithURL: targetData];
+			break;
 		case kASTargetPID:
 			target = [[aemApplicationClass alloc] initWithPID: [targetData unsignedLongValue]];
+			break;
 		case kASTargetDescriptor:
 			target = [[aemApplicationClass alloc] initWithDescriptor: targetData];
 	}
@@ -53,59 +62,65 @@
 	return target;
 }
 
-// TO DO: override various pack..., unpack... methods
+// override pack, various unpack methods
 
 - (NSAppleEventDescriptor *)pack:(id)object {
 	if ([object isKindOfClass: [ASReference class]])
-		return [[object AS_aemReference] packSelf: self]; // TO DO: this won't work for dynamic
+		return [object AS_packSelf: self];
 	else if ([object isKindOfClass: [ASConstant class]])
-		return [object desc]; // TO DO: this won't work for dynamic
+		return [object AS_packSelf: self];
 	else
 		return [super pack: object];
 }
 
+- (id)unpackAERecordKey:(AEKeyword)key {
+	return [constantClass constantWithCode: key];
+}
+
+- (id)unpackType:(NSAppleEventDescriptor *)desc {
+	id result;
+	
+	result = [constantClass constantWithCode: [desc typeCodeValue]];
+	if (!result)
+		result = [super unpackType: desc];
+	return result;
+}
+
+- (id)unpackEnum:(NSAppleEventDescriptor *)desc {
+	id result;
+	
+	result = [constantClass constantWithCode: [desc enumCodeValue]];
+	if (!result)
+		result = [super unpackType: desc];
+	return result;
+}
+
+- (id)unpackProperty:(NSAppleEventDescriptor *)desc {
+	id result;
+	
+	result = [constantClass constantWithCode: [desc typeCodeValue]];
+	if (!result)
+		result = [super unpackType: desc];
+	return result;
+}
+
+- (id)unpackKeyword:(NSAppleEventDescriptor *)desc {
+	id result;
+	
+	result = [constantClass constantWithCode: [desc typeCodeValue]];
+	if (!result)
+		result = [super unpackType: desc];
+	return result;
+}
+
 - (id)unpackObjectSpecifier:(NSAppleEventDescriptor *)desc {
-	return desc; // TO DO: return TEReference
+	return [referenceClass referenceWithAppData: self
+								aemReference: [super unpackObjectSpecifier: desc]];
 }
 
-@end
-
-
-/**********************************************************************/
-
-
-@implementation ASConstant
-
-- (id)initWithName:(NSString *)name_ descriptor:(NSAppleEventDescriptor *)desc_ {
-	self = [super init];
-	if (!self) return self;
-	name = [name_ retain];
-	desc = [desc_ retain];
-	return self;
-}
-
-- (void)dealloc {
-	[name release];
-	[desc release];
-	[super dealloc];
-}
-
-- (NSString *)description {
-	return [NSString stringWithFormat: @"[%@ %@]", [self class], name];
-}
-
-// TO DO: hash, isEqual
-
-- (NSString *)name {
-	return name;
-}
-
-- (OSType)code {
-	return [desc typeCodeValue];
-}
-
-- (NSAppleEventDescriptor *)desc {
-	return desc;
+- (id)unpackInsertionLoc:(NSAppleEventDescriptor *)desc {
+	return [referenceClass referenceWithAppData: self
+								aemReference: [super unpackInsertionLoc: desc]];
 }
 
 @end
@@ -152,6 +167,7 @@
 	return self;
 }
 
+
 - (id)send {
 	return [self sendWithTimeout: kAEDefaultTimeout];
 }
@@ -179,6 +195,11 @@
 
 /**********************************************************************/
 
+// TO DO: default command classes
+
+
+/**********************************************************************/
+
 
 @implementation ASReference
 
@@ -200,18 +221,25 @@
 	[super dealloc];
 }
 
+
+- (NSAppleEventDescriptor *)AS_packSelf:(id)codecs {
+	return [AS_aemReference packSelf: codecs];
+}
+
+
 // TO DO: hash, isEqual
 
 - (id)AS_appData {
 	return AS_appData;
 }
 
+// TO DO: AS_newReference
+
 - (id)AS_aemReference {
 	return AS_aemReference;
 }
 
-- (NSString *)description {
-	return [NSString stringWithFormat: @"<ASReference %@>", AS_aemReference]; // TO DO: finish
-}
+// TO DO: default commands, properties
 
 @end
+

@@ -72,29 +72,18 @@ void disposeSpecifierModule(void);
 // Comparison and logic tests
 
 - (id)greaterThan:(id)object;
-
 - (id)greaterOrEquals:(id)object;
-
 - (id)equals:(id)object;
-
 - (id)notEquals:(id)object;
-
 - (id)lessThan:(id)object;
-
 - (id)lessOrEquals:(id)object;
-
 - (id)startsWith:(id)object;
-
 - (id)endsWith:(id)object;
-
 - (id)contains:(id)object;
-
 - (id)isIn:(id)object;
 
 - (id)AND:(id)remainingOperands;
-
 - (id)OR:(id)remainingOperands;
-
 - (id)NOT;
 
 // Insertion location selectors

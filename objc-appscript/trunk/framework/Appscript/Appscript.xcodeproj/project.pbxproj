@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4F1E9DEF0B74EDCB00D4DCBF /* referencerenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F1E9DED0B74EDCB00D4DCBF /* referencerenderer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4F1E9DF00B74EDCB00D4DCBF /* referencerenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F1E9DEE0B74EDCB00D4DCBF /* referencerenderer.m */; };
+		4F1E9F420B75305800D4DCBF /* constant.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F1E9F400B75305800D4DCBF /* constant.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4F1E9F430B75305800D4DCBF /* constant.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F1E9F410B75305800D4DCBF /* constant.m */; };
 		4F25FAC20B6E79CE0050D532 /* base.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F25FAC00B6E79CE0050D532 /* base.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4F25FAC30B6E79CE0050D532 /* base.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F25FAC10B6E79CE0050D532 /* base.m */; };
 		4F4856680B6E8204005264DC /* test.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F4856660B6E8204005264DC /* test.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -53,6 +57,10 @@
 		0867D69BFE84028FC02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		089C1667FE841158C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		32DBCF5E0370ADEE00C91783 /* Appscript_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Appscript_Prefix.pch; sourceTree = "<group>"; };
+		4F1E9DED0B74EDCB00D4DCBF /* referencerenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = referencerenderer.h; sourceTree = "<group>"; };
+		4F1E9DEE0B74EDCB00D4DCBF /* referencerenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = referencerenderer.m; sourceTree = "<group>"; };
+		4F1E9F400B75305800D4DCBF /* constant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = constant.h; sourceTree = "<group>"; };
+		4F1E9F410B75305800D4DCBF /* constant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = constant.m; sourceTree = "<group>"; };
 		4F25FAC00B6E79CE0050D532 /* base.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = base.h; sourceTree = "<group>"; };
 		4F25FAC10B6E79CE0050D532 /* base.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = base.m; sourceTree = "<group>"; };
 		4F4856660B6E8204005264DC /* test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = test.h; sourceTree = "<group>"; };
@@ -199,10 +207,14 @@
 		4FDCB4B50B6D5F89009534FD /* Appscript */ = {
 			isa = PBXGroup;
 			children = (
+				4F1E9F400B75305800D4DCBF /* constant.h */,
+				4F1E9F410B75305800D4DCBF /* constant.m */,
 				4FDCB2F10B6D0CD0009534FD /* parser.h */,
 				4FDCB2F20B6D0CD0009534FD /* parser.m */,
 				4FDCB2F30B6D0CD0009534FD /* reference.h */,
 				4FDCB2F40B6D0CD0009534FD /* reference.m */,
+				4F1E9DED0B74EDCB00D4DCBF /* referencerenderer.h */,
+				4F1E9DEE0B74EDCB00D4DCBF /* referencerenderer.m */,
 				4FDCB2F70B6D0CD0009534FD /* terminology.h */,
 				4FDCB2F80B6D0CD0009534FD /* terminology.m */,
 			);
@@ -227,6 +239,8 @@
 				4F25FAC20B6E79CE0050D532 /* base.h in Headers */,
 				4F4856680B6E8204005264DC /* test.h in Headers */,
 				4F7CA9050B727AE5007010CE /* reference.h in Headers */,
+				4F1E9DEF0B74EDCB00D4DCBF /* referencerenderer.h in Headers */,
+				4F1E9F420B75305800D4DCBF /* constant.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -302,6 +316,8 @@
 				4F25FAC30B6E79CE0050D532 /* base.m in Sources */,
 				4F4856690B6E8204005264DC /* test.m in Sources */,
 				4F7CA9060B727AE5007010CE /* reference.m in Sources */,
+				4F1E9DF00B74EDCB00D4DCBF /* referencerenderer.m in Sources */,
+				4F1E9F430B75305800D4DCBF /* constant.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
