@@ -66,6 +66,8 @@ typedef enum {
 
 // TO DO: attribute methods
 
+- (AEMEvent *)AS_aemEvent;
+
 - (id)send;
 
 - (id)sendWithTimeout:(int)timeout;

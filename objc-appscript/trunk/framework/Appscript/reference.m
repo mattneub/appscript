@@ -131,7 +131,7 @@
 
 @implementation ASCommand
 
-// note: current design doesn't support returnID (TO DO: see if returnID attribute can be set later)
+// note: current design doesn't support returnID; not sure how best to implement this
 
 + (id)commandWithAppData:(id)appData
 			  eventClass:(AEEventClass)classCode
@@ -157,7 +157,6 @@
 											  codecs: appData];
 	if (directParameter)
 		[AS_event setParameter: directParameter forKeyword: keyDirectObject];
-	// TO DO: any additional special cases?
 	if (parentReference) {
 		if (directParameter)
 			[AS_event setAttribute: parentReference forKeyword: keySubjectAttr];
@@ -167,6 +166,9 @@
 	return self;
 }
 
+- (AEMEvent *)AS_aemEvent {
+	return AS_event;
+}
 
 - (id)send {
 	return [self sendWithTimeout: kAEDefaultTimeout];
@@ -191,11 +193,6 @@
 // TO DO: attribute methods
 
 @end
-
-
-/**********************************************************************/
-
-// TO DO: default command classes
 
 
 /**********************************************************************/
@@ -233,13 +230,11 @@
 	return AS_appData;
 }
 
-// TO DO: AS_newReference
+// TO DO: AS_newReference, get+set shortcuts
 
 - (id)AS_aemReference {
 	return AS_aemReference;
 }
-
-// TO DO: default commands, properties
 
 @end
 

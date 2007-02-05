@@ -26,12 +26,8 @@
 		4FDCB2FC0B6D0CD0009534FD /* codecs.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FDCB2EE0B6D0CD0009534FD /* codecs.m */; };
 		4FDCB2FD0B6D0CD0009534FD /* connect.h in Headers */ = {isa = PBXBuildFile; fileRef = 4FDCB2EF0B6D0CD0009534FD /* connect.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4FDCB2FE0B6D0CD0009534FD /* connect.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FDCB2F00B6D0CD0009534FD /* connect.m */; };
-		4FDCB2FF0B6D0CD0009534FD /* parser.h in Headers */ = {isa = PBXBuildFile; fileRef = 4FDCB2F10B6D0CD0009534FD /* parser.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4FDCB3000B6D0CD0009534FD /* parser.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FDCB2F20B6D0CD0009534FD /* parser.m */; };
 		4FDCB3030B6D0CD0009534FD /* specifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 4FDCB2F50B6D0CD0009534FD /* specifier.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4FDCB3040B6D0CD0009534FD /* specifier.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FDCB2F60B6D0CD0009534FD /* specifier.m */; };
-		4FDCB3050B6D0CD0009534FD /* terminology.h in Headers */ = {isa = PBXBuildFile; fileRef = 4FDCB2F70B6D0CD0009534FD /* terminology.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4FDCB3060B6D0CD0009534FD /* terminology.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FDCB2F80B6D0CD0009534FD /* terminology.m */; };
 		4FDCB32C0B6D14A6009534FD /* Appscript.h in Headers */ = {isa = PBXBuildFile; fileRef = 4FDCB32B0B6D14A6009534FD /* Appscript.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4FDCB4B20B6D5F21009534FD /* types.h in Headers */ = {isa = PBXBuildFile; fileRef = 4FDCB4B00B6D5F21009534FD /* types.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4FDCB4B30B6D5F21009534FD /* types.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FDCB4B10B6D5F21009534FD /* types.m */; };
@@ -57,6 +53,8 @@
 		0867D69BFE84028FC02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		089C1667FE841158C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		32DBCF5E0370ADEE00C91783 /* Appscript_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Appscript_Prefix.pch; sourceTree = "<group>"; };
+		4F196CB60B7786000095502E /* bridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bridge.h; sourceTree = "<group>"; };
+		4F196CB70B7786000095502E /* bridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = bridge.m; sourceTree = "<group>"; };
 		4F1E9DED0B74EDCB00D4DCBF /* referencerenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = referencerenderer.h; sourceTree = "<group>"; };
 		4F1E9DEE0B74EDCB00D4DCBF /* referencerenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = referencerenderer.m; sourceTree = "<group>"; };
 		4F1E9F400B75305800D4DCBF /* constant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = constant.h; sourceTree = "<group>"; };
@@ -159,6 +157,32 @@
 			name = "Other Sources";
 			sourceTree = "<group>";
 		};
+		4F196CC70B7789220095502E /* bridge */ = {
+			isa = PBXGroup;
+			children = (
+				4F196CB60B7786000095502E /* bridge.h */,
+				4F196CB70B7786000095502E /* bridge.m */,
+				4FDCB2F10B6D0CD0009534FD /* parser.h */,
+				4FDCB2F20B6D0CD0009534FD /* parser.m */,
+				4FDCB2F70B6D0CD0009534FD /* terminology.h */,
+				4FDCB2F80B6D0CD0009534FD /* terminology.m */,
+			);
+			name = bridge;
+			sourceTree = "<group>";
+		};
+		4F196CC80B7789500095502E /* base */ = {
+			isa = PBXGroup;
+			children = (
+				4F1E9F400B75305800D4DCBF /* constant.h */,
+				4F1E9F410B75305800D4DCBF /* constant.m */,
+				4FDCB2F30B6D0CD0009534FD /* reference.h */,
+				4FDCB2F40B6D0CD0009534FD /* reference.m */,
+				4F1E9DED0B74EDCB00D4DCBF /* referencerenderer.h */,
+				4F1E9DEE0B74EDCB00D4DCBF /* referencerenderer.m */,
+			);
+			name = base;
+			sourceTree = "<group>";
+		};
 		4F48566A0B6E8220005264DC /* query builder */ = {
 			isa = PBXGroup;
 			children = (
@@ -207,16 +231,8 @@
 		4FDCB4B50B6D5F89009534FD /* Appscript */ = {
 			isa = PBXGroup;
 			children = (
-				4F1E9F400B75305800D4DCBF /* constant.h */,
-				4F1E9F410B75305800D4DCBF /* constant.m */,
-				4FDCB2F10B6D0CD0009534FD /* parser.h */,
-				4FDCB2F20B6D0CD0009534FD /* parser.m */,
-				4FDCB2F30B6D0CD0009534FD /* reference.h */,
-				4FDCB2F40B6D0CD0009534FD /* reference.m */,
-				4F1E9DED0B74EDCB00D4DCBF /* referencerenderer.h */,
-				4F1E9DEE0B74EDCB00D4DCBF /* referencerenderer.m */,
-				4FDCB2F70B6D0CD0009534FD /* terminology.h */,
-				4FDCB2F80B6D0CD0009534FD /* terminology.m */,
+				4F196CC80B7789500095502E /* base */,
+				4F196CC70B7789220095502E /* bridge */,
 			);
 			name = Appscript;
 			sourceTree = "<group>";
@@ -231,9 +247,7 @@
 				4FDCB2F90B6D0CD0009534FD /* application.h in Headers */,
 				4FDCB2FB0B6D0CD0009534FD /* codecs.h in Headers */,
 				4FDCB2FD0B6D0CD0009534FD /* connect.h in Headers */,
-				4FDCB2FF0B6D0CD0009534FD /* parser.h in Headers */,
 				4FDCB3030B6D0CD0009534FD /* specifier.h in Headers */,
-				4FDCB3050B6D0CD0009534FD /* terminology.h in Headers */,
 				4FDCB32C0B6D14A6009534FD /* Appscript.h in Headers */,
 				4FDCB4B20B6D5F21009534FD /* types.h in Headers */,
 				4F25FAC20B6E79CE0050D532 /* base.h in Headers */,
@@ -309,9 +323,7 @@
 				4FDCB2FA0B6D0CD0009534FD /* application.m in Sources */,
 				4FDCB2FC0B6D0CD0009534FD /* codecs.m in Sources */,
 				4FDCB2FE0B6D0CD0009534FD /* connect.m in Sources */,
-				4FDCB3000B6D0CD0009534FD /* parser.m in Sources */,
 				4FDCB3040B6D0CD0009534FD /* specifier.m in Sources */,
-				4FDCB3060B6D0CD0009534FD /* terminology.m in Sources */,
 				4FDCB4B30B6D5F21009534FD /* types.m in Sources */,
 				4F25FAC30B6E79CE0050D532 /* base.m in Sources */,
 				4F4856690B6E8204005264DC /* test.m in Sources */,
