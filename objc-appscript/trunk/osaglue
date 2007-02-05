@@ -59,9 +59,9 @@ def renderConstantClass(interface, implementation):
 	print >> implementation, '''
 + (id)constantWithCode:(OSType)code_ {
     switch (code_) {'''
-	for name, code in typebyname:
-		code = formatcode(code.code)
-		print >> implementation, '''        case %s: return [self %s];''' % (code, name)
+	for code, name in typebycode:
+		code = formatcode(code)
+		print >> implementation, '''        case %s: return [self %s];''' % (code, name.name)
 	print >> implementation, '''        default: return [[self superclass] constantWithCode: code_];
     }
 }
@@ -161,63 +161,63 @@ _selectorimplementation = """
 // ordinal selectors
 
 - (PREFIXReference *)first {
-    return [[self class] referenceWithAppData: AS_appData
+    return [PREFIXReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference first]];
 }
 
 - (PREFIXReference *)middle {
-    return [[self class] referenceWithAppData: AS_appData
+    return [PREFIXReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference middle]];
 }
 
 - (PREFIXReference *)last {
-    return [[self class] referenceWithAppData: AS_appData
+    return [PREFIXReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference last]];
 }
 
 - (PREFIXReference *)any {
-    return [[self class] referenceWithAppData: AS_appData
+    return [PREFIXReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference any]];
 }
 
 // by-index, by-name, by-id selectors
  
 - (PREFIXReference *)at:(long)index {
-    return [[self class] referenceWithAppData: AS_appData
+    return [PREFIXReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference at: index]];
 }
 
 - (PREFIXReference *)byIndex:(id)index { // index is normally NSNumber, but may occasionally be other types
-    return [[self class] referenceWithAppData: AS_appData
+    return [PREFIXReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference byIndex: index]];
 }
 
 - (PREFIXReference *)byName:(NSString *)name {
-    return [[self class] referenceWithAppData: AS_appData
+    return [PREFIXReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference byName: name]];
 }
 
 - (PREFIXReference *)byID:(id)id_ {
-    return [[self class] referenceWithAppData: AS_appData
+    return [PREFIXReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference byID: id_]];
 }
 
 // by-relative-position selectors
 
 - (PREFIXReference *)previous:(ASConstant *)class_ {
-    return [[self class] referenceWithAppData: AS_appData
+    return [PREFIXReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference previous: [class_ AS_code]]];
 }
 
 - (PREFIXReference *)next:(ASConstant *)class_ {
-    return [[self class] referenceWithAppData: AS_appData
+    return [PREFIXReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference next: [class_ AS_code]]];
 }
 
 // by-range selector
 
 - (PREFIXReference *)at:(long)fromIndex to:(long)toIndex {
-    return [[self class] referenceWithAppData: AS_appData
+    return [PREFIXReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference at: fromIndex to: toIndex]];
 }
 
@@ -227,7 +227,7 @@ _selectorimplementation = """
         fromObject = [fromObject AS_aemReference];
     if ([toObject isKindOfClass: [PREFIXReference class]])
         toObject = [toObject AS_aemReference];
-    return [[self class] referenceWithAppData: AS_appData
+    return [PREFIXReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference byRange: fromObject to: toObject]];
 }
 
@@ -235,96 +235,96 @@ _selectorimplementation = """
 
 - (PREFIXReference *)byTest:(PREFIXReference *)testReference {
     // note: getting AS_aemReference won't work for ASDynamicReference
-    return [[self class] referenceWithAppData: AS_appData
+    return [PREFIXReference referenceWithAppData: AS_appData
                     aemReference: [AS_aemReference byTest: [testReference AS_aemReference]]];
 }
 
 // insertion location selectors
 
 - (PREFIXReference *)start {
-    return [[self class] referenceWithAppData: AS_appData
+    return [PREFIXReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference start]];
 }
 
 - (PREFIXReference *)end {
-    return [[self class] referenceWithAppData: AS_appData
+    return [PREFIXReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference end]];
 }
 
 - (PREFIXReference *)before {
-    return [[self class] referenceWithAppData: AS_appData
+    return [PREFIXReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference before]];
 }
 
 - (PREFIXReference *)after {
-    return [[self class] referenceWithAppData: AS_appData
+    return [PREFIXReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference after]];
 }
 
 // Comparison and logic tests
 
 - (PREFIXReference *)greaterThan:(id)object {
-    return [[self class] referenceWithAppData: AS_appData
+    return [PREFIXReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference greaterThan: object]];
 }
 
 - (PREFIXReference *)greaterOrEquals:(id)object {
-    return [[self class] referenceWithAppData: AS_appData
+    return [PREFIXReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference greaterOrEquals: object]];
 }
 
 - (PREFIXReference *)equals:(id)object {
-    return [[self class] referenceWithAppData: AS_appData
+    return [PREFIXReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference equals: object]];
 }
 
 - (PREFIXReference *)notEquals:(id)object {
-    return [[self class] referenceWithAppData: AS_appData
+    return [PREFIXReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference notEquals: object]];
 }
 
 - (PREFIXReference *)lessThan:(id)object {
-    return [[self class] referenceWithAppData: AS_appData
+    return [PREFIXReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference lessThan: object]];
 }
 
 - (PREFIXReference *)lessOrEquals:(id)object {
-    return [[self class] referenceWithAppData: AS_appData
+    return [PREFIXReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference lessOrEquals: object]];
 }
 
 - (PREFIXReference *)startsWith:(id)object {
-    return [[self class] referenceWithAppData: AS_appData
+    return [PREFIXReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference startsWith: object]];
 }
 
 - (PREFIXReference *)endsWith:(id)object {
-    return [[self class] referenceWithAppData: AS_appData
+    return [PREFIXReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference endsWith: object]];
 }
 
 - (PREFIXReference *)contains:(id)object {
-    return [[self class] referenceWithAppData: AS_appData
+    return [PREFIXReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference contains: object]];
 }
 
 - (PREFIXReference *)isIn:(id)object {
-    return [[self class] referenceWithAppData: AS_appData
+    return [PREFIXReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference isIn: object]];
 }
 
 - (PREFIXReference *)AND:(id)remainingOperands {
-    return [[self class] referenceWithAppData: AS_appData
+    return [PREFIXReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference AND: remainingOperands]];
 }
 
 - (PREFIXReference *)OR:(id)remainingOperands {
-    return [[self class] referenceWithAppData: AS_appData
+    return [PREFIXReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference OR: remainingOperands]];
 }
 
 - (PREFIXReference *)NOT {
-    return [[self class] referenceWithAppData: AS_appData
+    return [PREFIXReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference NOT]];
 }
 """
@@ -417,9 +417,9 @@ def renderReferenceRenderer(interface, implementation):
 }'''
 	print >> implementation, '''
 + (NSString *)render:(id)object {
-    return [[self class] render: object withPrefix: @"%s"];
+    return [%sReferenceRenderer render: object withPrefix: @"%s"];
 }
-''' % prefix
+''' % (prefix, prefix)
 	print >> interface, '@end'
 	print >> implementation, '@end'
 
@@ -442,9 +442,9 @@ gluefiles = [
 #import "PREFIXCommandGlue.h"
 #import "PREFIXReferenceRendererGlue.h"
 
-#define PREFIXApp [PREFIXReference referenceWithAppData: nil aemReference: AEMApp]
-#define PREFIXCon [PREFIXReference referenceWithAppData: nil aemReference: AEMCon]
-#define PREFIXIts [PREFIXReference referenceWithAppData: nil aemReference: AEMIts]
+#define PREFIXApp ((PREFIXReference *)[PREFIXReference referenceWithAppData: nil aemReference: AEMApp])
+#define PREFIXCon ((PREFIXReference *)[PREFIXReference referenceWithAppData: nil aemReference: AEMCon])
+#define PREFIXIts ((PREFIXReference *)[PREFIXReference referenceWithAppData: nil aemReference: AEMIts])
 ''', renderReferenceClass),
 
 ('ApplicationGlue', '''
@@ -457,9 +457,6 @@ gluefiles = [
 #import "Appscript/Appscript.h"
 ''', renderReferenceRenderer),
 ]
-
-
-######################################################################
 
 
 def renderGlueFiles(outdir, prefix, gluename, imports, fn):
@@ -517,8 +514,9 @@ EXAMPLES
 To generate TEGlue.h and associated files for TextEdit:
 
     osaglue -o ~/TEGlue TE TextEdit
-
+    
 """
+	sys.exit()
 
 outdir = opts.get('-o', '')
 prefix = args[0]
@@ -536,10 +534,12 @@ else:
 	typebycode, typebyname, referencebycode, referencebyname = \
 			terminology.tablesforaetedata([], 'objc-appscript')
 
-referencebyname = referencebyname.items()
-referencebyname.sort(lambda a, b: cmp(a[1][0], b[1][0]) or cmp(a[0], b[0]))
 typebyname = typebyname.items()
 typebyname.sort(lambda a, b: cmp(a[1].__class__.__name__, b[1].__class__.__name__) or cmp(a[0], b[0]))
+typebycode = typebycode.items()
+typebycode.sort(lambda a, b: cmp(a[1].name, b[1].name))
+referencebyname = referencebyname.items()
+referencebyname.sort(lambda a, b: cmp(a[1][0], b[1][0]) or cmp(a[0], b[0]))
 referencebycode = referencebycode.items()
 referencebycode.sort(lambda a, b: cmp(a[1][1], b[1][1]))
 
