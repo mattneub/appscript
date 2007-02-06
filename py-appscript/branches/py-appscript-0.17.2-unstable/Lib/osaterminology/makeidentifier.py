@@ -18,6 +18,161 @@ except: # Python 2.3
 ######################################################################
 # Reserved keywords
 
+# objc-appscript
+#
+# Important: the following must be reserved:
+#
+# - names of ObjC keywords
+# - names of NSObject class and instance methods
+# - names of methods used in ASConstant, ASReference classes // TO DO
+# - names of additional methods used in Application classes // TO DO
+# - names of built-in keyword arguments in ASCommand // TO DO
+# - anything else?
+
+
+kObjCKeywords = [
+	"const",
+	"extern",
+	"auto",
+	"register",
+	"static",
+	"unsigned",
+	"signed",
+	"volatile",
+	"char",
+	"double",
+	"float",
+	"int",
+	"long",
+	"short",
+	"void",
+	"typedef",
+	"struct",
+	"union",
+	"enum",
+	"id",
+	"Class",
+	"SEL",
+	"IMP",
+	"BOOL",
+	"return",
+	"goto",
+	"if",
+	"else",
+	"case",
+	"default",
+	"switch",
+	"break",
+	"continue",
+	"while",
+	"do",
+	"for",
+	"sizeof",
+	"self",
+	"super",
+	"nil",
+	"NIL",
+	"YES",
+	"NO",
+	]
+
+kObjCNSObjectMethods = [
+	"initialize",
+	"load",
+	"new",
+	"alloc",
+	"allocWithZone",
+	"init",
+	"copy",
+	"copyWithZone",
+	"mutableCopy",
+	"mutableCopyWithZone",
+	"dealloc",
+	"finalize",
+	"class",
+	"superclass",
+	"isSubclassOfClass",
+	"instancesRespondToSelector",
+	"conformsToProtocol",
+	"methodForSelector",
+	"instanceMethodForSelector",
+	"instanceMethodSignatureForSelector",
+	"methodSignatureForSelector",
+	"description",
+	"poseAsClass",
+	"cancelPreviousPerformRequestsWithTarget",
+	"forwardInvocation",
+	"doesNotRecognizeSelector",
+	"awakeAfterUsingCoder",
+	"classForArchiver",
+	"classForCoder",
+	"classForKeyedArchiver",
+	"classFallbacksForKeyedArchiver",
+	"classForKeyedUnarchiver",
+	"classForPortCoder",
+	"replacementObjectForArchiver",
+	"replacementObjectForCoder",
+	"replacementObjectForKeyedArchiver",
+	"replacementObjectForPortCoder",
+	"setVersion",
+	"version",
+	"attributeKeys",
+	"classDescription",
+	"inverseForRelationshipKey",
+	"toManyRelationshipKeys",
+	"toOneRelationshipKeys",
+	"classCode",
+	"className",
+	"scriptingProperties",
+	"setScriptingProperties",
+	]
+
+
+kObjCAppscriptReservedWords = [	
+	"initWithName",
+	"initWithBundleID",
+	"initWithSignature",
+	"initWithPath",
+	"initWithURL",
+	"initWithPID",
+	"initWithDescriptor",
+	"ID",
+	"start",
+	"end",
+	"before",
+	"after",
+	"previous",
+	"next",
+	"first",
+	"middle",
+	"last",
+	"any",
+	"startsWith",
+	"endsWith",
+	"contains",
+	"isIn",
+	"doesNotStartWith",
+	"doesNotEndWith",
+	"doesNotContain",
+	"isNotIn",
+	"AND",
+	"NOT",
+	"OR",
+	"startTransaction",
+	"abortTransaction",
+	"endTransaction",
+	"resultType",
+	"ignore",
+	"timeout",
+	"waitReply",
+	"ignoreReply",
+	"queueReply",
+	"returnID",
+	"help",
+	] + kObjCKeywords + kObjCNSObjectMethods
+
+
+
 # py-appscript
 #
 # Important: the following must be reserved:
@@ -171,7 +326,8 @@ kRbAppscriptReservedWords = [
 
 ######################################################################
 
-class Converter:
+
+class _Converter:
 	# Special conversions for selected characters in AppleScript keywords; makes appscript users' lives easier. Note this is a lossy conversion, but chances of this causing name collisions are very low unless application developers are very stupid in choosing keyword names in their dictionaries. (Mind, this wouldn't have been a problem had Apple restricted them all to using only alphanumeric and space characters to begin with, which would've allowed simple, unambiguous conversion to C-style identifiers and back.)
 	
 	_specialConversions = {
@@ -180,11 +336,52 @@ class Converter:
 			'&': 'and',
 			'/': '_',
 			}
-
+	
 	_legalChars = string.ascii_letters + '_'
 	_alphanum = _legalChars + string.digits
+	
+	def __init__(self, reservedWords):
+		self._cache = {}
+		self._reservedWords = set(reservedWords)
 
-	def __init__(self, reservedWords=kPyAppscriptReservedWords):
+
+
+class CamelCaseConverter(_Converter):
+		
+	def convert(self, s):
+		"""Convert string to identifier.
+			s : str
+			Result : str
+		"""
+		if not self._cache.has_key(s):
+			legal = self._legalChars
+			res = ''
+			uppercaseNext = False
+			for c in s:
+				if c in legal:
+					if uppercaseNext:
+						c = c.upper()
+						uppercaseNext = False
+					res += c
+				elif c in ' -/':
+					uppercaseNext = True
+				elif c == '&':
+					res += 'And'
+				else:
+					if res == '':
+						res = '_' # avoid creating an invalid identifier
+					res += '0x%2.2X' % ord(c)
+				legal = self._alphanum
+			if res in self._reservedWords or res.startswith('_') or res.startswith('AS_'):
+				res += '_'
+			self._cache[s] = str(res)
+		return self._cache[s]
+
+
+
+class UnderscoreConverter(_Converter):
+
+	def __init__(self, reservedWords):
 		self._cache = {}
 		self._reservedWords = set(reservedWords)
 		
@@ -212,14 +409,15 @@ class Converter:
 		return self._cache[s]
 
 
-_pyconverter = Converter().convert
+_pyconverter = UnderscoreConverter(kPyAppscriptReservedWords).convert
 
 
 _converters = {
 	'applescript': lambda s:s,
 	'appscript': _pyconverter,
+	'objc-appscript': CamelCaseConverter(kObjCAppscriptReservedWords).convert,
 	'py-appscript': _pyconverter,
-	'rb-appscript': Converter(kRbAppscriptReservedWords).convert,
+	'rb-appscript': UnderscoreConverter(kRbAppscriptReservedWords).convert,
 }
 
 
@@ -233,5 +431,4 @@ def getconverter(name='py-appscript'):
 		return _converters[name]
 	except:
 		raise KeyError, "Keyword converter not found: %r" % name
-
 

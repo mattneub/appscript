@@ -1,6 +1,9 @@
-#!/usr/bin/env pythonw
+#!/usr/bin/env python
 
 from osaterminology.dom.osadictionary import kAll, Nodes
+
+from codecs import getencoder
+
 
 ######################################################################
 
@@ -51,6 +54,20 @@ class AppscriptTypeRenderer(TypeRendererBase):
 		return getattr(type, 'pluralname', type.name) or self._render(type)
 
 
+class ObjCAppscriptTypeRenderer(AppscriptTypeRenderer):
+	_type = '<AEMType %s>'
+	_enum = '<AEMEnum %s>'
+	_keyword = '%s'
+	
+	_hexencode = getencoder('hex_codec')
+	
+	def escapecode(self, s):
+		if [c for c in s if not (31 < ord(c) < 128) or c in '\\\'"']:
+			return '0x' + self._hexencode(code)[0]
+		else:
+			return "'%s'" % code
+
+
 class PyAppscriptTypeRenderer(AppscriptTypeRenderer):
 	_type = 'AEType("%s")'
 	_enum = 'AEEnum("%s")'
@@ -87,6 +104,7 @@ class ApplescriptTypeRenderer(TypeRendererBase):
 typerenderers = {
 	'applescript': ApplescriptTypeRenderer,
 	'appscript': PyAppscriptTypeRenderer,
+	'objc-appscript': ObjCAppscriptTypeRenderer,
 	'py-appscript': PyAppscriptTypeRenderer,
 	'rb-appscript': RbAppscriptTypeRenderer,
 	}

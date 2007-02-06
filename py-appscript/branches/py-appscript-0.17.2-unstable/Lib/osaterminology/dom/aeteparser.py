@@ -217,6 +217,14 @@ class AppscriptParser(_Parser):
 		_Parser.start_command(self, code, name, description, directarg, reply)
 
 
+class ObjCAppscriptParser(AppscriptParser):
+	asname = staticmethod(makeidentifier.getconverter('objc-appscript'))
+	
+	def typemodule(self):
+		import objcappscripttypes
+		return objcappscripttypes
+
+
 class PyAppscriptParser(AppscriptParser):
 	asname = staticmethod(makeidentifier.getconverter('py-appscript'))
 
@@ -228,6 +236,7 @@ class RbAppscriptParser(AppscriptParser):
 _parsers = {
 		'applescript': AppleScriptParser, 
 		'appscript': PyAppscriptParser,
+		'objc-appscript': ObjCAppscriptParser,
 		'py-appscript': PyAppscriptParser,
 		'rb-appscript': RbAppscriptParser,
 }

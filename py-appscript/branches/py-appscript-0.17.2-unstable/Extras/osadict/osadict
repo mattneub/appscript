@@ -30,9 +30,11 @@ _domain = 'net.sourceforge.appscript.osadict'
 
 _styles = {
 		'as': 'applescript',
+		'objc': 'objc-appscript',
 		'py': 'py-appscript',
 		'rb': 'rb-appscript',
 		'applescript': 'applescript',
+		'objc-appscript': 'objc-appscript',
 		'py-appscript': 'py-appscript',
 		'rb-appscript': 'rb-appscript',
 		}
@@ -144,9 +146,10 @@ DESCRIPTION
     The -s option currently supports the following formatting styles
     (acceptable abbreviations are shown in parentheses):
     
-    *    applescript      (as)
-    *    py-appscript     (py)
-    *    rb-appscript     (rb)
+    *      applescript      (as)
+    *    objc-appscript    (objc)
+    *      py-appscript     (py)
+    *      rb-appscript     (rb)
     
     The -H and -N options are mutually exclusive. If neither is given, the
     viewer runs in interactive mode (the default).

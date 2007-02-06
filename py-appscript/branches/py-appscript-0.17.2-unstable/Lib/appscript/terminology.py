@@ -157,11 +157,11 @@ def aetedataforapp(app):
 	return [aete.data for aete in aetes if isinstance(aete, AEDesc) and aete.type == 'aete']
 
 
-def tablesforaetedata(aetes):
+def tablesforaetedata(aetes, style='py-appscript'):
 	"""Build terminology tables from a list of unpacked aete byte strings.
 		Result : tuple of dict -- (typebycode, typebyname, referencebycode, referencebyname)
 	"""
-	classes, enums, properties, elements, commands = buildtablesforaetes(aetes)
+	classes, enums, properties, elements, commands = buildtablesforaetes(aetes, style)
 	return _makeTypeTable(classes, enums, properties) + _makeReferenceTable(properties, elements, commands)
 
 
@@ -173,13 +173,13 @@ def tablesformodule(terms):
 			+ _makeReferenceTable(terms.properties, terms.elements, terms.commands)
 
 
-def tablesforapp(app):
+def tablesforapp(app, style='py-appscript'):
 	"""Build terminology tables for an application.
 		app : aem.Application
 		Result : tuple of dict -- (typebycode, typebyname, referencebycode, referencebyname)
 	"""
 	if not _terminologyCache.has_key(app.AEM_identity):
-		_terminologyCache[app.AEM_identity] = tablesforaetedata(aetedataforapp(app))
+		_terminologyCache[app.AEM_identity] = tablesforaetedata(aetedataforapp(app), style)
 	return _terminologyCache[app.AEM_identity]
 
 
