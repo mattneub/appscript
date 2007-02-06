@@ -50,6 +50,7 @@ typedef enum {
 	id AS_appData;
 	AEMEvent *AS_event;
 	AESendMode sendMode;
+	int timeout;
 }
 
 + (id)commandWithAppData:(id)appData
@@ -69,8 +70,6 @@ typedef enum {
 - (AEMEvent *)AS_aemEvent;
 
 - (id)send;
-
-- (id)sendWithTimeout:(int)timeout;
 
 - (OSErr)errorNumber;
 

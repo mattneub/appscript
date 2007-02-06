@@ -150,8 +150,9 @@
 			  eventID:(AEEventID)code
 	  directParameter:(id)directParameter
 	  parentReference:(id)parentReference {
-	  
+	
 	sendMode = kAEWaitReply + kAECanSwitchLayer;
+	timeout = kAEDefaultTimeout;
 	AS_event = [[appData target] eventWithEventClass: classCode
 											 eventID: code
 											  codecs: appData];
@@ -171,10 +172,6 @@
 }
 
 - (id)send {
-	return [self sendWithTimeout: kAEDefaultTimeout];
-}
-
-- (id)sendWithTimeout:(int)timeout {
 	return [AS_event sendWithMode: sendMode timeout: timeout];
 }
 

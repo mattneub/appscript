@@ -97,13 +97,19 @@
 
 - (id)sendWithMode:(AESendMode)sendMode timeout:(long)timeoutInTicks {
 	AEDesc replyDesc = {typeNull, NULL};
-	NSAppleEventDescriptor *desc, *replyData, *result;
+	NSAppleEventDescriptor *desc, *replyData, *errorNumberDesc, *errorStringDesc, *result;
 	
+	// clear any previous error info
+	errorNumber = noErr;
+	if (errorString) {
+		[errorString release];
+		errorString = nil;
+	}
 	// send event
 	errorNumber = sendProc(event, &replyDesc, sendMode, timeoutInTicks);
 	if (errorNumber) {
 		// ignore errors caused by application quitting normally after being sent a quit event
-		if (errorNumber == -609) {
+		if (errorNumber == connectionInvalid) {
 			desc = [[NSAppleEventDescriptor alloc] initWithAEDescNoCopy: event];
 				if ([[desc attributeDescriptorForKeyword: keyEventClassAttr]
 								typeCodeValue] == kCoreEventClass
@@ -115,22 +121,23 @@
 			[desc release];
 		}
 		// for any other Apple Event Manager errors, set error condition and return nil
-		[errorString release];
-		errorString = nil;
 		return nil; // note: clients should check return value to determine if event failed
 	}
 	// extract reply data, if any
 	if (replyDesc.descriptorType != typeNull) {
 		replyData = [[NSAppleEventDescriptor alloc] initWithAEDescNoCopy: &replyDesc];
 		// if application returned an error, set error condition and return nil
-		result = [replyData paramDescriptorForKeyword: keyErrorNumber];
-		if (result) {
-			errorNumber = (OSErr)[result int32Value];
-			if (errorNumber) { // Some apps (e.g. Finder) may return noErr on success, so ignore that.
-				if (errorString) [errorString release];
-				errorString = [[replyData paramDescriptorForKeyword: keyErrorString] stringValue];
-				[errorString retain];
+		errorNumberDesc = [replyData paramDescriptorForKeyword: keyErrorNumber];
+		errorStringDesc = [replyData paramDescriptorForKeyword: keyErrorString];
+		if (errorNumberDesc || errorStringDesc) {
+			if (errorNumberDesc)
+				errorNumber = (OSErr)[errorNumberDesc int32Value];
+			if (errorStringDesc)
+				errorString = [[errorStringDesc stringValue] retain];
+			if (errorNumber || errorString) { // Some apps (e.g. Finder) may return noErr on success, so ignore that
 				// TO DO: get any other error info
+				if (!errorNumber)
+					errorNumber = errOSAGeneralError; // if only error string was given, set error number
 				[replyData release];
 				return nil; // note: clients should check return value to determine if event failed
 			}
