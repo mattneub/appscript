@@ -1,0 +1,174 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<title>appscript | 11. Application Commands</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<style type="text/css" media="all"><!--@import url(full.css);--></style>
+
+</head>
+<body>
+
+<h1>11. Application Commands</h1>
+
+<!-- top navigation -->
+<div class="navbar">
+	<a href="10_referenceexamples.html">Previous</a> | <a href="index.html">Up</a> | <a href="12_commandexamples.html">Next</a>
+	
+</div>
+
+<!-- content -->
+<div id="content">
+
+
+<p class="hilitebox">Note that appscript commands aren't yet fully implemented: event attributes, transactions, return IDs and send mode flags have still to be supported, and the design of the error reporting/raising system is not yet finalised.</p>
+
+<h2>Using commands</h2>
+
+<p>Sending application commands in objc-appscript involves the following steps:</p>
+
+<ol>
+<li>Create a new command instance, optionally supplying a direct parameter.</li>
+<li>Add any attributes and/or keyword parameters to the command.</li>
+<li>Send the command to the application.</li>
+<li>Check for application-generated errors and/or a return value, if any.</li>
+</ol>
+
+<p>This granular approach provides plenty of power and flexibility along with a reasonably terse, efficient syntax.</p>
+
+
+<h3>Creating a command</h3>
+
+<p>Each application command is defined as a pair of methods on the glue's Application and Reference classes. One takes a value representing the command's direct parameter as its single argument, the other doesn't. For example, TextEdit's <code>duplicate</code> command is represented as:</p>
+
+<pre><code>- (TEMakeCommand *)duplicate;
+- (TEMakeCommand *)duplicate:(id)directParameter;</code></pre>
+
+<p>(Note that all commands take this form, regardless of whether the application dictionary lists them as taking a direct parameter or not; it's up to the client to use them as appropriate.)</p>
+
+
+<h3>Adding <!-- TO DO attributes and--> keyword parameters</h3>
+
+<p>Once a command object has been created, keyword parameters can be added one at a time. Each keyword parameter is represented by a method of the command object that takes a value of any class and returns <code>self</code>, allowing multiple parameter calls to be chained together for convenience. For example, TextEdit's <code>TEMakeCommand</code> class defines the following parameter methods:</p>
+
+<pre><code>- (TEMakeCommand *)to:(id)value;
+- (TEMakeCommand *)withProperties:(id)value</code></pre>
+
+<p>All required parameters must be supplied, along with zero or more optional parameters, before the command can be sent.</p>
+
+
+<h3>Sending a command</h3>
+
+<p>To send a command, just call its <code>-send</code> method. This will send the command to the application and return one of the following:</p>
+
+<ul>
+<li>If the command is successful and the application supplies a return value, that value is returned.</li>
+
+<li>If the command is successful and the application doesn't supply a return value, an <code>NSNull</code> instance is returned.</p>
+
+<li>If the command is unsuccessful, either due to an Apple Event Manager error or an application error, <code>nil</code> is returned to indicate failure.</li>
+</ul>
+
+
+<h3>Checking for command errors</h3>
+
+<p>Code that needs to know if an application command was unsuccessful should check the <code>-send</code> method's return value to see if it returned nil. If it did, error information can be obtained by calling the command object's <code>-errorNumber</code> and <code>-errorString</code> methods:</p>
+
+<pre><code>- (OSErr)errorNumber;
+- (NSString *)errorString;</code></pre>
+
+<h3>Example</h3>
+
+<p>AppleScript:</p>
+
+<pre><code>try
+    tell application "TextEdit"
+        return make new document with properties {text:"Hi!"}
+    end tell
+on error errString number errNumber
+    return "error:\n number: " & errNumber & "\n message: " & errString 
+end try</code></pre>
+
+<p>ObjC:</p>
+
+<pre><code>TEApplication *textedit;
+TEMakeCommand *makeCmd;
+id result;
+
+textedit = [[TEApplication alloc] initWithName: @"TextEdit.app"];
+
+makeCmd = [[[textedit make]
+                      new_: [TEConstant document]]
+            withProperties: [NSDictionary dictionaryWithObjectsAndKeys:
+                                      @"Hi 2!", [TEConstant text], nil]];
+result = [makeCmd send];
+if (result) 
+    NSLog(@"result:\n%@\n\n", result);
+else
+    NSLog(@"error:\n number: %i\n message: %@\n\n",
+            [makeCmd errorNumber], [makeCmd errorString]);</code></pre>
+
+
+<h2>Examples</h2>
+
+<pre><code>// tell application &quot;TextEdit&quot; to activate
+[[textedit activate] send]
+
+// tell application &quot;TextEdit&quot; to open fileRefList
+[[textedit open: fileRefList] send]
+
+// tell application &quot;Finder&quot; to get version
+[[[finder version] get] send]
+
+// tell application &quot;Finder&quot; to set name of file &quot;foo.txt&quot; of home to &quot;bar.txt&quot;
+[[[[[[[finder home] files] byName: @"foo.txt"] name] set] to: @"bar.txt"] send]
+
+// tell application &quot;TextEdit&quot; to count (text of first document) each paragraph
+[[[[[[textedit documents] first] text] count] each: [TEConstant paragraph]] send]
+
+// tell application &quot;TextEdit&quot; to make new document at end of documents
+[[[[[textedit documents] end] make] new_: [TEConstant document]] send]<!--
+// tell application &quot;Finder&quot; to get items of home as alias list
+[finder home] items] get(:result_type =&gt; :alias)--></code></pre>
+
+
+
+<h2>Special cases</h2>
+
+<p>The following special-case behaviours are implemented for convenience:</p>
+
+<ol>
+<li><p>Commands that take a reference to one or more application objects as their direct parameter may be written in the following form:</p>
+
+<pre><code>[reference command]</code></pre>
+
+<p>The conventional  form is also supported should you ever wish (or need) to use it:</p>
+
+<pre><code>[application command: reference]</code></pre>
+
+<p>The two forms are equivalent (appscript converts the first form to the second behind the scenes) although the first form is preferred for conciseness.</p></li>
+
+
+<li><p>If a command that already has a direct parameter is called on a reference, i.e.:</p>
+
+<pre><code>[reference command: directParameter]</code></pre>
+
+<p>the reference upon which it is called will be packed as the Apple event's 'subject' attribute (<code>keySubjectAttr</code>).</p></li>
+
+
+</ol>
+
+
+</div>
+
+<!-- bottom navigation -->
+<div class="navbar">
+	<a href="10_referenceexamples.html">Previous</a> | <a href="index.html">Up</a> | <a href="12_commandexamples.html">Next</a>
+	
+</div>
+
+<!--footer-->
+<p class="footer">&copy; 2007 HAS</p>
+</body>
+</html>

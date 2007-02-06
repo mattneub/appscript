@@ -1,0 +1,24 @@
+TO DO
+
+- note: emptying default typebyname, typebycode tables means that type/enum/property name collisions between AEM and application won't be detected when generating XXConstant class; need to sort this
+
+- finish AEMCodecs specifier unpackers
+
+- all-in-one shortcuts for get, set commands?
+
+- get developer feedback and suggestions on design of command attribute packing and error reporting schemes
+
+- i386 safety? 64-bit safety? GC (-finalize) support?
+
+- finish appscript.terminology support
+
+- finish osaterminology support (should see about implementing a proper extensible plugin architecture)
+
+- should properties and elements also take a direct index/name selector as a convenient shortcut? e.g.:
+
+	[textedit documents: [NSNumber numberWithLong: 3]]
+	[textedit documents: @"ReadMe"]
+
+- provide convenience macro(s), e.g.:
+
+	#AEMLong(index) [NSNumber numberWithLong: index]
