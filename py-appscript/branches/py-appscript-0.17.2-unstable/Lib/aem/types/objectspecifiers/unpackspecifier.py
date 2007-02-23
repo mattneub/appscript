@@ -64,7 +64,12 @@ def _fullyUnpackObjectSpecifier(desc, codecs):
 	want = codecs.unpack(desc.AEGetParamDesc(kAE.keyAEDesiredClass, kAE.typeType)).code # 4-letter code indicating element class
 	keyForm = codecs.unpack(desc.AEGetParamDesc(kAE.keyAEKeyForm, kAE.typeEnumeration)).code # 4-letter code indicating Specifier type
 	key = codecs.unpack(desc.AEGetParamDesc(kAE.keyAEKeyData, kAE.typeWildCard)) # value indicating which object(s) to select
-	ref = codecs.unpack(desc.AEGetParamDesc(kAE.keyAEContainer, kAE.typeWildCard)) or codecs.app # recursively unpack container structure
+	ref = codecs.unpack(desc.AEGetParamDesc(kAE.keyAEContainer, kAE.typeWildCard)) # recursively unpack container structure
+	if not isinstance(ref, base.BASE):
+		if ref is None:
+			ref = codecs.app
+		else:
+			ref = specifier.customroot(ref)
 	# print want, keyForm, key, ref # DEBUG
 	if keyForm == kAE.formPropertyID: # property specifier
 		return ref.property(key.code)

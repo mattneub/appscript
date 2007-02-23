@@ -4,9 +4,9 @@
 """
 
 from basictypes import AETypeBase, AEType, AEEnum, AEProp, AEKey, encoders, decoders, UnitTypeCodecs
-from objectspecifiers import app, con, its, Specifier, Test, osdecoders
+from objectspecifiers import app, con, its, customroot, osdecoders, BASE, Specifier, Test
 
-__all__ = ['Codecs', 'AETypeBase', 'AEType', 'AEEnum', 'AEProp', 'AEKey', 'app', 'con', 'its']
+__all__ = ['Codecs', 'AETypeBase', 'AEType', 'AEEnum', 'AEProp', 'AEKey', 'app', 'con', 'its', 'customroot']
 
 ######################################################################
 # PRIVATE
@@ -53,7 +53,11 @@ class Codecs:
 		if desc.AECheckIsRecord():
 			rec = desc.AECoerceDesc('reco')
 			rec.AEPutParamDesc('pcls', self.pack(AEType(desc.type)))
-			return self.unpack(rec)
+			decoder = self.decoders.get('reco')
+			if decoder:
+				return decoder(rec, self)
+			else:
+				return rec
 		else:
 			return desc
 	
@@ -64,7 +68,7 @@ class Codecs:
 			data : anything -- a Python value
 			Result : CarbonX.AE.AEDesc -- an Apple event descriptor, or error if no encoder exists for this type of data
 		"""
-		if isinstance(data, (Specifier, Test)):
+		if isinstance(data, BASE):
 			return data.AEM_packSelf(self)
 		else:
 			try:

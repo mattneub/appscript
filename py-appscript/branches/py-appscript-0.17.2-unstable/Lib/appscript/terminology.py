@@ -125,13 +125,12 @@ def _makeReferenceTable(properties, elements, commands):
 			referencebyname[name] = (kind, code) # to handle synonyms, if same name appears more than once then use code from first definition in list
 	if referencebyname.has_key('text'): # special case: AppleScript always packs 'text of...' as all-elements specifier
 		referencebyname['text'] = (kElement, referencebyname['text'][1])
-	if commands:
-		for name, code, args in commands[::-1]: # to handle synonyms, if two commands have same name but different codes, only the first definition should be used (iterating over the commands list in reverse ensures this)
-			# TO DO: make sure same collision avoidance is done in help terminology (i.e. need to centralise all this stuff in a single osaterminology module)
-			# Avoid collisions between default commands and application-defined commands with same name but different code (e.g. 'get' and 'set' in InDesign CS2):
-			if _defaultcommands.has_key(name) and code != _defaultcommands[name][1][0]:
-				name += '_'
-			referencebyname[name] = (kCommand, (code, dict(args)))
+	for name, code, args in commands[::-1]: # to handle synonyms, if two commands have same name but different codes, only the first definition should be used (iterating over the commands list in reverse ensures this)
+		# TO DO: make sure same collision avoidance is done in help terminology (i.e. need to centralise all this stuff in a single osaterminology module)
+		# Avoid collisions between default commands and application-defined commands with same name but different code (e.g. 'get' and 'set' in InDesign CS2):
+		if _defaultcommands.has_key(name) and code != _defaultcommands[name][1][0]:
+			name += '_'
+		referencebyname[name] = (kCommand, (code, dict(args)))
 	return referencebycode, referencebyname
 
 

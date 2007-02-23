@@ -226,7 +226,7 @@ class Script:
 		
 			mode flags: kOSAModePreventGetSource, kOSAModeDontStoreParent
 		"""
-		self._ciOSAStoreFile(self._id, type, mode, path)
+		self._ci.OSAStoreFile(self._id, type, mode, path)
 	
 	def load(self, desc, mode=kOSAModeNull):
 		"""Load script from AEDesc.
@@ -240,7 +240,7 @@ class Script:
 		
 			mode flags: kOSAModePreventGetSource, kOSAModeDontStoreParent
 		"""
-		return self._ciOSAStore(self._id, type, mode)
+		return self._ci.OSAStore(self._id, type, mode)
 	
 	def run(self):
 		if not self._id:

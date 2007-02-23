@@ -360,15 +360,31 @@ AllElements(MultipleElements) -- refers to all elements of
 
 <h3>Reference Roots</h3>
 
-<pre><code>ApplicationRoot(PropertySpecifier) -- the exported 'app' variable contains
+<p>The following classes are used to construct standard AEM references:</p>
+
+<pre><code>ApplicationRoot(ReferenceRoot) -- the exported 'app' variable contains
         an instance of this class
 
-CurrentContainer(PropertySpecifier) -- the exported 'con' variable contains
+CurrentContainer(ReferenceRoot) -- the exported 'con' variable contains
         an instance of this class
 
-ObjectBeingExamined(PropertySpecifier) -- the exported 'its' variable contains
+ObjectBeingExamined(ReferenceRoot) -- the exported 'its' variable contains
         an instance of this class</code></pre>
 
+<p>Clients shouldn't instantiate the above classes directly; instead, they should refer to the <code>app</code>, <code>con</code> and <code>its</code> variables exported by aem.</p>
+
+<p>The <code>CustomRoot</code> class is used to construct AEM references with a non-standard root:</p>
+
+<pre><code>CustomRoot(ReferenceRoot) -- used to construct references with
+        a custom root
+
+    Constructor:
+
+        __init__(self, rootobj)
+            rootobj : anything -- value to use as innermost container
+                    in nested object specifiers</code></pre>
+
+<p>AEM exports the <code>CustomRoot</code> class via the <code>customroot</code> variable.</p>
 
 
 <!-- TO DO: note on AEM_resolve -->

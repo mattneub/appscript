@@ -3,7 +3,7 @@
 (C) 2004 HAS"""
 
 from terminology import kProperty, kElement
-from aem.types import Specifier, Test
+from aem.types import BASE
 
 ######################################################################
 # PRIVATE
@@ -21,7 +21,7 @@ class _Formatter:
 		self.result = ''
 	
 	def _format(self, val):
-		if isinstance(val, (Specifier, Test)):
+		if isinstance(val, BASE):
 			return renderreference(self._appData, val)
 		else:
 			return repr(val)
@@ -145,6 +145,6 @@ def renderreference(appdata, aemreference):
 	try:
 		aemreference.AEM_resolve(f)
 	except:
-		return '%r.AS_newreference(%r)' % (f.root, aemreference)
+		return '%s.AS_newreference(%r)' % (f.root, aemreference)
 	return f.result
 	

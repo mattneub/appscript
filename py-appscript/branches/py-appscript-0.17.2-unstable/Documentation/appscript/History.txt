@@ -1,5 +1,10 @@
 HISTORY
 
+2006-02-23 -- ???
+
+- fixed minor formatting (cosmetic) glitch when rendering 'app(...).AS_newreference(...)' style references
+
+
 2006-01-15 -- 0.17.0
 
 - removed 'filter' method; 'filter' is no longer a reserved word. Users will need to update any scripts that use apps with a 'filter' keyword (e.g. Photoshop has a 'filter' command) to change 'filter_' -> 'filter'.

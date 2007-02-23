@@ -27,6 +27,11 @@ class DeferredSpecifier(base.BASE):
 	
 	def _realRef(self):
 		ref = self._codecs.unpack(self._desc) or self._codecs.app
+		if not isinstance(ref, base.BASE):
+			if ref is None:
+				ref = self._codecs.app
+			else:
+				ref = customroot(ref)
 		self._realRef = lambda:ref
 		return ref
 	
@@ -559,11 +564,26 @@ class ObjectBeingExamined(ReferenceRoot):
 	_kType = AE.AECreateDesc(kAE.typeObjectBeingExamined, '')
 
 
+class CustomRoot(ReferenceRoot):
+
+	def __init__(self, rootObj):
+		ReferenceRoot.__init__(self)
+		self._rootObj = rootObj
+	
+	def __repr__(self):
+		return 'customroot(%r)' % self._rootObj
+	
+	def _packSelf(self, codecs):
+		return codecs.pack(self._rootObj)
+	
+	def AEM_resolve(self, obj):
+		return obj.customroot(self._rootObj)
+
+
 ###################################
 # Reference root objects; use these constants to construct new specifiers, e.g. app.property('pnam')
 
 app = ApplicationRoot()
 con = CurrentContainer()
 its = ObjectBeingExamined()
-
-
+customroot = CustomRoot

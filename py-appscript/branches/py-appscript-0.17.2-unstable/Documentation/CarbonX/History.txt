@@ -1,5 +1,9 @@
 HISTORY
 
+2007-02-23 -- 0.3.?
+- fixed bugs in osascript.Script's store, storefile methods
+- added AEDescX_ConvertDisown function to _AE extension's C API
+
 2006-11-29 -- 0.3.0
 - renamed AESendMach to AESendMessageAllocatingMachPort
 

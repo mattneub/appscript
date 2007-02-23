@@ -7,6 +7,7 @@ from CarbonX import kAE
 from CarbonX.AE import AEDesc
 
 from aem.types import Codecs
+from aem.types.objectspecifiers import BASE
 
 import connect
 from send import *
@@ -23,7 +24,7 @@ _defaultCodecs = Codecs()
 # PUBLIC
 ######################################################################
 
-class Application:
+class Application(BASE):
 	"""Target application for Apple events."""
 	
 	_Event = Event # Application subclasses can override this attribute (normally with a subclass of the standard aem.send.Event class) to have the event() method return a different class instance; simpler than overriding the event() method
@@ -75,13 +76,21 @@ class Application:
 	__str__ = __repr__
 	
 	def __eq__(self, val):
-		return self.__class__ == val.__class__ and self.AEM_identity == val.AEM_identity
+		return self is val or (
+				self.__class__ == val.__class__ and 
+				self.AEM_identity == val.AEM_identity)
 	
 	def __ne__(self, val):
 		return not self == val
 	
 	def __hash__(self):
 		return hash(self.AEM_identity)
+	
+	def AEM_comparable(self):
+		return ['AEMApplication', self.AEM_identity]
+	
+	def AEM_packSelf(self, codecs):
+		return self._address
 	
 	def __del__(self):
 		if self._transaction != self._kAnyTransactionID: # If user forgot to close a transaction before throwing away the Application object that opened it, try to close it for them. Otherwise application will be left in mid-transaction, preventing anyone else from using it.

@@ -7,14 +7,15 @@
 
 #include "carbonxtoolbox.h"
 
-int shouldLoad = 1;
+static int shouldLoad = 1;
 
-PyObject *(*Ptr_AEDescX_New)(AEDesc *);
-PyObject *(*Ptr_AEDescX_NewBorrowed)(AEDesc *);
-int (*Ptr_AEDescX_Convert)(PyObject *, AEDesc *); 
+static PyObject *(*Ptr_AEDescX_New)(AEDesc *);
+static PyObject *(*Ptr_AEDescX_NewBorrowed)(AEDesc *);
+static int (*Ptr_AEDescX_Convert)(PyObject *, AEDesc *);
+static int (*Ptr_AEDescX_ConvertDisown)(PyObject *, AEDesc *);
 
 
-int LoadCarbonXAE() {
+static int LoadCarbonXAE() {
 	PyObject *aeModule, *aeAPIObj;
 	CarbonXAE_API *aeAPI;
 	
@@ -25,6 +26,7 @@ int LoadCarbonXAE() {
 	Ptr_AEDescX_New = aeAPI->Ptr_AEDescX_New;
 	Ptr_AEDescX_NewBorrowed = aeAPI->Ptr_AEDescX_NewBorrowed;
 	Ptr_AEDescX_Convert = aeAPI->Ptr_AEDescX_Convert;
+	Ptr_AEDescX_ConvertDisown = aeAPI->Ptr_AEDescX_ConvertDisown;
 	
 	if (!Ptr_AEDescX_New) goto failed;
 	shouldLoad = 0; 
@@ -53,7 +55,15 @@ PyObject *AEDescX_NewBorrowed(AppleEvent * cobj) {
 
 int AEDescX_Convert(PyObject *pyobj, AppleEvent *cobj) {
     if (shouldLoad) {
-       if (!LoadCarbonXAE()) return NULL;
+       if (!LoadCarbonXAE()) return 0;
     }
     return (*Ptr_AEDescX_Convert)(pyobj, cobj);
+}
+
+
+int AEDescX_ConvertDisown(PyObject *pyobj, AppleEvent *cobj) {
+    if (shouldLoad) {
+       if (!LoadCarbonXAE()) return 0;
+    }
+    return (*Ptr_AEDescX_ConvertDisown)(pyobj, cobj);
 }

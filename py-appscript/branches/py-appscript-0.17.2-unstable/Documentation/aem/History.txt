@@ -1,5 +1,12 @@
 HISTORY
 
+2007-02-23 -- 0.12.?
+
+- Codecs.unpackunknown no longer causes infinite recursion if a record-like AEDesc is given and there's no typeAERecord unpacker available to unpack it after unpackunknown converts it to a record descriptor
+
+- added support for object specifiers with custom roots
+
+
 2007-01-20 -- 0.12.1
 
 - fixed bug in unittypes' _defaultpacker
