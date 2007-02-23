@@ -1,83 +1,0 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-
-<title>appscript | 6. Classes and Enumerated Types</title>
-
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<style type="text/css" media="all"><!--@import url(full.css);--></style>
-
-</head>
-<body>
-
-<h1>6. Classes and Enumerated Types</h1>
-
-<!-- top navigation -->
-<div class="navbar">
-	<a href="05_keywordconversion.html">Previous</a> | <a href="index.html">Up</a> | <a href="07_applicationobjects.html">Next</a>
-	
-</div>
-
-<!-- content -->
-<div id="content">
-<h2>The <code>k</code> (&quot;keyword&quot;) namespace</h2>
-
-<p>For your convenience, appscript treats standard Apple event types and application-specific classes and enumerators as attributes of the appscript module's <code>k</code> (&quot;keywords&quot;) attribute. Think of <code>k</code> as an infinitely large namespace that contains every possible name you could use. Examples:</p>
-
-<pre><code>from appscript import *
-
-# AEM-defined data types:
-k.Boolean
-k.Unicode
-k.List
-
-# Application-defined class names:
-k.document
-k.window
-k.disk
-
-# Application-defined enumerators:
-k.yes
-k.no
-k.ask</code></pre>
-</div>
-
-<p>Occasionally an application defines a type or enumerator without providing it with a corresponding name name. In these cases, the value will be represented as a raw <code>aem.AEType</code> or <code>aem.AEEnum</code> object instead of a <code>k</code> attribute. The aem package's documentation provides more information on these lower-level objects, should you need to use them.</p>
-
-
-<h2>Common AE types</h2>
-
-<table width=100%>
-<thead>
-<tr><th>AE type</th><th>Python type</th></tr>
-</thead>
-<tbody>
-<tr><td><code>k.Null</code></td><td><code>types.NoneType</code></td></tr><tr><td><code>k.Boolean</code></td><td><code>bool</code></td></tr><tr><td><code>k.Integer</code></td><td><code>int</code></td></tr><tr><td><code>k.Float</code></td><td><code>float</code></td></tr><tr><td><code>k.String</code></td><td><code>str</code></td></tr><tr><td><code>k.Unicode</code></td><td><code>unicode</code></td></tr><tr><td><code>k.List</code></td><td><code>list</code></td></tr><tr><td><code>k.Record</code></td><td><code>dict</code></td></tr><tr><td><code>k.Date</code></td><td><code>datetime.datetime</code></td></tr><tr><td><code>k.Alias</code></td><td><code>macfile.Alias</code></td></tr><tr><td><code>k.FSRef</code></td><td><code>macfile.File</code></td></tr><tr><td><code>k.FileURL</code></td><td><code>macfile.File</code></td></tr>
-<tr><td><code>k.Reference</code></td><td><small>appscript reference</small></td></tr>
-<tr><td><code>k.InsertionRef</code></td><td><small>appscript insertion reference</small></td></tr>
-</tbody>
-</table>
-
-
-<ul>
-<li>The <code>k.Record</code> AE type is a struct-like data structure which appscript represents as a dict with [in most cases] appscript keywords as its keys.</li>
-<li>The <code>k.Alias</code> AE type corresponds to the <code>Carbon.File.Alias</code> Python type; appscript unpacks this type as a <code>macfile.Alias</code> object for ease of use.</li>
-<li>The <code>k.FSRef</code> type corresponds to the <code>Carbon.File.FSRef</code> Python type; appscript unpacks this type as a <code>macfile.File</code> object for ease of use.</li>
-<li>The <code>k.FileURL</code> type can be used to specify non-existent filesystem locations.</li>
-<li>While FSSpecs are supported they are deprecated by Apple and not recommended for use where other types can be used instead. Appscript unpacks a <code>k.FSSpec</code> value by first coercing it to a <code>k.FileURL</code> type and then unpacking it as a <code>macfile.File</code> object. Note that <code>Carbon.File.FSSpec</code> objects can't properly refer to non-existent filesystem locations due to limitations in the <code>Carbon.File</code> extension as well as the limitations of the FSSpec structure itself.</li>
-<li>While appscript unpacks all filesystem-related AE types as either <code>mac.Alias</code> or <code>mac.File</code>, don't forget that when asking an application to coerce a return value into a file type you must specify the exact file type (<code>k.Alias</code>, <code>k.FSRef</code>, <code>k.FileURL</code>, or <code>k.FSSpec</code>) in the <code>get()</code>. e.g. To get a <code>macfile.File</code> object for the current user's home folder, use <code>app('Finder').home.get(type=k.FSRef)</code>, not <code>app('Finder').home.get(type=k.File)</code> - <code>k.File</code> is not a known AE type and will cause an error. Also be aware that some applications may not support coercions to all AE file types; you'll need to experiment to find out which coercions are supported.</li>
-<li>The Apple Event Manager defines many other AE types which are included by appscript for completeness. A few of these types are of occasional interest, the rest can simply be ignored.</li>
-</ul>
-
-</div>
-
-<!-- bottom navigation -->
-<div class="navbar">
-	<a href="05_keywordconversion.html">Previous</a> | <a href="index.html">Up</a> | <a href="07_applicationobjects.html">Next</a>
-	
-</div>
-
-<!--footer-->
-<p class="footer">&copy; 2004 HAS</p>
-</body>
-</html>
