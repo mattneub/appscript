@@ -4,7 +4,8 @@
 # and takes ownership of all CarbonX.AEDescs returned as results. Python code must NOT
 # retain these AEDescs after returning control to C code or memory errors will occur.
 
-import MacOS, stderr
+import MacOS
+from sys import stderr
 from pprint import pprint
 from StringIO import StringIO
 
@@ -241,7 +242,7 @@ class ScriptManager:
 				target = atts['addr']
 				self.source = '# getting terminology for %r' % self._identity(target)
 			elif code == 'ascrcmnt' and \
-					self.identity(atts['addr']) = ('psn ', '\x00\x00\x00\x00\x00\x00\x00\x02'):
+					self._identity(atts['addr'])[1] == ('psn ', '\x00\x00\x00\x00\x00\x00\x00\x02'):
 				if '----' in params:
 					self.source = '# %r' % params['----']
 				else:

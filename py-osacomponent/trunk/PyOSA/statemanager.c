@@ -303,7 +303,7 @@ OSErr createValue(CIStorageHandle ciStorage, PyObject *value, ScriptStateRef par
 	}
 	result = PyObject_CallMethod(state->scriptManager, "setvalue", "(O)", value);
 	if (!result) {
-		err = handlePythonError(ciStorage, *valueID);
+		err = raisePythonError(ciStorage, *valueID);
 		disposeScriptState(ciStorage, *valueID);
 		Py_DECREF(value);
 		return err;
