@@ -92,7 +92,10 @@ class ScriptContext:
 			# TO DO: proper event handling system
 			if code == 'aevtoapp':
 				if params:
-					return self._context.run(params['----'])
+					directargs = params['----']
+					if not isinstance(directargs, list): # special-case handling needed for compatibility
+						directargs = [directargs]
+					return self._context.run(*directargs)
 				else:
 					return self._context.run()
 			elif code == 'aevtodoc':

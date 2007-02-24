@@ -37,6 +37,7 @@ class ScriptManager:
 	def __init__(self, appscriptservices):
 		self.appscriptservices = appscriptservices
 		self.source = None # TO DO: issource
+		self.state = {}
 		self.context = None
 		self.fsref = None
 		self.value = None
@@ -105,10 +106,10 @@ class ScriptManager:
 			if self.context:
 				state = self.context.state()
 			else:
-				state = {}
+				state = self.state
 			return packscript(self.source, state, modeflags, self.appscriptservices)
 		elif self.isvalue:
-			return packscript(self.display(typeUnicodeText, kOSAModeNull), {}, modeflags, self.appscriptservices)
+			return packscript(self.display(typeUnicodeText, kOSAModeNull), state, modeflags, self.appscriptservices)
 		else:
 			raiseComponentError(errOSACantAccess)
 		
@@ -116,9 +117,9 @@ class ScriptManager:
 	def load(self, scriptdesc, modeflags):
 		# TO DO: what modeflags to use?
 		self.modeflags = modeflags
-		self.source, state, modeflags = unpackscript(scriptdesc, self.appscriptservices)
+		self.source, self.state, modeflags = unpackscript(scriptdesc, self.appscriptservices)
 		if self.modeflags & kOSAModeCompileIntoContext:
-			self.context = ScriptContext(self.appscriptservices, self.source, state)
+			self.context = ScriptContext(self.appscriptservices, self.source, self.state)
 			
 	
 	#######
@@ -133,7 +134,7 @@ class ScriptManager:
 		elif self.source is not None:
 			if context:
 				context.compile(self.source)
-			else:
+			else: # make temporary context
 				context = ScriptContext(self.appscriptservices, self.source)
 		else:
 			raiseComponentError(errOSACantAccess)
@@ -173,7 +174,7 @@ class ScriptManager:
 	
 	def getscriptinfo(self, selector):
 		if selector == kOSAScriptIsModified:
-			return int(self.ismodified or (self.context and self.context.ismodified()))
+			return int(self.ismodified or bool(self.context) and self.context.ismodified()) # TO DO: currently doesn't work for non-context scripts (e.g. SE non-stay-open applets)
 		elif selector == kOSAScriptIsTypeCompiledScript:
 			return int(self.source is not None)
 		elif selector == kOSAScriptIsTypeScriptValue:
@@ -200,9 +201,10 @@ class ScriptManager:
 	def compile(self, sourcedesc, modeflags):
 		print 'Compiling...'
 		self.source = self.appscriptservices.unpack(sourcedesc)
-		if modeflags & kOSAModeCompileIntoContext:
+		print '    compile into context = %r' % bool(modeflags & kOSAModeCompileIntoContext)
+		if modeflags & kOSAModeCompileIntoContext: # make permanent context
 			self.context = ScriptContext(self.appscriptservices, self.source)
-		print '\tDone.'
+		print '    Done.'
 	
 	
 	#######
@@ -275,10 +277,12 @@ class ScriptManager:
 	#######
 	
 	def executeevent(self, event, modeflags):
-		if not self.context:
-			raiseComponentError(errOSACantAccess)
+		if self.context:
+			context = self.context
+		else: # make temporary context
+			context = ScriptContext(self.appscriptservices, self.source, self.state)
 		code, atts, params = self.appscriptservices.unpackappleevent(event)
-		result = self.context.handleevent(code, atts, params, modeflags)	
+		result = context.handleevent(code, atts, params, modeflags)	
 		return result
 
 	

@@ -8,10 +8,9 @@
 ** - OSA headers and Carbon documentation
 */
 
-#define UseExtendedThingResource 1
+#define thng_RezTemplateVersion 1
 
 #include <Carbon/Carbon.r>
-
 
 #define COMPONENT_VERSION 0x00010000
 
@@ -60,7 +59,11 @@ resource 'thng' (128) {
     { /* ComponentPlatformInfo */
 		COMPONENT_FLAGS,				// long componentFlags
 		'dlle', 128,					// ResourceSpec component
-		1000							// SInt16 platformType
+#if defined(ppc_YES)
+		platformPowerPCNativeEntryPoint	// SInt16 platformType
+#else
+		platformIA32NativeEntryPoint	// SInt16 platformType
+#endif
 	}
 };
 
