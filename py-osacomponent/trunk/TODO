@@ -1,0 +1,64 @@
+TO DO
+
+- OSAGetTerminology extension (used by osax module) causes crash in SE applets (SE and osascript don't have this problem though):
+
+####### applet code #######
+
+import osax
+def run(): osax.ScriptingAddition().display_alert('hello')
+
+####### crash log #######
+
+Exception:  EXC_BAD_ACCESS (0x0001)
+Codes:      KERN_PROTECTION_FAILURE (0x0002) at 0x00000184
+
+Thread 0 Crashed:
+0   com.apple.applescript          	0x995a5050 TTerminology::Init() + 84
+1   com.apple.applescript          	0x995a2ecc RebuildDynamicTerms(unsigned char) + 348
+2   com.apple.applescript          	0x9959a14c ASInitLocal(long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long) + 608
+3   com.apple.applescript          	0x99599390 AppleScriptComponent + 1576
+4   ...ple.CoreServices.CarbonCore 	0x90bdacd4 CallComponent + 260
+5   com.apple.openscripting        	0x93058f70 OSAGetAppTerminology + 56
+6   OSATerminology.so              	0x045c6770 PyOSA_GetAppTerminology + 168 (OSATerminology.c:79)
+7   org.python.python              	0x98b02c5c PyEval_GetFuncDesc + 476
+[...]
+42  org.python.python              	0x98aa3b8c PyObject_CallMethod + 296
+43  ...sourceforge.appscript.pyosa 	0x0170fe5c handleOSAExecuteEvent + 200 (osafunctions.c:523)
+44  ...ple.CoreServices.CarbonCore 	0x90bdb1b8 CallComponentFunctionCommon + 1152
+45  ...sourceforge.appscript.pyosa 	0x0170dd70 PyOSA_main + 120 (main.c:56)
+46  ...ple.CoreServices.CarbonCore 	0x90bdacd4 CallComponent + 260
+47  com.apple.openscripting        	0x93059878 OSAExecuteEvent + 52
+48  com.apple.applescript          	0x995bbfc8 Applet::RunScript(AEDesc const*, AEDesc*) + 604
+49  com.apple.applescript          	0x995b940c Applet::DoScriptEvent(AEDesc const*, AEDesc*) + 576
+50  com.apple.applescript          	0x995b91b8 ScriptEventHandler(AEDesc const*, AEDesc*, long) + 40
+51  com.apple.AE                   	0x914fc960 aeDispatchAppleEvent(AEDesc const*, AEDesc*, unsigned long, unsigned char*) + 208
+52  com.apple.AE                   	0x914fc7fc dispatchEventAndSendReply(AEDesc const*, AEDesc*) + 44
+53  com.apple.AE                   	0x914fc654 aeProcessAppleEvent + 284
+54  com.apple.HIToolbox            	0x9320aeb0 AEProcessAppleEvent + 60
+55  com.apple.applescript          	0x995b94c8 Applet::HandleAppleEvent(EventRecord*) + 60
+56  com.apple.applescript          	0x995bb37c Applet::ProcessEvent(unsigned long) + 92
+57  com.apple.applescript          	0x995b99f4 Applet::Main() + 328
+58  com.apple.applescript          	0x995b9c94 OSAAppletExecute + 60
+59  com.apple.applescript          	0x995b9e0c AppletComponent + 176
+60  ...ple.CoreServices.CarbonCore 	0x90bdacd4 CallComponent + 260
+61  persist.app                    	0x00002d38 0x1000 + 7480
+62  persist.app                    	0x00002d78 0x1000 + 7544
+63  persist.app                    	0x00002a38 0x1000 + 6712
+64  persist.app                    	0x000028a8 0x1000 + 6312
+
+####### end crash log #######
+
+(BTW, using a modified version of OSAGetTerminology.so that uses PyOC, not ascr, component may be a bit better for performance)
+
+
+- OSARemoveStorageType is buggy on i386: removes 3072 (0x0C00), not 12 (0x000C), bytes; see <http://lists.apple.com/archives/applescript-implementors/2006/May/msg00027.html>
+
+
+- load Python.framework dynamically (see py2app/apptemplate/main.m for example)
+
+
+- finish sub-interpreter support
+
+
+- lots of other stuff
+
