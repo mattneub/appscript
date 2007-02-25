@@ -1,4 +1,14 @@
-#!/usr/local/bin/python
+
+#
+# pyosa_scriptmanager.py
+# PyOSA
+#
+# Copyright (C) 2007 HAS
+#
+#
+# Defines ScriptManager class, instances of which are used by osafunctions.c to
+# load/store/compile/run/etc. client scripts, and to hold and display result values.
+#
 
 # IMPORTANT NOTE: C code retains ownership of all CarbonX.AEDescs passed as arguments,
 # and takes ownership of all CarbonX.AEDescs returned as results. Python code must NOT
@@ -8,9 +18,11 @@ import MacOS
 from sys import stderr
 from pprint import pprint
 from StringIO import StringIO
+from copy import deepcopy
 
 from CarbonX.kOSA import *
 from CarbonX.AE import AECreateDesc, AEDesc
+import appscript.reference
 
 from pyosa_errors import *
 from pyosa_scriptcontext import *
@@ -31,13 +43,16 @@ kSendFlagsMask = ( kOSAModeNeverInteract
 
 #######
 
-	
 
 class ScriptManager:
-	def __init__(self, appscriptservices):
+	def __init__(self, appscriptservices): # TO DO: most of these atts should also be [re]set by compile, load, coercefromdesc
 		self.appscriptservices = appscriptservices
+		self._reset()
+	
+	def _reset(self):
 		self.source = None # TO DO: issource
 		self.state = {}
+		self.initialstate = {}
 		self.context = None
 		self.fsref = None
 		self.value = None
@@ -55,74 +70,84 @@ class ScriptManager:
 		try:
 			return desc.AECoerceDesc(desiredtype)
 		except MacOS.Error:
-			raiseComponentError(errOSACantCoerce)
+			raisecomponenterror(errOSACantCoerce)
 
 
 	def _sourcetostyledtext(self, desc):
-		# (note: Script Editor likes to ask for typeStyledText when it calls OSADisplay and OSAGetSource)
+		# (note: Script Editor likes to ask for typeStyledText when it calls OSADisplay and OSAGetSource so it can colour the source code/output)
 		return self.appscriptservices.pack({
 				aem.AEType(keyAEText): desc.AECoerceDesc(typeChar),
 				aem.AEType(keyAEStyles): AECreateDesc(typeScrapStyles, 
-						'\x00\x01\x00\x00\x00\x00\x00\x10\x00\x0e\x00\x03\x00\x00\x00\x0c\x00\x00\x00\x00\xBB\x00') # blue text
+						'\x00\x01\x00\x00\x00\x00\x00\x10\x00\x0e\x00\x03\x00\x00\x00\x0c\x00\x00\x00\x00\xA0\x00') # blue text
 				}).AECoerceDesc(typeStyledText)
 	
 	
-	#######
+	def _appidentity(self, target):
+		if isinstance(target, appscript.reference.Application):
+			target = target.AS_appdata.target
+		if isinstance(target, aem.Application):
+			target = target.AEM_appidentity
+		return target
 	
-	def setvalue(self, value):
-		self.isvalue = True
-		self.value = value # TO DO: cache packed value for efficiency; provide value() and valuedesc() methods
-		print 'SETVALUE: %r' % (value,)
 	
-	
-	def getpysource(self):
-		return self.source or ''
-		
-	
-	def valueaspythonvalue(self):
-		if isinstance(self.value, AEDesc):
-			return self.appscriptservices.unpack(self.value)
-		else:
-			return self.value
-	
-	def valueasaedesc(self, fullyqualifydescriptors=False): 
-		if isinstance(self.value, AEDesc):
-			return self.value
-		elif fullyqualifydescriptors:
-			print 'PyOSA note: client requested fully qualify descriptors for value:'
-			pprint(self.value)
-			print
-			return self.appscriptservices.pack(self.value) # TO DO: use qualifiedpack
-		else:
-			return self.appscriptservices.pack(self.value)
-	
+	def _formatevent(self, code, atts, params):
+		target = atts['addr']
+		if code == ['ascrtell', 'ascrtend']: # ignore
+			return ''
+		elif code == 'ascrgdte': # TEST
+			return '\n# getting terminology for %r' % self._appidentity(target)
+		elif code == 'ascrcmnt':
+			if self._appidentity(target) == ('desc', 
+					('psn ', '\x00\x00\x00\x00\x00\x00\x00\x02')):
+				if '----' in params:
+					return '\n# %r' % params['----']
+				else:
+					return '\n#'
+		return '\nEVENT: %r %r \n\t\t%r \n\t\t%r' % (code, self._appidentity(target), atts, params) # TO DO: format event as string
 	
 	
 	#######
+	# set script/value
 	
-	def store(self, modeflags):
-		# TO DO: what modeflags to use?
-		if self.source is not None:
-			if self.context:
-				state = self.context.state()
-			else:
-				state = self.state
-			return packscript(self.source, state, modeflags, self.appscriptservices)
-		elif self.isvalue:
-			return packscript(self.display(typeUnicodeText, kOSAModeNull), state, modeflags, self.appscriptservices)
-		else:
-			raiseComponentError(errOSACantAccess)
+	
+	def compile(self, sourcedesc, modeflags):
+		print >> stderr, 'Compiling (as context=%r)' % bool(modeflags & kOSAModeCompileIntoContext) # debug
+		self._reset()
+		self.ismodified = True
+		self.source = self.appscriptservices.unpack(sourcedesc)
+		if modeflags & kOSAModeCompileIntoContext: # make permanent context
+			self.context = ScriptContext(self.appscriptservices, self.source)
 		
 	
 	def load(self, scriptdesc, modeflags):
 		# TO DO: what modeflags to use?
+		self._reset()
 		self.modeflags = modeflags
 		self.source, self.state, modeflags = unpackscript(scriptdesc, self.appscriptservices)
+		self.initialstate = deepcopy(self.state)
 		if self.modeflags & kOSAModeCompileIntoContext:
 			self.context = ScriptContext(self.appscriptservices, self.source, self.state)
+		
+	
+	def coercefromdesc(self, desc, modeflags):
+		self._reset()
+		self.ismodified = True
+		if desc.type == typeAppleEvent:
+			code, atts, params = self.appscriptservices.unpackappleevent(desc)
+			self._source = self._formatevent(code, atts, params)
+		else:
+			self.value = desc
+	
+	
+	def setvalue(self, value):
+		# TO DO: reset ScriptManager ivars
+		self.isvalue = True
+		self.value = value # TO DO: cache packed value for efficiency; provide value() and valuedesc() methods
+		print >> stderr, 'SETVALUE: %r' % (value,) # debug
 			
 	
 	#######
+	# execute
 	
 	def execute(self, parentcontext, modeflags):
 		# TO DO: what modeflags to use?
@@ -136,45 +161,60 @@ class ScriptManager:
 				context.compile(self.source)
 			else: # make temporary context
 				context = ScriptContext(self.appscriptservices, self.source)
+				self.state = context.state()
 		else:
-			raiseComponentError(errOSACantAccess)
+			raisecomponenterror(errOSACantAccess)
 		res = context.execute(modeflags)
 		return res
 	
 	
-	def display(self, desiredtype, modeflags):
-		#print 'display() desiredtype=%r modeflags=%08x' % (desiredtype, modeflags)
-		if self.source is not None:
-			desc = self.appscriptservices.pack('<PyOSAScript>')
-		elif self.isvalue:
-			if modeflags & kOSAModeDisplayForHumans:
-				res = StringIO()
-				pprint(self.valueaspythonvalue(), res)
-				val = res.getvalue()
-			else:
-				val = repr(self.valueaspythonvalue())
-			desc = self.appscriptservices.pack(val)
+	def executeevent(self, event, modeflags):
+		if self.context:
+			context = self.context
+		else: # make temporary context
+			context = ScriptContext(self.appscriptservices, self.source, self.state)
+			self.state = context.state()
+		code, atts, params = self.appscriptservices.unpackappleevent(event)
+		result = context.handleevent(code, atts, params, modeflags)
+		return result
+
+	
+	def doevent(self, event, modeflags, reply):
+		try:
+			result = self.executeevent(event, modeflags)
+		except ScriptError, e:
+			for key in kScriptErrorSelectors:
+				desc = packerror(key, typeWildCard, self.source, e)
+				if desc.type != typeNull:
+					reply.AEPutParamDesc(key, desc)
 		else:
-			raiseComponentError(errOSACantAccess)
-		return self._coercedesc(desc, desiredtype)
+			if result is not None:
+				reply.AEPutParamDesc('----', self.appscriptservices.pack(result))
 	
 	
 	#######
+	# info
 	
 	def setscriptinfo(self, selector, value):
 		if selector == kOSAScriptIsModified:
 			self.ismodified = bool(value)
 		else:
-			raiseComponentError(errOSACantAccess)
+			raisecomponenterror(errOSACantAccess)
 	
 	
 	def setscriptfile(self, fsref):
 		self.fsref = fsref
 	
 	
-	def getscriptinfo(self, selector):
+	def scriptinfo(self, selector):
 		if selector == kOSAScriptIsModified:
-			return int(self.ismodified or bool(self.context) and self.context.ismodified()) # TO DO: currently doesn't work for non-context scripts (e.g. SE non-stay-open applets)
+			if self.ismodified: 
+				res = True
+			elif self.context:
+				res = self.context.state() != self.initialstate
+			else:
+				res = self.state != self.initialstate
+			return int(res)
 		elif selector == kOSAScriptIsTypeCompiledScript:
 			return int(self.source is not None)
 		elif selector == kOSAScriptIsTypeScriptValue:
@@ -190,33 +230,44 @@ class ScriptManager:
 			return 1
 		elif selector == kASHasOpenHandler:
 			if not self.context:
-				raiseComponentError(errOSACantAccess)
+				raisecomponenterror(errOSACantAccess)
 			return self.context.hasopenhandler()
 		else:
-			raiseComponentError(errOSACantAccess)
+			raisecomponenterror(errOSACantAccess)
 	
 	
 	#######
-	
-	def compile(self, sourcedesc, modeflags):
-		print 'Compiling...'
-		self.source = self.appscriptservices.unpack(sourcedesc)
-		print '    compile into context = %r' % bool(modeflags & kOSAModeCompileIntoContext)
-		if modeflags & kOSAModeCompileIntoContext: # make permanent context
-			self.context = ScriptContext(self.appscriptservices, self.source)
-		print '    Done.'
+	# get script/value
 	
 	
-	#######
-	
-	def getsource(self, desiredtype):
+	def store(self, modeflags):
+		# TO DO: what modeflags to use?
 		if self.source is not None:
-			desc = self.appscriptservices.pack(self.source)
+			if self.context:
+				state = self.context.state()
+			else:
+				state = self.state
+			return packscript(self.source, state, modeflags, self.appscriptservices)
 		elif self.isvalue:
-		
-			desc = self.appscriptservices.pack(repr(self.valueaspythonvalue()))
+			return packscript(self.display(typeUnicodeText, kOSAModeNull), state, modeflags, self.appscriptservices)
 		else:
-			raiseComponentError(errOSACantAccess)
+			raisecomponenterror(errOSACantAccess)
+	
+	
+	def display(self, desiredtype, modeflags):
+		#print >> stderr, 'display() desiredtype=%r modeflags=%08x' % (desiredtype, modeflags) # debug
+		if self.source is not None:
+			desc = self.appscriptservices.pack('<PyOSAScript>')
+		elif self.isvalue:
+			if modeflags & kOSAModeDisplayForHumans:
+				res = StringIO()
+				pprint(self.valueaspyobject(), res)
+				val = res.getvalue()
+			else:
+				val = repr(self.valueaspyobject())
+			desc = self.appscriptservices.pack(val)
+		else:
+			raisecomponenterror(errOSACantAccess)
 		if desiredtype == typeStyledText: # colour compiled source code blue
 			try:
 				return self._sourcetostyledtext(desc)
@@ -224,77 +275,63 @@ class ScriptManager:
 				pass
 		return self._coercedesc(desc, desiredtype)
 	
-	def _identity(self, target): # TEST
-		import appscript.reference
-		if isinstance(target, appscript.reference.Application):
-			return target.AS_appdata.target.AEM_identity
-		elif isinstance(target, aem.Application):
-			return target.AEM_identity
-		return '???'
-	
-	def coercefromdesc(self, desc, modeflags):
-		if desc.type == typeAppleEvent:
-			code, atts, params = self.appscriptservices.unpackappleevent(desc)
-			if code == 'ascrtell':
-				target = params['----']
-				self.source = '' #'TARGET: %r %r' % (target, self._identity(target))
-			elif code == 'ascrtend':
-				self.source = ''
-			elif code == 'ascrgdte':
-				target = atts['addr']
-				self.source = '# getting terminology for %r' % self._identity(target)
-			elif code == 'ascrcmnt' and \
-					self._identity(atts['addr'])[1] == ('psn ', '\x00\x00\x00\x00\x00\x00\x00\x02'):
-				if '----' in params:
-					self.source = '# %r' % params['----']
-				else:
-					self.source = '#'
-			else:
-				target = atts['addr']
-				self.source = 'EVENT: %r %r \n\t\t%r \n\t\t%r' % (code, self._identity(target), atts, params) # TO DO: format event as string
-		else:
-			self.value = desc
-	
 	
 	def coercetodesc(self, desiredtype, modeflags):
-		print 'coercetodesc: %r %x' % (desiredtype, modeflags)
+		print >> stderr, 'coercetodesc: %r %x' % (desiredtype, modeflags) # debug
 		if self.source:
 			desc = self.store(kOSAModeNull)
 		elif self.isvalue:
 			try:
 				desc = self.valueasaedesc(bool(modeflags & kOSAModeFullyQualifyDescriptors))
 			except Exception, e:
-				print >> stderr, "Couldn't coerce to desc: %s" % e
-				pprint(self.valueaspythonvalue(), stderr)
-				print >> stderr
-				raiseComponentError(errOSACantCoerce)
+				print >> stderr, "Couldn't coerce to desc: %s" % e # debug
+				pprint(self.valueaspyobject(), stderr) # debug
+				print >> stderr # debug
+				raisecomponenterror(errOSACantCoerce)
 		else:
-			raiseComponentError(errOSACantAccess)
-		print '    desctype = %r' % desc.type
+			raisecomponenterror(errOSACantAccess)
+		print >> stderr, '    desctype = %r' % desc.type # debug
 		return self._coercedesc(desc, desiredtype)
 	
 	
-	#######
+	def sourceaspyobject(self): # TO DO: unused
+		return self.source or ''
 	
-	def executeevent(self, event, modeflags):
-		if self.context:
-			context = self.context
-		else: # make temporary context
-			context = ScriptContext(self.appscriptservices, self.source, self.state)
-		code, atts, params = self.appscriptservices.unpackappleevent(event)
-		result = context.handleevent(code, atts, params, modeflags)	
-		return result
-
 	
-	def doevent(self, event, modeflags, reply):
-		try:
-			result = self.executeevent(event, modeflags)
-		except ScriptError, e:
-			for key in kScriptErrorSelectors:
-				desc = packerror(key, typeWildCard, self.source, e)
-				if desc.type != typeNull:
-					reply.AEPutParamDesc(key, desc)
+	def sourceasaedesc(self, desiredtype):
+		if self.source is not None:
+			desc = self.appscriptservices.pack(self.source)
+		elif self.isvalue:
+		
+			desc = self.appscriptservices.pack(repr(self.valueaspyobject()))
 		else:
-			if result is not None:
-				reply.AEPutParamDesc('----', self.appscriptservices.pack(result))
+			raisecomponenterror(errOSACantAccess)
+		if desiredtype == typeStyledText: # colour compiled source code blue
+			try:
+				return self._sourcetostyledtext(desc)
+			except MacOS.Error:
+				pass
+		return self._coercedesc(desc, desiredtype)
+		
+	
+	def valueaspyobject(self):
+		if isinstance(self.value, AEDesc):
+			return self.appscriptservices.unpack(self.value)
+		else:
+			return self.value
+	
+	
+	def valueasaedesc(self, fullyqualifydescriptors=False): 
+		if isinstance(self.value, AEDesc):
+			return self.value
+		elif fullyqualifydescriptors:
+			print >> stderr, 'PyOSA note: client requested fully qualify descriptors for value (note: this is not yet implemented):' # debug
+			pprint(self.value, stderr) # debug
+			print >> stderr # debug
+			return self.appscriptservices.pack(self.value) # TO DO: use qualifiedpack
+		else:
+			return self.appscriptservices.pack(self.value)
+	
+	
+	#######
 

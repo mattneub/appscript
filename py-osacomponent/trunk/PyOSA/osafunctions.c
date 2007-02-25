@@ -146,7 +146,7 @@ static ComponentResult handleOSADisplay(CIStorageHandle ciStorage,
 	if (!AEDescX_ConvertDisown(result, resultingText))
 		err = pyosa_errNotAnAEDesc;
 	Py_DECREF(result);
-	printDesc(resultingText, "OSADisplay result");
+//	printDesc(resultingText, "OSADisplay result");
 	return err;
 }
 
@@ -224,7 +224,7 @@ static ComponentResult handleOSAGetScriptInfo(CIStorageHandle ciStorage,
 	
 	state = getScriptState(ciStorage, scriptID);
 	if (!state) return errOSAInvalidID;
-	result = PyObject_CallMethod(state->scriptManager, "getscriptinfo", "(O&)",
+	result = PyObject_CallMethod(state->scriptManager, "scriptinfo", "(O&)",
 																		PyMac_BuildOSType, selector);
 	if (!result) return raisePythonError(ciStorage, scriptID);
 	if (PyInt_Check(result))
@@ -322,13 +322,13 @@ static ComponentResult handleOSAGetSource(CIStorageHandle ciStorage,
 	
 	state = getScriptState(ciStorage, scriptID);
 	if (!state) return errOSAInvalidID;
-	result = PyObject_CallMethod(state->scriptManager, "getsource", "(O&)",
+	result = PyObject_CallMethod(state->scriptManager, "sourceasaedesc", "(O&)",
 																	PyMac_BuildOSType, desiredType);
 	if (!result) return raisePythonError(ciStorage, scriptID);
 	if (!AEDescX_ConvertDisown(result, resultingSourceData))
 		err = pyosa_errNotAnAEDesc;
 	Py_DECREF(result);
-	printDesc(resultingSourceData, "OSAGetSource result");
+//	printDesc(resultingSourceData, "OSAGetSource result");
 	return err;
 }
 
@@ -374,7 +374,7 @@ static ComponentResult handleOSACoerceToDesc(CIStorageHandle ciStorage,
 	if (!AEDescX_ConvertDisown(result, resultingValue))
 		err = pyosa_errNotAnAEDesc;
 	Py_DECREF(result);
-	printDesc(resultingValue, "OSACoerceToDesc result");
+//	printDesc(resultingValue, "OSACoerceToDesc result");
 	return err;
 }
 
@@ -517,7 +517,7 @@ static ComponentResult handleOSAExecuteEvent(CIStorageHandle ciStorage,
 	ScriptStateRef state;
 	PyObject *result;
 	
-	printDesc(theAppleEvent, "OSAExecuteEvent event");
+//	printDesc(theAppleEvent, "OSAExecuteEvent event");
 	state = getScriptState(ciStorage, contextID);
 	if (!state) return errOSAInvalidID;
 	result = PyObject_CallMethod(state->scriptManager, "executeevent", "O&l",

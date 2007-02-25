@@ -25,13 +25,13 @@ static ComponentResult handleComponentOpen(ComponentInstance ci) {
 		#endif
 	}
 	#ifdef DEBUG_ON
-	printf("PyOSA: opening component instance...\n");
+	printf("PyOSA: opening component instance\n");
 	#endif
 	err = createComponentInstanceStorage(&ciStorage);
 	if (err) return errOSACantOpenComponent;
 	SetComponentInstanceStorage(ci, (Handle)ciStorage);
 	#ifdef DEBUG_ON
-	printf("    Done.\n");
+	printf("...done.\n");
 	#endif
 	return noErr;
 }

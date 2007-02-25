@@ -207,23 +207,23 @@ OSErr createScriptState(CIStorageHandle ciStorage,
 	ExecutionContextRef context;
 	PyObject *scriptManagerClass, *result;
 	
-	#ifdef DEBUG_ON
-		printf("Creating new script state...\n");
-	#endif
 	// create new script state
 	*scriptID = createScriptID(ciStorage);
+	#ifdef DEBUG_ON
+		printf("Creating new script state %i...\n", *scriptID);
+	#endif
 	*scriptState = malloc(sizeof(ScriptState));
 	(*scriptState)->scriptID = *scriptID;
 	// assign it a context
 	if (parent) { // script was created by another script, so reuse that script's context
 		#ifdef DEBUG_ON
-			printf("    reusing context from script %i...\n", parent->scriptID);
+			printf("    reusing context from script %i\n", parent->scriptID);
 		#endif
 		context = parent->context;
 		retainExecutionContext(context);
 	} else { // script was created by client, so create new context
 		#ifdef DEBUG_ON
-			printf("    creating new context...\n");
+			printf("    creating new context\n");
 		#endif
 		err = createExecutionContext(ciStorage, &context);
 		if (err) {
@@ -251,7 +251,7 @@ OSErr createScriptState(CIStorageHandle ciStorage,
 	}
 	CFDictionarySetValue((**ciStorage).scripts, (void *)(*scriptID), (void *)(*scriptState));
 	#ifdef DEBUG_ON
-		printf("    Done.\n");
+		printf("...done.\n");
 	#endif
 	return noErr;
 }

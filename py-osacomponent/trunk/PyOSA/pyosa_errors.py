@@ -1,6 +1,15 @@
 
+#
+# pyosa_errors.py
+# PyOSA
+#
+# Copyright (C) 2007 HAS
+#
+#
+#
+
 import MacOS
-from sys import exc_info
+from sys import exc_info, stderr
 from traceback import extract_tb
 
 from CarbonX.kOSA import *
@@ -65,7 +74,7 @@ kScriptErrorSelectors = [kOSAErrorNumber,
 						 kOSAErrorRange]
 
 #######
-# note: use raiseComponentError function to raise ComponentErrors
+# note: use raisecomponenterror function to raise ComponentErrors
 
 class ComponentError(StandardError):
 	# Represents errors intentionally raised by PyOSA code
@@ -79,14 +88,14 @@ class ComponentError(StandardError):
 
 
 #######
-# note: use raiseScriptError function to raise ScriptErrors
+# note: use raisescripterror function to raise ScriptErrors
 
 class ScriptError(StandardError):
 	# Represents errors raised in client scripts
 	
 	def __init__(self, errornumber, errormessage, originalexception, traceback, source):
 		StandardError.__init__(self, errornumber, errormessage, originalexception, traceback)
-		print 'ScriptError traceback %r' % traceback
+		print >> stderr, 'ScriptError traceback %r' % traceback # debug
 		self.errornumber = errornumber
 		self.errormessage = errormessage
 		self.originalexception = originalexception
@@ -96,7 +105,9 @@ class ScriptError(StandardError):
 		self._tracebackstring = ''
 	
 	def __repr__(self):
-		return 'ScriptError(%r, %r, %r)' % (self.errornumber, self.errormessage, self.originalexception)
+		return 'ScriptError(%r, %r, %s(%s))' % (self.errornumber, self.errormessage, 
+				self.originalexception.__class__.__name__,
+				', '.join([repr(arg) for arg in self.originalexception.args]))
 	
 	#######
 	
@@ -156,20 +167,23 @@ class ScriptError(StandardError):
 	
 	#######
 	
+	def setsource(self, source):
+		self._source = source
+	
 	def errorrange(self):
 		if not self._errorrange:
 			if self.errornumber == OSASyntaxError:
 				self._extractcompilationerrorinfo()
 			else:
 				self._extracttracebackinfo()
-		print 'Error range: %r' % (self._errorrange,)
+#		print >> stderr, 'Error range: %r' % (self._errorrange,) # debug
 		return self._errorrange
 	errorrange = property(errorrange)
 			
 	
 	def traceback(self):
 		self.errorrange
-		print 'Traceback:\n%s\n\n' % (self._tracebackstring,)
+		print >> stderr, 'Traceback:\n%s\n\n' % (self._tracebackstring,) # debug
 		return self._tracebackstring
 	traceback = property(traceback)
 
@@ -178,11 +192,11 @@ class ScriptError(StandardError):
 #######
 # raise script and component errors
 
-def raiseComponentError(errornumber):
+def raisecomponenterror(errornumber):
 	raise ComponentError(errornumber)
 	
 
-def raiseScriptError(errornumber, briefmessage, originalexception, source):
+def raisescripterror(errornumber, briefmessage, originalexception, source):
 	# TO DO: using exc_info here may cause circular references
 	if errornumber == OSASyntaxError:
 		raise ScriptError(errornumber, briefmessage, originalexception, None, source)
@@ -196,13 +210,14 @@ def raiseScriptError(errornumber, briefmessage, originalexception, source):
 
 
 def packerror(selector, desiredtype, errorobj, codecs):
-	print 'packerror %r\n    %r\n    %r' % (selector, desiredtype, errorobj)
+	if selector == kOSAErrorNumber: print >> stderr, 'packerror selector=%r desiredtype=%r\n    errorobj=%r' % (selector, desiredtype, errorobj) # debug
 	if selector not in kScriptErrorSelectors:
-		raiseComponentError(errOSABadSelector)
+		raisecomponenterror(errOSABadSelector)
 	if isinstance(errorobj, ScriptError):
+		# TO DO: some/all of this code should be moved into a ScriptError method)
 		originalexception = errorobj.originalexception
 		if selector == kOSAErrorNumber:
-			# TO DO: more specific runtime error numbers, e.g. if MacOS.Error/aem.CommandError/appscript.CommandError, get error number from that
+			# TO DO: if errOSAGeneralError, try to determine a more specific runtime error number, e.g. if MacOS.Error/aem.CommandError/appscript.CommandError, get error number from that; if TypeError, use errOSACantCoerce, etc.
 			val = errorobj.errornumber 
 		elif selector == kOSAErrorMessage:
 			val = '%s: %s\n\n%s' % (errorobj.errormessage, errorobj.originalexception, errorobj.traceback)
@@ -225,6 +240,7 @@ def packerror(selector, desiredtype, errorobj, codecs):
 					aem.AEType(keyOSASourceEnd): endindex,
 					}).AECoerceDesc(typeOSAErrorRange)
 	elif isinstance(errorobj, ComponentError):
+		# TO DO: some/all of this code should be moved into a ComponentError method)
 		if selector == kOSAErrorNumber:
 			val = errorobj.errornumber
 		elif selector in [kOSAErrorMessage, kOSAErrorBriefMessage]:
@@ -238,11 +254,11 @@ def packerror(selector, desiredtype, errorobj, codecs):
 			val = 'PyOSA encountered an internal bug (see stderr for details): %s' % errorobj
 		else:
 			val = None
-	print '    value=%r' % val
+#	print >> stderr, '    value=%r' % val # debug
 	desc = codecs.pack(val)
-	print '    desc=%r' % desc
+#	print >> stderr, '    desc=%r' % desc # debug
 	try:
 		return desc.AECoerceDesc(desiredtype)
 	except MacOS.Error:
-		raiseComponentError(errOSACantCoerce)
+		raisecomponenterror(errOSACantCoerce)
 

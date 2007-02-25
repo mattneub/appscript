@@ -1,6 +1,17 @@
 
-from types import ModuleType
-from new import classobj
+#
+# pyosa_appscript.py
+# PyOSA
+#
+# Copyright (C) 2007 HAS
+#
+#
+# Defines AppscriptServices class, whch is responsible for installing PyOSA customisations
+# into standard aem/appscript modules, packing and unpacking AEDescs passed to and from
+# osafunctions.c
+#
+
+from sys import stderr # debug
 
 from CarbonX.kOSA import *
 import aem
@@ -69,7 +80,7 @@ class AppscriptServices:
 	def __init__(self, osacallbacks, terminologycache):
 	#	appscript.terminology._terminologyCache = terminologycache # TO DO: single shared cache throughout component
 	
-		print 'initing AppscriptServices: (%r %r)' %(osacallbacks, terminologycache)
+		print >> stderr, 'initing AppscriptServices: (%r %r)' %(osacallbacks, terminologycache) # debug
 		# TO DO: build eventhandlerbycode table (another option is to use existing commandbyname tables) - get script's callables, and put the ones whose names match dictionary commands into a by-code table;
 		#	or wait for events to arrive, then look up individual definitions in prebuilt eventhandlerbycode
 		# note: should support synonyms (same code, different names?)
@@ -79,11 +90,11 @@ class AppscriptServices:
 		self.unpack = self.codecs.unpack
 		#######
 		def createappleevent(self, eventclass, eventid, target, returnid, transactionid):
-			print '****createappleevent %r (%r %r)' % (osacallbacks, eventclass, eventid)
+			print >> stderr, '****createappleevent %r (%r %r)' % (osacallbacks, eventclass, eventid) # debug
 			return invokecreateproc(eventclass, eventid, target, returnid, transactionid, osacallbacks)
 		self.createappleevent = createappleevent
 		def sendappleevent(self, flags, timeout):
-			print '****sendappleevent'
+			print >> stderr, '****sendappleevent' # debug
 			return invokesendproc(self.AEM_event, flags, timeout, osacallbacks)
 		self.sendappleevent = sendappleevent
 	
