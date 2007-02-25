@@ -60,5 +60,14 @@ Thread 0 Crashed:
 - finish sub-interpreter support
 
 
+- add support for a config.py module that can be located at [~]/Library/PyOSA/2.x? If present, this would be executed each time a new script was created and would have access to PyOSA APIs, allowing additional configuration to be done (e.g. loading event handler definitions).
+
+
+- OSA library support?
+
+
+- ability to run scripts starting with '#!...python' in non-OSA mode; i.e. a python subprocess, with run event's args (if any) passed to ARGV, and stdout and stderr piped to script results and script errors respectively
+
+
 - lots of other stuff
 
