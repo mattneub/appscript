@@ -3,26 +3,34 @@
  * 
  * Copyright (C) 2007 HAS
  *
+ * Locates and binds a Python framework at runtime.
  *
- * file:///Developer/ADC%20Reference%20Library/documentation/Cocoa/Conceptual/CarbonCocoaDoc/Articles/LazyCocoaLoading.html
- * file:///Developer/ADC%20Reference%20Library/documentation/CoreFoundation/Conceptual/CFBundles/index.html
- * file:///Developer/ADC%20Reference%20Library/documentation/CoreFoundation/Reference/CFBundleRef/index.html
+ * Import rules are as follows:
+ * - If host process already contains a Python bundle, use that.
+ * - Else if host application bundle has a private Python framework, load that.
+ * - Else locate a public Python framework at one of the following locations and load that:
+ *		~/Library/Frameworks/Python.framework
+ *		/Library/Frameworks/Python.framework
+ *		/Network/Library/Frameworks/Python.framework
+ *		/System/Library/Frameworks/Python.framework
  *
  */
+
+#include <Carbon/Carbon.h>
+#include <CoreFoundation/CoreFoundation.h>
+#include <sys/stat.h>
+
+/**********************************************************************/
+ 
+#define DEBUG_ON
+
+/**********************************************************************/
 
 #define COMPONENT_NAME "PyOSA"
 #define COMPONENT_VERSION 0x00010000
 #define COMPONENT_IDENTIFIER "net.sourceforge.appscript.pyosa"
 #define COMPONENT_OSTYPE 'PyOC'
 #define PYTHON_LOCATIONS_KEY "PyFrameworkLocations"
- 
-#define DEBUG_ON
-
-/**********************************************************************/
-
-#include <Carbon/Carbon.h>
-#include <CoreFoundation/CoreFoundation.h>
-#include <sys/stat.h>
 
 /**********************************************************************/
 // Python macros
@@ -32,11 +40,9 @@
 #define Py_XINCREF(op) if ((op) == NULL) ; else Py_INCREF(op)
 #define Py_XDECREF(op) if ((op) == NULL) ; else Py_DECREF(op)
 
-// TO DO: #define PyCObject_Check(op) ((op)->ob_type == &PyCObject_Type)
-#define PyCObject_Check(op) (true)
 
-// TO DO: #define PyInt_Check(op) PyObject_TypeCheck(op, &PyInt_Type)
-#define PyInt_Check(op) (true)
+#define PyCObject_Check(op) PyObject_IsInstance(op, (PyObject *)PyCObject_Type_ptr)
+#define PyInt_Check(op) PyObject_IsInstance(op, (PyObject *)PyInt_Type_ptr)
 
 
 /**********************************************************************/
@@ -44,15 +50,20 @@
 
 typedef int PyObject;
 typedef int PyThreadState;
+typedef int PyTypeObject;
 
 
 /**********************************************************************/
-// predefined Python objects
+// Python types, objects
 
-// TO DO: make sure these are initialised correctly (should bind Py_IsInitialized and Py_Initialize first, and call them to init framework before doing anything else)
+PyTypeObject *PyCObject_Type_ptr; // used for checking parameters to callback functions
+PyTypeObject *PyInt_Type_ptr; // used for checking values returned by Python code
 
-PyObject *PyExc_ImportError;
-PyObject *PyExc_TypeError;
+
+/**********************************************************************/
+// Python objects
+
+PyObject *PyExc_ImportError; // used by carbonxtoolbox when raising exception
 
 
 /**********************************************************************/
@@ -80,7 +91,7 @@ Py_InitModule4_ptr Py_InitModule4;
 
 
 /**********************************************************************/
-// Python function defs
+// Python function typedefs
 
 typedef int (*PyArg_ParseTuple_ptr)(PyObject *, char *, ...);
 
@@ -111,6 +122,7 @@ typedef int (*PyOS_InterruptOccurred_ptr)(void);
 
 typedef PyObject *(*PyObject_CallMethod_ptr)(PyObject *, char *, char *, ...);
 typedef PyObject *(*PyObject_GetAttrString_ptr)(PyObject *, char *);
+typedef int (*PyObject_IsInstance_ptr)(PyObject *, PyObject *);
 typedef int (*PyObject_Print_ptr)(PyObject *, FILE *, int);
 
 typedef int (*PyRun_SimpleFile_ptr)(FILE *, const char *);
@@ -127,6 +139,8 @@ typedef int (*Py_IsInitialized_ptr)(void);
 typedef PyThreadState *(*Py_NewInterpreter_ptr)(void);
 
 
+/**********************************************************************/
+// Python functions
 
 PyArg_ParseTuple_ptr PyArg_ParseTuple;
 
@@ -157,6 +171,7 @@ PyOS_InterruptOccurred_ptr PyOS_InterruptOccurred;
 
 PyObject_CallMethod_ptr PyObject_CallMethod;
 PyObject_GetAttrString_ptr PyObject_GetAttrString;
+PyObject_IsInstance_ptr PyObject_IsInstance;
 PyObject_Print_ptr PyObject_Print;
 
 PyRun_SimpleFile_ptr PyRun_SimpleFile;
@@ -177,8 +192,5 @@ Py_NewInterpreter_ptr Py_NewInterpreter;
 /**********************************************************************/
 // loader
 
-CFBundleRef createPythonFramework(void); // returns Python.framework bundle on success, else NULL
-Boolean bindPythonFramework(CFBundleRef pyFramework);  // returns true on success, else false
-
-Boolean isPythonFrameworkLoaded(void);
+Boolean loadPythonFramework(void); // returns true on success, else false; subsequent calls are a no-op
 

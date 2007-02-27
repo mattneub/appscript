@@ -15,26 +15,11 @@
 static ComponentResult handleComponentOpen(ComponentInstance ci) {
 	OSErr err;
 	CIStorageHandle ciStorage;
-	CFBundleRef pyFramework;
 	
 	#ifdef DEBUG_ON
 	fprintf(stderr, "PyOSA: opening component instance\n");
 	#endif
-	if (!isPythonFrameworkLoaded()) {
-		pyFramework = createPythonFramework();
-		if (!pyFramework) {
-			fprintf(stderr, "Couldn't create Python framework.\n");
-			return errOSACantOpenComponent;
-		}
-		if (!bindPythonFramework(pyFramework)) {
-			fprintf(stderr, "Couldn't bind Python framework.\n");
-			return errOSACantOpenComponent;
-		}
-		Py_Initialize();
-		#ifdef DEBUG_ON
-		fprintf(stderr, "Python interpreter initialised.\n");
-		#endif
-	}
+	if (!loadPythonFramework()) return errOSACantOpenComponent;
 	err = createComponentInstanceStorage(&ciStorage);
 	if (err) return errOSACantOpenComponent;
 	SetComponentInstanceStorage(ci, (Handle)ciStorage);

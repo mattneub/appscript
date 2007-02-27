@@ -7,7 +7,7 @@
 
 #include "pythonloader.h"
 
-static pythonFrameworkIsLoaded = false;
+static isPythonFrameworkLoaded = false;
 
 
 /**********************************************************************/
@@ -116,16 +116,10 @@ static CFBundleRef createPythonFrameworkForFileURL(CFURLRef bundleURL) {
 /**********************************************************************/
 
 
-Boolean isPythonFrameworkLoaded(void) {
-	return pythonFrameworkIsLoaded;
-}
-
-
-CFBundleRef createPythonFramework(void) {
+static CFBundleRef createPythonFramework(void) {
 	CFBundleRef pyFramework = NULL;
 	CFURLRef bundleURL = NULL;
 	
-	pythonFrameworkIsLoaded = true;
 	// first see if Python framework is already loaded
 	pyFramework = CFBundleGetBundleWithIdentifier(CFSTR("org.python.python"));
 	if (pyFramework) {
@@ -154,38 +148,26 @@ CFBundleRef createPythonFramework(void) {
 	if (pyFramework) {
 		return pyFramework;
 	}
-	pythonFrameworkIsLoaded = false;
 	return NULL;
 }
 
 
 
-Boolean bindPythonFramework(CFBundleRef pyFramework) {
-
+Boolean bindFunctions(CFBundleRef pyFramework) {
+	// Python 2.3 doesn't export these symbols
 	Py_DecRef = (Py_DecRef_ptr)CFBundleGetFunctionPointerForName(pyFramework, CFSTR("Py_DecRef"));
 	if (!Py_DecRef)
 		Py_DecRef = Py_DecRef_py23;
 	Py_IncRef = (Py_IncRef_ptr)CFBundleGetFunctionPointerForName(pyFramework, CFSTR("Py_IncRef"));
 	if (!Py_DecRef)
 		Py_IncRef = Py_IncRef_py23;
-
-#define bindPyObject(name) \
-	name = (PyObject *)CFBundleGetDataPointerForName(pyFramework, CFSTR(#name)); \
-	if (!name) { \
-		fprintf(stderr, "Couldn't bind " #name "\n"); \
-		return 0; \
-	}
-
+		
 #define bindFunction(name) \
 	name = (name ## _ptr)CFBundleGetFunctionPointerForName(pyFramework, CFSTR(#name)); \
 	if (!name) { \
-		fprintf(stderr, "Couldn't bind " #name "\n"); \
+		fprintf(stderr, "PyOSA: Couldn't bind " #name "\n"); \
 		return 0; \
 	}
-	
-	bindPyObject(PyExc_ImportError);
-	bindPyObject(PyExc_TypeError);
-
 	
 	bindFunction(PyArg_ParseTuple);
 
@@ -216,6 +198,7 @@ Boolean bindPythonFramework(CFBundleRef pyFramework) {
 
 	bindFunction(PyObject_CallMethod);
 	bindFunction(PyObject_GetAttrString);
+	bindFunction(PyObject_IsInstance);
 	bindFunction(PyObject_Print);
 
 	bindFunction(PyRun_SimpleFile);
@@ -230,10 +213,64 @@ Boolean bindPythonFramework(CFBundleRef pyFramework) {
 	bindFunction(Py_IsInitialized);
 	bindFunction(Py_NewInterpreter);
 
-#undef bindType
 #undef bindFunction
 
 	return 1;
 }
 
+
+
+static Boolean bindOther(CFBundleRef pyFramework) {
+#define bindSymbol(name) \
+	name ## _ptr = CFBundleGetDataPointerForName(pyFramework, CFSTR(#name)); \
+	if (!name ## _ptr) { \
+		fprintf(stderr, "PyOSA: Couldn't bind " #name "\n"); \
+		return 0; \
+	}
+#define bindPyObject(name) \
+	name = NULL; \
+	void *name ## _ptr = NULL; \
+	bindSymbol(name); \
+	name = *((PyObject **)name ## _ptr); \
+	if (!name) { \
+		fprintf(stderr, "PyOSA: Couldn't get value for " #name "\n"); \
+		return 0; \
+	}
+	
+	bindSymbol(PyCObject_Type);
+	bindSymbol(PyInt_Type);
+	
+	bindPyObject(PyExc_ImportError);
+	
+#undef bindSymbol
+#undef bindPyObject
+	
+	return 1;
+}
+
+
+/**********************************************************************/
+// loader
+
+Boolean loadPythonFramework(void) {
+	CFBundleRef pyFramework;
+	
+	if (!isPythonFrameworkLoaded) {
+		pyFramework = createPythonFramework();
+			if (!pyFramework) {
+				fprintf(stderr, "Couldn't create Python framework.\n");
+				return false;
+			}
+			if (!bindFunctions(pyFramework)) return false;
+			if (!Py_IsInitialized()) {
+				Py_Initialize();
+				#ifdef DEBUG_ON
+				fprintf(stderr, "Python interpreter initialised.\n");
+				#endif
+			}
+			if (!bindOther(pyFramework)) return false;
+		isPythonFrameworkLoaded = true;
+	}
+	return true;
+}
 
