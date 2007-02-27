@@ -163,10 +163,10 @@ CFBundleRef createPythonFramework(void) {
 Boolean bindPythonFramework(CFBundleRef pyFramework) {
 
 	Py_DecRef = (Py_DecRef_ptr)CFBundleGetFunctionPointerForName(pyFramework, CFSTR("Py_DecRef"));
-	if (!name)
+	if (!Py_DecRef)
 		Py_DecRef = Py_DecRef_py23;
 	Py_IncRef = (Py_IncRef_ptr)CFBundleGetFunctionPointerForName(pyFramework, CFSTR("Py_IncRef"));
-	if (!name)
+	if (!Py_DecRef)
 		Py_IncRef = Py_IncRef_py23;
 
 #define bindPyObject(name) \

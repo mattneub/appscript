@@ -166,18 +166,12 @@ PyThreadState_Swap_ptr PyThreadState_Swap;
 
 Py_BuildValue_ptr Py_BuildValue;
 Py_EndInterpreter_ptr Py_EndInterpreter;
+Py_DecRef_ptr Py_DecRef;
+Py_IncRef_ptr Py_IncRef;
 Py_Initialize_ptr Py_Initialize;
 Py_IsInitialized_ptr Py_IsInitialized;
 Py_NewInterpreter_ptr Py_NewInterpreter;
 
-
-/**********************************************************************/
-// TO DO
-
-//Py_DecRef_ptr Py_DecRef; // TO DO: fails to bind; why?
-//Py_IncRef_ptr Py_IncRef; // TO DO: fails to bind; why?
-void Py_DecRef(PyObject *op); // TO DO: kludge; use stubby alternatives for now
-void Py_IncRef(PyObject *op); // TO DO: kludge; use stubby alternatives for now
 
 
 /**********************************************************************/
@@ -187,3 +181,4 @@ CFBundleRef createPythonFramework(void); // returns Python.framework bundle on s
 Boolean bindPythonFramework(CFBundleRef pyFramework);  // returns true on success, else false
 
 Boolean isPythonFrameworkLoaded(void);
+
