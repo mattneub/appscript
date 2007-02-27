@@ -20,7 +20,6 @@
  */
 
 #include <Carbon/Carbon.h>
-#include "Python/Python.h"
 
 #include "statemanager.h"
 

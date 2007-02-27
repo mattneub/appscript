@@ -21,7 +21,7 @@ import os.path
 # Development flags
 
 # Use True to display additional debug messages.
-DEBUG = 0 
+DEBUG = 1
 
 # Use False to load PyOSA_ modules a .pth file in site-packages; this then avoids the need
 # to recompile when testing changes to PyOSA_ modules. Also disables PyOSA site-packages.
@@ -46,9 +46,9 @@ if LOAD_PYOSA_MODULES_FROM_BUNDLE:
 	
 if DEBUG:
 	print >> sys.stderr, 'PyOSA: using Python %s\n' % sys.version
-	print >> sys.stderr, 'PyOSA: using sys.path:'
-	for path in sys.path:
-		print >> sys.stderr, '\t' + path
+#	print >> sys.stderr, 'PyOSA: using sys.path:'
+#	for path in sys.path:
+#		print >> sys.stderr, '\t' + path
 	print >> sys.stderr
 
 

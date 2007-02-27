@@ -24,5 +24,12 @@
 	<string>0.1.0</string>
 	<key>CSResourcesFileMapped</key>
 	<true/>
+	<key>PyFrameworkLocations</key>
+	<array>
+		<string>~/Library/Frameworks/Python.framework</string>
+		<string>/Library/Frameworks/Python.framework</string>
+		<string>/Network/Library/Frameworks/Python.framework</string>
+		<string>/System/Library/Frameworks/Python.framework</string>
+	</array>
 </dict>
 </plist>

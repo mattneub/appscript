@@ -13,7 +13,6 @@
  */
 
 #include <Carbon/Carbon.h>
-#include "Python/Python.h"
 #include "pythonerrors.h"
 
 

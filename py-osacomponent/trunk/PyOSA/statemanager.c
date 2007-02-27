@@ -283,10 +283,8 @@ PyObject* getContextManager(CIStorageHandle ciStorage, OSAID contextID) {
 		if (!contextState) return NULL;
 		Py_INCREF(contextState->scriptManager);
 		return contextState->scriptManager;
-	} else {
-		Py_INCREF(Py_None);
-		return Py_None;
-	}
+	} else
+		return Py_BuildValue(""); // return None
 }
 
 

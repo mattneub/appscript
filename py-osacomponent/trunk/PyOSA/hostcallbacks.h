@@ -14,17 +14,8 @@
  */
 
 #include <Carbon/Carbon.h>
-#include "Python/Python.h"
 #include "carbonxtoolbox.h"
 
-
-#define COMPONENT_NAME "PyOSA"
-#define COMPONENT_VERSION 0x00010000
-#define COMPONENT_IDENTIFIER "net.sourceforge.appscript.pyosa"
-#define COMPONENT_OSTYPE 'PyOC'
-
-
-#define DEBUG_ON
 
 AEIdleUPP defaultIdleProc;
 OSAActiveUPP defaultActiveProc;

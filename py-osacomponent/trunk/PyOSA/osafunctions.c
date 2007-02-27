@@ -22,6 +22,7 @@ static ComponentFunctionDef componentFunctionDefs[];
 
 static int shouldInitialize = 1;
 
+// TO DO: check if any result vars need to be explicitly zeroed
 
 /******************************************************************************/
 // TO DO: add beginInterpreter/endInterpreter macros to handle... functions
@@ -184,7 +185,7 @@ static ComponentResult handleOSADispose(CIStorageHandle ciStorage,
 										OSAID scriptID) {
 	OSErr err = noErr;
 	err = disposeScriptState(ciStorage, scriptID);
-	printf("OSADispose scriptID=%i\n", scriptID);
+	fprintf(stderr, "OSADispose scriptID=%i\n", scriptID);
 	return err;
 }
 
@@ -389,9 +390,9 @@ static ComponentResult handleOSASetCreateProc(CIStorageHandle ciStorage,
 	
 	if (!createProc) {
 		createProc = defaultCreateProc;
-		printf("OSASetCreateProc: using default proc\n");
+		fprintf(stderr, "OSASetCreateProc: using default proc\n");
 	}
-	printf("OSASetCreateProc: callbacksobj=%08x, createproc=%08x\n", (**ciStorage).callbacks, createProc);
+	fprintf(stderr, "OSASetCreateProc: callbacksobj=%08x, createproc=%08x\n", (**ciStorage).callbacks, createProc);
 	callbacks = (CallbacksRef)PyCObject_AsVoidPtr((**ciStorage).callbacks);
 	callbacks->createProc = createProc;
 	callbacks->createRefCon = refCon;
@@ -855,7 +856,7 @@ ComponentFunctionUPP getComponentFunction(SInt16 selector) {
 	while ((functionDef = componentFunctionDefs[i]).name) {
 		if (functionDef.selector == selector) {
 			#ifdef DEBUG_ON
-			printf("PyOSA: calling %s()\n", functionDef.name);
+			fprintf(stderr, "PyOSA: calling %s()\n", functionDef.name);
 			#endif
 			return functionDef.componentFunctionUPP;
 		}

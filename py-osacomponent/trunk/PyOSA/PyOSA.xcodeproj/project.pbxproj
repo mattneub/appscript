@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4F196DF40B7CD59B0095502E /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F196DF30B7CD59B0095502E /* Python.framework */; };
+		4F04DBA50B9447BB00689E6A /* pythonloader.c in Sources */ = {isa = PBXBuildFile; fileRef = 4F04DBA40B9447BB00689E6A /* pythonloader.c */; };
 		4F196DF60B7CD5B20095502E /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F196DF50B7CD5B20095502E /* CoreFoundation.framework */; };
 		4F1975780B7CEF8D0095502E /* hostcallbacks.c in Sources */ = {isa = PBXBuildFile; fileRef = 4F1975770B7CEF8D0095502E /* hostcallbacks.c */; };
 		4F1975DE0B7D0AC80095502E /* osafunctions.c in Sources */ = {isa = PBXBuildFile; fileRef = 4F1975DD0B7D0AC80095502E /* osafunctions.c */; };
@@ -45,7 +45,8 @@
 		08EA7FFBFE8413EDC02AAC07 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		08FB77B2FE8417CDC02AAC07 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		32BAE0B30371A71500C91783 /* PyOSA_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PyOSA_Prefix.pch; sourceTree = "<group>"; };
-		4F196DF30B7CD59B0095502E /* Python.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python.framework; path = /Library/Frameworks/Python.framework; sourceTree = "<absolute>"; };
+		4F04DBA40B9447BB00689E6A /* pythonloader.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = pythonloader.c; sourceTree = "<group>"; };
+		4F04DBA60B9447D500689E6A /* pythonloader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = pythonloader.h; sourceTree = "<group>"; };
 		4F196DF50B7CD5B20095502E /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
 		4F19755E0B7CD5D00095502E /* PyOSA.r */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.rez; path = PyOSA.r; sourceTree = "<group>"; };
 		4F1975760B7CEF8D0095502E /* hostcallbacks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hostcallbacks.h; sourceTree = "<group>"; };
@@ -75,7 +76,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D01CCCE0486CAD60068D4B7 /* Carbon.framework in Frameworks */,
-				4F196DF40B7CD59B0095502E /* Python.framework in Frameworks */,
 				4F196DF60B7CD5B20095502E /* CoreFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -99,7 +99,6 @@
 			children = (
 				08EA7FFBFE8413EDC02AAC07 /* Carbon.framework */,
 				4F196DF50B7CD5B20095502E /* CoreFoundation.framework */,
-				4F196DF30B7CD59B0095502E /* Python.framework */,
 			);
 			name = "External Frameworks and Libraries";
 			sourceTree = "<group>";
@@ -117,11 +116,13 @@
 			isa = PBXGroup;
 			children = (
 				32BAE0B30371A71500C91783 /* PyOSA_Prefix.pch */,
+				4F04DBA60B9447D500689E6A /* pythonloader.h */,
 				4F25B73C0B887053000AD995 /* carbonxtoolbox.h */,
 				4F1975760B7CEF8D0095502E /* hostcallbacks.h */,
 				4F49C8AC0B7F928B00DD1105 /* statemanager.h */,
 				4F25B6B70B87B66B000AD995 /* pythonerrors.h */,
 				4F1975DC0B7D0AC80095502E /* osafunctions.h */,
+				4F04DBA40B9447BB00689E6A /* pythonloader.c */,
 				4F25B73B0B887053000AD995 /* carbonxtoolbox.c */,
 				4F1975770B7CEF8D0095502E /* hostcallbacks.c */,
 				4F49C8AD0B7F928B00DD1105 /* statemanager.c */,
@@ -231,6 +232,7 @@
 				4F49C8AE0B7F928B00DD1105 /* statemanager.c in Sources */,
 				4F25B6B90B87B66B000AD995 /* pythonerrors.c in Sources */,
 				4F25B73D0B887053000AD995 /* carbonxtoolbox.c in Sources */,
+				4F04DBA50B9447BB00689E6A /* pythonloader.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

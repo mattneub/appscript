@@ -1,7 +1,5 @@
 
 #include <Carbon/Carbon.h>
-#include "Python/Python.h"
-#include "Python/pymactoolbox.h"
 
 #include "osafunctions.h"
 
@@ -17,21 +15,31 @@
 static ComponentResult handleComponentOpen(ComponentInstance ci) {
 	OSErr err;
 	CIStorageHandle ciStorage;
+	CFBundleRef pyFramework;
 	
-	if (!Py_IsInitialized()) {
+	#ifdef DEBUG_ON
+	fprintf(stderr, "PyOSA: opening component instance\n");
+	#endif
+	if (!isPythonFrameworkLoaded()) {
+		pyFramework = createPythonFramework();
+		if (!pyFramework) {
+			fprintf(stderr, "Couldn't create Python framework.\n");
+			return errOSACantOpenComponent;
+		}
+		if (!bindPythonFramework(pyFramework)) {
+			fprintf(stderr, "Couldn't bind Python framework.\n");
+			return errOSACantOpenComponent;
+		}
 		Py_Initialize();
 		#ifdef DEBUG_ON
-		printf("Python interpreter initialised.\n");
+		fprintf(stderr, "Python interpreter initialised.\n");
 		#endif
 	}
-	#ifdef DEBUG_ON
-	printf("PyOSA: opening component instance\n");
-	#endif
 	err = createComponentInstanceStorage(&ciStorage);
 	if (err) return errOSACantOpenComponent;
 	SetComponentInstanceStorage(ci, (Handle)ciStorage);
 	#ifdef DEBUG_ON
-	printf("...done.\n");
+	fprintf(stderr, "...done.\n");
 	#endif
 	return noErr;
 }

@@ -6,8 +6,7 @@
 */
 
 #include <Carbon/Carbon.h>
-#include "Python/Python.h"
-#include "Python/pymactoolbox.h"
+#include "pythonloader.h"
 
 // lifted from CarbonX
 // IMPORTANT: appscript-0.17.2+ must be installed or memory errors will occur (AEDescX_ConvertDisown was added in 0.17.2 unstable branch)

@@ -63,16 +63,16 @@ static PyObject* invokeCreateProc(PyObject *self, PyObject *args) {
 								&returnID,
 								&transactionID,
 								&callbacksObj)) return NULL;
-	printf("*****invokeCreateProc callbackobj=%08x\n", (int)callbacksObj);
+	fprintf(stderr, "*****invokeCreateProc callbackobj=%08x\n", (int)callbacksObj);
 	PyObject_Print(callbacksObj, stdout, 0);
-	printf("\n\n");
+	fprintf(stderr, "\n\n");
 	if (PyCObject_Check(callbacksObj))
 		callbacks = (CallbacksRef)PyCObject_AsVoidPtr(callbacksObj);
 	else
-		printf("not a COBJECT!\n");
-	printf("    callbacks=%08\n", callbacks);
+		fprintf(stderr, "not a COBJECT!\n");
+	fprintf(stderr, "    callbacks=%08\n", callbacks);
 	if (!callbacks) return PyMac_Error(9999);
-	printf("invoking createproc: \n\t code=(%04x %04x) \n\t target=%04x \n\t refcon=%08x \n\t callback = %08x\n",
+	fprintf(stderr, "invoking createproc: \n\t code=(%04x %04x) \n\t target=%04x \n\t refcon=%08x \n\t callback = %08x\n",
 			theAEEventClass, theAEEventID, target.descriptorType, 
 			(int)callbacks->createRefCon,
 			(int)callbacks->createProc);
@@ -85,7 +85,7 @@ static PyObject* invokeCreateProc(PyObject *self, PyObject *args) {
 										&result,
 										callbacks->createRefCon,
 										callbacks->createProc);
-	printf("    done\n");
+	fprintf(stderr, "    done\n");
 	if (err) return PyMac_Error(err);
 	return Py_BuildValue("O&", AEDescX_New, &result);
 }
