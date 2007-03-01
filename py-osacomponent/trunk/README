@@ -1,0 +1,180 @@
+PyOSA
+
+======================================================================
+IMPORTANT
+
+- This is an early developer release, so is incomplete and may be buggy.
+
+- Once built, the PyOSA.component should be installed in /Library/Components or ~/Library/Components. You will need to restart OSA-aware applications before they register the new component.
+
+======================================================================
+SUMMARY
+
+A Python OSA component.
+
+======================================================================
+DESCRIPTION
+
+PyOSA is Python interpreter repackaged as an OSA language component, allowing OSA scripts to be written in Python. It is intended to be a fully-fledged OSA component and as such has some usage differences to the standard [Mac]Python:
+
+1. PyOSA scripts are managed similarly to Python modules, being executed at load/compile time to initialise all top-level variables, functions, etc. prior to use. This means that global variables will retain their current state between runs until the script is recompiled/reloaded.
+It also means that one or more top-level functions must be provided as entry points, e.g. a PyOSA script intended for batch-processing use must provide a run handler to be called when the script is run. Example:
+
+def run():
+	return "Hello world!"
+
+Note that this means PyOSA is unsuitable for running conventional Python batch-processing scripts, unless they're modified to suit.
+
+2. PyOSA uses the host process's stdout and stderr. Use Console.app to view the results of 'print' statements. To send messages to the event log (e.g. in Script Editor), use PyOSA's log(msg=None) method.
+
+3. PyOSA doesn't support importing modules relative to a PyOSA script as the OSA is not properly filesystem-aware. Python modules must be located on the standard sys.path, or in the following folders:
+
+	/Library/PyOSA/X.Y/site-packages
+	~/Library/PyOSA/X.Y/site-packages
+
+where X and Y are the major and minor version numbers of the Python framework being used, e.g.:
+
+	 /Library/PyOSA/2.5/site-packages
+
+There is currently no support for using compiled OSA scripts as modules.
+
+
+4. Compiled PyOSA scripts (.scpt/.app) can contain persistent script data in addition to the script source code (see below).
+
+
+5. PyOSA adds several top-level variables to each script before initialising it: 
+
+- aem -- the aem module
+- appscript -- the appscript module
+- app, con, its, k, ApplicationNotFoundError, CommandError -- appscript's public attributes
+- state -- provides a persistent data storage area; data stored here will be retained after script is saved to disk, and restored when script is loaded from disk
+- log -- the log function
+- parent -- used to pass commands to the script's parent (currently this is always the host application)
+- installeventhandler -- used to manually install functions as Apple event handlers
+
+6. PyOSA scripts can handle Apple events simply by declaring handler functions at the top level of the script. Functions whose names are defined as commands/events in the host application's dictionary will be automatically installed as event handlers for that script.
+
+Example: save the following script as an applet, then drop one or more files/folders onto it:
+
+def open(aliaslist):
+	print 'OPENING:', aliaslist
+
+Handler functions can also be installed by the script if necessary, e.g. if the host application has no dictionary. This is done using the installeventhandler function. (TO DO: document this.)
+
+
+======================================================================
+INTERFACE
+
+======= Sending events to the host process =======
+
+Events can be passed to the host process in either of two ways:
+
+1. using app() - i.e. the current application - as the target, e.g.:
+
+	app().name.get()
+
+(This will send events to the application's normal event handlers.)
+
+
+2. using parent - i.e. the script's delegate - as the target, e.g.:
+
+	parent.name.get()
+
+(This is equivalent to using 'continue get name' in AppleScript.)
+
+
+When implementing 'quit' handlers in script applets, the second approach must be used otherwise infinite recursion will occur, e.g.:
+
+def quit(): # override the applet's own internal quit handler to add additional behaviour
+	# do stuff
+	parent.quit() # must be called to allow the application to quit
+	# do more stuff
+
+
+======= Persistent state =======
+
+The state variable contains a new-style class instance to which you can add, get and remove any attribute at any time, this provides a convenient facade for PyOSA's persistence mechanism. To set initial state at compilation time, call state with one or more named arguments, e.g.:
+
+state(
+	var1 = 42,
+	var2 = []
+)
+
+When a script is saved in compiled form, PyOSA will attempt to serialise the state object's __dict__ and store it in the script file along with the script's source code and other data. When the script is re-loaded, PyOSA restores the state object's attributes to their previously stored state. The client application can also query the PyOSA component to see if osastore's content has changed since the script was loaded. 
+
+Note that this persistence mechanism is reliant on Python's pickle module, so can't handle complex values such as functions, classes and instances. If serialisation fails, a warning is printed to stderr and the state data is omitted.
+
+======================================================================
+NOTES
+
+======= About OSA =======
+
+OSA scripts are commonly used in 'attachable' applications such as System Events and Mail to modify and extend their standard behaviour. An attachable application is one that allows OSA scripts to be attached to various objects - Script menus, objects within the application's Apple Event Object Model, etc. - to modify and extend the application's functionality. e.g. System Events allows scripts to be attached as Folder Actions and triggered when a filesystem folder is modified by the user; Mail allows scripts to be used as custom Mail Rule actions. 
+
+OSA scripts are also heavily used in OSA-based application development kits such as AppleScript Studio and FaceSpan. (Note that AppleScript Studio and FaceSpan currently provide direct support for the AppleScript language only.)
+
+The best known OSA language is Apple's own AppleScript language There are several other OSA languages of varying capabilities currently available:
+- UserTalk <http://radio.userland.com>
+- OSAShell <http://ranchero.com/software/osashell>
+- JavaScriptOSA <http://www.latenightsw.com/freeware/JavaScriptOSA>
+- TclOSA, PerlOSA, PythonOSA, PHPOSA, RubyOSA, ShOSA <http://homepage.mac.com/philip_aker/osa/osa.html>
+
+OSA scripts are typically written using an OSA script editor such as Apple's own Script Editor or Late Night Software's Script Debugger. Compiled OSA script files typically have a .scpt extension. Be aware that some OSA editors may not recognise source code files with .py extensions; where this is the case you'll need to copy and paste source code between applications.
+
+
+======= PyOSA Caveats and Other Issues =======
+
+- While some parts of PyOSA are fully functional, other bits are jury-rigged or not yet implemented.
+
+- Some APIs are not finalised and may be subject to change.
+
+- PyOSA dynamically loads the Python framework. The search order is as follows:
+
+	- If the host process already has a Python framework loaded, use that.
+	- If the host application bundle contains a private Python framework, load and use that.
+	- Search the following locations for a public Python framework and use the first one found:
+		~/Library/Frameworks/Python.framework
+		/Library/Frameworks/Python.framework
+		/Network/Library/Frameworks/Python.framework
+		/System/Library/Frameworks/Python.framework
+
+Python 2.3 and later are supported (though some may generate interface version warnings as 100% compatibility support isn't yet complete).
+
+- Appscript 0.17.2 or later must be installed in the Python framework used by PyOSA. If appscript is not found, or is an older version, an error message will be printed to Console and the component will refuse to load. (This is to protect against hard crashes due to API incompatibilities with older CarbonX.AE extensions.)
+
+- PyOSA currently hosts all component and script instances in a single Python interpreter. This means that all scripts share the same modules, file handles, etc. so it's up to script authors to ensure they don't interfere with one another. Host applications that call OSA components from multiple threads will very likely run into problems. Providing better insulation between scripts is on the TODO list, but it remains to be seen if this is practical or not under the current in-process design.
+
+
+======= Other =======
+
+- Offers of advice, assistance, additional documentation, etc. from anyone familiar with the finer points of OSA component design would be greatly appreciated!
+
+
+======================================================================
+SUBVERSION
+
+PyOSA:
+
+	svn checkout http://svn.macosforge.org/repository/appscript/py-osacomponent/trunk/
+
+py-appscript 0.17.2 unstable:
+
+	svn checkout http://svn.macosforge.org/repository/appscript/py-appscript/branches/py-appscript-0.17.2-unstable/
+
+
+======================================================================
+AUTHOR
+
+- has <hhas -at- users - sourceforge - net> <http://appscript.sourceforge.net>
+
+
+======================================================================
+THANKS
+
+Many thanks to: Philip Aker, Bill Fancher, Bob Ippolito, Chris Nebel, Donovan Preston, Brent Simmons
+
+
+======================================================================
+COPYRIGHT
+
+(C) 2007 HAS
