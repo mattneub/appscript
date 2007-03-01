@@ -49,10 +49,19 @@ __all__ = ['aem', 'appscript', 'AppscriptServices']
 #
 # - need to deal with generic references belonging to external apps somehow (some may resolve against host app ok, but most will fail, so need an intelligent error message when that happens)
 #
-# - keywords will need some special handling since they're also generic: those found in host dictionary will translate to AEDescs okay, but  those defined in other apps' dictionaries may cause 'unknown keyword' errors. Note: without robust handling of keywords, Script Editor, etc. may not display results correctly.
+# - keywords will need some special handling since they're also generic: those found in host dictionary will translate to AEDescs okay, but  those defined in other apps' dictionaries may cause 'unknown keyword' errors. Note: without robust handling of keywords, Script Editor, etc. may not display results correctly
+
 
 #######
 
+class DelegateEvent(aem.Event):
+	pass
+
+class DelegateApplication(aem.Application):
+	_Event = DelegateEvent
+
+
+#######
 
 class AppscriptServices:
 	
@@ -88,20 +97,31 @@ class AppscriptServices:
 		self.codecs = hostapp.AS_appdata.connect()
 		self.pack = self.codecs.pack
 		self.unpack = self.codecs.unpack
+		self.referencebyname = self.codecs.referencebyname
+		self.referencebycode = self.codecs.referencebycode
+		self.typebyname = self.codecs.typebyname
+		self.typebycode = self.codecs.typebycode
 		#######
 		def createappleevent(self, eventclass, eventid, target, returnid, transactionid):
-			print >> stderr, '****createappleevent %r (%r %r)' % (osacallbacks, eventclass, eventid) # debug
+			print >> stderr, '*called createappleevent*' # debug
 			return invokecreateproc(eventclass, eventid, target, returnid, transactionid, osacallbacks)
 		self.createappleevent = createappleevent
 		def sendappleevent(self, flags, timeout):
-			print >> stderr, '****sendappleevent' # debug
+			print >> stderr, '*called sendappleevent*' # debug
 			return invokesendproc(self.AEM_event, flags, timeout, osacallbacks)
 		self.sendappleevent = sendappleevent
+		def continueappleevent(self, flags, timeout): # TO DO: what to do with flags, timeout? Just ignore?
+			print >> stderr, '*called continueappleevent*' # debug
+			return invokecontinueproc(self.AEM_event, osacallbacks)
+		self.continueappleevent = continueappleevent
+		#######
+		self.target = DelegateApplication() # see pyosa_scriptcontext.ParentDelegate.__getattr__
 	
 	
 	def installcallbacks(self): # note: modifying aem module in-situ will be a bit unsafe if there's only a single interpreter supporting multiple component instances; should work ok when there's separate interpreters though
 		aem.Event._createAppleEvent = self.createappleevent
 		aem.Event._sendAppleEvent = self.sendappleevent
+		DelegateEvent._sendAppleEvent = self.continueappleevent
 	
 	#######
 	# unpack Apple events

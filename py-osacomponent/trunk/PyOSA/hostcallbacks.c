@@ -8,7 +8,6 @@
 
 #include "hostcallbacks.h"
 
-// TO CHECK: what is correct thing to do if UPP is null? (currently raises Python error)
 
 /**************************************/
 
@@ -46,9 +45,9 @@ static PyObject* invokeActiveProc(PyObject *self, PyObject *args) {
 
 
 static PyObject* invokeCreateProc(PyObject *self, PyObject *args) {
+	OSErr err;
 	PyObject *callbacksObj;
 	CallbacksRef callbacks = NULL;
-	OSErr err;
 	AEEventClass theAEEventClass;
 	AEEventID theAEEventID;
 	AEAddressDesc target;
@@ -63,19 +62,11 @@ static PyObject* invokeCreateProc(PyObject *self, PyObject *args) {
 								&returnID,
 								&transactionID,
 								&callbacksObj)) return NULL;
-	fprintf(stderr, "*****invokeCreateProc callbackobj=%08x\n", (int)callbacksObj);
 	PyObject_Print(callbacksObj, stdout, 0);
 	fprintf(stderr, "\n\n");
 	if (PyCObject_Check(callbacksObj))
 		callbacks = (CallbacksRef)PyCObject_AsVoidPtr(callbacksObj);
-	else
-		fprintf(stderr, "not a COBJECT!\n");
-	fprintf(stderr, "    callbacks=%08\n", callbacks);
 	if (!callbacks) return PyMac_Error(9999);
-	fprintf(stderr, "invoking createproc: \n\t code=(%04x %04x) \n\t target=%04x \n\t refcon=%08x \n\t callback = %08x\n",
-			theAEEventClass, theAEEventID, target.descriptorType, 
-			(int)callbacks->createRefCon,
-			(int)callbacks->createProc);
 	if (!callbacks || !(callbacks->createProc)) return PyMac_Error(8000);
 	err = InvokeOSACreateAppleEventUPP(theAEEventClass,
 										theAEEventID,
@@ -85,16 +76,15 @@ static PyObject* invokeCreateProc(PyObject *self, PyObject *args) {
 										&result,
 										callbacks->createRefCon,
 										callbacks->createProc);
-	fprintf(stderr, "    done\n");
 	if (err) return PyMac_Error(err);
 	return Py_BuildValue("O&", AEDescX_New, &result);
 }
 
 
 static PyObject* invokeSendProc(PyObject *self, PyObject *args) {
+	OSErr err;
 	PyObject *callbacksObj;
 	CallbacksRef callbacks = NULL;
-	OSErr err;
 	AppleEvent theAppleEvent, reply;
 	AESendMode sendMode;
 	long timeOutInTicks;
@@ -122,7 +112,43 @@ static PyObject* invokeSendProc(PyObject *self, PyObject *args) {
 
 
 static PyObject* invokeContinueProc(PyObject *self, PyObject *args) { 
-	return NULL; // TO DO
+	OSErr err = noErr;
+	PyObject *callbacksObj;
+	CallbacksRef callbacks = NULL;
+	AppleEvent theAppleEvent, reply;
+	AEAddressDesc target = {'null', NULL};
+	AEEventHandlerUPP eventHandlerUPP;
+	long refCon;
+	
+	
+	err = AECreateAppleEvent(kCoreEventClass,
+							kAEAnswer,
+							&target,
+							0,
+							0,
+							&reply);
+	
+	
+	if (!PyArg_ParseTuple(args, "O&O",
+							AEDescX_Convert, &theAppleEvent,
+							&callbacksObj)) return NULL;
+	if (PyCObject_Check(callbacksObj))
+		callbacks = ((CallbacksRef)PyCObject_AsVoidPtr(callbacksObj));
+	if (!callbacks) return PyMac_Error(8000);
+	eventHandlerUPP = callbacks->continueProc;
+	refCon = callbacks->continueRefCon;
+	#ifdef DEBUG_ON
+//	fprintf(stderr, "invoking continue: upp=%08x refcon=%08x\n", (int)eventHandlerUPP, refCon);
+	#endif
+	err = AEResumeTheCurrentEvent(&theAppleEvent,
+								  &reply,
+								  eventHandlerUPP,
+								  refCon);
+	#ifdef DEBUG_ON
+//	fprintf(stderr, "done (err = %i)\n", err);
+	#endif
+	if (err != noErr) return PyMac_Error(err);
+	return Py_BuildValue("O&", AEDescX_New, &reply);
 }
 
 
@@ -157,11 +183,17 @@ PyObject* createCallbacks(void) {
 		defaultActiveProc = NewOSAActiveUPP((OSAActiveProcPtr)activeProc);
 		defaultCreateProc = NewOSACreateAppleEventUPP((OSACreateAppleEventProcPtr)AECreateAppleEvent);
 		defaultSendProc = NewOSASendUPP((OSASendProcPtr)AESend);
+		defaultContinueProc = (AEEventHandlerUPP)kOSAUseStandardDispatch;
 	}
 	callbacks = malloc(sizeof(Callbacks));
 	callbacks->activeProc = defaultActiveProc;
+	callbacks->activeRefCon = 0;
 	callbacks->createProc = defaultCreateProc;
+	callbacks->createRefCon = 0;
 	callbacks->sendProc = defaultSendProc;
+	callbacks->sendRefCon = 0;
+	callbacks->continueProc = defaultContinueProc;
+	callbacks->continueRefCon = 0;
 	return PyCObject_FromVoidPtr((void *)callbacks, free);
 }
 

@@ -390,9 +390,9 @@ static ComponentResult handleOSASetCreateProc(CIStorageHandle ciStorage,
 	
 	if (!createProc) {
 		createProc = defaultCreateProc;
-		fprintf(stderr, "OSASetCreateProc: using default proc\n");
+	//	fprintf(stderr, "OSASetCreateProc: using default proc\n");
 	}
-	fprintf(stderr, "OSASetCreateProc: callbacksobj=%08x, createproc=%08x\n", (**ciStorage).callbacks, createProc);
+	//fprintf(stderr, "OSASetCreateProc: callbacksobj=%08x, createproc=%08x\n", (**ciStorage).callbacks, createProc);
 	callbacks = (CallbacksRef)PyCObject_AsVoidPtr((**ciStorage).callbacks);
 	callbacks->createProc = createProc;
 	callbacks->createRefCon = refCon;
@@ -496,17 +496,28 @@ static ComponentResult handleOSADoScript(CIStorageHandle ciStorage,
 /******************************************************************************/
 /* Using Script Contexts to Handle Apple Events */
 
+
 static ComponentResult handleOSASetResumeDispatchProc(CIStorageHandle ciStorage, 
 													  AEEventHandlerUPP resumeDispatchProc, 
 													  long refCon) {
-	return 0; // TO DO
+	CallbacksRef callbacks;
+	
+	callbacks = (CallbacksRef)PyCObject_AsVoidPtr((**ciStorage).callbacks);
+	callbacks->continueProc = resumeDispatchProc;
+	callbacks->continueRefCon = refCon;
+	return noErr;
 }
 
 
 static ComponentResult handleOSAGetResumeDispatchProc(CIStorageHandle ciStorage, 
 													  AEEventHandlerUPP *resumeDispatchProc, 
 													  long *refCon) {
-	return errOSABadSelector; // TO DO
+	CallbacksRef callbacks;
+	
+	callbacks = (CallbacksRef)PyCObject_AsVoidPtr((**ciStorage).callbacks);
+	*resumeDispatchProc = callbacks->continueProc;
+	*refCon = callbacks->continueRefCon;
+	return noErr;
 }
 
 

@@ -28,6 +28,7 @@ from types import ModuleType
 from copy import deepcopy
 
 from pyosa_appscript import aem, appscript
+import appscript.reference
 from pyosa_errors import *
 from pyosa_eventhandlerdefinitions import kCommand, kBuiltInEventHandlerDefs
 
@@ -53,8 +54,8 @@ class PersistentStorage:
 
 class EventHandlerManager:
 
-	def __init__(self, context, hostapp):
-		self._host = hostapp
+	def __init__(self, context, appdata):
+		self._appdata = appdata
 		self._context = context
 		self._eventhandlerdefs = {}
 		self._hasautoloaded = False
@@ -64,7 +65,7 @@ class EventHandlerManager:
 			print >> stderr, 'Initialising event handler table...' # debug
 			self._hasautoloaded = True
 			# for each command definition in built-in list/host application dictionary...
-			for defs in [kBuiltInEventHandlerDefs, self._host.AS_appdata.referencebyname]:
+			for defs in [kBuiltInEventHandlerDefs, self._appdata.referencebyname]:
 				for name, (kind, info) in defs.items():
 					if kind == kCommand:
 						# if script has a function with same name as this command, get it
@@ -123,29 +124,41 @@ class EventHandlerManager:
 
 class ScriptContext:
 	def __init__(self, appscriptservices, source=None, state=None):
+		# customise aem's classes so that they use host-supplied callbacks for creating and sending events
 		appscriptservices.installcallbacks()
+		# create the module object representing the client's script # TO DO: most of this code should probably be executed by compile(), not here
 		self._source = ''
 		self._context = ModuleType('__main__')
+		# add appscript and aem attributes to client script
 		self._context.appscript = appscript
 		self._context.aem = aem
 		for name in ['k', 'ApplicationNotFoundError', 'CommandError', 'con', 'its', 'app']:
 			setattr(self._context, name, getattr(appscript, name))
-		self._host = appscript.app()
-		self._context.host = self._host
+		# log() is equivalent to AppleScript's log command
+		self._aemhost = appscript.app().AS_appdata.target
 		self._context.log = self._log
-		self._eventhandlermanager = EventHandlerManager(self._context, self._host)
+		# parent.somecommand(...) is equivalent to AppleScript's continue somecommand(...) statement
+		self._context.parent = appscript.reference.Reference(appscriptservices, aem.app)
+		# EventHandlerManager is responsible for handling events sent to this script, providing
+		# automatic installation of event handlers based on the host application's dictionary
+		self._eventhandlermanager = EventHandlerManager(self._context, appscriptservices)
+		# client scripts can call installeventhandler to install functions using raw AE codes
+		# (equivalent to writing 'on <<event abcd1234>> ... end' in AppleScript)
 		self._context.installeventhandler = self._eventhandlermanager.installeventhandler
+		# for convenience, compile script if source was provided here (if not, ScriptManager will
+		# need to call the new ScriptContext instance's compile() method separately)
 		if source is not None:
 			self.compile(source, state)
 	
 	
 	
 	def _log(self, val=None):
-		self._host.AS_appdata.target.event('ascrcmnt', 
-				val is not None and {'----':val} or {}).send()
+		self._aemhost.event('ascrcmnt', val is not None and {'----':val} or {}).send()
 	
 	
 	def _executeincontext(self, source):
+		# compile source code into a code object, then execute it in the script module's context
+		# to initialise its top-level state (functions, classes, global variables, etc)
 		try:
 			bytecode = compile(source.replace('\r', '\n') + '\n', '<PyOSAScript>', 'exec')
 		except Exception, e:
@@ -158,10 +171,14 @@ class ScriptContext:
 	#######
 	
 	def state(self):
+		# retrieve the script's persistent statel used by ScriptManager when storing script (OSAStore)
+		# or checking if script has been modified (OSAGetScriptInfo)
 		return self._context.state.__dict__
 	
 	
 	def hasopenhandler(self):
+		# does script have an 'open' event handler - either a function named open that's installed
+		# automatically, or one installed manually by calling installeventhandler(fn, 'aevtodoc', ...)
 		return self._eventhandlermanager.hasopenhandler()
 	
 	#######

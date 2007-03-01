@@ -21,6 +21,7 @@ AEIdleUPP defaultIdleProc;
 OSAActiveUPP defaultActiveProc;
 OSACreateAppleEventUPP defaultCreateProc;
 OSASendUPP defaultSendProc;
+AEEventHandlerUPP defaultContinueProc;
 
 
 typedef struct {
