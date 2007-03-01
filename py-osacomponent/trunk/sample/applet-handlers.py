@@ -1,34 +1,40 @@
-# Responds to common applet events.
+# Responds to common applet events. (Messages will be printed to Console.)
 #
 # Note: compile this script before use, e.g:
 #	osacompile -s -l PyOSA -o applet-handlers.app applet-handlers.py
 
 def run():
-	print '####### HANDLER TEST #######'
+	# called when applet icon is double-clicked in Finder
+	print '\n####### HANDLER TEST #######'
 	print 'called run()'
-	print '####### ############ #######'
+	print '####### ############ #######\n'
 
-def open(o):
+def open(aliaslist):
+	# called when one or more files are dropped on applet icon
 	import pprint
-	print '####### HANDLER TEST #######'
+	print '\n####### HANDLER TEST #######'
 	print 'called open(...)'
-	pprint.pprint(o)
-	print '####### ############ #######'
+	pprint.pprint(aliaslist)
+	print '####### ############ #######\n'
 
 def reopen():
-	print '####### HANDLER TEST #######'
+	# called when running applet icon is clicked in Dock
+	print '\n####### HANDLER TEST #######'
 	print 'called reopen()'
-	print '####### ############ #######'
+	print '####### ############ #######\n'
 
 def idle():
-	print '####### HANDLER TEST #######'
+	# called periodically while applet is running
+	print '\n####### HANDLER TEST #######'
 	print 'called idle()'
-	print '####### ############ #######'
+	print '####### ############ #######\n'
 	return 10
 
-# 'quit' handler is disabled for now as PyOSA doesn't yet support delegation
-#def quit():
-#	parent.quit()
-#	print '####### HANDLER TEST #######'
-#	print 'called quit()'
-#	print '####### ############ #######'
+def quit():
+	# called when application is quitting (e.g. Cmd-Q)
+	print '\n####### HANDLER TEST #######'
+	print 'called quit()'
+	print '####### ############ #######\n'
+	# important: if intercepting the quit event, make sure to
+	# 'continue' it, otherwise the applet will never quit:
+	parent.quit() 
