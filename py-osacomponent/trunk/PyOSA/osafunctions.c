@@ -92,7 +92,13 @@ static ComponentResult handleOSALoad(CIStorageHandle ciStorage,
 	// note: OSARemoveStorageType modifies AEDescs in-place, so preserve the client-supplied AEDesc by working on a copy
 	err = AEDuplicateDesc(scriptData, &desc); 
 	if (err) return err;
-	OSARemoveStorageType(desc.dataHandle);
+	/*
+		BUG WORKAROUND
+		OSARemoveStorageType is broken on i386+Tiger, removing 3072 (0x0C00), not 12 (0x000C), bytes from
+		data handle. (See <http://lists.apple.com/archives/applescript-implementors/2006/May/msg00027.html>)
+		Therefore, disable it here and have pyosa_serialization.py remove the 12-byte trailer.
+	*/
+	/* OSARemoveStorageType(desc.dataHandle); */ // DISABLED
 	err = createScriptState(ciStorage, NULL, resultingScriptID, &state);
 	if (err) return err;
 	result = PyObject_CallMethod(state->scriptManager, "load", "O&l",

@@ -62,8 +62,6 @@ static PyObject* invokeCreateProc(PyObject *self, PyObject *args) {
 								&returnID,
 								&transactionID,
 								&callbacksObj)) return NULL;
-	PyObject_Print(callbacksObj, stdout, 0);
-	fprintf(stderr, "\n\n");
 	if (PyCObject_Check(callbacksObj))
 		callbacks = (CallbacksRef)PyCObject_AsVoidPtr(callbacksObj);
 	if (!callbacks) return PyMac_Error(9999);

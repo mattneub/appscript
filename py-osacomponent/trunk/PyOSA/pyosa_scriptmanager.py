@@ -14,7 +14,7 @@
 # and takes ownership of all CarbonX.AEDescs returned as results. Python code must NOT
 # retain these AEDescs after returning control to C code or memory errors will occur.
 
-import MacOS
+import MacOS, struct
 from sys import stderr
 from pprint import pprint
 from StringIO import StringIO
@@ -28,6 +28,7 @@ from pyosa_errors import *
 from pyosa_scriptcontext import *
 from pyosa_serialization import *
 from pyosa_appscript import *
+from pyosa_colorizesource import *
 
 # TO DO: packing of appscript Keyword instances in coercetodesc will be tricky: keywords don't contain AEDesc info, so those identifying external applications often won't pack correctly/at all via the host codecs - not sure how to deal with this yet
 
@@ -71,15 +72,6 @@ class ScriptManager:
 			return desc.AECoerceDesc(desiredtype)
 		except MacOS.Error:
 			raisecomponenterror(errOSACantCoerce)
-
-
-	def _sourcetostyledtext(self, desc):
-		# (note: Script Editor likes to ask for typeStyledText when it calls OSADisplay and OSAGetSource so it can colour the source code/output)
-		return self.appscriptservices.pack({
-				aem.AEType(keyAEText): desc.AECoerceDesc(typeChar),
-				aem.AEType(keyAEStyles): AECreateDesc(typeScrapStyles, 
-						'\x00\x01\x00\x00\x00\x00\x00\x10\x00\x0e\x00\x03\x00\x00\x00\x0c\x00\x00\x00\x00\xA0\x00') # blue text
-				}).AECoerceDesc(typeStyledText)
 	
 	
 	def _appidentity(self, target):
@@ -270,7 +262,7 @@ class ScriptManager:
 			raisecomponenterror(errOSACantAccess)
 		if desiredtype == typeStyledText: # colour compiled source code blue
 			try:
-				return self._sourcetostyledtext(desc)
+				return sourcetostyledtext(desc)
 			except MacOS.Error:
 				pass
 		return self._coercedesc(desc, desiredtype)
@@ -308,7 +300,7 @@ class ScriptManager:
 			raisecomponenterror(errOSACantAccess)
 		if desiredtype == typeStyledText: # colour compiled source code blue
 			try:
-				return self._sourcetostyledtext(desc)
+				return sourcetostyledtext(desc)
 			except MacOS.Error:
 				pass
 		return self._coercedesc(desc, desiredtype)

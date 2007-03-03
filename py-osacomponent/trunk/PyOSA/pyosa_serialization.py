@@ -45,11 +45,16 @@ def packscript(source, state, modeflags, codecs):
 
 
 def unpackscript(desc, codecs):
-	rec = codecs.unpack(AECreateDesc(typeAERecord, desc.data))
-#	if rec['serializationversion'] < pyosa_kOldestSupportedSerializationVersion:
-#		raise ComponentError(errOSADataFormatObsolete)
-#	if pyosa_kSerializationVersion < rec['oldestsupportedserializationversion']:
-#		raise ComponentError(errOSADataFormatTooNew)
+	# BUG WORKAROUND
+	# OSARemoveStorageType is broken on i386+Tiger, removing 3072 (0x0C00), not 12 (0x000C), bytes from
+	# data handle. (See <http://lists.apple.com/archives/applescript-implementors/2006/May/msg00027.html>)
+	# Therefore, disable it in osafunctions.c and have remove the 12-byte trailer here.
+	data = desc.data[:-12] # WORKAROUND
+	rec = codecs.unpack(AECreateDesc(typeAERecord, data))
+	if rec['serializationversion'] < pyosa_kOldestSupportedSerializationVersion:
+		raise ComponentError(errOSADataFormatObsolete)
+	if pyosa_kSerializationVersion < rec['oldestsupportedserializationversion']:
+		raise ComponentError(errOSADataFormatTooNew)
 	source = rec['source']
 	state = rec['state']
 	modeflags = rec['modeflags']

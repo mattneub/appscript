@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		4F04DBA50B9447BB00689E6A /* pythonloader.c in Sources */ = {isa = PBXBuildFile; fileRef = 4F04DBA40B9447BB00689E6A /* pythonloader.c */; };
+		4F0F00890B9A247C003FE278 /* pyosa_colorizesource.py in Resources */ = {isa = PBXBuildFile; fileRef = 4F0F00880B9A247C003FE278 /* pyosa_colorizesource.py */; };
 		4F196DF60B7CD5B20095502E /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F196DF50B7CD5B20095502E /* CoreFoundation.framework */; };
 		4F1975780B7CEF8D0095502E /* hostcallbacks.c in Sources */ = {isa = PBXBuildFile; fileRef = 4F1975770B7CEF8D0095502E /* hostcallbacks.c */; };
 		4F1975DE0B7D0AC80095502E /* osafunctions.c in Sources */ = {isa = PBXBuildFile; fileRef = 4F1975DD0B7D0AC80095502E /* osafunctions.c */; };
@@ -47,6 +48,7 @@
 		32BAE0B30371A71500C91783 /* PyOSA_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PyOSA_Prefix.pch; sourceTree = "<group>"; };
 		4F04DBA40B9447BB00689E6A /* pythonloader.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = pythonloader.c; sourceTree = "<group>"; };
 		4F04DBA60B9447D500689E6A /* pythonloader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = pythonloader.h; sourceTree = "<group>"; };
+		4F0F00880B9A247C003FE278 /* pyosa_colorizesource.py */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.script.python; path = pyosa_colorizesource.py; sourceTree = "<group>"; };
 		4F196DF50B7CD5B20095502E /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
 		4F19755E0B7CD5D00095502E /* PyOSA.r */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.rez; path = PyOSA.r; sourceTree = "<group>"; };
 		4F1975760B7CEF8D0095502E /* hostcallbacks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hostcallbacks.h; sourceTree = "<group>"; };
@@ -136,6 +138,7 @@
 				4F25B9150B89D040000AD995 /* pyosa_errors.py */,
 				4F91AC4D0B91156200471CB7 /* pyosa_eventhandlerdefinitions.py */,
 				4F25B9680B8A4660000AD995 /* pyosa_serialization.py */,
+				4F0F00880B9A247C003FE278 /* pyosa_colorizesource.py */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -205,6 +208,7 @@
 				4F6F349C0B8B287F00D81F58 /* pyosa_syspath.py in Resources */,
 				4F6F35D50B8B3F5200D81F58 /* pyosa_appscript.py in Resources */,
 				4F91AC4E0B91156200471CB7 /* pyosa_eventhandlerdefinitions.py in Resources */,
+				4F0F00890B9A247C003FE278 /* pyosa_colorizesource.py in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -290,6 +294,10 @@
 		4FADC23908B4156C00ABE55E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = (
+					ppc,
+					i386,
+				);
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;
