@@ -10,7 +10,7 @@
 
 import MacOS
 from sys import exc_info, stderr
-from traceback import extract_tb
+from traceback import extract_tb, print_stack
 
 from CarbonX.kOSA import *
 from pyosa_appscript import aem, appscript
@@ -193,6 +193,9 @@ class ScriptError(StandardError):
 # raise script and component errors
 
 def raisecomponenterror(errornumber):
+	print 'raise ComponentError:'
+	print_stack()
+	print
 	raise ComponentError(errornumber)
 	
 

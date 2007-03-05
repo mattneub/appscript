@@ -446,7 +446,20 @@ static ComponentResult handleOSAGetSendProc(CIStorageHandle ciStorage,
 
 static ComponentResult handleOSASetDefaultTarget(CIStorageHandle ciStorage, 
 												 const AEAddressDesc *target) {
-	return 0; // TO DO
+	PyObject *result;
+	AEAddressDesc actualTarget = {'null', NULL};
+	
+	/*
+	 * BUG WORKAROUND
+	 * Script Editor passes NULL to indicate default application (wrong) instead of a null descriptor (as-per OSA API docs).
+	 */
+	if (target)
+		actualTarget = *target;
+	result = PyObject_CallMethod((**ciStorage).appscriptServices, "setdefaulttarget", "O&",
+																					  AEDescX_NewBorrowed, &actualTarget);
+	if (!result) return raisePythonError(ciStorage, 0);
+	Py_DECREF(result);
+	return noErr;
 }
 
 

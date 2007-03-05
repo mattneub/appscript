@@ -87,12 +87,9 @@ class AppscriptServices:
 	#######
 	
 	def __init__(self, osacallbacks, terminologycache):
-	#	appscript.terminology._terminologyCache = terminologycache # TO DO: single shared cache throughout component
+		appscript.terminology._terminologyCache = terminologycache # single shared cache throughout component
 	
-		print >> stderr, 'initing AppscriptServices: (%r %r)' %(osacallbacks, terminologycache) # debug
-		# TO DO: build eventhandlerbycode table (another option is to use existing commandbyname tables) - get script's callables, and put the ones whose names match dictionary commands into a by-code table;
-		#	or wait for events to arrive, then look up individual definitions in prebuilt eventhandlerbycode
-		# note: should support synonyms (same code, different names?)
+		# print >> stderr, 'initing AppscriptServices: (%r %r)' %(osacallbacks, terminologycache) # debug
 		hostapp = appscript.app()
 		self.codecs = hostapp.AS_appdata.connect()
 		self.pack = self.codecs.pack
@@ -103,15 +100,15 @@ class AppscriptServices:
 		self.typebycode = self.codecs.typebycode
 		#######
 		def createappleevent(self, eventclass, eventid, target, returnid, transactionid):
-			print >> stderr, '*called createappleevent*' # debug
+		#	print >> stderr, '*called createappleevent*' # debug
 			return invokecreateproc(eventclass, eventid, target, returnid, transactionid, osacallbacks)
 		self.createappleevent = createappleevent
 		def sendappleevent(self, flags, timeout):
-			print >> stderr, '*called sendappleevent*' # debug
+		#	print >> stderr, '*called sendappleevent*' # debug
 			return invokesendproc(self.AEM_event, flags, timeout, osacallbacks)
 		self.sendappleevent = sendappleevent
 		def continueappleevent(self, flags, timeout): # TO DO: what to do with flags, timeout? Just ignore?
-			print >> stderr, '*called continueappleevent*' # debug
+		#	print >> stderr, '*called continueappleevent*' # debug
 			return invokecontinueproc(self.AEM_event, osacallbacks)
 		self.continueappleevent = continueappleevent
 		#######
@@ -122,6 +119,11 @@ class AppscriptServices:
 		aem.Event._createAppleEvent = self.createappleevent
 		aem.Event._sendAppleEvent = self.sendappleevent
 		DelegateEvent._sendAppleEvent = self.continueappleevent
+	
+	
+	def setdefaulttarget(self, addressdesc): # TO DO: finish. Also, need to provide an unpackfordefaulttarget method for use by display, getsource (e.g. this is needed by SE to format results in event log)
+		print 'setdefaulttarget: %r (%r)' % (addressdesc.type, addressdesc.data)
+	
 	
 	#######
 	# unpack Apple events

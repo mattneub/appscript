@@ -50,7 +50,7 @@ static Boolean getSetupScriptPath(char *setupScriptPath) {
 	#ifdef DEBUG_ON
 	char bundlePath[PATH_MAX];
 	urlToPath(CFBundleCopyBundleURL(mainBundle), bundlePath);
-	printf("\tPyOSA component bundle path: %s\n", bundlePath);
+	fprintf(stderr, "\tPyOSA component bundle path: %s\n", bundlePath);
 	#endif
 	setupScriptURL = CFBundleCopyResourceURL(mainBundle, CFSTR("pyosa_syspath.py"), NULL, NULL);
 	if (!setupScriptURL) return 0;
@@ -156,10 +156,12 @@ OSErr createComponentInstanceStorage(CIStorageHandle *ciStorage) {
 		return errOSASystemError;
 	}
 	Py_DECREF(appscriptServicesClass);
-	printf("initing AppscriptServices:\n");
-	PyObject_Print((**ciStorage)->callbacks, stdout, 0);
-	PyObject_Print((**ciStorage)->terminologyCache, stdout, 0);
-	printf("\n");
+	#ifdef DEBUG_ON
+	fprintf(stderr, "initing AppscriptServices:\n");
+	PyObject_Print((**ciStorage)->callbacks, stderr, 0);
+	PyObject_Print((**ciStorage)->terminologyCache, stderr, 0);
+	fprintf(stderr, "\n");
+	#endif
 	result = PyObject_CallMethod((**ciStorage)->appscriptServices, "__init__", "OO",
 																			   (**ciStorage)->callbacks,
 																			   (**ciStorage)->terminologyCache);
@@ -210,20 +212,20 @@ OSErr createScriptState(CIStorageHandle ciStorage,
 	// create new script state
 	*scriptID = createScriptID(ciStorage);
 	#ifdef DEBUG_ON
-		printf("Creating new script state %i...\n", *scriptID);
+		fprintf(stderr, "Creating new script state %i...\n", *scriptID);
 	#endif
 	*scriptState = malloc(sizeof(ScriptState));
 	(*scriptState)->scriptID = *scriptID;
 	// assign it a context
 	if (parent) { // script was created by another script, so reuse that script's context
 		#ifdef DEBUG_ON
-			printf("    reusing context from script %i\n", parent->scriptID);
+			fprintf(stderr, "    reusing context from script %i\n", parent->scriptID);
 		#endif
 		context = parent->context;
 		retainExecutionContext(context);
 	} else { // script was created by client, so create new context
 		#ifdef DEBUG_ON
-			printf("    creating new context\n");
+			fprintf(stderr, "    creating new context\n");
 		#endif
 		err = createExecutionContext(ciStorage, &context);
 		if (err) {
@@ -251,7 +253,7 @@ OSErr createScriptState(CIStorageHandle ciStorage,
 	}
 	CFDictionarySetValue((**ciStorage).scripts, (void *)(*scriptID), (void *)(*scriptState));
 	#ifdef DEBUG_ON
-		printf("...done.\n");
+		fprintf(stderr, "...done.\n");
 	#endif
 	return noErr;
 }

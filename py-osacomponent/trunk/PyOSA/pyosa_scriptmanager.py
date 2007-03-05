@@ -46,7 +46,7 @@ kSendFlagsMask = ( kOSAModeNeverInteract
 
 
 class ScriptManager:
-	def __init__(self, appscriptservices): # TO DO: most of these atts should also be [re]set by compile, load, coercefromdesc
+	def __init__(self, appscriptservices):
 		self.appscriptservices = appscriptservices
 		self._reset()
 	
@@ -78,24 +78,38 @@ class ScriptManager:
 		if isinstance(target, appscript.reference.Application):
 			target = target.AS_appdata.target
 		if isinstance(target, aem.Application):
-			target = target.AEM_appidentity
+			target = target.AEM_identity
 		return target
 	
 	
-	def _formatevent(self, code, atts, params):
-		target = atts['addr']
-		if code == ['ascrtell', 'ascrtend']: # ignore
+	def _formatevent(self, desc): # TO DO: finish
+		code = desc.AEGetAttributeDesc('evcl', '****').data \
+				+ desc.AEGetAttributeDesc('evid', '****').data
+		target = desc.AEGetAttributeDesc('addr', '****')
+		if code == 'ascrgdte':
+			return '\nGET AETE: %r %r' % (target.type, target.data)
+		if code in ['ascrtell', 'ascrtend']: # Python doesn't do 'tell' blocks, so ignore these
 			return ''
-		elif code == 'ascrgdte': # TEST
-			return '\n# getting terminology for %r' % self._appidentity(target)
 		elif code == 'ascrcmnt':
 			if self._appidentity(target) == ('desc', 
 					('psn ', '\x00\x00\x00\x00\x00\x00\x00\x02')):
-				if '----' in params:
-					return '\n# %r' % params['----']
-				else:
+				try:
+					data = desc.AEGetParamDesc('----', '****')
+				except:
 					return '\n#'
-		return '\nEVENT: %r %r \n\t\t%r \n\t\t%r' % (code, self._appidentity(target), atts, params) # TO DO: format event as string
+				else:
+					return '\n# %r' % self.appscriptservices.unpack()
+		code, atts, params = self.appscriptservices.unpackappleevent(desc)
+		# TO DO: if psn target, get app's path; if url target, get url; then construct app object using these for readability (note: this isn't ideal since there might be >1 instance of an app; the alternative is to improve appscript's repr support)
+		targetapp = self.appscriptservices.unpack(target)
+		parameters = {}
+		for i in range(desc.AECountItems()):
+			key, value = desc.AEGetNthDesc(i + 1, typeWildCard)
+			parameters[key] = targetapp.AS_appdata.unpack(value)
+		s = StringIO()
+		pprint(atts, s)
+		pprint(parameters, s)
+		return '\nEVENT: %r %r \n\t%s' % (code, self._appidentity(targetapp), s.getvalue().replace('\n', '\n\t'))
 	
 	
 	#######
@@ -122,20 +136,21 @@ class ScriptManager:
 		
 	
 	def coercefromdesc(self, desc, modeflags):
+		print >> stderr, "Coercing from desc: %r (%r) %08x" % (desc.type, desc.data[:64], modeflags) # debug
 		self._reset()
 		self.ismodified = True
 		if desc.type == typeAppleEvent:
-			code, atts, params = self.appscriptservices.unpackappleevent(desc)
-			self._source = self._formatevent(code, atts, params)
+			self.source = self._formatevent(desc)
 		else:
+			self.isvalue = True
 			self.value = desc
 	
 	
 	def setvalue(self, value):
-		# TO DO: reset ScriptManager ivars
+		self._reset()
 		self.isvalue = True
 		self.value = value # TO DO: cache packed value for efficiency; provide value() and valuedesc() methods
-		print >> stderr, 'SETVALUE: %r' % (value,) # debug
+		print >> stderr, 'setting value' #'SETVALUE: %r' % (value,) # debug
 			
 	
 	#######
@@ -251,7 +266,7 @@ class ScriptManager:
 		if self.source is not None:
 			desc = self.appscriptservices.pack('<PyOSAScript>')
 		elif self.isvalue:
-			if modeflags & kOSAModeDisplayForHumans:
+			if 1: # modeflags & kOSAModeDisplayForHumans: # TEST # TO DO: always pretty print? (it would make list and dict results easier to read)
 				res = StringIO()
 				pprint(self.valueaspyobject(), res)
 				val = res.getvalue()
@@ -260,10 +275,10 @@ class ScriptManager:
 			desc = self.appscriptservices.pack(val)
 		else:
 			raisecomponenterror(errOSACantAccess)
-		if desiredtype == typeStyledText: # colour compiled source code blue
+		if desiredtype == typeStyledText: # colour as compiled source code
 			try:
 				return sourcetostyledtext(desc)
-			except MacOS.Error:
+			except: # if anything goes wrong, ignore and display as uncoloured text
 				pass
 		return self._coercedesc(desc, desiredtype)
 	
@@ -294,11 +309,10 @@ class ScriptManager:
 		if self.source is not None:
 			desc = self.appscriptservices.pack(self.source)
 		elif self.isvalue:
-		
 			desc = self.appscriptservices.pack(repr(self.valueaspyobject()))
 		else:
 			raisecomponenterror(errOSACantAccess)
-		if desiredtype == typeStyledText: # colour compiled source code blue
+		if desiredtype == typeStyledText: # colour compiled source code
 			try:
 				return sourcetostyledtext(desc)
 			except MacOS.Error:
