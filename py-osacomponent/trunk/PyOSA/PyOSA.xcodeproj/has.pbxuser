@@ -82,8 +82,16 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 194745297;
-			PBXWorkspaceStateSaveDate = 194745297;
+			PBXPerProjectTemplateStateSaveDate = 194820862;
+			PBXWorkspaceStateSaveDate = 194820862;
+		};
+		perUserProjectItems = {
+			4F0F02EE0B9CBB09003FE278 /* PBXBookmark */ = 4F0F02EE0B9CBB09003FE278 /* PBXBookmark */;
+			4F0F03090B9CC1FD003FE278 /* PBXTextBookmark */ = 4F0F03090B9CC1FD003FE278 /* PBXTextBookmark */;
+			4F0F030A0B9CC1FD003FE278 /* PBXTextBookmark */ = 4F0F030A0B9CC1FD003FE278 /* PBXTextBookmark */;
+			4F0F030F0B9CC1FF003FE278 /* PBXTextBookmark */ = 4F0F030F0B9CC1FF003FE278 /* PBXTextBookmark */;
+			4F0F03110B9CC1FF003FE278 /* PBXTextBookmark */ = 4F0F03110B9CC1FF003FE278 /* PBXTextBookmark */;
+			4F0F03120B9CC1FF003FE278 /* PBXTextBookmark */ = 4F0F03120B9CC1FF003FE278 /* PBXTextBookmark */;
 		};
 		sourceControlManager = 4F196DE90B7CD54A0095502E /* Source Control */;
 		userBuildSettings = {
@@ -128,6 +136,58 @@
 			sepNavVisRect = "{{0, 434}, {775, 742}}";
 			sepNavWindowFrame = "{{264, 0}, {814, 832}}";
 		};
+	};
+	4F0F02EE0B9CBB09003FE278 /* PBXBookmark */ = {
+		isa = PBXBookmark;
+		fRef = 4F1975DD0B7D0AC80095502E /* osafunctions.c */;
+	};
+	4F0F03090B9CC1FD003FE278 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		comments = "warning: passing argument 2 of 'handleOSALoad' discards qualifiers from pointer target type";
+		fRef = 4F1975DD0B7D0AC80095502E /* osafunctions.c */;
+		rLen = 1;
+		rLoc = 489;
+		rType = 1;
+	};
+	4F0F030A0B9CC1FD003FE278 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 4F1975DD0B7D0AC80095502E /* osafunctions.c */;
+		name = "osafunctions.c: 291";
+		rLen = 0;
+		rLoc = 9102;
+		rType = 0;
+		vrLen = 687;
+		vrLoc = 21552;
+	};
+	4F0F030F0B9CC1FF003FE278 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 4F1975DD0B7D0AC80095502E /* osafunctions.c */;
+		name = handleOSADispose;
+		rLen = 16;
+		rLoc = 5829;
+		rType = 0;
+		vrLen = 372;
+		vrLoc = 5902;
+	};
+	4F0F03110B9CC1FF003FE278 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 4F1975DD0B7D0AC80095502E /* osafunctions.c */;
+		name = "osafunctions.c: 513";
+		rLen = 0;
+		rLoc = 15613;
+		rType = 0;
+		vrLen = 901;
+		vrLoc = 15057;
+	};
+	4F0F03120B9CC1FF003FE278 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 4F1975DD0B7D0AC80095502E /* osafunctions.c */;
+		name = "osafunctions.c: 546";
+		rLen = 0;
+		rLoc = 16994;
+		rType = 0;
+		vrLen = 1220;
+		vrLoc = 16339;
 	};
 	4F196DE90B7CD54A0095502E /* Source Control */ = {
 		isa = PBXSourceControlManager;
@@ -176,10 +236,10 @@
 	};
 	4F1975DD0B7D0AC80095502E /* osafunctions.c */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {781, 12642}}";
-			sepNavSelRange = "{14496, 0}";
-			sepNavVisRect = "{{0, 3377}, {781, 741}}";
-			sepNavWindowFrame = "{{84, 1}, {820, 831}}";
+			sepNavIntBoundsRect = "{{0, 0}, {781, 13188}}";
+			sepNavSelRange = "{16994, 0}";
+			sepNavVisRect = "{{0, 6004}, {781, 741}}";
+			sepNavWindowFrame = "{{272, 1}, {820, 831}}";
 		};
 	};
 	4F19765C0B7D2E6D0095502E /* XCBreakpointsBucket */ = {
@@ -223,9 +283,9 @@
 	4F25B8330B88D2DF000AD995 /* pyosa_scriptmanager.py */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {672, 5026}}";
-			sepNavSelRange = "{2508, 0}";
-			sepNavVisRect = "{{0, 1079}, {672, 742}}";
-			sepNavWindowFrame = "{{452, 0}, {711, 832}}";
+			sepNavSelRange = "{6828, 0}";
+			sepNavVisRect = "{{0, 2590}, {672, 742}}";
+			sepNavWindowFrame = "{{105, 0}, {711, 832}}";
 		};
 	};
 	4F25B9150B89D040000AD995 /* pyosa_errors.py */ = {
@@ -262,9 +322,9 @@
 	};
 	4F49C8AD0B7F928B00DD1105 /* statemanager.c */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {712, 4382}}";
-			sepNavSelRange = "{4533, 32}";
-			sepNavVisRect = "{{0, 1681}, {712, 741}}";
+			sepNavIntBoundsRect = "{{0, 0}, {732, 4410}}";
+			sepNavSelRange = "{4958, 0}";
+			sepNavVisRect = "{{0, 2702}, {732, 742}}";
 			sepNavWindowFrame = "{{348, 0}, {771, 832}}";
 		};
 	};

@@ -77,32 +77,27 @@ static ComponentResult handleOSAStore(CIStorageHandle ciStorage,
 
 
 static ComponentResult handleOSALoad(CIStorageHandle ciStorage, 
-									 AEDesc *scriptData, 
+									 const AEDesc *scriptData, 
 									 long modeFlags, 
 									 OSAID *resultingScriptID) {
 	OSErr err = noErr;
 	DescType storageType;
-	AEDesc desc;
 	ScriptStateRef state;
 	PyObject *result;
 	
 	if (scriptData->descriptorType != typeOSAGenericStorage) return errOSABadStorageType;
 	err = OSAGetStorageType(scriptData->dataHandle, &storageType);
 	if (err || storageType != COMPONENT_OSTYPE) return errOSABadStorageType;
-	// note: OSARemoveStorageType modifies AEDescs in-place, so preserve the client-supplied AEDesc by working on a copy
-	err = AEDuplicateDesc(scriptData, &desc); 
-	if (err) return err;
 	/*
 		BUG WORKAROUND
 		OSARemoveStorageType is broken on i386+Tiger, removing 3072 (0x0C00), not 12 (0x000C), bytes from
 		data handle. (See <http://lists.apple.com/archives/applescript-implementors/2006/May/msg00027.html>)
-		Therefore, disable it here and have pyosa_serialization.py remove the 12-byte trailer.
+		Therefore, don't use it here and have pyosa_serialization.py remove the 12-byte trailer.
 	*/
-	/* OSARemoveStorageType(desc.dataHandle); */ // DISABLED
 	err = createScriptState(ciStorage, NULL, resultingScriptID, &state);
 	if (err) return err;
 	result = PyObject_CallMethod(state->scriptManager, "load", "O&l",
-															   AEDescX_New, &desc,
+															   AEDescX_NewBorrowed, scriptData,
 															   modeFlags);
 	if (!result) return raisePythonError(ciStorage, *resultingScriptID);
 	Py_DECREF(result);
@@ -489,7 +484,18 @@ static ComponentResult handleOSALoadExecute(CIStorageHandle ciStorage,
 											OSAID contextID, 
 											long modeFlags, 
 											OSAID *resultingScriptValueID) {
-	return errOSABadSelector; // TO DO
+	OSErr err = noErr;
+	OSAID scriptID = 0;
+
+	err = handleOSALoad(ciStorage, scriptData, modeFlags, &scriptID);
+	if (err) return err;
+	err = handleOSAExecute(ciStorage, scriptID, contextID, modeFlags, resultingScriptValueID);
+	if (err) {
+		handleOSADispose(ciStorage, scriptID);
+		return err;
+	}
+	err = handleOSADispose(ciStorage, scriptID);
+	return err;
 }
 
 
@@ -498,7 +504,18 @@ static ComponentResult handleOSACompileExecute(CIStorageHandle ciStorage,
 											   OSAID contextID, 
 											   long modeFlags, 
 											   OSAID *resultingScriptValueID) {
-	return errOSABadSelector; // TO DO
+	OSErr err = noErr;
+	OSAID scriptID = 0;
+
+	err = handleOSACompile(ciStorage, sourceData, modeFlags, &scriptID);
+	if (err) return err;
+	err = handleOSAExecute(ciStorage, scriptID, contextID, modeFlags, resultingScriptValueID);
+	if (err) {
+		handleOSADispose(ciStorage, scriptID);
+		return err;
+	}
+	err = handleOSADispose(ciStorage, scriptID);
+	return err;
 }
 
 
@@ -508,7 +525,29 @@ static ComponentResult handleOSADoScript(CIStorageHandle ciStorage,
 										 DescType desiredType, 
 										 long modeFlags, 
 										 AEDesc *resultingText) {
-	return errOSABadSelector; // TO DO
+	OSErr err = noErr;
+	OSAID scriptID = 0;
+	OSAID resultID = 0;
+
+	err = handleOSACompile(ciStorage, sourceData, modeFlags, &scriptID);
+	if (err) return err;
+	err = handleOSAExecute(ciStorage, scriptID, contextID, modeFlags, &resultID);
+	if (err) {
+		handleOSADispose(ciStorage, scriptID);
+		return err;
+	}
+	err = handleOSADispose(ciStorage, scriptID);
+	if (err) {
+		handleOSADispose(ciStorage, resultID);
+		return err;
+	}
+	err = handleOSADisplay(ciStorage, resultID, desiredType, modeFlags, resultingText);
+	if (err) {
+		handleOSADispose(ciStorage, resultID);
+		return err;
+	}
+	err = handleOSADispose(ciStorage, resultID);
+	return err;
 }
 
 
