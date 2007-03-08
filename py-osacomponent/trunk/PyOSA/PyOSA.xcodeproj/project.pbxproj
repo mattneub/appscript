@@ -19,7 +19,7 @@
 		4F25B9420B89D336000AD995 /* pyosa_scriptcontext.py in Resources */ = {isa = PBXBuildFile; fileRef = 4F25B9410B89D336000AD995 /* pyosa_scriptcontext.py */; };
 		4F25B9690B8A4660000AD995 /* pyosa_serialization.py in Resources */ = {isa = PBXBuildFile; fileRef = 4F25B9680B8A4660000AD995 /* pyosa_serialization.py */; };
 		4F49C8AE0B7F928B00DD1105 /* statemanager.c in Sources */ = {isa = PBXBuildFile; fileRef = 4F49C8AD0B7F928B00DD1105 /* statemanager.c */; };
-		4F6F349C0B8B287F00D81F58 /* pyosa_syspath.py in Resources */ = {isa = PBXBuildFile; fileRef = 4F6F349B0B8B287F00D81F58 /* pyosa_syspath.py */; };
+		4F6F349C0B8B287F00D81F58 /* pyosa_setup.py in Resources */ = {isa = PBXBuildFile; fileRef = 4F6F349B0B8B287F00D81F58 /* pyosa_setup.py */; };
 		4F6F34D70B8B2CD800D81F58 /* PyOSA.r in Rez */ = {isa = PBXBuildFile; fileRef = 4F19755E0B7CD5D00095502E /* PyOSA.r */; };
 		4F6F35D50B8B3F5200D81F58 /* pyosa_appscript.py in Resources */ = {isa = PBXBuildFile; fileRef = 4F6F35D40B8B3F5200D81F58 /* pyosa_appscript.py */; };
 		4F91AC4E0B91156200471CB7 /* pyosa_eventhandlerdefinitions.py in Resources */ = {isa = PBXBuildFile; fileRef = 4F91AC4D0B91156200471CB7 /* pyosa_eventhandlerdefinitions.py */; };
@@ -65,7 +65,7 @@
 		4F25B9680B8A4660000AD995 /* pyosa_serialization.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = pyosa_serialization.py; sourceTree = "<group>"; };
 		4F49C8AC0B7F928B00DD1105 /* statemanager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = statemanager.h; sourceTree = "<group>"; };
 		4F49C8AD0B7F928B00DD1105 /* statemanager.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = statemanager.c; sourceTree = "<group>"; };
-		4F6F349B0B8B287F00D81F58 /* pyosa_syspath.py */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.script.python; path = pyosa_syspath.py; sourceTree = "<group>"; };
+		4F6F349B0B8B287F00D81F58 /* pyosa_setup.py */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = file; path = pyosa_setup.py; sourceTree = "<group>"; };
 		4F6F35D40B8B3F5200D81F58 /* pyosa_appscript.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = pyosa_appscript.py; sourceTree = "<group>"; };
 		4F91AC4D0B91156200471CB7 /* pyosa_eventhandlerdefinitions.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = pyosa_eventhandlerdefinitions.py; sourceTree = "<group>"; };
 		8D01CCD10486CAD60068D4B7 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -131,7 +131,7 @@
 				4F25B6B80B87B66B000AD995 /* pythonerrors.c */,
 				4F1975DD0B7D0AC80095502E /* osafunctions.c */,
 				08FB77B2FE8417CDC02AAC07 /* main.c */,
-				4F6F349B0B8B287F00D81F58 /* pyosa_syspath.py */,
+				4F6F349B0B8B287F00D81F58 /* pyosa_setup.py */,
 				4F25B8330B88D2DF000AD995 /* pyosa_scriptmanager.py */,
 				4F25B9410B89D336000AD995 /* pyosa_scriptcontext.py */,
 				4F6F35D40B8B3F5200D81F58 /* pyosa_appscript.py */,
@@ -205,7 +205,7 @@
 				4F25B9160B89D040000AD995 /* pyosa_errors.py in Resources */,
 				4F25B9420B89D336000AD995 /* pyosa_scriptcontext.py in Resources */,
 				4F25B9690B8A4660000AD995 /* pyosa_serialization.py in Resources */,
-				4F6F349C0B8B287F00D81F58 /* pyosa_syspath.py in Resources */,
+				4F6F349C0B8B287F00D81F58 /* pyosa_setup.py in Resources */,
 				4F6F35D50B8B3F5200D81F58 /* pyosa_appscript.py in Resources */,
 				4F91AC4E0B91156200471CB7 /* pyosa_eventhandlerdefinitions.py in Resources */,
 				4F0F00890B9A247C003FE278 /* pyosa_colorizesource.py in Resources */,

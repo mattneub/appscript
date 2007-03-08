@@ -212,6 +212,10 @@ Boolean bindFunctions(CFBundleRef pyFramework) {
 	bindFunction(Py_Initialize);
 	bindFunction(Py_IsInitialized);
 	bindFunction(Py_NewInterpreter);
+	
+	bindFunction(PyString_FromString);
+	bindFunction(PySequence_Contains);
+	bindFunction(PyList_Insert);
 
 #undef bindFunction
 

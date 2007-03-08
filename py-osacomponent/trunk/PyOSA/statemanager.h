@@ -22,6 +22,7 @@ typedef struct {
 	PyObject *terminologyCache;
 	PyObject *callbacks;
 	PyObject *appscriptServices;
+	PyObject *resourcesFolderPath;
 	char setupScriptPath[PATH_MAX];
 	OSAID errorScriptID;
 	PyObject *errorValue;

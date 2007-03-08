@@ -42,7 +42,6 @@ static Boolean urlToPath(CFURLRef url, char *pathCStr) {
 
 
 static Boolean getSetupScriptPath(char *setupScriptPath) {
-	/* Runs Resources/pyosa_syspath.py script to add module search paths to Python interpreter. */
 	CFBundleRef mainBundle;
 	CFURLRef setupScriptURL;
 	
@@ -52,16 +51,54 @@ static Boolean getSetupScriptPath(char *setupScriptPath) {
 	urlToPath(CFBundleCopyBundleURL(mainBundle), bundlePath);
 	fprintf(stderr, "\tPyOSA component bundle path: %s\n", bundlePath);
 	#endif
-	setupScriptURL = CFBundleCopyResourceURL(mainBundle, CFSTR("pyosa_syspath.py"), NULL, NULL);
+	setupScriptURL = CFBundleCopyResourceURL(mainBundle, CFSTR("pyosa_setup.py"), NULL, NULL);
 	if (!setupScriptURL) return 0;
 	return urlToPath(setupScriptURL, setupScriptPath);
 }
 
 
-static Boolean setSysPath(char *setupScriptPath) {
+static PyObject* getResourcesFolderPath(void) {
+	CFBundleRef mainBundle;
+	CFURLRef resourcesFolderURL;
+	char resourcesFolderPath[PATH_MAX];
+	
+	mainBundle = CFBundleGetBundleWithIdentifier(CFSTR(COMPONENT_IDENTIFIER));
+	#ifdef DEBUG_ON
+	char bundlePath[PATH_MAX];
+	urlToPath(CFBundleCopyBundleURL(mainBundle), bundlePath);
+	fprintf(stderr, "\tPyOSA component bundle path: %s\n", bundlePath);
+	#endif
+	resourcesFolderURL = CFBundleCopyResourcesDirectoryURL(mainBundle);
+	if (!resourcesFolderURL) return NULL;
+	if (!urlToPath(resourcesFolderURL, resourcesFolderPath)) return NULL;
+	return PyString_FromString(resourcesFolderPath);
+}
+
+
+static Boolean addResourcesFolderToSysPath(PyObject *resourcesFolderPath) {
+	PyObject *sysModule, *pathsList;
+	Boolean success = true;
+	
+	sysModule = PyImport_ImportModule("sys");
+	if (!sysModule) return false;
+	pathsList = PyObject_GetAttrString(sysModule, "path");
+	if (!pathsList) return false;
+	if (!PySequence_Contains(pathsList, resourcesFolderPath))
+		success = !(PyList_Insert(pathsList, 1, resourcesFolderPath));
+	Py_DecRef(pathsList);
+	Py_DecRef(resourcesFolderPath);
+	if (!success) {
+		PyErr_Print();
+		return false;
+	}
+	return true;
+}
+
+static Boolean runSetupScript(char *setupScriptPath) {
 	FILE *fp;
 	Boolean success;
 	
+	fprintf(stderr, "runSetupScript: %s\n", setupScriptPath);
 	fp = fopen(setupScriptPath, "r");
 	success = !PyRun_SimpleFile(fp, setupScriptPath);
 	fclose(fp);
@@ -80,9 +117,14 @@ static OSErr createExecutionContext(CIStorageHandle ciStorage, ExecutionContextR
 	PyThreadState* currentState = PyThreadState_Get();
 	(*context)->context = Py_NewInterpreter();
 	importCallbacksModule();
-	// set up interpreter's sys.path
-	if (!setSysPath((**ciStorage).setupScriptPath)) {
-		fprintf(stderr, "PyOSA: pyosa_syspath failed.\n");
+	// add PyOSA's Resources folder to Python's sys.path
+	if (!addResourcesFolderToSysPath((**ciStorage).resourcesFolderPath)) {
+		fprintf(stderr, "PyOSA: can't set sys.path\n");
+		return errOSASystemError;
+	}	
+	// set up main interpreter's sys.path
+	if (!runSetupScript((**ciStorage).setupScriptPath)) {
+		fprintf(stderr, "PyOSA: pyosa_setup failed.\n");
 		return errOSASystemError;
 	}
 	#endif
@@ -127,14 +169,27 @@ OSErr createComponentInstanceStorage(CIStorageHandle *ciStorage) {
 	(**ciStorage)->scripts = CFDictionaryCreateMutable(NULL, 0, NULL, NULL);
 	(**ciStorage)->callbacks = createCallbacks();
 	(**ciStorage)->terminologyCache = PyDict_New();
-	// locate Python script used to set up interpreter's sys.path
-	if (!getSetupScriptPath((**ciStorage)->setupScriptPath)) {
-		fprintf(stderr, "PyOSA: can't get pyosa_syspath.py\n");
+	// get various paths
+	// locate PyOSA's Resources folder
+	(**ciStorage)->resourcesFolderPath = getResourcesFolderPath();
+	if (!((**ciStorage)->resourcesFolderPath)) {
+		fprintf(stderr, "PyOSA: can't get PyOSA's Resources folder.\n");
 		return errOSASystemError;
 	}
+	// locate Python setup script
+	if (!getSetupScriptPath((**ciStorage)->setupScriptPath)) {
+		fprintf(stderr, "PyOSA: can't get pyosa_setup.py\n");
+		return errOSASystemError;
+	}
+	// set up this interpreter
+	// add PyOSA's Resources folder to Python's sys.path
+	if (!addResourcesFolderToSysPath((**ciStorage)->resourcesFolderPath)) {
+		fprintf(stderr, "PyOSA: can't set sys.path\n");
+		return errOSASystemError;
+	}	
 	// set up main interpreter's sys.path
-	if (!setSysPath((**ciStorage)->setupScriptPath)) {
-		fprintf(stderr, "PyOSA: pyosa_syspath failed.\n");
+	if (!runSetupScript((**ciStorage)->setupScriptPath)) {
+		fprintf(stderr, "PyOSA: pyosa_setup failed.\n");
 		return errOSASystemError;
 	}
 	// create appscript services
@@ -158,9 +213,9 @@ OSErr createComponentInstanceStorage(CIStorageHandle *ciStorage) {
 	Py_DECREF(appscriptServicesClass);
 	#ifdef DEBUG_ON
 	fprintf(stderr, "initing AppscriptServices:\n");
-	PyObject_Print((**ciStorage)->callbacks, stderr, 0);
-	PyObject_Print((**ciStorage)->terminologyCache, stderr, 0);
-	fprintf(stderr, "\n");
+//	PyObject_Print((**ciStorage)->callbacks, stderr, 0);
+//	PyObject_Print((**ciStorage)->terminologyCache, stderr, 0);
+//	fprintf(stderr, "\n");
 	#endif
 	result = PyObject_CallMethod((**ciStorage)->appscriptServices, "__init__", "OO",
 																			   (**ciStorage)->callbacks,

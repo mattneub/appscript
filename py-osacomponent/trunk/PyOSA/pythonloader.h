@@ -51,7 +51,7 @@
 typedef int PyObject;
 typedef int PyThreadState;
 typedef int PyTypeObject;
-
+typedef int Py_ssize_t;
 
 /**********************************************************************/
 // Python types, objects
@@ -138,6 +138,10 @@ typedef void (*Py_Initialize_ptr)(void);
 typedef int (*Py_IsInitialized_ptr)(void);
 typedef PyThreadState *(*Py_NewInterpreter_ptr)(void);
 
+typedef PyObject *(*PyString_FromString_ptr)(const char *);
+typedef int (*PySequence_Contains_ptr)(PyObject *, PyObject *);
+typedef int (*PyList_Insert_ptr)(PyObject *, Py_ssize_t, PyObject *);
+
 
 /**********************************************************************/
 // Python functions
@@ -187,6 +191,9 @@ Py_Initialize_ptr Py_Initialize;
 Py_IsInitialized_ptr Py_IsInitialized;
 Py_NewInterpreter_ptr Py_NewInterpreter;
 
+PyString_FromString_ptr PyString_FromString;
+PySequence_Contains_ptr PySequence_Contains;
+PyList_Insert_ptr PyList_Insert;
 
 
 /**********************************************************************/
