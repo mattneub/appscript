@@ -6,6 +6,7 @@
 
 #include "osx_ruby.h"
 #include <Carbon/Carbon.h>
+#include <CoreFoundation/CoreFoundation.h>
 
 VALUE rb_ll2big(LONG_LONG); // keeps gcc happy
 
@@ -24,10 +25,26 @@ struct rbAE_AEDescWrapper {
 #define AEDESC_OF(o) (AEDESC_DATA_PTR(o)->desc)
 
 // Event handling
-typedef long refcontype;
+#if !defined(SRefCon)
+typedef long SRefCon;
+#endif
 
 AEEventHandlerUPP upp_GenericEventHandler;
 AECoercionHandlerUPP upp_GenericCoercionHandler;
+
+/* TO DO:
+extern OSAError OSAGetAppTerminology(ComponentInstance,
+									 long,
+									 FSSpec *,
+									 short,
+									 Boolean *,
+									 AEDesc *) __attribute__((weak_import));
+
+
+extern OSAError OSACopyScriptingDefinition(const FSRef *,
+										   SInt32, 
+										   CFDataRef *) __attribute__((weak_import));
+*/
 
 
 /**********************************************************************/
@@ -60,7 +77,7 @@ rbAE_MacOSError_inspect(VALUE self)
 {
 	char s[32];
 	
-	sprintf(s, "#<AE::MacOSError %i>", NUM2INT(rb_iv_get(self, "@number")));
+	sprintf(s, "#<AE::MacOSError %li>", (long)NUM2INT(rb_iv_get(self, "@number")));
 	return rb_str_new2(s);
 }
 
@@ -444,7 +461,9 @@ static VALUE
 rbAE_launchApplication(VALUE self, VALUE path, VALUE firstEvent, VALUE flags)
 {
 	FSRef appRef;
-	FSSpec fss;
+#if !defined(__LP64__)
+	FSSpec appFSS;
+#endif
 	AEDesc paraDesc;
 	Size paraSize;
 	AppParametersPtr paraData;
@@ -454,8 +473,10 @@ rbAE_launchApplication(VALUE self, VALUE path, VALUE firstEvent, VALUE flags)
 	
 	err = FSPathMakeRef((UInt8 *)StringValuePtr(path), &appRef, NULL);
 	if (err != 0) rbAE_raiseMacOSError("Couldn't make FSRef for application.", err);
-	err = FSGetCatalogInfo(&appRef, kFSCatInfoNone, NULL, NULL, &fss, NULL);
+#if !defined(__LP64__)
+	err = FSGetCatalogInfo(&appRef, kFSCatInfoNone, NULL, NULL, &appFSS, NULL);
 	if (err != 0) rbAE_raiseMacOSError("Couldn't make FSSpec for application.", err);
+#endif
 	err = AECoerceDesc(&(AEDESC_OF(firstEvent)), typeAppParameters, &paraDesc);
 	paraSize = AEGetDescDataSize(&paraDesc);
 	paraData = (AppParametersPtr)NewPtr(paraSize);
@@ -466,7 +487,11 @@ rbAE_launchApplication(VALUE self, VALUE path, VALUE firstEvent, VALUE flags)
 	launchParams.launchEPBLength = extendedBlockLen;
 	launchParams.launchFileFlags = 0;
 	launchParams.launchControlFlags = (LaunchFlags)NUM2UINT(flags);
-	launchParams.launchAppSpec = &fss;
+#if defined(__LP64__)
+	launchParams.launchAppRef = &appRef;
+#else
+	launchParams.launchAppSpec = &appFSS;
+#endif
 	launchParams.launchAppParameters = paraData;
 	err = LaunchApplication(&launchParams);
 	if (err != noErr) rbAE_raiseMacOSError("Can't launch application.", err);
@@ -507,6 +532,10 @@ rbAE_convertUnixSecondsToLongDateTime(VALUE self, VALUE secs)
 static VALUE
 rbAE_OSAGetAppTerminology(VALUE self, VALUE path)
 {
+#if defined(__LP64__)
+	rb_raise(rb_eNotImpError, "OSAGetAppTerminology unavailable.\n");
+	return NULL;
+#else
 	FSRef appRef;
 	FSSpec fss;
 	ComponentInstance defaultComponent;
@@ -514,6 +543,8 @@ rbAE_OSAGetAppTerminology(VALUE self, VALUE path)
 	AEDesc theDesc;
 	OSErr err = noErr;
 	
+	if (OSAGetAppTerminology == NULL)
+		rb_raise(rb_eNotImpError, "OSAGetAppTerminology unavailable.\n");
 	err = FSPathMakeRef((UInt8 *)StringValuePtr(path), &appRef, NULL);
 	if (err != 0) rbAE_raiseMacOSError("Couldn't make FSRef.", err);
 	err = FSGetCatalogInfo(&appRef, kFSCatInfoNone, NULL, NULL, &fss, NULL);
@@ -529,6 +560,157 @@ rbAE_OSAGetAppTerminology(VALUE self, VALUE path)
 							   &theDesc);
 	if (err != 0) rbAE_raiseMacOSError("Couldn't get aete resource.", err);
 	return rbAE_wrapAEDesc(&theDesc);
+#endif
+}
+
+
+/**********************************************************************/
+// Parse sdef
+
+// callbacks
+
+static void *
+startNode(CFXMLParserRef parser, CFXMLNodeRef nodeDesc, void *eventHandlerObj) {
+	char elementNameBuffer[32] = "\0";
+	char attributeBuffer[256] = "\0";
+	CFDictionaryRef attributes;
+	CFStringRef value;
+	VALUE name = Qnil;
+	VALUE plural = Qnil;
+	VALUE code = Qnil;
+	VALUE result;
+	
+	switch (CFXMLNodeGetTypeCode(nodeDesc)) {
+		case kCFXMLNodeTypeDocument:
+			return (void *)Qnil;
+		case kCFXMLNodeTypeElement:
+			CFStringGetCString(CFXMLNodeGetString(nodeDesc),
+							   elementNameBuffer,
+							   sizeof(elementNameBuffer),
+							   kCFStringEncodingUTF8);
+			attributes = ((CFXMLElementInfo *)CFXMLNodeGetInfoPtr(nodeDesc))->attributes;
+			value = (CFStringRef)CFDictionaryGetValue(attributes, CFSTR("name"));
+			if (value) {
+				CFStringGetCString(value,
+								   attributeBuffer,
+								   sizeof(attributeBuffer),
+								   kCFStringEncodingUTF8);
+				name = rb_str_new2(attributeBuffer);
+			}
+			value = (CFStringRef)CFDictionaryGetValue(attributes, CFSTR("plural"));
+			if (value) {
+				CFStringGetCString(value,
+								   attributeBuffer,
+								   sizeof(attributeBuffer),
+								   kCFStringEncodingUTF8);
+				plural = rb_str_new2(attributeBuffer);
+			}
+			value = (CFStringRef)CFDictionaryGetValue(attributes, CFSTR("code"));
+			if (value) {
+				CFStringGetCString(value,
+								   attributeBuffer,
+								   sizeof(attributeBuffer),
+								   kCFStringEncodingMacRoman);
+				code = rb_str_new2(attributeBuffer);
+			}
+			result = rb_funcall((VALUE)eventHandlerObj, 
+								rb_intern("start_node"), 
+								4,
+								rb_str_new2(elementNameBuffer),
+								name,
+								plural,
+								code);
+			return ((result == Qnil) ?  NULL : (void *)result);
+		default:
+			return NULL;
+	}
+}
+
+
+static void
+endNode(CFXMLParserRef parser, void *nodeObj, void *eventHandlerObj) {
+/*
+	rb_funcall((VALUE)eventHandlerObj, 
+			   rb_intern("end_node"), 
+			   1,
+			   (VALUE)nodeObj);
+*/
+}
+
+
+static void
+addChild(CFXMLParserRef parser, void *parentNodeObj, void *childNodeObj, void *eventHandlerObj) {
+/*
+	rb_funcall((VALUE)eventHandlerObj, 
+			   rb_intern("add_child"), 
+			   2,
+			   (VALUE)parentNodeObj,
+			   (VALUE)childNodeObj);
+*/
+}
+
+
+
+
+static Boolean
+handleError(CFXMLParserRef parser, CFXMLParserStatusCode error, void *eventHandlerObj) {
+/*
+	VALUE result = Qfalse;
+	
+	result = rb_funcall((VALUE)eventHandlerObj, 
+						rb_intern("handle_error"), 
+						3,
+						INT2NUM(error),
+						INT2NUM(CFXMLParserGetLocation(parser)),
+INT2NUM(CFXMLParserGetLineNumber(parser)));
+	return (result == Qtrue);
+*/
+	return false;
+}
+
+
+static CFXMLParserCallBacks parserCallbacks = {0,
+											   startNode,
+											   addChild,
+											   endNode,
+											   NULL,
+											   handleError};
+
+
+// parse
+
+static VALUE
+rbAE_parseScriptingDefinition(VALUE self, VALUE path, VALUE handlerObj)
+{
+	OSAError err = noErr;
+	CFDataRef sdef = NULL;
+	FSRef fsref;
+	CFXMLParserRef parser = NULL;
+	CFXMLParserContext context = {0, (void *)handlerObj, NULL, NULL, NULL};
+
+	// get sdef
+	if (OSACopyScriptingDefinition == NULL)
+		rb_raise(rb_eNotImpError, "OSACopyScriptingDefinition unavailable.\n");
+	err = FSPathMakeRef((UInt8 *)StringValuePtr(path), &fsref, NULL);
+	if (err != 0) rbAE_raiseMacOSError("Couldn't make FSRef.", err);
+	err = OSACopyScriptingDefinition(&fsref, kOSAModeNull, &sdef);
+	if (err) rbAE_raiseMacOSError("Couldn't get scripting definition.", err);
+	// parse sdef
+	parser = CFXMLParserCreate(kCFAllocatorDefault,
+							   sdef,
+							   NULL,
+							   kCFXMLParserNoOptions,
+							   kCFXMLNodeCurrentVersion,
+							   &parserCallbacks,
+							   &context);
+	CFRelease(sdef);
+	if (!CFXMLParserParse(parser)) {
+		err = CFXMLParserGetStatusCode(parser);
+		CFRelease(parser);
+		rbAE_raiseMacOSError("Couldn't parse sdef.", err);
+	}
+	CFRelease(parser);
+	return Qnil;
 }
 
 
@@ -540,7 +722,7 @@ rbAE_OSAGetAppTerminology(VALUE self, VALUE path)
 // TO DO: make sure GC won't collect handler objects while they're installed as event/coercion handlers
 
 static pascal OSErr
-rbAE_GenericEventHandler(const AppleEvent *request, AppleEvent *reply, refcontype refcon)
+rbAE_GenericEventHandler(const AppleEvent *request, AppleEvent *reply, SRefCon refcon)
 {
 	VALUE err;
 	
@@ -555,7 +737,7 @@ rbAE_GenericEventHandler(const AppleEvent *request, AppleEvent *reply, refcontyp
 /*******/
 
 static VALUE
-rbAE_AEInstallEventHandler(VALUE self, VALUE eventClass, VALUE eventID, VALUE handler)
+rbAE_AEInstallEventHandler(VALUE self, VALUE eventClass, VALUE eventID, SRefCon handler)
 {
 	/* 
 	 * eventClass and eventID must be four-character code strings
@@ -569,7 +751,7 @@ rbAE_AEInstallEventHandler(VALUE self, VALUE eventClass, VALUE eventID, VALUE ha
 	
 	err = AEInstallEventHandler(rbStringToDescType(eventClass),
 								rbStringToDescType(eventID),
-	                            upp_GenericEventHandler, (long)handler,
+	                            upp_GenericEventHandler, handler,
 	                            0);
 	if (err != noErr) rbAE_raiseMacOSError("Can't install event handler.", err);
 	return Qnil;
@@ -595,14 +777,14 @@ rbAE_AEGetEventHandler(VALUE self, VALUE eventClass, VALUE eventID)
 {
 	OSErr err = noErr;
 	AEEventHandlerUPP handlerUPP;
-	VALUE handler;
+	SRefCon handler;
 	
 	err = AEGetEventHandler(rbStringToDescType(eventClass),
 							 rbStringToDescType(eventID),
-	                         &handlerUPP, (long *)&handler,
+	                         &handlerUPP, &handler,
 	                         0);
 	if (err != noErr) rbAE_raiseMacOSError("Can't get event handler.", err);
-	return handler;
+	return (VALUE)handler;
 }
 
 
@@ -612,7 +794,7 @@ rbAE_AEGetEventHandler(VALUE self, VALUE eventClass, VALUE eventID)
 // TO DO: make sure GC won't collect handler objects while they're installed as event/coercion handlers
 
 static pascal OSErr
-rbAE_GenericCoercionHandler(const AEDesc *fromDesc, DescType toType, refcontype refcon, AEDesc *toDesc)
+rbAE_GenericCoercionHandler(const AEDesc *fromDesc, DescType toType, SRefCon refcon, AEDesc *toDesc)
 {
 	// handle_coercion method should return an AE::AEDesc, or nil if an error occurred
 	OSErr err = noErr;
@@ -632,7 +814,7 @@ rbAE_GenericCoercionHandler(const AEDesc *fromDesc, DescType toType, refcontype 
 /*******/
 
 static VALUE
-rbAE_AEInstallCoercionHandler(VALUE self, VALUE fromType, VALUE toType, VALUE handler)
+rbAE_AEInstallCoercionHandler(VALUE self, VALUE fromType, VALUE toType, SRefCon handler)
 {
 	/* 
 	 * fromType and toType must be four-character code strings
@@ -647,7 +829,7 @@ rbAE_AEInstallCoercionHandler(VALUE self, VALUE fromType, VALUE toType, VALUE ha
 	
 	err = AEInstallCoercionHandler(rbStringToDescType(fromType),
 								   rbStringToDescType(toType),
-								   upp_GenericCoercionHandler, (long)handler,
+								   upp_GenericCoercionHandler, handler,
 								   1, 0);
 	if (err != noErr) rbAE_raiseMacOSError("Can't install coercion handler.", err);
 	return Qnil;
@@ -673,12 +855,12 @@ rbAE_AEGetCoercionHandler(VALUE self, VALUE fromType, VALUE toType)
 {
 	OSErr err = noErr;
 	AECoercionHandlerUPP handlerUPP;
-	VALUE handler;
+	SRefCon handler;
 	Boolean fromTypeIsDesc;
 	
 	err = AEGetCoercionHandler(rbStringToDescType(fromType),
 							   rbStringToDescType(toType),
-							   &handlerUPP, (long *)&handler,
+							   &handlerUPP, &handler,
 							   &fromTypeIsDesc,
 							   0);
 	if (err != noErr) rbAE_raiseMacOSError("Can't get coercion handler.", err);
@@ -773,6 +955,7 @@ Init_ae (void)
 							  rbAE_convertUnixSecondsToLongDateTime, 1);
 							  
 	rb_define_module_function(mAE, "get_app_terminology", rbAE_OSAGetAppTerminology, 1);
+	rb_define_module_function(mAE, "parse_sdef", rbAE_parseScriptingDefinition, 2);
 	
 	// Event handling
 	

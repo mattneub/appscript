@@ -10,7 +10,7 @@ module TypeWrappers
 		
 		def initialize(code)
 			if not (code.is_a?(String) and code.length == 4)
-				raise ArgumentError, "Code must be a four-character string: #{code}"
+				raise ArgumentError, "Code must be a four-character string: #{code.inspect}"
 			end
 			@code = code
 		end
@@ -26,7 +26,7 @@ module TypeWrappers
 		alias_method :eql?, :== 
 			
 		def to_s
-			return "AEM::#{self.class::Name}.new(#{@code.dump})"
+			return "AEM::#{self.class::Name}.new(#{@code.inspect})"
 		end
 		
 		def inspect

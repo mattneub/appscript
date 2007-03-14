@@ -131,13 +131,17 @@ module OSAX
 				if not path
 					raise ArgumentError, "Scripting addition not found: #{name.inspect}"
 				end
-				if terms
-					@_terms = terms
-				else
-					desc = AE.get_app_terminology(path).coerce(KAE::TypeAEList)
-					@_terms = OSAXCache[osax_name][1] = \
-							Terminology.tables_for_aetes(DefaultCodecs.unpack(desc))
+				if not terms
+					begin
+						aetes_desc = AE.get_app_terminology(path)
+						aetes = DefaultCodecs.unpack(aetes_desc.coerce(KAE::TypeAEList))
+						terms = Terminology.tables_for_aetes(aetes)
+					rescue NotImplementedError # get_app_terminology is unavailable
+						terms = Terminology.tables_from_sdef_for_app_path(path)
+					end
+					OSAXCache[osax_name][1] = terms
 				end
+				@_terms = terms
 				osax_data = OSAXData.new(:current, nil, @_terms)
 			end
 			super(osax_data, AEM.app)
