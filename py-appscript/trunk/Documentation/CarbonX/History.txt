@@ -1,5 +1,9 @@
 HISTORY
 
+2007-02-20 -- 0.3.1
+- added AEDescX_ConvertDisown
+- fixed a compiler warning
+
 2006-11-29 -- 0.3.0
 - renamed AESendMach to AESendMessageAllocatingMachPort
 

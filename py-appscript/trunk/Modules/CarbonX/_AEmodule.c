@@ -22,11 +22,13 @@
 extern PyObject *_AEDescX_New(AEDesc *);
 extern PyObject *_AEDescX_NewBorrowed(AEDesc *);
 extern int _AEDescX_Convert(PyObject *, AEDesc *);
+extern int _AEDescX_ConvertDisown(PyObject *, AEDesc *);
 
 
 #define AEDescX_New _AEDescX_New
 #define AEDescX_NewBorrowed _AEDescX_NewBorrowed
 #define AEDescX_Convert _AEDescX_Convert
+#define AEDescX_ConvertDisown _AEDescX_ConvertDisown
 
 typedef long refcontype;
 
@@ -1659,11 +1661,17 @@ PyObject *AEDescX_NewBorrowed(AEDesc *itself)
 	return (PyObject *)it;
 }
 
+int AEDescX_ConvertDisown(PyObject *v, AEDesc *p_itself) {
+	if (!AEDescX_Convert(v, p_itself)) return 0;
+	((AEDescObject *)v)->ob_owned = 0;
+	return 1;
+}
 
 CarbonXAE_API aeAPI = {
 	AEDescX_New,
 	AEDescX_NewBorrowed,
 	AEDescX_Convert,
+	AEDescX_ConvertDisown
 };
 
 
