@@ -1,4 +1,4 @@
-Appscript is packaged using the standard Python Distribution Utilities (a.k.a. Distutils). To install appscript, cd to the appscript-0.17.1 directory and run:
+Appscript is packaged using the standard Python Distribution Utilities (a.k.a. Distutils). To install appscript, cd to the appscript-0.17.2 directory and run:
 
 	python setup.py install
 
