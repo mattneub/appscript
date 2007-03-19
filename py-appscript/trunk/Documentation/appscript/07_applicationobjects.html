@@ -43,7 +43,7 @@
 
 <dl>
 <dt><code>name</code></dt>
-<dd>The application's filename or POSIX path, e.g. <code>'TextEdit'</code>, <code>'TextEdit.app'</code>, <code>'/Applications/TextEdit.app'</code>. Where a filename is provided, appscript uses LaunchServices to locate the application. Paths beginning with <code>~</code>, e.g. <code>'~/Dev/MyApp.app'</code>, will be expanded automatically. An <code>.app</code> suffix is optional. For example, given the name <code>'TextEdit'</code>, appscript will first search for an application with that exact name. If none is found, it'll automatically add a <code>.app</code> suffix (<code>'TextEdit.app'</code>) and try again.</dd>
+<dd>The application's filename or POSIX path, e.g. <code>'TextEdit'</code>, <code>'TextEdit.app'</code>, <code>'/Applications/TextEdit.app'</code>. Where a filename is provided, appscript uses LaunchServices to locate the application. An <code>.app</code> suffix is optional. e.g. Given the name <code>'TextEdit'</code>, appscript first searches for an application with that exact filename; if none is found, it automatically adds an <code>.app</code> suffix (<code>'TextEdit.app'</code>) and tries again.</dd>
 
 <dt><code>id</code></dt>
 <dd>The application's bundle id, e.g. <code>'com.apple.textedit'</code>. Cocoa applications often have unique bundle ids.</dd>
