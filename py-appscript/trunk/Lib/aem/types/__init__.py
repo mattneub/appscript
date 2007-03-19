@@ -53,7 +53,11 @@ class Codecs:
 		if desc.AECheckIsRecord():
 			rec = desc.AECoerceDesc('reco')
 			rec.AEPutParamDesc('pcls', self.pack(AEType(desc.type)))
-			return self.unpack(rec)
+			decoder = self.decoders.get('reco')
+			if decoder:
+				return decoder(rec, self)
+			else:
+				return rec
 		else:
 			return desc
 	

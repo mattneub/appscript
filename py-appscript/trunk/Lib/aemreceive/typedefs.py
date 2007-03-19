@@ -4,7 +4,7 @@
 """
 
 from CarbonX import kAE, kOSA
-import MacOS
+import MacOS, struct
 
 from aem import AEType
 
@@ -12,6 +12,11 @@ from handlererror import EventHandlerError
 
 # TO DO: build decent error messages pinpointing problem.
 
+if struct.pack("h", 1) == '\x00\x01': # host is big-endian
+	fourCharCode = lambda code: code
+else: # host is small-endian
+	fourCharCode = lambda code: code[::-1]
+	
 ######################################################################
 # PUBLIC
 ######################################################################
@@ -45,8 +50,10 @@ class ArgMissingValue(ArgDef):
 		Describes a 'missing value' constant.
 	"""
 	
+	_cMissingValue = fourCharCode(kOSA.cMissingValue)
+	
 	def AEM_unpack(self, desc, codecs):
-		if desc.type == kAE.typeType and desc.data == kOSA.cMissingValue:
+		if desc.type == kAE.typeType and desc.data == self._cMissingValue:
 			return True, codecs.unpack(desc)
 		else:
 			return False, EventHandlerError(-1704, "Not a 'missing value' constant.", desc)
@@ -91,7 +98,7 @@ class ArgEnum(ArgDef):
 		for code in codes:
 			if not isinstance(code, str) and len(code) == 4:
 				raise TypeError, "Invalid AE enum code: %r" % code
-		self._codes = codes
+		self._codes = [fourCharCode(code) for code in codes]
 	
 	def _unpack(self, desc, codecs):
 		desc = desc.AECoerceDesc(kAE.typeEnumerated)

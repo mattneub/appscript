@@ -1,5 +1,8 @@
 HISTORY
 
+2007-03-18 -- 0.1.6
+- fixed i386 support in main.py, typedefs.py
+
 2006-12-17 -- 0.1.5
 - fixed problem in typedefs where slicing an Exception object causes an error on Python 2.5 (now uses 'e.args[1:]' instead of 'e[1:]')
 - fixed bug in typedefs.ArgDesc.AEM_unpack (wasn't returning a two-item struct)

@@ -1,5 +1,12 @@
 HISTORY
 
+2007-02-07 -- 0.12.2
+
+- fixed infinite recursion problem in Codecs.unpackunknown if client removed a Codecs instance's typeAERecord unpacker, then tried to unpack a record-like AEDesc
+
+- fixed description string in specifier.py's Property class
+
+
 2007-01-20 -- 0.12.1
 
 - fixed bug in unittypes' _defaultpacker

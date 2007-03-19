@@ -6,7 +6,7 @@
 from StringIO import StringIO
 from traceback import print_exc
 from CarbonX import AE, kAE, kOSA
-import MacOS
+import MacOS, struct
 
 import mactypes
 import aem
@@ -15,11 +15,17 @@ from typedefs import buildDefs
 from handlererror import EventHandlerError
 
 
+if struct.pack("h", 1) == '\x00\x01': # host is big-endian
+	fourCharCode = lambda code: code
+else: # host is small-endian
+	fourCharCode = lambda code: code[::-1]
+
+
 ######################################################################
 # PUBLIC
 ######################################################################
 
-kMissingValue = AE.AECreateDesc(kAE.typeType, 'msng') # 'missing value' constant
+kMissingValue = AE.AECreateDesc(kAE.typeType, fourCharCode('msng')) # 'missing value' constant
 
 
 class Codecs(aem.Codecs):
@@ -202,7 +208,7 @@ def removecoercionhandler(fromType, toType):
 # Install various xxxx-to-unicode coercions if the OS (10.2, 10.3) doesn't already provide them
 
 def _coerceTypeAndEnum(desc, toType):
-	return _standardCodecs.pack(unicode(desc.data))
+	return _standardCodecs.pack(unicode(fourCharCode(desc.data)))
 
 def _coerceBoolAndNum(desc, toType):
 	return desc.AECoerceDesc('TEXT').AECoerceDesc('utxt')

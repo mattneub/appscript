@@ -230,7 +230,7 @@ class _PositionSpecifier(Specifier):
 
 class Property(_PositionSpecifier):
 	"""Form: ref.property(code)
-		A reference to a user-defined property, where code is the code identifying the property.
+		A reference to an application-defined property, where code is the code identifying the property.
 	"""
 	_by = 'property'
 	_keyForm = base.packEnum(kAE.formPropertyID)

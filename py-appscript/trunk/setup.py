@@ -49,7 +49,7 @@ else:
 
 setup(
 		name = "appscript",
-		version = "0.17.1",
+		version = "0.17.2",
 		description = "appscript and related modules",
 		author = "HAS",
 		author_email='',
