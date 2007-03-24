@@ -8,6 +8,7 @@ plist = dict(
             CFBundleTypeName="Text File",
             CFBundleTypeRole="Editor",
             NSDocumentClass="ASTranslateDocument",
+            CFBundleIdentifier="net.sourceforge.appscript.astranslate"
         ),
     ]
 )
