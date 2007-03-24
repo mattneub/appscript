@@ -54,7 +54,7 @@ kPyAppscriptReservedWords = [
 	"resulttype",
 	"ignore",
 	"timeout",
-	"waitreply"
+	"waitreply",
 	"help",
 	 ] + keyword.kwlist
 
