@@ -57,7 +57,7 @@ try:
 	else:
 		appPaths = [alias.path for alias in osax.chooseapp(prompt='Select the application(s) to process:', multiselect=True)]
 	outFormat = osax.chooseitems([kRaw, kText, kAppscript, kRbAppscript, kAppleScript], 'Select output formats:', multiselelect=True)
-	if (kAppscript in outFormat or kAppleScript in outFormat) and \
+	if [o for o in outFormat if o in [kAppscript, kRbAppscript, kAppleScript]] and \
 			osax.displaydialog('Combine duplicate classes?', ['No', 'Yes'], 'Yes')[0] == 'Yes':
 		options = ['collapse']
 	else:

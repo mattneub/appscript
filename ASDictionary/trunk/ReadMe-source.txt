@@ -8,6 +8,6 @@ Requirements:
 
 --
 
-To build, cd to ASDictionary-0.7.0 directory and run:
+To build, cd to ASDictionary-0.7.1 directory and run:
 
 	python setup.py py2app

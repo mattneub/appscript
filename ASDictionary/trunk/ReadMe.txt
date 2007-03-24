@@ -30,6 +30,8 @@ Note that HTML elements containing special 'node' attributes are used by ASDicti
 -----------------------------------
 HISTORY
 
+2006-11-19 -- 0.7.1; 'collapse classes' dialog now shows when exporting only Ruby-style dictionaries; updated for py-appscript 0.17.0 and rb-appscript 0.2.0
+
 2006-10-23 -- 0.7.0; added rb-appscript support; now reports when an application's terminology isn't found instead of writing an empty file; changed 'appscript' suffix to 'py'/'rb' suffixes to distinguish different versions
 
 2006-09-19 -- 0.6.2; renamed to ASDictionary
