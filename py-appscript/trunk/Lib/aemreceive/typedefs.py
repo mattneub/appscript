@@ -39,6 +39,14 @@ class ArgDef:
 # Concrete classes
 
 class ArgDesc(ArgDef):
+	"""
+		Describes a raw AEDesc. Clients shouldn't instantiate directly; use kArgDesc instead.
+		
+		- aemreceive will pass CarbonX.AEDesc directly to callback as-is.
+	"""
+	
+	AEM_code = kAE.typeWildCard
+	
 	def AEM_unpack(self, desc, codecs):
 		return True, desc
 
@@ -47,8 +55,13 @@ kArgDesc = ArgDesc()
 
 class ArgMissingValue(ArgDef):
 	"""
-		Describes a 'missing value' constant.
+		Describes a 'missing value' constant. Clients shouldn't instantiate directly; use kArgMissingValue instead.
+		
+		May be supplied in ArgMultiChoice to indicate that aem.AEType('msng') is an acceptable parameter value, 
+		e.g. ArgMultiChoice(kAE.typeUnicodeText, kArgMissingValue')
 	"""
+	
+	AEM_code = kAE.typeType
 	
 	_cMissingValue = fourCharCode(kOSA.cMissingValue)
 	
@@ -133,7 +146,7 @@ class ArgMultiChoice(ArgDef):
 	"""
 		Used to encapsulate multiple acceptable types. If event parameter's type matches one of those given, will unpack exactly; otherwise will attempt to coerce and upack with each in turn until one succeeds or all fail.
 	"""
-	AEM_code = None # TO DECIDE
+	AEM_code = '????'
 
 	def __init__(self, *datatypes):
 		# datatypes = a list of ArgDef subclasses
