@@ -4,7 +4,7 @@
 """
 
 from CarbonX import kAE, kOSA
-import MacOS
+import MacOS, struct
 
 from aem import AEType
 
@@ -12,6 +12,11 @@ from handlererror import EventHandlerError
 
 # TO DO: build decent error messages pinpointing problem.
 
+if struct.pack("h", 1) == '\x00\x01': # host is big-endian
+	fourCharCode = lambda code: code
+else: # host is small-endian
+	fourCharCode = lambda code: code[::-1]
+	
 ######################################################################
 # PUBLIC
 ######################################################################
@@ -34,6 +39,14 @@ class ArgDef:
 # Concrete classes
 
 class ArgDesc(ArgDef):
+	"""
+		Describes a raw AEDesc. Clients shouldn't instantiate directly; use kArgDesc instead.
+		
+		- aemreceive will pass CarbonX.AEDesc directly to callback as-is.
+	"""
+	
+	AEM_code = kAE.typeWildCard
+	
 	def AEM_unpack(self, desc, codecs):
 		return True, desc
 
@@ -42,11 +55,18 @@ kArgDesc = ArgDesc()
 
 class ArgMissingValue(ArgDef):
 	"""
-		Describes a 'missing value' constant.
+		Describes a 'missing value' constant. Clients shouldn't instantiate directly; use kArgMissingValue instead.
+		
+		May be supplied in ArgMultiChoice to indicate that aem.AEType('msng') is an acceptable parameter value, 
+		e.g. ArgMultiChoice(kAE.typeUnicodeText, kArgMissingValue')
 	"""
 	
+	AEM_code = kAE.typeType
+	
+	_cMissingValue = fourCharCode(kOSA.cMissingValue)
+	
 	def AEM_unpack(self, desc, codecs):
-		if desc.type == kAE.typeType and desc.data == kOSA.cMissingValue:
+		if desc.type == kAE.typeType and desc.data == self._cMissingValue:
 			return True, codecs.unpack(desc)
 		else:
 			return False, EventHandlerError(-1704, "Not a 'missing value' constant.", desc)
@@ -91,7 +111,7 @@ class ArgEnum(ArgDef):
 		for code in codes:
 			if not isinstance(code, str) and len(code) == 4:
 				raise TypeError, "Invalid AE enum code: %r" % code
-		self._codes = codes
+		self._codes = [fourCharCode(code) for code in codes]
 	
 	def _unpack(self, desc, codecs):
 		desc = desc.AECoerceDesc(kAE.typeEnumerated)
@@ -126,7 +146,7 @@ class ArgMultiChoice(ArgDef):
 	"""
 		Used to encapsulate multiple acceptable types. If event parameter's type matches one of those given, will unpack exactly; otherwise will attempt to coerce and upack with each in turn until one succeeds or all fail.
 	"""
-	AEM_code = None # TO DECIDE
+	AEM_code = '????'
 
 	def __init__(self, *datatypes):
 		# datatypes = a list of ArgDef subclasses

@@ -146,10 +146,10 @@ DESCRIPTION
     The -s option currently supports the following formatting styles
     (acceptable abbreviations are shown in parentheses):
     
-    *      applescript      (as)
+    *    applescript       (as)
     *    objc-appscript    (objc)
-    *      py-appscript     (py)
-    *      rb-appscript     (rb)
+    *    py-appscript      (py)
+    *    rb-appscript      (rb)
     
     The -H and -N options are mutually exclusive. If neither is given, the
     viewer runs in interactive mode (the default).

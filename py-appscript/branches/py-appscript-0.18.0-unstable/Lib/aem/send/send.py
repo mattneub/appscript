@@ -103,6 +103,9 @@ class Event(object):
 			if replyEvent.type != kAE.typeNull:
 				eventResult = dict([replyEvent.AEGetNthDesc(i + 1, kAE.typeWildCard) 
 						for i in range(replyEvent.AECountItems())])
+				# note: while Apple docs say that both keyErrorNumber and keyErrorString should be
+				# tested for when determining if an error has occurred, AppleScript tests for keyErrorNumber
+				# only, so do the same here for compatibility
 				if eventResult.has_key(kAE.keyErrorNumber): # an application-level error occurred
 					# note: uses standard codecs to unpack error info to ensure consistent conversion
 					eNum = _defaultCodecs.unpack(eventResult[kAE.keyErrorNumber])

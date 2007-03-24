@@ -1,8 +1,8 @@
 HISTORY
 
-2006-02-23 -- ???
+2006-02-23 -- 0.17.1
 
-- fixed minor formatting (cosmetic) glitch when rendering 'app(...).AS_newreference(...)' style references
+- fixed cosmetic glitch when rendering 'app(...).AS_newreference(...)' style references
 
 
 2006-01-15 -- 0.17.0
