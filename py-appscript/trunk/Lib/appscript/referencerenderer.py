@@ -145,6 +145,6 @@ def renderreference(appdata, aemreference):
 	try:
 		aemreference.AEM_resolve(f)
 	except:
-		return '%r.AS_newreference(%r)' % (f.root, aemreference)
+		return '%s.AS_newreference(%r)' % (f.root, aemreference)
 	return f.result
 	
