@@ -15,7 +15,7 @@ static int (*Ptr_AEDescX_Convert)(PyObject *, AEDesc *);
 static int (*Ptr_AEDescX_ConvertDisown)(PyObject *, AEDesc *);
 
 
-static int LoadCarbonXAE() {
+static int LoadCarbonXAE(void) {
 	PyObject *aeModule, *aeAPIObj;
 	CarbonXAE_API *aeAPI;
 	

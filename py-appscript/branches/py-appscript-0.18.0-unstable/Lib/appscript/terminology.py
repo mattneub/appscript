@@ -145,7 +145,7 @@ defaulttables = _makeTypeTable([], [], []) + _makeReferenceTable([], [], []) # (
 def aetedataforapp(app):
 	"""Get aetes from local/remote app via an ascrgdte event; result is a list of byte strings."""
 	try:
-		aetes = app.event('ascrgdte', {'----':0}).send(60 * 30)
+		aetes = app.event('ascrgdte', {'----':0}).send(60 * 60)
 	except Exception, e: # (e.g.application not running)
 		if isinstance(e, CommandError) and e.number == -192:
 			aetes = []
