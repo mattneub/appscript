@@ -4,6 +4,9 @@ HISTORY
 
 - fixed cosmetic glitch when rendering 'app(...).AS_newreference(...)' style references
 
+- changed timeout for ascrgdte event to 60 sec
+
+
 2006-01-15 -- 0.17.0
 
 - removed 'filter' method; 'filter' is no longer a reserved word. Users will need to update any scripts that use apps with a 'filter' keyword (e.g. Photoshop has a 'filter' command) to change 'filter_' -> 'filter'.
