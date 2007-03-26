@@ -42,41 +42,45 @@
 
 resource 'thng' (128) {
 	/* ComponentDescription */
-    'osa ',								// OSType componentType
-    'PyOC',								// OSType componentSubType
-    'HHAS', 							// OSType componentManufacturer
-	COMPONENT_FLAGS,					// long componentFlags				// flags describing component's available services
-    0,									// unsigned long componentFlagsMask	// (kAnyComponentFlagsMask = 0)
-    /* ComponentResource */
-	'dlle', 128,						// ResourceSpec component			// resource ID for name of component's entry point
-    'STR ', 128,						// ResourceSpec componentName
-    'STR ', 129,						// ResourceSpec componentInfo
-    'ICON', 0,							// ResourceSpec componentIcon
+	'osa ',									// OSType componentType
+	'PyOC',									// OSType componentSubType
+	'HHAS',									// OSType componentManufacturer
+	COMPONENT_FLAGS,						// long componentFlags				// flags describing component's available services
+	0,										// unsigned long componentFlagsMask	// (kAnyComponentFlagsMask = 0)
+	/* ComponentResource */
+	'dlle', 128,							// ResourceSpec component			// resource ID for name of component's entry point
+	'STR ', 128,							// ResourceSpec componentName
+	'STR ', 129,							// ResourceSpec componentInfo
+	'ICON', 0,								// ResourceSpec componentIcon
 	/* ComponentResourceExtension */
-    COMPONENT_VERSION,					// SInt32 componentVersion
-    componentHasMultiplePlatforms,		// SInt32 componentRegisterFlags	// must include componentHasMultiplePlatforms
-    0,									// SInt16 componentIconFamily
-    { /* ComponentPlatformInfo */
-		COMPONENT_FLAGS,				// long componentFlags
-		'dlle', 128,					// ResourceSpec component
-#if defined(ppc_YES)
-		platformPowerPCNativeEntryPoint	// SInt16 platformType
-#else
-		platformIA32NativeEntryPoint	// SInt16 platformType
+	COMPONENT_VERSION,						// SInt32 componentVersion
+	componentHasMultiplePlatforms,			// SInt32 componentRegisterFlags	// must include componentHasMultiplePlatforms
+	0,										// SInt16 componentIconFamily
+	/* ComponentPlatformInfo */
+	{
+#if defined(__ppc__)
+		COMPONENT_FLAGS,					// long componentFlags
+		'dlle', 128,						// ResourceSpec component
+		platformPowerPCNativeEntryPoint,	// SInt16 platformType
+#endif
+#if defined(__i386__)
+		COMPONENT_FLAGS,					// long componentFlags
+		'dlle', 128,						// ResourceSpec component
+		platformIA32NativeEntryPoint,		// SInt16 platformType
 #endif
 	}
 };
 
 resource 'dlle' (128) {
-	"PyOSA_main"						// name of function which provides component's entry point
+	"PyOSA_main"							// name of function which provides component's entry point
 };
 
 
 resource 'STR ' (128) {
-    "PyOSA"								// component's name
+	"PyOSA"									// component's name
 };
 
 
 resource 'STR ' (129) {
-	"PyOSA Scripting Component"			// component's description
+	"Python OSA Language Component"			// component's description
 };

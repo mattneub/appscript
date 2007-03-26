@@ -65,7 +65,7 @@
 		4F25B9680B8A4660000AD995 /* pyosa_serialization.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = pyosa_serialization.py; sourceTree = "<group>"; };
 		4F49C8AC0B7F928B00DD1105 /* statemanager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = statemanager.h; sourceTree = "<group>"; };
 		4F49C8AD0B7F928B00DD1105 /* statemanager.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = statemanager.c; sourceTree = "<group>"; };
-		4F6F349B0B8B287F00D81F58 /* pyosa_setup.py */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = file; path = pyosa_setup.py; sourceTree = "<group>"; };
+		4F6F349B0B8B287F00D81F58 /* pyosa_setup.py */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.script.python; path = pyosa_setup.py; sourceTree = "<group>"; };
 		4F6F35D40B8B3F5200D81F58 /* pyosa_appscript.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = pyosa_appscript.py; sourceTree = "<group>"; };
 		4F91AC4D0B91156200471CB7 /* pyosa_eventhandlerdefinitions.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = pyosa_eventhandlerdefinitions.py; sourceTree = "<group>"; };
 		8D01CCD10486CAD60068D4B7 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -275,7 +275,6 @@
 				GCC_PREFIX_HEADER = PyOSA_Prefix.pch;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
-				OTHER_REZFLAGS = "-d ppc_$(ppc) -d i386_$(i386)";
 				PRODUCT_NAME = PyOSA;
 				WRAPPER_EXTENSION = component;
 			};

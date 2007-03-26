@@ -193,9 +193,11 @@ class ScriptError(StandardError):
 # raise script and component errors
 
 def raisecomponenterror(errornumber):
-	print 'raise ComponentError:'
-	print_stack()
-	print
+	print >> stderr, 'raise ComponentError:'
+	print >> stderr, '-' * 80
+	print_stack(None, 20, stderr)
+	print >> stderr, '-' * 80
+	print >> stderr
 	raise ComponentError(errornumber)
 	
 
