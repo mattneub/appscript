@@ -1,5 +1,20 @@
 TO DO
 
+- in applets, calling osaterminology.getterminology.getaete at the script's top level results in infinite recursion, causing the script to crash, e.g.:
+
+### start applet script ###
+
+import osax
+
+sa = osax.ScriptingAddition() # this will crash the applet
+
+def run():
+	sa.beep()
+
+###  end applet script  ###
+
+(Note that scripts run in Script Editor don't have this problem. Also, calling osaterminology.getterminology.getaete from within an event handler seems to work okay.)
+
 
 - finish sub-interpreter support
 
@@ -10,7 +25,7 @@ TO DO
 - OSA library support?
 
 
-- ability to run scripts starting with '#!...python' in non-OSA mode; i.e. a python subprocess, with run event's args (if any) passed to ARGV, and stdout and stderr piped to script results and script errors respectively
+- ability to run scripts starting with '#!...python' in non-OSA mode; i.e. a python subprocess, with run event's args (if any) passed to ARGV, and stdout and stderr piped to script results and script errors respectively?
 
 
 - see also comments in source code

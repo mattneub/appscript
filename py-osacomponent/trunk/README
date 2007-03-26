@@ -3,14 +3,24 @@ PyOSA
 ======================================================================
 IMPORTANT
 
-- This is an early developer release, so is incomplete and may be buggy.
+- This is an early developer release, so is incomplete and may be buggy. Use at your own risk, etc.
 
-- Once built, the PyOSA.component should be installed in /Library/Components or ~/Library/Components. You will need to restart OSA-aware applications before they register the new component.
+- Note that the version of Script Editor included with Mac OS X 10.4.x contains bugs that can prevent scripts loading or compiling correctly. Script Editor users should read the NOTES > Script Editor Workarounds section below before using PyOSA.
+
 
 ======================================================================
 SUMMARY
 
-A Python OSA component.
+A Python OSA language component.
+
+
+======================================================================
+INSTALLATION
+
+- Install py-appscript 0.17.2 or later <http://appscript.sourceforge.net> for Mac OS X's Apple-installed Python framework and any user-installed Python frameworks.
+
+- Copy the PyOSA.component bundle to /Library/Components or ~/Library/Components. OSA-aware applications will detect PyOSA the next time they are launched.
+
 
 ======================================================================
 DESCRIPTION
@@ -73,32 +83,36 @@ Events can be passed to the host process in either of two ways:
 
 	app().name.get()
 
-(This will send events to the application's normal event handlers.)
+This is equivalent to using 'get name' in AppleScript.
 
 
 2. using parent - i.e. the script's delegate - as the target, e.g.:
 
 	parent.name.get()
 
-(This is equivalent to using 'continue get name' in AppleScript.)
+This is equivalent to using 'continue get name' in AppleScript.
 
 
-When implementing 'quit' handlers in script applets, the second approach must be used otherwise infinite recursion will occur, e.g.:
+------- Notes -------
 
-def quit(): # override the applet's own internal quit handler to add additional behaviour
-	# do stuff
-	parent.quit() # must be called to allow the application to quit
-	# do more stuff
+- When implementing 'quit' handlers in script applets, remember to forward the 'quit' event to the script's parent (i.e. the applet shell) otherwise the application will fail to quit, e.g.:
+
+	def quit(): # override the applet's own internal quit handler to add additional behaviour
+		# do stuff
+		parent.quit() # must be called to allow the application to quit
+		# do more stuff
+
+(Don't use app().quit() here otherwise an infinite recursion error will occur.)
 
 
 ======= Persistent state =======
 
 The state variable contains a new-style class instance to which you can add, get and remove any attribute at any time, this provides a convenient facade for PyOSA's persistence mechanism. To set initial state at compilation time, call state with one or more named arguments, e.g.:
 
-state(
-	var1 = 42,
-	var2 = []
-)
+	state(
+		var1 = 42,
+		var2 = []
+	)
 
 When a script is saved in compiled form, PyOSA will attempt to serialise the state object's __dict__ and store it in the script file along with the script's source code and other data. When the script is re-loaded, PyOSA restores the state object's attributes to their previously stored state. The client application can also query the PyOSA component to see if osastore's content has changed since the script was loaded. 
 
@@ -109,9 +123,7 @@ NOTES
 
 ======= About OSA =======
 
-OSA scripts are commonly used in 'attachable' applications such as System Events and Mail to modify and extend their standard behaviour. An attachable application is one that allows OSA scripts to be attached to various objects - Script menus, objects within the application's Apple Event Object Model, etc. - to modify and extend the application's functionality. e.g. System Events allows scripts to be attached as Folder Actions and triggered when a filesystem folder is modified by the user; Mail allows scripts to be used as custom Mail Rule actions. 
-
-OSA scripts are also heavily used in OSA-based application development kits such as AppleScript Studio and FaceSpan. (Note that AppleScript Studio and FaceSpan currently provide direct support for the AppleScript language only.)
+The Open Scripting Architecture defines a standard API and bundle format for creating scripting language plugins. Once a scripting language is packaged as an OSA component, applications can load and run scripts written in that language without having to deal with language-specific APIs. (When using compiled scripts, the application doesn't even need to know what language the script is written in!)
 
 The best known OSA language is Apple's own AppleScript language There are several other OSA languages of varying capabilities currently available:
 - UserTalk <http://radio.userland.com>
@@ -119,14 +131,14 @@ The best known OSA language is Apple's own AppleScript language There are severa
 - JavaScriptOSA <http://www.latenightsw.com/freeware/JavaScriptOSA>
 - TclOSA, PerlOSA, PythonOSA, PHPOSA, RubyOSA, ShOSA <http://homepage.mac.com/philip_aker/osa/osa.html>
 
+OSA scripts are commonly used in 'attachable' applications such as System Events and Mail to modify and extend their standard behaviour. An attachable application is one that allows OSA scripts to be attached to various objects - Script menus, objects within the application's Apple Event Object Model, etc. - to modify and extend the application's functionality. e.g. System Events allows scripts to be attached as Folder Actions and triggered when a filesystem folder is modified by the user; Mail allows scripts to be used as custom Mail Rule actions. 
+
+OSA scripts are also heavily used in OSA-based application development kits such as AppleScript Studio and FaceSpan. (Note that AppleScript Studio and FaceSpan currently provide direct support for the AppleScript language only.)
+
 OSA scripts are typically written using an OSA script editor such as Apple's own Script Editor or Late Night Software's Script Debugger. Compiled OSA script files typically have a .scpt extension. Be aware that some OSA editors may not recognise source code files with .py extensions; where this is the case you'll need to copy and paste source code between applications.
 
 
-======= PyOSA Caveats and Other Issues =======
-
-- While some parts of PyOSA are fully functional, other bits are jury-rigged or not yet implemented.
-
-- Some APIs are not finalised and may be subject to change.
+======= PyOSA Notes =======
 
 - PyOSA dynamically loads the Python framework. The search order is as follows:
 
@@ -142,7 +154,33 @@ Python 2.3 and later are supported (though some may generate interface version w
 
 - Appscript 0.17.2 or later must be installed in the Python framework used by PyOSA. If appscript is not found, or is an older version, an error message will be printed to Console and the component will refuse to load. (This is to protect against hard crashes due to API incompatibilities with older CarbonX.AE extensions.)
 
-- PyOSA currently hosts all component and script instances in a single Python interpreter. This means that all scripts share the same modules, file handles, etc. so it's up to script authors to ensure they don't interfere with one another. Host applications that call OSA components from multiple threads will very likely run into problems. Providing better insulation between scripts is on the TODO list, but it remains to be seen if this is practical or not under the current in-process design.
+
+======= PyOSA Known Issues =======
+
+- PyOSA currently hosts all component and script instances in a single Python interpreter. This means that all scripts share the same modules, file handles, etc. so it's up to script authors to ensure they don't interfere with one another. In addition, host applications that call OSA components from multiple threads will very likely run into problems. Providing better insulation between scripts is planned, assuming this is practical.
+
+- Don't create osax.ScriptingAddition instances at the top level of an applet script as this currently causes the applet to error/crash. (Creating the ScriptingAddition instance within an event handler appears to work okay, however.)
+
+- While some parts of PyOSA are fully functional, other bits are jury-rigged or not yet implemented, so don't be surprised if some features don't work correctly/at all.
+
+- The public APIs are not yet finalised and may be subject to change.
+
+- PyOSA currently contains debugging code that prints various status messages to stderr while PyOSA is working. (When compiling and running PyOSA scripts from GUI applications, these messages will appear in Console.app.) There is currently no way to disable these messages, short of disabling the debug code by hand and rebuilding the component. This will be addressed in a future release.
+
+
+======= Script Editor Workarounds =======
+
+The Script Editor application that ships with Mac OS X 10.4.x has known bugs in its OSA language support that can prevent scripts not written in the default language (normally AppleScript) from loading or compiling correctly. (Note that MacOS X 10.3's Script Editor and Script Debugger do not have this problem.) 
+
+The workaround is to set the default language in Script Editor's General Preferences to 'PyOSA' and restart it. (To switch back to editing AppleScripts, set the default language to 'AppleScript' and restart Script Editor again.)
+
+Alternatively, use osacompile to convert .py files into .scpt or .app files, e.g.:
+
+	osacompile  -l PyOSA  -o myscript.scpt  myscript.py
+
+	osacompile  -l PyOSA  -o myscript.app  myscript.py
+
+See the osacompile manpage for more details.
 
 
 ======= Other =======
@@ -157,9 +195,11 @@ PyOSA:
 
 	svn checkout http://svn.macosforge.org/repository/appscript/py-osacomponent/trunk/
 
-py-appscript 0.17.2 unstable:
 
-	svn checkout http://svn.macosforge.org/repository/appscript/py-appscript/branches/py-appscript-0.17.2-unstable/
+======================================================================
+HISTORY
+
+- 2007-03-26 -- 0.1.0; first release
 
 
 ======================================================================
@@ -178,3 +218,5 @@ Many thanks to: Philip Aker, Bill Fancher, Bob Ippolito, Chris Nebel, Donovan Pr
 COPYRIGHT
 
 (C) 2007 HAS
+
+PyOSA is released under the MIT License. See LICENSE for details.
