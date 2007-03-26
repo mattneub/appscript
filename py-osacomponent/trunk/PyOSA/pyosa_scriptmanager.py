@@ -161,16 +161,18 @@ class ScriptManager:
 		# TO DO: parentcontext support
 		# - If current script isn't a context, exec it in the parent context, calling its run handler if it has one? (not making the run handler compulsory when current script isn't a context should allow PyOSA to work better with command-line-style environments such as Smile text windows or SD console)
 		# - How to support parent contexts when current script is also a context (bearing in mind that, unlike AppleScript script objects, Python modules don't do automatic delegation)? Assign parent context to a top-level 'parent' variable, which can then be used to access/manipulate the parent's contents?
-		if self.context:
-			context = self.context
-		elif self.source is not None:
-			if context:
-				context.compile(self.source)
-			else: # make temporary context
-				context = ScriptContext(self.appscriptservices, self.source)
-				self.state = context.state()
-		else:
+		if self.source is None: 
+			# TO DO:
+			# if parentcontext is None:
 			raisecomponenterror(errOSACantAccess)
+			# else: 
+			#	return parentcontent.execute(None, modeflags)
+		if self.context: # use existing context
+			context = self.context
+			context.compile(self.source)
+		else: # make temporary context
+			context = ScriptContext(self.appscriptservices, self.source)
+			self.state = context.state()
 		res = context.execute(modeflags)
 		return res
 	
