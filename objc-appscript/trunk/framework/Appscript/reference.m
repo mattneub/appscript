@@ -151,24 +151,47 @@
 	  directParameter:(id)directParameter
 	  parentReference:(id)parentReference {
 	
-	sendMode = kAEWaitReply + kAECanSwitchLayer;
+	sendMode = kAEWaitReply | kAECanSwitchLayer;
 	timeout = kAEDefaultTimeout;
 	AS_event = [[appData target] eventWithEventClass: classCode
 											 eventID: code
 											  codecs: appData];
 	if (directParameter)
-		[AS_event setParameter: directParameter forKeyword: keyDirectObject];
+		if (![AS_event setParameter: directParameter forKeyword: keyDirectObject]) return nil;
 	if (parentReference) {
 		if (directParameter)
-			[AS_event setAttribute: parentReference forKeyword: keySubjectAttr];
+			if (![AS_event setAttribute: parentReference forKeyword: keySubjectAttr]) return nil;
 		else
-			[AS_event setParameter: parentReference forKeyword: keyDirectObject];
+			if (![AS_event setParameter: parentReference forKeyword: keyDirectObject]) return nil;
 	}
 	return self;
 }
 
 - (AEMEvent *)AS_aemEvent {
 	return AS_event;
+}
+
+- (id)sendMode:(AESendMode)flags {
+	sendMode = flags;
+	return self;
+}
+
+- (id)timeout:(long)timeout_ {
+	timeout = timeout_ * 60;
+	return self;
+}
+
+- (id)replyPort:(mach_port_t)machPort {
+	if (![AS_event setAttributePtr: &machPort
+							  size: sizeof(machPort)
+					descriptorType: typeMachPort
+						forKeyword: keyReplyPortAttr]) return nil;
+	return self;
+}
+
+- (id)resultType:(ASConstant *)type {
+	if (![AS_event setParameter: type forKeyword: keyAERequestedType]) return nil;
+	return self;
 }
 
 - (id)send {
