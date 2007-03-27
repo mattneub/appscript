@@ -129,13 +129,7 @@ kObjCNSObjectMethods = [
 
 
 kObjCAppscriptReservedWords = [	
-	"initWithName",
-	"initWithBundleID",
-	"initWithSignature",
-	"initWithPath",
-	"initWithURL",
-	"initWithPID",
-	"initWithDescriptor",
+	# used by ASReference
 	"ID",
 	"start",
 	"end",
@@ -158,12 +152,35 @@ kObjCAppscriptReservedWords = [
 	"AND",
 	"NOT",
 	"OR",
+	
+	# used by osaglue-generated XXApplication classes
+	"initWithName",
+	"initWithBundleID",
+	"initWithSignature",
+	"initWithPath",
+	"initWithURL",
+	"initWithPID",
+	"initWithDescriptor",
 	"startTransaction",
 	"abortTransaction",
 	"endTransaction",
-	"resultType",
-	"ignore",
+	
+	# used by ASConstant
+	"constantWithName",
+	"constantWithCode",
+	
+	# used by ASCommand
+	"sendMode",
 	"timeout",
+	"replyPort",
+	"resultType",
+	"send",
+	"errorNumber",
+	"errorString",
+	"raise",
+	
+	# TO DO: delete some/all of these?
+	"ignore",
 	"waitReply",
 	"ignoreReply",
 	"queueReply",
