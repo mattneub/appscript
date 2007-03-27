@@ -22,7 +22,7 @@
 <div id="content">
 
 
-<p class="hilitebox">Note that appscript commands aren't yet fully implemented: event attributes, transactions, return IDs and send mode flags have still to be supported, and the design of the error reporting/raising system is not yet finalised.</p>
+<p class="hilitebox">Note: the appscript command API is currently unfinished and may change in future. Transaction and return IDs are not yet supported, the send mode API may be added to or replaced, and the design of the error reporting system has still to be finalised.</p>
 
 <h2>Using commands</h2>
 
@@ -47,15 +47,90 @@
 
 <p>(Note that all commands take this form, regardless of whether the application dictionary lists them as taking a direct parameter or not; it's up to the client to use them as appropriate.)</p>
 
-
-<h3>Adding <!-- TO DO attributes and--> keyword parameters</h3>
+<h3>Adding keyword parameters</h3>
 
 <p>Once a command object has been created, keyword parameters can be added one at a time. Each keyword parameter is represented by a method of the command object that takes a value of any class and returns <code>self</code>, allowing multiple parameter calls to be chained together for convenience. For example, TextEdit's <code>TEMakeCommand</code> class defines the following parameter methods:</p>
 
 <pre><code>- (TEMakeCommand *)to:(id)value;
 - (TEMakeCommand *)withProperties:(id)value</code></pre>
 
-<p>All required parameters must be supplied, along with zero or more optional parameters, before the command can be sent.</p>
+<p>Note: all required parameters must be supplied, along with zero or more optional parameters, before the command is sent, otherwise the target application will raise a 'missing parameter' error.</p>
+
+
+<!-- TO DO: specifying considering/ignoring flags -->
+
+<h3>Specifying send mode flags</h3>
+
+<p>Every command object provides a <code>-sendMode:</code> method for specifying how the target application should handle the event:</p>
+
+<pre><code>- (id)sendMode:(AESendMode)flags;</code></pre>
+
+<p>The Apple Event Manager defines the following <code>AESendMode</code> constants:</p>
+
+<pre><code>enum {
+    kAENoReply = 0x00000001,
+    kAEQueueReply = 0x00000002,
+    kAEWaitReply = 0x00000003,
+
+    kAENeverInteract = 0x00000010,
+    kAECanInteract = 0x00000020,
+    kAEAlwaysInteract = 0x00000030,
+
+    kAECanSwitchLayer = 0x00000040,
+
+    kAEDontRecord = 0x00001000,
+    kAEDontExecute = 0x00002000,
+
+    kAEProcessNonReplyEvents = 0x00008000
+};</code></pre>
+
+<p>By default, appscript uses <code>kAEWaitReply</code> and <code>kAECanSwitchLayer</code>.</p>
+
+<p>See the Apple Event Manager documentation for more information.</p>
+
+
+
+<h3>Specifying the event timeout</h3>
+
+<p>Every command object provides a <code>-timeout:</code> method for specifying the number of seconds the sender is willing to wait for the target application to reply when the <code>kAEWaitReply</code> send mode is used:</p>
+
+<pre><code>- (id)timeout:(long)timeout_;</code></pre>
+
+<p>The Apple Event Manager defines two constants that may also be used here:</p>
+
+<pre><code>enum {
+   kAEDefaultTimeout = -1,
+   kNoTimeOut = -2
+};</code></pre>
+
+<p>See the Apple Event Manager documentation for more information.</p>
+
+
+<h3>Specifying the Mach port to receive the reply event</h3>
+
+<p>By default, the Apple Event Manager receives reply events on the main thread via the process's default Mach port. When sending events from a non-main thread, if the <code>kAEWaitReply</code> send mode is used, the thread should create its own Mach port to receive the reply events, and pass it to the command object's <code>-replyPort:</code> method before sending the event:</p>
+
+<pre><code>- (id)replyPort:(mach_port_t)machPort;</code></pre>
+
+<p>Example usage:</p>
+
+<pre><code>mach_port_t rp;
+mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &rp);
+...
+[commandObj replyPort: rp];
+reply = [commandObj send];
+...
+mach_port_destroy(mach_task_self(), rp);</code></pre>
+
+
+<h3>Specifying the reply value's type</h3>
+
+<p>Where supported by the target application's event handler, the sender can use a command object's <code>-resultType:</code> method to specify the desired type for the reply value:</p>
+
+<pre><code>- (id)resultType:(ASConstant *)type;</code></pre>
+
+<p>The target application will attempt to coerce the reply value to this type before returning it. The argument is usually a standard AE type, e.g. <code>[ASConstant alias]</code>, though may occasionally be an application-defined type.</p>
+
 
 
 <h3>Sending a command</h3>
@@ -150,7 +225,7 @@ else
 <p>The two forms are equivalent (appscript converts the first form to the second behind the scenes) although the first form is preferred for conciseness.</p></li>
 
 
-<li><p>If a command that already has a direct parameter is called on a reference, i.e.:</p>
+<li><p>If a command is called on a reference object and a direct parameter is also given, i.e.:</p>
 
 <pre><code>[reference command: directParameter]</code></pre>
 
