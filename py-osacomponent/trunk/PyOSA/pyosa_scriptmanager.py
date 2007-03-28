@@ -34,6 +34,12 @@ from pyosa_colorizesource import *
 
 #######
 
+if struct.pack("h", 1) == '\x00\x01': # host is big-endian
+	fourcharcode = lambda code: code
+else: # host is small-endian
+	fourcharcode = lambda code: code[::-1]
+
+
 kSendFlagsMask = ( kOSAModeNeverInteract
 				 | kOSAModeCanInteract
 				 | kOSAModeAlwaysInteract
@@ -83,25 +89,24 @@ class ScriptManager:
 	
 	
 	def _formatevent(self, desc): # TO DO: finish
-		code = desc.AEGetAttributeDesc('evcl', '****').data \
-				+ desc.AEGetAttributeDesc('evid', '****').data
+		code = fourcharcode(desc.AEGetAttributeDesc('evcl', '****').data) \
+				+ fourcharcode(desc.AEGetAttributeDesc('evid', '****').data)
 		target = desc.AEGetAttributeDesc('addr', '****')
 		if code == 'ascrgdte':
 			return '\nGET AETE: %r %r' % (target.type, target.data)
 		if code in ['ascrtell', 'ascrtend']: # Python doesn't do 'tell' blocks, so ignore these
 			return ''
-		elif code == 'ascrcmnt':
-			if self._appidentity(target) == ('desc', 
-					('psn ', '\x00\x00\x00\x00\x00\x00\x00\x02')):
+		targetapp = self.appscriptservices.unpack(target)
+		if code == 'ascrcmnt':
+			if self._appidentity(targetapp) == ('desc', 
+					('psn ', '\x00\x00\x00\x00' + fourcharcode('\x00\x00\x00\x02'))):
 				try:
 					data = desc.AEGetParamDesc('----', '****')
 				except:
 					return '\n#'
-				else:
-					return '\n# %r' % self.appscriptservices.unpack()
+				return '\n# %r' % self.appscriptservices.unpack(data)
 		code, atts, params = self.appscriptservices.unpackappleevent(desc)
 		# TO DO: if psn target, get app's path; if url target, get url; then construct app object using these for readability (note: this isn't ideal since there might be >1 instance of an app; the alternative is to improve appscript's repr support)
-		targetapp = self.appscriptservices.unpack(target)
 		parameters = {}
 		for i in range(desc.AECountItems()):
 			key, value = desc.AEGetNthDesc(i + 1, typeWildCard)
