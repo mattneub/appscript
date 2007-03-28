@@ -16,6 +16,15 @@ def run():
 (Note that scripts run in Script Editor don't have this problem. Also, calling osaterminology.getterminology.getaete from within an event handler seems to work okay.)
 
 
+- make scripts and script values executable? In the AppleScript component, scripts and values are effectively interchangeable, allowing clients to call OSAExecute on a script's return value. PyOSA currently doesn't allow this as scripts and values aren't interchangeable: scripts are Python modules and must have a run() function to be executable, whereas values are simple datatypes (ints, strings, lists, etc).
+
+
+- support fully qualified object specifiers (used by e.g. Automator)
+
+
+- see if it's possible to make script results display better in Script Debugger's 'Best' pane (single references don't display; references in lists/records display poorly; record keys also display poorly)
+
+
 - finish sub-interpreter support
 
 
