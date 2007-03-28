@@ -22,6 +22,13 @@ from pyosa_hostcallbacks import *
 __all__ = ['aem', 'appscript', 'AppscriptServices']
 
 
+# monkey-patch appscript to cope with Script Debugger returning an aete descriptor with zero-length data when getting its dictionary
+aetedataforapp = appscript.terminology.aetedataforapp
+def aetedataforapp_patch(app):
+	return [s for s in aetedataforapp(app) if s]
+appscript.terminology.aetedataforapp = aetedataforapp_patch
+
+
 # TO DO: need to replace following method in appscript.reference.AppData:
 #
 # 	def pack(self, data):

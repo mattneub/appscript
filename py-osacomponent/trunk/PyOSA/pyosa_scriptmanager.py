@@ -232,7 +232,7 @@ class ScriptManager:
 			return int(self.context is not None)
 		elif selector == kOSAScriptBestType:
 			if self.isvalue:
-				return struct.unpack('l', self.appscriptservices.pack(value).type)[0]
+				return struct.unpack('l', self.appscriptservices.pack(self.value).type)[0]
 			else:
 				return struct.unpack('l', typeScript)[0]
 		elif selector == kOSACanGetSource:

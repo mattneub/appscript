@@ -8,6 +8,10 @@
 #
 #
 
+# TO DO: packscript, unpackscript currently do dodgy serialisation
+# From TN2053: "AEGetDescData should not be used on a complex AEDesc like a list, record, or AppleEvent [...]
+# If you need to serialize a complex AEDesc, use AEFlattenDesc and AEUnflattenDesc."
+
 import pickle, sys
 from pprint import pprint
 
