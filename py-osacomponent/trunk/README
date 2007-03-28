@@ -199,7 +199,7 @@ PyOSA:
 ======================================================================
 HISTORY
 
-- 2007-03-28 -- 0.1.1; fixes compatibility problem with Script Debugger 4
+- 2007-03-28 -- 0.1.1; fixes compatibility problem with Script Debugger 4; some improvements in event log support
 
 - 2007-03-26 -- 0.1.0; first release
 
