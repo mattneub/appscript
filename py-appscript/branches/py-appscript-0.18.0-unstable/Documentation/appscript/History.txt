@@ -1,13 +1,18 @@
 HISTORY
 
-2006-02-23 -- 0.17.1
+2007-03-28 -- 0.???
+
+- terminology.aetedataforapp now omits zero-length aetes from result list
+
+
+2007-02-23 -- 0.17.1
 
 - fixed cosmetic glitch when rendering 'app(...).AS_newreference(...)' style references
 
 - changed timeout for ascrgdte event to 60 sec
 
 
-2006-01-15 -- 0.17.0
+2007-01-15 -- 0.17.0
 
 - removed 'filter' method; 'filter' is no longer a reserved word. Users will need to update any scripts that use apps with a 'filter' keyword (e.g. Photoshop has a 'filter' command) to change 'filter_' -> 'filter'.
 

@@ -153,7 +153,7 @@ def aetedataforapp(app):
 			raise RuntimeError, "Can't get terminology for application (%r): %s" % (app, e)
 	if not isinstance(aetes, list):
 		aetes = [aetes]
-	return [aete.data for aete in aetes if isinstance(aete, AEDesc) and aete.type == 'aete']
+	return [aete.data for aete in aetes if isinstance(aete, AEDesc) and aete.type == 'aete' and aete.data]
 
 
 def tablesforaetedata(aetes, style='py-appscript'):

@@ -1,5 +1,7 @@
 TO DO
 
+- How should terminology module handle malformed aetes? Ignore them? Raise proper error (except for zero-length aetes, which AS seems to ignore)?
+
 
 - Relaunching an application immediately after quitting it often results in an invalid connection error (-609) as LaunchApplication is being called before the application has actually quit. Not sure if there's a practical solution to this - users may just have to live with it.
 
