@@ -96,8 +96,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 196772367;
-			PBXWorkspaceStateSaveDate = 196772367;
+			PBXPerProjectTemplateStateSaveDate = 196858920;
+			PBXWorkspaceStateSaveDate = 196858920;
 		};
 		sourceControlManager = 4F196DE90B7CD54A0095502E /* Source Control */;
 		userBookmarkGroup = 4FA814880BB7E171004D5DFF /* PBXBookmarkGroup */;
@@ -237,9 +237,9 @@
 	};
 	4F25B8330B88D2DF000AD995 /* pyosa_scriptmanager.py */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {672, 5054}}";
-			sepNavSelRange = "{5822, 0}";
-			sepNavVisRect = "{{0, 1932}, {672, 742}}";
+			sepNavIntBoundsRect = "{{0, 0}, {712, 5068}}";
+			sepNavSelRange = "{3790, 0}";
+			sepNavVisRect = "{{0, 1259}, {712, 480}}";
 			sepNavWindowFrame = "{{105, 0}, {711, 832}}";
 		};
 	};
@@ -254,8 +254,8 @@
 	4F25B9410B89D336000AD995 /* pyosa_scriptcontext.py */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {725, 3122}}";
-			sepNavSelRange = "{4071, 0}";
-			sepNavVisRect = "{{0, 1154}, {725, 742}}";
+			sepNavSelRange = "{8767, 0}";
+			sepNavVisRect = "{{0, 0}, {725, 742}}";
 			sepNavWindowFrame = "{{345, 0}, {764, 832}}";
 		};
 	};
@@ -293,9 +293,9 @@
 	};
 	4F6F35D40B8B3F5200D81F58 /* pyosa_appscript.py */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {692, 2170}}";
-			sepNavSelRange = "{4533, 0}";
-			sepNavVisRect = "{{0, 1022}, {692, 742}}";
+			sepNavIntBoundsRect = "{{0, 0}, {692, 2282}}";
+			sepNavSelRange = "{745, 0}";
+			sepNavVisRect = "{{0, 0}, {692, 742}}";
 			sepNavWindowFrame = "{{48, 0}, {731, 832}}";
 		};
 	};

@@ -13,7 +13,7 @@
 #define pyosa_errNotAnAEDesc errOSASystemError
 #define pyosa_errNotAnInt errOSASystemError
 
-#define osaInfoScriptFSRef 'fref'
+#define pyosa_kOSAFileReference 'fref'
 
 
 static const char componentName[] = COMPONENT_NAME;
@@ -203,13 +203,13 @@ static ComponentResult handleOSASetScriptInfo(CIStorageHandle ciStorage,
 	
 	state = getScriptState(ciStorage, scriptID);
 	if (!state) return errOSAInvalidID;
-	if (selector == osaInfoScriptFSRef)
+	if (selector == pyosa_kOSAFileReference)
+		result = PyObject_CallMethod(state->scriptManager, "setscriptfile", "(O&)",
+																			PyMac_BuildFSRef, (FSRef *)value);
+	else
 		result = PyObject_CallMethod(state->scriptManager, "setscriptinfo", "O&l",
 																			PyMac_BuildOSType, selector,
 																			value);
-	else
-		result = PyObject_CallMethod(state->scriptManager, "setscriptfile", "(O&)",
-																			PyMac_BuildFSRef, (FSRef *)value);
 	if (!result) return raisePythonError(ciStorage, scriptID);
 	Py_DECREF(result);
 	return noErr;

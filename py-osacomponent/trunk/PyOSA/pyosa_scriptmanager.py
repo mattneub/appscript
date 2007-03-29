@@ -213,6 +213,7 @@ class ScriptManager:
 		if selector == kOSAScriptIsModified:
 			self.ismodified = bool(value)
 		else:
+			print >> stderr, "Can't set script info: %r %r" % (selector, value)
 			raisecomponenterror(errOSACantAccess)
 	
 	
