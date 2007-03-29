@@ -158,12 +158,12 @@
 											  codecs: appData];
 	if (directParameter)
 		if (![AS_event setParameter: directParameter forKeyword: keyDirectObject]) return nil;
-	if (parentReference) {
-		if (directParameter)
+	if (parentReference)
+		if (directParameter) {
 			if (![AS_event setAttribute: parentReference forKeyword: keySubjectAttr]) return nil;
-		else
+		} else {
 			if (![AS_event setParameter: parentReference forKeyword: keyDirectObject]) return nil;
-	}
+		}
 	return self;
 }
 
