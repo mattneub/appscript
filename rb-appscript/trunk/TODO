@@ -1,10 +1,16 @@
 TO DO
 
+- (re)write sdef parser using libxml2, with XInclude support. (Sdef parser is needed for OSAX module in 64-bit Ruby, as OSAGetAppTerminology is gone in 64-bit Leopard.)
+
+- weak binding for OSAGetAppTerminology, OSACopyScriptingDefinition in rbae.c
+
 - see if there's a way to provide a SafeObject base class for Appscript::Reference and Appscript::GenericReference that doesn't depend on inserting callbacks into Module (or are Rubyists fine with the current approach?)
 
 - see if it's possible to work better with irb's autocomplete (autocomplete support is currently limited to start of a reference; not sure why)
 
 - ae/aem/appscript-defined exception classes aren't quite idiomatic Ruby
+
+- can numbers in range (2**63)..(2**64 - 1) safely be packed as typeUInt64 on 10.5+? Or stick with packing those as lossy 64-bit floating point for compatibility?
 
 - any additional tests
 

@@ -140,6 +140,12 @@ class Codecs
 	end
 	
 	######################################################################
+	# Type codes (OS 10.5+)
+	
+	TypeUInt16 = 'ushr'
+	TypeUInt64 = 'ucom'
+
+	######################################################################
 	# Subclasses could override these to provide their own reference roots if needed
 	
 	App = AEMReference::App
@@ -151,6 +157,7 @@ class Codecs
 	
 	SInt32Bounds = (-2**31)..(2**31-1)
 	SInt64Bounds = (-2**63)..(2**63-1)
+	UInt64Bounds = (2**63)..(2**64-1)
 
 	NullDesc = AE::AEDesc.new(KAE::TypeNull, '')
 	TrueDesc = AE::AEDesc.new(KAE::TypeTrue, '')
@@ -218,6 +225,8 @@ class Codecs
 					AE::AEDesc.new(KAE::TypeSInt32, [val].pack('l')) 
 				elsif SInt64Bounds === val
 					AE::AEDesc.new(KAE::TypeSInt64, [val].pack('q'))
+				elsif UInt64Bounds === val
+					pack_uint64(val)
 				else
 					AE::AEDesc.new(KAE::TypeFloat, [val.to_f].pack('d'))
 				end
@@ -234,6 +243,16 @@ class Codecs
 	end
 	
 	#######
+	
+	def pack_uint64(val) 
+		# On 10.5+, clients could override this method to do a non-lossy conversion,
+		# (assuming target app knows how to handle new UInt64 type):
+		#
+		# def pack_uint64(val)
+		# 	AE::AEDesc.new(Codecs::TypeUInt64, [val.to_f].pack('Q'))
+		# end
+		AE::AEDesc.new(KAE::TypeFloat, [val.to_f].pack('d')) # pack as 64-bit float for compatibility (lossy conversion)
+	end
 	
 	def pack_array(val)
 		lst = AE::AEDesc.new_list(false)
@@ -352,6 +371,9 @@ class Codecs
 				"#{vers}.#{subvers}.#{patch}"
 				
 			when KAE::TypeBoolean then desc.data != "\000"
+			
+			when TypeUInt16 then desc.data.unpack('S')[0] # 10.5+
+			when TypeUInt64 then desc.data.unpack('Q')[0] # 10.5+
 		else
 			did_unpack, val = @unit_type_codecs.unpack(desc)
 			if did_unpack

@@ -1,3 +1,14 @@
+2007-03-?? -- 0.3.1
+
+- 64-bit support in rbae.c
+
+- added TypeUInt16, TypeUInt64 support to Codecs#unpack
+
+- added Codecs#pack_uint16; by default, this packs numbers in range (2**63)..(2**64 - 1) as 64-bit floats (lossy), but clients could override this to pack as TypeUInt64 where supported by OS and applications
+
+- changed timeout for ascrgdte event to 60 sec
+
+
 2007-01-18 -- 0.3.0
 
 - removed 'AS' alias; client scripts should refer to Appscript module, e.g.:
