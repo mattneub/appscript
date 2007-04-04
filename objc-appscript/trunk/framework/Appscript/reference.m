@@ -34,13 +34,13 @@
 	[super dealloc];
 }
 
-- (void)connect {
+- (BOOL)connect {
 	switch (targetType) {
 		case kASTargetCurrent:
 			target = [[aemApplicationClass alloc] init];
 			break;
 		case kASTargetName:
-			target = [[aemApplicationClass alloc] initWithURL: AEMFindAppWithName(targetData)];
+			target = [[aemApplicationClass alloc] initWithName: targetData];
 			break;
 		case kASTargetPath:
 			target = [[aemApplicationClass alloc] initWithPath: targetData];
@@ -54,11 +54,12 @@
 		case kASTargetDescriptor:
 			target = [[aemApplicationClass alloc] initWithDescriptor: targetData];
 	}
+	return target != nil;
 }
 
 - (id)target { // returns AEMApplication instance or equivalent
 	if (!target)
-		[self connect];
+		if (![self connect]) return nil;
 	return target;
 }
 
@@ -150,12 +151,15 @@
 			  eventID:(AEEventID)code
 	  directParameter:(id)directParameter
 	  parentReference:(id)parentReference {
-	
+
+	self = [super init];
+	if (!self) return self;
 	sendMode = kAEWaitReply | kAECanSwitchLayer;
 	timeout = kAEDefaultTimeout;
 	AS_event = [[appData target] eventWithEventClass: classCode
 											 eventID: code
 											  codecs: appData];
+	if (!AS_event) return nil; // TO DO: better error reporting?
 	if (directParameter)
 		if (![AS_event setParameter: directParameter forKeyword: keyDirectObject]) return nil;
 	if (parentReference)

@@ -191,7 +191,9 @@
 
 @implementation AEMApplication
 
+// clients shouldn't call this initializer directly; use one of the methods below
 - (id)initWithTargetType:(AEMTargetType)targetType_ data:(id)targetData_ {
+	if (!targetData_) return nil;
 	self = [super init];
 	if (!self) return self;
 	// hooks
@@ -200,14 +202,13 @@
 	eventClass = [AEMEvent class];
 	// description
 	targetType = targetType_;
-	[targetData_ retain];
 	targetData = targetData_;
 	// address desc
 	switch (targetType) {
-		case kAEMTargetFile:
+		case kAEMTargetFileURL:
 			addressDesc = AEMAddressDescForLocalApplication(targetData);
 			break;
-		case kAEMTargetURL:
+		case kAEMTargetEppcURL:
 			addressDesc = AEMAddressDescForRemoteProcess(targetData);
 			break;
 		case kAEMTargetCurrent:
@@ -216,6 +217,8 @@
 		default:
 			addressDesc = targetData;
 	}
+	if (!addressDesc) return nil;
+	[targetData_ retain];
 	[addressDesc retain];
 	// misc
 	defaultCodecs = [[AEMCodecs alloc] init];
@@ -223,33 +226,36 @@
 	return self;
 }
 
+// initializers
+
 - (id)init {
-	return [self initWithTargetType: kAEMTargetCurrent data: nil];
+	return [self initWithTargetType: kAEMTargetCurrent data: [NSNull null]];
 }
 
+- (id)initWithName:(NSString *)name {
+	return [self initWithTargetType: kAEMTargetFileURL data: AEMFindAppWithName(name)];
+}
 
 - (id)initWithPath:(NSString *)path {
-	return [self initWithURL: [NSURL fileURLWithPath: path]];	
+	return [self initWithTargetType: kAEMTargetFileURL data: [NSURL fileURLWithPath: path]];	
 }
-
 
 - (id)initWithURL:(NSURL *)url {
 	if ([url isFileURL])
-		return [self initWithTargetType: kAEMTargetFile data: url];
+		return [self initWithTargetType: kAEMTargetFileURL data: url];
 	else
-		return [self initWithTargetType: kAEMTargetURL data: url];
+		return [self initWithTargetType: kAEMTargetEppcURL data: url];
 }
-
 
 - (id)initWithPID:(pid_t)pid {
 	return [self initWithTargetType: kAEMTargetPID data: AEMAddressDescForLocalProcess(pid)];
 }
 
-
 - (id)initWithDescriptor:(NSAppleEventDescriptor *)desc {
 	return [self initWithTargetType: kAEMTargetDescriptor data: desc];
 }
 
+// dealloc
 
 - (void)dealloc {
 	[targetData release];
@@ -263,8 +269,8 @@
 - (NSString *)description {
 	pid_t pid;
 	switch (targetType) {
-		case kAEMTargetFile:
-		case kAEMTargetURL:
+		case kAEMTargetFileURL:
+		case kAEMTargetEppcURL:
 			return [NSString stringWithFormat: @"<AEMApplication url=%@>", targetData];
 		case kAEMTargetPID:
 			[[addressDesc data] getBytes: &pid length: sizeof(pid_t)];

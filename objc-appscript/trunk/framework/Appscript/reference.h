@@ -35,7 +35,7 @@ typedef enum {
 					targetType:(ASTargetType)type
 					targetData:(id)data;
 
-- (void)connect;
+- (BOOL)connect;
 
 - (id)target; // returns AEMApplication instance or equivalent
 

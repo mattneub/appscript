@@ -127,6 +127,7 @@ NSAppleEventDescriptor* AEMAddressDescForLocalApplication(NSURL *fileURL) {
 	OSStatus err;
 	pid_t pid;
 
+	if (!fileURL) return nil;
 	err = AEMFindPIDForApplication(fileURL, &pid);
 	if (err) {
 		if (err != -600) return nil;
@@ -151,6 +152,7 @@ NSAppleEventDescriptor* AEMAddressDescForRemoteProcess(NSURL *eppcURL) {
 	CFDataRef data;
 	NSAppleEventDescriptor *desc;
 	
+	if (!eppcURL) return nil;
 	data = CFURLCreateData(NULL, (CFURLRef)eppcURL, kCFStringEncodingUTF8, YES);
 	desc = [NSAppleEventDescriptor descriptorWithDescriptorType: typeApplicationURL
 														   data: (NSData *)data];

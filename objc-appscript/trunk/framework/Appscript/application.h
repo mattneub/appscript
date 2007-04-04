@@ -30,8 +30,8 @@ typedef OSStatus(*AEMSendProcPtr)(const AppleEvent *event,
 
 typedef enum {
 	kAEMTargetCurrent,
-	kAEMTargetFile, // file:// url
-	kAEMTargetURL, // should be eppc:// url
+	kAEMTargetFileURL,
+	kAEMTargetEppcURL,
 	kAEMTargetPID,
 	kAEMTargetDescriptor,
 } AEMTargetType;
@@ -131,6 +131,10 @@ typedef enum {
 }
 
 - (id)initWithTargetType:(AEMTargetType)targetType_ data:(id)targetData_;
+
+// clients should call one of the following methods to initialize AEMApplication object
+
+- (id)initWithName:(NSString *)name;
 
 - (id)initWithPath:(NSString *)path;
 

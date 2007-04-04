@@ -492,7 +492,7 @@ extern OSStatus AEMGetAppTerminology(NSURL *fileURL,
 			n = [self integer];
 			for (j = 0; j < n; j++)
 				[self parseSuite];
-			if (cursor != aeteSize){ NSLog(@"balls\n");
+			if (cursor != aeteSize){
 				[NSException raise: @"Bad aete"
 							format: @"Some data wasn't read (%i bytes expected, %i bytes read)", 
 									aeteSize, cursor];}
