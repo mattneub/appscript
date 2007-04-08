@@ -32,7 +32,7 @@ class _Vis(object):
 
 #######
 
-class Nodes(_Vis): # TO DO: rename
+class Nodes(_Vis): # TO DO: rename; TO DO: add non-in-place sort method
 	
 	def __init__(self, visibility, items=[]):
 		self._visibility = visibility
@@ -244,7 +244,7 @@ class _Base(_Vis):
 class Dictionary(_Base):
 	kind = 'dictionary'
 
-	def __init__(self, visibility, name, path):
+	def __init__(self, visibility, name, path): # TO DO: style
 		_Base.__init__(self, visibility, name, None, None, None)
 		self.path = path
 		self._suites = Nodes(visibility)

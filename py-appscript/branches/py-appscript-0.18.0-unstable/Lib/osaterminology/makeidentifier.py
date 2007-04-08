@@ -173,6 +173,7 @@ kObjCAppscriptReservedWords = [
 	"sendMode",
 	"timeout",
 	"replyPort",
+	"requestType",
 	"resultType",
 	"send",
 	"errorNumber",

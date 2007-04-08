@@ -399,7 +399,7 @@ _template = Template(renderTemplate, _html)
 # PUBLIC
 ######################################################################
 
-def renderdictionary(terms, style='appscript', options=[], template=None):
+def renderdictionary(terms, style='py-appscript', options=[], template=None):
 	"""Render a Dictionary object's classes and commands as an XHTML string.
 		terms : osaterminology.dom.osadictionary.Dictionary -- pre-parsed dictionary object
 		style : str -- keyword formatting style ('appscript' or 'applescript')
@@ -422,7 +422,7 @@ def renderdictionary(terms, style='appscript', options=[], template=None):
 	return html
 
 
-def doc(apppath, outfile, style='appscript', options=[], template=None):
+def doc(apppath, outfile, style='py-appscript', options=[], template=None):
 	"""Render an XHTML file listing a scriptable application/scripting addition's classes and commands.
 		apppath : str -- name or path to application/path to scripting addition
 		outfile : str -- the file to write
@@ -432,7 +432,7 @@ def doc(apppath, outfile, style='appscript', options=[], template=None):
 		Result : bool -- False if no terminology was found and no file was written; else True
 	"""
 	terms = aeteparser.parseapp(findapp.byname(apppath), style)
-	result = renderdictionary(terms, style='appscript', options=[], template=None)
+	result = renderdictionary(terms, style, options, template)
 	if result:
 		f = open(outfile, 'w')
 		f.write(str(result))

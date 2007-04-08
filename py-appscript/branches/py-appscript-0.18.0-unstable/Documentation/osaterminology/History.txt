@@ -1,5 +1,8 @@
 HISTORY
 
+2007-04-02 -- 0.???
+- fixed renderdictionary call in htmldoc.doc to use client-supplied parameters
+
 2007-03-24 -- 0.10.1
 - fixed typo in makeidentifier that accidentally concatenated Python reserved words 'waitreply' and 'help'
 
