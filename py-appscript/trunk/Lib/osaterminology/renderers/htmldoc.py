@@ -432,7 +432,7 @@ def doc(apppath, outfile, style='appscript', options=[], template=None):
 		Result : bool -- False if no terminology was found and no file was written; else True
 	"""
 	terms = aeteparser.parseapp(findapp.byname(apppath), style)
-	result = renderdictionary(terms, style='appscript', options=[], template=None)
+	result = renderdictionary(terms, style, options, template)
 	if result:
 		f = open(outfile, 'w')
 		f.write(str(result))

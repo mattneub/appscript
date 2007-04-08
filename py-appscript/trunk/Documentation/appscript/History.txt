@@ -1,5 +1,10 @@
 HISTORY
 
+2007-03-28 -- 0.17.2
+
+- terminology.aetedataforapp now omits zero-length aetes from result list
+
+
 2006-02-23 -- 0.17.1
 
 - fixed cosmetic glitch when rendering 'app(...).AS_newreference(...)' style references
