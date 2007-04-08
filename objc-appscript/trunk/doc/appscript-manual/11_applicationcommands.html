@@ -125,12 +125,20 @@ mach_port_destroy(mach_task_self(), rp);</code></pre>
 
 <h3>Specifying the reply value's type</h3>
 
-<p>Where supported by the target application's event handler, the sender can use a command object's <code>-resultType:</code> method to specify the desired type for the reply value:</p>
+<p>Where supported by the target application's event handler, the sender can use a command object's <code>-requestType:</code> method to specify the desired type for the reply value:</p>
 
-<pre><code>- (id)resultType:(ASConstant *)type;</code></pre>
+<pre><code>- (id)requestType:(ASConstant *)type;</code></pre>
 
 <p>The target application will attempt to coerce the reply value to this type before returning it. The argument is usually a standard AE type, e.g. <code>[ASConstant alias]</code>, though may occasionally be an application-defined type.</p>
 
+
+<h3>Specifying the required result type</h3>
+
+<p>The <code>-resultType:</code> method specifies the AE type that the returned result descriptor must be coerced to before unpacking it:</p>
+
+<pre><code>- (id)resultType:(DescType)type;</code></pre>
+
+<p>Whereas the <code>-requestType:</code> method adds a <code>kAERequestedType</code> parameter to the outgoing event, this coercion is performed locally by the <code>-send:</code> method using a built-in/user-installed AE coercion handler if one is available. Note that if the coercion fails, <code>-send:</code> will return <code>nil</code> and set the command object's error number to <code>errAECoercionFail</code> (-1700).</p>
 
 
 <h3>Sending a command</h3>
