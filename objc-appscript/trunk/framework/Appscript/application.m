@@ -30,6 +30,7 @@
 	[codecs_ retain];
 	codecs = codecs_;
 	sendProc = sendProc_;
+	requiredResultType = typeWildCard;
 	return self;
 }
 
@@ -83,6 +84,11 @@
 	return err ? nil : self;
 }
 
+- (id)setResultType:(DescType)type {
+	requiredResultType = type;
+	return self;
+}
+
 /*
  * Send event.
  *
@@ -121,7 +127,7 @@
 			[desc release];
 		}
 		// for any other Apple Event Manager errors, set error condition and return nil
-		return nil; // note: clients should check return value to determine if event failed
+		return nil; // note: clients should check if return value is nil to determine if event failed
 	}
 	// extract reply data, if any
 	if (replyDesc.descriptorType != typeNull) {
@@ -139,12 +145,19 @@
 				if (!errorNumber)
 					errorNumber = errOSAGeneralError; // if only error string was given, set error number
 				[replyData release];
-				return nil; // note: clients should check return value to determine if event failed
+				return nil; // note: clients should check if return value is nil to determine if event failed
 			}
 		}
 		// if application returned a result, unpack and return it
 		result = [replyData paramDescriptorForKeyword: keyAEResult];
 		[replyData release];
+		if (requiredResultType != typeWildCard && [result descriptorType] != requiredResultType) {
+			result = [result coerceToDescriptorType: requiredResultType];
+			if (!result) {
+				errorNumber = errAECoercionFail;
+				return nil; // note: clients should check if return value is nil to determine if event failed
+			}
+		}
 		if (result) return [codecs unpack: result];
 	}
 	// application didn't return anything

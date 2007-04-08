@@ -193,8 +193,13 @@
 	return self;
 }
 
-- (id)resultType:(ASConstant *)type {
+- (id)requestType:(ASConstant *)type {
 	if (![AS_event setParameter: type forKeyword: keyAERequestedType]) return nil;
+	return self;
+}
+
+- (id)resultType:(DescType)type {
+	[AS_event setResultType: type];
 	return self;
 }
 

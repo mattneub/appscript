@@ -159,8 +159,18 @@ enumConsidsAndIgnores = 'csig'
  * type before returning it. May be a standard AE type (e.g. [ASConstant alias])
  * or, occasionally, an application-defined type.
  */
-- (id)resultType:(ASConstant *)type;
+- (id)requestType:(ASConstant *)type;
 
+/*
+ * Specify the AE type that the returned AEDesc must be coerced to before unpacking.
+ * Whereas the -resultType: method adds a kAERequestedType parameter to the outgoing
+ * event, this coercion is performed locally by the -send: method using a built-in/
+ * user-installed AE coercion handler if one is available. Note that if the coercion
+ * fails, -send: will return nil and set the command object's error number to -1700
+ * (errAECoercionFail).
+ */
+- (id)resultType:(DescType)type;
+ 
 // send events
 
 /*

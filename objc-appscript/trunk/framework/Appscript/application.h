@@ -49,6 +49,8 @@ typedef enum {
 	AEDesc *event;
 	id codecs;
 	AEMSendProcPtr sendProc;
+	// type to coerce returned value to before unpacking it
+	DescType requiredResultType;
 	// error info
 	OSErr errorNumber;
 	NSString *errorString;
@@ -78,6 +80,10 @@ typedef enum {
 - (id)setAttribute:(id)value forKeyword:(AEKeyword)key;
 
 - (id)setParameter:(id)value forKeyword:(AEKeyword)key;
+
+// Specify an AE type to coerce the reply descriptor to before unpacking it.
+
+- (id)setResultType:(DescType)type;
 
 /*
  * Send event.
