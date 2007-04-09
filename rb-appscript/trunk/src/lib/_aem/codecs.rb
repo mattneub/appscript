@@ -138,12 +138,6 @@ class Codecs
 		# e.g. Adobe apps define additional unit types (ciceros, pixels, etc.)
 		@unit_type_codecs.add_types(type_defs)
 	end
-	
-	######################################################################
-	# Type codes (OS 10.5+)
-	
-	TypeUInt16 = 'ushr'
-	TypeUInt64 = 'ucom'
 
 	######################################################################
 	# Subclasses could override these to provide their own reference roots if needed
@@ -249,7 +243,7 @@ class Codecs
 		# (assuming target app knows how to handle new UInt64 type):
 		#
 		# def pack_uint64(val)
-		# 	AE::AEDesc.new(Codecs::TypeUInt64, [val.to_f].pack('Q'))
+		# 	AE::AEDesc.new(KAE::TypeUInt64, [val.to_f].pack('Q'))
 		# end
 		AE::AEDesc.new(KAE::TypeFloat, [val.to_f].pack('d')) # pack as 64-bit float for compatibility (lossy conversion)
 	end
@@ -372,8 +366,8 @@ class Codecs
 				
 			when KAE::TypeBoolean then desc.data != "\000"
 			
-			when TypeUInt16 then desc.data.unpack('S')[0] # 10.5+
-			when TypeUInt64 then desc.data.unpack('Q')[0] # 10.5+
+			when KAE::TypeUInt16 then desc.data.unpack('S')[0] # 10.5+
+			when KAE::TypeUInt64 then desc.data.unpack('Q')[0] # 10.5+
 		else
 			did_unpack, val = @unit_type_codecs.unpack(desc)
 			if did_unpack

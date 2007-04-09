@@ -5,6 +5,9 @@ require "appscript"
 module OSAX
 
 	# Allows scripting additions (a.k.a. OSAXen) to be called from Ruby.
+	#
+	# Note: currently 32-bit only; attempting to create a new ScriptingAddition instance
+	# in a 64-bit process will result in a NotImplementedError.
 	
 	######################################################################
 	# PRIVATE
@@ -132,13 +135,9 @@ module OSAX
 					raise ArgumentError, "Scripting addition not found: #{name.inspect}"
 				end
 				if not terms
-					begin
-						aetes_desc = AE.get_app_terminology(path)
-						aetes = DefaultCodecs.unpack(aetes_desc.coerce(KAE::TypeAEList))
-						terms = Terminology.tables_for_aetes(aetes)
-					rescue NotImplementedError # get_app_terminology is unavailable
-						terms = Terminology.tables_from_sdef_for_app_path(path)
-					end
+					aetes_desc = AE.get_app_terminology(path) # will raise NotImplementedError in 64-bit processes
+					aetes = DefaultCodecs.unpack(aetes_desc.coerce(KAE::TypeAEList))
+					terms = Terminology.tables_for_aetes(aetes)
 					OSAXCache[osax_name][1] = terms
 				end
 				@_terms = terms

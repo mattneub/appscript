@@ -232,136 +232,6 @@ module TerminologyParser
 		end
 	end
 	
-	#######
-	
-		class SdefParser
-		@@_name_cache = {}
-		LegalFirst = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_'
-		LegalRest = LegalFirst + '0123456789'
-		@@_reserved_keywords = {} # ersatz set
-		ReservedKeywords.each { |name| @@_reserved_keywords[name] = nil }
-		
-		def initialize
-			# terminology tables
-			@commands = {}
-			@properties = []
-			@elements = []
-			@classes = []
-			@enumerators = []		
-			# use ersatz sets to record previously found definitions, and avoid adding duplicates to lists
-			# (i.e. 'name+code not in <set>' is quicker than using 'name+code not in <list>')
-			@_found_properties = {} # set
-			@_found_elements = {} # set
-			@_found_classes = {} # set
-			@_found_enumerators = {} # set
-		end
-		
-		# note: sdefs in OS 10.4 handle ASCII control characters (0x00-0x1f) incorrectly; this will result in the next two methods returning incorrect codes (of the correct length), but since SdefParser class is only intended for use under OS 10.5+ in situations where aetes can't be used, this isn't an issue here
-		
-		def _unescape_code(s) # assumes code is correctly formed (i.e. either a four-char string with some chars represented as XML entities, or as a 10-char hex string starting with '0x')
-			if s.include?('&')
-				return _unescape_entities(s)
-			else
-				return [s.hex].pack('L')
-			end
-		end
-		
-		def _unescape_event_code(s) # assumes code is correctly formed (i.e. either a eight-char string with some chars represented as XML entities, or as a 18-char hex string starting with '0x')
-			if s.include?('&')
-				return _unescape_entities(s)
-			else
-				return [s.hex].pack('Q')
-			end
-		end
-		
-		def _unescape_entities(s)
-			[['&gt;', '>'], ['&lt;', '<'], ['&quot;', '"' ], ['&apos;', "'"], ['&amp;', '&']].each { |s1, s2| s.sub!(s1, s2) }
-			return s
-		end
-		
-		def _name(s)
-			if not @@_name_cache.has_key?(s)
-				s = _unescape_entities(s) if s.include?('&')
-				legal = LegalFirst
-				res = ''
-				s.split(//).each do |c|
-					if legal[c]
-						res += c
-					else
-						case c
-							when ' ', '-', '/'
-								res += '_'
-							when '&'
-								res += 'and'
-						else
-							if res == ''
-								res = '_'
-							end
-							res += "0x#{c.unpack('HXh')}"
-						end
-					end
-					legal = LegalRest
-				end
-				if res[0, 3] == 'AS_' or @@_reserved_keywords.has_key?(res) or res[0, 1] == '_'
-					res += '_'
-				end
-				@@_name_cache[s] = res
-			end
-			return @@_name_cache[s]
-		end
-	
-		def start_node(node_name, name, plural, code)
-			case node_name
-				when 'property'
-					name = _name(name)
-					code = _unescape_code(code) if code.length != 4
-					if not @_found_properties.has_key?(name + code)
-						@properties.push([name, code])
-						@_found_properties[name + code] = nil # add to found set
-					end
-				when 'command', 'event'
-					name = _name(name)
-					code = _unescape_event_code(code) if code.length != 8
-					@params = []
-					if not @commands.has_key?(name) or @commands[name][1] == code
-						@commands[name] = [name, code, @params]
-					end
-				when 'parameter'
-					name = _name(name)
-					code = _unescape_code(code) if code.length != 4
-					@params.push([name, code])
-				when 'class', 'record-type', 'value-type'
-					name = _name(name)
-					plural = plural ? _name(plural) : name
-					code = _unescape_code(code) if code.length != 4
-					if not @_found_classes.has_key?(name + code)
-						@classes.push([name, code])
-						@_found_classes[name + code] = nil # add to found set
-					end
-					if not @_found_elements.has_key?(name + code)
-						@elements.push([plural, code])
-						@_found_elements[name + code] = nil # add to found set
-					end
-				when 'enumerator'
-					name = _name(name)
-					code = _unescape_code(code) if code.length != 4
-					if not @_found_enumerators.has_key?(name + code)
-						@enumerators.push([name, code])
-						@_found_enumerators[name + code] = nil # add to found set
-					end
-				when 'synonym' # TO DO: synonym support
-					p "SYNONYM #{[name, plural, code].inspect}"
-				when 'dictionary', 'suite', 'enumeration'
-			else
-				return nil
-			end
-			return self
-		end
-	
-		def result
-			return @classes, @enumerators, @properties, @elements, @commands.values
-		end
-	end
 	
 	#######
 	# Public
@@ -372,12 +242,6 @@ module TerminologyParser
 		else
 			return LittleEndianParser.new.parse(aetes)
 		end
-	end
-	
-	def TerminologyParser.build_tables_from_sdef_for_app_path(app_or_osax_path) # TO DO: separate methods for getting and parsing sdef?
-		h = SdefParser.new
-		AE.parse_sdef(app_or_osax_path, h)
-		return h.result
 	end
 
 end
@@ -550,19 +414,6 @@ module Terminology
 			f.puts "\t]"
 			f.puts "end"
 		end
-	end
-	
-	#######
-	
-	def Terminology.tables_from_sdef_for_app_path(app_or_osax_path)
-		if not @@_terminology_cache.has_key?(app_or_osax_path)
-			classes, enumerators, properties , elements, commands = \
-					TerminologyParser.build_tables_from_sdef_for_app_path(app_or_osax_path)
-			@@_terminology_cache[app_or_osax_path] = \
-					_make_type_table(classes, enumerators, properties) \
-					+ _make_reference_table(properties, elements, commands)
-		end
-		return @@_terminology_cache[app_or_osax_path]
 	end
 end
 

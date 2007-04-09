@@ -32,20 +32,6 @@ typedef long SRefCon;
 AEEventHandlerUPP upp_GenericEventHandler;
 AECoercionHandlerUPP upp_GenericCoercionHandler;
 
-/* TO DO:
-extern OSAError OSAGetAppTerminology(ComponentInstance,
-									 long,
-									 FSSpec *,
-									 short,
-									 Boolean *,
-									 AEDesc *) __attribute__((weak_import));
-
-
-extern OSAError OSACopyScriptingDefinition(const FSRef *,
-										   SInt32, 
-										   CFDataRef *) __attribute__((weak_import));
-*/
-
 
 /**********************************************************************/
 // Raise MacOS error
@@ -533,8 +519,8 @@ static VALUE
 rbAE_OSAGetAppTerminology(VALUE self, VALUE path)
 {
 #if defined(__LP64__)
-	rb_raise(rb_eNotImpError, "OSAGetAppTerminology unavailable.\n");
-	return NULL;
+	rb_raise(rb_eNotImpError, "AE.get_app_terminology isn't available in 64-bit processes.\n");
+	return Qnil;
 #else
 	FSRef appRef;
 	FSSpec fss;
@@ -561,156 +547,6 @@ rbAE_OSAGetAppTerminology(VALUE self, VALUE path)
 	if (err != 0) rbAE_raiseMacOSError("Couldn't get aete resource.", err);
 	return rbAE_wrapAEDesc(&theDesc);
 #endif
-}
-
-
-/**********************************************************************/
-// Parse sdef
-
-// callbacks
-
-static void *
-startNode(CFXMLParserRef parser, CFXMLNodeRef nodeDesc, void *eventHandlerObj) {
-	char elementNameBuffer[32] = "\0";
-	char attributeBuffer[256] = "\0";
-	CFDictionaryRef attributes;
-	CFStringRef value;
-	VALUE name = Qnil;
-	VALUE plural = Qnil;
-	VALUE code = Qnil;
-	VALUE result;
-	
-	switch (CFXMLNodeGetTypeCode(nodeDesc)) {
-		case kCFXMLNodeTypeDocument:
-			return (void *)Qnil;
-		case kCFXMLNodeTypeElement:
-			CFStringGetCString(CFXMLNodeGetString(nodeDesc),
-							   elementNameBuffer,
-							   sizeof(elementNameBuffer),
-							   kCFStringEncodingUTF8);
-			attributes = ((CFXMLElementInfo *)CFXMLNodeGetInfoPtr(nodeDesc))->attributes;
-			value = (CFStringRef)CFDictionaryGetValue(attributes, CFSTR("name"));
-			if (value) {
-				CFStringGetCString(value,
-								   attributeBuffer,
-								   sizeof(attributeBuffer),
-								   kCFStringEncodingUTF8);
-				name = rb_str_new2(attributeBuffer);
-			}
-			value = (CFStringRef)CFDictionaryGetValue(attributes, CFSTR("plural"));
-			if (value) {
-				CFStringGetCString(value,
-								   attributeBuffer,
-								   sizeof(attributeBuffer),
-								   kCFStringEncodingUTF8);
-				plural = rb_str_new2(attributeBuffer);
-			}
-			value = (CFStringRef)CFDictionaryGetValue(attributes, CFSTR("code"));
-			if (value) {
-				CFStringGetCString(value,
-								   attributeBuffer,
-								   sizeof(attributeBuffer),
-								   kCFStringEncodingMacRoman);
-				code = rb_str_new2(attributeBuffer);
-			}
-			result = rb_funcall((VALUE)eventHandlerObj, 
-								rb_intern("start_node"), 
-								4,
-								rb_str_new2(elementNameBuffer),
-								name,
-								plural,
-								code);
-			return ((result == Qnil) ?  NULL : (void *)result);
-		default:
-			return NULL;
-	}
-}
-
-
-static void
-endNode(CFXMLParserRef parser, void *nodeObj, void *eventHandlerObj) {
-/*
-	rb_funcall((VALUE)eventHandlerObj, 
-			   rb_intern("end_node"), 
-			   1,
-			   (VALUE)nodeObj);
-*/
-}
-
-
-static void
-addChild(CFXMLParserRef parser, void *parentNodeObj, void *childNodeObj, void *eventHandlerObj) {
-/*
-	rb_funcall((VALUE)eventHandlerObj, 
-			   rb_intern("add_child"), 
-			   2,
-			   (VALUE)parentNodeObj,
-			   (VALUE)childNodeObj);
-*/
-}
-
-
-
-
-static Boolean
-handleError(CFXMLParserRef parser, CFXMLParserStatusCode error, void *eventHandlerObj) {
-/*
-	VALUE result = Qfalse;
-	
-	result = rb_funcall((VALUE)eventHandlerObj, 
-						rb_intern("handle_error"), 
-						3,
-						INT2NUM(error),
-						INT2NUM(CFXMLParserGetLocation(parser)),
-INT2NUM(CFXMLParserGetLineNumber(parser)));
-	return (result == Qtrue);
-*/
-	return false;
-}
-
-
-static CFXMLParserCallBacks parserCallbacks = {0,
-											   startNode,
-											   addChild,
-											   endNode,
-											   NULL,
-											   handleError};
-
-
-// parse
-
-static VALUE
-rbAE_parseScriptingDefinition(VALUE self, VALUE path, VALUE handlerObj)
-{
-	OSAError err = noErr;
-	CFDataRef sdef = NULL;
-	FSRef fsref;
-	CFXMLParserRef parser = NULL;
-	CFXMLParserContext context = {0, (void *)handlerObj, NULL, NULL, NULL};
-
-	// get sdef
-	if (OSACopyScriptingDefinition == NULL)
-		rb_raise(rb_eNotImpError, "OSACopyScriptingDefinition unavailable.\n");
-	err = FSPathMakeRef((UInt8 *)StringValuePtr(path), &fsref, NULL);
-	if (err != 0) rbAE_raiseMacOSError("Couldn't make FSRef.", err);
-	err = OSACopyScriptingDefinition(&fsref, kOSAModeNull, &sdef);
-	if (err) rbAE_raiseMacOSError("Couldn't get scripting definition.", err);
-	// parse sdef
-	parser = CFXMLParserCreate(kCFAllocatorDefault,
-							   sdef,
-							   NULL,
-							   kCFXMLParserNoOptions,
-							   kCFXMLNodeCurrentVersion,
-							   &parserCallbacks,
-							   &context);
-	CFRelease(sdef);
-	if (!CFXMLParserParse(parser)) {
-		err = CFXMLParserGetStatusCode(parser);
-		CFRelease(parser);
-		rbAE_raiseMacOSError("Couldn't parse sdef.", err);
-	}
-	CFRelease(parser);
-	return Qnil;
 }
 
 
@@ -955,7 +791,6 @@ Init_ae (void)
 							  rbAE_convertUnixSecondsToLongDateTime, 1);
 							  
 	rb_define_module_function(mAE, "get_app_terminology", rbAE_OSAGetAppTerminology, 1);
-	rb_define_module_function(mAE, "parse_sdef", rbAE_parseScriptingDefinition, 2);
 	
 	// Event handling
 	
