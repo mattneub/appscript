@@ -1,6 +1,8 @@
-2007-03-?? -- 0.3.1
+2007-04-?? -- 0.3.1
 
 - 64-bit support in rbae.c
+
+- Terminology.dump will use 'ascrgdte' event to obtain aetes if AE.get_app_terminology is unavailable
 
 - added TypeUInt16, TypeUInt64 support to Codecs#unpack
 

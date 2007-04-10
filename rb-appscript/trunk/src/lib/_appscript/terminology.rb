@@ -338,27 +338,30 @@ module Terminology
 			+ _make_reference_table(terms::Properties, terms::Elements, terms::Commands)
 	end
 	
+	def Terminology.aetes_for_app(aem_app)
+		begin
+			begin
+				aetes = aem_app.event('ascrgdte', {'----' => 0}).send(60 * 60)
+			rescue AEM::CommandError => e
+				if  e.number == -192 # aete resource not found
+					aetes = []
+				else
+					raise
+				end
+			end
+		rescue => err
+			raise RuntimeError, "Can't get terminology for application (#{aem_app}): #{err}"
+		end
+		aetes = [aetes] if not aetes.is_a?(Array)
+		return aetes
+	end
+	
 	def Terminology.tables_for_app(aem_app)
 		# Build terminology tables for an application.
 		# app : AEM::Application
 		# Result : list of hash -- [typebycode, typebyname, referencebycode, referencebyname]
 		if not @@_terminology_cache.has_key?(aem_app.identity)
-			begin
-				begin
-					aetes = aem_app.event('ascrgdte', {'----' => 0}).send(60 * 60)
-				rescue AEM::CommandError => e
-					if  e.number == -192 # aete resource not found
-						aetes = []
-					else
-						raise
-					end
-				end
-				if not aetes.is_a?(Array)
-					aetes = [aetes]
-				end
-			rescue => err
-				raise RuntimeError, "Can't get terminology for application (#{aem_app}): #{err}"
-			end
+			aetes = Terminology.aetes_for_app(aem_app)
 			@@_terminology_cache[aem_app.identity] = Terminology.tables_for_aetes(aetes)
 		end
 		return @@_terminology_cache[aem_app.identity]
@@ -379,7 +382,11 @@ module Terminology
 		File.open(out_path, "w") do |f|
 			# Get aete(s)
 			begin
-				aetes = AEM::Codecs.new.unpack(AE.get_app_terminology(app_path).coerce(KAE::TypeAEList))
+				begin
+					aetes = AEM::Codecs.new.unpack(AE.get_app_terminology(app_path).coerce(KAE::TypeAEList))
+				rescue NotImplementedError # get_app_terminology is unavailable on 64-bit Leopard
+					aetes = Terminology.aetes_for_app(AEM::Application.by_path(app_path))
+				end
 			rescue AE::MacOSError => e
 				if  e.to_i == -192 # aete resource not found
 					raise RuntimeError, "No terminology found."
