@@ -65,6 +65,16 @@ typedef enum {
 			 codecs:(id)codecs_
 		   sendProc:(AEMSendProcPtr)sendProc_;
 
+/*
+ * Get a pointer to the AEDesc contained by this AEMEvent instance
+ */
+- (const AppleEvent *)aeDesc;
+
+/*
+ * Get an NSAppleEventDescriptor instance containing a copy of this event
+ */
+- (NSAppleEventDescriptor *)appleEventDescriptor;
+
 // Pack event's attributes and parameters, if any.
 
 - (id)setAttributePtr:(void *)dataPtr 

@@ -54,6 +54,20 @@
 	return result;
 }
 
+// Access underlying AEDesc
+
+- (const AppleEvent *)aeDesc {
+	return event;
+}
+
+
+- (NSAppleEventDescriptor *)appleEventDescriptor {
+	AppleEvent eventCopy;
+	
+	AEDuplicateDesc(event, &eventCopy);
+	return [[[NSAppleEventDescriptor alloc] initWithAEDescNoCopy: &eventCopy] autorelease];
+}
+
 // Pack event's attributes and parameters, if any.
 
 // TO DO: these methods may need to check for nil values to protect against crashes (need to investigate further)
@@ -102,8 +116,11 @@
  */
 
 - (id)sendWithMode:(AESendMode)sendMode timeout:(long)timeoutInTicks {
+	OSErr err;
 	AEDesc replyDesc = {typeNull, NULL};
-	NSAppleEventDescriptor *desc, *replyData, *errorNumberDesc, *errorStringDesc, *result;
+	AEDesc classDesc, idDesc;
+	OSType classCode, idCode;
+	NSAppleEventDescriptor *replyData, *errorNumberDesc, *errorStringDesc, *result;
 	
 	// clear any previous error info
 	errorNumber = noErr;
@@ -116,15 +133,20 @@
 	if (errorNumber) {
 		// ignore errors caused by application quitting normally after being sent a quit event
 		if (errorNumber == connectionInvalid) {
-			desc = [[NSAppleEventDescriptor alloc] initWithAEDescNoCopy: event];
-				if ([[desc attributeDescriptorForKeyword: keyEventClassAttr]
-								typeCodeValue] == kCoreEventClass
-						&& [[desc attributeDescriptorForKeyword: keyEventClassAttr]
-								typeCodeValue] == kAEQuitApplication) {
-					[desc release];
-					return [NSNull null];
-				}
-			[desc release];
+			err = AEGetAttributeDesc(event, keyEventClassAttr, typeType, &classDesc);
+			if (!err) return nil;
+			err = AEGetDescData(&classDesc, &classCode, sizeof(classCode));
+			AEDisposeDesc(&classDesc);
+			if (!err) return nil;
+			err = AEGetAttributeDesc(event, keyEventIDAttr, typeType, &idDesc);
+			if (!err) return nil;
+			err = AEGetDescData(&idDesc, &idCode, sizeof(idCode));
+			AEDisposeDesc(&idDesc);
+			if (!err) return nil;
+			if (classCode == kCoreEventClass && idCode == kAEQuitApplication) {
+				errorNumber = noErr;
+				return [NSNull null];
+			}
 		}
 		// for any other Apple Event Manager errors, set error condition and return nil
 		return nil; // note: clients should check if return value is nil to determine if event failed
