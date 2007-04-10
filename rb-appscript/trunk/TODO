@@ -1,8 +1,6 @@
 TO DO
 
-- (re)write sdef parser using libxml2, with XInclude support. (Sdef parser is needed for OSAX module in 64-bit Ruby, as OSAGetAppTerminology is gone in 64-bit Leopard.)
-
-- weak binding for OSAGetAppTerminology, OSACopyScriptingDefinition in rbae.c
+- Add a libxml2-based sdef parser for use by Terminology.dump, OSAX::ScriptingAddition in 64-bit Leopard as OSAGetAppTerminology is not available there. Also use weak binding for OSAGetAppTerminology, OSACopyScriptingDefinition in rbae.c
 
 - see if there's a way to provide a SafeObject base class for Appscript::Reference and Appscript::GenericReference that doesn't depend on inserting callbacks into Module (or are Rubyists fine with the current approach?)
 
