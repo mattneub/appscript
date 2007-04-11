@@ -1,7 +1,9 @@
 /*
  *  Copyright (C) 2006 HAS
  *
- *  Thanks to: FUJIMOTO Hisakuni, author of RubyAEOSA
+ *  Thanks to:
+ *  - FUJIMOTO Hisakuni, author of RubyAEOSA
+ *  - Jordan Breeding (64-bit support patch)
  */
 
 #include "osx_ruby.h"
