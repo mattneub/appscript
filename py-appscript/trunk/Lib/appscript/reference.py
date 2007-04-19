@@ -369,12 +369,12 @@ class Command(_Base):
 		try:
 			return self.AS_appdata.target.event(self._code, params, atts, codecs=self.AS_appdata).send(timeout, sendFlags)
 		except aem.CommandError, e:
-			if e.number in [-600, -609] and self.AS_appdata.path: # event was sent to a local app for which we no longer have a valid address (i.e. the application has quit since this aem.Application object was made).
+			if e.number in [-600, -609] and self.AS_appdata.constructor == 'path': # event was sent to a local app for which we no longer have a valid address (i.e. the application has quit since this aem.Application object was made).
 				# - If application is running under a new process id, we just update the aem.Application object and resend the event.
 				# - If application isn't running, then we see if the event being sent is one of those allowed to relaunch the application (i.e. 'run' or 'launch'). If it is, the aplication is relaunched, the process id updated and the event resent; if not, the error is rethrown.
-				if not self.AS_appdata.target.isrunning(self.AS_appdata.path):
+				if not self.AS_appdata.target.isrunning(self.AS_appdata.identifier):
 					if self._code == 'ascrnoop':
-						aem.Application.launch(self.AS_appdata.path) # relaunch app in background
+						aem.Application.launch(self.AS_appdata.identifier) # relaunch app in background
 					elif self._code != 'aevtoapp': # only 'launch' and 'run' are allowed to restart a local application that's been quit
 						raise CommandError(self, (args, kargs), e)
 				self.AS_appdata.target.reconnect() # update aem.Application object so it has a valid address for app
