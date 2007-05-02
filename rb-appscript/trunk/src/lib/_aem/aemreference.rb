@@ -1,4 +1,4 @@
-#!/usr/local/bin/ruby
+#!/usr/local/bin/ruby -w
 # Copyright (C) 2006 HAS. 
 # Released under MIT License.
 
@@ -83,6 +83,10 @@ module AEMReference
 	
 	class Base
 	
+		def initialize
+			@_comparable = nil
+		end
+	
 		def AEM_comparable
 			# called by Base#==; returns the data needed to compare two aem references
 			if not @_comparable
@@ -122,6 +126,8 @@ module AEMReference
 		protected :_key, :_container
 	
 		def initialize(container, key)
+			super()
+			@_desc = nil
 			@_container = container
 			@_key = key
 		end
@@ -730,6 +736,7 @@ module AEMReference
 	
 	class DeferredSpecifier < Base
 		def initialize(desc, codecs)
+			@_ref = nil
 			@_desc = desc
 			@_codecs   = codecs
 		end
@@ -792,6 +799,7 @@ module AEMReference
 		protected :_operand1, :_operand2
 	
 		def initialize(operand1, operand2)
+			super()
 			@_operand1 = operand1
 			@_operand2 = operand2
 		end
@@ -886,6 +894,7 @@ module AEMReference
 		protected :_operands
 	
 		def initialize(operands)
+			super()
 			@_operands = operands
 		end
 			
@@ -942,6 +951,7 @@ module AEMReference
 	class ReferenceRoot < PositionSpecifier
 	
 		def initialize
+			super(nil, nil, nil)
 		end
 		
 		def to_s

@@ -8,6 +8,8 @@
 
 module TerminologyParser
 	
+	require "ae"
+	require "kae"
 	require "_appscript/reservedkeywords" # names of all existing methods on ASReference::Application
 	
 	class BigEndianParser
@@ -204,11 +206,13 @@ module TerminologyParser
 		
 		def parse(aetes)
 			aetes.each do |aete|
-				@_str = aete.data
-				@_ptr = 6 # version, language, script integers
-				_integer.times { parse_suite }
-				if not @_ptr == @_str.length
-					raise RuntimeError, "aete was not fully parsed."
+				if aete.is_a?(AE::AEDesc) and aete.type == KAE::TypeAETE and aete.data != ''
+					@_str = aete.data
+					@_ptr = 6 # version, language, script integers
+					_integer.times { parse_suite }
+					if not @_ptr == @_str.length
+						raise RuntimeError, "aete was not fully parsed."
+					end
 				end
 			end
 			# singular names are normally used in the classes table and plural names in the elements table. However, if an aete defines a singular name but not a plural name then the missing plural name is substituted with the singular name; and vice-versa if there's no singular equivalent for a plural name.
@@ -322,7 +326,8 @@ module Terminology
 	def Terminology.tables_for_aetes(aetes)
 		# Build terminology tables from a list of unpacked aete byte strings.
 		# Result : list of hash -- [typebycode, typebyname, referencebycode, referencebyname]
-		classes, enums, properties, elements, commands = TerminologyParser.build_tables_for_aetes(aetes.delete_if { |aete| not (aete.is_a?(AE::AEDesc) and aete.type == KAE::TypeAETE) })
+		aetes = aetes.reject { |aete| not (aete.is_a?(AE::AEDesc) and aete.type == KAE::TypeAETE and aete.data != '') }
+		classes, enums, properties, elements, commands = TerminologyParser.build_tables_for_aetes(aetes)
 		return _make_type_table(classes, enums, properties) + _make_reference_table(properties, elements, commands)
 	end
 	

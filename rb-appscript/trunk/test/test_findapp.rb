@@ -1,4 +1,4 @@
-#!/usr/local/bin/ruby
+#!/usr/local/bin/ruby -w
 
 require 'test/unit'
 require "_aem/findapp"

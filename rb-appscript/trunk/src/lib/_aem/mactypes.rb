@@ -1,4 +1,4 @@
-#!/usr/local/bin/ruby
+#!/usr/local/bin/ruby -w
 # Copyright (C) 2006 HAS. 
 # Released under MIT License.
 
@@ -61,7 +61,6 @@ module MacTypes
 		#
 		# Since Ruby doesn't already bridge the Mac OS's Alias Manager, simplest solution is to always store data internally as an AEDesc of typeAlias, and convert this to other forms on demand (e.g. when casting to string).
 		
-		attr_reader :desc
 		private_class_method :new
 		
 		def initialize(desc)
@@ -89,10 +88,7 @@ module MacTypes
 		
 		# Methods
 		
-		def desc
-			# Return AEDesc of typeAlias. If clients want a different type, they can subsequently call this AEDesc's coerce method.
-			return @desc
-		end
+		attr_reader :desc # Return AEDesc of typeAlias. If clients want a different type, they can subsequently call this AEDesc's coerce method.
 		
 		def url
 			# Get as URL string.
