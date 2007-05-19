@@ -74,6 +74,8 @@ kObjCKeywords = [
 	"NIL",
 	"YES",
 	"NO",
+	"true",
+	"false",
 	]
 
 kObjCNSObjectMethods = [
