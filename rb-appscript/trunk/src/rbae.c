@@ -27,8 +27,10 @@ struct rbAE_AEDescWrapper {
 #define AEDESC_OF(o) (AEDESC_DATA_PTR(o)->desc)
 
 // Event handling
-#if !defined(SRefCon)
-typedef long SRefCon;
+#if __LP64__
+	// SRefCon typedefed as void * by system headers
+#else
+	typedef long SRefCon;
 #endif
 
 AEEventHandlerUPP upp_GenericEventHandler;
