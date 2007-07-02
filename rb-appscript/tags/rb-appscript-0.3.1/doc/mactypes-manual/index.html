@@ -1,0 +1,244 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<title>mactypes</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<style type="text/css" media="all"><!--@import url(../appscript-manual/full.css);--></style>
+
+</head>
+<body>
+
+<h1>mactypes</h1>
+
+<!-- top navigation -->
+<div class="navbar">
+    <a href="../index.html">Up</a>
+    
+</div>
+
+<!-- content -->
+<div id="content">
+<h2>What is mactypes?</h2>
+
+<p>The mactypes module provides user-friendly wrappers for OS X Alias and FileURL objects, commonly used by scriptable applications to identify filesystem objects and locations, and for unit type values used by some applications to represent lengths, etc. It is automatically imported when requiring appscript, aem or osax.</p>
+
+<p class="hilitebox">Note that most scriptable applications do not use or understand POSIX paths, and while the Apple Event Manager does provide some built-in coercions for converting between path strings and alias/file objects, these work with HFS paths only. Therefore, when specifying files and folders to scriptable applications, use <code>MacTypes::Alias</code> and <code>MacTypes::FileURL</code> objects - not path strings - unless otherwise indicated.</p>
+
+
+<h2><code>MacTypes::Alias</code></h2>
+
+<p>The <code>Alias</code> class represents a persistent reference to a filesystem object. Aliases keep track of filesystem objects even if they're renamed or moved to another location on the same disk.</p>
+
+
+<h3>Methods</h3>
+
+<pre><code>Alias -- a persistent reference to a filesystem object
+    Constructors:
+
+        Alias.path(path) -- make Alias object from POSIX path string
+
+        Alias.url(url) -- make Alias object from a local file:// URL string
+    
+        Alias.desc(desc) -- make Alias object from an AE::AEDesc
+                            of TypeAlias
+
+    Methods:
+
+        ==
+
+        hash
+    
+        inspect
+    
+        path -- returns POSIX path string to the object's current location
+
+        url -- returns file:// URL string to the object's current location
+
+        desc -- returns AE::AEDesc of TypeAlias
+
+        to_s -- synonym for #path
+    
+        to_alias -- returns self
+    
+        to_file_url -- returns a MacTypes::FileURL object</code></pre>
+
+
+<h3>Examples</h3>
+
+<pre><code>require "appscript"
+
+f = MacTypes::Alias.path('/Users/foo/some file')
+
+puts f.to_s
+# /Users/foo/some file
+
+puts f.url
+# file://localhost/Users/foo/some%20file
+
+puts f.inspect
+# MacTypes::Alias.path("/Users/foo/some file")
+
+Appscript.app('TextEdit').open(f)
+# opens document in TextEdit</code></pre>
+
+
+<h3>Notes</h3>
+
+<p>Comparing an <code>Alias</code> object against a <code>FileURL</code> object always returns false, even if both point to the same location.</p>
+
+
+<h2><code>MacTypes::FileURL</code></h2>
+
+<p>The <code>FileURL</code> class represents a fixed filesystem location. This may be deterministic (i.e. existing locations only) or non-deterministic depending on how the object is created.</p>
+
+<h3>Methods</h3>
+
+<pre><code>FileURL -- identifies a fixed filesystem location
+    Constructors:
+
+        FileURL.path(path) -- make FileURL object from POSIX path string
+
+        FileURL.url(url) -- make FileURL object from a local file:// URL string
+    
+        FileURL.desc(desc) -- make FileURL object from an AE::AEDesc
+                              of TypeFSS, TypeFSRef or TypeFileURL
+
+    Methods:
+
+        ==
+
+        hash
+    
+        inspect
+    
+        path -- returns POSIX path string
+
+        url -- returns file:// URL string
+
+        desc -- returns AE::AEDesc of TypeFSRef, TypeFSS or TypeFileURL
+
+        to_s -- synonym for #path
+    
+        to_alias -- returns a MacTypes::Alias object
+    
+        to_file_url -- returns a new MacTypes::FileURL object</code></pre>
+
+
+<h3>Examples</h3>
+
+<pre><code>require "appscript"
+
+f = MacTypes::FileURL.path('/Users/foo/new file')
+
+puts f.to_s
+# /Users/foo/new file
+
+puts f.url
+# file://localhost/Users/foo/some%20file
+
+puts f.inspect
+# MacTypes::FileURL.path("/Users/foo/new file")
+
+Appscript.app('TextEdit').documents[1].save(:in => f)
+# saves front TextEdit document at the given location</code></pre>
+
+
+<h3>Notes</h3>
+
+<p>Unlike the <code>Alias</code> class which wraps <code>TypeAlias</code> values only, the <code>FileURL</code> class provides a uniform wrapper for several file-related types that may be returned by applications: <code>TypeFSS</code>, <code>TypeFSRef</code> and <code>TypeFileURL</code>. When passing <code>FileURL</code> values to applications, you should not normally need to worry about which value type a <code>FileURL</code> object contains as well-designed applications will ask the Apple Event Manager to coerce the given value to the desired type as necessary.</p>
+
+<p>When dealing with less well-behaved applications, however, you may need to pass an AEDesc of a specific type. In this case you should use the <code>desc</code> method to obtain an <code>AE::AEDesc</code> object, then call its <code>coerce</code> method to obtain an AEDesc of the desired type. For example, if an older Carbon application refuses to accept a FileURL identifying a non-existing file location, you may need to provide a FSSpec insteaf:</p>
+
+<pre><code>require "appscript"
+
+file_url = MacTypes::FileURL.path('/Users/foo/new file')
+
+fs_spec = file_url.desc.coerce(KAE::TypeFSS)
+
+Appscript.app('older app').documents[1].save(:in => fs_spec)</code></pre>
+
+<p>When used in an application command, a <code>FileURL</code> object returned by appscript will always pack into the same <code>TypeFSRef</code>, <code>TypeFileURL</code> or <code>TypeFSS</code> AEDesc it was created from. A <code>FileURL</code> object returned by <code>FileURL.path</code>, <code>Alias#to_file_url</code> or <code>FileURL#to_file_url</code> will always pack into an AEDesc of <code>TypeFileURL</code>.</p>
+
+<p>When comparing <code>FileURL</code> objects for equality, be aware that <code>FileURL#==</code> always performs case-sensitive comparisons, regardless of how the underlying filesystem handles case-[in]sensitivity.</p>
+
+<p>Note that AEDescs of <code>TypeFSRef</code> can represent existing filesystem locations only. AEDescs of <code>TypeFileURL</code> can represent both existing and non-existing locations. AEDescs of <code>TypeFSS</code> (FSSpecs) are deprecated on Mac OS X due to lack of proper Unicode and long filename support, and are retained for backwards compatibility with older applications only.</p>
+
+
+
+
+<h2><code>MacTypes::FileNotFoundError</code></h2>
+
+<p><code>FileNotFoundError</code> is a subclass of <code>RuntimeError</code>. It is raised by <code>Alias</code> and <code>FileURL</code> objects when an operation that only works for existing filesystem objects/locations fails. For example:</p>
+
+<pre><code>require "appscript"
+
+MacTypes::Alias.path('/some/non/existent/location')
+# raises FileNotFoundError</code></pre>
+
+
+<h2><code>MacTypes::Units</code></h2>
+
+<p>The <code>Units</code> class represents a measurement of some sort, e.g. 3 inches, 98.5 degrees Fahrenheit.</p>
+
+<pre><code>class Units
+
+    Constructor:
+
+        Units.new(value, type)
+            value : Fixnum | Bignum | Float -- the amount, e.g. 3.5
+            type : Symbol -- the unit of measurement, e.g. :centimeters
+
+    Methods:
+
+        ==
+
+        hash
+
+        inspect
+
+        value -- returns the amount
+
+        type -- returns the unit of measurement
+
+        to_i -- returns the amount as an integer
+
+        to_f -- returns the amount as a float
+
+        to_s -- returns the measurement as a string, e.g. "3.5 centimeters"</code></pre>
+
+<p>The following unit types are defined as standard:</p>
+
+<pre><code>:centimeters                   :cubic_inches
+:meters                        :cubic_feet
+:kilometers                    :cubic_yards
+:inches                        
+:feet                          :liters
+:yards                         :quarts
+:miles                         :gallons
+                               
+:square_meters                 :grams
+:square_kilometers             :kilograms
+:square_feet                   :ounces
+:square_yards                  :pounds
+:square_miles                  
+                               :degrees_Celsius
+:cubic_centimeters             :degrees_Fahrenheit
+:cubic_meters                  :degrees_Kelvin</code></pre>
+
+<p>Additional application-specific unit types can be added if needed.</p>
+
+
+</div>
+
+<!-- bottom navigation -->
+<div class="navbar">
+    <a href="../index.html">Up</a>
+    
+</div>
+
+<!--footer-->
+<p class="footer">&copy; 2006 HAS</p>
+</body>
+</html>

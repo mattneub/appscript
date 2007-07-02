@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<title>appscript | 4. Getting Help</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<style type="text/css" media="all"><!--@import url(full.css);--></style>
+
+</head>
+<body>
+
+<h1>4. Getting Help</h1>
+
+<!-- top navigation -->
+<div class="navbar">
+	<a href="03_quicktutorial.html">Previous</a> | <a href="index.html">Up</a> | <a href="05_keywordconversion.html">Next</a>
+	
+</div>
+
+<!-- content -->
+<div id="content">
+<p>There are several ways to get information about applications' scripting interfaces: the <code>osadict</code> command-line tool, the ASDictionary application, and introspection.</p>
+
+
+<h2>osadict</h2>
+
+<p>The <code>osadict</code> tool, bundled with the <a href="http://sourceforge.net/projects/appscript">py-appscript package</a>, can be used to export application dictionaries in HTML format, or browse them interactively from the command line.</p>
+
+<p>To view osadict's full documentation:</p>
+
+<pre><code>osadict -h</code></pre>
+
+<p>Use osadict's <code>-s</code> option or <code>default</code> command to set the formatting style for rb-appscript.</p>
+
+<p>Examples:</p>
+
+<pre><code># Export TextEdit's dictionary to HTML:
+osadict -Hs rb TextEdit.app > TextEdit.html
+
+# Browse iCal's dictionary:
+osadict -s rb eppc://remote-mac.local/iCal
+iCal&gt; -u
+iCal&gt; -t view_calendar
+iCal&gt; -t calendar -i calendar -r calendar
+iCal&gt; exit
+
+# View a Standard Additions command:
+osadict -Ns rb StandardAdditions -t display dialog</code></pre>
+
+
+<h2>ASDictionary</h2>
+
+<p>ASDictionary, available from the <a href="http://sourceforge.net/projects/appscript"> py-appscript website</a>, renders application terminology resources in plain text and HTML formats. It provides a convenient drag-n-drop alternative to using the <code>osadict -H ...</code> command.</p>
+
+
+<h2>Introspection</h2>
+
+<p>Appscript's <code>Application</code> and <code>Reference</code> classes define several methods for obtaining information on the target application: </p>
+
+<dl>
+<dt><code>properties</code></dt>
+<dd>Returns a list of all property names.</dd>
+
+<dt><code>elements</code></dt>
+<dd>Returns a list of all element names.</dd>
+
+<dt><code>commands</code></dt>
+<dd>Returns a list of all command names.</dd>
+
+<dt><code>keywords</code></dt>
+<dd>Returns a list of all class, enumerator, type and property names.</dd>
+
+<dt><code>parameters(commandName)</code></dt>
+<dd>Takes a command's name as string and returns the names of its parameters.</dd>
+</dl>
+
+<p>Like Ruby's standard <code>methods</code> method, all of these methods return a list of strings.</p>
+
+<p>Examples</p>
+
+<pre><code>te = app('TextEdit')
+
+p te.commands
+# ["activate", "close", "count", "delete", "duplicate", "exists", ...]
+
+p te.parameters('make')
+# ["at", "new", "with_data", "with_properties"]</code></pre>
+
+
+<h2>Other sources of help</h2>
+
+<ul>
+<li>The <code>sample</code> folder contains example scripts demonstrating a range of common tasks.</li>
+
+<li>Refer to any scripting documentation and example scripts supplied by the application developer.</li>
+
+<li>Look for third-party scripts that provide examples of use (though many of these scripts will be written in AppleScript rather than Ruby).</li>
+
+<li>The <a href="http://rb-appscript.rubyforge.org">rb-appscript website</a> has links to mailing lists and other general resources.</li>
+</ul>
+
+
+</div>
+
+<!-- bottom navigation -->
+<div class="navbar">
+	<a href="03_quicktutorial.html">Previous</a> | <a href="index.html">Up</a> | <a href="05_keywordconversion.html">Next</a>
+	
+</div>
+
+<!--footer-->
+<p class="footer">&copy; 2006 HAS</p>
+</body>
+</html> 

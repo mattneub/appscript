@@ -1,0 +1,31 @@
+TO DO
+
+- Add a libxml2-based sdef parser for use by Terminology.dump, OSAX::ScriptingAddition in 64-bit Leopard as OSAGetAppTerminology is not available there. Also use weak binding for OSAGetAppTerminology, OSACopyScriptingDefinition in rbae.c
+
+- see if there's a way to provide a SafeObject base class for Appscript::Reference and Appscript::GenericReference that doesn't depend on inserting callbacks into Module (or are Rubyists fine with the current approach?)
+
+- see if it's possible to work better with irb's autocomplete (autocomplete support is currently limited to start of a reference; not sure why)
+
+- ae/aem/appscript-defined exception classes aren't quite idiomatic Ruby
+
+- can numbers in range (2**63)..(2**64 - 1) safely be packed as typeUInt64 on 10.5+? Or stick with packing those as lossy 64-bit floating point for compatibility?
+
+- any additional tests
+
+- improve/polish documentation
+
+- see also TO DO comments in rbae.c
+
+-------
+
+- _aem/connect.rb module refers directly to Send::Event instead of going via the AEM::Application::Event hook, which might cause problems when used in an OSA component or other situation where client needs to customise all event creation and/or dispatch.
+
+- support sending and receiving events on non-main threads
+
+- provide an example project (or source for) that uses ruby2exe to build a standalone 'applet'
+
+- any more built-in Ruby class<->AE type converters needed?
+
+- in AEM::CommandError, extract and report any kOSA... error parameters, if present
+
+- implement built-in help by bridging to osadict
