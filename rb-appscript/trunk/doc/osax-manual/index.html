@@ -177,6 +177,8 @@ p sa.display_dialog("Ruby says hello!",
 # Result: {:button_returned=&gt;"Duuuude!"}</code></pre>
 
 
+<p>When using the <code>osax</code> module within RubyCocoa-based applications, avoid creating <code>ScriptingAddition</code> instances before the main event loop is started as this will prevent minimized windows expanding as normal when clicked on in the Dock.</p>
+
 
 </div>
 

@@ -9,6 +9,7 @@
 #include "osx_ruby.h"
 #include <Carbon/Carbon.h>
 #include <CoreFoundation/CoreFoundation.h>
+#include "SendThreadSafe.h"
 
 VALUE rb_ll2big(LONG_LONG); // keeps gcc happy
 
@@ -182,6 +183,19 @@ rbAE_AEDesc_newAppleEvent(VALUE class, VALUE eventClass, VALUE eventID,
 }
 
 
+static VALUE
+rbAE_AEDesc_newUnflatten(VALUE class, VALUE data)
+{
+	OSErr err = noErr;
+	AEDesc desc;
+	
+	Check_Type(data, T_STRING);
+	err = AEUnflattenDesc(RSTRING(data)->ptr, &desc);
+	if (err != noErr) rbAE_raiseMacOSError("Can't create AEDesc.", err);
+	return rbAE_wrapAEDesc(&desc);
+}
+
+
 /**********************************************************************/
 // AEDesc methods
 
@@ -226,6 +240,24 @@ rbAE_AEDesc_data(VALUE self)
 	data = malloc(dataSize);
 	err = AEGetDescData(&(AEDESC_OF(self)), data, dataSize);
 	if (err != noErr) rbAE_raiseMacOSError("Can't get AEDesc data.", err);
+	result = rb_str_new(data, dataSize);
+	free(data);
+	return result;
+}
+
+
+static VALUE
+rbAE_AEDesc_flatten(VALUE self)
+{
+	OSErr err = noErr;
+	Size dataSize;
+	void *data;
+	VALUE result;
+	
+	dataSize = AESizeOfFlattenedDesc(&(AEDESC_OF(self)));
+	data = malloc(dataSize);
+	err = AEFlattenDesc(&(AEDESC_OF(self)), data, dataSize, NULL);
+	if (err != noErr) rbAE_raiseMacOSError("Can't flatten AEDesc.", err);
 	result = rb_str_new(data, dataSize);
 	free(data);
 	return result;
@@ -335,9 +367,9 @@ rbAE_AEDesc_getParam(VALUE self, VALUE key, VALUE type)
 	AEDesc desc;
 	
 	err = AEGetParamDesc(&(AEDESC_OF(self)),
-					   rbStringToDescType(key),
-					   rbStringToDescType(type),
-					   &desc);
+						 rbStringToDescType(key),
+						 rbStringToDescType(type),
+						 &desc);
 	if (err != noErr) rbAE_raiseMacOSError("Can't get parameter from AEDesc.", err);
 	return rbAE_wrapAEDesc(&desc);
 }
@@ -350,9 +382,9 @@ rbAE_AEDesc_getAttr(VALUE self, VALUE key, VALUE type)
 	AEDesc desc;
 	
 	err = AEGetAttributeDesc(&(AEDESC_OF(self)),
-					   rbStringToDescType(key),
-					   rbStringToDescType(type),
-					   &desc);
+							 rbStringToDescType(key),
+							 rbStringToDescType(type),
+							 &desc);
 	if (err != noErr) rbAE_raiseMacOSError("Can't get attribute from AEDesc.", err);
 	return rbAE_wrapAEDesc(&desc);
 }
@@ -370,6 +402,20 @@ rbAE_AEDesc_send(VALUE self, VALUE sendMode, VALUE timeout)
 						&reply,
 						(AESendMode)NUM2LONG(sendMode),
 						NUM2LONG(timeout));
+	if (err != noErr) rbAE_raiseMacOSError("Can't send Apple event.", err);
+	return rbAE_wrapAEDesc(&reply);
+}
+
+static VALUE
+rbAE_AEDesc_sendThreadSafe(VALUE self, VALUE sendMode, VALUE timeout)
+{
+	OSErr err = noErr;
+	AppleEvent reply;
+	
+	err = SendMessageThreadSafe(&(AEDESC_OF(self)),
+								&reply,
+								(AESendMode)NUM2LONG(sendMode),
+								NUM2LONG(timeout));
 	if (err != noErr) rbAE_raiseMacOSError("Can't send Apple event.", err);
 	return rbAE_wrapAEDesc(&reply);
 }
@@ -755,11 +801,13 @@ Init_ae (void)
 	rb_define_singleton_method(cAEDesc, "new", rbAE_AEDesc_new, 2);
 	rb_define_singleton_method(cAEDesc, "new_list", rbAE_AEDesc_newList, 1);
 	rb_define_singleton_method(cAEDesc, "new_apple_event", rbAE_AEDesc_newAppleEvent, 5);
+	rb_define_singleton_method(cAEDesc, "unflatten", rbAE_AEDesc_newUnflatten, 1);
 	
 	rb_define_method(cAEDesc, "to_s", rbAE_AEDesc_inspect, 0);
 	rb_define_method(cAEDesc, "inspect", rbAE_AEDesc_inspect, 0);
 	rb_define_method(cAEDesc, "type", rbAE_AEDesc_type, 0);
 	rb_define_method(cAEDesc, "data", rbAE_AEDesc_data, 0);
+	rb_define_method(cAEDesc, "flatten", rbAE_AEDesc_flatten, 0);
 	rb_define_method(cAEDesc, "is_record?", rbAE_AEDesc_isRecord, 0);
 	rb_define_method(cAEDesc, "coerce", rbAE_AEDesc_coerce, 1);
 	rb_define_method(cAEDesc, "length", rbAE_AEDesc_length, 0);
@@ -770,6 +818,7 @@ Init_ae (void)
 	rb_define_method(cAEDesc, "get_param", rbAE_AEDesc_getParam, 2);
 	rb_define_method(cAEDesc, "get_attr", rbAE_AEDesc_getAttr, 2);
 	rb_define_method(cAEDesc, "send", rbAE_AEDesc_send, 2);
+	rb_define_method(cAEDesc, "send_thread_safe", rbAE_AEDesc_sendThreadSafe, 2);
 	
 	// AE::MacOSError
 	

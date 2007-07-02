@@ -443,7 +443,7 @@ class Codecs
 	InsertionLocEnums = {
 			Codecs.four_char_code(KAE::KAEBefore) => 'before', 
 			Codecs.four_char_code(KAE::KAEAfter) => 'after', 
-			Codecs.four_char_code(KAE::KAEBeginning) => 'start',
+			Codecs.four_char_code(KAE::KAEBeginning) => 'beginning',
 			Codecs.four_char_code(KAE::KAEEnd) => 'end',
 			}
 
@@ -453,7 +453,7 @@ class Codecs
 			Codecs.four_char_code(KAE::KAEEquals) => 'eq',
 			Codecs.four_char_code(KAE::KAELessThan) => 'lt',
 			Codecs.four_char_code(KAE::KAELessThanEquals) => 'le',
-			Codecs.four_char_code(KAE::KAEBeginsWith) => 'starts_with',
+			Codecs.four_char_code(KAE::KAEBeginsWith) => 'begins_with',
 			Codecs.four_char_code(KAE::KAEEndsWith) => 'ends_with',
 			Codecs.four_char_code(KAE::KAEContains) => 'contains',
 			}

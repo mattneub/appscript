@@ -11,6 +11,7 @@ module Appscript
 	
 	require "kae"
 	require "aem"
+	require "_aem/aemreference"
 	require "_appscript/referencerenderer"
 	require "_appscript/terminology"
 	require "_appscript/safeobject"
@@ -568,8 +569,8 @@ module Appscript
 			return Reference.new(@AS_app_data, @AS_aem_reference.any)
 		end
 		
-		def start
-			return Reference.new(@AS_app_data, @AS_aem_reference.start)
+		def beginning
+			return Reference.new(@AS_app_data, @AS_aem_reference.beginning)
 		end
 		
 		def end
@@ -625,8 +626,8 @@ module Appscript
 			return Reference.new(@AS_app_data, @AS_aem_reference.le(operand))
 		end
 		
-		def starts_with(operand)
-			return Reference.new(@AS_app_data, @AS_aem_reference.starts_with(operand))
+		def begins_with(operand)
+			return Reference.new(@AS_app_data, @AS_aem_reference.begins_with(operand))
 		end
 		
 		def ends_with(operand)
@@ -641,8 +642,8 @@ module Appscript
 			return Reference.new(@AS_app_data, @AS_aem_reference.is_in(operand))
 		end
 		
-		def does_not_start_with(operand)
-			return self.starts_with(operand).not
+		def does_not_begin_with(operand)
+			return self.begins_with(operand).not
 		end
 		
 		def does_not_end_with(operand)
@@ -722,13 +723,15 @@ module Appscript
 		def AS_new_reference(ref)
 			if ref.is_a?(Appscript::GenericReference)
 				return ref.AS_resolve(@AS_app_data)
-			else
+			elsif ref.is_a?(AEMReference::Base)
 				return Reference.new(@AS_app_data, ref)
+			else
+				return Reference.new(@AS_app_data, AEM.custom_root(ref))
 			end
 		end
 		
-		def start_transaction(session=nil)
-			@AS_app_data.target.start_transaction(session)
+		def begin_transaction(session=nil)
+			@AS_app_data.target.begin_transaction(session)
 		end
 		
 		def abort_transaction

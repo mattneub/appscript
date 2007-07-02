@@ -154,7 +154,7 @@ p ref
 
     Methods:
 
-        start
+        beginning
             Result : InsertionSpecifier
 
         end
@@ -213,7 +213,7 @@ p ref
             val : anything
             Result : Test
     
-        starts_with(val) -- self starts with value
+        begins_with(val) -- self begins with value
             val : anything
             Result : Test
     
@@ -311,7 +311,7 @@ p ref
 <h3>Insertion location reference form</h3>
 
 <pre><code>InsertionSpecifier &lt; Specifier -- refers to insertion point before or after/at
-        start or end of element(s); e.g. ref.before</code></pre>
+        beginning or end of element(s); e.g. ref.before</code></pre>
 
 <h3>Property reference forms</h3>
 
@@ -350,14 +350,14 @@ ElementByRelativePosition &lt; SingleElement -- refers to the previous or next e
 <h3>Multiple element reference forms</h3>
 
 <pre><code>ElementsByRange &lt; MultipleElements -- refers to a range of elements
-        in the referenced container object(s) (including start and 
+        in the referenced container object(s) (including beginning and 
         end points); e.g. ref.by_range(AEM.con.elements('cpar').by_index(2),
                 AEM.con.elements('cpar').last)
 
 
 ElementsByFilter &lt; MultipleElements -- refers to all elements in the
         referenced container object(s) that fulfill a given condition; 
-        e.g. ref.by_filter(AEM.its.name.startswith('a'))
+        e.g. ref.by_filter(AEM.its.name.begins_with('a'))
 
 
 AllElements(MultipleElements) -- refers to all elements of 

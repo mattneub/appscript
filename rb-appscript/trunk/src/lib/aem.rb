@@ -49,6 +49,10 @@ module AEM
 		return AEMReference::Its
 	end
 	
+	def AEM.custom_root(value)
+		return AEMReference::CustomRoot.new(value)
+	end
+	
 	#######
 	# Application class
 	
@@ -180,8 +184,8 @@ module AEM
 			return self.class::Event.new(@address_desc, event, params, atts, @_transaction, return_id, codecs)
 		end
 		
-		def start_transaction(session=nil)
-			# Start a new transaction.
+		def begin_transaction(session=nil)
+			# Begin a new transaction.
 			if @_transaction != KAE::KAnyTransactionID
 				raise RuntimeError, "Transaction is already active."
 			end

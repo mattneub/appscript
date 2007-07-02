@@ -160,7 +160,7 @@ module Send
 		
 		def _send_apple_event(flags, timeout)
 			# Hook method; may be overridden to customise how events are sent.
-			return @AEM_event.send(flags, timeout)
+			return @AEM_event.send_thread_safe(flags, timeout)
 		end
 		
 		def inspect

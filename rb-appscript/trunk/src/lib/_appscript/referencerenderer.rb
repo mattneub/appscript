@@ -75,6 +75,12 @@ class ReferenceRenderer
 	
 	##
 	
+	def custom_root(value)
+		app
+		@result += ".AS_new_reference(#{value.inspect})"
+		return self
+	end
+	
 	def app
 		case @_app_data.constructor
 			when :current
@@ -99,8 +105,8 @@ class ReferenceRenderer
 	
 	##
 	
-	def start
-		@result += ".start"
+	def beginning
+		@result += ".beginning"
 		return self
 	end
 	
@@ -173,8 +179,8 @@ class ReferenceRenderer
 		return self
 	end
 	
-	def starts_with(val)
-		@result += ".starts_with(#{_format(val)})"
+	def begins_with(val)
+		@result += ".begins_with(#{_format(val)})"
 		return self
 	end
 	

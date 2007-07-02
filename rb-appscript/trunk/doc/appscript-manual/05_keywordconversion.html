@@ -37,11 +37,14 @@
 
 <li>Names that match the methods already defined on appscript's Application and Reference classes have an underscore appended. The reserved method names are:
 
-<pre><code>abort_transaction             instance_variable_get
-after                         instance_variable_set
-and                           instance_variables
-any                           is_in
-before                        is_not_in
+<pre><code>abort_transaction             ignore
+after                         inspect
+and                           instance_eval
+any                           instance_variable_get
+before                        instance_variable_set
+begin_transaction             instance_variables
+beginning                     is_in
+begins_with                   is_not_in
 by_aem_app                    keywords
 by_creator                    last
 by_id                         launch
@@ -54,9 +57,9 @@ commands                      middle
 contains                      ne
 current                       next
 display                       not
-does_not_contain              object_id
-does_not_end_with             or
-does_not_start_with           parameters
+does_not_begin_with           object_id
+does_not_contain              or
+does_not_end_with             parameters
 dup                           previous
 elements                      private_methods
 end                           properties
@@ -65,16 +68,13 @@ ends_with                     public_methods
 eq                            result_type
 extend                        send
 first                         singleton_methods
-freeze                        start
-ge                            start_transaction
-gt                            starts_with
-hash                          taint
-help                          timeout
-ID                            to_a
-id                            to_s
-ignore                        type
-inspect                       untaint
-instance_eval                 wait_reply</code></pre>
+freeze                        taint
+ge                            timeout
+gt                            to_a
+hash                          to_s
+help                          type
+ID                            untaint
+id                            wait_reply</code></pre>
 </div>
 </li>
 </ul>

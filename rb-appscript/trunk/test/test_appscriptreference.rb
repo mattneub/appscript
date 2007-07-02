@@ -57,8 +57,8 @@ class TC_AppscriptReferences < Test::Unit::TestCase
 			[Appscript.its.words.size.gt(0), 
 					'its.words.size.gt(0)', nil],
 			[Appscript.its.words.le(''), 'its.words.le("")', nil],
-			[Appscript.its.words.starts_with('foo').not, 
-					'its.words.starts_with("foo").not', nil],
+			[Appscript.its.words.begins_with('foo').not, 
+					'its.words.begins_with("foo").not', nil],
 			
 			
 			[Appscript.its.words.contains('foo'), 'its.words.contains("foo")', nil],
@@ -84,7 +84,7 @@ class TC_AppscriptReferences < Test::Unit::TestCase
 					'its.name.ne("foo").and(its.words.eq([])).not',
 					Appscript.its.name.eq('foo').not.and(Appscript.its.words.eq([])).not],
 			
-			[@te.documents.start, @s+'.documents.start', nil],
+			[@te.documents.beginning, @s+'.documents.beginning', nil],
 			[@te.documents.end, @s+'.documents.end', nil],
 			[@te.documents[3].before, @s+'.documents[3].before', nil],
 			[@te.documents['foo'].after, @s+'.documents["foo"].after', nil],

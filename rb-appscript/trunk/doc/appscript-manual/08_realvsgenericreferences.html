@@ -36,11 +36,11 @@ app.by_url('eppc://my-mac.local/Finder').home.folders.name</code></pre>
 
 <pre><code>app.documents.end
 con.word[3]
-its.name.starts_with('d')</code></pre>
+its.name.begins_with('d')</code></pre>
 
 <p>Generic references are only evaluated when used used within real references, either as selectors:</p>
 
-<pre><code>app('Finder').home.folders[<em>its.name.starts_with('d')</em>].get
+<pre><code>app('Finder').home.folders[<em>its.name.begins_with('d')</em>].get
 
 app('Tex-Edit Plus').windows[1].text[<em>con.words[2]</em>, <em>con.words[-2]</em>].get</code></pre>
 

@@ -169,7 +169,7 @@ module AEMReference
 	class InsertionSpecifier < Specifier
 		# A reference to an element insertion point.
 		
-		# Syntax: all_elements_ref.start / all_elements_ref.end / element_ref.before / element_ref.after
+		# Syntax: all_elements_ref.beginning / all_elements_ref.end / element_ref.before / element_ref.after
 		
 		def initialize(container, key, keyname)
 			super(container, key)
@@ -262,8 +262,8 @@ module AEMReference
 			return LessOrEquals.new(self, val)
 		end
 		
-		def starts_with(val)
-			return StartsWith.new(self, val)
+		def begins_with(val)
+			return BeginsWith.new(self, val)
 		end
 		
 		def ends_with(val)
@@ -302,8 +302,8 @@ module AEMReference
 		# Thes can be called on any kind of element reference, and also on property references where the 
 		# property represents a one-to-one relationship, e.g. textedit.documents[1].text.end is valid
 			
-		def start
-			return InsertionSpecifier.new(self, Beginning, :start)
+		def beginning
+			return InsertionSpecifier.new(self, Beginning, :beginning)
 		end
 		
 		def end
@@ -778,11 +778,33 @@ module AEMReference
 		# Logical tests
 		
 		def and(operand2, *operands)
-			return AND.new([self, operand2] + operands)
+			ops = [operand2] + operands
+			ops.collect do |op|
+				if not op.is_a?(Test)
+					if op.is_a?(Specifier) and op.AEM_root == Its
+						op = op.eq(true)
+					else
+						raise TypeError, "Bad selector: not a test (its) based specifier: #{op.inspect}"
+					end
+				end
+			end
+			ops.insert(self)
+			return AND.new(ops)
 		end
 			
 		def or(operand2, * operands)
-			return OR.new([self, operand2] + operands)
+			ops = [operand2] + operands
+			ops.collect do |op|
+				if not op.is_a?(Test)
+					if op.is_a?(Specifier) and op.AEM_root == Its
+						op = op.eq(true)
+					else
+						raise TypeError, "Bad selector: not a test (its) based specifier: #{op.inspect}"
+					end
+				end
+			end
+			ops.insert(self)
+			return OR.new(ops)
 		end
 		
 		def not
@@ -859,8 +881,8 @@ module AEMReference
 		Operator = AEMReference.pack_enum(KAE::KAELessThanEquals)
 	end
 	
-	class StartsWith < ComparisonTest
-		Name = :starts_with
+	class BeginsWith < ComparisonTest
+		Name = :begins_with
 		Operator = AEMReference.pack_enum(KAE::KAEBeginsWith)
 	end
 	
@@ -978,7 +1000,7 @@ module AEMReference
 	class ApplicationRoot < ReferenceRoot
 		# Reference base; represents an application's application object. Used to construct full references.
 		
-		# Syntax: app
+		# Syntax: AEM.app
 		
 		Name = :app
 		Type = AE::AEDesc.new(KAE::TypeNull, '')
@@ -988,7 +1010,7 @@ module AEMReference
 	class CurrentContainer < ReferenceRoot
 		# Reference base; represents elements' container object. Used to construct by-range references.
 		
-		# Syntax: con
+		# Syntax: AEM.con
 		
 		Name = :con
 		Type = AE::AEDesc.new(KAE::TypeCurrentContainer, '')
@@ -998,10 +1020,34 @@ module AEMReference
 	class ObjectBeingExamined < ReferenceRoot
 		# Reference base; represents an element to be tested. Used to construct by-filter references.
 		
-		# Syntax: its
+		# Syntax: AEM.its
 		
 		Name = :its
 		Type = AE::AEDesc.new(KAE::TypeObjectBeingExamined, '')
+	end
+	
+	
+	class CustomRoot < ReferenceRoot
+		# Reference base; represents an arbitrary root object, e.g. an AEAddressDesc in a fully qualified reference
+		
+		# Syntax: AEM.custom_root(value)
+		
+		def initialize(value)
+			@value = value
+			super()
+		end
+		
+		def to_s
+			return "AEM.custom_root(#{@value.inspect})"
+		end
+		
+		def _pack_self(codecs)
+			return codecs.pack(@value)
+		end
+		
+		def AEM_resolve(obj)
+			return obj.send(:custom_root, @value)
+		end
 	end
 	
 	

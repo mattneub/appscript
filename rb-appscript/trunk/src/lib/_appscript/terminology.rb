@@ -346,7 +346,7 @@ module Terminology
 	def Terminology.aetes_for_app(aem_app)
 		begin
 			begin
-				aetes = aem_app.event('ascrgdte', {'----' => 0}).send(60 * 60)
+				aetes = aem_app.event('ascrgdte', {'----' => 0}).send(120 * 60)
 			rescue AEM::CommandError => e
 				if  e.number == -192 # aete resource not found
 					aetes = []

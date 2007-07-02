@@ -61,8 +61,8 @@
 
         event(...) -- construct an Apple event (see next chapter for details)
 
-        start_transaction(session=nil) -- start a new transaction;
-                all Events constructed after start_transaction is
+        begin_transaction(session=nil) -- begin a new transaction;
+                all Events constructed after begin_transaction is
                 called will belong to the same transaction until
                 end_transaction or abort_transaction is called
             session : anything -- optional value identifying the 
@@ -104,7 +104,7 @@ KAE::TypeProcessSerialNumber</code></pre>
 
 <h2>Transactions</h2>
 
-<p>The <code>start_transaction</code> and <code>end_transaction</code> methods are used to start and stop transaction sessions for applications that support this. All events <em>created</em> while a transaction session is active will be identified as part of that transaction.</p>
+<p>The <code>begin_transaction</code> and <code>end_transaction</code> methods are used to start and stop transaction sessions for applications that support this. All events <em>created</em> while a transaction session is active will be identified as part of that transaction.</p>
 
 <p>Note that during a transaction, sending the application an event not created during that transaction will cause an error. Similarly, sending the application an event created during a transaction after that transaction has ended will cause an error.</p>
 

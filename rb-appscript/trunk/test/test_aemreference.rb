@@ -52,8 +52,8 @@ class TC_AEMReferences < Test::Unit::TestCase
 			[AEMReference::Its.elements('cwor').property('leng').gt(0), 
 					'AEM.its.elements("cwor").property("leng").gt(0)', nil],
 			[AEMReference::Its.elements('cwor').le(''), 'AEM.its.elements("cwor").le("")', nil],
-			[AEMReference::Its.elements('cwor').starts_with('foo').not, 
-					'AEM.its.elements("cwor").starts_with("foo").not', nil],
+			[AEMReference::Its.elements('cwor').begins_with('foo').not, 
+					'AEM.its.elements("cwor").begins_with("foo").not', nil],
 			
 			
 			[AEMReference::Its.elements('cwor').contains('foo'), 'AEM.its.elements("cwor").contains("foo")', nil],
@@ -75,7 +75,7 @@ class TC_AEMReferences < Test::Unit::TestCase
 					'AEM.its.property("pnam").ne("foo").and(AEM.its.elements("cfol").eq([])).not',
 					AEMReference::Its.property('pnam').eq('foo').not.and(AEMReference::Its.elements('cfol').eq([])).not],
 			
-			[AEMReference::App.elements('docu').start, 'AEM.app.elements("docu").start', nil],
+			[AEMReference::App.elements('docu').beginning, 'AEM.app.elements("docu").beginning', nil],
 			[AEMReference::App.elements('docu').end, 'AEM.app.elements("docu").end', nil],
 			[AEMReference::App.elements('docu').by_index(3).before, 'AEM.app.elements("docu").by_index(3).before', nil],
 			[AEMReference::App.elements('docu').by_name('foo').after, 'AEM.app.elements("docu").by_name("foo").after', nil],

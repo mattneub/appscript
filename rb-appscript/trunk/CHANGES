@@ -1,4 +1,30 @@
-2007-04-?? -- 0.3.1
+2007-??-?? -- 0.4.0
+
+- renamed the following aem/appscript methods to be consistent with AppleScript:
+
+	start -> beginning
+	starts_with -> begins_with
+	does_not_start_with -> does_not_begin_with
+	start_transaction -> begin_transaction
+
+- aem's Test#AND and Test#OR methods now check argument types and accept its-based references as shorthand for 'reference.eq(true)' - i.e. same behaviour as for by_filter method. This fixes an inconsistency where a command like:
+
+	p app('textedit').windows[its.visible.and(its.name.ne('foo'))].get
+
+would work, but one like:
+
+	p app('textedit').windows[its.name.ne('foo').and(its.visible)].get
+
+would fail due to the 'its.visible' reference not being packed as a comparison test.
+
+- added AE::AEDesc#send_thread_safe; this is now used by AEM instead of AE::AEDesc.send to allow reply events to be received on non-main threads (note: this is a non-issue in non-threaded processes or in processes that only use Ruby 1.x's green threads within the main native thread, but as the additional overhead isn't noticeable it does no harm to make it the default behaviour anyway).
+
+- added AE::AEDesc#flatten and AE::AEDesc.unflatten for serialising AEDescs
+
+- added support for custom reference roots in AEM and Appscript
+
+
+2007-04-10 -- 0.3.1
 
 - 64-bit support in rbae.c
 
@@ -8,7 +34,9 @@
 
 - added Codecs#pack_uint16; by default, this packs numbers in range (2**63)..(2**64 - 1) as 64-bit floats (lossy), but clients could override this to pack as TypeUInt64 where supported by OS and applications
 
-- changed timeout for ascrgdte event to 60 sec
+- changed timeout for ascrgdte event to 120 sec
+
+- terminology parser no longer errors on zero-length aetes
 
 
 2007-01-18 -- 0.3.0
