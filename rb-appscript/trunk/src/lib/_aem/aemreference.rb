@@ -597,18 +597,12 @@ module AEMReference
 		# Syntax: elements_ref.by_filter(test)
 		
 		# The test argument is a Test object constructed from an its-based reference.
-		# For convenience, an its-based reference can also be passed directly - this will
-		# be expanded to a Boolean equality test, e.g. AEM.its.visible -> AEM.its.visible.eq(true)
 	
 		KeyForm = AEMReference.pack_enum(KAE::FormTest)
 		
 		def initialize(wantcode, container, key)
 			if not key.is_a?(Test)
-				if key.is_a?(Specifier) and key.AEM_root == Its
-					key = key.eq(true)
-				else
-					raise TypeError, "Bad selector: not a test (its) based specifier: #{key.inspect}"
-				end
+				raise TypeError, "Bad selector: not a test (its) based specifier: #{key.inspect}"
 			end
 			super(wantcode, container.AEM_true_self, key)
 		end
@@ -778,33 +772,11 @@ module AEMReference
 		# Logical tests
 		
 		def and(operand2, *operands)
-			ops = [operand2] + operands
-			ops.collect do |op|
-				if not op.is_a?(Test)
-					if op.is_a?(Specifier) and op.AEM_root == Its
-						op = op.eq(true)
-					else
-						raise TypeError, "Bad selector: not a test (its) based specifier: #{op.inspect}"
-					end
-				end
-			end
-			ops.insert(self)
-			return AND.new(ops)
+			return AND.new([self, operand2] + operands)
 		end
 			
 		def or(operand2, * operands)
-			ops = [operand2] + operands
-			ops.collect do |op|
-				if not op.is_a?(Test)
-					if op.is_a?(Specifier) and op.AEM_root == Its
-						op = op.eq(true)
-					else
-						raise TypeError, "Bad selector: not a test (its) based specifier: #{op.inspect}"
-					end
-				end
-			end
-			ops.insert(self)
-			return OR.new(ops)
+			return OR.new([self, operand2] + operands)
 		end
 		
 		def not
