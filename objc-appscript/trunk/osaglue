@@ -532,7 +532,7 @@ if args[1:]:
 else:
 	apppath = '<default terminology>'
 	typebycode, typebyname, referencebycode, referencebyname = \
-			terminology.tablesforaetedata([], 'objc-appscript')
+			terminology.tablesforaetes([], 'objc-appscript')
 
 typebyname = typebyname.items()
 typebyname.sort(lambda a, b: cmp(a[1].__class__.__name__, b[1].__class__.__name__) or cmp(a[0], b[0]))
