@@ -67,11 +67,11 @@ except ImportError:
 # incompatible C API
 
 vers, subvers, patch = getattr(appscript, '__version__', '0.0.0').split('.')
-if int(vers) == 0 and (int(subvers) < 17 or (int(subvers) == 17 and int(patch) < 2)):
+if int(vers) == 0 and (int(subvers) < 18): # or (int(subvers) == 17 and int(patch) < 2)):
 	print >> sys.stderr, "*" * 70
-	print >> sys.stderr, "PyOSA: can't open component: appscript version is too old (0.17.2+ required)."
+	print >> sys.stderr, "PyOSA: can't open component: appscript version is too old (0.18.0+ required)."
 	print >> sys.stderr, "*" * 70
-	raise RuntimeError, "Appscript version is too old (0.17.2+ required)."
+	raise RuntimeError, "Appscript version is too old (0.18.0+ required)."
 
 if DEBUG:
 	print >> sys.stderr, 'PyOSA: using appscript %s\n' % appscript.__version__
