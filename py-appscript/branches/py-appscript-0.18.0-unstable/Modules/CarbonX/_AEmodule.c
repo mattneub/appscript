@@ -19,6 +19,8 @@
 
 #include <Carbon/Carbon.h>
 
+#include "SendThreadSafe.c"
+
 extern PyObject *_AEDescX_New(AEDesc *);
 extern PyObject *_AEDescX_NewBorrowed(AEDesc *);
 extern int _AEDescX_Convert(PyObject *, AEDesc *);
@@ -660,7 +662,7 @@ static PyObject *AEDesc_AESend(AEDescObject *_self, PyObject *_args)
 }
 
 
-static PyObject *AEDesc_AESendMessageAllocatingMachPort(AEDescObject *_self, PyObject *_args)
+static PyObject *AEDesc_SendMessageThreadSafe(AEDescObject *_self, PyObject *_args)
 {
 	PyObject *_res = NULL;
 	OSErr _err;
@@ -675,34 +677,14 @@ static PyObject *AEDesc_AESendMessageAllocatingMachPort(AEDescObject *_self, PyO
 						  &sendMode,
 						  &timeOutInTicks))
 		return NULL;
-	if (sendMode == kAEWaitReply) {
-		if (mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &replyPort) != KERN_SUCCESS) {
-			PyErr_SetString(PyExc_SystemError, "Failed to allocate Mach port!");
-			return NULL;
-		}
-		_err = AEPutAttributePtr(&_self->ob_itself,
-								 keyReplyPortAttr,
-								 typeMachPort,
-								 &replyPort,
-								 sizeof(replyPort));
-		if (_err != noErr) goto cleanup;
-	}
-	_err = AESendMessage(&_self->ob_itself,
-						 &reply,
-						 sendMode,
-						 timeOutInTicks);
-	if (_err != noErr) goto cleanup;
+	_err = SendMessageThreadSafe(&_self->ob_itself,
+								 &reply,
+								 sendMode,
+								 timeOutInTicks);
+	if (_err != noErr) return PyMac_Error(_err);
 	_res = Py_BuildValue("O&",
 						 AEDescX_New, &reply);
-	if (sendMode == kAEWaitReply) {
-		mach_port_destroy(mach_task_self(), replyPort);
-	}
 	return _res;
-cleanup:
-	if (sendMode == kAEWaitReply) {
-		mach_port_destroy(mach_task_self(), replyPort);
-	}
-	return PyMac_Error(_err);
 }
 
 
@@ -877,7 +859,25 @@ static PyObject *AEDesc_AEReplaceDescData(AEDescObject *_self, PyObject *_args)
 	return _res;
 }
 
+static PyObject *AEDesc_AEFlattenDesc(AEDescObject *_self, PyObject *_args)
+{
+	PyObject *_res = NULL;
+	OSErr _err;
+	Size dataSize;
+	void *data;
+	
+	dataSize = AESizeOfFlattenedDesc(&_self->ob_itself);
+	data = malloc(dataSize);
+	_err = AEFlattenDesc(&_self->ob_itself, data, dataSize, NULL);
+	if (_err != noErr) return PyMac_Error(_err);
+	_res = Py_BuildValue("s#", data, dataSize);
+	free(data);
+	return _res;
+}
+
 static PyMethodDef AEDesc_methods[] = {
+	{"AEFlattenDesc", (PyCFunction)AEDesc_AEFlattenDesc, 1,
+	 PyDoc_STR("() -> (Ptr buffer)")},
 	{"AECoerceDesc", (PyCFunction)AEDesc_AECoerceDesc, 1,
 	 PyDoc_STR("(DescType toType) -> (AEDesc result)")},
 	{"AEDuplicateDesc", (PyCFunction)AEDesc_AEDuplicateDesc, 1,
@@ -926,7 +926,7 @@ static PyMethodDef AEDesc_methods[] = {
 	 PyDoc_STR("(AESendMode sendMode, AESendPriority sendPriority, long timeOutInTicks) -> (AppleEvent reply)")},
 	{"AESendMessage", (PyCFunction)AEDesc_AESendMessage, 1,
 	 PyDoc_STR("(AESendMode sendMode, long timeOutInTicks) -> (AppleEvent reply)")}, 
-	{"AESendMessageAllocatingMachPort", (PyCFunction)AEDesc_AESendMessageAllocatingMachPort, 1,
+	{"SendMessageThreadSafe", (PyCFunction)AEDesc_SendMessageThreadSafe, 1,
 	 PyDoc_STR("(AESendMode sendMode, long timeOutInTicks) -> (AppleEvent reply)")},
 	{"AEResetTimer", (PyCFunction)AEDesc_AEResetTimer, 1,
 	 PyDoc_STR("() -> None")},
@@ -1516,7 +1516,28 @@ static PyObject *AE_AECallObjectAccessor(PyObject *_self, PyObject *_args)
 	return _res;
 }
 
+static PyObject *AE_AEUnflattenDesc(PyObject *_self, PyObject *_args)
+{
+	PyObject *_res = NULL;
+	OSErr _err;
+	void *data;
+	Size dataSize;
+	AEDesc desc;
+	
+	if (!PyArg_ParseTuple(_args, "s#",
+	                      &data, &dataSize))
+		return NULL;
+	_err = AEUnflattenDesc(data, &desc);
+	if (_err != noErr) return PyMac_Error(_err);
+	_res = Py_BuildValue("O&",
+	                     AEDescX_New, &desc);
+	return _res;
+}
+
+
 static PyMethodDef AE_methods[] = {
+	{"AEUnflattenDesc", (PyCFunction)AE_AEUnflattenDesc, 1,
+	 PyDoc_STR("(Buffer data) -> (AEDesc result)")},
 	{"AECoercePtr", (PyCFunction)AE_AECoercePtr, 1,
 	 PyDoc_STR("(DescType typeCode, Buffer dataPtr, DescType toType) -> (AEDesc result)")},
 	{"AECreateDesc", (PyCFunction)AE_AECreateDesc, 1,

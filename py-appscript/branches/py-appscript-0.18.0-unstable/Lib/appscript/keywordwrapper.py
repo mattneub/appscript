@@ -25,7 +25,7 @@ class Keyword:
 		return not self.__eq__(val)
 	
 	def __nonzero__(self):
-		return self.AS_name != 'MissingValue'
+		return self.AS_name != 'missing_value'
 	
 	name = property(lambda self:self.AS_name)
 

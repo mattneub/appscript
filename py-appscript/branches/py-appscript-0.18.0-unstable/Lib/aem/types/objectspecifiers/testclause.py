@@ -76,8 +76,8 @@ class LessOrEquals(_ComparisonTest):
 	_name = 'le'
 	_operator = base.packEnum(kAE.kAELessThanEquals)
 
-class StartsWith(_ComparisonTest):
-	_name = 'startswith'
+class BeginsWith(_ComparisonTest):
+	_name = 'beginswith'
 	_operator = base.packEnum(kAE.kAEBeginsWith)
 
 class EndsWith(_ComparisonTest):

@@ -63,8 +63,8 @@
 
         event(...) -- construct an Apple event (see next chapter for details)
 
-        starttransaction(self, session=None) -- start a new transaction;
-                all Events constructed after starttransaction() is called will
+        begintransaction(self, session=None) -- begin a new transaction;
+                all Events constructed after begintransaction() is called will
                 belong to the same transaction until aborttransaction() or
                 endtransaction() is called
             session : anything -- optional value identifying the 
@@ -110,7 +110,7 @@ typeProcessSerialNumber</code></pre>
 
 <h2>Transactions</h2>
 
-<p>The <code>starttransaction</code> and <code>endtransaction</code> methods are used to start and stop transaction sessions for applications that support this. All events <em>created</em> while a transaction session is active will be identified as part of that transaction.</p>
+<p>The <code>begintransaction</code> and <code>endtransaction</code> methods are used to begin and end transaction sessions for applications that support this. All events <em>created</em> while a transaction session is active will be identified as part of that transaction.</p>
 
 <p>Note that during a transaction, sending the application an event not created during that transaction will cause an error. Similarly, sending the application an event created during a transaction after that transaction has ended will cause an error.</p>
 

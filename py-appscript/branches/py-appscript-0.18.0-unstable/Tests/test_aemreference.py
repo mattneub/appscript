@@ -51,8 +51,8 @@ class TC_AEMReferences(unittest.TestCase):
 				[aem.its.elements("cwor").property("leng").gt(0), 
 						"its.elements('cwor').property('leng').gt(0)", None],
 				[aem.its.elements("cwor").le(""), "its.elements('cwor').le('')", None],
-				[aem.its.elements("cwor").startswith("foo").NOT, 
-						"its.elements('cwor').startswith('foo').NOT", None],
+				[aem.its.elements("cwor").beginswith("foo").NOT, 
+						"its.elements('cwor').beginswith('foo').NOT", None],
 				
 				
 				[aem.its.elements("cwor").contains("foo"), "its.elements('cwor').contains('foo')", None],
@@ -74,7 +74,7 @@ class TC_AEMReferences(unittest.TestCase):
 						"its.property('pnam').ne('foo').AND(its.elements('cfol').eq([])).NOT",
 						aem.its.property("pnam").eq("foo").NOT.AND(aem.its.elements("cfol").eq([])).NOT],
 				
-				[aem.app.elements("docu").start, "app.elements('docu').start", None],
+				[aem.app.elements("docu").beginning, "app.elements('docu').beginning", None],
 				[aem.app.elements("docu").end, "app.elements('docu').end", None],
 				[aem.app.elements("docu").byindex(3).before, "app.elements('docu').byindex(3).before", None],
 				[aem.app.elements("docu").byname("foo").after, "app.elements('docu').byname('foo').after", None],

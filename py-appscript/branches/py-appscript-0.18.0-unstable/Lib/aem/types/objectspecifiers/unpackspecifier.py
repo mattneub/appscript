@@ -24,7 +24,7 @@ else: # host is small-endian
 _kInsertionLocSelectors = {
 		fourCharCode(kAE.kAEBefore): 'before', 
 		fourCharCode(kAE.kAEAfter): 'after', 
-		fourCharCode(kAE.kAEBeginning): 'start', 
+		fourCharCode(kAE.kAEBeginning): 'beginning', 
 		fourCharCode(kAE.kAEEnd): 'end'
 }
 
@@ -34,7 +34,7 @@ _kTypeCompDescriptorOperators = {
 		fourCharCode(kAE.kAEEquals): 'eq',
 		fourCharCode(kAE.kAELessThan): 'lt',
 		fourCharCode(kAE.kAELessThanEquals): 'le',
-		fourCharCode(kAE.kAEBeginsWith): 'startswith',
+		fourCharCode(kAE.kAEBeginsWith): 'beginswith',
 		fourCharCode(kAE.kAEEndsWith): 'endswith',
 		fourCharCode(kAE.kAEContains): 'contains'
 }

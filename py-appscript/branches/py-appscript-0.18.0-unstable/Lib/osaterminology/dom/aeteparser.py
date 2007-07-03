@@ -15,7 +15,7 @@
 (C) 2006 HAS
 """
 
-from CarbonX import kAE
+from CarbonX import kAE, AE
 
 from osadictionary import *
 from osaterminology import getterminology, makeidentifier
@@ -245,16 +245,15 @@ _parsers = {
 ######################################################################
 # Main
 
-def parsedata(aetes, path='', style='appscript'):
-	# aetes : list of string -- aete data as a list of zero or more byte strings
+def parseaetes(aetes, path='', style='appscript'):
+	# aetes : list of AEDesc -- a list of zero or more AEDescs of typeAETE/typeAEUT
 	p = _parsers[style](path)
 	aeteparser.parse(aetes, p)
 	return p.result()
-parsestring = parsedata # TO DO: delete, and update clients to use parsedata instead of parsestring
 
 
 def parselang(code='ascr', style='appscript'):
-	return parsedata(getterminology.getaeut(code), '', style)
+	return parseaetes(getterminology.getaeut(code), '', style)
 
 
 def parsefile(paths, style='appscript'):
@@ -263,12 +262,12 @@ def parsefile(paths, style='appscript'):
 	aetes = []
 	for path in paths:
 		f = file(path)
-		aetes.append(f.read())
+		aetes.append(AE.AECreateDesc(kAE.typeAETE, f.read()))
 		f.close()
-	return parsedata(aetes, paths[0], style)
+	return parseaetes(aetes, paths[0], style)
 	
 
 def parseapp(path, style='appscript'):
-	return parsedata(getterminology.getaete(path), path, style)
+	return parseaetes(getterminology.getaete(path), path, style)
 
 

@@ -133,11 +133,11 @@ set(reference, to) -- Set an object's data.
 
 <h2>Transaction support</h2>
 
-<p>Application objects implement three additional methods, <code>starttransaction</code>, <code>endtransaction</code> and <code>aborttransaction</code> that allow a sequence of related commands to be handled as a single operation by applications that support transactions, e.g. FileMaker Pro.</p>
+<p>Application objects implement three additional methods, <code>begintransaction</code>, <code>endtransaction</code> and <code>aborttransaction</code> that allow a sequence of related commands to be handled as a single operation by applications that support transactions, e.g. FileMaker Pro.</p>
 
-<p>Once the application object's <code>starttransaction</code> method is called, all subsequent commands to that application will be sent as part of the same transaction until <code>endtransaction</code> or <code>aborttransaction</code> is called.</p>
+<p>Once the application object's <code>begintransaction</code> method is called, all subsequent commands to that application will be sent as part of the same transaction until <code>endtransaction</code> or <code>aborttransaction</code> is called.</p>
 
-<p>The <code>starttransaction</code> method takes an optional <code>session</code> argument that indicates the specific transaction session to open (in applications that support this).</p>
+<p>The <code>begintransaction</code> method takes an optional <code>session</code> argument that indicates the specific transaction session to open (in applications that support this).</p>
 
 <p class="hilitebox">Remember to call <code>endtransaction</code> or <code>aborttransaction</code> at the end of every transaction. (This includes transactions interrupted by a raised exception.) If a transaction is accidentally left open, appscript will try to end it automatically when the application object is garbage-collected, but this is not guaranteed to succeed.</p>
 

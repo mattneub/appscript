@@ -117,7 +117,7 @@ p ref
 
 <p><img src="aemreferenceinheritance.gif" title="aem reference class hierarchy" />
 
-<p>Note that the user shouldn't instantiate these classes directly; instead, aem will instantiate them as appropriate when the client calls the properties and methods of one of the three root objects - <code>app</code>, <code>con</code>, <code>its</code> - of of other aem reference objects.</p>
+<p>Note that the user shouldn't instantiate these classes directly; instead, aem will instantiate them as appropriate when the client calls the properties/methods of other aem reference objects, starting with the <code>app</code>, <code>con</code> and <code>its</code> objects that form the root of all aem references.</p>
 
 <p>In fact, it really isn't necessary to remember the reference class hierarchy at all, only to know which concrete classes implement which methods. All user-accessible properties and methods are defined by just four superclasses:</p>
 
@@ -157,7 +157,7 @@ p ref
         reference forms (i.e. all forms except insertion location)
 
     Properties:
-        start -&gt; InsertionSpecifier
+        beginning -&gt; InsertionSpecifier
         end -&gt; InsertionSpecifier
         before -&gt; InsertionSpecifier
         after -&gt; InsertionSpecifier
@@ -212,7 +212,7 @@ p ref
             val : anything
             Result : Test
     
-        startswith(val) -- self starts with value
+        beginswith(val) -- self begins with value
             val : anything
             Result : Test
     
@@ -297,7 +297,7 @@ p ref
 <h3>Insertion location reference form</h3>
 
 <pre><code>InsertionSpecifier(Specifier) -- refers to insertion point before or after/at
-        start or end of element(s); e.g. ref.before</code></pre>
+        beginning or end of element(s); e.g. ref.before</code></pre>
 
 <h3>Property reference forms</h3>
 
@@ -343,7 +343,7 @@ ElementByRelativePosition(SingleElement) -- refers to the previous or next eleme
 
 ElementsByFilter(MultipleElements) -- refers to all elements in the
         referenced container object(s) that fulfill a given condition; 
-        e.g. ref.byfilter(its.name.startswith('a'))
+        e.g. ref.byfilter(its.name.beginswith('a'))
 
 
 AllElements(MultipleElements) -- refers to all elements of 

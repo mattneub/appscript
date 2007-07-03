@@ -12,7 +12,7 @@ from CarbonX.AE import AEDesc
 from terminologyparser import buildtablesforaetes
 from keywordwrapper import Keyword
 
-__all__ = ['tablesforapp', 'tablesformodule', 'tablesforaetedata', 'kProperty', 'kElement', 'kCommand', 'defaulttables', 'aetedataforapp']
+__all__ = ['tablesforapp', 'tablesformodule', 'tablesforaetes', 'kProperty', 'kElement', 'kCommand', 'defaulttables', 'aetesforapp']
 
 
 ######################################################################
@@ -142,10 +142,10 @@ def _makeReferenceTable(properties, elements, commands):
 defaulttables = _makeTypeTable([], [], []) + _makeReferenceTable([], [], []) # (typebycode, typebyname, referencebycode, referencebyname)
 
 
-def aetedataforapp(app):
+def aetesforapp(app):
 	"""Get aetes from local/remote app via an ascrgdte event; result is a list of byte strings."""
 	try:
-		aetes = app.event('ascrgdte', {'----':0}).send(60 * 60)
+		aetes = app.event('ascrgdte', {'----':0}).send(120 * 60)
 	except Exception, e: # (e.g.application not running)
 		if isinstance(e, CommandError) and e.number == -192:
 			aetes = []
@@ -153,10 +153,10 @@ def aetedataforapp(app):
 			raise RuntimeError, "Can't get terminology for application (%r): %s" % (app, e)
 	if not isinstance(aetes, list):
 		aetes = [aetes]
-	return [aete.data for aete in aetes if isinstance(aete, AEDesc) and aete.type == 'aete' and aete.data]
+	return [aete for aete in aetes if isinstance(aete, AEDesc) and aete.type == 'aete' and aete.data]
 
 
-def tablesforaetedata(aetes, style='py-appscript'):
+def tablesforaetes(aetes, style='py-appscript'):
 	"""Build terminology tables from a list of unpacked aete byte strings.
 		Result : tuple of dict -- (typebycode, typebyname, referencebycode, referencebyname)
 	"""
@@ -178,7 +178,7 @@ def tablesforapp(app, style='py-appscript'):
 		Result : tuple of dict -- (typebycode, typebyname, referencebycode, referencebyname)
 	"""
 	if not _terminologyCache.has_key(app.AEM_identity):
-		_terminologyCache[app.AEM_identity] = tablesforaetedata(aetedataforapp(app), style)
+		_terminologyCache[app.AEM_identity] = tablesforaetes(aetesforapp(app), style)
 	return _terminologyCache[app.AEM_identity]
 
 

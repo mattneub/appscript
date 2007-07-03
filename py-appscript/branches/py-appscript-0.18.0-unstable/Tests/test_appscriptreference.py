@@ -54,8 +54,8 @@ class TC_AppscriptReferences(unittest.TestCase):
 				[AS.its.words.size > 0, 
 						'its.words.size > 0', None],
 				[AS.its.words <= '', "its.words <= ''", None],
-				[AS.its.words.startswith('foo').NOT, 
-						"(its.words.startswith('foo')).NOT", None],
+				[AS.its.words.beginswith('foo').NOT, 
+						"(its.words.beginswith('foo')).NOT", None],
 				
 				
 				[AS.its.words.contains('foo'), "its.words.contains('foo')", None],
@@ -81,7 +81,7 @@ class TC_AppscriptReferences(unittest.TestCase):
 						"((its.name != 'foo').AND(its.words == [])).NOT",
 						(AS.its.name == 'foo').NOT.AND(AS.its.words == []).NOT],
 				
-				[self.te.documents.start, self.s+'.documents.start', None],
+				[self.te.documents.beginning, self.s+'.documents.beginning', None],
 				[self.te.documents.end, self.s+'.documents.end', None],
 				[self.te.documents[3].before, self.s+'.documents[3].before', None],
 				[self.te.documents['foo'].after, self.s+".documents['foo'].after", None],

@@ -23,6 +23,8 @@ getaeut(code='ascr') -- Get a scripting component's built-in terminology (aeut)
 ----------------------------------------------------------------------
 NOTES
 
+- Avoid calling getaete/getaeut within PyObjC-based applications before the main event loop is started as this will result in odd behaviour where minimized windows refuse to expand when clicked on in the Dock. (This is a Cocoa/Carbon issue.)
+
 - Use osaterminology.aeteparser to parse results of getaete() and getaeut().
 
 - aete/aeut data contains endian-sensitive information; aeteparser knows how to handle this, assuming retrieval and parsing are both done on the same architecture

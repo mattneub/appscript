@@ -32,7 +32,7 @@ _kTypeCompDescriptorOperators = {
 		kAE.kAEEquals: 'AS__eq__',
 		kAE.kAELessThan: 'AS__lt__',
 		kAE.kAELessThanEquals: 'AS__le__',
-		kAE.kAEBeginsWith: 'startswith',
+		kAE.kAEBeginsWith: 'beginswith',
 		kAE.kAEEndsWith: 'endswith',
 		kAE.kAEContains: 'contains'
 }
@@ -243,7 +243,7 @@ class AppData(aem.Codecs):
 	def help(self, flags, ref):
 		# Stub method; initialises Help object and replaces itself with a real help() function the first time it's called.
 		from helpsystem import Help
-		helpObj = Help(terminology.aetedataforapp(self.target), self.identifier or 'Current Application')
+		helpObj = Help(terminology.aetesforapp(self.target), self.identifier or 'Current Application')
 		self.help = lambda flags, ref: helpObj.help(flags, ref) # replace stub method with real help
 		return self.help(flags, ref) # call real help. Note that help system is responsible for providing a return value (usually the same reference it was called upon, but it may modify this).
 
@@ -465,7 +465,7 @@ class Reference(_Base):
 	middle = property(lambda self: Reference(self.AS_appdata, self.AS_aemreference.middle))
 	last = property(lambda self: Reference(self.AS_appdata, self.AS_aemreference.last))
 	any = property(lambda self: Reference(self.AS_appdata, self.AS_aemreference.any))
-	start = property(lambda self: Reference(self.AS_appdata, self.AS_aemreference.start))
+	beginning = property(lambda self: Reference(self.AS_appdata, self.AS_aemreference.beginning))
 	end = property(lambda self: Reference(self.AS_appdata, self.AS_aemreference.end))
 	before = property(lambda self: Reference(self.AS_appdata, self.AS_aemreference.before))
 	after = property(lambda self: Reference(self.AS_appdata, self.AS_aemreference.after))
@@ -514,8 +514,8 @@ class Reference(_Base):
 	def AS__le__(self, operand):
 		return Reference(self.AS_appdata, self.AS_aemreference.le(operand))
 	
-	def startswith(self, operand):
-		return Reference(self.AS_appdata, self.AS_aemreference.startswith(operand))
+	def beginswith(self, operand):
+		return Reference(self.AS_appdata, self.AS_aemreference.beginswith(operand))
 	
 	def endswith(self, operand):
 		return Reference(self.AS_appdata, self.AS_aemreference.endswith(operand))
@@ -526,8 +526,8 @@ class Reference(_Base):
 	def isin(self, operand):
 		return Reference(self.AS_appdata, self.AS_aemreference.isin(operand))
 	
-	def doesnotstartwith(self, operand):
-		return self.startswith(operand).NOT
+	def doesnotbeginwith(self, operand):
+		return self.beginswith(operand).NOT
 	
 	def doesnotendwith(self, operand):
 		return self.endswith(operand).NOT
@@ -594,8 +594,8 @@ class Application(Reference):
 		"""Create a new appscript reference from an aem reference."""
 		return Reference(self.AS_appdata, aemreference)
 	
-	def starttransaction(self, session=None):
-		self.AS_appdata.target.starttransaction(session)
+	def begintransaction(self, session=None):
+		self.AS_appdata.target.begintransaction(session)
 	
 	def aborttransaction(self):
 		self.AS_appdata.target.aborttransaction()

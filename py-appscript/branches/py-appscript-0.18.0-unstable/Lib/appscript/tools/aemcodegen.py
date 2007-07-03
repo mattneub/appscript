@@ -64,8 +64,8 @@ class _Application(_Base):
 			args = (event,) + args
 			return _Event('%s.event(%s)' % (self._repr, self._encfmt(args, kargs)), realEvent, self._codecs)
 	
-	def starttransaction(self):
-		print >> outputfile, self._repr + '.starttransaction()\n'
+	def begintransaction(self):
+		print >> outputfile, self._repr + '.begintransaction()\n'
 	
 	def endtransaction(self):
 		print >> outputfile, self._repr + '.endtransaction()\n'

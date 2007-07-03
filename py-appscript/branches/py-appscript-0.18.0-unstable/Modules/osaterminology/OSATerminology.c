@@ -20,6 +20,8 @@
 
 extern OSAError OSACopyScriptingDefinition(const FSRef *, SInt32, CFDataRef *) __attribute__((weak_import));
 
+static ComponentInstance defaultComponent = NULL;
+
 
 static PyObject *
 PyOSA_CopyScriptingDefinition(PyObject* self, PyObject* args)
@@ -58,21 +60,21 @@ PyOSA_GetAppTerminology(PyObject* self, PyObject* args)
 {
 	AEDesc theDesc = {0,0};
 	FSSpec fss;
-	ComponentInstance defaultComponent = NULL;
-	SInt16 defaultTerminology = 0;
 	Boolean didLaunch = 0;
 	OSAError err;
 	
 	if (!PyArg_ParseTuple(args, "O&", PyMac_GetFSSpec, &fss))
 		return NULL;
-	defaultComponent = OpenDefaultComponent(kOSAComponentType, 'ascr');
-	err = GetComponentInstanceError(defaultComponent);
-	if (err) return PyMac_Error(err);
+	if (!defaultComponent) {
+		defaultComponent = OpenDefaultComponent(kOSAComponentType, 'ascr');
+		err = GetComponentInstanceError(defaultComponent);
+		if (err) return PyMac_Error(err);
+	}
 	err = OSAGetAppTerminology(
 			defaultComponent, 
 			kOSAModeNull,
 			&fss, 
-			defaultTerminology, 
+			0, 
 			&didLaunch, 
 			&theDesc
 	);
@@ -84,22 +86,22 @@ static PyObject *
 PyOSA_GetSysTerminology(PyObject* self, PyObject* args)
 {
 	AEDesc theDesc = {0,0};
-	ComponentInstance defaultComponent = NULL;
-	SInt16 defaultTerminology = 0;
+	ComponentInstance component = NULL;
 	OSType componentSubType;
 	OSAError err;
 	
 	if (!PyArg_ParseTuple(args, "O&", PyMac_GetOSType, &componentSubType))
 		return NULL;
-	defaultComponent = OpenDefaultComponent(kOSAComponentType, componentSubType);
-	err = GetComponentInstanceError(defaultComponent);
+	component = OpenDefaultComponent(kOSAComponentType, componentSubType);
+	err = GetComponentInstanceError(component);
 	if (err) return PyMac_Error(err);
 	err = OSAGetSysTerminology(
-			defaultComponent, 
+			component, 
 			kOSAModeNull,
-			defaultTerminology, 
+			0, 
 			&theDesc
 	);
+	CloseComponent(component);
 	if (err) return PyMac_Error(err);
 	return Py_BuildValue("O&", AEDescX_New, &theDesc);
 }

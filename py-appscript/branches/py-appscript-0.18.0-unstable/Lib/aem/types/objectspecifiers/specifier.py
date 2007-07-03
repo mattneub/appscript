@@ -88,7 +88,7 @@ class Specifier(base.BASE):
 ######################################################################
 
 class InsertionSpecifier(Specifier):
-	"""Form: allelementsref.start/end, elementsref.before/after
+	"""Form: allelementsref.beginning/end, elementsref.before/after
 		A reference to an element insertion point.
 	"""
 	def __init__(self, container, key, keyname):
@@ -166,9 +166,9 @@ class _PositionSpecifier(Specifier):
 		"""le(anything) --> is less than or equals test"""
 		return testclause.LessOrEquals(self, val)
 	
-	def startswith(self, val):
-		"""startswith(anything) --> starts with test"""
-		return testclause.StartsWith(self, val)
+	def beginswith(self, val):
+		"""beginswith(anything) --> begins with test"""
+		return testclause.BeginsWith(self, val)
 	
 	def endswith(self, val):
 		"""endswith(anything) --> ends with test"""
@@ -199,7 +199,7 @@ class _PositionSpecifier(Specifier):
 	
 	# Insertion references can be used on any kind of element reference, and also on property references where the property represents a one-to-one relationship, e.g. textedit.documents[1].text.end is valid:
 		
-	start = property(lambda self: InsertionSpecifier(self, self._kBeginning, 'start'), doc="start --> insertion location")
+	beginning = property(lambda self: InsertionSpecifier(self, self._kBeginning, 'beginning'), doc="beginning --> insertion location")
 	end = property(lambda self: InsertionSpecifier(self, self._kEnd, 'end'), doc="end --> insertion location")
 	before = property(lambda self: InsertionSpecifier(self, self._kBefore, 'before'), doc="before --> insertion location")
 	after = property(lambda self: InsertionSpecifier(self, self._kAfter, 'after'), doc="after --> insertion location")
@@ -381,7 +381,7 @@ class _MultipleElements(_PositionSpecifier):
 		return ElementsByRange(self.AEM_want, self, (start, stop))
 	
 	def byfilter(self, expression):
-		"""byfilter(start, expression) --> elements"""
+		"""byfilter(expression) --> elements"""
 		return ElementsByFilter(self.AEM_want, self, expression)
 
 

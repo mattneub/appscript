@@ -325,7 +325,7 @@ handlers = {
 ######################################################################
 
 
-def parsestring(sdef, path='', style='appscript'):
+def parsexml(sdef, path='', style='appscript'):
 	parser = xml.sax.make_parser()
 	handler = handlers[style](parser, path)
 	parser.setContentHandler(handler)
@@ -339,13 +339,13 @@ def parsefile(path, style='appscript'):
 	f = file(path)
 	sdef = f.read()
 	f.close()
-	return parsestring(sdef, path, style)
+	return parsexml(sdef, path, style)
 
 def parseapp(path, style='appscript'):
 	sdef = getterminology.getsdef(path)
 	if sdef is None:
 		raise RuntimeError, "Can't get sdef (requires OS 10.4+)."
-	return parsestring(sdef, path, style)
+	return parsexml(sdef, path, style)
 
 
 

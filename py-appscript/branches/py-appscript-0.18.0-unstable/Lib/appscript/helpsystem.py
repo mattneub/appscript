@@ -176,10 +176,10 @@ For example, to print an overview of TextEdit, a description of its make command
 	
 	def __init__(self, aetes, appname, style='py-appscript', out=_Out()):
 		"""
-			aetes : list of str -- list of aete data as byte strings
+			aetes : list of AEDesc -- list of aetes
 			out : anything -- any file-like object that implements a write(str) method
 		"""
-		self.terms = aeteparser.parsedata(aetes, appname, style)
+		self.terms = aeteparser.parseaetes(aetes, appname, style)
 		self.style = style
 		self.output = out
 	

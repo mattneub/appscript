@@ -7,7 +7,7 @@ import MacOS
 from aem import Codecs
 from CarbonX.AE import AEDesc
 
-import OSATerminology as _osat
+import OSATerminology
 
 __all__ = ['getsdef', 'getaete', 'getaeut']
 
@@ -28,7 +28,7 @@ def _extract(fn, type):
 		lst = _codecs.unpack(desc)
 		if not isinstance(lst, list):
 			lst = [lst]
-		return [val.data for val in lst if isinstance(val, AEDesc) and val.type == type]
+		return [val for val in lst if isinstance(val, AEDesc) and val.type == type and val.data]
 
 
 ######################################################################
@@ -40,19 +40,19 @@ def getsdef(path):
 		path : str | unicode | FSRef -- full path to app
 		Result : str | None -- XML data, or None if OS version < 10.4
 	"""
-	return _osat.CopyScriptingDefinition(path)
+	return OSATerminology.CopyScriptingDefinition(path)
 
 def getaete(path):
 	"""Get an application's terminology as zero or more aete(s).
 		path : str | unicode | FSSpec -- full path to app
-		Result : list of str -- zero or more strings of binary aete data
+		Result : list of AEDesc -- zero or more aetes
 	"""
-	return _extract((lambda: _osat.GetAppTerminology(path)[0]), 'aete')
+	return _extract((lambda: OSATerminology.GetAppTerminology(path)[0]), 'aete')
 
 def getaeut(code='ascr'):
 	"""Get a scripting component's built-in terminology (aeut)
 		code : str -- 4-letter code indication component subtype (default: AppleScript)
-		Result : list of str -- zero or more strings of binary aeut data
+		Result : list of AEDesc -- zero or more aeuts
 	"""
-	return _extract((lambda: _osat.GetSysTerminology(code)), 'aeut')
+	return _extract((lambda: OSATerminology.GetSysTerminology(code)), 'aeut')
 

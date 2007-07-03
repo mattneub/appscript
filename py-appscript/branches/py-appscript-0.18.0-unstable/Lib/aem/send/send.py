@@ -75,8 +75,8 @@ class Event(object):
 	
 	def _sendAppleEvent(self, flags, timeout):
 		"""Hook method; may be overridden to modify event sending."""
-		return self.AEM_event.AESendMessage(flags, timeout)
-		#return self.AEM_event.AESendMessageAllocatingMachPort(flags, timeout)
+		#return self.AEM_event.AESendMessage(flags, timeout)
+		return self.AEM_event.SendMessageThreadSafe(flags, timeout)
 	
 	# Public
 	

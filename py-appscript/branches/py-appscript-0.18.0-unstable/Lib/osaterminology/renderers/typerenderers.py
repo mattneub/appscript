@@ -63,9 +63,9 @@ class ObjCAppscriptTypeRenderer(AppscriptTypeRenderer):
 	
 	def escapecode(self, s):
 		if [c for c in s if not (31 < ord(c) < 128) or c in '\\\'"']:
-			return '0x' + self._hexencode(code)[0]
+			return '0x' + self._hexencode(s)[0]
 		else:
-			return "'%s'" % code
+			return "'%s'" % s
 
 
 class PyAppscriptTypeRenderer(AppscriptTypeRenderer):

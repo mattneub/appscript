@@ -120,8 +120,8 @@ def _unpackAppleEvent(event, includeAttributes, requiredArgDefs, optionalArgDefs
 	for code, argName, datatypes in requiredArgDefs:
 		try:
 			argValue = params.pop(code)
-			if argValue.type == kAE.typeNull:
-				raise KeyError
+#			if argValue.type == kAE.typeNull:
+#				raise KeyError
 		except KeyError:
 			raise EventHandlerError(-1721, "Required parameter %r is missing." % code)
 		else:

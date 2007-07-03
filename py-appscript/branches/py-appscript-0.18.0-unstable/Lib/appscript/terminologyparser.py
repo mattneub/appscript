@@ -6,13 +6,14 @@ The tables returned by this module are an intermediate format, suitable for expo
 
 (C) 2004 HAS"""
 
-from osaterminology.makeidentifier import getconverter
 from struct import pack, unpack
-
 try:
 	set
 except NameError: # Python 2.3
 	from sets import Set as set
+
+from osaterminology.makeidentifier import getconverter
+from CarbonX.AE import AEDesc
 
 
 ######################################################################
@@ -167,12 +168,13 @@ class Parser:
 	
 	def parse(self, aetes):
 		for aete in aetes:
-			self._str = aete
-			self._ptr = 6 # version, language, script integers
-			for _ in range(self.integer()):
-				self.parseSuite()
-			if not self._ptr == len(self._str):
-				raise RuntimeError, "aete was not fully parsed."
+			if isinstance(aete, AEDesc) and aete.type in ['aete', 'aeut'] and aete.data:
+				self._str = aete.data
+				self._ptr = 6 # version, language, script integers
+				for _ in range(self.integer()):
+					self.parseSuite()
+				if not self._ptr == len(self._str):
+					raise RuntimeError, "aete was not fully parsed."
 		# singular names are normally used in the classes table and plural names in the elements table. However, if an aete defines a singular name but not a plural name then the missing plural name is substituted with the singular name; and vice-versa if there's no singular equivalent for a plural name.
 		missingElements = self._foundClassCodes - self._foundElementCodes
 		missingClasses = self._foundElementCodes - self._foundClassCodes
@@ -196,6 +198,10 @@ class LittleEndianParser(Parser):
 ######################################################################
 
 def buildtablesforaetes(aetes, style='py-appscript'):
+	"""
+		aetes : list of AEDesc
+		style : str
+	"""
 	if pack("H", 1) == '\x00\x01': # is it big-endian?
 		return Parser(style).parse(aetes)
 	else:

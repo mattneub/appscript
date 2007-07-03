@@ -90,9 +90,11 @@ print sa.display_dialog("Python says hello!",
 # Result: {k.button_returned: u"Howdy!"}</code></pre>
 
 
-<!-- TO DO: need to sort out appscript first
-
 <h2>Notes</h2>
+
+<p>When using the <code>osax</code> module within PyObjC-based applications, avoid creating <code>ScriptingAddition</code> instances before the main event loop is started as this will prevent minimized windows expanding as normal when clicked on in the Dock.</p>
+
+<!-- TO DO: need to sort out appscript first
 
 <p>When sending scripting addition commands that require GUI access (e.g. <code>display_dialog</code>) to the Python 2.3 command-line interpreter, remember to use <code>pythonw</code>, not <code>python</code>, otherwise a "no user interaction allowed" error will occur. (This is not an issue when sending commands to normal GUI processes, or when using Python 2.4 or later.)</p>
 

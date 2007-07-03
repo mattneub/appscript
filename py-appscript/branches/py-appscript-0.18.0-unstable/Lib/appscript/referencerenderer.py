@@ -101,8 +101,8 @@ class _Formatter:
 		self.result += ' <= %s' % self._format(sel)
 		return self
 	
-	def startswith(self, sel):
-		self.result += '.startswith(%s)' % self._format(sel)
+	def beginswith(self, sel):
+		self.result += '.beginswith(%s)' % self._format(sel)
 		return self
 	
 	def endswith(self, sel):

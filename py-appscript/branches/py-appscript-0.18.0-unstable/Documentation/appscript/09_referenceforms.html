@@ -117,11 +117,11 @@ paragraphs[-1].previous(k.character)</code></pre>
 
 <h3>by Range</h3>
 
-<p>Range references select all elements between and including two references indicating the start and end of the range. The start and end references are normally declared relative to the container of the elements being selected. Appscript defines a constant, <code>con</code> (short for 'container'), to indicate this container; for example, to indicate the third paragraph of the currrent container object:</p>
+<p>Range references select all elements between and including two references indicating the beginning and end of the range. The beginning and end references are normally declared relative to the container of the elements being selected. Appscript defines a constant, <code>con</code> (short for 'container'), to indicate this container; for example, to indicate the third paragraph of the currrent container object:</p>
 
 <pre><code>con.paragraphs[3]</code></pre>
 
-<p>For convenience, the range reference also allows start and end references to be written in shorthand form where their element class is the same as the elements being selected; thus:</p>
+<p>For convenience, the range reference also allows beginning and end references to be written in shorthand form where their element class is the same as the elements being selected; thus:</p>
 
 <pre><code>ref.paragraphs[con.paragraphs[3]:con.paragraphs[-1]]</code></pre>
 
@@ -134,9 +134,9 @@ paragraphs[-1].previous(k.character)</code></pre>
 <pre><code>ref.words[cont.characters[5]:cont.paragraphs[-2]]</code></pre>
 
 <p>Syntax:</p>
-<pre><code>elements[start:end]
-        start : str | unicode | int | reference -- start of range
-        end : str | unicode | int | reference -- end of range</code></pre>
+<pre><code>elements[stop]
+        start : str | unicode | int | reference -- beginning of range
+        stop : str | unicode | int | reference -- end of range</code></pre>
 	
 <p>Examples:</p>
 <pre><code>folders['Documents':'Movies']
@@ -169,11 +169,11 @@ reference == value
 reference != value
 reference &gt; value
 reference &gt;= value
-reference.startswith(value)
+reference.beginswith(value)
 reference.endswith(value)
 reference.contains(value)
 reference.isin(value)
-reference.doesnotstartwith(value)
+reference.doesnotbeginwith(value)
 reference.doesnotendwith(value)
 reference.doesnotcontain(value)
 reference.isnotin(value)
@@ -182,7 +182,7 @@ reference.isnotin(value)
 <p>Examples:</p>
 <pre><code>its == ''
 its.size &gt; 1024
-its.words.first.startswith('A')
+its.words.first.beginswith('A')
 its.characters.first == its.characters.last</code></pre>
 
 <p>Note that Boolean comparison tests can be written as either <code>reference == True</code> or just <code>reference</code>, e.g. <code>folderRef.files[its.locked]</code></p></li>
@@ -197,7 +197,7 @@ test.NOT</code></pre>
 <p>Examples:</p>
 <pre><code>(its == '').NOT
 (its.size &gt; 1024).AND(its.size &lt; 10240)
-its.words[1].startswith('A').OR(
+its.words[1].beginswith('A').OR(
     its.words[2].contains('ce'), its.words[1] == 'Foo')</code></pre></li>
 </ul>
 
@@ -209,7 +209,7 @@ its.words[1].startswith('A').OR(
 <p>Insertion locations can be specified at the beginning or end of all elements, or before or after a specified element or element range.</p>
 
 <p>Syntax:</p>
-<pre><code>elements.start
+<pre><code>elements.beginning
 elements.end
 elements[selector].before
 elements[selector].after</code></pre>

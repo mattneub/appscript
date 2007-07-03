@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"""htmldoc - Render application terminology as XHTML.
+"""htmldoc - Render application terminology as a single XHTML document.
 
 (C) 2006 HAS
 """
@@ -182,8 +182,9 @@ def stripNonChars(txt):
 	return _stripCache[txt]
 
 def formatType(types, typeRenderer):
-	res = ''
+	result = []
 	for type in types:
+		res = ''
 		if type.islist: # render 'list of' bit outside the link
 			res += 'list of '
 			type = type.type
@@ -198,7 +199,8 @@ def formatType(types, typeRenderer):
 				res += esc(typeRenderer.render(enum))
 			else:
 				res += esc(typeRenderer.render(type)) # missing class/enum definition, so will be rendered as raw AE code or whatever else is left
-	return res
+		result.append(res)
+	return ' | '.join(result)
 
 #
 

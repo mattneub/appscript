@@ -127,8 +127,8 @@ class Application(BASE):
 		"""
 		return self._Event(self._address, event, params, atts, self._transaction, returnid, codecs or self._codecs)
 	
-	def starttransaction(self, session=None):
-		"""Start a transaction."""
+	def begintransaction(self, session=None):
+		"""Begin a transaction."""
 		if self._transaction != self._kAnyTransactionID:
 			raise RuntimeError, "Transaction is already active."
 		self._transaction = self._Event(self._address, 'miscbegi', 

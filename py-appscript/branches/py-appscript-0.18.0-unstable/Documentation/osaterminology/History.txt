@@ -1,6 +1,10 @@
 HISTORY
 
-2007-04-02 -- 0.???
+2007-06-30 -- 0.10.3
+- OSAGetAppTerminology no longer opens a new ascr component instance each time it's called; instead a single instance is opened on the first call and reused for subsequent calls.
+- OSAGetSysTerminology now closes opened component before returning.
+
+2007-04-02 -- 0.10.2
 - fixed renderdictionary call in htmldoc.doc to use client-supplied parameters
 
 2007-03-24 -- 0.10.1

@@ -5,6 +5,8 @@
 
 from struct import pack, unpack
 
+from CarbonX.AE import AEDesc
+
 __all__ = ['Receiver', 'parse', 'kBE', 'kLE', 'kAuto']
 
 
@@ -275,7 +277,7 @@ class Receiver:
 
 def parse(aetes, receiver, byteorder=kNative):
 	"""Parse an application or scripting component's scripting terminology.
-		aetes : str | list of str -- the raw aete/aeut data
+		aetes : str | list of AEDesc -- zero or more aete/aeut descriptors
 		receiver : Receiver -- object to receive parsing events
 		byteorder : kBE / kLE / kAuto / kNative -- the byte order to use [1]
 		
@@ -285,17 +287,19 @@ def parse(aetes, receiver, byteorder=kNative):
 	if not isinstance(aetes, list):
 		aetes = [aetes]
 	for aete in aetes:
-		if byteorder == kNative:
-			isBigEndian = pack("H", 1) == '\x00\x01'
-		elif byteorder == kAuto:
-			isBigEndian = aete[6] == '\x00'
-		else:
-			isBigEndian = byteorder == kBE
-		a = (isBigEndian and _BigEndianDataSource or _LittleEndianDataSource)(aete)
-		a.integer() # version
-		a.integer() # language
-		a.integer() # script
-		a.list(_parseSuite, receiver)
-		if not a.isComplete(): # sanity check
-			raise RuntimeError, "aete was not fully parsed."
+		if isinstance(aete, AEDesc) and aete.type in ['aete', 'aeut'] and aete.data:
+			aete = aete.data
+			if byteorder == kNative:
+				isBigEndian = pack("H", 1) == '\x00\x01'
+			elif byteorder == kAuto:
+				isBigEndian = aete[6] == '\x00'
+			else:
+				isBigEndian = byteorder == kBE
+			a = (isBigEndian and _BigEndianDataSource or _LittleEndianDataSource)(aete)
+			a.integer() # version
+			a.integer() # language
+			a.integer() # script
+			a.list(_parseSuite, receiver)
+			if not a.isComplete(): # sanity check
+				raise RuntimeError, "aete was not fully parsed."
 
