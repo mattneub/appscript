@@ -1209,3 +1209,10 @@ kAEDontDisposeOnResume = 0x80000000
 kAENoDispatch = 0
 kAEUseStandardDispatch = 0xFFFFFFFF
 
+
+
+# Miscellaneous
+
+typeUInt16 = 'ushr'
+typeUInt64 = 'ucom'
+

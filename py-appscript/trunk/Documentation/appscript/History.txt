@@ -1,5 +1,10 @@
 HISTORY
 
+2007-04-19 -- 0.17.3
+
+- fixed reconnection code in reference module's Command class (was referring to non-existent AS_appdata.path)
+
+
 2007-03-28 -- 0.17.2
 
 - terminology.aetedataforapp now omits zero-length aetes from result list
