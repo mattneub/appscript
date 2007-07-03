@@ -1,107 +1,364 @@
-"""ASDictionary -- Render application terminology in plain text or appscript/AppleScript HTML format, or dump raw aete resources to file.
+"""ASDictionary
 
-(C) 2005 HAS
-
+(C) 2007 HAS
 """
 
-from os import mkdir
-from os.path import basename, splitext, join, exists
-from sys import argv, stderr
-from traceback import print_exc
-from EasyDialogs import ProgressBar
+import objc
+from Foundation import NSUserDefaultsDidChangeNotification
+from AppKit import *
+from PyObjCTools.KeyValueCoding import *
+from PyObjCTools import NibClassBuilder, AppHelper
 
-import osax
-from osaterminology.renderers import quickdoc
+import os.path
+
+import osax, appscript
+
 from osaterminology.getterminology import getaete
-from osaterminology.renderers import htmldoc
-
-#######
-# MAIN
-
-# supported formats
-kRaw = 'raw aete'
-kText = 'plain text'
-kAppscript = 'Python appscript HTML'
-kRbAppscript = 'Ruby appscript HTML'
-kAppleScript = 'AppleScript HTML'
+from osaterminology.dom import aeteparser
+from osaterminology.renderers import quickdoc, htmldoc, htmldoc2
+from osaterminology.makeidentifier import getconverter
 
 
-#######
+NibClassBuilder.extractClasses("MainMenu")
 
-def writeRaw(path, outFolder):
-	targetFolder = join(outFolder, splitext(basename(path))[0]) + ' aetes' # app may have >1 aetes, so dump them into a single folder
-	if not exists(targetFolder):
-		mkdir(targetFolder)
-	for i, aete in enumerate(getaete(path)):
-		f = open(join(targetFolder, str(i)), 'w')
-		f.write(aete)
-		f.close()
-		
-		
-def writeText(path, outFolder):
-	f = file(join(outFolder, splitext(basename(path))[0] + '.txt'), 'w')
-	try:
-		f.write('\xEF\xBB\xBF') # UTF8 BOM
-		quickdoc.app(path, f)
-	except:
-		f.close()
-		raise
-	f.close()
+userDefaults = NSUserDefaults.standardUserDefaults()
 
+# Note: OSATerminology.so functions should not be called before main event loop
+# is started, otherwise it triggers strange behaviour where minimised windows
+# refuse to expand when clicked on in Dock. (This is a Cocoa/Carbon issue.)
+# Since osax.ScriptingAddition constructor calls osaterminology.getterminology.getaete
+# (which in turn calls OSATerminology.OSAGetAppTerminology), it should not be
+# called here (ie. at top level of script).
+
+# OTOH, appscript uses ascrgdte event to retrieve terminology, so app objects can
+# safely be created and used at top level of script:
+_sysev = appscript.app('System Events')
 
 #######
 
-try:
-	if len(argv) > 1:
-		appPaths = argv[1:]
-	else:
-		appPaths = [alias.path for alias in osax.chooseapp(prompt='Select the application(s) to process:', multiselect=True)]
-	outFormat = osax.chooseitems([kRaw, kText, kAppscript, kRbAppscript, kAppleScript], 'Select output formats:', multiselelect=True)
-	if [o for o in outFormat if o in [kAppscript, kRbAppscript, kAppleScript]] and \
-			osax.displaydialog('Combine duplicate classes?', ['No', 'Yes'], 'Yes')[0] == 'Yes':
-		options = ['collapse']
-	else:
-		options = []
-	outFolder = (osax.choosefolder('Select folder to write the file%s to:' % (len(appPaths) > 1 and 's' or ''))).path
-	failedApps = []
-	progbar = ProgressBar('Rendering terminology for:', len(appPaths))
-	for path in appPaths:
-		progbar.label(splitext(basename(path))[0].encode('macroman', 'replace')[:254]) # ProgressBar is kinda Stone Age
-		progbar.inc()
-		try:
-			if not bool(getaete(path)):
-				raise RuntimeError, "no terminology found"
-			# Dump aetes	
-			if kRaw in outFormat:
-				writeRaw(path, outFolder)
-			# Render in quickdoc format
-			if kText in outFormat:
-				writeText(path, outFolder)
-			# Render in HTML format
-			userTemplatePath = join(osax.pathto(osax.kApplicationSupport, osax.kUserDomain).path, 'ASDictionary/AppleScriptTemplate.html')
-			if not exists(userTemplatePath):
-				userTemplatePath = join(osax.pathto(osax.kApplicationSupport).path, 'ASDictionary/Template.html')
-			if exists(userTemplatePath):
-				f = open(userTemplatePath)
-				userTemplateHTML = f.read()
-				f.close()
-			else:
-				userTemplateHTML = None
-			if kAppscript in outFormat:
-				htmldoc.doc(path, join(outFolder, splitext(basename(path))[0] + ' py.html') , 'py-appscript', options, userTemplateHTML)
-			if kRbAppscript in outFormat:
-				htmldoc.doc(path, join(outFolder, splitext(basename(path))[0] + ' rb.html') , 'rb-appscript', options, userTemplateHTML)
-			if kAppleScript in outFormat:
-				htmldoc.doc(path, join(outFolder, splitext(basename(path))[0] + '.html'), 'applescript', options, userTemplateHTML)
-		except Exception, err:
-			print >> stderr, "ASDictionary: Can't render terminology for application %r:" % path, err
-			print_exc()
-			failedApps.append('%s (%s)' % (basename(path), err))
-	if failedApps:
-		osax.displaydialog("Couldn't render terminology for: " + ', '.join(failedApps), ['OK'], 1, icon=osax.kCaution)
-except osax.UserCancelled:
+_styles = [ # (prefs key, osaterminology name, filename suffix)
+		(u'applescriptStyle', 'applescript', '-AS'),
+		(u'pythonStyle', 'py-appscript', '-py'), 
+		(u'rubyStyle', 'rb-appscript', '-rb'), 
+		(u'objcStyle', 'objc-appscript', '-objc'),
+]
+
+#######
+
+def _namefrompath(path):
+	if path.endswith('/'):
+		path = path[:-1]
+	name = os.path.basename(path)
+	if name.lower().endswith('.app'):
+		name = name[:-4]
+	elif name.lower().endswith('.osax'):
+		name = name[:-5]
+	return name
+
+#######
+
+class NoTerminologyError(Exception):
 	pass
-except Exception, err:
-	print >> stderr, "ASDictionary error:", err
-	print_exc()
-	osax.displayerror("An error occurred: %s" % err)
+
+_osaxcache = None
+
+def _osaxInfo():
+	global _osaxcache
+	if _osaxcache is None:
+		_osaxcache = {}
+		for domain in [_sysev.system_domain, _sysev.local_domain, _sysev.user_domain]:
+			osaxen = domain.scripting_additions_folder.files[appscript.its.visible]
+			for name, path in zip(osaxen.name(), osaxen.POSIX_path()):
+				if name.lower().endswith('.osax'):
+					name = name[:-5]
+				elif name.lower().endswith('.app'):
+					name = name[:-4]
+				if not _osaxcache.has_key(name.lower()):
+					_osaxcache[name] = path
+	return _osaxcache
+
+def osaxNames():
+	names = _osaxInfo().keys()
+	names.sort(lambda a,b:cmp(a.lower(), b.lower()))
+	return names
+
+def osaxPathForName(name):
+	return _osaxInfo()[name]
+
+
+#######
+
+class ArrayToBooleanTransformer(NSValueTransformer):
+	def transformedValue_(self, item):
+		return bool(item)
+
+NSValueTransformer.setValueTransformer_forName_(
+		ArrayToBooleanTransformer.alloc().init(), u"ArrayToBoolean")
+
+
+class ASDictionary(NibClassBuilder.AutoBaseClass):
+	# Outlets:
+	# selectedFilesController
+	# progressPanel
+	# progressBar
+	# itemName
+	# showLogMenuItem
+	# logTextView
+	
+	def init(self):
+		self = super(ASDictionary, self).init()
+		if self is None: return
+		self._selectedFiles = [] # {'name': '...', 'path': '...'}
+		self._canExport = False
+		self._htmlOptionsEnabled = False
+		self._itemName = ''
+		self._progressBar = 0
+		self._showLog = False
+		# Connect to StandardAdditions (see note at top of script)
+		self._stdadditions = osax.ScriptingAddition()
+		return self
+	
+	def awakeFromNib(self):
+		NSNotificationCenter.defaultCenter().addObserver_selector_name_object_(
+				self, 'notifyPreferencesChanged:', NSUserDefaultsDidChangeNotification, userDefaults)
+		self._updateLocks()
+	
+	def _updateLocks(self):
+		self.setHtmlOptionsEnabled_(userDefaults.boolForKey_(u'singleHTML') or userDefaults.boolForKey_(u'frameHTML'))
+		self.setCanExport_(bool(self.selectedFiles())
+				and (self.htmlOptionsEnabled() or userDefaults.boolForKey_(u'plainText'))
+				and (userDefaults.boolForKey_(u'applescriptStyle') or userDefaults.boolForKey_(u'pythonStyle')
+						or userDefaults.boolForKey_(u'rubyStyle') or userDefaults.boolForKey_(u'objcStyle')))
+	
+	def delete_(self, sender):
+		self.selectedFilesController.removeObjects_(self.selectedFilesController.selectedObjects())
+		self._updateLocks()
+	
+	##
+	
+	def showLog_(self, sender):
+		pass
+	
+	def showLog(self):
+		return self._showLog
+	
+	def setShowLog_(self, value):
+		self._showLog = value
+
+	##
+	
+	def selectedFiles(self):
+		return self._selectedFiles
+
+	def setSelectedFiles_(self, selectedFiles):
+		self._selectedFiles = selectedFiles[:]
+
+	def countOfSelectedFiles(self):
+		return len(self._selectedFiles)
+	countOfSelectedFiles = objc.accessor(countOfSelectedFiles)
+	
+	def objectInSelectedFilesAtIndex_(self, idx):
+		return self._selectedFiles[idx]
+	objectInSelectedFilesAtIndex_ = objc.accessor(objectInSelectedFilesAtIndex_)
+	
+	def insertObject_inSelectedFilesAtIndex_(self, obj, idx):
+		self._selectedFiles.insert(idx, obj)
+	insertObject_inSelectedFilesAtIndex_ = objc.accessor(insertObject_inSelectedFilesAtIndex_)
+
+	def removeObjectFromSelectedFilesAtIndex_(self, idx):
+		del self._selectedFiles[idx]
+	removeObjectFromSelectedFilesAtIndex_ = objc.accessor(removeObjectFromSelectedFilesAtIndex_)
+	
+	def replaceObjectInSelectedFilesAtIndex_withObject_(self, idx, obj):
+		self._selectedFiles[idx] = obj
+	replaceObjectInSelectedFilesAtIndex_withObject_ = objc.accessor(replaceObjectInSelectedFilesAtIndex_withObject_)
+
+	##
+	
+	def canExport(self):
+		return self._canExport
+	
+	def setCanExport_(self, value):
+		self._canExport = value
+	
+	def htmlOptionsEnabled(self):
+		return self._htmlOptionsEnabled
+	
+	def setHtmlOptionsEnabled_(self, value):
+		self._htmlOptionsEnabled = value
+	
+	##
+	
+	def _addPathToSelectedFiles(self, path):
+		item = {'name': _namefrompath(path), 'path': path}
+		if item not in self.selectedFiles():
+				self.insertObject_inSelectedFilesAtIndex_(item, self.countOfSelectedFiles())
+		self._updateLocks()
+	
+	def chooseFromFileBrowser_(self, sender):
+		try:
+			selection = self._stdadditions.choose_file(with_prompt='Select the item(s) to process:', 
+					invisibles=False, multiple_selections_allowed=True)
+		except osax.CommandError, e:
+			if int(e) == -128:
+				return
+			else:
+				raise
+		for alias in selection:
+			self._addPathToSelectedFiles(alias.path)
+	
+	def chooseFromApplicationList_(self, sender):
+		try:
+			selection = self._stdadditions.choose_application(
+					with_prompt='Select the application(s) to process:', 
+					multiple_selections_allowed=True, as_=osax.k.alias)
+		except osax.CommandError, e:
+			if int(e) == -128:
+				return
+			else:
+				raise
+		for alias in selection:
+			self._addPathToSelectedFiles(alias.path)
+	
+	def chooseRunningApplications_(self, sender):
+		names = _sysev.application_processes.name()
+		names.sort(lambda a, b: cmp(a.lower(), b.lower()))
+		selection = self._stdadditions.choose_from_list(
+				names, 
+				with_prompt='Choose one or more running applications:', 
+				multiple_selections_allowed=True)
+		if selection == False:
+			return
+		for name in selection:
+			self._addPathToSelectedFiles(_sysev.application_processes[name].file().path)
+		
+	
+	def chooseInstalledAdditions_(self, sender):
+		selection = self._stdadditions.choose_from_list(
+				osaxNames(), 
+				with_prompt='Choose one or more scripting additions:', 
+				multiple_selections_allowed=True)
+		if selection == False:
+			return
+		for name in selection:
+			self._addPathToSelectedFiles(osaxPathForName(name))
+	
+	##
+	
+	def notifyPreferencesChanged_(self, sender):
+		self._updateLocks()
+	
+	##
+	
+	def _log(self, text):
+		store = self.logTextView.textStorage()
+		store.appendAttributedString_(NSAttributedString.alloc().initWithString_(text))
+		self.logTextView.scrollRangeToVisible_([store.length(), 0])
+	
+	def export_(self, sender):
+		try:
+			outFolder = self._stdadditions.choose_folder('Select the destination folder:').path
+		except osax.CommandError, e:
+			if int(e) == -128:
+				return
+			else:
+				raise
+		# HTML options
+		options = []
+		if userDefaults.boolForKey_(u'compactClasses'):
+			options.append('collapse')
+		if userDefaults.boolForKey_(u'showInvisibles'):
+			options.append('full')
+		plainText, singleHTML, frameHTML = [userDefaults.boolForKey_(name) 
+				for name in [u'plainText', u'singleHTML', u'frameHTML']]
+		styleInfo = [(style, suffix) for key, style, suffix in _styles if userDefaults.boolForKey_(key)]
+		# files to process, sorted by name
+		selection = self.selectedFiles()[:]
+		selection.sort(lambda a,b:cmp(a['name'].lower(), b['name'].lower()))
+		# create progress panel
+		self.progressPanel.center()
+		self.progressPanel.makeKeyAndOrderFront_(None)
+		self.progressPanel.display()
+		failedApps = []
+		session = NSApp().beginModalSessionForWindow_(self.progressPanel)
+		# process each item
+		stop = False
+		for i, item in enumerate(selection):
+			name, path = item['name'], item['path']
+			self._log(u'Exporting %s:\n' % name)
+			self.progressBar.setDoubleValue_(float(i + 1) / len(selection))
+			self.itemName.setStringValue_(name)
+			try:
+				aetes = getaete(path)
+				if not bool(aetes):
+					failedApps.append(name)
+					self._log(u'\tNo terminology found.\n')
+					continue
+				for style, suffix in styleInfo:
+					if NSApp().runModalSession_(session) != NSRunContinuesResponse:
+						for j in range(i, len(selection)):
+							failedApps.append(selection[j]['name'])
+						self._log(u"User cancelled.\n")
+						stop = True
+						break
+					self._log(u'\t%s\n' % style)
+					if plainText:
+						self._log(u'\t\tplain text\n')
+						f = file(os.path.join(outFolder, name + suffix + '.txt'), 'w')
+						try:
+							f.write('\xEF\xBB\xBF') # UTF8 BOM
+							quickdoc.app(path, f, getconverter(style))
+						except:
+							f.close()
+							raise
+						f.close()
+					if singleHTML or frameHTML:
+						terms = aeteparser.parseaetes(aetes, path, style)
+						if singleHTML:
+							self._log(u'\t\tHTML single file\n')
+							html = htmldoc.renderdictionary(terms, style, options)
+							f = open(os.path.join(outFolder, name + suffix + '.html'), 'w')
+							f.write(str(html))
+							f.close()
+						if frameHTML:
+							self._log(u'\t\tHTML frames\n')
+							htmldoc2.renderdictionary(terms, os.path.join(outFolder, name + suffix), style, options)
+				if stop:
+					break
+			except Exception, err:
+				failedApps.append(name)
+				from traceback import print_exc
+				from StringIO import StringIO
+				out = StringIO()
+				self._log(u"Unexpected error:/n")
+				print_exc(file=out)
+				self._log(u'%s' % out.getvalue())
+		# dispose progress panel
+		self.progressPanel.orderOut_(None)
+		NSApp().endModalSession_(session)
+		self._log(u'Done.\n\n')
+		self._stdadditions.beep()
+		if failedApps:
+			buttons = ['OK']
+			if not self._showLog:
+				buttons.insert(0, 'View Log')
+			action = self._stdadditions.display_dialog("Rendered terminology for %i items.\n\n" % (len(selection) - len(failedApps))
+					+ "Couldn't render terminology for: \n    " + '\n    '.join(failedApps), 
+					buttons=buttons, default_button='OK', with_icon=osax.k.caution)[osax.k.button_returned]
+			if action == 'View Log':
+				self.setShowLog_(True)
+		else:
+			self._stdadditions.display_dialog("Rendered terminology for %i items." % len(selection), 
+					buttons=['OK'], default_button=1, with_icon=osax.k.note)
+	
+	def stopProcessing_(self, sender): # cancel button on progress panel
+		NSApp().stopModalWithCode_(-128)
+	
+	def windowWillClose_(self, sender): # quit on main window close
+		NSApp().terminate_(sender)
+		
+	
+#######
+
+AppHelper.runEventLoop()
+

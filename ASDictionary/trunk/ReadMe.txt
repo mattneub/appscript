@@ -3,32 +3,32 @@ ASDictionary
 -----------------------------------
 ABOUT
 
-ASDictionary renders scriptable Mac applications' dictionaries in plain text or HTML format, or dumps their raw aete data to file. Requires Mac OS 10.3 or later. 
+ASDictionary exports scriptable Mac applications' dictionaries in plain text or HTML format. Requires Mac OS 10.3 or later. 
 
 -----------------------------------
 USAGE
 
-1. Drag-n-drop one or more applications onto ASDictionary, or double-click ASDictionary and select from a list of all available applications.
+1. Use the 'Dictionary' menu to select one or more scriptable applications or scripting additions.
 
-2. Choose the desired output formats: raw aete, plain text and/or HTML.
+2. Select one or more file formats: plain text, single-file HTML and/or frame-based HTML. If an HTML format is chosen, check the 'Compact classes' option to combine duplicate classes into one. (For example, TextEdit defines a 'document' class in its Standard Suite, and again in its TextEdit Suite.) Check the 'Show invisibles' option to include hidden classes and commands in HTML output.
 
-3. If an HTML format is chosen, choose whether duplicate class definitions should be combined into one or not. (For example, TextEdit defines a 'document' class in its Standard Suite, and again in its TextEdit Suite.)
+3. Select one or more terminology styles.
 
-4. Select a destination folder for the generated files.
+4. Click 'Export', and select a destination folder for the generated files.
 
 -----------------------------------
 NOTES
 
+- Exporting larger dictionaries may take several seconds; GUI responsiveness may be limited during this time. HTML export options take longer due to the additional processing involved.
+
 - While ASDictionary is fairly tolerant of weird and buggy application dictionaries, HTML generation may fail on a few especially strange ones. Should this happen, please submit a bug report.
-
-- By default, ASDictionary uses its built-in HTML template to render AppleScript dictionaries. To have it use an external HTML template, copy the ASDictionary folder located within the Templates folder to your ~/Library/Application Support folder. You can then edit the ~/Library/Application Support/ASDictionary/Template.html file to use a different CSS stylesheet, or to make minor modifications to the HTML markup. 
-
-Note that HTML elements containing special 'node' attributes are used by ASDictionary to insert content. Deleting or moving these elements may break the template unless you modify ASDictionary as well; see the Source folder.
 
 - Many thanks to the following for comments, suggestions and bug reports: Philip Aker, Emmanuel Levy, Tim Mansour, Jake Pietrykowski, Courtney Schwartz
 
 -----------------------------------
 HISTORY
+
+2007-06-30 -- 0.8.0; added frame-based HTML option; added objc-appscript formatting option; removed aete export option; improved GUI
 
 2006-11-19 -- 0.7.1; 'collapse classes' dialog now shows when exporting only Ruby-style dictionaries; updated for py-appscript 0.17.0 and rb-appscript 0.2.0
 

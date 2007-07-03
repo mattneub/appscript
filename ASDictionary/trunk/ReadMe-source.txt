@@ -2,12 +2,14 @@ ASDictionary source
 
 Requirements:
 
-- appscript 0.17.0+ <http://appscript.sourceforge.net>
+- appscript 0.18.0+ <http://appscript.sourceforge.net>
+
+- PyObjC <http://pyobjc.sourceforge.net/>
 
 - py2app <http://undefined.org/python/>
 
 --
 
-To build, cd to ASDictionary-0.7.1 directory and run:
+To build, cd to ASDictionary-0.8.0 directory and run:
 
 	python setup.py py2app
