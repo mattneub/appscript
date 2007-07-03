@@ -16,7 +16,7 @@ plist = dict(
 
 setup(
     app=["ASTranslate.py"],
-    version='0.2.0',
-    data_files=["MainMenu.nib", "ASTranslateDocument.nib"],
+    version='0.3.0',
+    data_files=["MainMenu.nib", "ASTranslateDocument.nib", "rubyrenderer.rb"],
     options=dict(py2app=dict(plist=plist)),
 )

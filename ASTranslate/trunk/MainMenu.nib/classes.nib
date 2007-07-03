@@ -1,5 +1,6 @@
 {
     IBClasses = (
+        {CLASS = ASApplicationDelegate; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
         {
             ACTIONS = {runScript = id; }; 
             CLASS = FirstResponder; 

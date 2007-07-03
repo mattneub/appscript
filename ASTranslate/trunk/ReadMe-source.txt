@@ -10,6 +10,6 @@ Requirements:
 
 --
 
-To build, cd to ASTranslate-source-0.2.0 directory and run:
+To build, cd to ASTranslate-source-0.3.0 directory and run:
 
 	python setup.py py2app

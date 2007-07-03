@@ -13,11 +13,17 @@ Usage:
 
 	with timeout of 10 seconds		tell application "Finder" to folder 1 of home as alias	end timeout
 
-2. Select Document > Translate. The AppleScript code is compiled and executed, and the bottom pane displays each Apple event sent by AppleScript as Python appscript code, e.g.:
+2. Select Document > Translate. The AppleScript code is compiled and executed, and the bottom pane displays each Apple event sent by AppleScript as appscript code, e.g.:
 
 	app(u'/Applications/TextEdit.app').documents.text.get()
 
 	app(u'/System/Library/CoreServices/Finder.app').home.folders[1].get(resulttype=k.Alias, timeout=10)
+
+Click on the tabs below the bottom pane to switch between Python and Ruby translations. 
+
+Note that Ruby appscript translations are only available if rb-appscript 0.3.0 or later is installed. You can obtain the latest rb-appscript release from:
+
+	http://rb-appscript.rubyforge.org/
 
 -----------------------------------
 NOTES
@@ -28,8 +34,12 @@ NOTES
 
 - Don't forget that all Apple events sent by AppleScript will be passed to applications to be handled as normal. i.e. Destructive commands (e.g. 'tell "Finder" to delete some file') will still do their destructive thing; invalid or unsuccessful commands will cause AppleScript to raise an error, etc.
 
+- Ruby translations are only available if rb-appscript is installed on the host machine's default Ruby installation. (The command line ruby interpreter used by ASTranslate is determined by the host's /bin/sh $PATH environment variable.)
+
 -----------------------------------
 HISTORY
+
+2007-06-25 -- 0.3.0; added rb-appscript support; subject ('subj') attributes now display correctly
 
 2006-08-17 -- 0.2.0; updated for appscript 0.16.1; fixed 'make' command rendering bug
 
