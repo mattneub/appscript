@@ -17,6 +17,8 @@ Users should update existing code as necessary.
 
 - added support for custom reference roots in AEM and Appscript
 
+- AEM::Application#inspect now displays correct class name when Application class is subclassed
+
 
 2007-04-10 -- 0.3.1
 

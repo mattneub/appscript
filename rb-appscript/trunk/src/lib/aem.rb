@@ -144,10 +144,10 @@ module AEM
 		
 		def inspect
 			if @identity[0] == :current
-				return 'AEM::Application.current'
+				return "#{self.class}.current"
 			else
 				con_name = {:path => 'by_path', :url => 'by_url', :pid => 'by_pid', :desc => 'by_desc'}[@identity[0]]
-				return "AEM::Application.#{con_name}(#{@identity[1].inspect})"
+				return "#{self.class}.#{con_name}(#{@identity[1].inspect})"
 			end
 		end
 		
