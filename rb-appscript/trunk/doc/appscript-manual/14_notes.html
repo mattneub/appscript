@@ -21,9 +21,16 @@
 <!-- content -->
 <div id="content">
 
-<h2>Dealing with problem applications</h2>
+<h2>Rubygems issues</h2>
 
-<p>Appscript provides a number of mechanisms for dealing with problematic applications. See the <a href="http://rb-appscript.rubyforge.org">appscript website</a> for more information.</p>
+<p>If using the appscript gem, don't forget to <code>require 'rubygems'</code> <em>before</em> requiring appscript, otherwise the appscript gem won't load. For example:</p>
+
+<pre><code>begin
+    require 'rubygems'
+rescue LoadError
+end
+require 'appscript'
+...</code></pre>
 
 
 <h2>Security issues</h2>
@@ -40,22 +47,15 @@
 
 <p>Some applications (e.g. QuarkXpress) may return values which appscript cannot convert to equivalent Ruby types. These values are usually of types which are defined, used and understood only by that particular application, and will be represented in Ruby as raw <code>AE::AEDesc</code> objects (e.g. <code>#&lt;AE::AEDesc:0x33fc40&gt;</code>). While there's not much you can do with raw <code>AEDesc</code> objects within Ruby (it's best just to treat them as opaque types), subsequent commands can pass them back to the application for further use and/or conversion just like any other value.</p>
 
-<!--
-<h2>aemcodegen</h2>
 
-<p>The <code>appscript.tools.aemcodegen</code> module is an convenience tool for translating appscript commands into their aem equivalents; useful if you want to control applications using the lower-level aem package. See the <code>aemcodegen</code> module's docstring for more information.</p>
--->
+<h2>Dealing with problem applications</h2>
 
-<h2>Appscript and threads</h2>
-
-<p>When using appscript in multi-threaded systems, always send application commands from the main thread. (This is a limitation of the underlying aem package, which currently doesn't support receiving reply events on non-main threads.)</p>
+<p>Appscript provides a number of mechanisms for dealing with problematic applications. See the <a href="http://rb-appscript.rubyforge.org">appscript website</a> for more information.</p>
 
 
 <h2>Credits</h2>
 
-<p>Many thanks to Bill Birkett, Jordan Breeding, FUJIMOTO Hisakuni, Alexander Kellett, Chris Nebel, Matt Neuburg, Laurent Sansonetti and Michelle Steiner, and to all those who have contributed comments, suggestions and bug reports to py-appscript.</p>
-
-<p>Thanks also to <a href="http://www.macosforge.org/">Mac OS Forge</a> and <a href="http://rubyforge.org/">RubyForge</a> for providing project hosting and support.</p>
+<p>Many thanks to Bill Birkett, Jordan Breeding, Fujimoto Hisakuni, Jordan K Hubbard, Alexander Kellett, Chris Nebel, Matt Neuburg, Laurent Sansonetti, Michelle Steiner, Kevin Van Vechten, and all the appscript who've provided comments, criticisms and encouragement along the way.</p>
 
 
 <h2>Donations</h2>

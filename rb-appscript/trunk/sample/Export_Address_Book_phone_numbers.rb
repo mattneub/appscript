@@ -2,6 +2,9 @@
 
 # Exports phone numbers from Address Book.
 
+# Note: if using the appscript gem, rubygems must be required first:
+begin; require 'rubygems'; rescue LoadError; end
+
 require "osax"
 include Appscript, OSAX
 

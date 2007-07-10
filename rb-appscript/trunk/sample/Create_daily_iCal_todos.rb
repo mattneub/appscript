@@ -24,6 +24,8 @@
 # <http://web.mac.com/lypanov/iWeb/Web/Diary/9950DF91-726E-42B2-A639-
 #  1967D1DE7545.html>
 
+# Note: if using the appscript gem, rubygems must be required first:
+begin; require 'rubygems'; rescue LoadError; end
 
 require "appscript"
 include Appscript

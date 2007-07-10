@@ -5,6 +5,9 @@ include Appscript
 
 # Add an event to Home calendar that runs from 7am to 9 am tomorrow
 
+# Note: if using the appscript gem, rubygems must be required first:
+begin; require 'rubygems'; rescue LoadError; end
+
 calendar_name = 'Home'
 t = Time.now + 60 * 60 * 24
 start = Time.local(t.year, t.month, t.day, 7)

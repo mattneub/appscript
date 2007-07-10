@@ -542,13 +542,18 @@ module Appscript
 				new_ref = @AS_aem_reference.by_range(
 						self._resolve_range_boundary(selector, 1),
 						self._resolve_range_boundary(end_range_selector, -1))
-			elsif selector.is_a?(String)
-				 new_ref = @AS_aem_reference.by_name(selector)
-			elsif selector.is_a?(Appscript::GenericReference)
-				new_ref = @AS_aem_reference.by_filter(
-						selector.AS_resolve(@AS_app_data).AS_aem_reference)
 			else
-				new_ref = @AS_aem_reference.by_index(selector)
+				case selector
+					when String
+						 new_ref = @AS_aem_reference.by_name(selector)
+					when Appscript::GenericReference
+						new_ref = @AS_aem_reference.by_filter(
+								selector.AS_resolve(@AS_app_data).AS_aem_reference)
+					when Appscript::Reference, AEMReference::Test
+						new_ref = @AS_aem_reference.by_filter(selector)
+				else
+					new_ref = @AS_aem_reference.by_index(selector)
+				end
 			end
 			return Reference.new(@AS_app_data, new_ref)
 		end

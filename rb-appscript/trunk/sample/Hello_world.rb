@@ -1,5 +1,8 @@
 #!/usr/bin/env ruby
 
+# Note: if using the appscript gem, rubygems must be required first:
+begin; require 'rubygems'; rescue LoadError; end
+
 # 1. "Hello world" in TextEdit:
 
 require "appscript"

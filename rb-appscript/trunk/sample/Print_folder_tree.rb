@@ -2,6 +2,9 @@
 
 # Prints the sub-folder hierarchy of a given folder as a list of folder names indented according to depth.
 
+# Note: if using the appscript gem, rubygems must be required first:
+begin; require 'rubygems'; rescue LoadError; end
+
 require "appscript"
 include Appscript
 

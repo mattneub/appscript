@@ -6,6 +6,9 @@
 # Based on an AppleScript example from:
 # <http://developer.apple.com/cocoa/applescriptforapps.html>
 
+# Note: if using the appscript gem, rubygems must be required first:
+begin; require 'rubygems'; rescue LoadError; end
+
 require "appscript"
 include Appscript
 

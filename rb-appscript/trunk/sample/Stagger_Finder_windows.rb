@@ -4,6 +4,9 @@
 # another. (Could easily be adapted to work with any scriptable application
 # that uses standard window class terminology.)
 
+# Note: if using the appscript gem, rubygems must be required first:
+begin; require 'rubygems'; rescue LoadError; end
+
 require "appscript"
 include Appscript
 
