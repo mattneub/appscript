@@ -8,7 +8,7 @@ import struct, MacOS
 
 from CarbonX import kAE, kOSA
 from CarbonX.AE import AECreateList, AECreateDesc
-import aem, mactypes
+import aem, mactypes, aem.types.objectspecifiers
 
 from genericreference import GenericReference
 import terminology
@@ -454,6 +454,8 @@ class Reference(_Base):
 		elif isinstance(selector, GenericReference):
 			return Reference(self.AS_appdata, self.AS_aemreference.byfilter(
 					selector.AS_resolve(Reference, self.AS_appdata).AS_aemreference))
+		elif isinstance(selector, (Reference, aem.types.objectspecifiers.Test)):
+			return Reference(self.AS_appdata, self.AS_aemreference.byfilter(selector))
 		elif isinstance(selector, slice):
 			return Reference(self.AS_appdata, self.AS_aemreference.byrange(
 					self._resolveRangeBoundary(selector.start, 1),

@@ -1,5 +1,10 @@
 HISTORY
 
+2007-??-?? -- 0.18.0
+
+- reference.Reference.__getitem__ now accepts real references and aem specifiers as by-filter test clauses (previously only accepted GenericReference)
+
+
 2007-04-19 -- 0.17.3
 
 - fixed reconnection code in reference module's Command class (was referring to non-existent AS_appdata.path)

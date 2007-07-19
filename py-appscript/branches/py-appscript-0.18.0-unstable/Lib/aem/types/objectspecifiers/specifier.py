@@ -422,10 +422,7 @@ class ElementsByFilter(_MultipleElements):
 	
 	def __init__(self, wantcode, container, key):
 		if not isinstance(key, testclause.Test):
-			if isinstance(key, Specifier) and key.AEM_root() == its:
-				key = key.eq(True)
-			else:
-				raise TypeError, 'Not a test specifier: %r' % key
+			raise TypeError, 'Not a test specifier: %r' % key
 		_PositionSpecifier.__init__(self, wantcode, container.AEM_trueSelf(), key)
 	
 	def __repr__(self):

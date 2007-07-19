@@ -1,10 +1,16 @@
 HISTORY
 
-2007-02-23 -- 0.12.?
+2007-??-?? -- 0.13.0
 
 - Codecs.unpackunknown no longer causes infinite recursion if a record-like AEDesc is given and there's no typeAERecord unpacker available to unpack it after unpackunknown converts it to a record descriptor
 
 - added support for object specifiers with custom roots
+
+- send.Event._sendAppleEvent now uses CarbonX.AE.AEDesc.SendMessageThreadSafe  instead of CarbonX.AE.AEDesc.AESendMessage, allowing reply events to be received on non-main threads.
+
+- byfilter method no longer accepts non-test specifiers as test clauses. Previously, a reference such as 'its.visible' would automatically be expanded to the comparison test 'its.visible.eq(true)' as a convenience. However, this shortcut didn't apply when these non-test references appeared as arguments to the #and and #or logical test methods, which meant that this shortcut behaviour was inconsistent and potentially confusing; therefore it has been removed. Users should update existing code as necessary.
+
+- aem.Application.__repr__ now displays correct class name when Application class is subclassed
 
 
 2007-01-20 -- 0.12.1

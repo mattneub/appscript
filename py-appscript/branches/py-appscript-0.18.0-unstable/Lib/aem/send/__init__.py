@@ -71,7 +71,12 @@ class Application(BASE):
 			args.append('%s=%r' % self.AEM_identity)
 		if self._codecs != _defaultCodecs:
 			args.append('codecs=%r' % self._codecs)
-		return 'aem.Application(%s)' % ', '.join(args)
+		modulename = '%s.' % self.__class__.__module__
+		if modulename == 'aem.send.':
+			modulename = 'aem.'
+		elif modulename == '__main__.':
+			modulename = ''
+		return '%s%s(%s)' % (modulename, self.__class__.__name__, ', '.join(args))
 			
 	__str__ = __repr__
 	
