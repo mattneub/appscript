@@ -1,5 +1,8 @@
 HISTORY
 
+2007-07-26 -- 0.10.4
+- sax.aeteparser no longer raises error if aete isn't fully parsed
+
 2007-06-30 -- 0.10.3
 - OSAGetAppTerminology no longer opens a new ascr component instance each time it's called; instead a single instance is opened on the first call and reused for subsequent calls.
 - OSAGetSysTerminology now closes opened component before returning.

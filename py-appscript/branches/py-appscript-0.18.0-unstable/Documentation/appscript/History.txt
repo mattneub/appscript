@@ -4,6 +4,8 @@ HISTORY
 
 - reference.Reference.__getitem__ now accepts real references and aem specifiers as by-filter test clauses (previously only accepted GenericReference)
 
+- no longer raises error if aete isn't fully parsed
+
 
 2007-04-19 -- 0.17.3
 

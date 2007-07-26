@@ -173,8 +173,6 @@ class Parser:
 				self._ptr = 6 # version, language, script integers
 				for _ in range(self.integer()):
 					self.parseSuite()
-				if not self._ptr == len(self._str):
-					raise RuntimeError, "aete was not fully parsed."
 		# singular names are normally used in the classes table and plural names in the elements table. However, if an aete defines a singular name but not a plural name then the missing plural name is substituted with the singular name; and vice-versa if there's no singular equivalent for a plural name.
 		missingElements = self._foundClassCodes - self._foundElementCodes
 		missingClasses = self._foundElementCodes - self._foundClassCodes

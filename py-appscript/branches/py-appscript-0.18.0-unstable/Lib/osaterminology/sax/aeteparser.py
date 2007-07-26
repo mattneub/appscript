@@ -300,6 +300,4 @@ def parse(aetes, receiver, byteorder=kNative):
 			a.integer() # language
 			a.integer() # script
 			a.list(_parseSuite, receiver)
-			if not a.isComplete(): # sanity check
-				raise RuntimeError, "aete was not fully parsed."
 
