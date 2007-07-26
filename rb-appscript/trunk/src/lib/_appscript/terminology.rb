@@ -210,9 +210,6 @@ module TerminologyParser
 					@_str = aete.data
 					@_ptr = 6 # version, language, script integers
 					_integer.times { parse_suite }
-					if not @_ptr == @_str.length
-						raise RuntimeError, "aete was not fully parsed."
-					end
 				end
 			end
 			# singular names are normally used in the classes table and plural names in the elements table. However, if an aete defines a singular name but not a plural name then the missing plural name is substituted with the singular name; and vice-versa if there's no singular equivalent for a plural name.
@@ -383,26 +380,25 @@ module Terminology
 		if not /^[A-Z][A-Za-z0-9_]*$/ === module_name
 			raise RuntimeError, "Invalid module name."
 		end
+		# Get aete(s)
+		begin
+			begin
+				aetes = AEM::Codecs.new.unpack(AE.get_app_terminology(app_path).coerce(KAE::TypeAEList))
+			rescue NotImplementedError # get_app_terminology is unavailable on 64-bit Leopard
+				aetes = Terminology.aetes_for_app(AEM::Application.by_path(app_path))
+			end
+		rescue AE::MacOSError => e
+			if  e.to_i == -192 # aete resource not found
+				raise RuntimeError, "No terminology found."
+			else
+				raise
+			end
+		end
+		aetes.delete_if { |aete| not (aete.is_a?(AE::AEDesc) and aete.type == KAE::TypeAETE) }
+		# Parse aete(s) into intermediate tables, suitable for use by Terminology#tables_for_module
+		tables = TerminologyParser.build_tables_for_aetes(aetes)
 		# Write module
 		File.open(out_path, "w") do |f|
-			# Get aete(s)
-			begin
-				begin
-					aetes = AEM::Codecs.new.unpack(AE.get_app_terminology(app_path).coerce(KAE::TypeAEList))
-				rescue NotImplementedError # get_app_terminology is unavailable on 64-bit Leopard
-					aetes = Terminology.aetes_for_app(AEM::Application.by_path(app_path))
-				end
-			rescue AE::MacOSError => e
-				if  e.to_i == -192 # aete resource not found
-					raise RuntimeError, "No terminology found."
-				else
-					raise
-				end
-			end
-			aetes.delete_if { |aete| not (aete.is_a?(AE::AEDesc) and aete.type == KAE::TypeAETE) }
-			# Parse aete(s) into intermediate tables, suitable for use by Terminology#tables_for_module
-			tables = TerminologyParser.build_tables_for_aetes(aetes)
-			# Write module code
 			f.puts "module #{module_name}"
 			f.puts "\tVersion = 1.1"
 			f.puts "\tPath = #{app_path.inspect}"
