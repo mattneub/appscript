@@ -25,6 +25,8 @@ Users should update existing code as necessary.
 
 - aete parser no longer raises error if aete isn't fully parsed (i.e. same as AppleScript) [SI]
 
+- added Appscript::Reference#help
+
 
 2007-04-10 -- 0.3.1
 

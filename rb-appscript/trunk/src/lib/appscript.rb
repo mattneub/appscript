@@ -26,6 +26,8 @@ module Appscript
 	
 	class AppData < AEM::Codecs
 	
+		HelpAgentID = 'net.sourceforge.appscript.appscripthelpagent'
+	
 		attr_reader :constructor, :identifier, :reference_codecs
 		attr_writer :reference_codecs
 	
@@ -36,6 +38,7 @@ module Appscript
 			@constructor = constructor # name of AEM::Application constructor to use/:by_aem_app
 			@identifier = identifier # argument for AEM::Application constructor
 			@reference_codecs = AEM::Codecs.new # low-level Codecs object used to unpack references; used by AppData#unpack_object_specifier, AppData#unpack_insertion_loc. Note: this is a bit kludgy, and it's be better to use AppData for all unpacking, but it should be 'good enough' in practice.
+			@_help_agent = nil
 		end
 		
 		def connect # initialize AEM::Application instance and terminology tables the first time they are needed
@@ -60,6 +63,54 @@ module Appscript
 				@type_by_code, @type_by_name, @reference_by_code, @reference_by_name = Terminology.tables_for_module(@_terms)
 			end
 			extend(AppDataAccessors)
+		end
+		
+		#######
+		
+		Constructors = {
+			:by_path => 'path',
+			:by_pid => 'pid',
+			:by_url => 'url',
+			:by_aem_app => 'aemapp',
+			:current => 'current',
+		}
+		
+		def _make_help_agent
+			begin
+				@_help_agent = AEM::Application.by_path(FindApp.by_id(HelpAgentID))
+				return true
+			rescue FindApp::ApplicationNotFoundError
+				puts "No help available: AppscriptHelpAgent.app not found."
+				return false
+			end
+		end
+		
+		def _display_help(flags, ref)
+			begin
+				puts @_help_agent.event('ASHAHelp', {
+						'Cons' => Constructors[@constructor],
+						'Iden' => @constructor == :by_aem_app ? @identifier.address_desc : @identifier,
+						'Styl' => 'rb-appscript',
+						'Flag' => flags,
+						'aRef' => pack(ref),
+					}).send
+				return nil
+			rescue AEM::CommandError => e
+				return e
+			end
+		end
+		
+		def help(flags, ref)
+			if not @_help_agent
+				return ref if not _make_help_agent
+			end
+			e = _display_help(flags, ref)
+			if e and [-600, -609].include?(e.number) # not running
+				return ref if not _make_help_agent
+				e = _display_help(flags, ref)
+			end
+			puts "No help available: AppscriptHelpAgent raised an error: #{e}." if e
+			return ref
 		end
 		
 		#######
@@ -309,6 +360,10 @@ module Appscript
 		end
 		
 		#######
+		
+		def help(flags='-t')
+			return @AS_app_data.help(flags, self)
+		end
 		
 		def Reference._pack_uint32(n) # used to pack csig attributes
 			return AE::AEDesc.new(KAE::TypeUInt32, [n].pack('L'))
