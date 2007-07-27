@@ -120,23 +120,18 @@ def _unpackAppleEvent(event, includeAttributes, requiredArgDefs, optionalArgDefs
 	for code, argName, datatypes in requiredArgDefs:
 		try:
 			argValue = params.pop(code)
-#			if argValue.type == kAE.typeNull:
-#				raise KeyError
 		except KeyError:
 			raise EventHandlerError(-1721, "Required parameter %r is missing." % code)
 		else:
 			kargs[argName] = _unpackValue(argValue, datatypes, codecs)
 	for code, argValue in params.items():
-		if argValue.type != kAE.typeNull:
-			try:
-				argName, datatypes = optionalArgDefs[code]
-			except KeyError:
-				if code == kAE.keyAERequestedType: # event contains a 'desired result type' parameter but callback doesn't handle this explicitly, so have callback wrapper attempt to perform coercion automatically when packing result
-					desiredResultType = argValue
-				# else:
-				#	raise EventHandlerError(-1721, "Parameter %r is not supported for this command." % code) # Note: SIG says that any unrecognised parameters should be ignored
-			else:
-				kargs[argName] = _unpackValue(argValue, datatypes, codecs)
+		try:
+			argName, datatypes = optionalArgDefs[code]
+		except KeyError: # (note: SIG says that any unrecognised parameters should be ignored)
+			if code == kAE.keyAERequestedType: # event contains a 'desired result type' parameter but callback doesn't handle this explicitly, so have callback wrapper attempt to perform coercion automatically when packing result
+				desiredResultType = argValue
+		else:
+			kargs[argName] = _unpackValue(argValue, datatypes, codecs)
 	return kargs, desiredResultType
 
 

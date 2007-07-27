@@ -74,6 +74,38 @@ class ArgMissingValue(ArgDef):
 kArgMissingValue = ArgMissingValue()
 
 
+class ArgNull(ArgDef):
+	"""
+		Describes a typeNull descriptor. Clients shouldn't instantiate directly; use kArgNull instead.
+		
+		May be supplied in ArgMultiChoice to indicate that None is an acceptable parameter value, 
+		e.g. ArgMultiChoice(kAE.typeUnicodeText, kArgNull)
+	"""
+	
+	AEM_code = kAE.typeNull
+	
+	def AEM_unpack(self, desc, codecs):
+		if desc.type == kAE.typeNull:
+			return True, None
+		else:
+			return False, EventHandlerError(-1704, "Not a typeNull descriptor.", desc)
+
+kArgNull = ArgNull()
+
+
+class ArgAny(ArgDef):
+	"""
+		Describes any value. Clients shouldn't instantiate directly; use kArgAny instead.
+	"""
+	
+	AEM_code = kAE.typeWildCard
+	
+	def AEM_unpack(self, desc, codecs):
+		return True, codecs.unpack(desc)
+
+kArgAny = ArgAny()
+
+
 class ArgType(ArgDef):
 	"""
 		Describes a simple AE type, e.g. ArgType('utxt') = a value of typeUnicodeText
@@ -89,7 +121,10 @@ class ArgType(ArgDef):
 		self.AEM_code = code
 	
 	def _unpack(self, desc, codecs):
-		return True, codecs.unpack(desc.AECoerceDesc(self.AEM_code))
+		if desc.type == self.AEM_code or self.AEM_code == kAE.typeWildCard:
+			return True, codecs.unpack(desc)
+		else:
+			return True, codecs.unpack(desc.AECoerceDesc(self.AEM_code))
 
 
 class ArgEnum(ArgDef):

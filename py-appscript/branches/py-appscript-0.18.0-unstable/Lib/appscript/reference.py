@@ -225,6 +225,12 @@ class AppData(aem.Codecs):
 	typebyname = property(lambda self: self.connect().typebyname)
 	referencebycode = property(lambda self: self.connect().referencebycode)
 	referencebyname = property(lambda self: self.connect().referencebyname)
+	
+	def _helpObject(self):
+		from helpsystem import Help
+		self.helpobject = Help(terminology.aetesforapp(self.target), self.identifier or 'Current Application') # TO DO: better formatting of name
+		return self.helpobject
+	helpobject = property(lambda self: self._helpObject())
 
 	def pack(self, data):
 		if isinstance(data, GenericReference):
@@ -241,11 +247,7 @@ class AppData(aem.Codecs):
 	# Help system
 	
 	def help(self, flags, ref):
-		# Stub method; initialises Help object and replaces itself with a real help() function the first time it's called.
-		from helpsystem import Help
-		helpObj = Help(terminology.aetesforapp(self.target), self.identifier or 'Current Application')
-		self.help = lambda flags, ref: helpObj.help(flags, ref) # replace stub method with real help
-		return self.help(flags, ref) # call real help. Note that help system is responsible for providing a return value (usually the same reference it was called upon, but it may modify this).
+		return self.helpobject.help(flags, ref) # call real help. Note that help system is responsible for providing a return value (usually the same reference it was called upon, but it may modify this).
 
 
 ######################################################################
