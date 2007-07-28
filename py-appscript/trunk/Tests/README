@@ -1,1 +1,0 @@
-Some of the code in these tests may not yet be 100% portable (hardcoded paths, etc) so may currently fail for some users, although they have been passed on G4 and i386 hardware running OS X 10.4.x + Python 2.5.
