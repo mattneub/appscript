@@ -42,7 +42,7 @@
 <li>The application-name argument may be the name or full path of the application for which glues should be generated. If omitted, the resulting glue files will contain only the default terminology provided by appscript.</li>
 </ul>
 
-<p>For example, to output <code>TEGlue.h</code> and associated files for TextEdit to the folder <code>~/TEGlue</code>:</p>
+<p>For example, to output <code>TEGlue.h</code> and associated files for TextEdit to the folder <code>TEGlue</code>:</p>
 
 <pre><code>osaglue -o TEGlue TE TextEdit</code></pre>
 
@@ -60,7 +60,7 @@
 
 <li><code><var>PREFIX</var>Reference</code> -- represents Apple Event Object Model queries (a.k.a. application references), e.g. <code>TEReference</code></li>
 
-<li><code><var>PREFIXCOMMAND</var>Command</code> -- represents an application command (one class for each application command), e.g. <code>TEMakeCommand</code>, <code>TEMoveCommand</code>, etc.</li>
+<li><code><var>PREFIXNAME</var>Command</code> -- represents an application command (one class for each application command), e.g. <code>TEMakeCommand</code>, <code>TEMoveCommand</code>, etc.</li>
 
 <li><code><var>PREFIX</var>Application</code> -- represents an application, e.g. <code>TEApplication</code></li>
 </ul>

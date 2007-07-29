@@ -106,22 +106,6 @@
 <p>See the Apple Event Manager documentation for more information.</p>
 
 
-<h3>Specifying the Mach port to receive the reply event</h3>
-
-<p>By default, the Apple Event Manager receives reply events on the main thread via the process's default Mach port. When sending events from a non-main thread, if the <code>kAEWaitReply</code> send mode is used, the thread should create its own Mach port to receive the reply events, and pass it to the command object's <code>-replyPort:</code> method before sending the event:</p>
-
-<pre><code>- (id)replyPort:(mach_port_t)machPort;</code></pre>
-
-<p>Example usage:</p>
-
-<pre><code>mach_port_t rp;
-mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &rp);
-...
-[commandObj replyPort: rp];
-reply = [commandObj send];
-...
-mach_port_destroy(mach_task_self(), rp);</code></pre>
-
 
 <h3>Specifying the reply value's type</h3>
 
