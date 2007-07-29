@@ -241,9 +241,9 @@ _selectorimplementation = """
 
 // insertion location selectors
 
-- (PREFIXReference *)start {
+- (PREFIXReference *)beginning {
     return [PREFIXReference referenceWithAppData: AS_appData
-                                 aemReference: [AS_aemReference start]];
+                                 aemReference: [AS_aemReference beginning]];
 }
 
 - (PREFIXReference *)end {
@@ -293,9 +293,9 @@ _selectorimplementation = """
                                  aemReference: [AS_aemReference lessOrEquals: object]];
 }
 
-- (PREFIXReference *)startsWith:(id)object {
+- (PREFIXReference *)beginsWith:(id)object {
     return [PREFIXReference referenceWithAppData: AS_appData
-                                 aemReference: [AS_aemReference startsWith: object]];
+                                 aemReference: [AS_aemReference beginsWith: object]];
 }
 
 - (PREFIXReference *)endsWith:(id)object {
