@@ -2,7 +2,7 @@
  * TEReferenceGlue.m
  *
  * /Applications/TextEdit.app
- * 2007-02-04 12:49:58 (GMT)
+ * osaglue 0.2.0
  *
  */
 
@@ -546,63 +546,63 @@
 // ordinal selectors
 
 - (TEReference *)first {
-    return [[self class] referenceWithAppData: AS_appData
+    return [TEReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference first]];
 }
 
 - (TEReference *)middle {
-    return [[self class] referenceWithAppData: AS_appData
+    return [TEReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference middle]];
 }
 
 - (TEReference *)last {
-    return [[self class] referenceWithAppData: AS_appData
+    return [TEReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference last]];
 }
 
 - (TEReference *)any {
-    return [[self class] referenceWithAppData: AS_appData
+    return [TEReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference any]];
 }
 
 // by-index, by-name, by-id selectors
  
 - (TEReference *)at:(long)index {
-    return [[self class] referenceWithAppData: AS_appData
+    return [TEReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference at: index]];
 }
 
 - (TEReference *)byIndex:(id)index { // index is normally NSNumber, but may occasionally be other types
-    return [[self class] referenceWithAppData: AS_appData
+    return [TEReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference byIndex: index]];
 }
 
 - (TEReference *)byName:(NSString *)name {
-    return [[self class] referenceWithAppData: AS_appData
+    return [TEReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference byName: name]];
 }
 
 - (TEReference *)byID:(id)id_ {
-    return [[self class] referenceWithAppData: AS_appData
+    return [TEReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference byID: id_]];
 }
 
 // by-relative-position selectors
 
 - (TEReference *)previous:(ASConstant *)class_ {
-    return [[self class] referenceWithAppData: AS_appData
+    return [TEReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference previous: [class_ AS_code]]];
 }
 
 - (TEReference *)next:(ASConstant *)class_ {
-    return [[self class] referenceWithAppData: AS_appData
+    return [TEReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference next: [class_ AS_code]]];
 }
 
 // by-range selector
 
 - (TEReference *)at:(long)fromIndex to:(long)toIndex {
-    return [[self class] referenceWithAppData: AS_appData
+    return [TEReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference at: fromIndex to: toIndex]];
 }
 
@@ -612,7 +612,7 @@
         fromObject = [fromObject AS_aemReference];
     if ([toObject isKindOfClass: [TEReference class]])
         toObject = [toObject AS_aemReference];
-    return [[self class] referenceWithAppData: AS_appData
+    return [TEReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference byRange: fromObject to: toObject]];
 }
 
@@ -620,96 +620,96 @@
 
 - (TEReference *)byTest:(TEReference *)testReference {
     // note: getting AS_aemReference won't work for ASDynamicReference
-    return [[self class] referenceWithAppData: AS_appData
+    return [TEReference referenceWithAppData: AS_appData
                     aemReference: [AS_aemReference byTest: [testReference AS_aemReference]]];
 }
 
 // insertion location selectors
 
-- (TEReference *)start {
-    return [[self class] referenceWithAppData: AS_appData
-                                 aemReference: [AS_aemReference start]];
+- (TEReference *)beginning {
+    return [TEReference referenceWithAppData: AS_appData
+                                 aemReference: [AS_aemReference beginning]];
 }
 
 - (TEReference *)end {
-    return [[self class] referenceWithAppData: AS_appData
+    return [TEReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference end]];
 }
 
 - (TEReference *)before {
-    return [[self class] referenceWithAppData: AS_appData
+    return [TEReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference before]];
 }
 
 - (TEReference *)after {
-    return [[self class] referenceWithAppData: AS_appData
+    return [TEReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference after]];
 }
 
 // Comparison and logic tests
 
 - (TEReference *)greaterThan:(id)object {
-    return [[self class] referenceWithAppData: AS_appData
+    return [TEReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference greaterThan: object]];
 }
 
 - (TEReference *)greaterOrEquals:(id)object {
-    return [[self class] referenceWithAppData: AS_appData
+    return [TEReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference greaterOrEquals: object]];
 }
 
 - (TEReference *)equals:(id)object {
-    return [[self class] referenceWithAppData: AS_appData
+    return [TEReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference equals: object]];
 }
 
 - (TEReference *)notEquals:(id)object {
-    return [[self class] referenceWithAppData: AS_appData
+    return [TEReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference notEquals: object]];
 }
 
 - (TEReference *)lessThan:(id)object {
-    return [[self class] referenceWithAppData: AS_appData
+    return [TEReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference lessThan: object]];
 }
 
 - (TEReference *)lessOrEquals:(id)object {
-    return [[self class] referenceWithAppData: AS_appData
+    return [TEReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference lessOrEquals: object]];
 }
 
-- (TEReference *)startsWith:(id)object {
-    return [[self class] referenceWithAppData: AS_appData
-                                 aemReference: [AS_aemReference startsWith: object]];
+- (TEReference *)beginsWith:(id)object {
+    return [TEReference referenceWithAppData: AS_appData
+                                 aemReference: [AS_aemReference beginsWith: object]];
 }
 
 - (TEReference *)endsWith:(id)object {
-    return [[self class] referenceWithAppData: AS_appData
+    return [TEReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference endsWith: object]];
 }
 
 - (TEReference *)contains:(id)object {
-    return [[self class] referenceWithAppData: AS_appData
+    return [TEReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference contains: object]];
 }
 
 - (TEReference *)isIn:(id)object {
-    return [[self class] referenceWithAppData: AS_appData
+    return [TEReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference isIn: object]];
 }
 
 - (TEReference *)AND:(id)remainingOperands {
-    return [[self class] referenceWithAppData: AS_appData
+    return [TEReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference AND: remainingOperands]];
 }
 
 - (TEReference *)OR:(id)remainingOperands {
-    return [[self class] referenceWithAppData: AS_appData
+    return [TEReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference OR: remainingOperands]];
 }
 
 - (TEReference *)NOT {
-    return [[self class] referenceWithAppData: AS_appData
+    return [TEReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference NOT]];
 }
 

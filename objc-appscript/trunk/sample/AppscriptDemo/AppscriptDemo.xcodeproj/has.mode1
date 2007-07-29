@@ -185,48 +185,7 @@
 	<key>Notifications</key>
 	<array/>
 	<key>OpenEditors</key>
-	<array>
-		<dict>
-			<key>Content</key>
-			<dict>
-				<key>PBXProjectModuleGUID</key>
-				<string>4FDCB64E0B6E16C2009534FD</string>
-				<key>PBXProjectModuleLabel</key>
-				<string>AppscriptDemo.m</string>
-				<key>PBXSplitModuleInNavigatorKey</key>
-				<dict>
-					<key>Split0</key>
-					<dict>
-						<key>PBXProjectModuleGUID</key>
-						<string>4FDCB64F0B6E16C2009534FD</string>
-						<key>PBXProjectModuleLabel</key>
-						<string>AppscriptDemo.m</string>
-						<key>_historyCapacity</key>
-						<integer>0</integer>
-						<key>bookmark</key>
-						<string>4F25FA8E0B6E349A0050D532</string>
-						<key>history</key>
-						<array>
-							<string>4F25FA550B6E30F80050D532</string>
-						</array>
-					</dict>
-					<key>SplitCount</key>
-					<string>1</string>
-				</dict>
-				<key>StatusBarVisibility</key>
-				<true/>
-			</dict>
-			<key>Geometry</key>
-			<dict>
-				<key>Frame</key>
-				<string>{{0, 20}, {670, 735}}</string>
-				<key>PBXModuleWindowStatusBarHidden2</key>
-				<false/>
-				<key>RubberWindowFrame</key>
-				<string>195 56 670 776 0 0 1280 832 </string>
-			</dict>
-		</dict>
-	</array>
+	<array/>
 	<key>PerspectiveWidths</key>
 	<array>
 		<integer>-1</integer>
@@ -297,7 +256,6 @@
 								<string>08FB7794FE84155DC02AAC07</string>
 								<string>08FB779DFE84155DC02AAC07</string>
 								<string>1C37FABC05509CD000000102</string>
-								<string>E2644B35053B69B200211256</string>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
@@ -408,9 +366,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>4F25FA5C0B6E32870050D532</string>
+				<string>4F14D3700C5CF976004A386D</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>4F25FA5D0B6E32870050D532</string>
+				<string>4F14D3710C5CF976004A386D</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -544,9 +502,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>4FDCB6600B6E1762009534FD</string>
-		<string>1C0AD2B3069F1EA900FABCE6</string>
-		<string>4FDCB64E0B6E16C2009534FD</string>
 		<string>/Users/has/appscript/objc-appscript/sample/AppscriptDemo/AppscriptDemo.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
@@ -588,8 +543,6 @@
 							<string>239pt</string>
 						</dict>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -629,7 +582,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>4FDCB6600B6E1762009534FD</string>
-				<string>4F25FA8B0B6E34570050D532</string>
+				<string>4F7C7FC20C5C95080033C219</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
@@ -999,9 +952,9 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C0AD2B3069F1EA900FABCE6</string>
-				<string>4F25FA5F0B6E32870050D532</string>
+				<string>4F7C7FC30C5C95080033C219</string>
 				<string>1CD0528B0623707200166675</string>
-				<string>4F25FA600B6E32870050D532</string>
+				<string>4F7C7FC40C5C95080033C219</string>
 			</array>
 			<key>ToolbarConfiguration</key>
 			<string>xcode.toolbar.config.run</string>

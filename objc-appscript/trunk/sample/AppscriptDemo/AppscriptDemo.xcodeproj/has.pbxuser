@@ -47,7 +47,7 @@
 				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
-					451,
+					433,
 					20,
 					48,
 					43,
@@ -110,16 +110,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 192407532;
-			PBXWorkspaceStateSaveDate = 192407532;
-		};
-		perUserProjectItems = {
-			4F5CA5AA0B76109A0013C44E = 4F5CA5AA0B76109A0013C44E /* PBXTextBookmark */;
-			4F5CA5D30B7653220013C44E = 4F5CA5D30B7653220013C44E /* PBXBookmark */;
-			4F5CA5D70B7653F10013C44E = 4F5CA5D70B7653F10013C44E /* PBXTextBookmark */;
-			4F5CA5EA0B7667570013C44E = 4F5CA5EA0B7667570013C44E /* PBXTextBookmark */;
-			4F5CA5EB0B7667570013C44E = 4F5CA5EB0B7667570013C44E /* PBXTextBookmark */;
-			4F5CA5EC0B7667570013C44E = 4F5CA5EC0B7667570013C44E /* PBXTextBookmark */;
+			PBXPerProjectTemplateStateSaveDate = 207419762;
+			PBXWorkspaceStateSaveDate = 207419762;
 		};
 		sourceControlManager = 4FDCB6510B6E16C2009534FD /* Source Control */;
 		userBuildSettings = {
@@ -153,65 +145,11 @@
 			sepNavVisRect = "{{0, 0}, {884, 181}}";
 		};
 	};
-	4F5CA5AA0B76109A0013C44E /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 4F5CA55D0B760D310013C44E /* aemexample.m */;
-		name = "aemexample.m: 1";
-		rLen = 2333;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 1820;
-		vrLoc = 0;
-	};
 	4F5CA5BA0B76109A0013C44E /* XCBreakpointsBucket */ = {
 		isa = XCBreakpointsBucket;
 		name = "Project Breakpoints";
 		objects = (
 		);
-	};
-	4F5CA5D30B7653220013C44E /* PBXBookmark */ = {
-		isa = PBXBookmark;
-		fRef = 08FB7796FE84155DC02AAC07 /* AppscriptDemo.m */;
-	};
-	4F5CA5D70B7653F10013C44E /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 4F5CA5640B760DC20013C44E /* appscriptexample.m */;
-		name = "appscriptexample.m: 27";
-		rLen = 0;
-		rLoc = 776;
-		rType = 0;
-		vrLen = 1611;
-		vrLoc = 0;
-	};
-	4F5CA5EA0B7667570013C44E /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 08FB7796FE84155DC02AAC07 /* AppscriptDemo.m */;
-		name = "AppscriptDemo.m: main";
-		rLen = 0;
-		rLoc = 535;
-		rType = 0;
-		vrLen = 535;
-		vrLoc = 0;
-	};
-	4F5CA5EB0B7667570013C44E /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 4F5CA5640B760DC20013C44E /* appscriptexample.m */;
-		name = "appscriptexample.m: 22";
-		rLen = 0;
-		rLoc = 598;
-		rType = 0;
-		vrLen = 1600;
-		vrLoc = 0;
-	};
-	4F5CA5EC0B7667570013C44E /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 4F5CA55D0B760D310013C44E /* aemexample.m */;
-		name = "aemexample.m: 26";
-		rLen = 0;
-		rLoc = 841;
-		rType = 0;
-		vrLen = 1825;
-		vrLoc = 0;
 	};
 	4FDCB6470B6E16B9009534FD /* AppscriptDemo */ = {
 		isa = PBXExecutable;

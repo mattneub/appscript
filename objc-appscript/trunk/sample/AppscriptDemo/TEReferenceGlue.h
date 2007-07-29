@@ -2,7 +2,7 @@
  * TEReferenceGlue.h
  *
  * /Applications/TextEdit.app
- * 2007-02-04 12:49:58 (GMT)
+ * osaglue 0.2.0
  *
  */
 
@@ -123,7 +123,7 @@
 - (TEReference *)at:(long)fromIndex to:(long)toIndex;
 - (TEReference *)byRange:(id)fromObject to:(id)toObject;
 - (TEReference *)byTest:(TEReference *)testReference;
-- (TEReference *)start;
+- (TEReference *)beginning;
 - (TEReference *)end;
 - (TEReference *)before;
 - (TEReference *)after;
@@ -133,7 +133,7 @@
 - (TEReference *)notEquals:(id)object;
 - (TEReference *)lessThan:(id)object;
 - (TEReference *)lessOrEquals:(id)object;
-- (TEReference *)startsWith:(id)object;
+- (TEReference *)beginsWith:(id)object;
 - (TEReference *)endsWith:(id)object;
 - (TEReference *)contains:(id)object;
 - (TEReference *)isIn:(id)object;
