@@ -16,9 +16,9 @@ TO DO
 
 - should properties and elements also take a direct index/name selector as a convenient shortcut? e.g.:
 
-	[textedit documents: [NSNumber numberWithLong: 3]]
+	[textedit documents: [NSNumber numberWithInt: 3]]
 	[textedit documents: @"ReadMe"]
 
 - provide convenience macro(s), e.g.:
 
-	#AEMLong(index) [NSNumber numberWithLong: index]
+	#AEMInt(index) [NSNumber numberWithInt: index]

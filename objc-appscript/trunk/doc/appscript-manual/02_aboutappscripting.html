@@ -221,7 +221,7 @@ ref = [[[[[[[AEMApp elements: 'docu']
 evt = [textedit eventWithEventClass: 'core' eventID: 'getd'];
 
 [evt setParameter: ref forKeyword: '----'];
-[evt setParameter: [NSNumber numberWithLong: 24] forKeyword: 'data'];
+[evt setParameter: [NSNumber numberWithInt: 24] forKeyword: 'data'];
 
 [evt send];</code></pre>
 </li>
@@ -241,7 +241,7 @@ ref = [[[[[[[textedit documents]
                      characters] at: 1]
                            size];
 
-[[[ref set] to: [NSNumber numberWithLong: 24]] send];</code></pre>
+[[[ref set] to: [NSNumber numberWithInt: 24]] send];</code></pre>
 </li>
 </ul>
 

@@ -125,7 +125,7 @@ TEApplication *textedit = [[TEApplication alloc]
 //      whose name extension is &quot;txt&quot; and size < 10240
 [[[[[finder home] folders] byName: @"Documents"] files] byTest:
         [[[FNIts nameExtension] equals: @"txt"] AND: 
-                [[FNIts size] lessThan: [NSNumber numberWithLong: 10240]]]]</code></pre>
+                [[FNIts size] lessThan: [NSNumber numberWithInt: 10240]]]]</code></pre>
 
 
 <h2>Insertion location references</h2>

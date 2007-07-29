@@ -69,10 +69,10 @@
         selector = NSNumber -- index of object
 
 [elements at: selector]
-        selector = long -- index of object</code></pre>
+        selector = int -- index of object</code></pre>
 		
 <p>Examples:</p>
-<pre><code>[words byIndex: [NSNumber numberWithLong: 3]]
+<pre><code>[words byIndex: [NSNumber numberWithInt: 3]]
 [items at: -1]</code></pre>
 
 <p class="hilitebox">Note: elements are <em>one-indexed</em> (AEM-style indexing), not zero-indexed (Ruby-style indexing).</p>
@@ -132,8 +132,8 @@
 
 <p>can also be written as:</p>
 
-<pre><code>[[ref paragraphs] byRange: [[NSNumber numberWithLong: 3]
-                                  to: [[NSNumber numberWithLong: -1]]</code></pre>
+<pre><code>[[ref paragraphs] byRange: [[NSNumber numberWithInt: 3]
+                                  to: [[NSNumber numberWithInt: -1]]</code></pre>
 
 <p>Where start and end points are both indexes (the most common form), this can be shortened even further by using the <code>-at:to:</code> convenience method:</p>
 
@@ -150,8 +150,8 @@
         end = NSNumber | NSString | ASReference -- end of range
 
 [elements at: start to: end]
-        start = long -- start of range
-        end = long -- end of range</code></pre>
+        start = int -- start of range
+        end = int -- end of range</code></pre>
 	
 <p>Examples:</p>
 <pre><code>[folders byRange: @"Documents" to: @"Movies"]
@@ -196,7 +196,7 @@
 
 <p>Examples:</p>
 <pre><code>[TEIts equals: @""]
-[[FNIts size] greaterThan: [NSNumber numberWithLong: 1024]]
+[[FNIts size] greaterThan: [NSNumber numberWithInt: 1024]]
 [[[TEIts words] first] startsWith: @"A"]
 [[[TEIts characters] first] equals: [[TEIts characters] last]]</code></pre>
 
@@ -212,8 +212,8 @@
 <p>Examples:</p>
 <pre><code>[[TEIts equals: @""] NOT]
 
-[[[FNIts size] greaterThan: [NSNumber numberWithLong: 1024]] AND:
-        [[FNIts size] lessThan: [NSNumber numberWithLong: 10240]]<!--TO DO
+[[[FNIts size] greaterThan: [NSNumber numberWithInt: 1024]] AND:
+        [[FNIts size] lessThan: [NSNumber numberWithInt: 10240]]<!--TO DO
 
 its.words[1].starts_with('A').or(
     its.words[2].contains('ce'),
