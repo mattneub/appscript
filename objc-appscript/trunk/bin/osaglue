@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 
 from codecs import getencoder
-import re, time, os.path, sys, getopt
+import re, os, os.path, sys, getopt
 
 from osaterminology.makeidentifier import getconverter
 from appscript import terminology
 from aem import Application, findapp, AEType
+
+__version__ = '0.2.0'
 
 ######################################################################
 # default tables
@@ -466,24 +468,24 @@ def renderGlueFiles(outdir, prefix, gluename, imports, fn):
  * %s.h
  *
  * %%s
- * %%s
+ * osaglue %%s
  *
  */
 
 #import <Appscript/Appscript.h>
 
 %s
-""" % (prefix + gluename, imports)).replace(prefixtag, prefix) % (apppath, time.strftime('%Y-%m-%d %H:%M:%S (%Z)'))
+""" % (prefix + gluename, imports)).replace(prefixtag, prefix) % (apppath, __version__)
 	print >> implementation, ("""/*
  * %s.m
  *
  * %%s
- * %%s
+ * osaglue %%s
  *
  */
 
 #import "%s.h"
-""" % (prefix + gluename, prefix + gluename)).replace(prefixtag, prefix) % (apppath, time.strftime('%Y-%m-%d %H:%M:%S (%Z)'))
+""" % (prefix + gluename, prefix + gluename)).replace(prefixtag, prefix) % (apppath, __version__)
 	fn(interface, implementation)
 	interface.close()
 	implementation.close()
@@ -491,36 +493,54 @@ def renderGlueFiles(outdir, prefix, gluename, imports, fn):
 ######################################################################
 # parse argv
 
-opts, args = getopt.getopt(sys.argv[1:], 'p:o:') # -p = prefix; -o = output directory
+opts, args = getopt.getopt(sys.argv[1:], 'hvo:')
 opts = dict(opts)
+
+
+if opts.has_key('-v'):
+	print __version__
+	sys.exit()
 
 if not args or opts.has_key('-h'):
 	print """osaglue -- Generate .h and .m glue files for objc-appscript.
 
 SYNOPSIS
 
-    osaglue [-o output-directory] prefix [application-name]
+    osaglue [-hv] [-o output-directory] prefix [application-name]
 
 DESCRIPTION
 
-The -o option may be used to specify the directory to which the glue files should be written.
+The -h option prints this help and exits immediately.
 
-The prefix argument is prepended to the names of all glue files and classes. Developers should specify a unique prefix that won't cause namespace conflicts in their project.
+The -v option prints osaglue's version number and exits immediately.
 
-The application-name argument may be the name or full path of the application for which glues should be generated. If omitted, the resulting glue files will contain only the default terminology provided by appscript.
+The -o option may be used to specify the directory to which the glue files
+should be written. If the directory doesn't already exist, one is created.
+If omitted, the glue files are written to the current directory.
+
+The prefix argument is prepended to the names of all glue files and classes.
+Developers should specify a unique prefix that won't cause namespace conflicts
+in their project.
+
+The application-name argument may be the name or full path of the application
+for which glues should be generated. If omitted, the resulting glue files will
+contain only the default terminology provided by appscript.
 
 EXAMPLES
 
 To generate TEGlue.h and associated files for TextEdit:
 
-    osaglue -o ~/TEGlue TE TextEdit
+    osaglue -o TEGlue TE TextEdit
     
 """
 	sys.exit()
 
+
 outdir = opts.get('-o', '')
 prefix = args[0]
 
+if outdir and not os.path.exists(outdir):
+	os.makedirs(outdir)
 
 ######################################################################
 # get tables
@@ -556,7 +576,7 @@ print >> interface, '''
  * PREFIXGlue.h
  *
  * %s
- * %s
+ * osaglue %s
  *
  */
 
@@ -566,5 +586,5 @@ print >> interface, '''
 #import "PREFIXConstantGlue.h"
 #import "PREFIXReferenceGlue.h"
 #import "PREFIXReferenceRendererGlue.h"
-'''.replace(prefixtag, prefix) % (apppath, time.strftime('%Y-%m-%d %H:%M:%S (%Z)'))
+'''.replace(prefixtag, prefix) % (apppath, __version__)
 interface.close()
