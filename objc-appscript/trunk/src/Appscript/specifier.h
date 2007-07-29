@@ -77,7 +77,7 @@ void disposeSpecifierModule(void);
 - (id)notEquals:(id)object;
 - (id)lessThan:(id)object;
 - (id)lessOrEquals:(id)object;
-- (id)startsWith:(id)object;
+- (id)beginsWith:(id)object;
 - (id)endsWith:(id)object;
 - (id)contains:(id)object;
 - (id)isIn:(id)object;
@@ -88,7 +88,7 @@ void disposeSpecifierModule(void);
 
 // Insertion location selectors
 
-- (AEMInsertionSpecifier *)start;
+- (AEMInsertionSpecifier *)beginning;
 - (AEMInsertionSpecifier *)end;
 - (AEMInsertionSpecifier *)before;
 - (AEMInsertionSpecifier *)after;
@@ -168,7 +168,7 @@ void disposeSpecifierModule(void);
 
 // by-index, by-name, by-id selectors
  
-- (AEMElementByIndexSpecifier *)at:(long)index;
+- (AEMElementByIndexSpecifier *)at:(int)index;
 - (AEMElementByIndexSpecifier *)byIndex:(id)index; // normally NSNumber, but may occasionally be other types
 - (AEMElementByNameSpecifier *)byName:(NSString *)name;
 - (AEMElementByIDSpecifier *)byID:(id)id_;
@@ -176,8 +176,8 @@ void disposeSpecifierModule(void);
 // by-range selector
 
 // TO DO: specific return type
-- (id)at:(long)startIndex to:(long)endIndex;
-- (id)byRange:(id)startReference to:(id)endReference; // takes two con-based references, with other values being expanded as necessary
+- (id)at:(int)startIndex to:(int)stopIndex;
+- (id)byRange:(id)startReference to:(id)stopReference; // takes two con-based references, with other values being expanded as necessary
 
 // by-test selector
 
@@ -187,12 +187,12 @@ void disposeSpecifierModule(void);
 
 
 @interface AEMElementsByRangeSpecifier : AEMMultipleElementsSpecifierBase {
-	id startReference, endReference;
+	id startReference, stopReference;
 }
 
 - (id)initWithContainer:(AEMSpecifier *)container_
 				  start:(id)startReference_
-					end:(id)endReference_
+				   stop:(id)stopReference_
 			   wantCode:(OSType)wantCode_;
 
 @end

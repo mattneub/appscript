@@ -9,6 +9,7 @@
 #import <Carbon/Carbon.h>
 #import "codecs.h"
 #import "connect.h"
+#import "SendThreadSafe.h"
 
 
 /**********************************************************************/
@@ -188,9 +189,9 @@ typedef enum {
 
 // transaction support
 
-- (void)startTransaction;
+- (void)beginTransaction;
 
-- (void)startTransactionWithSession:(id)session;
+- (void)beginTransactionWithSession:(id)session;
 
 - (void)endTransaction;
 

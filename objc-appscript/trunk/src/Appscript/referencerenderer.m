@@ -186,9 +186,9 @@
 
 // insertion location selectors
 
-- (ASReferenceRenderer *)start {
+- (ASReferenceRenderer *)beginning {
 	[result insertString: @"[" atIndex: 0];
-	[result appendString: @" start]"];
+	[result appendString: @" beginning]"];
     return self;
 }
 
@@ -248,9 +248,9 @@
     return self;
 }
 
-- (ASReferenceRenderer *)startsWith:(id)object {
+- (ASReferenceRenderer *)beginsWith:(id)object {
 	[result insertString: @"[" atIndex: 0];
-	[result appendFormat: @" startsWith: %@]", [self format: object]];
+	[result appendFormat: @" beginsWith: %@]", [self format: object]];
     return self;
 }
 

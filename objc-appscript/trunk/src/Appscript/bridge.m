@@ -57,7 +57,7 @@
 
 // by-index, by-name, by-id selectors
  
-- (ASBReference *)at:(long)index {
+- (ASBReference *)at:(int)index {
 	return [[self class] referenceWithAppData: AS_appData
 								 aemReference: [AS_aemReference at: index]];
 }
@@ -91,7 +91,7 @@
 
 // by-range selector
 
-- (ASBReference *)at:(long)fromIndex to:(long)toIndex {
+- (ASBReference *)at:(int)fromIndex to:(int)toIndex {
 	return [[self class] referenceWithAppData: AS_appData
 								 aemReference: [AS_aemReference at: fromIndex to: toIndex]];
 }
@@ -115,9 +115,9 @@
 
 // insertion location selectors
 
-- (ASBReference *)start {
+- (ASBReference *)beginning {
 	return [[self class] referenceWithAppData: AS_appData
-								 aemReference: [AS_aemReference start]];
+								 aemReference: [AS_aemReference beginning]];
 }
 - (ASBReference *)end {
 	return [[self class] referenceWithAppData: AS_appData
@@ -164,9 +164,9 @@
                                  aemReference: [AS_aemReference lessOrEquals: object]];
 }
 
-- (ASBReference *)startsWith:(id)object {
+- (ASBReference *)beginsWith:(id)object {
     return [ASBReference referenceWithAppData: AS_appData
-                                 aemReference: [AS_aemReference startsWith: object]];
+                                 aemReference: [AS_aemReference beginsWith: object]];
 }
 
 - (ASBReference *)endsWith:(id)object {

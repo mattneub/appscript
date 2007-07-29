@@ -67,11 +67,11 @@
 			case 'i':
 			case 'l':
 				packAsSInt32:
-					result = [NSAppleEventDescriptor descriptorWithInt32: [anObject longValue]];
+					result = [NSAppleEventDescriptor descriptorWithInt32: [anObject intValue]];
 					break;
 			case 'I':
 			case 'L':
-				uint32 = [anObject unsignedLongValue];
+				uint32 = [anObject unsignedIntValue];
 				if (uint32 < 0x7FFFFFFF)
 					goto packAsSInt32;
 				result = [NSAppleEventDescriptor descriptorWithDescriptorType: typeUInt32
@@ -93,6 +93,7 @@
 					goto packAsSInt32;
 				else if (uint64 < pow(2, 63))
 					goto packAsSInt64;
+				// else pack as double for compatibility's sake
 			default: // f, d
 				packAsDouble:
 					float64 = [anObject doubleValue];
@@ -464,7 +465,7 @@
 	ref = [self unpack: [desc descriptorForKeyword: keyAEObject]];
 	switch ([[desc descriptorForKeyword: keyAEPosition] enumCodeValue]) {
 		case kAEBeginning:
-			return [ref start];
+			return [ref beginning];
 		case kAEEnd:
 			return [ref end];
 		case kAEBefore:

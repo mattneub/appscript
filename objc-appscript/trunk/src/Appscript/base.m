@@ -86,7 +86,7 @@
 	return nil;
 }
 
-- (id)startsWith:(id)object {
+- (id)beginsWith:(id)object {
 	return nil;
 }
 

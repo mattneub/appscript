@@ -74,7 +74,7 @@
 	
 	codeObj = [parameters objectForKey: name];
 	if (!codeObj) return NO;
-	*code_ = [codeObj longValue];
+	*code_ = [codeObj intValue];
 	return YES;
 }
 

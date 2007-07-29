@@ -53,7 +53,7 @@
 - (ASReferenceRenderer *)byRange:(id)fromObject to:(id)toObject;
 - (ASReferenceRenderer *)byTest:(ASReferenceRenderer *)testReference;
 
-- (ASReferenceRenderer *)start;
+- (ASReferenceRenderer *)beginning;
 - (ASReferenceRenderer *)end;
 - (ASReferenceRenderer *)before;
 - (ASReferenceRenderer *)after;
@@ -64,7 +64,7 @@
 - (ASReferenceRenderer *)notEquals:(id)object;
 - (ASReferenceRenderer *)lessThan:(id)object;
 - (ASReferenceRenderer *)lessOrEquals:(id)object;
-- (ASReferenceRenderer *)startsWith:(id)object;
+- (ASReferenceRenderer *)beginsWith:(id)object;
 - (ASReferenceRenderer *)endsWith:(id)object;
 - (ASReferenceRenderer *)contains:(id)object;
 - (ASReferenceRenderer *)isIn:(id)object;

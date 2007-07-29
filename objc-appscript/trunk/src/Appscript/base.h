@@ -66,7 +66,7 @@
 
 - (id)lessOrEquals:(id)object;
 
-- (id)startsWith:(id)object;
+- (id)beginsWith:(id)object;
 
 - (id)endsWith:(id)object;
 

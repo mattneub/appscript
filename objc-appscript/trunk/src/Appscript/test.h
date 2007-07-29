@@ -68,7 +68,7 @@ void disposeTestModule(void);
 @interface AEMLessOrEquals : AEMComparisonBase
 @end
 
-@interface AEMStartsWith : AEMComparisonBase
+@interface AEMBeginsWith : AEMComparisonBase
 @end
 
 @interface AEMEndsWith : AEMComparisonBase

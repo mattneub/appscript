@@ -204,7 +204,7 @@ void disposeSpecifierModule(void) { // TO DO: since frameworks are never unloade
 - (NSString *)description {
 	switch ([key enumCodeValue]) {
 		case kAEBeginning:
-			return [NSString stringWithFormat: @"[%@ start]", container];
+			return [NSString stringWithFormat: @"[%@ beginning]", container];
 		case kAEEnd:
 			return [NSString stringWithFormat: @"[%@ end]", container];
 		case kAEBefore:
@@ -231,7 +231,7 @@ void disposeSpecifierModule(void) { // TO DO: since frameworks are never unloade
 	result = [container resolve: object];
 	switch ([key enumCodeValue]) {
 		case kAEBeginning:
-			return [result start];
+			return [result beginning];
 		case kAEEnd:
 			return [result end];
 		case kAEBefore:
@@ -287,8 +287,8 @@ void disposeSpecifierModule(void) { // TO DO: since frameworks are never unloade
 	return [[[AEMLessOrEquals alloc] initWithOperand1: self operand2: object] autorelease];
 }
 
-- (id)startsWith:(id)object {
-	return [[[AEMStartsWith alloc] initWithOperand1: self operand2: object] autorelease];
+- (id)beginsWith:(id)object {
+	return [[[AEMBeginsWith alloc] initWithOperand1: self operand2: object] autorelease];
 }
 
 - (id)endsWith:(id)object {
@@ -326,7 +326,7 @@ void disposeSpecifierModule(void) { // TO DO: since frameworks are never unloade
 
 // Insertion location selectors
 
-- (AEMInsertionSpecifier *)start {
+- (AEMInsertionSpecifier *)beginning {
 	return [[[AEMInsertionSpecifier alloc] initWithContainer: self key: kEnumBeginning] autorelease];
 }
 
@@ -686,10 +686,10 @@ void disposeSpecifierModule(void) { // TO DO: since frameworks are never unloade
 
 // by-index, by-name, by-id selectors
  
-- (AEMElementByIndexSpecifier *)at:(long)index {
+- (AEMElementByIndexSpecifier *)at:(int)index {
 	return [[[AEMElementByIndexSpecifier alloc]
 							 initWithContainer: self
-										   key: [NSNumber numberWithLong: index]
+										   key: [NSNumber numberWithInt: index]
 									  wantCode: wantCode] autorelease];
 }
 
@@ -716,20 +716,20 @@ void disposeSpecifierModule(void) { // TO DO: since frameworks are never unloade
 
 // by-range selector
 
-- (id)at:(long)startIndex to:(long)endIndex {
+- (id)at:(int)startIndex to:(int)stopIndex {
 	return [[[AEMElementsByRangeSpecifier alloc]
 							  initWithContainer: self
 										  start: [[AEMCon elements: wantCode] at: startIndex]
-											end: [[AEMCon elements: wantCode] at: endIndex]
+										   stop: [[AEMCon elements: wantCode] at: stopIndex]
 									   wantCode: wantCode] autorelease];
 }
 
 // takes two app- or con-based references, expanding any other values as necessary
-- (id)byRange:(id)startReference to:(id)endReference { 
+- (id)byRange:(id)startReference to:(id)stopReference { 
 	return [[[AEMElementsByRangeSpecifier alloc]
 							  initWithContainer: self
 										  start: startReference
-											end: endReference
+										   stop: stopReference
 									   wantCode: wantCode] autorelease];
 }
 
@@ -750,7 +750,7 @@ void disposeSpecifierModule(void) { // TO DO: since frameworks are never unloade
 
 - (id)initWithContainer:(AEMSpecifier *)container_
 				  start:(id)startReference_
-					end:(id)endReference_
+				   stop:(id)stopReference_
 			   wantCode:(OSType)wantCode_ {
 	self = [super initWithContainer: [container_ trueSelf] key: nil wantCode: wantCode_];
 	if (!self) return self;
@@ -761,20 +761,20 @@ void disposeSpecifierModule(void) { // TO DO: since frameworks are never unloade
 		startReference_ = [[AEMCon elements: wantCode_] byName: startReference_];
 	else if (![startReference_ isKindOfClass: [AEMSpecifier class]])
 		startReference_ = [[AEMCon elements: wantCode_] byIndex: startReference_];
-	if (![endReference_ isKindOfClass: [AEMSpecifier class]])
-		endReference_ = [[AEMCon elements: wantCode_] byName: endReference_];
-	else if (![endReference_ isKindOfClass: [AEMSpecifier class]])
-		endReference_ = [[AEMCon elements: wantCode_] byIndex: endReference_];
+	if (![stopReference_ isKindOfClass: [AEMSpecifier class]])
+		stopReference_ = [[AEMCon elements: wantCode_] byName: stopReference_];
+	else if (![stopReference_ isKindOfClass: [AEMSpecifier class]])
+		stopReference_ = [[AEMCon elements: wantCode_] byIndex: stopReference_];
 	[startReference_ retain];
-	[endReference_ retain];
+	[stopReference_ retain];
 	startReference = startReference_;
-	endReference = endReference_;
+	stopReference = stopReference_;
 	return self;
 }
 
 - (void)dealloc {
 	[startReference release];
-	[endReference release];
+	[stopReference release];
 	[super dealloc];
 }
 
@@ -782,7 +782,7 @@ void disposeSpecifierModule(void) { // TO DO: since frameworks are never unloade
 	return [NSString stringWithFormat: @"[%@ byRange: %@ to: %@]",
 									   container,
 									   startReference,
-									   endReference];
+									   stopReference];
 }
 
 // reserved methods
@@ -793,7 +793,7 @@ void disposeSpecifierModule(void) { // TO DO: since frameworks are never unloade
 	if (!cachedDesc) {
 		keyDesc = [kNullRecord coerceToDescriptorType: typeRangeDescriptor];
 		[keyDesc setDescriptor: [codecs pack: startReference] forKeyword: keyAERangeStart];
-		[keyDesc setDescriptor: [codecs pack: endReference] forKeyword: keyAERangeStop];
+		[keyDesc setDescriptor: [codecs pack: stopReference] forKeyword: keyAERangeStop];
 		cachedDesc = [kNullRecord coerceToDescriptorType: typeObjectSpecifier];
 		[cachedDesc setDescriptor: [NSAppleEventDescriptor descriptorWithTypeCode: wantCode]
 					   forKeyword: keyAEDesiredClass];
@@ -806,7 +806,7 @@ void disposeSpecifierModule(void) { // TO DO: since frameworks are never unloade
 
 
 -(id)resolve:(id)object {
-	return [[container resolve: object] byRange: startReference to: endReference];
+	return [[container resolve: object] byRange: startReference to: stopReference];
 }
 
 @end
@@ -814,13 +814,7 @@ void disposeSpecifierModule(void) { // TO DO: since frameworks are never unloade
 
 @implementation AEMElementsByTestSpecifier
 
-- (id)initWithContainer:(AEMSpecifier *)container_ key:(id)key_ wantCode:(OSType)wantCode_; {
-	if (![key_ isKindOfClass: [AEMTest class]]) {
-		if ([key_ isKindOfClass: [AEMSpecifier class]] && [key_ root] == AEMIts)
-			key_ = [key_ equals: kTypeTrue];
-		else
-			return nil; // not a test specifier
-	}
+- (id)initWithContainer:(AEMSpecifier *)container_ key:(AEMTest *)key_ wantCode:(OSType)wantCode_; {
 	return [super initWithContainer: [container_ trueSelf] key: key_ wantCode: wantCode_];
 }
 

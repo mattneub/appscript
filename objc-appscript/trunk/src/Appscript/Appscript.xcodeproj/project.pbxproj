@@ -15,6 +15,8 @@
 		4F25FAC30B6E79CE0050D532 /* base.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F25FAC10B6E79CE0050D532 /* base.m */; };
 		4F4856680B6E8204005264DC /* test.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F4856660B6E8204005264DC /* test.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4F4856690B6E8204005264DC /* test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F4856670B6E8204005264DC /* test.m */; };
+		4F7C7EAE0C5B68420033C219 /* SendThreadSafe.c in Sources */ = {isa = PBXBuildFile; fileRef = 4F7C7EAC0C5B68420033C219 /* SendThreadSafe.c */; };
+		4F7C7EAF0C5B68420033C219 /* SendThreadSafe.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F7C7EAD0C5B68420033C219 /* SendThreadSafe.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4F7CA9050B727AE5007010CE /* reference.h in Headers */ = {isa = PBXBuildFile; fileRef = 4FDCB2F30B6D0CD0009534FD /* reference.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4F7CA9060B727AE5007010CE /* reference.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FDCB2F40B6D0CD0009534FD /* reference.m */; };
 		4FDCB2E00B6D0BAF009534FD /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4FDCB2DE0B6D0BAF009534FD /* Carbon.framework */; };
@@ -63,6 +65,8 @@
 		4F25FAC10B6E79CE0050D532 /* base.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = base.m; sourceTree = "<group>"; };
 		4F4856660B6E8204005264DC /* test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = test.h; sourceTree = "<group>"; };
 		4F4856670B6E8204005264DC /* test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = test.m; sourceTree = "<group>"; };
+		4F7C7EAC0C5B68420033C219 /* SendThreadSafe.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = SendThreadSafe.c; sourceTree = "<group>"; };
+		4F7C7EAD0C5B68420033C219 /* SendThreadSafe.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SendThreadSafe.h; sourceTree = "<group>"; };
 		4FDCB2DE0B6D0BAF009534FD /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		4FDCB2DF0B6D0BAF009534FD /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
 		4FDCB2EB0B6D0CD0009534FD /* application.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = application.h; sourceTree = "<group>"; };
@@ -214,6 +218,8 @@
 				4FDCB2EC0B6D0CD0009534FD /* application.m */,
 				4FDCB2EF0B6D0CD0009534FD /* connect.h */,
 				4FDCB2F00B6D0CD0009534FD /* connect.m */,
+				4F7C7EAD0C5B68420033C219 /* SendThreadSafe.h */,
+				4F7C7EAC0C5B68420033C219 /* SendThreadSafe.c */,
 			);
 			name = "application connector";
 			sourceTree = "<group>";
@@ -255,6 +261,7 @@
 				4F7CA9050B727AE5007010CE /* reference.h in Headers */,
 				4F1E9DEF0B74EDCB00D4DCBF /* referencerenderer.h in Headers */,
 				4F1E9F420B75305800D4DCBF /* constant.h in Headers */,
+				4F7C7EAF0C5B68420033C219 /* SendThreadSafe.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -330,6 +337,7 @@
 				4F7CA9060B727AE5007010CE /* reference.m in Sources */,
 				4F1E9DF00B74EDCB00D4DCBF /* referencerenderer.m in Sources */,
 				4F1E9F430B75305800D4DCBF /* constant.m in Sources */,
+				4F7C7EAE0C5B68420033C219 /* SendThreadSafe.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

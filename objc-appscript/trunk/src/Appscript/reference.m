@@ -185,14 +185,6 @@
 	return self;
 }
 
-- (id)replyPort:(mach_port_t)machPort {
-	if (![AS_event setAttributePtr: &machPort
-							  size: sizeof(machPort)
-					descriptorType: typeMachPort
-						forKeyword: keyReplyPortAttr]) return nil;
-	return self;
-}
-
 - (id)requestType:(ASConstant *)type {
 	if (![AS_event setParameter: type forKeyword: keyAERequestedType]) return nil;
 	return self;

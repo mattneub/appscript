@@ -271,10 +271,10 @@ void disposeTestModule(void) {
 @end
 
 
-@implementation AEMStartsWith
+@implementation AEMBeginsWith
 
 - (id)formatString {
-	return @"[%@ startsWith: %@]";
+	return @"[%@ beginsWith: %@]";
 }
 
 - (NSAppleEventDescriptor *)operator {
@@ -282,7 +282,7 @@ void disposeTestModule(void) {
 }
 
 - (id)resolve:(id)object {
-	return [[operand1 resolve: object] startsWith: operand2];
+	return [[operand1 resolve: object] beginsWith: operand2];
 }
 
 @end

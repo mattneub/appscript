@@ -232,8 +232,8 @@
 	self = [super init];
 	if (!self) return self;
 	// hooks
-	createProc = AECreateAppleEvent;
-	sendProc = AESendMessage;
+	createProc = (AEMCreateProcPtr)AECreateAppleEvent;
+	sendProc = (AEMSendProcPtr)SendMessageThreadSafe;
 	eventClass = [AEMEvent class];
 	// description
 	targetType = targetType_;
@@ -384,10 +384,10 @@
 
 // transaction support // TO DO
 
-- (void)startTransaction {
+- (void)beginTransaction {
 }
 
-- (void)startTransactionWithSession:(id)session {
+- (void)beginTransactionWithSession:(id)session {
 }
 
 - (void)endTransaction {

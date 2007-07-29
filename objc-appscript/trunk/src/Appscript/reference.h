@@ -134,26 +134,6 @@ enumConsidsAndIgnores = 'csig'
 - (id)timeout:(long)timeout_;
 
 /*
- * Specify a Mach port to receive the reply event.
- *
- * By default, the Apple Event Manager receives reply events on the main thread
- * via the process's registered Mach port. When sending events on a non-main thread
- * with kAEWaitReply, the thread should create its own Mach port to receive the
- * reply events.
- *
- * Example usage:
- *
- * mach_port_t rp;
- * mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &rp);
- * ...
- * [commandObj replyPort: rp];
- * reply = [commandObj send];
- * ...
- * mach_port_destroy(mach_task_self(), rp);
- */
-- (id)replyPort:(mach_port_t)machPort;
-
-/*
  * Specify the desired type for the return value. Where the application's event
  * handler supports this, it will attempt to coerce the event's result to this
  * type before returning it. May be a standard AE type (e.g. [ASConstant alias])

@@ -64,7 +64,7 @@
 - (ASBReference *)any;
 
 // by-index, by-name, by-id selectors
-- (ASBReference *)at:(long)index;
+- (ASBReference *)at:(int)index;
 - (ASBReference *)byIndex:(id)index; // index is normally NSNumber, but may occasionally be other types
 - (ASBReference *)byName:(NSString *)name;
 - (ASBReference *)byID:(id)id_;
@@ -74,14 +74,14 @@
 - (ASBReference *)next:(ASConstant *)class_;
 
 // by-range selector
-- (ASBReference *)at:(long)fromIndex to:(long)toIndex;
+- (ASBReference *)at:(int)fromIndex to:(int)toIndex;
 - (ASBReference *)byRange:(id)fromObject to:(id)toObject;
 
 // by-test selector
 - (ASBReference *)byTest:(ASBReference *)testReference;
 
 // insertion location selectors
-- (ASBReference *)start;
+- (ASBReference *)beginning;
 - (ASBReference *)end;
 - (ASBReference *)before;
 - (ASBReference *)after;
@@ -93,7 +93,7 @@
 - (ASBReference *)notEquals:(id)object;
 - (ASBReference *)lessThan:(id)object;
 - (ASBReference *)lessOrEquals:(id)object;
-- (ASBReference *)startsWith:(id)object;
+- (ASBReference *)beginsWith:(id)object;
 - (ASBReference *)endsWith:(id)object;
 - (ASBReference *)contains:(id)object;
 - (ASBReference *)isIn:(id)object;
