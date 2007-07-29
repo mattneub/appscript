@@ -174,7 +174,6 @@ kObjCAppscriptReservedWords = [
 	# used by ASCommand
 	"sendMode",
 	"timeout",
-	"replyPort",
 	"requestType",
 	"resultType",
 	"send",
