@@ -14,11 +14,8 @@ TO DO
 
 - finish osaterminology support (should see about implementing a proper extensible plugin architecture)
 
-- should properties and elements also take a direct index/name selector as a convenient shortcut? e.g.:
-
-	[textedit documents: [NSNumber numberWithInt: 3]]
-	[textedit documents: @"ReadMe"]
-
 - provide convenience macro(s), e.g.:
 
 	#AEMInt(index) [NSNumber numberWithInt: index]
+
+- add 'strict' options for class and command generation to osaglue: -k option would create individual classes according to application dictionary; -c option would enforce type checking/coercion in command parameters and result. This would allow users to take advantage of ObjC static typing for applications whose dictionaries are sufficiently accurate to avoid compatibility problems.

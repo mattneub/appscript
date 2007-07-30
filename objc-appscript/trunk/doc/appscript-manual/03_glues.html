@@ -32,10 +32,13 @@
 
 <p>Glues are generated using the command-line <code>osaglue</code> tool:</p>
 
-<pre><code>osaglue [-o output-directory] prefix [application-name]</code></pre>
+<pre><code>osaglue [-hv] [-o output-directory] prefix [application-name]</code></pre>
 
+<li>The -h option prints this help and exits immediately.</li>
 
-<li>The <code>-o</code> option may be used to specify the directory to which the glue files should be written.</li>
+<li>The -v option prints osaglue's version number and exits immediately.</li>
+
+<li>The <code>-o</code> option may be used to specify the directory to which the glue files should be written. If the directory doesn't already exist, one is created. If omitted, the glue files are written to the current directory.</li>
 
 <li>The prefix argument is prepended to the names of all glue files and classes. Developers should specify a unique prefix that won't cause namespace conflicts in their project.</li>
 
