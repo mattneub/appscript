@@ -25,5 +25,3 @@ TO DO
 - any more built-in Ruby class<->AE type converters needed?
 
 - in AEM::CommandError, extract and report any kOSA... error parameters, if present
-
-- implement built-in help by bridging to osadict
