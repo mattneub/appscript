@@ -1,0 +1,43 @@
+AppscriptHelpAgent Read Me
+
+======================================================================
+ABOUT
+
+A faceless background application that provides support for rb-appscript's built-in help system.
+
+Note that AppscriptHelpAgent is an optional extra and is *not* required to use rb-appscript. If AppscriptHelpAgent isn't installed, appscript will function as normal with any calls to its built-in help merely resulting in a 'no help available' message being displayed.
+
+======================================================================
+REQUIREMENTS
+
+- Mac OS X 10.3+
+
+======================================================================
+INSTALLATION
+
+Copy the AppscriptHelpAgent.app binary to your Applications folder.
+
+======================================================================
+NOTES
+
+- No user interaction needed: appscript will launch AppscriptHelpAgent when needed, and AppscriptHelpAgent will automatically quit after 60 minutes of inactivity.
+
+- rb-appscript support is not quite complete yet. While the -o, -k, -u, -t, -i and -r all display the desired rb-appscript style terminology, the -s option currently displays Python-style, not Ruby-style, values. Additionally, AppscriptHelpAgent currently displays a Python-style, not Ruby-style, appscript reference at the start of each help listing. These issues will be addressed in future releases.
+
+- To build from source, cd to the AppscriptHelpAgent/src directory and run:
+
+	python setup.py py2app
+
+Requires appscript 0.18.0 or later, PyObjC and py2app.
+
+======================================================================
+AUTHOR
+
+- HAS -- hhas -at- users - sourceforge - net <http://rb-appscript.rubyforge.org> <http://appscript.sourceforge.net>
+
+======================================================================
+COPYRIGHT
+
+Copyright (C) 2007 HAS 
+
+AppscriptHelpAgent is released under the MIT License. See the LICENSE file for more information.
