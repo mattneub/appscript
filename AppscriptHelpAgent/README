@@ -22,13 +22,13 @@ NOTES
 
 - No user interaction needed: appscript will launch AppscriptHelpAgent when needed, and AppscriptHelpAgent will automatically quit after 60 minutes of inactivity.
 
-- rb-appscript support is not quite complete yet. While the -o, -k, -u, -t, -i and -r all display the desired rb-appscript style terminology, the -s option currently displays Python-style, not Ruby-style, values. Additionally, AppscriptHelpAgent currently displays a Python-style, not Ruby-style, appscript reference at the start of each help listing. These issues will be addressed in future releases.
+- rb-appscript support is not yet complete. While the -o, -k, -u, -t, -i and -r all display the desired rb-appscript style terminology, the -s option currently displays Python-style, not Ruby-style, values. Additionally, AppscriptHelpAgent currently displays a Python-style, not Ruby-style, appscript reference at the start of each help listing. These issues will be addressed in future releases.
 
 - To build from source, cd to the AppscriptHelpAgent/src directory and run:
 
 	python setup.py py2app
 
-Requires appscript 0.18.0 or later, PyObjC and py2app.
+(Requires appscript 0.18.0+, PyObjC, py2app and gcc.)
 
 ======================================================================
 AUTHOR
