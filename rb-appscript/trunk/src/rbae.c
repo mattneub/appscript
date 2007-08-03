@@ -762,14 +762,22 @@ rbAE_AEGetCoercionHandler(VALUE self, VALUE fromType, VALUE toType)
 static VALUE
 rbAE_RunApplicationEventLoop(VALUE self)
 {
+#if defined(__LP64__)
+	rb_raise(rb_eNotImpError, "AE.run_application_event_loop isn't available in 64-bit processes.\n");
+#else
 	RunApplicationEventLoop();
+#end
 	return Qnil;
 }
 
 static VALUE
 rbAE_QuitApplicationEventLoop(VALUE self)
 {
+#if defined(__LP64__)
+	rb_raise(rb_eNotImpError, "AE.quit_application_event_loop isn't available in 64-bit processes.\n");
+#else
 	QuitApplicationEventLoop();
+#end
 	return Qnil;
 }
 
