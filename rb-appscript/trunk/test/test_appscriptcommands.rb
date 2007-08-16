@@ -51,7 +51,7 @@ class TC_AppscriptNewApp < Test::Unit::TestCase
 	end
 	
 	def test_by_pid
-		pid = `top -l1 | grep Finder | awk '{ print $1 }'`.to_i
+		pid = `top -l1 | grep Finder | awk '{ print $1 }'`.to_i # note: this line will return a bad result if more than one user is logged in
 		a = Appscript.app.by_pid(pid)
 		assert_instance_of(Appscript::Reference, a.name)
 		assert_equal("app.by_pid(#{pid})", a.to_s)
