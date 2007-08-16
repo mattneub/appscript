@@ -1,0 +1,5 @@
+TO DO
+
+- finish rb-appscript support: -s option should display Ruby-style values, show Ruby-style reference at start of each help listing
+
+- move/add osadict command-line tool from py-appscript package to AHA package (note: osadict will need rewritten to avoid py-appscript dependency, either using standard Python+Carbon.AE installation only or C/ObjC)
