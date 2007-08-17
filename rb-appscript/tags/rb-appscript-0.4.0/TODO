@@ -1,0 +1,7 @@
+TO DO
+
+- Add a libxml2-based sdef parser for use by Terminology.dump, OSAX::ScriptingAddition in 64-bit Leopard as OSAGetAppTerminology is not available there. Also use weak binding for OSAGetAppTerminology, OSACopyScriptingDefinition in rbae.c
+
+- can numbers in range (2**63)..(2**64 - 1) safely be packed as typeUInt64 on 10.5+? Or stick with packing those as lossy 64-bit floating point for compatibility?
+
+- _aem/connect.rb module refers directly to Send::Event instead of going via the AEM::Application::Event hook, which might cause problems when used in an OSA component or other situation where client needs to customise all event creation and/or dispatch.

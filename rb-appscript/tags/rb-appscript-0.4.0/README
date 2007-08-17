@@ -1,0 +1,46 @@
+Appscript Read Me
+
+======================================================================
+ABOUT
+
+Ruby appscript (rb-appscript) is a high-level Apple event bridge for the Ruby scripting language. rb-appscript is closely based on the Python appscript (py-appscript) bridge.
+
+See the doc folder for more information.
+
+======================================================================
+REQUIREMENTS
+
+- Mac OS X 10.3+
+- Ruby 1.8+
+
+======================================================================
+INSTALLATION
+
+$ ruby extconf.rb
+$ make
+$ sudo make install
+
+-------
+
+Please note that the version of Ruby included with Mac OS X 10.4 is missing the header files needed to build appscript on PPC-based Macs. You can avoid this issue by installing the latest version of Ruby from <http://www.ruby-lang.org/en/downloads/> and updating your shell login profiles to suit.
+
+======================================================================
+NOTES
+
+- rb-appscript 0.4.0 is the first beta release. Except for bug fixes, no further changes are planned prior to the 1.0 release.
+
+- rb-appscript 0.4.0 contains a couple of API changes from earlier versions; see the CHANGES file and documentation for details
+
+- rb-appscript 0.4.0  provides preliminary 64-bit support for OS X 10.5 in the following modules: AE, AEM, Appscript. Note that the OSAX module currently remains 32-bit only; this will be addressed after OS X 10.5 is released.
+
+======================================================================
+AUTHOR
+
+- HAS -- hhas -at- users - sourceforge - net <http://rb-appscript.rubyforge.org> <http://appscript.sourceforge.net>
+
+======================================================================
+COPYRIGHT
+
+Copyright (C) 2006 HAS 
+
+Appscript is released under the MIT License. See the LICENSE file for more information.
