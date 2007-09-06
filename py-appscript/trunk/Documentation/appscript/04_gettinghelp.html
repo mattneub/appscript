@@ -80,7 +80,7 @@ True</code></pre>
 
 <h2>ASDictionary</h2>
 
-<p>ASDictionary, available from the <a href="http://sourceforge.net/projects/appscript"> py-appscript website</a>, renders application terminology resources in plain text and HTML formats. It provides a convenient drag-n-drop alternative to using the <code>osadict -H ...</code> command or the <code>htmldoc</code> module.</p>
+<p>ASDictionary, available from the <a href="http://sourceforge.net/projects/appscript"> py-appscript website</a>, renders application terminology resources in plain text and HTML formats. It provides a convenient GUI-based alternative to using the <code>osadict -H ...</code> command or the <code>htmldoc</code> module.</p>
 
 
 <h2>Built-in help</h2>
@@ -150,7 +150,7 @@ f.close()</code></pre>
 <div class="hilitebox">
 <p>Tip: <code>help</code> calls can safely be inserted at any point in a reference without disrupting your script's execution:</p>
 
-<pre><code>c = app('TextEdit')<strong>.help().help('-o -i -c')</strong>. \
+<pre><code>c = app('TextEdit')<strong>.help().help('-o -i -s')</strong>. \
         documents.<strong>help()</strong>[1]<strong>.help()</strong>.count<strong>.help()</strong>()</code></pre>
 </div>
 
@@ -158,7 +158,7 @@ f.close()</code></pre>
 <h2>Notes</h2>
 
 <ul>
-<li>While appscript's help systems try to be reasonably forgiving of flawed or faulty terminology resources, there may be a few particularly problematic applications on which they fail. Should this happen, you can use the <code>osaterminology.renderers.quickdoc</code> module to render the application's terminology in plain text format instead.</li>
+<li>While appscript's help systems try to be reasonably forgiving of flawed or faulty terminology resources, there may be a few particularly problematic applications on which they fail. Should this happen, you can use ASDictionary or the <code>osaterminology.renderers.quickdoc</code> module to export the application's terminology in plain text format instead.</li>
 
 <li>Appscript is not pydoc-compatible. Passing appscript references to Python's built-in <code>help</code> function will result in an error.</li>
 </ul>

@@ -1,4 +1,4 @@
-Appscript is packaged using the standard Python Distribution Utilities (a.k.a. Distutils). To install appscript, cd to the appscript-0.17.1 directory and run:
+Appscript is packaged using the standard Python Distribution Utilities (a.k.a. Distutils). To install appscript, cd to the appscript-0.18.0 directory and run:
 
 	python setup.py install
 
@@ -17,6 +17,8 @@ Appscript requires MacPython 2.3 or later and Mac OS X 10.3 or later.
 
 ======================================================================
 NOTES
+
+- The appscript API has undergone several non-backwards-compatible changes since 0.17.3. Please read the 'IMPORTANT - API CHANGES' file BEFORE installing appscript 0.18.0+.
 
 - The appscript API has undergone several non-backwards-compatible changes since 0.16.3. Please read the 'IMPORTANT - API CHANGES' file BEFORE installing appscript 0.17.0+.
 

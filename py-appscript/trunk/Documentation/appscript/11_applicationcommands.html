@@ -106,7 +106,7 @@ app('Finder').home.items.get(resulttype=k.alias)</code></pre>
 
 <p>is equivalent to:</p>
 
-<pre><code>application.make(:new=class, at=insertion_location)</code></pre>
+<pre><code>application.make(new=class, at=insertion_location)</code></pre>
 
 <p>If the <code>make</code> command is called on an object reference, appscript will pack that reference as the Apple event's 'subject' attribute. (Note that some applications may not handle the subject attribute correctly, in which case the reference should be passed as the <code>make</code> command's <code>at</code> parameter instead.)</p></li>
 
