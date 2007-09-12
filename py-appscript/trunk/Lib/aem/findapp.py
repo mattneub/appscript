@@ -3,15 +3,12 @@
 (C) 2004 HAS
 """
 
-try: # Python 2.4+
-	from Carbon.Launch import LSFindApplicationForInfo
-except ImportError: # Python 2.3.x + Py23Compat
-	from LaunchServices.Launch import LSFindApplicationForInfo
-
 from Carbon.CoreFoundation import kCFURLPOSIXPathStyle
 from os.path import exists, expanduser
 import MacOS
-import Carbon.CF # workaround for LaunchServices dependency resolution problem in py2app 0.2 when building a standalone app with embedded Python.framework; presumably Launch.so uses CF.so, and py2app can't detect this dependency itself # TO DO: check (and file a bug report on py2app if that's the problem)
+import Carbon.CF # workaround for dependency resolution problem in py2app 0.2 when building a standalone app with embedded Python.framework; LSFindApplicationForInfo uses CF.so, and py2app can't detect this dependency itself
+
+from send.PSN import LSFindApplicationForInfo # note: previously used Carbon.Launch here, but calling Carbon.Launch.LSFindApplicationForInfo leaks memory in Python 2.5 and earlier due to bugs in Carbon.CF's CFStringRefObj_Convert function, so now using modified versions of LSFindApplicationForInfo and CFStringRefObj_Convert
 
 
 __all__ = ['byname', 'byid', 'bycreator']

@@ -8,9 +8,11 @@ HISTORY
 
 - send.Event._sendAppleEvent now uses CarbonX.AE.AEDesc.SendMessageThreadSafe  instead of CarbonX.AE.AEDesc.AESendMessage, allowing reply events to be received on non-main threads.
 
-- byfilter method no longer accepts non-test specifiers as test clauses. Previously, a reference such as 'its.visible' would automatically be expanded to the comparison test 'its.visible.eq(true)' as a convenience. However, this shortcut didn't apply when these non-test references appeared as arguments to the #and and #or logical test methods, which meant that this shortcut behaviour was inconsistent and potentially confusing; therefore it has been removed. Users should update existing code as necessary.
+- byfilter method no longer accepts non-test specifiers as test clauses. Previously, a reference such as 'its.visible' would automatically be expanded to the comparison test 'its.visible.eq(true)' as a convenience. However, this shortcut didn't apply when these non-test references appeared as arguments to the AND and OR logical test methods, which meant that this shortcut behaviour was inconsistent and potentially confusing; therefore it has been removed. Users should update existing code as necessary.
 
 - aem.Application.__repr__ now displays correct class name when Application class is subclassed
+
+- removed Carbon.Launch dependency in findapp module due to memory leaks in Carbon.CF; findapp now uses modified version of LSFindApplicationForInfo in PSN extension
 
 
 2007-01-20 -- 0.12.1

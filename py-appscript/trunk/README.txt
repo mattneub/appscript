@@ -32,8 +32,6 @@ DEPENDENCIES
 
 - HTMLTemplate -- see <http://www.python.org/pypi/HTMLTemplate>
 
-- LaunchServices -- Python 2.3 only; see Py23Compat packages at <http://undefined.org/python/>
-
 
 ======================================================================
 COPYRIGHT
