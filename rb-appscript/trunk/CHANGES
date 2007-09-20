@@ -1,3 +1,8 @@
+2007-09-20 -- 0.?.?
+
+- added hfs_path,, #hfs_path methods to MacTypes::Alias, MacTypes::FileURL; existing path, #path methods now use CFURL functions to convert between POSIX paths and URLs
+
+
 2007-08-17 -- 0.4.0 (beta 1)
 
 - renamed the following aem/appscript methods to be consistent with AppleScript:

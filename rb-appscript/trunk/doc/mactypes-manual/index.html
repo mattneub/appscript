@@ -39,6 +39,8 @@
 
         Alias.path(path) -- make Alias object from POSIX path string
 
+        Alias.hfs_path(path) -- make Alias object from HFS path string
+
         Alias.url(url) -- make Alias object from a local file:// URL string
     
         Alias.desc(desc) -- make Alias object from an AE::AEDesc
@@ -53,6 +55,8 @@
         inspect
     
         path -- returns POSIX path string to the object's current location
+    
+        hfs_path -- returns HFS path string to the object's current location
 
         url -- returns file:// URL string to the object's current location
 
@@ -100,6 +104,8 @@ Appscript.app('TextEdit').open(f)
 
         FileURL.path(path) -- make FileURL object from POSIX path string
 
+        FileURL.hfs_path(path) -- make FileURL object from HFS path string
+
         FileURL.url(url) -- make FileURL object from a local file:// URL string
     
         FileURL.desc(desc) -- make FileURL object from an AE::AEDesc
@@ -114,6 +120,8 @@ Appscript.app('TextEdit').open(f)
         inspect
     
         path -- returns POSIX path string
+    
+        hfs_path -- returns HFS path string
 
         url -- returns file:// URL string
 
