@@ -102,7 +102,7 @@ module AEM
 		
 		def Application.launch(path)
 			# Launches a local application without sending it the usual 'run' event (aevtoapp).
-			Connect.launch_app(path)
+			Connect.launch_app_with_launch_event(path)
 		end
 		
 		def Application.is_running?(path)

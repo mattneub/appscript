@@ -6,7 +6,7 @@ require "_aem/mactypes"
 
 module Appscript
 	# The following methods and classes are of interest to end users:
-	# app, con, its, CommandError, ApplicationNotFoundError
+	# app, con, its, CommandError, ApplicationNotFoundError, CantLaunchApplicationError
 	# Other classes are only of interest to implementors who need to hook in their own code.
 	
 	require "kae"
@@ -924,6 +924,6 @@ module Appscript
 		end
 	end
 	
-	
 	ApplicationNotFoundError = FindApp::ApplicationNotFoundError
+	CantLaunchApplicationError = Connect::CantLaunchApplicationError
 end

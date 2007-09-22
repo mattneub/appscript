@@ -1,6 +1,8 @@
-2007-09-20 -- 0.?.?
+2007-09-22 -- 0.?.?
 
 - added hfs_path,, #hfs_path methods to MacTypes::Alias, MacTypes::FileURL; existing path, #path methods now use CFURL functions to convert between POSIX paths and URLs
+
+- aem/appscript now raises Connect::CantLaunchApplicationError instead of AE::MacOSError if unable to launch an application. Users should update existing code as necessary.
 
 
 2007-08-17 -- 0.4.0 (beta 1)

@@ -28,7 +28,48 @@ module Connect
 	#######
 	# public
 	
-	def Connect.launch_app(path)
+	class CantLaunchApplicationError < RuntimeError
+	
+		# Taken from <http://developer.apple.com/documentation/Carbon/Reference/LaunchServicesReference>:
+		LSErrors = {
+			-10660 => "The application cannot be run because it is inside a Trash folder.",
+			-10810 => "An unknown error has occurred.",
+			-10811 => "The item to be registered is not an application.",
+			-10813 => "Data of the desired type is not available (for example, there is no kind string).",
+			-10814 => "No application in the Launch Services database matches the input criteria.",
+			-10817 => "Data is structured improperly (for example, an item's information property list is malformed).",
+			-10818 => "A launch of the application is already in progress.",
+			-10822 => "There is a problem communicating with the server process that maintains the Launch Services database.",
+			-10823 => "The filename extension to be hidden cannot be hidden.",
+			-10825 => "The application to be launched cannot run on the current Mac OS version.",
+			-10826 => "The user does not have permission to launch the application (on a managed network).",
+			-10827 => "The executable file is missing or has an unusable format.",
+			-10828 => "The Classic emulation environment was required but is not available.",
+			-10829 => "The application to be launched cannot run simultaneously in two different user sessions.",
+		}
+	
+		def initialize(error_number)
+			@error_number = error_number
+			super("#{ LSErrors.fetch(@error_number, 'OS error') } (#{ @error_number })")
+		end
+		
+		def to_i
+			return @error_number
+		end
+	end
+	
+	##
+	
+	def Connect.launch_application(path, event)
+		begin
+			AE.launch_application(path, event,
+					LaunchContinue + LaunchNoFileFlags + LaunchDontSwitch)
+		rescue AE::MacOSError => err
+			raise CantLaunchApplicationError, err.to_i
+		end
+	end
+	
+	def Connect.launch_app_with_launch_event(path)
 		# Send a 'launch' event to an application. If application is not already running, it will be launched in background first.
 		begin
 			# If app is already running, calling AE.launch_application will send a 'reopen' event, so need to check for this first:
@@ -36,8 +77,7 @@ module Connect
 		rescue AE::MacOSError => err
 			if err.to_i == -600 # Application isn't running, so launch it and send it a 'launch' event
 				sleep(1)
-				AE.launch_application(path, LaunchEvent,  
-						LaunchContinue + LaunchNoFileFlags + LaunchDontSwitch)
+				launch_application(path, LaunchEvent)
 			else
 				raise
 			end
@@ -73,8 +113,7 @@ module Connect
 		rescue AE::MacOSError => err
 			if err.to_i == -600 # Application isn't running, so launch it in background and send it a standard 'run' event.
 				sleep(1)
-				psn = AE.launch_application(path, RunEvent,  
-						LaunchContinue + LaunchNoFileFlags + LaunchDontSwitch)
+				psn = launch_application(path, RunEvent)
 			else
 				raise
 			end
