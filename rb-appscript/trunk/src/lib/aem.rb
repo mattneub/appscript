@@ -23,6 +23,8 @@ module AEM
 	Codecs = Codecs
 	DefaultCodecs = DefaultCodecs
 	MacOSError = AE::MacOSError
+	CantLaunchApplicationError = Connect::CantLaunchApplicationError
+	
 	
 	AEDesc = AE::AEDesc
 	
