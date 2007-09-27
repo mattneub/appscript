@@ -15,7 +15,7 @@
 import pickle, sys
 from pprint import pprint
 
-from CarbonX.AE import AECreateDesc
+from CarbonX.AE import AECreateDesc, AEUnflattenDesc
 from CarbonX.kOSA import *
 from pyosa_errors import *
 
@@ -23,7 +23,7 @@ __all__ = ['packscript', 'unpackscript']
 
 #######
 
-pyosa_kSerializationVersion = 1
+pyosa_kSerializationVersion = 2
 pyosa_kOldestSupportedSerializationVersion = 0
 
 
@@ -37,7 +37,7 @@ def packscript(source, state, modeflags, codecs):
 		print >> sys.stderr, "PyOSA: couldn't pack script's persistent state (%s) so ignoring it." % e # user warning
 		pprint(state, sys.stderr) # user warning
 		state = {}
-	rec = codecs.pack({
+	desc = codecs.pack({
 			'source': source,
 			'state': state,
 			'modeflags': modeflags,
@@ -45,7 +45,7 @@ def packscript(source, state, modeflags, codecs):
 			'serializationversion': pyosa_kSerializationVersion,
 			'oldestsupportedserializationversion': pyosa_kOldestSupportedSerializationVersion,
 			})
-	return AECreateDesc(typeScript, rec.data)
+	return AECreateDesc(typeScript, desc.AEFlattenDesc())
 
 
 def unpackscript(desc, codecs):
@@ -54,7 +54,7 @@ def unpackscript(desc, codecs):
 	# data handle. (See <http://lists.apple.com/archives/applescript-implementors/2006/May/msg00027.html>)
 	# Therefore, disable it in osafunctions.c and have remove the 12-byte trailer here.
 	data = desc.data[:-12] # WORKAROUND
-	rec = codecs.unpack(AECreateDesc(typeAERecord, data))
+	rec = codecs.unpack(AEUnflattenDesc(data))
 	if rec['serializationversion'] < pyosa_kOldestSupportedSerializationVersion:
 		raise ComponentError(errOSADataFormatObsolete)
 	if pyosa_kSerializationVersion < rec['oldestsupportedserializationversion']:

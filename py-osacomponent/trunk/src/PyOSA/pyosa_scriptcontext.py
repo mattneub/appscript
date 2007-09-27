@@ -59,6 +59,7 @@ class EventHandlerManager:
 		self._context = context
 		self._eventhandlerdefs = {}
 		self._hasautoloaded = False
+		self._handlernamebycode = {}
 	
 	def _eventhandlers(self):
 		if not self._hasautoloaded: # initialize event handler table
@@ -68,10 +69,11 @@ class EventHandlerManager:
 			for defs in [kBuiltInEventHandlerDefs, self._appdata.referencebyname]:
 				for name, (kind, info) in defs.items():
 					if kind == kCommand:
+						code, paramdefs = info
+						self._handlernamebycode[code] = name
 						# if script has a function with same name as this command, get it
 						callback = getattr(self._context, name, None)
 						if callable(callback):
-							code, paramdefs = info
 							# get keyword parameters
 							paramdefs = dict([(paramcode, paramname) for paramname, paramcode in paramdefs.items()])
 							# does this function take a direct parameter?
@@ -106,7 +108,8 @@ class EventHandlerManager:
 	def calleventhandler(self, eventcode, params):
 		callback, paramdefs = self._eventhandlers().get(eventcode, (None, {}))
 		if not callback:
-			raisecomponenterror(OSAMessageNotUnderstood) # if event handler is missing, raise a ComponentError (not a ScriptError, which is only for errors that happen within the script)
+			raisecomponenterror(OSAMessageNotUnderstood, "Script doesn't contain a handler for %r events." % 
+					self._handlernamebycode.get(eventcode, eventcode)) # if event handler is missing, raise a ComponentError (not a ScriptError, which is only for errors that happen within the script)
 		args = {}
 		for code, value in params.items():
 			paramname = paramdefs.get(code)
@@ -115,7 +118,8 @@ class EventHandlerManager:
 		try:
 			return callback(**args)
 		except Exception, e:
-			raisescripterror(errOSAGeneralError, "Couldn't handle event", e, None) # caller will need to add source later
+			raisescripterror(errOSAGeneralError, "Couldn't handle %r event" %
+					self._handlernamebycode.get(eventcode, eventcode), e, None) # note: caller will need to add source later
 
 
 #######

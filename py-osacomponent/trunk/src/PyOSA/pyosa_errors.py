@@ -73,15 +73,70 @@ kScriptErrorSelectors = [kOSAErrorNumber,
 						 kOSAErrorExpectedType,
 						 kOSAErrorRange]
 
+
 #######
 # note: use raisecomponenterror function to raise ComponentErrors
 
 class ComponentError(StandardError):
 	# Represents errors intentionally raised by PyOSA code
 	
-	def __init__(self, errornumber):
+	_genericerrormessages = { # cribbed from OSA reference docs
+		-1700: "A value can't be coerced to the desired type.",
+		-1701: "A parameter is missing for a function invocation.",
+		-1702: "Some data could not be read.",
+		-1703: "Same as errAEWrongDataType; wrong descriptor type.",
+		-1708: "A message was sent to an object that didn't handle it.",
+		-1717: "A function to be returned doesn't exist.",
+		-1719: "An index was out of range. Specialization of errOSACantAccess.",
+		-1720: "The specified range is illegal. Specialization of errOSACantAccess.",
+		-1721: "The wrong number of parameters were passed to the function, or a parameter pattern cannot be matched.",
+		-1723: "A container can not have the requested object.",
+		-1728: "An object is not found in a container.",
+		-1732: "Recording is already on. Available only in version 1.0.1 or greater.",
+		-1750: "Scripting component error.",
+		-1751: "Invalid script id.",
+		-1752: "Script doesn't seem to belong to AppleScript.",
+		-1753: "Script error.",
+		-1754: "Invalid selector given.",
+		-1756: "Invalid access.",
+		-1757: "Source not available.",
+		-1758: "No such dialect.",
+		-1759: "Data couldn't be read because its format is obsolete.",
+		-1761: "Parameters are from two different components.",
+		-1762: "Can't connect to system with that ID.",
+		-2700: "No actual error code is to be returned.",
+		-2701: "An attempt to divide by zero was made.",
+		-2702: "An integer or real value is too large to be represented.",
+		-2703: "An application can't be launched, or when it is, remote and program linking is not enabled.",
+		-2704: "An application can't respond to AppleEvents.",
+		-2705: "An application's terminology resource is not readable.",
+		-2706: "The runtime stack overflowed.",
+		-2707: "A runtime internal data structure overflowed.",
+		-2708: "An intrinsic limitation is exceeded for the size of a value or data structure.",
+		-2709: "Can't get the event dictionary.",
+		-2710: "Can't make class <class identifier>.",
+		-2740: "A syntax error occured.",
+		-2741: "Another form of syntax was expected.",
+		-2742: "A name or number is too long to be parsed.",
+		-2750: "A formal parameter, local variable, or instance variable is specified more than once.",
+		-2751: "A formal parameter, local variable, or instance variable is specified more than once.",
+		-2752: "More than one handler is defined with the same name in a scope where the language doesn't allow it.",
+		-2753: "A variable is accessed that has no value.",
+		-2754: "A variable is declared inconsistently in the same scope, such as both local and global.",
+		-2755: "An illegal control flow occurs in an application. For example, there is no catcher for the throw, or there was a non-lexical loop exit.",
+		-10003: "An object can never be set in a container",
+		-10006: "An object cannot be set in a container.",
+	}
+	
+	originalexception = None
+	errorrange = (0, 0)
+	traceback = ''
+	
+	def __init__(self, errornumber, errormessage=''):
 		StandardError.__init__(self, errornumber)
 		self.errornumber = errornumber
+		self.errormessage = errormessage or self._genericerrormessages.get(
+				errornumber, 'An error %i occurred.' % errornumber)
 	
 	def __repr__(self):
 		return 'ComponentError(%r)' % self.errornumber
@@ -192,17 +247,17 @@ class ScriptError(StandardError):
 #######
 # raise script and component errors
 
-def raisecomponenterror(errornumber):
+def raisecomponenterror(errornumber, errormessage=''):
 	print >> stderr, 'raise ComponentError:'
 	print >> stderr, '-' * 80
 	print_stack(None, 20, stderr)
 	print >> stderr, '-' * 80
 	print >> stderr
-	raise ComponentError(errornumber)
+	raise ComponentError(errornumber, errormessage)
 	
 
 def raisescripterror(errornumber, briefmessage, originalexception, source):
-	# TO DO: using exc_info here may cause circular references
+	# TO DO: using exc_info here may cause circular references that leak memory; need to check this
 	if errornumber == OSASyntaxError:
 		raise ScriptError(errornumber, briefmessage, originalexception, None, source)
 	else:

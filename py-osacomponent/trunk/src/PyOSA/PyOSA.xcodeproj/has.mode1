@@ -185,7 +185,128 @@
 	<key>Notifications</key>
 	<array/>
 	<key>OpenEditors</key>
-	<array/>
+	<array>
+		<dict>
+			<key>Content</key>
+			<dict>
+				<key>PBXProjectModuleGUID</key>
+				<string>4FB8B8380C51108B00270858</string>
+				<key>PBXProjectModuleLabel</key>
+				<string>pyosa_scriptcontext.py</string>
+				<key>PBXSplitModuleInNavigatorKey</key>
+				<dict>
+					<key>Split0</key>
+					<dict>
+						<key>PBXProjectModuleGUID</key>
+						<string>4FB8B8390C51108B00270858</string>
+						<key>PBXProjectModuleLabel</key>
+						<string>pyosa_scriptcontext.py</string>
+						<key>_historyCapacity</key>
+						<integer>0</integer>
+						<key>bookmark</key>
+						<string>4FB8B83A0C51108B00270858</string>
+						<key>history</key>
+						<array>
+							<string>4FB8B8180C50FEA700270858</string>
+						</array>
+					</dict>
+					<key>SplitCount</key>
+					<string>1</string>
+				</dict>
+				<key>StatusBarVisibility</key>
+				<true/>
+			</dict>
+			<key>Geometry</key>
+			<dict>
+				<key>Frame</key>
+				<string>{{0, 20}, {764, 759}}</string>
+				<key>PBXModuleWindowStatusBarHidden2</key>
+				<false/>
+				<key>RubberWindowFrame</key>
+				<string>116 32 764 800 0 0 1280 832 </string>
+			</dict>
+		</dict>
+		<dict>
+			<key>Content</key>
+			<dict>
+				<key>PBXProjectModuleGUID</key>
+				<string>4FB8B83B0C51108B00270858</string>
+				<key>PBXProjectModuleLabel</key>
+				<string>pyosa_errors.py</string>
+				<key>PBXSplitModuleInNavigatorKey</key>
+				<dict>
+					<key>Split0</key>
+					<dict>
+						<key>PBXProjectModuleGUID</key>
+						<string>4FB8B83C0C51108B00270858</string>
+						<key>PBXProjectModuleLabel</key>
+						<string>pyosa_errors.py</string>
+						<key>_historyCapacity</key>
+						<integer>0</integer>
+						<key>bookmark</key>
+						<string>4FB8B83E0C51108B00270858</string>
+						<key>history</key>
+						<array>
+							<string>4FB8B83D0C51108B00270858</string>
+						</array>
+					</dict>
+					<key>SplitCount</key>
+					<string>1</string>
+				</dict>
+				<key>StatusBarVisibility</key>
+				<true/>
+			</dict>
+			<key>Geometry</key>
+			<dict>
+				<key>Frame</key>
+				<string>{{0, 20}, {785, 759}}</string>
+				<key>PBXModuleWindowStatusBarHidden2</key>
+				<false/>
+				<key>RubberWindowFrame</key>
+				<string>39 32 785 800 0 0 1280 832 </string>
+			</dict>
+		</dict>
+		<dict>
+			<key>Content</key>
+			<dict>
+				<key>PBXProjectModuleGUID</key>
+				<string>4FB8B83F0C51108B00270858</string>
+				<key>PBXProjectModuleLabel</key>
+				<string>main.c</string>
+				<key>PBXSplitModuleInNavigatorKey</key>
+				<dict>
+					<key>Split0</key>
+					<dict>
+						<key>PBXProjectModuleGUID</key>
+						<string>4FB8B8400C51108B00270858</string>
+						<key>PBXProjectModuleLabel</key>
+						<string>main.c</string>
+						<key>_historyCapacity</key>
+						<integer>0</integer>
+						<key>bookmark</key>
+						<string>4FB8B8410C51108B00270858</string>
+						<key>history</key>
+						<array>
+							<string>4FB8B8070C50F36D00270858</string>
+						</array>
+					</dict>
+					<key>SplitCount</key>
+					<string>1</string>
+				</dict>
+				<key>StatusBarVisibility</key>
+				<true/>
+			</dict>
+			<key>Geometry</key>
+			<dict>
+				<key>Frame</key>
+				<string>{{0, 20}, {740, 759}}</string>
+				<key>PBXModuleWindowStatusBarHidden2</key>
+				<false/>
+				<key>RubberWindowFrame</key>
+				<string>210 32 740 800 0 0 1280 832 </string>
+			</dict>
+		</dict>
+	</array>
 	<key>PerspectiveWidths</key>
 	<array>
 		<integer>1012</integer>
@@ -460,7 +581,7 @@
 							<real>274</real>
 						</array>
 						<key>RubberWindowFrame</key>
-						<string>-7 31 291 801 0 0 1280 832 </string>
+						<string>-1 31 291 801 0 0 1280 832 </string>
 					</dict>
 					<key>Module</key>
 					<string>PBXSmartGroupTreeModule</string>
@@ -479,7 +600,7 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>4FA814990BB7EF12004D5DFF</string>
+				<string>4FB8B8050C50F27B00270858</string>
 				<string>11E0B1FE06471DED0097A5F4</string>
 			</array>
 			<key>ToolbarConfiguration</key>
@@ -511,10 +632,13 @@
 	<key>WindowOrderList</key>
 	<array>
 		<string>4F19765A0B7D2E6D0095502E</string>
-		<string>/Users/has/appscript/py-osacomponent/PyOSA/PyOSA.xcodeproj</string>
+		<string>4FB8B83F0C51108B00270858</string>
+		<string>4FB8B83B0C51108B00270858</string>
+		<string>4FB8B8380C51108B00270858</string>
+		<string>/Users/has/appscript/py-osacomponent/src/PyOSA/PyOSA.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
-	<string>-7 31 291 801 0 0 1280 832 </string>
+	<string>-1 31 291 801 0 0 1280 832 </string>
 	<key>WindowTools</key>
 	<array>
 		<dict>
@@ -530,14 +654,12 @@
 					<key>Dock</key>
 					<array>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
 								<string>1CD0528F0623707200166675</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>PyOSA.r</string>
+								<string></string>
 								<key>StatusBarVisibility</key>
 								<true/>
 							</dict>
@@ -593,7 +715,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>4F19765A0B7D2E6D0095502E</string>
-				<string>4FA814A40BB7EFC9004D5DFF</string>
+				<string>4FB8B8060C50F27B00270858</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>

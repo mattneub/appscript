@@ -3,9 +3,6 @@ TO DO
 - finish HTML-ising documentation
 
 
-- use AEFlattenDesc/AEUnflattenDesc to serialise/deserialise data for typeScript descriptors
-
-
 - in applets, calling osaterminology.getterminology.getaete at the script's top level results in infinite recursion, causing the script to crash, e.g.:
 
 ### start applet script ###
@@ -36,7 +33,10 @@ def run():
 - finish sub-interpreter support
 
 
-- add support for a config.py module that can be located at [~]/Library/PyOSA/2.x? If present, this would be executed each time a new script was created and would have access to PyOSA APIs, allowing additional configuration to be done (e.g. loading event handler definitions).
+- add support for a config.py module that can be located at [~]/Library/PyOSA/2.x? If present, this would be executed each time a new script was created and would have access to PyOSA APIs, allowing additional configuration to be done (e.g. loading event handler definitions). (Question: what are security implications?)
+
+
+- include prebuilt appscript packages for each Python version in component bundle and have PyOSA load one of these as appropriate instead of requiring Python interpreter to have a copy already installed.
 
 
 - OSA library support?
