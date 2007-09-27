@@ -151,6 +151,13 @@ set(reference, to) -- Set an object's data.
 
 <p>When you create an <code>app</code> object by application name, bundle id or creator type, appscript uses LaunchServices to locate an application matching that description. If you have more than one copy of the same application installed, you can identify the one you want by providing its full path, otherwise LaunchServices will identify the newest copy for you.</p>
 
+<p>Appscript identifies running applications by their process ids so it's possible to control multiple versions of an application running at the same time if their Application objects are created using process ids or eppc URLs.</p>
+
+
+<h3>Launch errors</h3>
+
+<p>If the application can't be launched for some reason (e.g. if it's in the Trash), an <code>appscript.CantLaunchApplicationError</code> error will be raised. This provides a description of the problem (if it's a standard LaunchServices error) along with the original OS error number, which you can also obtain by casting the error object to an integer.</p>
+
 
 <h3>Using <code>launch</code> vs <code>run</code></h3>
 

@@ -6,6 +6,8 @@ HISTORY
 
 - no longer raises error if aete isn't fully parsed
 
+- built-in help() system now requires external AppscriptHelpAgent.app to operate; now prints help info to stderr only 
+
 
 2007-04-19 -- 0.17.3
 

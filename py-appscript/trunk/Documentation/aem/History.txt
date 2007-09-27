@@ -14,6 +14,10 @@ HISTORY
 
 - removed Carbon.Launch dependency in findapp module due to memory leaks in Carbon.CF; findapp now uses modified version of LSFindApplicationForInfo in PSN extension
 
+- now raises CantLaunchApplicationError if unable to launch an application (previously raised MacOS.Error; users)
+
+- now raises CantLaunchApplicationError instead of MacOS.Error if unable to launch an application. Users should update existing code as necessary.
+
 
 2007-01-20 -- 0.12.1
 

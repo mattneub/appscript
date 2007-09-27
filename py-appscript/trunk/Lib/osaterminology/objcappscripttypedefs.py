@@ -1,8 +1,7 @@
+"""objcappscripttypedefs -- translation tables between objc-appscript-style typenames and corresponding AE codes
 
-
-######################################################################
-# PRIVATE
-######################################################################
+(C) 2007 HAS
+"""
 
 types = [
 	('April', 'apr '),

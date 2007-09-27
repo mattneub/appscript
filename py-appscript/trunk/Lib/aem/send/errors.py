@@ -92,6 +92,21 @@ _errors = { # Following error descriptions are mostly cribbed from AppleScript L
 	-10023: "Enumerated value is not allowed for this property.",
 	-10024: "Class can't be an element of container.",
 	-10025: "Illegal combination of properties settings.",
+	# following taken from <http://developer.apple.com/documentation/Carbon/Reference/LaunchServicesReference>:
+	-10660: "The application cannot be run because it is inside a Trash folder.",
+	-10810: "An unknown error has occurred.",
+	-10811: "The item to be registered is not an application.",
+	-10813: "Data of the desired type is not available (for example, there is no kind string).",
+	-10814: "No application in the Launch Services database matches the input criteria.",
+	-10817: "Data is structured improperly (for example, an item's information property list is malformed).",
+	-10818: "A launch of the application is already in progress.",
+	-10822: "There is a problem communicating with the server process that maintains the Launch Services database.",
+	-10823: "The filename extension to be hidden cannot be hidden.",
+	-10825: "The application to be launched cannot run on the current Mac OS version.",
+	-10826: "The user does not have permission to launch the application (on a managed network).",
+	-10827: "The executable file is missing or has an unusable format.",
+	-10828: "The Classic emulation environment was required but is not available.",
+	-10829: "The application to be launched cannot run simultaneously in two different user sessions.",
 }
 
 

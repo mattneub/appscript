@@ -10,9 +10,10 @@ from aem.types import Codecs
 from aem.types.objectspecifiers import BASE
 
 import connect
+from connect import CantLaunchApplicationError
 from send import *
 
-__all__ = ['Application', 'CommandError', 'Event']
+__all__ = ['Application', 'CommandError', 'Event', 'CantLaunchApplicationError']
 
 ######################################################################
 # PRIVATE

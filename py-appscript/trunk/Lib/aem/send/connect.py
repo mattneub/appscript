@@ -2,15 +2,16 @@
 
 (C) 2005 HAS
 """
+import MacOS, struct
+from time import sleep
 
 from CarbonX.AE import AECreateDesc, AECreateAppleEvent
 from CarbonX import kAE
-import MacOS, struct
 
 import PSN
 from send import Event
 from aem.types import Codecs
-from time import sleep
+from errors import errorMessage
 
 __all__ = ['launchapp', 'isrunning', 'currentapp', 'localapp', 'remoteapp']
 
@@ -50,9 +51,30 @@ def _makePSNAddressDesc(psn):
 	return AECreateDesc(kAE.typeProcessSerialNumber, struct.pack('LL', *psn))
 
 
+def _launchApplication(path, event):
+	try:
+		return PSN.LaunchApplication(path, event,
+				_launchContinue + _launchNoFileFlags + _launchDontSwitch)
+	except MacOS.Error, err:
+		raise CantLaunchApplicationError, err[0]
+
+
 ######################################################################
 # PUBLIC
 ######################################################################
+
+
+class CantLaunchApplicationError(Exception):
+	def __init__(self, errorNumber):
+		self.number = errorNumber
+		Exception.__init__(self, errorNumber)
+				
+	def __int__(self):
+		return self.number
+	
+	def __str__(self):
+		return "CantLaunchApplicationError %i: %s" % (self.number, errorMessage(self.number))
+
 
 def launchapp(path):
 	"""Send a 'launch' event to an application. If application is not already running, it will be launched in background first."""
@@ -62,8 +84,7 @@ def launchapp(path):
 	except MacOS.Error, err:
 		if err[0] == -600: # Application isn't running, so launch it and send it a 'launch' event:
 			sleep(1)
-			PSN.LaunchApplication(path, _launchEvent,
-					_launchContinue + _launchNoFileFlags + _launchDontSwitch)
+			_launchApplication(path, _launchEvent)
 		else:
 			raise
 	else: # App is already running, so send it a 'launch' event:
@@ -98,8 +119,7 @@ def localapp(path):
 	except MacOS.Error, err:
 		if err[0] == -600: # Application isn't running, so launch it in background and send it a standard 'run' event.
 			sleep(1)
-			psn = PSN.LaunchApplication(path, _runEvent, 
-					_launchContinue + _launchNoFileFlags + _launchDontSwitch)
+			psn = _launchApplication(path, _runEvent)
 		else:
 			raise
 	return _makePSNAddressDesc(psn)

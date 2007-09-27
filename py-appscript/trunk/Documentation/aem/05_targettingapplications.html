@@ -85,7 +85,7 @@
 
 <p>When creating a new <code>Application</code> object, at most only one of the following arguments should be given: <code>path</code>, <code>pid</code>, <code>url</code> or <code>desc</code>. If none are given, the current application (host process) is targetted.</p>
 
-<p>When targetting a local application by path, the full path to the application (or application bundle) must be given, including a <code>.app</code> suffix if present. Note that aem identifies local applications by process serial number for reliability. If the target application is not already running when a new <code>Application</code> instance is created, it will be started automatically so that a PSN can be acquired.</p>
+<p>When targetting a local application by path, the full path to the application (or application bundle) must be given, including a <code>.app</code> suffix if present. Note that aem identifies local applications by process serial number for reliability. If the target application is not already running when a new <code>Application</code> instance is created, it will be started automatically so that a PSN can be acquired. If the application can't be launched for some reason (e.g. if it's in the Trash), an <code>aem.CantLaunchApplicationError</code> error will be raised.</p>
 
 <p>If the <code>url</code> argument is used, it should contain an eppc URL string. Aem will pack this as an <code>AEDesc</code> of <code>typeApplSignature</code>. The target machine must have Remote Apple Events enabled in its Sharing preferences.</p>
 

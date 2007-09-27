@@ -1,13 +1,7 @@
-#!/usr/bin/env pythonw
-
 """appscripttypedefs -- translation tables between appscript-style typenames and corresponding AE codes
 
 (C) 2005 HAS
 """
-
-######################################################################
-# PRIVATE
-######################################################################
 
 types = [
 		# Human-readable names for commonly used AE types.

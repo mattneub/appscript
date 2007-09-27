@@ -4,7 +4,7 @@ Lots of syntactic sugar allows users to construct query-based references using f
 
 (C) 2004 HAS"""
 
-import struct, MacOS
+import struct, MacOS, sys
 
 from CarbonX import kAE, kOSA
 from CarbonX.AE import AECreateList, AECreateDesc
@@ -181,6 +181,8 @@ class AppData(aem.Codecs):
 		- help system
 	"""
 	
+	_kHelpAgentID = 'net.sourceforge.appscript.appscripthelpagent'
+	
 	def __init__(self, aemApplicationClass, constructor, identifier, terms):
 		"""
 			aemApplicationClass : class -- aem.Application or equivalent
@@ -196,6 +198,7 @@ class AppData(aem.Codecs):
 		self._aemApplicationClass = aemApplicationClass
 		self.constructor, self.identifier = constructor, identifier
 		self._terms = terms
+		self._helpAgent = None
 	
 	def connect(self):
 		"""Initialises application target and terminology lookup tables.
@@ -225,12 +228,6 @@ class AppData(aem.Codecs):
 	typebyname = property(lambda self: self.connect().typebyname)
 	referencebycode = property(lambda self: self.connect().referencebycode)
 	referencebyname = property(lambda self: self.connect().referencebyname)
-	
-	def _helpObject(self):
-		from helpsystem import Help
-		self.helpobject = Help(terminology.aetesforapp(self.target), self.identifier or 'Current Application') # TO DO: better formatting of name
-		return self.helpobject
-	helpobject = property(lambda self: self._helpObject())
 
 	def pack(self, data):
 		if isinstance(data, GenericReference):
@@ -246,8 +243,45 @@ class AppData(aem.Codecs):
 		
 	# Help system
 	
+	def _initHelpAgent(self):
+		try:
+			self._helpAgent = aem.Application(aem.findapp.byid(self._kHelpAgentID))
+			return True
+		except aem.findapp.ApplicationNotFoundError:
+			print >> sys.stderr,  "No help available: AppscriptHelpAgent.app not found. (See <http://appscript.sourceforge.net>)"
+			return False
+	
+	def _displayHelp(self, flags, ref):
+		if isinstance(ref, Command):
+			commandName = ref.AS_name
+			ref = ref.AS_aemreference
+		else:
+			commandName = ''
+		try:
+			print >> sys.stderr, self._helpAgent.event('ASHAHelp', {
+					'Cons': self.constructor,
+					'Iden': self.identifier,
+					'Styl': 'py-appscript',
+					'Flag': flags,
+					'aRef': self.pack(ref),
+					'CNam': commandName
+					}).send()
+			return None
+		except aem.CommandError, e:
+			return e
+	
 	def help(self, flags, ref):
-		return self.helpobject.help(flags, ref) # call real help. Note that help system is responsible for providing a return value (usually the same reference it was called upon, but it may modify this).
+		if not self._helpAgent: # initialise help system upon first use
+			if not self._initHelpAgent():
+				return ref # if AppscriptHelpAgent is unavailable then do nothing
+		e = self._displayHelp(flags, ref)
+		if e and e.number in [-600, -609]: # AppscriptHelpAgent is no longer running, so reconnect
+			if not self._initHelpAgent():
+				return ref # if AppscriptHelpAgent is unavailable then do nothing
+			e = self._displayHelp(flags, ref)
+		if e:
+			print >> sys.stderr, "No help available: AppscriptHelpAgent raised an error: %r." % e
+		return ref
 
 
 ######################################################################
@@ -297,7 +331,7 @@ class Command(_Base):
 	
 	def __init__(self, appdata, aemreference, repr, name, info):
 		_Base.__init__(self, appdata)
-		self._aemreference, self._repr, self.AS_name = aemreference, repr, name
+		self.AS_aemreference, self._repr, self.AS_name = aemreference, repr, name
 		self._code, self._labelledArgTerms = info
 	
 	def __repr__(self):
@@ -340,16 +374,16 @@ class Command(_Base):
 		except KeyError:
 			raise TypeError, 'Unknown keyword argument %r.' % name
 		# apply special cases for certain commands (make, set, any command that takes target object specifier as its direct parameter); appscript provides these as a convenience to users, making its syntax more concise, OO-like and nicer to use
-		if self._aemreference is not aem.app:
+		if self.AS_aemreference is not aem.app:
 			if self._code == 'coresetd':
 				# Special case: if ref.set(...) contains no 'to' argument, use direct argument for 'to' parameter and target reference for direct parameter
 				if  params.has_key('----') and not params.has_key('data'):
 					params['data'] = params['----']
-					params['----'] = self._aemreference
+					params['----'] = self.AS_aemreference
 				elif not params.has_key('----'):
-					params['----'] = self._aemreference
+					params['----'] = self.AS_aemreference
 				else:
-					atts['subj'] = self._aemreference
+					atts['subj'] = self.AS_aemreference
 			elif self._code == 'corecrel':
 				# this next bit is a bit tricky: 
 				# - While it should be possible to pack the target reference as a subject attribute, when the target is of typeInsertionLoc, CocoaScripting stupidly tries to coerce it to typeObjectSpecifier, which causes a coercion error.
@@ -357,16 +391,16 @@ class Command(_Base):
 				# One option is to follow the AppleScript approach and force users to always supply subject attributes as target references and 'at' parameters as 'at' parameters, but the syntax for the latter is clumsy and not backwards-compatible with a lot of existing appscript code (since earlier versions allowed the 'at' parameter to be given as the target reference). So for now we split the difference when deciding what to do with a target reference: if it's an insertion location then pack it as the 'at' parameter (where possible), otherwise pack it as the subject attribute (and if the application doesn't like that then it's up to the client to pack it as an 'at' parameter themselves).
 				#
 				# if ref.make(...) contains no 'at' argument and target is an insertion reference, use target reference for 'at' parameter...
-				if isinstance(self._aemreference, aem.types.objectspecifiers.specifier.InsertionSpecifier) and not params.has_key('insh'):
-					params['insh'] = self._aemreference
+				if isinstance(self.AS_aemreference, aem.types.objectspecifiers.specifier.InsertionSpecifier) and not params.has_key('insh'):
+					params['insh'] = self.AS_aemreference
 				else: # ...otherwise pack the target reference as the subject attribute
-					atts['subj'] = self._aemreference
+					atts['subj'] = self.AS_aemreference
 			elif params.has_key('----'):
 				# if user has already supplied a direct parameter, pack that reference as the subject attribute
-				atts['subj'] = self._aemreference
+				atts['subj'] = self.AS_aemreference
 			else:
 				# pack that reference as the direct parameter
-				params['----'] = self._aemreference
+				params['----'] = self.AS_aemreference
 		# build and send the Apple event, returning its result, if any
 		try:
 			return self.AS_appdata.target.event(self._code, params, atts, codecs=self.AS_appdata).send(timeout, sendFlags)
