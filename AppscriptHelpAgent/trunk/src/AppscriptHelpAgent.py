@@ -12,10 +12,9 @@ from AppKit import NSApp
 
 from aemreceive import *
 import appscript, aem, CarbonX.AE
-
-from appscript.reference import AppData
 from appscript.terminology import aetesforapp
-from appscript.helpsystem import Help
+
+from helpsystem import Help
 
 
 __name__ = 'AppscriptHelpAgent'
@@ -26,8 +25,6 @@ __version__ = '0.1.0'
 _waittime = 60 * 60 # automatically quit after this no. of seconds of inactivity
 
 _cache = {}
-
-_codecs = AppData(aem.Application, 'current', None, True)
 
 #######
 
@@ -74,7 +71,7 @@ installeventhandler(
 
 #######
 
-def help(constructor, identity, style, flags, aemreference): # TO DO: command support
+def help(constructor, identity, style, flags, aemreference, commandname=''):
 	restartwatchdog()
 	id = (constructor, identity, style)
 	if id not in _cache:
@@ -92,13 +89,15 @@ def help(constructor, identity, style, flags, aemreference): # TO DO: command su
 			raise RuntimeError, 'Unknown constructor: %r' % constructor
 		output = StringIO()
 		aetes = aetesforapp(appobj.AS_appdata.target)
-		appobj.AS_appdata.helpobject = Help(aetes, identity or u'Current Application', style, output)
-		_cache[id] = (appobj, output)
-	ref, output = _cache[id]
+		helpobj = Help(aetes, identity or u'Current Application', style, output)
+		_cache[id] = (appobj, helpobj, output)
+	ref, helpobj, output = _cache[id]
 	output.truncate(0)
 	if aemreference is not None:
 		ref = ref.AS_newreference(aemreference)
-	ref.help(flags)
+	if commandname:
+		ref = getattr(ref, commandname)
+	helpobj.help(flags, ref)
 	return output.getvalue()
 
 installeventhandler(help,
@@ -107,7 +106,9 @@ installeventhandler(help,
 		('Iden', 'identity', kAE.typeWildCard),
 		('Styl', 'style', kAE.typeChar),
 		('Flag', 'flags', kAE.typeChar),
-		('aRef', 'aemreference', kAE.typeWildCard))
+		('aRef', 'aemreference', kAE.typeWildCard),
+		('CNam', 'commandname', kAE.typeChar)
+		)
 
 #######
 
