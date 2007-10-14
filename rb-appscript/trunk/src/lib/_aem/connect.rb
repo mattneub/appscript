@@ -62,7 +62,7 @@ module Connect
 	
 	def Connect.launch_application(path, event)
 		begin
-			AE.launch_application(path, event,
+			return AE.launch_application(path, event,
 					LaunchContinue + LaunchNoFileFlags + LaunchDontSwitch)
 		rescue AE::MacOSError => err
 			raise CantLaunchApplicationError, err.to_i

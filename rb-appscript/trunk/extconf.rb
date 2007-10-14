@@ -30,8 +30,8 @@
 
 require 'mkmf'
 
-$CFLAGS << ' -Wall'# -arch ppc -arch i386'
-$LDFLAGS = '-framework Carbon'
+$CFLAGS << ' -Wall'
+$LDFLAGS << ' -framework Carbon -framework ApplicationServices'
 
 # Avoid `ID' and `T_DATA' symbol collisions between Ruby and Carbon.
 # (adapted code from RubyAEOSA - FUJIMOTO Hisakuni  <hisa -at- fobj - com>)

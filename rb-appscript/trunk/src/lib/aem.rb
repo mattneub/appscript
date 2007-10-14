@@ -58,7 +58,7 @@ module AEM
 	#######
 	# Application class
 	
-	class Application
+	class Application < AEMReference::Base
 		# Identifies an application and provides an #event method for constructing Apple events targetted at it.
 	
 		require "weakref"
@@ -162,6 +162,14 @@ module AEM
 		alias_method :eql?, :== 
 		
 		# (hash method is provided by attr_reader :hash)
+		
+		def AEM_comparable
+			return ['AEMApplication', @identity]
+		end
+		
+		def AEM_pack_self(codecs)
+			return @address_desc
+		end
 		
 		def reconnect
 			# If application has quit since this Application object was created, its AEAddressDesc

@@ -119,7 +119,7 @@ class TC_Codecs < Test::Unit::TestCase
 	end
 	
 	def test_file
-		path = '/Applications/TextEdit.app/'
+		path = '/Applications/TextEdit.app'
 		d = @c.pack(MacTypes::Alias.path(path))
 		assert_equal(path, @c.unpack(d).to_s)
 		
@@ -168,5 +168,11 @@ class TC_Codecs < Test::Unit::TestCase
 		assert_equal(val, val2)
 		assert_equal(:inches, val2.type)
 		assert_equal(3.3, val2.value)
+	end
+	
+	def test_app
+		val = AEM::Application.by_path(FindApp.by_name('TextEdit'))
+		d = @c.pack(val)
+		assert_equal(KAE::TypeProcessSerialNumber, d.type)
 	end
 end

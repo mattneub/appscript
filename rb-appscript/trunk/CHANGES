@@ -1,8 +1,14 @@
-2007-09-22 -- 0.?.?
+2007-10-?? -- 0.5.0 (beta 2)
 
-- added hfs_path,, #hfs_path methods to MacTypes::Alias, MacTypes::FileURL; existing path, #path methods now use CFURL functions to convert between POSIX paths and URLs
+- added hfs_path, #hfs_path methods to MacTypes::Alias, MacTypes::FileURL; existing path, #path methods now use CFURL functions to convert between POSIX paths and URLs
 
 - aem/appscript now raises Connect::CantLaunchApplicationError instead of AE::MacOSError if unable to launch an application. Users should update existing code as necessary.
+
+- added AB_export_vcard.rb sample script
+
+- AEM::Application is now a subclass of AEMReference::Base, allowing aem Codecs instances to pack it
+
+- fixed extconf.rb so that universal binaries build correctly
 
 
 2007-08-17 -- 0.4.0 (beta 1)

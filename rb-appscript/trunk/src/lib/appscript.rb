@@ -75,12 +75,12 @@ module Appscript
 			:current => 'current',
 		}
 		
-		def _make_help_agent
+		def _init_help_agent
 			begin
 				@_help_agent = AEM::Application.by_path(FindApp.by_id(HelpAgentID))
 				return true
 			rescue FindApp::ApplicationNotFoundError
-				puts "No help available: AppscriptHelpAgent.app not found."
+				puts "No help available: AppscriptHelpAgent.app not found. (See <http://appscript.sourceforge.net>)"
 				return false
 			end
 		end
@@ -89,7 +89,7 @@ module Appscript
 			begin
 				puts @_help_agent.event('ASHAHelp', {
 						'Cons' => Constructors[@constructor],
-						'Iden' => @constructor == :by_aem_app ? @identifier.address_desc : @identifier,
+						'Iden' => @identifier,
 						'Styl' => 'rb-appscript',
 						'Flag' => flags,
 						'aRef' => pack(ref),
@@ -102,11 +102,11 @@ module Appscript
 		
 		def help(flags, ref)
 			if not @_help_agent
-				return ref if not _make_help_agent
+				return ref if not _init_help_agent
 			end
 			e = _display_help(flags, ref)
 			if e and [-600, -609].include?(e.number) # not running
-				return ref if not _make_help_agent
+				return ref if not _init_help_agent
 				e = _display_help(flags, ref)
 			end
 			puts "No help available: AppscriptHelpAgent raised an error: #{e}." if e
