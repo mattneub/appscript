@@ -1,3 +1,21 @@
+"""
+
+Requirements:
+
+- appscript 0.18.0+ <http://appscript.sourceforge.net>
+
+- PyObjC <http://pyobjc.sourceforge.net/>
+
+- py2app <http://undefined.org/python/>
+
+--
+
+To build, cd to ASDictionary-x.x.x directory and run:
+
+	python setup.py py2app
+
+"""
+
 from distutils.core import setup
 import py2app
 from plistlib import Plist

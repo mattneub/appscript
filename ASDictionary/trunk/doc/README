@@ -26,29 +26,6 @@ NOTES
 - Many thanks to the following for comments, suggestions and bug reports: Philip Aker, Emmanuel Levy, Tim Mansour, Jake Pietrykowski, Courtney Schwartz
 
 -----------------------------------
-HISTORY
+AUTHOR
 
-2007-06-30 -- 0.8.0; added frame-based HTML option; added objc-appscript formatting option; removed aete export option; improved GUI
-
-2006-11-19 -- 0.7.1; 'collapse classes' dialog now shows when exporting only Ruby-style dictionaries; updated for py-appscript 0.17.0 and rb-appscript 0.2.0
-
-2006-10-23 -- 0.7.0; added rb-appscript support; now reports when an application's terminology isn't found instead of writing an empty file; changed 'appscript' suffix to 'py'/'rb' suffixes to distinguish different versions
-
-2006-09-19 -- 0.6.2; renamed to ASDictionary
-
-2006-08-26 -- 0.6.1; now uses appscript 0.16.2 - this fixes some additional HTML rendering problems; combining duplicate class definitions into one is now optional
-
-2006-08-17 -- 0.6.0; now uses appscript 0.16.1 - this fixes rendering problems for applications that have classes in hidden suites, where visible classes by the same name could end up moved to the hidden suite and therefore fail to show up in HTML output (e.g. Mail 2's 'application' class); changed licence from LGPL to MIT; Universal build
-
-2005-11-22 -- 0.5.0; now supports optional external HTML template for AppleScript dictionaries; new icon; no longer renders HTML dictionaries for applications that don't have one
-
-2005-05-27 -- 0.4.1; now ignores invalid reference forms instead of erroring
-
-2005-05-13 -- 0.4.0; now generates appscript-style terminology; allows selection of multiple formats
-
-2005-04-29 -- 0.3.0; more forgiving of weird and broken dictionaries; merges DumpAETE functionality; improves hyperlinking; new cheesy icon
-
------------------------------------
-COPYRIGHT
-
-(C) 2005 HAS -- <hhas -at- users - sourceforge - net> <http://appscript.sourceforge.net>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+- HAS -- <hhas -at- users - sourceforge - net> <http://appscript.sourceforge.net>
