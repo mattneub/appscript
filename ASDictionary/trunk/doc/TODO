@@ -1,0 +1,28 @@
+TO DO
+
+- the application reference displayed at start of each help listing should appear in Ruby, not Python, format when rb-appscript style is used
+
+- the -s option should display Ruby, not Python, values when the rb-appscript style is used
+
+- there seems to be a period between launching ASDictionary and its custom event handlers being installed where events sent by asdict/appscript immediately after launching ASDictionary result in -1708 (event not handled) errors being returned to sender; investigate this and provide suitable solution
+
+- allow asdict, appscript to launch ASDictionary without displaying Export window; will also need to modify current behaviour so that closing window no longer quits ASDictionary and window can be reopened from menu and on 'reopen' events
+
+- improve ASDictionary launching code in asdict (currently brings ASDictionary to front instead of launching it in background)
+
+- add 'open' event handler, allowing application and osax files to be dragged onto ASDictionary icon to add them to export list
+
+- support drag-n-drop in table view, allowing application and osax files to be dragged directly onto export list
+
+- add 'Clear' button to Export window for clearing export list
+
+- add public event handler: 
+	
+	export -- export application dictionaries
+		[list of file alias] -- the applications and/or osaxen to read; if not given, use export list instead
+		[to : folder alias] -- the folder to export to; if not given, the current user's desktop
+		[using file formats : list of 'plain text', 'single file HTML', 'frame based HTML']
+		[using styles : list of 'AppleScript', 'py appscript', 'rb appscript', 'objc appscript']
+		[compact classes : <boolean>]
+		[show invisibles : <boolean>]
+	Result: list of record -- error info for any applications/osaxen that failed to export, as {file: <alias>, description: <string>}

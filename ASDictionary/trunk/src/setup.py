@@ -1,4 +1,4 @@
-"""
+"""ASDictionary build notes
 
 Requirements:
 
@@ -10,7 +10,7 @@ Requirements:
 
 --
 
-To build, cd to ASDictionary-x.x.x directory and run:
+To build, cd to ASDictionary/src directory and run:
 
 	python setup.py py2app
 
@@ -20,7 +20,7 @@ from distutils.core import setup
 import py2app
 from plistlib import Plist
 
-version='0.8.0'
+version='0.9.0'
 
 setup(
 	app=["ASDictionary.py"],

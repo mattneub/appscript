@@ -12,26 +12,69 @@ from PyObjCTools import NibClassBuilder, AppHelper
 import os.path
 
 import osax, appscript
+from aemreceive import *
 
 from osaterminology.getterminology import getaete
 from osaterminology.dom import aeteparser
 from osaterminology.renderers import quickdoc, htmldoc, htmldoc2
 from osaterminology.makeidentifier import getconverter
 
+import appscriptsupport, asdictsupport
+
+#######
+
+__name__ = 'ASDictionary'
+__version__ = '0.9.0'
+
+#######
 
 NibClassBuilder.extractClasses("MainMenu")
 
 userDefaults = NSUserDefaults.standardUserDefaults()
 
-# Note: OSATerminology.so functions should not be called before main event loop
+#######
+# name and version properties
+
+class _AEOMApplication:
+	def __init__(self, result):
+		self._result = result
+	
+	def property(self, code):
+		self._result['result'] = unicode({'pnam': __name__, 'vers': __version__}[code])
+
+
+class _AEOMResolver:
+	def __init__(self, result):
+		self.app = _AEOMApplication(result)
+
+
+def getd(ref):
+	try:
+		result = {}
+		ref.AEM_resolve(_AEOMResolver(result))
+		return result['result']
+	except:
+		raise EventHandlerError(-1728)
+installeventhandler(
+		getd,
+		'coregetd',
+		('----', 'ref', kAE.typeObjectSpecifier)
+		)
+
+
+#######
+
+# OS X bug workaround note: 
+# OSATerminology.so functions should not be called before main event loop
 # is started, otherwise it triggers strange behaviour where minimised windows
 # refuse to expand when clicked on in Dock. (This is a Cocoa/Carbon issue.)
 # Since osax.ScriptingAddition constructor calls osaterminology.getterminology.getaete
 # (which in turn calls OSATerminology.OSAGetAppTerminology), it should not be
 # called here (ie. at top level of script).
-
+#
 # OTOH, appscript uses ascrgdte event to retrieve terminology, so app objects can
-# safely be created and used at top level of script:
+# safely be created and used at top level of script.
+
 _sysev = appscript.app('System Events')
 
 #######
