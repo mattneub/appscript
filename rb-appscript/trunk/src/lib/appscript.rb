@@ -26,7 +26,7 @@ module Appscript
 	
 	class AppData < AEM::Codecs
 	
-		HelpAgentID = 'net.sourceforge.appscript.appscripthelpagent'
+		HelpAgentID = 'net.sourceforge.appscript.asdictionary'
 	
 		attr_reader :constructor, :identifier, :reference_codecs
 		attr_writer :reference_codecs
@@ -75,25 +75,25 @@ module Appscript
 			:current => 'current',
 		}
 		
-		def _init_help_agent
+		def _init_help_agent # TO DO: raise error if ASDictionary version < 0.9.0
 			begin
 				@_help_agent = AEM::Application.by_path(FindApp.by_id(HelpAgentID))
 				return true
 			rescue FindApp::ApplicationNotFoundError
-				puts "No help available: AppscriptHelpAgent.app not found. (See <http://appscript.sourceforge.net>)"
+				$stderr.puts("No help available: ASDictionary application not found.")
 				return false
 			end
 		end
 		
 		def _display_help(flags, ref)
 			begin
-				puts @_help_agent.event('ASHAHelp', {
+				$stderr.puts(@_help_agent.event('AppSHelp', {
 						'Cons' => Constructors[@constructor],
 						'Iden' => @identifier,
 						'Styl' => 'rb-appscript',
 						'Flag' => flags,
 						'aRef' => pack(ref),
-					}).send
+					}).send)
 				return nil
 			rescue AEM::CommandError => e
 				return e
@@ -109,7 +109,7 @@ module Appscript
 				return ref if not _init_help_agent
 				e = _display_help(flags, ref)
 			end
-			puts "No help available: AppscriptHelpAgent raised an error: #{e}." if e
+			$stderr.puts("No help available: ASDictionary raised an error: #{e}.") if e
 			return ref
 		end
 		
@@ -510,7 +510,7 @@ module Appscript
 		#######
 		# introspection
 	
-		def respond_to?(name)
+		def respond_to?(name, includePriv=false)
 			if super 
 				return true
 			else

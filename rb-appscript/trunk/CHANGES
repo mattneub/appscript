@@ -10,6 +10,12 @@
 
 - fixed extconf.rb so that universal binaries build correctly
 
+- built-in help system now uses ASDictionary 0.9.0+ instead of AppscriptHelpAgent. (AppscriptHelpAgent is no longer used as-of rb-appscript 0.5.0 and may be removed if previously installed.)
+
+- #help method now writes messages to stderr instead of stdout
+
+- Appscript::Reference#respond_to? now has identical signature to Object#respond_to? (optional second argument was previously missing)
+
 
 2007-08-17 -- 0.4.0 (beta 1)
 
