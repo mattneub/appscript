@@ -115,7 +115,7 @@ def _osaxInfo():
 	if _osaxcache is None:
 		_osaxcache = {}
 		for domain in [_sysev.system_domain, _sysev.local_domain, _sysev.user_domain]:
-			osaxen = domain.scripting_additions_folder.files[appscript.its.visible]
+			osaxen = domain.scripting_additions_folder.files[appscript.its.visible == True]
 			for name, path in zip(osaxen.name(), osaxen.POSIX_path()):
 				if name.lower().endswith('.osax'):
 					name = name[:-5]
@@ -157,10 +157,10 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 	def init(self):
 		self = super(ASDictionary, self).init()
 		if self is None: return
-		self._selectedFiles = [] # {'name': '...', 'path': '...'}
+		self._selectedFiles = [] # {'name': u'...', 'path': u'...'}
 		self._canExport = False
 		self._htmlOptionsEnabled = False
-		self._itemName = ''
+		self._itemName = u''
 		self._progressBar = 0
 		self._showLog = False
 		# Connect to StandardAdditions (see note at top of script)
@@ -348,6 +348,8 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 		selection = self.selectedFiles()[:]
 		selection.sort(lambda a,b:cmp(a['name'].lower(), b['name'].lower()))
 		# create progress panel
+		self.itemName.setStringValue_(selection[0]['name'])
+		self.progressBar.setDoubleValue_(0)
 		self.progressPanel.center()
 		self.progressPanel.makeKeyAndOrderFront_(None)
 		self.progressPanel.display()
@@ -355,11 +357,12 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 		session = NSApp().beginModalSessionForWindow_(self.progressPanel)
 		# process each item
 		stop = False
+		incrementSize = 1.0 / (len([i for i in [plainText, singleHTML, frameHTML] if i]) * len(styleInfo))
 		for i, item in enumerate(selection):
 			name, path = item['name'], item['path']
 			self._log(u'Exporting %s:\n' % name)
-			self.progressBar.setDoubleValue_(float(i + 1) / len(selection))
 			self.itemName.setStringValue_(name)
+			progress = 0
 			try:
 				aetes = getaete(path)
 				if not bool(aetes):
@@ -375,6 +378,8 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 						break
 					self._log(u'\t%s\n' % style)
 					if plainText:
+						progress += incrementSize
+						self.progressBar.setDoubleValue_(float(i + progress) / len(selection))
 						self._log(u'\t\tplain text\n')
 						f = file(os.path.join(outFolder, name + suffix + '.txt'), 'w')
 						try:
@@ -387,12 +392,16 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 					if singleHTML or frameHTML:
 						terms = aeteparser.parseaetes(aetes, path, style)
 						if singleHTML:
+							progress += incrementSize
+							self.progressBar.setDoubleValue_(float(i + progress) / len(selection))
 							self._log(u'\t\tHTML single file\n')
 							html = htmldoc.renderdictionary(terms, style, options)
 							f = open(os.path.join(outFolder, name + suffix + '.html'), 'w')
 							f.write(str(html))
 							f.close()
 						if frameHTML:
+							progress += incrementSize
+							self.progressBar.setDoubleValue_(float(i + progress) / len(selection))
 							self._log(u'\t\tHTML frames\n')
 							htmldoc2.renderdictionary(terms, os.path.join(outFolder, name + suffix), style, options)
 				if stop:

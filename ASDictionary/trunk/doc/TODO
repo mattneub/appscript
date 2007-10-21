@@ -6,13 +6,18 @@ TO DO
 
 - package asdict as .pkg and put it inside application bundle, then add an 'Install command-line tool...' menu option that opens this .pkg in Installer.app
 
+- table view should sort names and paths case-insensitively
+
 - add public event handler: 
 	
-	export -- export application dictionaries
-		[list of file alias] -- the applications and/or osaxen to read; if not given, use export list instead
-		[to : folder alias] -- the folder to export to; if not given, the current user's desktop
-		[using file formats : list of 'plain text', 'single file HTML', 'frame based HTML']
-		[using styles : list of 'AppleScript', 'py appscript', 'rb appscript', 'objc appscript']
-		[compact classes : <boolean>]
-		[show invisibles : <boolean>]
-	Result: list of record -- error info for any applications/osaxen that failed to export, as {file: <alias>, description: <string>}
+	export dictionaries
+		for : list of alias or text -- the applications and/or osaxen to read; if an application/osax's name is given instead of an alias, ASDictionary will attempt to locate the named item via LaunchServices (applications only) or by searching ScriptingAdditions folders (osaxen only)
+		[to : folder alias] -- the folder to export to; if not given, use ~/Scripts/Terminology, creating new folder if necessary
+		[using file formats : list of 'plain text', 'single file HTML', 'frame based HTML' constants]
+		[using styles : list of 'AppleScript', 'py appscript', 'rb appscript', 'objc appscript' constants]
+		[classes compacted : boolean] -- default: false
+		[invisible items shown : boolean] -- default: false
+	Result: list -- 2-item list of form: {list of successful exports, list of failed exports}, where each sublist
+			is of form: {{name : text, source : alias, result : alias or text}, ...}
+
+- add aete
