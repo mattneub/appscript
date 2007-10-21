@@ -3,37 +3,18 @@
 (C) 2007 HAS
 """
 
-import objc
-from Foundation import NSUserDefaultsDidChangeNotification
-from AppKit import *
-from PyObjCTools.KeyValueCoding import *
-from PyObjCTools import NibClassBuilder, AppHelper
-
-import os.path
-
-import osax, appscript
-from aemreceive import *
-
-from osaterminology.getterminology import getaete
-from osaterminology.dom import aeteparser
-from osaterminology.renderers import quickdoc, htmldoc, htmldoc2
-from osaterminology.makeidentifier import getconverter
-
-import appscriptsupport, asdictsupport
-
-#######
-
 __name__ = 'ASDictionary'
 __version__ = '0.9.0'
 
-#######
-
-NibClassBuilder.extractClasses("MainMenu")
-
-userDefaults = NSUserDefaults.standardUserDefaults()
 
 #######
-# name and version properties
+# Initialise support for appscript help system and asdict tool
+
+import appscriptsupport, asdictsupport
+
+# Initialise support for read-only 'name' and 'version' properties
+
+from aemreceive import *
 
 class _AEOMApplication:
 	def __init__(self, result):
@@ -60,6 +41,30 @@ installeventhandler(
 		'coregetd',
 		('----', 'ref', kAE.typeObjectSpecifier)
 		)
+
+
+#######
+
+import objc
+from Foundation import NSUserDefaultsDidChangeNotification
+from AppKit import *
+from PyObjCTools.KeyValueCoding import *
+from PyObjCTools import NibClassBuilder, AppHelper
+
+import os.path
+
+import osax, appscript
+
+from osaterminology.getterminology import getaete
+from osaterminology.dom import aeteparser
+from osaterminology.renderers import quickdoc, htmldoc, htmldoc2
+from osaterminology.makeidentifier import getconverter
+
+#######
+
+NibClassBuilder.extractClasses("MainMenu")
+
+userDefaults = NSUserDefaults.standardUserDefaults()
 
 
 #######
@@ -141,6 +146,7 @@ NSValueTransformer.setValueTransformer_forName_(
 
 class ASDictionary(NibClassBuilder.AutoBaseClass):
 	# Outlets:
+	# filenameTableView
 	# selectedFilesController
 	# progressPanel
 	# progressBar
@@ -161,10 +167,19 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 		self._stdadditions = osax.ScriptingAddition()
 		return self
 	
+	
+	def application_openFile_(self, application, filename):
+		self._addPathToSelectedFiles(filename)
+		return True
+	
+	
 	def awakeFromNib(self):
 		NSNotificationCenter.defaultCenter().addObserver_selector_name_object_(
 				self, 'notifyPreferencesChanged:', NSUserDefaultsDidChangeNotification, userDefaults)
 		self._updateLocks()
+		self.filenameTableView.registerForDraggedTypes_([NSFilenamesPboardType])
+		self.filenameTableView.setDraggingSourceOperationMask_forLocal_(NSDragOperationLink, False)
+
 	
 	def _updateLocks(self):
 		self.setHtmlOptionsEnabled_(userDefaults.boolForKey_(u'singleHTML') or userDefaults.boolForKey_(u'frameHTML'))
@@ -176,6 +191,20 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 	def delete_(self, sender):
 		self.selectedFilesController.removeObjects_(self.selectedFilesController.selectedObjects())
 		self._updateLocks()
+	
+	def clear_(self, sender):
+		self.selectedFilesController.removeObjects_(self.selectedFilesController.content())
+		self._updateLocks()
+	
+	##
+	
+	def tableView_validateDrop_proposedRow_proposedDropOperation_(self, tableView, info, row, operation):
+		return NSDragOperationLink
+	
+	def tableView_acceptDrop_row_dropOperation_(self, tableView, info, row, operation):
+		for path in info.draggingPasteboard().propertyListForType_(NSFilenamesPboardType):
+			self._addPathToSelectedFiles(path)
+		return True
 	
 	##
 	
@@ -235,7 +264,7 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 	def _addPathToSelectedFiles(self, path):
 		item = {'name': _namefrompath(path), 'path': path}
 		if item not in self.selectedFiles():
-				self.insertObject_inSelectedFilesAtIndex_(item, self.countOfSelectedFiles())
+			self.insertObject_inSelectedFilesAtIndex_(item, self.countOfSelectedFiles())
 		self._updateLocks()
 	
 	def chooseFromFileBrowser_(self, sender):

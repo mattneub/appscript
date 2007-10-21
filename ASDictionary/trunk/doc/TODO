@@ -4,17 +4,7 @@ TO DO
 
 - the -s option should display Ruby, not Python, values when the rb-appscript style is used
 
-- there seems to be a period between launching ASDictionary and its custom event handlers being installed where events sent by asdict/appscript immediately after launching ASDictionary result in -1708 (event not handled) errors being returned to sender; investigate this and provide suitable solution
-
-- allow asdict, appscript to launch ASDictionary without displaying Export window; will also need to modify current behaviour so that closing window no longer quits ASDictionary and window can be reopened from menu and on 'reopen' events
-
-- improve ASDictionary launching code in asdict (currently brings ASDictionary to front instead of launching it in background)
-
-- add 'open' event handler, allowing application and osax files to be dragged onto ASDictionary icon to add them to export list
-
-- support drag-n-drop in table view, allowing application and osax files to be dragged directly onto export list
-
-- add 'Clear' button to Export window for clearing export list
+- note: if PyObjC is imported before using aemreceive to install event handlers, an error -1708 (unknown event not handled) will occur when asdict/appscript launches ASDictionary to send it an event (looks like Cocoa starts handling events upon initialisation, rather than waiting until after the main event loop is started); shoud investigate this
 
 - add public event handler: 
 	

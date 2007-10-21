@@ -1,10 +1,11 @@
 {
     IBClasses = (
         {
-            ACTIONS = {export = id; showLog = id; }; 
+            ACTIONS = {clear = id; export = id; showLog = id; }; 
             CLASS = ASDictionary; 
             LANGUAGE = ObjC; 
             OUTLETS = {
+                filenameTableView = id; 
                 itemName = id; 
                 logTextView = id; 
                 progressBar = id; 

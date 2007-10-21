@@ -11,17 +11,15 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
+__version__ = '0.9.0'
+
 
 _prefsdomain = 'net.sourceforge.appscript.asdict'
 _supportapp = 'net.sourceforge.appscript.asdictionary'
 
+from commands import getstatusoutput, getoutput
 from sys import argv, stderr, exit
 import os, MacOS, struct, time, traceback
-
-errn = os.system('open -b ' + _supportapp) # TO DO: this is problematic as it brings ASDictionary to the front
-if errn:
-	exit("Can't launch ASDictionary (error %i)." % errn)
-time.sleep(2) # TO DO: seems to be a delay in ASDictionary in installing event handlers; without kludging sufficient extra delay here, get error -1708 upon sending an event. TO DO: check that 'open' waits for app to finish launching.
 
 try:
 	import readline
@@ -29,7 +27,6 @@ except:
 	pass
 
 import textwrap
-from commands import getstatusoutput
 
 from getopt import getopt
 from Carbon import AE
@@ -124,7 +121,7 @@ SYNOPSIS
 
     asdict [ -N ] [ -s style ] app-or-osax-name [ viewer-options ]
     
-    asdict -h
+    asdict [ -h ] [ -v ]
 
 
 DESCRIPTION
@@ -150,7 +147,9 @@ DESCRIPTION
     -c         when used with -H option, collapses identically named classes
                that appear in multiple suites into a single definition
     
-    -h         show this help
+    -h         show this help, then exit
+    
+    -v         show version number, then exit
     
     -s name    output style (default is py-appscript):
 
@@ -242,6 +241,24 @@ _out = _Out()
 #######
 
 
+def ensureasdictionary():
+	# Launch ASDictionary if it isn't already running
+	# Bit kludgy, since we want to keep ASDictionary hidden, or at least not bring it to front, if it wasn't previously running
+	# while using only 'open' to launch it (can't use LaunchServices since it isn't included in 10.3/10.4's default Python
+	# and definitely can't use AppleScript to launch it as AS can't use bundle ID in 10.3/10.4 so has to rely on less
+	# reliable filename, and will display annoying 'Where is application...?' dialogs if ASDictionary isn't found.
+	isrunning = getoutput("""osascript -e 'tell application "System Events" to exists process "ASDictionary" ' """) == 'true'
+	if not isrunning:
+		errn = os.system('open -b ' + _supportapp)
+		print errn
+		if errn:
+			exit("Can't open ASDictionary (error %i). You may need to install it or launch it manually. See <http://appscript.sourceforge.net>." % errn)
+		print os.system("""osascript -e 'tell app "System Events" to set visible of process "ASDictionary" to false' """)
+
+
+#######
+
+
 def doevent(eventid, **args):
 	# print 'DOEVENT', eventid # DEBUG
 	# pack event
@@ -252,7 +269,11 @@ def doevent(eventid, **args):
 	try:
 		reply = evt.AESend(3, 0, -1)
 	except MacOS.Error, err:
-		exit('An unexpected error occurred when contacting ASDictionary: %i' % err[0])
+		print 'err', err
+		if err[0] in [-600, -609]:
+			exit('Error: ASDictionary is no longer running. Please restart asdict to continue.')
+		else:
+			exit('An unexpected error occurred when contacting ASDictionary: %i' % err[0])
 	# handle error if given
 	try:
 		err = struct.unpack('l', reply.AEGetParamDesc('errn', 'long').data)[0]
@@ -274,16 +295,19 @@ def doevent(eventid, **args):
 		pass
 
 
+#######
+# parse asdict arguments
 
+opts, args = getopt(argv[1:], 'NHs:cahv')
+opts = dict(opts)
 
-opts, args = getopt(argv[1:], 'NHs:cah')
-
-if not args: # print general help
+if opts.has_key('-v'): # print version number
+	print __version__
+	exit()
+elif not args or opts.has_key('-h'): # print general help
 	print _generalhelp
 	exit()
 
-# parse asdict arguments
-opts = dict(opts)
 style = opts.get('-s', getpref('style', _defaultstyle)).lower()
 
 if not _styles.has_key(style):
@@ -294,10 +318,11 @@ appname = args[0]
 shortname = appname.split('/')[-1]
 vieweroptions = ' '.join(args[1:]).strip()
 
+
 # render/export
-if opts.has_key('-h'):
-	print _generalhelp
-elif opts.has_key('-H'): # export HTML
+ensureasdictionary()
+
+if opts.has_key('-H'): # export HTML
 	print doevent('HTML', Appl=appname, Styl=style, Opts=' '.join(argv[1:]))
 elif opts.has_key('-N'): # non-interactive mode
 	print >> _out, doevent('Help', Appl=appname, Styl=style, Opts=vieweroptions or '-o')
