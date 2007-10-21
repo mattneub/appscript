@@ -4,7 +4,7 @@ TO DO
 
 - the -s option should display Ruby, not Python, values when the rb-appscript style is used
 
-- note: if PyObjC is imported before using aemreceive to install event handlers, an error -1708 (unknown event not handled) will occur when asdict/appscript launches ASDictionary to send it an event (looks like Cocoa starts handling events upon initialisation, rather than waiting until after the main event loop is started); shoud investigate this
+- package asdict as .pkg and put it inside application bundle, then add an 'Install command-line tool...' menu option that opens this .pkg in Installer.app
 
 - add public event handler: 
 	

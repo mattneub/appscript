@@ -27,20 +27,20 @@ setup(
 	data_files=["MainMenu.nib"],
 	options=dict(
 	
-		CFBundleDocumentTypes = [
-			dict(
-				CFBundleTypeExtensions=["*"],
-				CFBundleTypeName="public.item",
-				CFBundleTypeRole="Viewer",
-			),
-		],
 
 		py2app=dict(
 			plist=Plist(
 				CFBundleVersion=version,
 				CFBundleShortVersionString=version,
 				NSHumanReadableCopyright="(C) 2007 HAS",
-				CFBundleIdentifier="net.sourceforge.appscript.asdictionary"
+				CFBundleIdentifier="net.sourceforge.appscript.asdictionary",
+				CFBundleDocumentTypes = [
+					dict(
+						CFBundleTypeExtensions=["*"],
+						CFBundleTypeName="public.item",
+						CFBundleTypeRole="Viewer",
+					),
+				]
 			),
 			resources=['ASDictionary.icns'],
 			iconfile='ASDictionary.icns'
