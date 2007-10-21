@@ -1,7 +1,0 @@
-TO DO
-
-- finish integrating helpsystem module (including support/drop -s option for commands)
-
-- finish rb-appscript support: -s option should display Ruby-style values, show Ruby-style reference at start of each help listing
-
-- modify osadict to use standard OS X Python installation only (or rewrite in C?), and add corresponding 'ASHAOSAD' handler to AHA
