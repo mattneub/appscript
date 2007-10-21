@@ -27,17 +27,6 @@
 /***********************************/
 // main pack methods; subclasses can override to process some or all values themselves
 
-// subclasses can override -packUnknown: to process any still-unconverted types
-- (NSAppleEventDescriptor *)packUnknown:(id)data {
-	if (data)
-		[NSException raise: @"CodecsError"
-					format: @"Can't pack data of class %@ (unsupported type): %@",
-							[data class], data];
-	else
-		[NSException raise: @"CodecsError" format: @"Can't pack nil."];
-	return nil;
-}
-
 - (NSAppleEventDescriptor *)pack:(id)anObject {
 	UInt32 uint32;
 	SInt64 sint64;
@@ -138,6 +127,19 @@
 	return result;
 }
 
+// subclasses can override -packUnknown: to process any still-unconverted types
+- (NSAppleEventDescriptor *)packUnknown:(id)anObject {
+	if (anObject)
+		[NSException raise: @"CodecsError"
+					format: @"Can't pack object of class %@ (unsupported type): %@",
+							[anObject class], anObject];
+	else
+		[NSException raise: @"CodecsError" format: @"Can't pack nil."];
+	return nil;
+}
+
+
+// methods called by -pack:; may be overridden by subclasses to modify how values are packed
 
 - (NSAppleEventDescriptor *)packArray:(NSArray *)anObject {
 	NSEnumerator *enumerator;
@@ -193,22 +195,6 @@
 
 /***********************************/
 // main unpack methods; subclasses can override to process some or all descs themselves
-
-- (id)unpackUnknown:(NSAppleEventDescriptor *)desc {
-	NSAppleEventDescriptor *record, *descType;
-	if (AECheckIsRecord([desc aeDesc])) { 
-		/*
-		 * if it's a record-like structure with an unknown/unsupported type then unpack 
-		 * it as a hash, including the original type info as a 'class' property
-		 */
-		record = [desc coerceToDescriptorType: typeAERecord];
-		descType = [NSAppleEventDescriptor descriptorWithTypeCode: [desc descriptorType]];
-		[record setDescriptor: descType forKeyword: pClass];
-		return [self unpack: record];
-	} else
-		return desc;
-}
-
 
 - (id)unpack:(NSAppleEventDescriptor *)desc {
 	LongDateTime longTime;
@@ -316,6 +302,21 @@
 	}
 	// TO DO: unit types
 	return [self unpackUnknown: desc];
+}
+
+- (id)unpackUnknown:(NSAppleEventDescriptor *)desc {
+	NSAppleEventDescriptor *record, *descType;
+	if (AECheckIsRecord([desc aeDesc])) { 
+		/*
+		 * if it's a record-like structure with an unknown/unsupported type then unpack 
+		 * it as a hash, including the original type info as a 'class' property
+		 */
+		record = [desc coerceToDescriptorType: typeAERecord];
+		descType = [NSAppleEventDescriptor descriptorWithTypeCode: [desc descriptorType]];
+		[record setDescriptor: descType forKeyword: pClass];
+		return [self unpack: record];
+	} else
+		return desc;
 }
 
 // methods called by -unpack:; may be overridden by subclasses to modify how values are unpacked
