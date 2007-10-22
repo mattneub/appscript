@@ -5,6 +5,9 @@
 require "_aem/mactypes"
 
 module Appscript
+
+	Version = '0.5.0'
+
 	# The following methods and classes are of interest to end users:
 	# app, con, its, CommandError, ApplicationNotFoundError, CantLaunchApplicationError
 	# Other classes are only of interest to implementors who need to hook in their own code.
