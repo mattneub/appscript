@@ -3,12 +3,12 @@ ASDictionary
 -----------------------------------
 ABOUT
 
-ASDictionary exports scriptable Mac applications' dictionaries in plain text or HTML format. Requires Mac OS 10.3 or later. 
+ASDictionary exports scriptable Mac applications' dictionaries in plain text or HTML format. Requires Mac OS 10.3.9 or later. 
 
 -----------------------------------
 USAGE
 
-1. Use the 'Dictionary' menu to select one or more scriptable applications or scripting additions.
+1. Use the 'Dictionary' menu to select one or more scriptable applications or scripting additions, or drag-and-drop one or more application and/or scripting addition files onto ASDictionary's application icon or Export window.
 
 2. Select one or more file formats: plain text, single-file HTML and/or frame-based HTML. If an HTML format is chosen, check the 'Compact classes' option to combine duplicate classes into one. (For example, TextEdit defines a 'document' class in its Standard Suite, and again in its TextEdit Suite.) Check the 'Show invisibles' option to include hidden classes and commands in HTML output.
 

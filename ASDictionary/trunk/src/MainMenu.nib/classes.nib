@@ -8,6 +8,7 @@
                 filenameTableView = id; 
                 itemName = id; 
                 logTextView = id; 
+                mainWindow = id; 
                 progressBar = id; 
                 progressPanel = id; 
                 selectedFilesController = id; 

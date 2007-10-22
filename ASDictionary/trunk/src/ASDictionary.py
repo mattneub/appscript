@@ -144,14 +144,17 @@ NSValueTransformer.setValueTransformer_forName_(
 		ArrayToBooleanTransformer.alloc().init(), u"ArrayToBoolean")
 
 
+#######
+
+
 class ASDictionary(NibClassBuilder.AutoBaseClass):
 	# Outlets:
+	# mainWindow
 	# filenameTableView
 	# selectedFilesController
 	# progressPanel
 	# progressBar
 	# itemName
-	# showLogMenuItem
 	# logTextView
 	
 	def init(self):
@@ -166,12 +169,7 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 		# Connect to StandardAdditions (see note at top of script)
 		self._stdadditions = osax.ScriptingAddition()
 		return self
-	
-	
-	def application_openFile_(self, application, filename):
-		self._addPathToSelectedFiles(filename)
-		return True
-	
+		
 	
 	def awakeFromNib(self):
 		NSNotificationCenter.defaultCenter().addObserver_selector_name_object_(
@@ -179,7 +177,13 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 		self._updateLocks()
 		self.filenameTableView.registerForDraggedTypes_([NSFilenamesPboardType])
 		self.filenameTableView.setDraggingSourceOperationMask_forLocal_(NSDragOperationLink, False)
-
+		self._windowController = NSWindowController.alloc().initWithWindow_(self.mainWindow)
+		self._windowController.setWindowFrameAutosaveName_('ExportWindow')
+	
+	
+	#######
+	# Update enabled/disabled status of 'Export' window's checkboxes and 'Export' button when
+	# chosen files list or preferences change
 	
 	def _updateLocks(self):
 		self.setHtmlOptionsEnabled_(userDefaults.boolForKey_(u'singleHTML') or userDefaults.boolForKey_(u'frameHTML'))
@@ -187,6 +191,13 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 				and (self.htmlOptionsEnabled() or userDefaults.boolForKey_(u'plainText'))
 				and (userDefaults.boolForKey_(u'applescriptStyle') or userDefaults.boolForKey_(u'pythonStyle')
 						or userDefaults.boolForKey_(u'rubyStyle') or userDefaults.boolForKey_(u'objcStyle')))
+	
+	def notifyPreferencesChanged_(self, sender):
+		self._updateLocks()
+	
+	
+	#######
+	# delete items in files list
 	
 	def delete_(self, sender):
 		self.selectedFilesController.removeObjects_(self.selectedFilesController.selectedObjects())
@@ -196,7 +207,13 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 		self.selectedFilesController.removeObjects_(self.selectedFilesController.content())
 		self._updateLocks()
 	
-	##
+	
+	#######
+	# drag-n-drop support
+	
+	def application_openFile_(self, application, filename):
+		self._addPathToSelectedFiles(filename)
+		return True
 	
 	def tableView_validateDrop_proposedRow_proposedDropOperation_(self, tableView, info, row, operation):
 		return NSDragOperationLink
@@ -206,7 +223,9 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 			self._addPathToSelectedFiles(path)
 		return True
 	
-	##
+	
+	#######
+	# show/hide export log drawer bindings
 	
 	def showLog_(self, sender):
 		pass
@@ -216,8 +235,10 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 	
 	def setShowLog_(self, value):
 		self._showLog = value
-
-	##
+	
+	
+	#######
+	# files list controller bindings
 	
 	def selectedFiles(self):
 		return self._selectedFiles
@@ -244,8 +265,10 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 	def replaceObjectInSelectedFilesAtIndex_withObject_(self, idx, obj):
 		self._selectedFiles[idx] = obj
 	replaceObjectInSelectedFilesAtIndex_withObject_ = objc.accessor(replaceObjectInSelectedFilesAtIndex_withObject_)
-
-	##
+	
+	
+	#######
+	# 'Export' window checkbox bindings
 	
 	def canExport(self):
 		return self._canExport
@@ -259,7 +282,9 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 	def setHtmlOptionsEnabled_(self, value):
 		self._htmlOptionsEnabled = value
 	
-	##
+	
+	#######
+	# 'Dictionary' menu methods
 	
 	def _addPathToSelectedFiles(self, path):
 		item = {'name': _namefrompath(path), 'path': path}
@@ -315,17 +340,15 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 		for name in selection:
 			self._addPathToSelectedFiles(osaxPathForName(name))
 	
-	##
 	
-	def notifyPreferencesChanged_(self, sender):
-		self._updateLocks()
-	
-	##
+	#######
+	# 'Export' button method
 	
 	def _log(self, text):
 		store = self.logTextView.textStorage()
 		store.appendAttributedString_(NSAttributedString.alloc().initWithString_(text))
 		self.logTextView.scrollRangeToVisible_([store.length(), 0])
+	
 	
 	def export_(self, sender):
 		try:

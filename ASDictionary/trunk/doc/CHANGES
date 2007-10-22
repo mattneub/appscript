@@ -4,7 +4,7 @@ CHANGES
 - added asdict tool
 - now supports drag-n-drop in Finder and in table view
 - ASDictionary now provides support to appscript help system
-- minor GUI changes
+- minor GUI changes and improvements
 
 2007-06-30 -- 0.8.0
 - added frame-based HTML option

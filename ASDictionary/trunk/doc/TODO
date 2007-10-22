@@ -15,9 +15,18 @@ TO DO
 		[to : folder alias] -- the folder to export to; if not given, use ~/Scripts/Terminology, creating new folder if necessary
 		[using file formats : list of 'plain text', 'single file HTML', 'frame based HTML' constants]
 		[using styles : list of 'AppleScript', 'py appscript', 'rb appscript', 'objc appscript' constants]
+		[organised by : list of 'format', 'style'] -- optionally organise results into subfolders
 		[classes compacted : boolean] -- default: false
 		[invisible items shown : boolean] -- default: false
 	Result: list -- 2-item list of form: {list of successful exports, list of failed exports}, where each sublist
 			is of form: {{name : text, source : alias, result : alias or text}, ...}
 
 - add aete
+
+- add '-w [size]' option for getting/setting linewrap in appscript support
+
+- add 'visibility' option to asdict's defaults system
+
+- allow users to export dictionaries for remote applications
+
+- add an 'Organise output by:' box with 'Format' and 'Style' checkboxes that outputs dictionaries to separate folders according to format and/or style, creating new subfolders as necessary
