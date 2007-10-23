@@ -14,15 +14,13 @@
 	<key>IBFramework Version</key>
 	<string>446.1</string>
 	<key>IBLockedObjects</key>
-	<array>
-		<integer>21</integer>
-	</array>
+	<array/>
 	<key>IBOpenObjects</key>
 	<array>
-		<integer>21</integer>
 		<integer>497</integer>
 		<integer>29</integer>
 		<integer>342</integer>
+		<integer>21</integer>
 	</array>
 	<key>IBSystem Version</key>
 	<string>8R4061a</string>

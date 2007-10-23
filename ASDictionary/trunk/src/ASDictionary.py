@@ -51,7 +51,7 @@ from AppKit import *
 from PyObjCTools.KeyValueCoding import *
 from PyObjCTools import NibClassBuilder, AppHelper
 
-import os.path
+import os, os.path
 
 import osax, appscript
 
@@ -178,7 +178,10 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 		self.filenameTableView.registerForDraggedTypes_([NSFilenamesPboardType])
 		self.filenameTableView.setDraggingSourceOperationMask_forLocal_(NSDragOperationLink, False)
 		self._windowController = NSWindowController.alloc().initWithWindow_(self.mainWindow)
-		self._windowController.setWindowFrameAutosaveName_('ExportWindow')
+		self._windowController.setWindowFrameAutosaveName_(u'ExportWindow')
+		self.selectedFilesController.setSortDescriptors_([
+				NSSortDescriptor.alloc().initWithKey_ascending_selector_(u'name', True, 'caseInsensitiveCompare:'),
+				NSSortDescriptor.alloc().initWithKey_ascending_selector_(u'path', True, 'caseInsensitiveCompare:')])
 	
 	
 	#######
@@ -349,6 +352,13 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 		store.appendAttributedString_(NSAttributedString.alloc().initWithString_(text))
 		self.logTextView.scrollRangeToVisible_([store.length(), 0])
 	
+	def _makeDestinationFolder(self, outFolder, styleSubfolderName, formatSubfolderName, fileName):
+		destFolder = os.path.join(outFolder, styleSubfolderName, formatSubfolderName or '')
+		if not os.path.exists(destFolder):
+			os.makedirs(destFolder)
+		return os.path.join(destFolder, fileName)
+
+	
 	
 	def export_(self, sender):
 		try:
@@ -367,6 +377,7 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 		plainText, singleHTML, frameHTML = [userDefaults.boolForKey_(name) 
 				for name in [u'plainText', u'singleHTML', u'frameHTML']]
 		styleInfo = [(style, suffix) for key, style, suffix in _styles if userDefaults.boolForKey_(key)]
+		exportToSubfolders = userDefaults.boolForKey_(u'exportToSubfolders')
 		# files to process, sorted by name
 		selection = self.selectedFiles()[:]
 		selection.sort(lambda a,b:cmp(a['name'].lower(), b['name'].lower()))
@@ -393,6 +404,7 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 					self._log(u'\tNo terminology found.\n')
 					continue
 				for style, suffix in styleInfo:
+					styleSubfolderName = exportToSubfolders and style or ''
 					if NSApp().runModalSession_(session) != NSRunContinuesResponse:
 						for j in range(i, len(selection)):
 							failedApps.append(selection[j]['name'])
@@ -401,10 +413,12 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 						break
 					self._log(u'\t%s\n' % style)
 					if plainText:
+						outputPath = self._makeDestinationFolder(outFolder, styleSubfolderName, 
+								exportToSubfolders and 'text', name + suffix + '.txt')
 						progress += incrementSize
 						self.progressBar.setDoubleValue_(float(i + progress) / len(selection))
-						self._log(u'\t\tplain text\n')
-						f = file(os.path.join(outFolder, name + suffix + '.txt'), 'w')
+						self._log(u'\t\t(plain text) %s\n' % outputPath)
+						f = file(outputPath, 'w')
 						try:
 							f.write('\xEF\xBB\xBF') # UTF8 BOM
 							quickdoc.app(path, f, getconverter(style))
@@ -415,18 +429,22 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 					if singleHTML or frameHTML:
 						terms = aeteparser.parseaetes(aetes, path, style)
 						if singleHTML:
+							outputPath = self._makeDestinationFolder(outFolder, styleSubfolderName, 
+									exportToSubfolders and 'html', name + suffix + '.html')
 							progress += incrementSize
 							self.progressBar.setDoubleValue_(float(i + progress) / len(selection))
-							self._log(u'\t\tHTML single file\n')
+							self._log(u'\t\t(HTML single file) %s\n' % outputPath)
 							html = htmldoc.renderdictionary(terms, style, options)
-							f = open(os.path.join(outFolder, name + suffix + '.html'), 'w')
+							f = open(outputPath, 'w')
 							f.write(str(html))
 							f.close()
 						if frameHTML:
+							outputPath = self._makeDestinationFolder(outFolder, styleSubfolderName, 
+									exportToSubfolders and 'frame-html', name + suffix)
 							progress += incrementSize
 							self.progressBar.setDoubleValue_(float(i + progress) / len(selection))
-							self._log(u'\t\tHTML frames\n')
-							htmldoc2.renderdictionary(terms, os.path.join(outFolder, name + suffix), style, options)
+							self._log(u'\t\t(HTML frames) %s\n' % outputPath)
+							htmldoc2.renderdictionary(terms, outputPath, style, options)
 				if stop:
 					break
 			except Exception, err:

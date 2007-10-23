@@ -4,29 +4,25 @@ TO DO
 
 - the -s option should display Ruby, not Python, values when the rb-appscript style is used
 
-- package asdict as .pkg and put it inside application bundle, then add an 'Install command-line tool...' menu option that opens this .pkg in Installer.app
-
-- table view should sort names and paths case-insensitively
-
-- add public event handler: 
+- add public event handler + aete: 
 	
 	export dictionaries
-		for : list of alias or text -- the applications and/or osaxen to read; if an application/osax's name is given instead of an alias, ASDictionary will attempt to locate the named item via LaunchServices (applications only) or by searching ScriptingAdditions folders (osaxen only)
+		list of Unicode text or alias -- the applications and/or osaxen to read by filename, alias or eppc:// URL; if an application/osax's filename is given instead of an alias, ASDictionary will attempt to locate the named item by using LaunchServices to locate an application of that name, then by searching ScriptingAdditions folders for an osaxen of that name (note: filename suffixes are optional)
 		[to : folder alias] -- the folder to export to; if not given, use ~/Scripts/Terminology, creating new folder if necessary
 		[using file formats : list of 'plain text', 'single file HTML', 'frame based HTML' constants]
 		[using styles : list of 'AppleScript', 'py appscript', 'rb appscript', 'objc appscript' constants]
-		[organised by : list of 'format', 'style'] -- optionally organise results into subfolders
 		[classes compacted : boolean] -- default: false
 		[invisible items shown : boolean] -- default: false
+		[exporting to subfolders : boolean] -- default: false
 	Result: list -- 2-item list of form: {list of successful exports, list of failed exports}, where each sublist
-			is of form: {{name : text, source : alias, result : alias or text}, ...}
+			is of form: {{name : Unicode text, source : alias, result : alias, error : Unicode text}, ...}
 
-- add aete
-
-- add '-w [size]' option for getting/setting linewrap in appscript support
+- add '-w size' option for setting linewrap in appscript support
 
 - add 'visibility' option to asdict's defaults system
 
-- allow users to export dictionaries for remote applications
+- add plain text and frame-based HTML export options to asdict
 
-- add an 'Organise output by:' box with 'Format' and 'Style' checkboxes that outputs dictionaries to separate folders according to format and/or style, creating new subfolders as necessary
+- allow users to export dictionaries for remote applications (10.4+ only)
+
+- allow users to import/export sdefs
