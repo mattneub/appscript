@@ -7,6 +7,8 @@
             OUTLETS = {
                 filenameTableView = id; 
                 itemName = id; 
+                logDrawer = id; 
+                logPanel = id; 
                 logTextView = id; 
                 mainWindow = id; 
                 progressBar = id; 

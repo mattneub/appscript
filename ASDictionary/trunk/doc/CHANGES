@@ -5,6 +5,7 @@ CHANGES
 - now supports drag-n-drop in Finder and in table view
 - ASDictionary now provides support to appscript's help system
 - ASDictionary can now optionally export into subfolders according to style and format
+- improved log drawer
 - minor GUI improvements
 
 2007-06-30 -- 0.8.0

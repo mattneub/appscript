@@ -155,6 +155,7 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 	# progressPanel
 	# progressBar
 	# itemName
+	# logDrawer
 	# logTextView
 	
 	def init(self):
@@ -165,7 +166,6 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 		self._htmlOptionsEnabled = False
 		self._itemName = u''
 		self._progressBar = 0
-		self._showLog = False
 		# Connect to StandardAdditions (see note at top of script)
 		self._stdadditions = osax.ScriptingAddition()
 		return self
@@ -177,12 +177,16 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 		self._updateLocks()
 		self.filenameTableView.registerForDraggedTypes_([NSFilenamesPboardType])
 		self.filenameTableView.setDraggingSourceOperationMask_forLocal_(NSDragOperationLink, False)
-		self._windowController = NSWindowController.alloc().initWithWindow_(self.mainWindow)
-		self._windowController.setWindowFrameAutosaveName_(u'ExportWindow')
+		self.mainWindow.setFrameAutosaveName_(u'ExportWindow')
+		self.logDrawer.setContentSize_(userDefaults.arrayForKey_(u'LogDrawer') or self.logDrawer.contentSize())
 		self.selectedFilesController.setSortDescriptors_([
 				NSSortDescriptor.alloc().initWithKey_ascending_selector_(u'name', True, 'caseInsensitiveCompare:'),
 				NSSortDescriptor.alloc().initWithKey_ascending_selector_(u'path', True, 'caseInsensitiveCompare:')])
 	
+	
+	def applicationWillTerminate_(self, notification):
+		userDefaults.setObject_forKey_(list(self.logDrawer.contentSize()), u'LogDrawer')
+
 	
 	#######
 	# Update enabled/disabled status of 'Export' window's checkboxes and 'Export' button when
@@ -228,16 +232,10 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 	
 	
 	#######
-	# show/hide export log drawer bindings
+	# show/hide export log drawer
 	
 	def showLog_(self, sender):
 		pass
-	
-	def showLog(self):
-		return self._showLog
-	
-	def setShowLog_(self, value):
-		self._showLog = value
 	
 	
 	#######
@@ -394,14 +392,14 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 		incrementSize = 1.0 / (len([i for i in [plainText, singleHTML, frameHTML] if i]) * len(styleInfo))
 		for i, item in enumerate(selection):
 			name, path = item['name'], item['path']
-			self._log(u'Exporting %s:\n' % name)
+			self._log(u'Exporting %s dictionary...\n' % name)
 			self.itemName.setStringValue_(name)
 			progress = 0
 			try:
 				aetes = getaete(path)
 				if not bool(aetes):
 					failedApps.append(name)
-					self._log(u'\tNo terminology found.\n')
+					self._log(u"...no terminology found.\n\n")
 					continue
 				for style, suffix in styleInfo:
 					styleSubfolderName = exportToSubfolders and style or ''
@@ -411,13 +409,12 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 						self._log(u"User cancelled.\n")
 						stop = True
 						break
-					self._log(u'\t%s\n' % style)
 					if plainText:
 						outputPath = self._makeDestinationFolder(outFolder, styleSubfolderName, 
 								exportToSubfolders and 'text', name + suffix + '.txt')
 						progress += incrementSize
 						self.progressBar.setDoubleValue_(float(i + progress) / len(selection))
-						self._log(u'\t\t(plain text) %s\n' % outputPath)
+						self._log(u'%s\n' % outputPath)
 						f = file(outputPath, 'w')
 						try:
 							f.write('\xEF\xBB\xBF') # UTF8 BOM
@@ -433,7 +430,7 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 									exportToSubfolders and 'html', name + suffix + '.html')
 							progress += incrementSize
 							self.progressBar.setDoubleValue_(float(i + progress) / len(selection))
-							self._log(u'\t\t(HTML single file) %s\n' % outputPath)
+							self._log(u'%s\n' % outputPath)
 							html = htmldoc.renderdictionary(terms, style, options)
 							f = open(outputPath, 'w')
 							f.write(str(html))
@@ -443,7 +440,7 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 									exportToSubfolders and 'frame-html', name + suffix)
 							progress += incrementSize
 							self.progressBar.setDoubleValue_(float(i + progress) / len(selection))
-							self._log(u'\t\t(HTML frames) %s\n' % outputPath)
+							self._log(u'%s\n' % outputPath)
 							htmldoc2.renderdictionary(terms, outputPath, style, options)
 				if stop:
 					break
@@ -455,6 +452,7 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 				self._log(u"Unexpected error:/n")
 				print_exc(file=out)
 				self._log(u'%s' % out.getvalue())
+			self._log(u'\n')
 		# dispose progress panel
 		self.progressPanel.orderOut_(None)
 		NSApp().endModalSession_(session)
@@ -462,13 +460,13 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 		self._stdadditions.beep()
 		if failedApps:
 			buttons = ['OK']
-			if not self._showLog:
+			if not userDefaults.boolForKey_(u'showLog'):
 				buttons.insert(0, 'View Log')
 			action = self._stdadditions.display_dialog("Rendered terminology for %i items.\n\n" % (len(selection) - len(failedApps))
 					+ "Couldn't render terminology for: \n    " + '\n    '.join(failedApps), 
 					buttons=buttons, default_button='OK', with_icon=osax.k.caution)[osax.k.button_returned]
 			if action == 'View Log':
-				self.setShowLog_(True)
+				userDefaults.setBool_forKey_(True, u'showLog')
 		else:
 			self._stdadditions.display_dialog("Rendered terminology for %i items." % len(selection), 
 					buttons=['OK'], default_button=1, with_icon=osax.k.note)
@@ -478,7 +476,7 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 	
 	def windowWillClose_(self, sender): # quit on main window close
 		NSApp().terminate_(sender)
-		
+	
 	
 #######
 
