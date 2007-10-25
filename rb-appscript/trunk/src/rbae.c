@@ -636,7 +636,7 @@ rbAE_convertLongDateTimeToUnixSeconds(VALUE self, VALUE ldt)
 	OSStatus err = 0;
 	CFAbsoluteTime cfTime;
 	
-	err = UCConvertLongDateTimeToCFAbsoluteTime(rb_big2ll(ldt), &cfTime);
+	err = UCConvertLongDateTimeToCFAbsoluteTime(NUM2LL(ldt), &cfTime);
 	if (err != noErr) rbAE_raiseMacOSError("Can't convert LongDateTime to seconds.", err);
 	return rb_float_new(cfTime + kCFAbsoluteTimeIntervalSince1970);
 }

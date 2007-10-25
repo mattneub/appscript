@@ -29,7 +29,7 @@ module Appscript
 	
 	class AppData < AEM::Codecs
 	
-		HelpAgentID = 'net.sourceforge.appscript.asdictionary'
+		ASDictionaryBundleID = 'net.sourceforge.appscript.asdictionary'
 	
 		attr_reader :constructor, :identifier, :reference_codecs
 		attr_writer :reference_codecs
@@ -78,9 +78,16 @@ module Appscript
 			:current => 'current',
 		}
 		
-		def _init_help_agent # TO DO: raise error if ASDictionary version < 0.9.0
+		def _init_help_agent
 			begin
-				@_help_agent = AEM::Application.by_path(FindApp.by_id(HelpAgentID))
+				apppath = FindApp.by_id(ASDictionaryBundleID)
+				is_running = AEM::Application.is_running?(apppath)
+				@_help_agent = AEM::Application.by_path(apppath)
+				if not is_running # hide ASDictionary after launching it
+					AEM::Application.by_path(FindApp.by_id('com.apple.systemevents')).event('coresetd', {
+							'----' => AEM.app.elements('prcs').by_name('ASDictionary').property('pvis'), 
+							'data' => false}).send
+				end
 				return true
 			rescue FindApp::ApplicationNotFoundError
 				$stderr.puts("No help available: ASDictionary application not found.")
@@ -112,7 +119,13 @@ module Appscript
 				return ref if not _init_help_agent
 				e = _display_help(flags, ref)
 			end
-			$stderr.puts("No help available: ASDictionary raised an error: #{e}.") if e
+			if e
+				if e.number == -1708 # event wasn't handled, presumably because available ASDictionary is too old
+					$stderr.puts("No help available: ASDictionary 0.9.0 or later required.")
+				else
+					$stderr.puts("No help available: ASDictionary raised an error: #{e}.")
+				end
+			end
 			return ref
 		end
 		

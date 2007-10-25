@@ -16,6 +16,8 @@
 
 - Appscript::Reference#respond_to? now has identical signature to Object#respond_to? (optional second argument was previously missing)
 
+- fixed bug in AE.convert_long_date_time_to_unix_seconds (used to unpack AEDescs of typeLongDateTime) where it would crash if passed a FixNum instead of a BigNum
+
 
 2007-08-17 -- 0.4.0 (beta 1)
 
