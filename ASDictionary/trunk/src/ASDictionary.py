@@ -66,7 +66,6 @@ NibClassBuilder.extractClasses("MainMenu")
 
 userDefaults = NSUserDefaults.standardUserDefaults()
 
-
 #######
 
 # OS X bug workaround note: 
@@ -104,9 +103,6 @@ def _namefrompath(path):
 	return name
 
 #######
-
-class NoTerminologyError(Exception):
-	pass
 
 _osaxcache = None
 
@@ -186,6 +182,7 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 	
 	def applicationWillTerminate_(self, notification):
 		userDefaults.setObject_forKey_(list(self.logDrawer.contentSize()), u'LogDrawer')
+		appscriptsupport.quit()
 
 	
 	#######

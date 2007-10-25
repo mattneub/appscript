@@ -1,9 +1,5 @@
 TO DO
 
-- the application reference displayed at start of each help listing should appear in Ruby, not Python, format when rb-appscript style is used
-
-- the -s option should display Ruby, not Python, values when the rb-appscript style is used
-
 - add public event handler + aete: 
 	
 	export dictionaries

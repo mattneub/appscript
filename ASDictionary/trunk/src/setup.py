@@ -2,6 +2,8 @@
 
 Requirements:
 
+- Python 2.4+ <http://www.python.org>
+
 - appscript 0.18.0+ <http://appscript.sourceforge.net>
 
 - PyObjC <http://pyobjc.sourceforge.net/>
@@ -24,7 +26,7 @@ version='0.9.0'
 
 setup(
 	app=["ASDictionary.py"],
-	data_files=["MainMenu.nib"],
+	data_files=["MainMenu.nib", "rubyrenderer.rb"],
 	options=dict(
 	
 

@@ -3,9 +3,10 @@
 (C) 2004 HAS
 """
 
-from pprint import pprint
+from pprint import pprint, pformat
 from sys import stdout
 from StringIO import StringIO
+from subprocess import Popen
 
 import aem, appscript
 from aemreceive import *
@@ -16,6 +17,87 @@ from osaterminology.renderers import textdoc, inheritance, relationships
 from appscript import reference, terminology, terminologyparser
 
 __all__ = ['Help']
+
+
+#######
+# Data renderers
+
+class DefaultRenderer:
+	
+	def rendervalue(self, value, prettyprint=False):
+		return prettyprint and pformat(value) or repr(value)
+		
+	def rendervalues(self, values, prettyprint=False):
+		return [prettyprint and pformat(value) or repr(value) for value in values]
+
+_defaultrenderer = DefaultRenderer()
+
+#######
+
+
+class RubyRenderer:
+
+	#######
+	# manage ruby subprocess
+
+	_rubyapp = None
+	
+	@staticmethod
+	def _findrubyinterpreter():
+		return '/usr/local/bin/ruby' # TO DO: how to locate ruby interpreter?
+	
+	@staticmethod
+	def _findrubyrenderer():
+		from AppKit import NSBundle
+		return NSBundle.mainBundle().pathForResource_ofType_('rubyrenderer', 'rb')
+	
+	@classmethod
+	def _target(klass):
+		if not klass._rubyapp:
+			klass._rubyproc = Popen([klass._findrubyinterpreter(), klass._findrubyrenderer()])
+			klass._rubyapp = aem.Application(pid= klass._rubyproc.pid)
+		return klass._rubyapp
+	
+	@classmethod
+	def quit(self):
+		try:
+			self._target().event('aevtquit').send()
+		except:
+			pass	
+	
+	#######
+	
+	def __init__(self, appobj):
+		self._appobj = appobj
+		self._appdata = appobj.AS_appdata
+	
+	def rendervalue(self, value , prettyprint=False):
+		return self.rendervalues([value], prettyprint)[0]
+	
+	def rendervalues(self, values, prettyprint=False):
+		try:
+			return self._target().event('AppSFmt_', {
+					'Cons': self._appdata.constructor,
+					'Iden': self._appdata.identifier,
+					'PPri': prettyprint,
+					'Data': values,
+					}, codecs=self._appdata).send()
+		except aem.CommandError, e:
+			# TO DO: if error -600 (e.g. due to crash)
+			import sys, traceback
+			print >> sys.stderr, '*' * 78
+			print >> sys.stderr, "ASDictionary warning: Couldn't translate values to Ruby:" \
+					"\n\tAPP: %r\n\tDATA: %r" % (self._appobj, values)
+			traceback.print_exc(file=sys.stderr)
+			print >> sys.stderr, '*' * 78
+			return [repr(value) for value in values]
+
+
+#######
+
+def quit():
+	RubyRenderer.quit()
+
 
 ######################################################################
 # PRIVATE
@@ -175,13 +257,19 @@ For example, to print an overview of TextEdit, a description of its make command
     app('TextEdit.app').help('-o -t make -i document')"""
 	
 	
-	def __init__(self, aetes, appname, style='py-appscript', out=_Out()):
+	def __init__(self, appobj, style='py-appscript', out=_Out()):
 		"""
 			aetes : list of AEDesc -- list of aetes
 			out : anything -- any file-like object that implements a write(str) method
 		"""
+		aetes = terminology.aetesforapp(appobj.AS_appdata.target)
+		appname = appobj.AS_appdata.identifier or u'Current Application'
 		self.terms = aeteparser.parseaetes(aetes, appname, style)
 		self.style = style
+		if style == 'rb-appscript':
+			self.datarenderer = RubyRenderer(appobj)
+		else:
+			self.datarenderer = _defaultrenderer
 		self.output = out
 	
 	def overview(self):
@@ -315,7 +403,7 @@ For example, to print an overview of TextEdit, a description of its make command
 	
 	def _printRefValue(self, ref):
 			try:
-				pprint(ref.get(), self.output)
+				print >> self.output, self.datarenderer.rendervalue(ref.get(), True)
 			except:
 				print >> self.output, 'UNAVAILABLE'
 	
@@ -349,8 +437,8 @@ For example, to print an overview of TextEdit, a description of its make command
 								print >> self.output, 'UNAVAILABLE'
 							else:
 								try:
-									pprint(getattr(ref, name).get(), self.output)
-								except:
+									print >> self.output, self.datarenderer.rendervalue(getattr(ref, name).get(), True)
+								except Exception, e:
 									print >> self.output, 'UNAVAILABLE'
 				else:
 					print >> self.output, 'Current state of referenced property (or properties)\n\n%s:' % \
@@ -387,7 +475,7 @@ For example, to print an overview of TextEdit, a description of its make command
 			tokens = flags.split()
 			print >> self.output, '=' * 78 + '\nHelp (%s)' % ' '.join(tokens)
 			if ref:
-				print >> self.output, '\nReference: %r' % ref
+				print >> self.output, '\nReference: %s' % self.datarenderer.rendervalue(ref)
 			i = 0
 			while i < len(tokens):
 				print >> self.output, '\n' + '-' * 78
@@ -444,8 +532,7 @@ def help(constructor, identity, style, flags, aemreference, commandname=''):
 		else:
 			raise RuntimeError, 'Unknown constructor: %r' % constructor
 		output = StringIO()
-		aetes = terminology.aetesforapp(appobj.AS_appdata.target)
-		helpobj = Help(aetes, identity or u'Current Application', style, output)
+		helpobj = Help(appobj, style, output)
 		_cache[id] = (appobj, helpobj, output)
 	ref, helpobj, output = _cache[id]
 	output.truncate(0)
@@ -456,7 +543,7 @@ def help(constructor, identity, style, flags, aemreference, commandname=''):
 	helpobj.help(flags, ref)
 	return output.getvalue()
 
-installeventhandler(help,
+installeventhandler(help, # TO DO: add 'Inte' param giving path to [Ruby] interpreter to use when running rubyrenderer
 		'AppSHelp',
 		('Cons', 'constructor', kAE.typeChar),
 		('Iden', 'identity', kAE.typeWildCard),
