@@ -527,7 +527,7 @@ module Appscript
 		# introspection
 	
 		def respond_to?(name, includePriv=false)
-			if super 
+			if Object.respond_to?(name)
 				return true
 			else
 				return @AS_app_data.reference_by_name.has_key?(name.is_a?(String) ? name.intern : name)
@@ -535,7 +535,7 @@ module Appscript
 		end
 		
 		def methods
-			return super + @AS_app_data.reference_by_name.keys.collect { |name| name.to_s }
+			return (Object.instance_methods + @AS_app_data.reference_by_name.keys.collect { |name| name.to_s }).uniq
 		end
 		
 		def commands
@@ -592,19 +592,49 @@ module Appscript
 		
 		def method_missing(name, *args)
 			selector_type, code = @AS_app_data.reference_by_name[name]
-			case selector_type
+			case selector_type # check if name is a property/element/command name, and if it is handle accordingly
 				when :property
 					return Reference.new(@AS_app_data, @AS_aem_reference.property(code))
 				when :element
 					return Reference.new(@AS_app_data, @AS_aem_reference.elements(code))
 				when :command
 					return _send_command(args, name, code[0], code[1])
-			else
-				msg = "Unknown property, element or command: '#{name}'"
-				if @AS_app_data.reference_by_name.has_key?("#{name}_".intern)
-					msg += " (Did you mean '#{name}_'?)"
+			else 
+				# see if it's a method that has been added to Object class [presumably] at runtime, but excluded
+				# by AE_SafeObject to avoid potential conflicts with property/element/command names
+				begin
+					# Notes:
+					# rb-appscript has to prevent arbitrary methods that are added to Ruby's base Object class
+					# by client code from automatically appearing in Appscript::Reference as well, as these new
+					# methods may inadvertently mask property/element/command names, causing appscript to
+					# behave incorrectly. However, once it is confirmed that a given method will not mask an existing 
+					# property/element/command name, it can be added retrospectively to the Reference instance
+					# upon which it was called, which is what happens here.
+					# 
+					# This means that methods such as #pretty_print and #pretty_inspect, which are
+					# injected into Object when the 'pp' module is loaded, will still be available in appscript
+					# references, even though they are not on AS_SafeObject's official list of permitted methods,
+					# *as long as* properties/elements/commands of the same name do not already exist for that
+					# reference. 
+					#
+					# Where properties/elements/commands of the same name do already exist, appscript
+					# will still defer to those, of course, and this may cause problems for the caller if
+					# they were wanting the other behaviour. (But, that's the risk one runs with any sort
+					# of subclassing exercise when the contents of the superclass are not known for certain
+					# beforehand.) Clients that require access to these methods will need to add their names
+					# to the ReservedKeywords list (see _appscript/reservedkeywords.rb) at runtime, thereby
+					# forcing appscript to append underscores to the conflicting property/element/command
+					# names in order to disambiguate them, and modifying any code that refers to those
+					# properties/elements/commands accordingly.
+					meth = Object.instance_method(name)
+				rescue NameError # message not handled
+					msg = "Unknown property, element or command: '#{name}'"
+					if @AS_app_data.reference_by_name.has_key?("#{name}_".intern)
+						msg += " (Did you mean '#{name}_'?)"
+					end
+					raise RuntimeError, msg
 				end
-				raise RuntimeError, msg
+				return meth.bind(self).call(*args)
 			end
 		end
 		

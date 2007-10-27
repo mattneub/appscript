@@ -18,6 +18,8 @@
 
 - fixed bug in AE.convert_long_date_time_to_unix_seconds (used to unpack AEDescs of typeLongDateTime) where it would crash if passed a FixNum instead of a BigNum
 
+- now allow methods that have been added to Object class at runtime (e.g. importing the 'pp' module adds #pretty_print and #pretty_inspect) to be invoked on Appscript::Reference and Appscript::Application instances, assuming that the reference object doesn't already have a property/element/command by the same name. In other words, instances of these classes now behave more or less the same as instances of ordinary subclasses that use bound methods rather than #method_missing to handle incoming messages. Previously, calling (e.g.) #pretty_inspect on an appscript reference would result in a 'property/element/command not found' error.
+
 
 2007-08-17 -- 0.4.0 (beta 1)
 
