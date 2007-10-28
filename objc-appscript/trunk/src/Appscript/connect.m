@@ -12,8 +12,6 @@
 /**********************************************************************/
 // find/launch/get PIDs for local applications
 
-// TO DO: better error reporting?
-
 /*
  * Find application by creator code, bundle ID and/or file name.
  */
@@ -34,7 +32,7 @@ extern NSURL* AEMFindApplication(OSType creator, NSString *bundleID, NSString *n
 /*
  * Get Unix process ID of first process launched from specified application.
  */
-extern OSStatus AEMFindPIDForApplication(NSURL *fileURL, pid_t *pid) { // TO DO: extern?
+extern OSStatus AEMFindPIDForApplication(NSURL *fileURL, pid_t *pid) {
 	OSStatus err;
 	FSRef desired, found;
 	ProcessSerialNumber psn = {0, kNoProcess};

@@ -10,127 +10,25 @@
 #import "codecs.h"
 #import "connect.h"
 #import "SendThreadSafe.h"
+#import "event.h"
 
-
-/**********************************************************************/
-// typedefs
-
-typedef OSErr(*AEMCreateProcPtr)(AEEventClass theAEEventClass,
-							     AEEventID theAEEventID,
-							     const AEAddressDesc *target,
-							     AEReturnID returnID,
-							     AETransactionID transactionID,
-							     AppleEvent *result);
-
-
-typedef OSStatus(*AEMSendProcPtr)(const AppleEvent *event,
-								  AppleEvent *reply,
-								  AESendMode sendMode,
-								  long timeOutInTicks);
-
-
-typedef enum {
-	kAEMTargetCurrent,
-	kAEMTargetFileURL,
-	kAEMTargetEppcURL,
-	kAEMTargetPID,
-	kAEMTargetDescriptor,
-} AEMTargetType;
-
-
-/**********************************************************************/
-// Event class
-/*
- * Note: clients shouldn't instantiate this directly; instead use AEMApplication methods.
- */
-
-// TO DO: returnID support
-
-@interface AEMEvent : NSObject {
-	AEDesc *event;
-	id codecs;
-	AEMSendProcPtr sendProc;
-	// type to coerce returned value to before unpacking it
-	DescType requiredResultType;
-	// error info
-	OSErr errorNumber;
-	NSString *errorString;
-}
 
 /*
- * Note: new AEMEvent instances are constructed by AEMApplication objects; 
- * clients shouldn't instantiate this class directly.
- */
-
-- (id)initWithEvent:(AppleEvent *)event_
-			 codecs:(id)codecs_
-		   sendProc:(AEMSendProcPtr)sendProc_;
-
-/*
- * Get a pointer to the AEDesc contained by this AEMEvent instance
- */
-- (const AppleEvent *)aeDesc;
-
-/*
- * Get an NSAppleEventDescriptor instance containing a copy of this event
- */
-- (NSAppleEventDescriptor *)appleEventDescriptor;
-
-// Pack event's attributes and parameters, if any.
-
-- (id)setAttributePtr:(void *)dataPtr 
-				 size:(Size)dataSize
-	   descriptorType:(DescType)typeCode
-		   forKeyword:(AEKeyword)key;
-
-- (id)setParameterPtr:(void *)dataPtr 
-				 size:(Size)dataSize
-	   descriptorType:(DescType)typeCode
-		   forKeyword:(AEKeyword)key;
-
-- (id)setAttribute:(id)value forKeyword:(AEKeyword)key;
-
-- (id)setParameter:(id)value forKeyword:(AEKeyword)key;
-
-// Specify an AE type to coerce the reply descriptor to before unpacking it.
-
-- (id)setResultType:(DescType)type;
-
-/*
- * Send event.
+ * TO DO:
  *
- * (Note: a single event can be sent multiple times if desired.)
+ * - provide protocol/abstract base class for Event class, as clients can provide their own
  *
- * (Note: if an Apple Event Manager/application error occurs, these methods will return nil.
- * Clients should test for this, then use the -errorNumber and -errorString methods to
- * retrieve the error description.
+ * - returnID support; note: returnID is an argument to AECreateAppleEvent(), so we may want
+ *   to move this call into AEMEvent and defer it long enough to give clients an opportunity
+ *   to call -[AEMEvent setReturnID:]. Setting returnID in -[AEMApplication eventWith...]
+ *   is another option, although the appscript layer would then need to avoid instantiating
+ *   AEMEvent when a command is first called, again to allow clients an opportunity to set
+ *   the returnID if they wish to.
+ *
+ * - default [Cocoa?] error message strings in AEMEvent error reporting?
+ *
+ *
  */
-
-- (id)sendWithMode:(AESendMode)sendMode timeout:(long)timeoutInTicks;
-
-- (id)sendWithTimeout:(long)timeoutInTicks;
-
-- (id)sendWithMode:(AESendMode)sendMode;
-
-- (id)send;
-
-/*
- * Get error information for last event sent, assuming it failed.
- */ 
-
-- (OSErr)errorNumber;
-
-- (NSString *)errorString;
-
-/*
- * Convenience method for raising an exception containing error information
- * for last event sent, assuming it failed.
- */
-
-- (void)raise;
-
-@end
-
 
 /**********************************************************************/
 // Application class

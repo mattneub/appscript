@@ -19,6 +19,8 @@
 		4F7C7EAF0C5B68420033C219 /* SendThreadSafe.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F7C7EAD0C5B68420033C219 /* SendThreadSafe.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4F7CA9050B727AE5007010CE /* reference.h in Headers */ = {isa = PBXBuildFile; fileRef = 4FDCB2F30B6D0CD0009534FD /* reference.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4F7CA9060B727AE5007010CE /* reference.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FDCB2F40B6D0CD0009534FD /* reference.m */; };
+		4F9BFD6C0CD4CD74003BDDE0 /* event.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F9BFD6A0CD4CD74003BDDE0 /* event.h */; };
+		4F9BFD6D0CD4CD74003BDDE0 /* event.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F9BFD6B0CD4CD74003BDDE0 /* event.m */; };
 		4FDCB2E00B6D0BAF009534FD /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4FDCB2DE0B6D0BAF009534FD /* Carbon.framework */; };
 		4FDCB2E10B6D0BAF009534FD /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4FDCB2DF0B6D0BAF009534FD /* CoreFoundation.framework */; };
 		4FDCB2E20B6D0BCB009534FD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0867D69BFE84028FC02AAC07 /* Foundation.framework */; };
@@ -36,21 +38,6 @@
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXBuildStyle section */
-		014CEA440018CDF011CA2923 /* Debug */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-			};
-			name = Debug;
-		};
-		014CEA450018CDF011CA2923 /* Release */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-			};
-			name = Release;
-		};
-/* End PBXBuildStyle section */
-
 /* Begin PBXFileReference section */
 		0867D69BFE84028FC02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		089C1667FE841158C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -67,6 +54,8 @@
 		4F4856670B6E8204005264DC /* test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = test.m; sourceTree = "<group>"; };
 		4F7C7EAC0C5B68420033C219 /* SendThreadSafe.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = SendThreadSafe.c; sourceTree = "<group>"; };
 		4F7C7EAD0C5B68420033C219 /* SendThreadSafe.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SendThreadSafe.h; sourceTree = "<group>"; };
+		4F9BFD6A0CD4CD74003BDDE0 /* event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = event.h; sourceTree = "<group>"; };
+		4F9BFD6B0CD4CD74003BDDE0 /* event.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = event.m; sourceTree = "<group>"; };
 		4FDCB2DE0B6D0BAF009534FD /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		4FDCB2DF0B6D0BAF009534FD /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
 		4FDCB2EB0B6D0CD0009534FD /* application.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = application.h; sourceTree = "<group>"; };
@@ -216,6 +205,8 @@
 			children = (
 				4FDCB2EB0B6D0CD0009534FD /* application.h */,
 				4FDCB2EC0B6D0CD0009534FD /* application.m */,
+				4F9BFD6A0CD4CD74003BDDE0 /* event.h */,
+				4F9BFD6B0CD4CD74003BDDE0 /* event.m */,
 				4FDCB2EF0B6D0CD0009534FD /* connect.h */,
 				4FDCB2F00B6D0CD0009534FD /* connect.m */,
 				4F7C7EAD0C5B68420033C219 /* SendThreadSafe.h */,
@@ -251,6 +242,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4FDCB2F90B6D0CD0009534FD /* application.h in Headers */,
+				4F9BFD6C0CD4CD74003BDDE0 /* event.h in Headers */,
 				4FDCB2FB0B6D0CD0009534FD /* codecs.h in Headers */,
 				4FDCB2FD0B6D0CD0009534FD /* connect.h in Headers */,
 				4FDCB3030B6D0CD0009534FD /* specifier.h in Headers */,
@@ -279,8 +271,6 @@
 			);
 			buildRules = (
 			);
-			buildSettings = {
-			};
 			dependencies = (
 			);
 			name = Appscript;
@@ -295,12 +285,6 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "Appscript" */;
-			buildSettings = {
-			};
-			buildStyles = (
-				014CEA440018CDF011CA2923 /* Debug */,
-				014CEA450018CDF011CA2923 /* Release */,
-			);
 			hasScannedForEncodings = 1;
 			mainGroup = 0867D691FE84028FC02AAC07 /* Appscript */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
@@ -338,6 +322,7 @@
 				4F1E9DF00B74EDCB00D4DCBF /* referencerenderer.m in Sources */,
 				4F1E9F430B75305800D4DCBF /* constant.m in Sources */,
 				4F7C7EAE0C5B68420033C219 /* SendThreadSafe.c in Sources */,
+				4F9BFD6D0CD4CD74003BDDE0 /* event.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

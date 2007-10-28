@@ -12,6 +12,14 @@
 
 
 /**********************************************************************/
+// Forward declarations
+
+@class AEMAND;
+@class AEMOR;
+@class AEMNOT;
+
+
+/**********************************************************************/
 // initialise constants
 
 void initTestModule(void); // called automatically
@@ -24,11 +32,9 @@ void disposeTestModule(void);
 
 @interface AEMTest : AEMQuery
 
-- (id)AND:(id)remainingOperands; // takes a single test clause or an array of test clauses
-
-- (id)OR:(id)remainingOperands;
-
-- (id)NOT;
+- (AEMAND	*)AND:(id)remainingOperands; // takes a single test clause or an NSArray of test clauses
+- (AEMOR	*)OR:(id)remainingOperands;
+- (AEMNOT	*)NOT;
 
 - (NSString *)formatString;
 

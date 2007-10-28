@@ -10,12 +10,62 @@
 #import "base.h"
 #import "test.h"
 
+/* TO DO:
+ *
+ * - provide an abstract AEMResolverBase class that third-party clients can subclass
+ *   in order to create resolver objects to pass to AEM specifiers' -resolve: method.
+ *   This base class should provide default implementations of all known specifier and
+ *   test methods; these should in turn call a common -selector:args: method that does
+ *   nothing by default. Subclasses can then override any of the specific specifier/
+ *   test methods and/or the -selector:args: method according to their needs.
+ *
+ * - declare protocol/base class for reference resolver objects
+ *
+ * - implement AEMCustomRoot
+ *
+ * - since frameworks are never unloaded, do we really need disposeSpecifierModule()?
+ */
+
 /**********************************************************************/
 
 
 #define AEMApp [AEMApplicationRoot applicationRoot]
 #define AEMCon [AEMCurrentContainerRoot currentContainerRoot]
 #define AEMIts [AEMObjectBeingExaminedRoot objectBeingExaminedRoot]
+
+
+/**********************************************************************/
+// Forward declarations
+
+@class AEMPropertySpecifier;
+@class AEMUserPropertySpecifier;
+@class AEMElementByNameSpecifier;
+@class AEMElementByIndexSpecifier;
+@class AEMElementByIDSpecifier;
+@class AEMElementByOrdinalSpecifier;
+@class AEMElementByRelativePositionSpecifier;
+@class AEMElementsByRangeSpecifier;
+@class AEMElementsByTestSpecifier;
+@class AEMAllElementsSpecifier;
+
+@class AEMGreaterThan;
+@class AEMGreaterOrEquals;
+@class AEMEquals;
+@class AEMNotEquals;
+@class AEMLessThan;
+@class AEMLessOrEquals;
+@class AEMBeginsWith;
+@class AEMEndsWith;
+@class AEMContains;
+@class AEMIsIn;
+
+@class AEMSpecifier;
+@class AEMReferenceRootBase;
+@class AEMApplicationRoot;
+@class AEMCurrentContainerRoot;
+@class AEMObjectBeingExaminedRoot;
+
+@class AEMTest;
 
 
 /**********************************************************************/
@@ -41,8 +91,8 @@ void disposeSpecifierModule(void);
 
 // reserved methods
 
-- (id)root;
-- (id)trueSelf;
+- (AEMReferenceRootBase *)root;
+- (AEMSpecifier *)trueSelf;
 
 @end
 
@@ -71,20 +121,16 @@ void disposeSpecifierModule(void);
 
 // Comparison and logic tests
 
-- (id)greaterThan:(id)object;
-- (id)greaterOrEquals:(id)object;
-- (id)equals:(id)object;
-- (id)notEquals:(id)object;
-- (id)lessThan:(id)object;
-- (id)lessOrEquals:(id)object;
-- (id)beginsWith:(id)object;
-- (id)endsWith:(id)object;
-- (id)contains:(id)object;
-- (id)isIn:(id)object;
-
-- (id)AND:(id)remainingOperands;
-- (id)OR:(id)remainingOperands;
-- (id)NOT;
+- (AEMGreaterThan		*)greaterThan:(id)object;
+- (AEMGreaterOrEquals	*)greaterOrEquals:(id)object;
+- (AEMEquals			*)equals:(id)object;
+- (AEMNotEquals			*)notEquals:(id)object;
+- (AEMLessThan			*)lessThan:(id)object;
+- (AEMLessOrEquals		*)lessOrEquals:(id)object;
+- (AEMBeginsWith		*)beginsWith:(id)object;
+- (AEMEndsWith			*)endsWith:(id)object;
+- (AEMContains			*)contains:(id)object;
+- (AEMIsIn				*)isIn:(id)object;
 
 // Insertion location selectors
 
@@ -95,16 +141,14 @@ void disposeSpecifierModule(void);
 
 // property and all-element specifiers
 
-// TO DO: specific return types
-- (id)property:(OSType)propertyCode;
-- (id)userProperty:(NSString *)propertyName;
-- (id)elements:(OSType)classCode;
+- (AEMPropertySpecifier		*)property:(OSType)propertyCode;
+- (AEMUserPropertySpecifier	*)userProperty:(NSString *)propertyName;
+- (AEMAllElementsSpecifier	*)elements:(OSType)classCode;
 
 // by-relative-position selectors
 
-// TO DO: specific return types
-- (id)previous:(OSType)classCode;
-- (id)next:(OSType)classCode;
+- (AEMElementByRelativePositionSpecifier *)previous:(OSType)classCode;
+- (AEMElementByRelativePositionSpecifier *)next:(OSType)classCode;
 
 @end
 
@@ -168,20 +212,19 @@ void disposeSpecifierModule(void);
 
 // by-index, by-name, by-id selectors
  
-- (AEMElementByIndexSpecifier *)at:(int)index;
-- (AEMElementByIndexSpecifier *)byIndex:(id)index; // normally NSNumber, but may occasionally be other types
-- (AEMElementByNameSpecifier *)byName:(NSString *)name;
-- (AEMElementByIDSpecifier *)byID:(id)id_;
+- (AEMElementByIndexSpecifier	*)at:(int)index;
+- (AEMElementByIndexSpecifier	*)byIndex:(id)index; // normally NSNumber, but may occasionally be other types
+- (AEMElementByNameSpecifier	*)byName:(NSString *)name;
+- (AEMElementByIDSpecifier		*)byID:(id)id_;
 
 // by-range selector
 
-// TO DO: specific return type
-- (id)at:(int)startIndex to:(int)stopIndex;
-- (id)byRange:(id)startReference to:(id)stopReference; // takes two con-based references, with other values being expanded as necessary
+- (AEMElementsByRangeSpecifier *)at:(int)startIndex to:(int)stopIndex;
+- (AEMElementsByRangeSpecifier *)byRange:(id)startReference to:(id)stopReference; // takes two con-based references, with other values being expanded as necessary
 
 // by-test selector
 
-- (id)byTest:(id)testReference; // TO DO: specific param, return types
+- (AEMElementsByTestSpecifier *)byTest:(AEMTest *)testReference;
 
 @end
 
@@ -233,7 +276,7 @@ void disposeSpecifierModule(void);
 
 // note: clients should avoid calling this initialiser directly; 
 // use AEMApp, AEMCon, AEMIts macros instead.
-+ (id)applicationRoot;
++ (AEMApplicationRoot *)applicationRoot;
 
 @end
 
@@ -241,7 +284,7 @@ void disposeSpecifierModule(void);
 
 // note: clients should avoid calling this initialiser directly; 
 // use AEMApp, AEMCon, AEMIts macros instead.
-+ (id)currentContainerRoot;
++ (AEMCurrentContainerRoot *)currentContainerRoot;
 
 @end
 
@@ -249,8 +292,7 @@ void disposeSpecifierModule(void);
 
 // note: clients should avoid calling this initialiser directly; 
 // use AEMApp, AEMCon, AEMIts macros instead.
-+ (id)objectBeingExaminedRoot;
++ (AEMObjectBeingExaminedRoot *)objectBeingExaminedRoot;
 
 @end
-
 

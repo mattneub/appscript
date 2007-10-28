@@ -86,7 +86,7 @@ void disposeTestModule(void) {
 // takes a single test clause or an array of test clauses
 // note: currently performs no runtime type checks to ensure arg is/contains
 // AEMTest instances only
-- (id)AND:(id)remainingOperands { 
+- (AEMAND *)AND:(id)remainingOperands { 
 	NSMutableArray *allOperands;
 	
 	allOperands = [NSArray arrayWithObject: self];
@@ -100,7 +100,7 @@ void disposeTestModule(void) {
 // takes a single test clause or an array of test clauses
 // note: currently performs no runtime type checks to ensure arg is/contains
 // AEMTest instances only
-- (id)OR:(id)remainingOperands {
+- (AEMOR *)OR:(id)remainingOperands {
 	NSMutableArray *allOperands;
 	
 	allOperands = [NSArray arrayWithObject: self];
@@ -111,7 +111,7 @@ void disposeTestModule(void) {
 	return [[[AEMOR alloc] initWithOperands: allOperands] autorelease];
 }
 
-- (id)NOT {
+- (AEMNOT *)NOT {
 	return [[[AEMNOT alloc] initWithOperands: [NSArray arrayWithObject: self]] autorelease];
 }
 
@@ -169,7 +169,7 @@ void disposeTestModule(void) {
 
 @implementation AEMGreaterThan
 
-- (id)formatString {
+- (NSString *)formatString {
 	return @"[%@ greaterThan: %@]";
 }
 
@@ -186,7 +186,7 @@ void disposeTestModule(void) {
 
 @implementation AEMGreaterOrEquals
 
-- (id)formatString {
+- (NSString *)formatString {
 	return @"[%@ greaterOrEquals: %@]";
 }
 
@@ -203,7 +203,7 @@ void disposeTestModule(void) {
 
 @implementation AEMEquals
 
-- (id)formatString {
+- (NSString *)formatString {
 	return @"[%@ equals: %@]";
 }
 
@@ -220,7 +220,7 @@ void disposeTestModule(void) {
 
 @implementation AEMNotEquals
 
-- (id)formatString {
+- (NSString *)formatString {
 	return @"[%@ notEquals: %@]";
 }
 
@@ -239,7 +239,7 @@ void disposeTestModule(void) {
 
 @implementation AEMLessThan
 
-- (id)formatString {
+- (NSString *)formatString {
 	return @"[%@ lessThan: %@]";
 }
 
@@ -256,7 +256,7 @@ void disposeTestModule(void) {
 
 @implementation AEMLessOrEquals
 
-- (id)formatString {
+- (NSString *)formatString {
 	return @"[%@ lessOrEquals: %@]";
 }
 
@@ -273,7 +273,7 @@ void disposeTestModule(void) {
 
 @implementation AEMBeginsWith
 
-- (id)formatString {
+- (NSString *)formatString {
 	return @"[%@ beginsWith: %@]";
 }
 
@@ -290,7 +290,7 @@ void disposeTestModule(void) {
 
 @implementation AEMEndsWith
 
-- (id)formatString {
+- (NSString *)formatString {
 	return @"[%@ endsWith: %@]";
 }
 
@@ -307,7 +307,7 @@ void disposeTestModule(void) {
 
 @implementation AEMContains
 
-- (id)formatString {
+- (NSString *)formatString {
 	return @"[%@ contains: %@]";
 }
 
@@ -324,7 +324,7 @@ void disposeTestModule(void) {
 
 @implementation AEMIsIn
 
-- (id)formatString {
+- (NSString *)formatString {
 	return @"[%@ isIn: %@]";
 }
 

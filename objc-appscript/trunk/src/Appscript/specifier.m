@@ -7,11 +7,6 @@
 
 #import "specifier.h"
 
-/* TO DO:
- *
- * - how best to implement -resolve:? e.g. Better to invoke a '-(id)call:(SEL)name, ...' method (or similar) on a generic visitor object (i.e. smaller API is better for simpler tasks)? Or stick with current approach (i.e. larger API is arguably better for more complex tasks)? Note: could provide an abstract AEMResolverBase class that adapts from larger API to smaller API; that'd also allow subclasses to override individual methods they're interested in.
- */
-
 
 /**********************************************************************/
 // initialise/dispose constants
@@ -118,7 +113,7 @@ void initSpecifierModule(void) {
 }
 
 
-void disposeSpecifierModule(void) { // TO DO: since frameworks are never unloaded, do we really need this?
+void disposeSpecifierModule(void) {
 	disposeTestModule();
 	// insertion locations
 	[kEnumBeginning release];
@@ -177,11 +172,11 @@ void disposeSpecifierModule(void) { // TO DO: since frameworks are never unloade
 
 // reserved methods
 
-- (id)root {
+- (AEMReferenceRootBase *)root {
 	return [container root];
 }
 
-- (id)trueSelf {
+- (AEMSpecifier *)trueSelf {
 	return self;
 }
 
@@ -263,64 +258,44 @@ void disposeSpecifierModule(void) { // TO DO: since frameworks are never unloade
 
 // Comparison and logic tests
 
-- (id)greaterThan:(id)object {
+- (AEMGreaterThan *)greaterThan:(id)object {
 	return [[[AEMGreaterThan alloc] initWithOperand1: self operand2: object] autorelease];
 }
 
-- (id)greaterOrEquals:(id)object {
+- (AEMGreaterOrEquals *)greaterOrEquals:(id)object {
 	return [[[AEMGreaterOrEquals alloc] initWithOperand1: self operand2: object] autorelease];
 }
 
-- (id)equals:(id)object {
+- (AEMEquals *)equals:(id)object {
 	return [[[AEMEquals alloc] initWithOperand1: self operand2: object] autorelease];
 }
 
-- (id)notEquals:(id)object {
+- (AEMNotEquals *)notEquals:(id)object {
 	return [[[AEMNotEquals alloc] initWithOperand1: self operand2: object] autorelease];
 }
 
-- (id)lessThan:(id)object {
+- (AEMLessThan *)lessThan:(id)object {
 	return [[[AEMLessThan alloc] initWithOperand1: self operand2: object] autorelease];
 }
 
-- (id)lessOrEquals:(id)object {
+- (AEMLessOrEquals *)lessOrEquals:(id)object {
 	return [[[AEMLessOrEquals alloc] initWithOperand1: self operand2: object] autorelease];
 }
 
-- (id)beginsWith:(id)object {
+- (AEMBeginsWith *)beginsWith:(id)object {
 	return [[[AEMBeginsWith alloc] initWithOperand1: self operand2: object] autorelease];
 }
 
-- (id)endsWith:(id)object {
+- (AEMEndsWith *)endsWith:(id)object {
 	return [[[AEMEndsWith alloc] initWithOperand1: self operand2: object] autorelease];
 }
 
-- (id)contains:(id)object {
+- (AEMContains *)contains:(id)object {
 	return [[[AEMContains alloc] initWithOperand1: self operand2: object] autorelease];
 }
 
-- (id)isIn:(id)object {
+- (AEMIsIn *)isIn:(id)object {
 	return [[[AEMIsIn alloc] initWithOperand1: self operand2: object] autorelease];
-}
-
-- (id)AND:(id)remainingOperands {
-	NSMutableArray *allOperands;
-	
-	allOperands = [NSMutableArray arrayWithObject: self];
-	[allOperands addObjectsFromArray: remainingOperands];
-	return [[[AEMAND alloc] initWithOperands: allOperands] autorelease];
-}
-
-- (id)OR:(id)remainingOperands {
-	NSMutableArray *allOperands;
-	
-	allOperands = [NSMutableArray arrayWithObject: self];
-	[allOperands addObjectsFromArray: remainingOperands];
-	return [[[AEMOR alloc] initWithOperands: allOperands] autorelease];
-}
-
-- (id)NOT {
-	return [[[AEMNOT alloc] initWithOperands: [NSArray arrayWithObject: self]] autorelease];
 }
 
 
@@ -345,21 +320,21 @@ void disposeSpecifierModule(void) { // TO DO: since frameworks are never unloade
 
 // property and all-element specifiers
 
-- (id)property:(OSType)propertyCode {
+- (AEMPropertySpecifier *)property:(OSType)propertyCode {
 	return [[[AEMPropertySpecifier alloc]
 					   initWithContainer: self
 									 key: [NSAppleEventDescriptor descriptorWithTypeCode: propertyCode]
 								wantCode: cProperty] autorelease];
 }
 
-- (id)userProperty:(NSString *)propertyName {
+- (AEMUserPropertySpecifier *)userProperty:(NSString *)propertyName {
 	return [[[AEMUserPropertySpecifier alloc]
 						   initWithContainer: self
 										 key: propertyName
 									wantCode: cProperty] autorelease];
 }
 
-- (id)elements:(OSType)classCode {
+- (AEMAllElementsSpecifier *)elements:(OSType)classCode {
 	return [[[AEMAllElementsSpecifier alloc]
 						  initWithContainer: self
 								   wantCode: classCode] autorelease];
@@ -368,14 +343,14 @@ void disposeSpecifierModule(void) { // TO DO: since frameworks are never unloade
 
 // by-relative-position selectors
 
-- (id)previous:(OSType)classCode {
+- (AEMElementByRelativePositionSpecifier *)previous:(OSType)classCode {
 	return [[[AEMElementByRelativePositionSpecifier alloc]
 										initWithContainer: self
 													  key: kEnumPrevious
 												 wantCode: classCode] autorelease];
 }
 
-- (id)next:(OSType)classCode {
+- (AEMElementByRelativePositionSpecifier *)next:(OSType)classCode {
 	return [[[AEMElementByRelativePositionSpecifier alloc]
 										initWithContainer: self
 													  key: kEnumNext
@@ -716,7 +691,7 @@ void disposeSpecifierModule(void) { // TO DO: since frameworks are never unloade
 
 // by-range selector
 
-- (id)at:(int)startIndex to:(int)stopIndex {
+- (AEMElementsByRangeSpecifier *)at:(int)startIndex to:(int)stopIndex {
 	return [[[AEMElementsByRangeSpecifier alloc]
 							  initWithContainer: self
 										  start: [[AEMCon elements: wantCode] at: startIndex]
@@ -725,7 +700,7 @@ void disposeSpecifierModule(void) { // TO DO: since frameworks are never unloade
 }
 
 // takes two app- or con-based references, expanding any other values as necessary
-- (id)byRange:(id)startReference to:(id)stopReference { 
+- (AEMElementsByRangeSpecifier *)byRange:(id)startReference to:(id)stopReference { 
 	return [[[AEMElementsByRangeSpecifier alloc]
 							  initWithContainer: self
 										  start: startReference
@@ -736,7 +711,7 @@ void disposeSpecifierModule(void) { // TO DO: since frameworks are never unloade
 
 // by-test selector
 
-- (id)byTest:(id)testReference {
+- (AEMElementsByTestSpecifier *)byTest:(AEMTest *)testReference {
 	return [[[AEMElementsByTestSpecifier alloc]
 							 initWithContainer: self
 										   key: testReference
@@ -861,7 +836,7 @@ void disposeSpecifierModule(void) { // TO DO: since frameworks are never unloade
 
 // reserved methods
 
-- (id)trueSelf {
+- (AEMSpecifier *)trueSelf {
 	// Overrides default implementation to return the UnkeyedElements object
 	// stored inside of this AllElements instance.
 	return container; 
@@ -935,7 +910,7 @@ void disposeSpecifierModule(void) { // TO DO: since frameworks are never unloade
 }
 
 
-- (id)root {
+- (AEMReferenceRootBase *)root {
 	return self;
 }
 
@@ -949,7 +924,7 @@ void disposeSpecifierModule(void) { // TO DO: since frameworks are never unloade
 
 // note: clients should avoid calling this initialiser directly; 
 // use AEMApp, AEMCon, AEMIts macros instead.
-+ (id)applicationRoot {
++ (AEMApplicationRoot *)applicationRoot {
 	static AEMApplicationRoot *root;
 	
 	if (!root) {
@@ -974,7 +949,7 @@ void disposeSpecifierModule(void) { // TO DO: since frameworks are never unloade
 
 // note: clients should avoid calling this initialiser directly; 
 // use AEMApp, AEMCon, AEMIts macros instead.
-+ (id)currentContainerRoot {
++ (AEMCurrentContainerRoot *)currentContainerRoot {
 	static AEMCurrentContainerRoot *root;
 	
 	if (!root) {
@@ -999,7 +974,7 @@ void disposeSpecifierModule(void) { // TO DO: since frameworks are never unloade
 
 // note: clients should avoid calling this initialiser directly; 
 // use AEMApp, AEMCon, AEMIts macros instead.
-+ (id)objectBeingExaminedRoot {
++ (AEMObjectBeingExaminedRoot *)objectBeingExaminedRoot {
 	static AEMObjectBeingExaminedRoot *root;
 	
 	if (!root) {

@@ -7,6 +7,7 @@
 
 // aem
 #import "application.h"
+#import "event.h"
 #import "base.h"
 #import "codecs.h"
 #import "specifier.h"
