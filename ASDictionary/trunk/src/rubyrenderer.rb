@@ -1,13 +1,6 @@
 #!/usr/bin/env ruby
 
 require 'appscript'
-
-# allow pp module to inject #pretty_print method into Appscript::Reference and hope
-# it's not a word used by too many applications 
-# (the alternative would be to override pp's default #pretty_print implementations in Array
-# and Hash to recognise Reference instances and call their #inspect method instead)
-AS_SafeObject::EXCLUDE << "pretty_print"
-
 require 'pp'
 
 #######

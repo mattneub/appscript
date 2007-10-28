@@ -19,11 +19,26 @@ USAGE
 -----------------------------------
 NOTES
 
+- Caution: ASDictionary will overwrite any existing files when exporting dictionaries.
+
+- AppleScript and appscript users can also export application and scripting dictionaries using ASDictionary's 'export dictionaries' command. See ASDictionary's own dictionary for details.
+
+- The optional asdict tool can be used to view or export application dictionaries from the command line in both interactive and non-interactive modes. To install asdict, open the bundled asdict-installer.pkg file and follow the instructions.
+
 - Exporting larger dictionaries may take several seconds; GUI responsiveness may be limited during this time. HTML export options take longer due to the additional processing involved.
 
 - While ASDictionary is fairly tolerant of weird and buggy application dictionaries, HTML generation may fail on a few especially strange ones. Should this happen, please submit a bug report.
 
 - Many thanks to the following for comments, suggestions and bug reports: Philip Aker, Emmanuel Levy, Tim Mansour, Jake Pietrykowski, Courtney Schwartz
+
+-----------------------------------
+DONATIONS
+
+ASDictionary is free to use; however, any donations will be gratefully received and will help to support future development. You can donate to the appscript project (which ASDictionary belongs to) via its project page at sourceforge.net:
+
+	http://sourceforge.net/projects/appscript
+
+Many thanks to all those who have already contributed.
 
 -----------------------------------
 AUTHOR

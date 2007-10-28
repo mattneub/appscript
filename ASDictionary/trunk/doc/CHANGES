@@ -2,9 +2,10 @@ CHANGES
 
 2007-??-?? -- 0.9.0
 - added asdict tool
-- now supports drag-n-drop in Finder and in table view
-- ASDictionary now provides support to appscript's help system
+- now supports drag-and-drop of files from Finder to application icon and Export window
+- ASDictionary now provides transparent support to appscript's interactive help system
 - ASDictionary can now optionally export into subfolders according to style and format
+- added scripting support - see the new 'export dictionaries' command
 - improved log drawer
 - minor GUI improvements
 

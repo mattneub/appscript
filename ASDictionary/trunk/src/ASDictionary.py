@@ -6,11 +6,25 @@
 __name__ = 'ASDictionary'
 __version__ = '0.9.0'
 
+import objc
+from Foundation import NSUserDefaultsDidChangeNotification
+from AppKit import *
+from PyObjCTools.KeyValueCoding import *
+from PyObjCTools import NibClassBuilder, AppHelper
 
-#######
+import osax, appscript
+
+
+
+import os, os.path
+
+import mactypes
+
+######################################################################
 # Initialise support for appscript help system and asdict tool
 
 import appscriptsupport, asdictsupport
+
 
 # Initialise support for read-only 'name' and 'version' properties
 
@@ -43,17 +57,20 @@ installeventhandler(
 		)
 
 
-#######
-
-import objc
-from Foundation import NSUserDefaultsDidChangeNotification
-from AppKit import *
-from PyObjCTools.KeyValueCoding import *
-from PyObjCTools import NibClassBuilder, AppHelper
-
-import os, os.path
-
-import osax, appscript
+######################################################################
+	
+def namefrompath(path):
+	if path.endswith('/'):
+		path = path[:-1]
+	name = os.path.basename(path)
+	if name.lower().endswith('.app'):
+		name = name[:-4]
+	elif name.lower().endswith('.osax'):
+		name = name[:-5]
+	return name
+		
+######################################################################
+# Main export function
 
 from osaterminology.getterminology import getaete
 from osaterminology.dom import aeteparser
@@ -62,11 +79,171 @@ from osaterminology.makeidentifier import getconverter
 
 #######
 
+kStyleToSuffix = {
+		'applescript': '-AS',
+		'py-appscript': '-py', 
+		'rb-appscript': '-rb', 
+		'objc-appscript': '-objc',
+}
+
+
+def _makeDestinationFolder(outFolder, styleSubfolderName, formatSubfolderName, fileName):
+	destFolder = os.path.join(outFolder, styleSubfolderName, formatSubfolderName or '')
+	if not os.path.exists(destFolder):
+		os.makedirs(destFolder)
+	return os.path.join(destFolder, fileName)
+
+
+def _export(items, styles, plainText, singleHTML, frameHTML, options, outFolder, exportToSubfolders, progress):
+	styleInfo = [(style, kStyleToSuffix[style]) for style in styles]
+	# process each item
+	for i, item in enumerate(items):
+		name, path = item['name'], item['path']
+		progress.nextitem(name, path)
+		try:
+			aetes = getaete(path)
+			if not bool(aetes):
+				progress.didfail(u"No terminology found.")
+				continue
+			for style, suffix in styleInfo:
+				styleSubfolderName = exportToSubfolders and style or ''
+				if not progress.shouldcontinue():
+					for item in items[i:]:
+						progress.didfail(u"User cancelled.")
+						progress.nextapp(item['name'], item['path'])
+					progress.didfail(u"User cancelled.")
+					progress.didfinish()
+					return
+				if plainText:
+					outputPath = _makeDestinationFolder(outFolder, styleSubfolderName, 
+							exportToSubfolders and 'text', name + suffix + '.txt')
+					progress.nextoutput(u'%s' % outputPath)
+					f = file(outputPath, 'w')
+					try:
+						f.write('\xEF\xBB\xBF') # UTF8 BOM
+						quickdoc.app(path, f, getconverter(style))
+					except:
+						f.close()
+						raise
+					f.close()
+				if singleHTML or frameHTML:
+					terms = aeteparser.parseaetes(aetes, path, style)
+					if singleHTML:
+						outputPath = _makeDestinationFolder(outFolder, styleSubfolderName, 
+								exportToSubfolders and 'html', name + suffix + '.html')
+						progress.nextoutput(u'%s' % outputPath)
+						html = htmldoc.renderdictionary(terms, style, options)
+						f = open(outputPath, 'w')
+						f.write(str(html))
+						f.close()
+					if frameHTML:
+						outputPath = _makeDestinationFolder(outFolder, styleSubfolderName, 
+								exportToSubfolders and 'frame-html', name + suffix)
+						progress.nextoutput(u'%s' % outputPath)
+						htmldoc2.renderdictionary(terms, outputPath, style, options)
+		except Exception, err:
+			from traceback import print_exc
+			from StringIO import StringIO
+			out = StringIO()
+			print_exc(file=out)
+			progress.didfail(u'Unexpected error:/n%s' % out.getvalue())
+		else:
+			progress.didsucceed()
+	return progress.didfinish()
+
+
+######################################################################
+# Install 'export dictionaries' event handler
+
+kPlainText = 'PTex'
+kSingleHTML = 'SHTM'
+kFrameHTML = 'FHTM'
+kASStyle = 'AScr'
+kPyStyle = 'PyAp'
+kRbStyle = 'RbAp'
+kObjCStyle = 'OCAp'
+
+kAECodeToStyle = {
+	kASStyle: 'applescript',
+	kPyStyle: 'py-appscript',
+	kRbStyle: 'rb-appscript',
+	kObjCStyle: 'objc-appscript',
+}
+
+class AEProgress:
+
+	kClassKey = AEType('pcls')
+	kClassValue = AEType('ExpR')
+	#kNameKey = AEType('pnam')
+	kSourceKey = AEType('Sour')
+	kDestKey = AEType('Dest')
+	kErrorKey = AEType('ErrS')
+	kMissingValue = AEType('msng')
+
+	def __init__(self, itemcount, stylecount, formatcount, controller):
+		self._results = []
+
+	def shouldcontinue(self):
+		return True
+		
+	def nextitem(self, name, inpath):
+		self._results.append({
+				self.kClassKey:self.kClassValue,
+				#self.kNameKey:name, 
+				self.kSourceKey:mactypes.File(inpath)})
+	
+	def nextoutput(self, outpath):
+		self._results[-1][self.kDestKey] = mactypes.File(outpath)
+		
+	def didsucceed(self):
+		self._results[-1][self.kErrorKey] = self.kMissingValue
+		
+	def didfail(self, errormessage):
+		self._results[-1][self.kDestKey] = self.kMissingValue
+		self._results[-1][self.kErrorKey] = errormessage
+	
+	def didfinish(self):
+		return self._results
+
+
+def exportdictionaries(sources, outfolder, 
+		fileformats=[AEEnum(kFrameHTML)], styles=[AEEnum(kASStyle)],
+		compactclasses=False, showinvisibles=False, usesubfolders=False):
+	items = [{'name': namefrompath(alias.path), 'path': alias.path} for alias in sources]
+	outfolder = outfolder.path
+	plaintext = AEEnum(kPlainText) in fileformats
+	singlehtml = AEEnum(kSingleHTML) in fileformats
+	framehtml = AEEnum(kFrameHTML) in fileformats
+	styles = [kAECodeToStyle[o.code] for o in styles]
+	options = []
+	if compactclasses:
+		options.append('collapse')
+	if showinvisibles:
+		options.append('full')
+	progressobj = AEProgress(len(items), len(styles), len(fileformats), None)
+	return _export(items, styles, plaintext, singlehtml, framehtml, options, outfolder, usesubfolders, progressobj)
+
+installeventhandler(exportdictionaries,
+		'ASDiExpD',
+		('----', 'sources', ArgListOf(kAE.typeAlias)),
+		('ToFo', 'outfolder', kAE.typeAlias),
+		('Form', 'fileformats', ArgListOf(ArgEnum(kPlainText, kSingleHTML, kFrameHTML))),
+		('Styl', 'styles', ArgListOf(ArgEnum(kASStyle, kPyStyle, kRbStyle, kObjCStyle))),
+		('ClaC', 'compactclasses', kAE.typeBoolean),
+		('SInv', 'showinvisibles', kAE.typeBoolean),
+		('SubF', 'usesubfolders', kAE.typeBoolean))
+
+
+
+######################################################################
+# Import remaining dependencies
+
+
+######################################################################
+
 NibClassBuilder.extractClasses("MainMenu")
 
 userDefaults = NSUserDefaults.standardUserDefaults()
-
-#######
 
 # OS X bug workaround note: 
 # OSATerminology.so functions should not be called before main event loop
@@ -81,28 +258,9 @@ userDefaults = NSUserDefaults.standardUserDefaults()
 
 _sysev = appscript.app('System Events')
 
-#######
 
-_styles = [ # (prefs key, osaterminology name, filename suffix)
-		(u'applescriptStyle', 'applescript', '-AS'),
-		(u'pythonStyle', 'py-appscript', '-py'), 
-		(u'rubyStyle', 'rb-appscript', '-rb'), 
-		(u'objcStyle', 'objc-appscript', '-objc'),
-]
-
-#######
-
-def _namefrompath(path):
-	if path.endswith('/'):
-		path = path[:-1]
-	name = os.path.basename(path)
-	if name.lower().endswith('.app'):
-		name = name[:-4]
-	elif name.lower().endswith('.osax'):
-		name = name[:-5]
-	return name
-
-#######
+######################################################################
+# Functions for locating installed osaxen by name
 
 _osaxcache = None
 
@@ -130,7 +288,8 @@ def osaxPathForName(name):
 	return _osaxInfo()[name]
 
 
-#######
+######################################################################
+# Cocoa Bindings stuff (required by part of the enable/disable logic for the Export button)
 
 class ArrayToBooleanTransformer(NSValueTransformer):
 	def transformedValue_(self, item):
@@ -140,8 +299,10 @@ NSValueTransformer.setValueTransformer_forName_(
 		ArrayToBooleanTransformer.alloc().init(), u"ArrayToBoolean")
 
 
-#######
-
+######################################################################
+# NSApplication delegate, model logic and window controllers
+# Bit unwieldy this; would be good to move log drawer and progress dialog
+# controller logic into their own classes at some point, but it works ok for now.
 
 class ASDictionary(NibClassBuilder.AutoBaseClass):
 	# Outlets:
@@ -163,7 +324,7 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 		self._itemName = u''
 		self._progressBar = 0
 		# Connect to StandardAdditions (see note at top of script)
-		self._stdadditions = osax.ScriptingAddition()
+		self.standardAdditions = osax.ScriptingAddition()
 		return self
 		
 	
@@ -191,10 +352,9 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 	
 	def _updateLocks(self):
 		self.setHtmlOptionsEnabled_(userDefaults.boolForKey_(u'singleHTML') or userDefaults.boolForKey_(u'frameHTML'))
-		self.setCanExport_(bool(self.selectedFiles())
+		self.setCanExport_(bool(self.selectedFiles()) 
 				and (self.htmlOptionsEnabled() or userDefaults.boolForKey_(u'plainText'))
-				and (userDefaults.boolForKey_(u'applescriptStyle') or userDefaults.boolForKey_(u'pythonStyle')
-						or userDefaults.boolForKey_(u'rubyStyle') or userDefaults.boolForKey_(u'objcStyle')))
+				and bool([1 for name in [u'applescriptStyle', u'pythonStyle', u'rubyStyle', u'objcStyle'] if userDefaults.boolForKey_(name)]))
 	
 	def notifyPreferencesChanged_(self, sender):
 		self._updateLocks()
@@ -285,14 +445,16 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 	# 'Dictionary' menu methods
 	
 	def _addPathToSelectedFiles(self, path):
-		item = {'name': _namefrompath(path), 'path': path}
+		item = {'name': namefrompath(path), 'path': path}
 		if item not in self.selectedFiles():
 			self.insertObject_inSelectedFilesAtIndex_(item, self.countOfSelectedFiles())
 		self._updateLocks()
 	
+	##
+	
 	def chooseFromFileBrowser_(self, sender):
 		try:
-			selection = self._stdadditions.choose_file(with_prompt='Select the item(s) to process:', 
+			selection = self.standardAdditions.choose_file(with_prompt='Select the item(s) to process:', 
 					invisibles=False, multiple_selections_allowed=True)
 		except osax.CommandError, e:
 			if int(e) == -128:
@@ -304,7 +466,7 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 	
 	def chooseFromApplicationList_(self, sender):
 		try:
-			selection = self._stdadditions.choose_application(
+			selection = self.standardAdditions.choose_application(
 					with_prompt='Select the application(s) to process:', 
 					multiple_selections_allowed=True, as_=osax.k.alias)
 		except osax.CommandError, e:
@@ -318,7 +480,7 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 	def chooseRunningApplications_(self, sender):
 		names = _sysev.application_processes.name()
 		names.sort(lambda a, b: cmp(a.lower(), b.lower()))
-		selection = self._stdadditions.choose_from_list(
+		selection = self.standardAdditions.choose_from_list(
 				names, 
 				with_prompt='Choose one or more running applications:', 
 				multiple_selections_allowed=True)
@@ -329,7 +491,7 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 		
 	
 	def chooseInstalledAdditions_(self, sender):
-		selection = self._stdadditions.choose_from_list(
+		selection = self.standardAdditions.choose_from_list(
 				osaxNames(), 
 				with_prompt='Choose one or more scripting additions:', 
 				multiple_selections_allowed=True)
@@ -342,22 +504,16 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 	#######
 	# 'Export' button method
 	
-	def _log(self, text):
+	def writeToLogWindow(self, text):
 		store = self.logTextView.textStorage()
 		store.appendAttributedString_(NSAttributedString.alloc().initWithString_(text))
 		self.logTextView.scrollRangeToVisible_([store.length(), 0])
-	
-	def _makeDestinationFolder(self, outFolder, styleSubfolderName, formatSubfolderName, fileName):
-		destFolder = os.path.join(outFolder, styleSubfolderName, formatSubfolderName or '')
-		if not os.path.exists(destFolder):
-			os.makedirs(destFolder)
-		return os.path.join(destFolder, fileName)
 
 	
 	
 	def export_(self, sender):
 		try:
-			outFolder = self._stdadditions.choose_folder('Select the destination folder:').path
+			outFolder = self.standardAdditions.choose_folder('Select the destination folder:').path
 		except osax.CommandError, e:
 			if int(e) == -128:
 				return
@@ -371,110 +527,89 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 			options.append('full')
 		plainText, singleHTML, frameHTML = [userDefaults.boolForKey_(name) 
 				for name in [u'plainText', u'singleHTML', u'frameHTML']]
-		styleInfo = [(style, suffix) for key, style, suffix in _styles if userDefaults.boolForKey_(key)]
+		styles = [style for key, style in [
+				(u'applescriptStyle', 'applescript'),
+				(u'pythonStyle', 'py-appscript'),
+				(u'rubyStyle', 'rb-appscript'),
+				(u'objcStyle', 'objc-appscript')] if userDefaults.boolForKey_(key)]
 		exportToSubfolders = userDefaults.boolForKey_(u'exportToSubfolders')
 		# files to process, sorted by name
 		selection = self.selectedFiles()[:]
 		selection.sort(lambda a,b:cmp(a['name'].lower(), b['name'].lower()))
-		# create progress panel
-		self.itemName.setStringValue_(selection[0]['name'])
-		self.progressBar.setDoubleValue_(0)
-		self.progressPanel.center()
-		self.progressPanel.makeKeyAndOrderFront_(None)
-		self.progressPanel.display()
-		failedApps = []
-		session = NSApp().beginModalSessionForWindow_(self.progressPanel)
-		# process each item
-		stop = False
-		incrementSize = 1.0 / (len([i for i in [plainText, singleHTML, frameHTML] if i]) * len(styleInfo))
-		for i, item in enumerate(selection):
-			name, path = item['name'], item['path']
-			self._log(u'Exporting %s dictionary...\n' % name)
-			self.itemName.setStringValue_(name)
-			progress = 0
-			try:
-				aetes = getaete(path)
-				if not bool(aetes):
-					failedApps.append(name)
-					self._log(u"...no terminology found.\n\n")
-					continue
-				for style, suffix in styleInfo:
-					styleSubfolderName = exportToSubfolders and style or ''
-					if NSApp().runModalSession_(session) != NSRunContinuesResponse:
-						for j in range(i, len(selection)):
-							failedApps.append(selection[j]['name'])
-						self._log(u"User cancelled.\n")
-						stop = True
-						break
-					if plainText:
-						outputPath = self._makeDestinationFolder(outFolder, styleSubfolderName, 
-								exportToSubfolders and 'text', name + suffix + '.txt')
-						progress += incrementSize
-						self.progressBar.setDoubleValue_(float(i + progress) / len(selection))
-						self._log(u'%s\n' % outputPath)
-						f = file(outputPath, 'w')
-						try:
-							f.write('\xEF\xBB\xBF') # UTF8 BOM
-							quickdoc.app(path, f, getconverter(style))
-						except:
-							f.close()
-							raise
-						f.close()
-					if singleHTML or frameHTML:
-						terms = aeteparser.parseaetes(aetes, path, style)
-						if singleHTML:
-							outputPath = self._makeDestinationFolder(outFolder, styleSubfolderName, 
-									exportToSubfolders and 'html', name + suffix + '.html')
-							progress += incrementSize
-							self.progressBar.setDoubleValue_(float(i + progress) / len(selection))
-							self._log(u'%s\n' % outputPath)
-							html = htmldoc.renderdictionary(terms, style, options)
-							f = open(outputPath, 'w')
-							f.write(str(html))
-							f.close()
-						if frameHTML:
-							outputPath = self._makeDestinationFolder(outFolder, styleSubfolderName, 
-									exportToSubfolders and 'frame-html', name + suffix)
-							progress += incrementSize
-							self.progressBar.setDoubleValue_(float(i + progress) / len(selection))
-							self._log(u'%s\n' % outputPath)
-							htmldoc2.renderdictionary(terms, outputPath, style, options)
-				if stop:
-					break
-			except Exception, err:
-				failedApps.append(name)
-				from traceback import print_exc
-				from StringIO import StringIO
-				out = StringIO()
-				self._log(u"Unexpected error:/n")
-				print_exc(file=out)
-				self._log(u'%s' % out.getvalue())
-			self._log(u'\n')
-		# dispose progress panel
-		self.progressPanel.orderOut_(None)
-		NSApp().endModalSession_(session)
-		self._log(u'Done.\n\n')
-		self._stdadditions.beep()
-		if failedApps:
-			buttons = ['OK']
-			if not userDefaults.boolForKey_(u'showLog'):
-				buttons.insert(0, 'View Log')
-			action = self._stdadditions.display_dialog("Rendered terminology for %i items.\n\n" % (len(selection) - len(failedApps))
-					+ "Couldn't render terminology for: \n    " + '\n    '.join(failedApps), 
-					buttons=buttons, default_button='OK', with_icon=osax.k.caution)[osax.k.button_returned]
-			if action == 'View Log':
-				userDefaults.setBool_forKey_(True, u'showLog')
-		else:
-			self._stdadditions.display_dialog("Rendered terminology for %i items." % len(selection), 
-					buttons=['OK'], default_button=1, with_icon=osax.k.note)
+		progressObj = GUIProgress(len(selection), len(styles), len([i for i in [plainText, singleHTML, frameHTML] if i]), self)
+		_export(selection, styles, plainText, singleHTML, frameHTML, options, outFolder, exportToSubfolders, progressObj)
+	
 	
 	def stopProcessing_(self, sender): # cancel button on progress panel
 		NSApp().stopModalWithCode_(-128)
 	
 	def windowWillClose_(self, sender): # quit on main window close
 		NSApp().terminate_(sender)
+
+
+######################################################################
+# Main _export method takes an instance of this or AEProgress class, depending on
+# whether it's invoked by GUI or Apple event handler.
+
+class GUIProgress:
+
+	def __init__(self, itemcount, stylecount, formatcount, appcontroller):
+		self._appcontroller = appcontroller
+		self._subincrement = 1.0 / (stylecount * formatcount)
+		self._maincount = 0
+		self._faileditems = []
+		# create progress panel
+		appcontroller.itemName.setStringValue_('Now processing...')
+		appcontroller.progressBar.setMaxValue_(itemcount)
+		appcontroller.progressBar.setDoubleValue_(0)
+		appcontroller.progressPanel.center()
+		appcontroller.progressPanel.makeKeyAndOrderFront_(None)
+		appcontroller.progressPanel.display()
+		self._session = NSApp().beginModalSessionForWindow_(appcontroller.progressPanel)
 	
+	def shouldcontinue(self):
+		return NSApp().runModalSession_(self._session) == NSRunContinuesResponse
 	
+	def nextitem(self, name, inpath):
+		self._itemname = name
+		self._subcount = 0
+		self._maincount += 1
+		self._appcontroller.writeToLogWindow(u'Exporting %s dictionary...\n' % name)
+		self._appcontroller.itemName.setStringValue_(name)
+		self._appcontroller.progressBar.setDoubleValue_(self._maincount - 1)
+	
+	def nextoutput(self, outpath):
+		self._subcount += self._subincrement
+		self._appcontroller.writeToLogWindow(u'%s\n' % outpath)
+		self._appcontroller.progressBar.setDoubleValue_(self._maincount - 1 + self._subcount)
+	
+	def didsucceed(self):
+		self._appcontroller.writeToLogWindow(u'\n')
+
+	def didfail(self, errormessage):
+		self._faileditems.append(self._itemname)
+		self._appcontroller.writeToLogWindow(u'%s\n\n' % errormessage)
+
+	def didfinish(self):
+		# dispose progress panel
+		self._appcontroller.progressPanel.orderOut_(None)
+		NSApp().endModalSession_(self._session)
+		self._appcontroller.writeToLogWindow(u'Done.\n\n\n')
+		self._appcontroller.standardAdditions.beep()
+		if self._faileditems:
+			buttons = ['OK']
+			if not userDefaults.boolForKey_(u'showLog'):
+				buttons.insert(0, 'View Log')
+			action = self._appcontroller.standardAdditions.display_dialog("Rendered terminology for %i items.\n\n" % (self._maincount - len(self._faileditems))
+					+ "Couldn't render terminology for: \n    " + '\n    '.join(self._faileditems), 
+					buttons=buttons, default_button='OK', with_icon=osax.k.caution)[osax.k.button_returned]
+			if action == 'View Log':
+				userDefaults.setBool_forKey_(True, u'showLog')
+		else:
+			self._appcontroller.standardAdditions.display_dialog("Rendered terminology for %i items." % self._maincount, 
+					buttons=['OK'], default_button=1, with_icon=osax.k.note)
+
+
 #######
 
 AppHelper.runEventLoop()

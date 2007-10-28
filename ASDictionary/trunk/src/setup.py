@@ -21,17 +21,25 @@ To build, cd to ASDictionary/src directory and run:
 from distutils.core import setup
 import py2app
 from plistlib import Plist
+import os
 
+name = 'ASDictionary'
 version='0.9.0'
 
+os.system('''
+sdp -fa %s.sdef;
+Rez %sScripting.r -o %s.rsrc -useDF
+''' % ((name,) * 3))
+
 setup(
-	app=["ASDictionary.py"],
+	app=[name+".py"],
 	data_files=["MainMenu.nib", "rubyrenderer.rb"],
 	options=dict(
 	
 
 		py2app=dict(
 			plist=Plist(
+				NSAppleScriptEnabled=True,
 				CFBundleVersion=version,
 				CFBundleShortVersionString=version,
 				NSHumanReadableCopyright="(C) 2007 HAS",
@@ -44,8 +52,8 @@ setup(
 					),
 				]
 			),
-			resources=['ASDictionary.icns'],
-			iconfile='ASDictionary.icns'
+			resources=[name+'.icns', name+'.rsrc'],
+			iconfile=name+'.icns'
 		)
 	)
 )

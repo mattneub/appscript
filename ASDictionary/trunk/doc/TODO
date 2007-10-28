@@ -1,17 +1,6 @@
-TO DO
+''TO DO
 
-- add public event handler + aete: 
-	
-	export dictionaries
-		list of Unicode text or alias -- the applications and/or osaxen to read by filename, alias or eppc:// URL; if an application/osax's filename is given instead of an alias, ASDictionary will attempt to locate the named item by using LaunchServices to locate an application of that name, then by searching ScriptingAdditions folders for an osaxen of that name (note: filename suffixes are optional)
-		[to : folder alias] -- the folder to export to; if not given, use ~/Scripts/Terminology, creating new folder if necessary
-		[using file formats : list of 'plain text', 'single file HTML', 'frame based HTML' constants]
-		[using styles : list of 'AppleScript', 'py appscript', 'rb appscript', 'objc appscript' constants]
-		[classes compacted : boolean] -- default: false
-		[invisible items shown : boolean] -- default: false
-		[exporting to subfolders : boolean] -- default: false
-	Result: list -- 2-item list of form: {list of successful exports, list of failed exports}, where each sublist
-			is of form: {{name : Unicode text, source : alias, result : alias, error : Unicode text}, ...}
+- there is a problem where an event sent immediately after launching results in an 'unknown command' (-1708) error; not sure why but need to find out and fix
 
 - add '-w size' option for setting linewrap in appscript support
 
@@ -22,3 +11,7 @@ TO DO
 - allow users to export dictionaries for remote applications (10.4+ only)
 
 - allow users to import/export sdefs
+
+- (full sdef support in osaterminology)
+
+- create asdict-installer.pkg for asdict
