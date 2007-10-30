@@ -23,18 +23,22 @@ module OSAX
 	OSAXCache = {}
 	OSAXNames = []
 	
-	se = Appscript.app.by_id('com.apple.systemevents')
-	[se.system_domain, se.local_domain, se.user_domain].each do |domain|
-		osaxen = domain.scripting_additions_folder.files[
-				Appscript.its.file_type.eq('osax').or(Appscript.its.name_extension.eq('osax'))]
-		osaxen.name.get.zip(osaxen.POSIX_path.get).each do |name, path|
-			name = name.sub(/(?i)\.osax$/, '') # remove name extension, if any
-			OSAXNames.push(name)
-			OSAXCache[name.downcase] = [path, nil]
+	se = AEM::Application.by_path(FindApp.by_id('com.apple.systemevents'))
+	['flds', 'fldl', 'fldu'].each do |domain_code|
+		osaxen = AEM.app.property(domain_code).property('$scr').elements('file').by_filter(
+				AEM.its.property('asty').eq('osax').or(AEM.its.property('extn').eq('osax')))
+		if se.event('coredoex', {'----' => osaxen.property('pnam')}).send # domain has ScriptingAdditions folder
+			names = se.event('coregetd', {'----' => osaxen.property('pnam')}).send
+			paths = se.event('coregetd', {'----' => osaxen.property('posx')}).send
+			names.zip(paths).each do |name, path|
+				name = name.sub(/(?i)\.osax$/, '') # remove name extension, if any
+				OSAXNames.push(name)
+				OSAXCache[name.downcase] = [path, nil]
+			end
 		end
 	end
 	OSAXNames.sort!.uniq!
-	
+
 	#######
 	# modified AppData class
 	
