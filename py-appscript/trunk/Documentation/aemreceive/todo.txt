@@ -13,7 +13,7 @@ TO DO
 	installeventhandler(callbackfunction,
 			'evntcode',
 			(kAE.keyDirectObject, 'param', ...), # parameter
-			(kAttribute, 'subject', ...), # attribute
+			(kOSA.keySubjectAttr, 'subject', ...), # attribute
 			)
 
 

@@ -10,7 +10,7 @@ To use, import aemcodegen and execute one or more appscript commands to generate
 
 Example:
 
-from appscript.aemcodegen import *
+from appscript.tools.aemcodegen import *
 
 app('Finder.app').home.folders[1].name.get()
 

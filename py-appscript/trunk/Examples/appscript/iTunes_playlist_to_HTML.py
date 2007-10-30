@@ -60,7 +60,7 @@ def render_track(node, i, names, artists, albums, times):
     node.artist.content = artists[i] or '-'
     node.album.content = albums[i] or '-'
     time = times[i]
-    if time == k.MissingValue: 
+    if time == k.missing_value: 
     	time = '-:--'
     node.time.content = time
 

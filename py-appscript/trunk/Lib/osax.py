@@ -28,20 +28,22 @@ _osaxcache = {} # a dict of form: {'osax name': ['/path/to/osax', cached_terms_o
 
 #_se = app(id='com.apple.systemevents')
 _se = aem.Application(aem.findapp.byid('com.apple.systemevents'))
-#for domain in [_se.system_domain, _se.local_domain, _se.user_domain]:
-for domain in ['flds', 'fldl', 'fldu']:
+# for domain in [_se.system_domain, _se.local_domain, _se.user_domain]:
+for domaincode in ['flds', 'fldl', 'fldu']:
 #	osaxen = domain.scripting_additions_folder.files[
 #			(its.file_type == 'osax').OR(its.name_extension == 'osax')]
-	osaxen = aem.app.property(domain).property('$scr').elements('file').byfilter(
+	osaxen = aem.app.property(domaincode).property('$scr').elements('file').byfilter(
 			aem.its.property('asty').eq('osax').OR(aem.its.property('extn').eq('osax')))
 #	for name, path in zip(osaxen.name(), osaxen.POSIX_path()):
-	for name, path in zip(_se.event('coregetd', {'----': osaxen.property('pnam')}).send(), 
-			_se.event('coregetd', {'----': osaxen.property('posx')}).send()):
-		if name.lower().endswith('.osax'):
-			name = name[:-5]
-		if not _osaxcache.has_key(name.lower()):
-			scriptingadditions.append(name)
-			_osaxcache[name.lower()] = [path, None]
+	if _se.event('coredoex', {'----': osaxen.property('pnam')}).send(): # domain has ScriptingAdditions folder
+		names = _se.event('coregetd', {'----': osaxen.property('pnam')}).send()
+		paths = _se.event('coregetd', {'----': osaxen.property('posx')}).send()
+		for name, path in zip(names, paths):
+			if name.lower().endswith('.osax'): # remove name extension, if any
+				name = name[:-5]
+			if not _osaxcache.has_key(name.lower()):
+				scriptingadditions.append(name)
+				_osaxcache[name.lower()] = [path, None]
 scriptingadditions.sort()
 
 

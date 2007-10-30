@@ -181,7 +181,7 @@ class AppData(aem.Codecs):
 		- help system
 	"""
 	
-	_kHelpAgentID = 'net.sourceforge.appscript.appscripthelpagent'
+	_kHelpAgentID = 'net.sourceforge.appscript.asdictionary'
 	
 	def __init__(self, aemApplicationClass, constructor, identifier, terms):
 		"""
@@ -243,12 +243,12 @@ class AppData(aem.Codecs):
 		
 	# Help system
 	
-	def _initHelpAgent(self):
+	def _initHelpAgent(self): # TO DO: need to check ASDictionary is version 0.9.0 or later
 		try:
 			self._helpAgent = aem.Application(aem.findapp.byid(self._kHelpAgentID))
 			return True
 		except aem.findapp.ApplicationNotFoundError:
-			print >> sys.stderr,  "No help available: AppscriptHelpAgent.app not found. (See <http://appscript.sourceforge.net>)"
+			print >> sys.stderr,  "No help available: ASDictionary application not found."
 			return False
 	
 	def _displayHelp(self, flags, ref):
@@ -258,7 +258,7 @@ class AppData(aem.Codecs):
 		else:
 			commandName = ''
 		try:
-			print >> sys.stderr, self._helpAgent.event('ASHAHelp', {
+			print >> sys.stderr, self._helpAgent.event('AppSHelp', {
 					'Cons': self.constructor,
 					'Iden': self.identifier,
 					'Styl': 'py-appscript',
@@ -273,14 +273,14 @@ class AppData(aem.Codecs):
 	def help(self, flags, ref):
 		if not self._helpAgent: # initialise help system upon first use
 			if not self._initHelpAgent():
-				return ref # if AppscriptHelpAgent is unavailable then do nothing
+				return ref # if ASDictionary is unavailable then do nothing
 		e = self._displayHelp(flags, ref)
-		if e and e.number in [-600, -609]: # AppscriptHelpAgent is no longer running, so reconnect
+		if e and e.number in [-600, -609]: # ASDictionary is no longer running, so reconnect
 			if not self._initHelpAgent():
-				return ref # if AppscriptHelpAgent is unavailable then do nothing
+				return ref # if ASDictionary is unavailable then do nothing
 			e = self._displayHelp(flags, ref)
 		if e:
-			print >> sys.stderr, "No help available: AppscriptHelpAgent raised an error: %r." % e
+			print >> sys.stderr, "No help available: ASDictionary raised an error: %r." % e
 		return ref
 
 

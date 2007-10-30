@@ -1,7 +1,8 @@
 HISTORY
 
-2007-007-27 -- 0.1.6
-- now allows AEDescs of typeNull as parameters
+2007-07-27 -- 0.1.6
+- added kArgNull (indicates AEDesc of typeNull is allowed as a parameter)
+- added kArgAny
 
 2006-12-17 -- 0.1.5
 - fixed problem in typedefs where slicing an Exception object causes an error on Python 2.5 (now uses 'e.args[1:]' instead of 'e[1:]')

@@ -13,11 +13,25 @@ DESCRIPTION
 ======================================================================
 CONSTANTS
 
-kMissingValue -- The 'missing value' constant. Event handlers that sometimes return a result should return kMissingValue, not None, when they have no other value to return. (Only event handlers that never return a result should return None.)
+The following constants are exported by the top-level aemreceive module:
+
+------- Parameter constants -------
 
 kArgDesc -- Used in installeventhandler where a parameter should be passed directly to eventcallback as an AEDesc without unpacking or typechecking
 
 kArgMissingValue -- Used in installeventhandler to indicate that a 'missing value' constant is an acceptable parameter, e.g. ArgMultiChoice(kAE.typeUnicodeText, kArgMissingValue)
+
+kArgAny -- Used in installeventhandler to indicate that any type of descriptor is an acceptable parameter
+
+kArgNull -- Used in installeventhandler to indicate that a null descriptor is an acceptable parameter
+
+
+------- Result constants -------
+
+kMissingValue -- The 'missing value' constant. Event handlers that sometimes return a result should return kMissingValue, not None, when they have no other value to return. (Only event handlers that never return a result should return None.)
+
+
+------- Other constants -------
 
 kAE -- aemreceive re-exports CarbonX's kAE constants module for convenience; contains a range of common AE type constants useful when declaring event parameters' types
 
