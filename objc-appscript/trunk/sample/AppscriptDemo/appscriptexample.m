@@ -1,6 +1,5 @@
 
-#import <Foundation/Foundation.h>
-#import "TEGlue.h"
+#import "appscriptexample.h"
 
 void appscriptExample(void) {
 

@@ -1,6 +1,5 @@
 
-#import <Foundation/Foundation.h>
-#import "Appscript/Appscript.h"
+#import "aemexample.h"
 
 void aemExample(void) {
 

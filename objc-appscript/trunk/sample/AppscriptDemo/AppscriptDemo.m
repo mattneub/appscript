@@ -1,6 +1,6 @@
 #import <Foundation/Foundation.h>
-#import "aemexample.m"
-#import "appscriptexample.m"
+#import "aemexample.h"
+#import "appscriptexample.h"
 
 int main(int argc, char *argv[]) {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
