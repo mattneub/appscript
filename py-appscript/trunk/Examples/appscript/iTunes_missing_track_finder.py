@@ -16,14 +16,14 @@ from appscript import *
 # The following line should delete all iTunes file tracks whose file is missing:
 #
 #	app('iTunes').sources['Library'].library_playlists['Library'] \
-#        .file_tracks[its.location == k.MissingValue].delete()
+#        .file_tracks[its.location == k.missing_value].delete()
 #
 # Alas; iTunes' scripting support is a bit limited, so we have to do it 
 # the slow and tedious way instead:
 
 for track in app('iTunes').sources['Library'] \
             .library_playlists['Library'].file_tracks.get():
-    if track.location.get() == k.MissingValue:
+    if track.location.get() == k.missing_value:
         track.delete()
 
 
@@ -37,5 +37,5 @@ for track in app('iTunes').sources['Library'] \
 #	tracks = tracksRef.get()
 #	locs = tracksRef.location.get()
 #	for i in range(len(tracks)):
-#		if locs[i] == k.MissingValue:
+#		if locs[i] == k.missing_value:
 #			tracks[i].delete()

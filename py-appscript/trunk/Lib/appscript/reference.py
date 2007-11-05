@@ -628,10 +628,17 @@ class Application(Reference):
 		# will launch TE normally (i.e. app receives 'aevtoapp' as its first event), causing it to open a new, empty window.
 		Reference.__init__(self, AppData(self._Application, constructor, identifier, terms), aem.app)
 	
-	def AS_newreference(self, aemreference):
+	def AS_newreference(self, ref):
 		"""Create a new appscript reference from an aem reference."""
-		return Reference(self.AS_appdata, aemreference)
-	
+		if isinstance(ref, GenericReference):
+			return ref.AS_resolve(self.AS_appdata)
+		elif isinstance(ref, aem.types.BASE):
+			return Reference(self.AS_appdata, ref)
+		elif ref is None:
+			return Reference(self.AS_appdata, aem.app)
+		else:
+			return Reference(self.AS_appdata, aem.customroot(ref))
+
 	def begintransaction(self, session=None):
 		self.AS_appdata.target.begintransaction(session)
 	

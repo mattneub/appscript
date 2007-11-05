@@ -669,7 +669,6 @@ static PyObject *AEDesc_SendMessageThreadSafe(AEDescObject *_self, PyObject *_ar
 	AppleEvent reply;
 	AESendMode sendMode;
 	long timeOutInTicks;
-	mach_port_t replyPort;
 #ifndef AESend
 	PyMac_PRECHECK(AESend);
 #endif
