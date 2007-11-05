@@ -1,4 +1,4 @@
-2007-10-?? -- 0.5.0 (beta 2)
+2007-11-?? -- 0.5.0 (beta 2)
 
 - added hfs_path, #hfs_path methods to MacTypes::Alias, MacTypes::FileURL; existing path, #path methods now use CFURL functions to convert between POSIX paths and URLs
 
@@ -20,7 +20,11 @@
 
 - now allow methods that have been added to Object class at runtime (e.g. importing the 'pp' module adds #pretty_print and #pretty_inspect) to be invoked on Appscript::Reference and Appscript::Application instances, assuming that the reference object doesn't already have a property/element/command by the same name. In other words, instances of these classes now behave more or less the same as instances of ordinary subclasses that use bound methods rather than #method_missing to handle incoming messages. Previously, calling (e.g.) #pretty_inspect on an appscript reference would result in a 'property/element/command not found' error.
 
-- OSAX module no longer errors on import in 10.5 if ~/Library/ScriptingAdditions doesn't exist
+- OSAX module no longer errors on import in 10.5 if a ScriptingAdditions folder (e.g. ~/Library/ScriptingAdditions) doesn't exist
+
+- improved behaviour of Appscript::Application#AS_new_reference when argument is nil
+
+- OSAX::Application initialiser now optionally accepts static terminology 'glue' module as its second argument
 
 
 2007-08-17 -- 0.4.0 (beta 1)

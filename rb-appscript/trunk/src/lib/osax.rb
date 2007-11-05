@@ -126,28 +126,40 @@ module OSAX
 	class ScriptingAddition < Appscript::Reference
 		# Represents a single scripting addition.
 		
-		def initialize(name, osax_data=nil)
+		def initialize(name, terms=nil)
 			# name: string -- a scripting addition's name, e.g. "StandardAdditions";
 			#	basically its filename minus the '.osax' suffix
 			#
+			# terms : module or nil -- an optional terminology glue module,
+			#	as exported by Terminology.dump; if given, ScriptingAddition
+			#	will use this instead of retrieving the terminology dynamically
+			#
 			# Note that name is case-insensitive and an '.osax' suffix is ignored if given.
 			@_osax_name = name
-			if not osax_data
+			if not terms
 				osax_name = name.downcase.sub(/(?i)\.osax$/, '')
-				path, terms = OSAXCache[osax_name]
+				path, terminology_tables = OSAXCache[osax_name]
 				if not path
 					raise ArgumentError, "Scripting addition not found: #{name.inspect}"
 				end
-				if not terms
-					aetes_desc = AE.get_app_terminology(path) # will raise NotImplementedError in 64-bit processes
+				if not terminology_tables
+					begin
+						aetes_desc = AE.get_app_terminology(path) # will raise NotImplementedError in 64-bit processes
+					rescue NotImplementedError
+						raise RuntimeError, "OSAX::ScriptingAddition can't dynamically retrieve scripting addition terminology within a 64-bit process."
+					end
 					aetes = DefaultCodecs.unpack(aetes_desc.coerce(KAE::TypeAEList))
-					terms = Terminology.tables_for_aetes(aetes)
-					OSAXCache[osax_name][1] = terms
+					terminology_tables = Terminology.tables_for_aetes(aetes)
+					OSAXCache[osax_name][1] = terminology_tables
 				end
-				@_terms = terms
-				osax_data = OSAXData.new(:current, nil, @_terms)
+				@_terms = terminology_tables
+				terms = OSAXData.new(:current, nil, @_terms)
+			elsif not terms.is_a?(OSAX::OSAXData) # assume it's a glue module
+				terminology_tables = Terminology.tables_for_module(terms)
+				@_terms = terminology_tables
+				terms = OSAXData.new(:current, nil, @_terms)
 			end
-			super(osax_data, AEM.app)
+			super(terms, AEM.app)
 		end
 		
 		def to_s

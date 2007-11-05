@@ -831,6 +831,8 @@ module Appscript
 				return ref.AS_resolve(@AS_app_data)
 			elsif ref.is_a?(AEMReference::Base)
 				return Reference.new(@AS_app_data, ref)
+			elsif ref == nil
+				return  Reference.new(@AS_app_data, AEM.app)
 			else
 				return Reference.new(@AS_app_data, AEM.custom_root(ref))
 			end

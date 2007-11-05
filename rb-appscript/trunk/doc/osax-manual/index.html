@@ -107,9 +107,18 @@ osax.another_command</code></pre>
 
     Constructors:
 
-        ScriptingAddition.new(name) -- make a ScriptingAddition object
-                for the specified scripting addition, targetted at the
-                current application
+        ScriptingAddition.new(name, terms=nil) -- make a ScriptingAddition
+                object for the specified scripting addition, targetted
+                at the current application
+                
+                name: string -- a scripting addition's name, 
+                        e.g. "StandardAdditions"; basically its filename
+                        minus the '.osax' suffix
+                
+                terms : module or nil -- an optional terminology glue
+                        module,as exported by Terminology.dump; if
+                        given, ScriptingAddition will use this instead 
+                        of retrieving the terminology dynamically
 
     Methods:
 
@@ -117,7 +126,7 @@ osax.another_command</code></pre>
 
         commands -- returns names of all available commands
 
-        parameters(commandName) -- returns a command's parameter names
+        parameters(command_name) -- returns a command's parameter names
 
         # Specifying a different target application:
 
@@ -167,6 +176,8 @@ p sa.display_dialog("Ruby says hello!",
 
 <h2>Notes</h2>
 
+<h3>GUI interaction</h3>
+
 <p>When using scripting addition commands that require GUI access (e.g. <code>display_dialog</code>) targetted at the command-line Ruby interpreter, the osax module will automatically convert the non-GUI interpreter process into a full GUI process to allow these commands to operate correctly. If you want to avoid this, target these commands at a faceless GUI application such as System Events instead:</p>
 
 <pre><code>sa = OSAX.osax("StandardAdditions", "System Events")
@@ -177,7 +188,27 @@ p sa.display_dialog("Ruby says hello!",
 # Result: {:button_returned=&gt;"Duuuude!"}</code></pre>
 
 
-<p>When using the <code>osax</code> module within RubyCocoa-based applications, avoid creating <code>ScriptingAddition</code> instances before the main event loop is started as this will prevent minimized windows expanding as normal when clicked on in the Dock.</p>
+<h3>64-bit limitations</h3>
+
+<p>The <code>osax</code> module currently only supports dynamic retrieval of scripting addition terminology when running in 32-bit processes. To use it in 64-bit processes, use the <code>Terminology</code> module's <code>dump</code> method to export a static terminology 'glue' module for the desired scripting addition (running it in a 32-bit process), then import that module and pass it as the second argument to the <code>ScriptingAddition</code> class's initialiser. For example, to export a glue module for Standard Additions:</p>
+
+<pre><code>require 'appscript'
+
+Terminology.dump('/System/Library/ScriptingAdditions/StandardAdditions.osax', 
+        'StandardAdditions', 'standard_additions.rb')</code></pre>
+
+<p>To create a new <code>ScriptingAddition</code> instance using the terminology provided by this glue module:</p>
+
+<pre><code>require 'osax'
+require 'standard_additions'
+
+sa = OSAX::ScriptingAddition.new('StandardAdditions', StandardAdditions)</code></pre>
+
+
+<h3>Known problems</h3>
+
+<p>When using the <code>osax</code> module within RubyCocoa-based applications, avoid creating <code>ScriptingAddition</code> instances before the main event loop is started as this can result in the application behaving strangely (minimised windows don't expand correctly) due to a bug in OS X's <code>OSAGetAppTerminology</code> function.</p>
+
 
 
 </div>
