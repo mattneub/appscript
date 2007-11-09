@@ -472,7 +472,7 @@ def renderGlueFiles(outdir, prefix, gluename, imports, fn):
  *
  */
 
-#import <Appscript/Appscript.h>
+#import <Foundation/Foundation.h>
 
 %s
 """ % (prefix + gluename, imports)).replace(prefixtag, prefix) % (apppath, __version__)

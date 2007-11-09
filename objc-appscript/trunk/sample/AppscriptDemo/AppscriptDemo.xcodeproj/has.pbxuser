@@ -91,8 +91,8 @@
 				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
-					200,
-					253,
+					171,
+					60,
 					20,
 					48,
 					43,
@@ -108,16 +108,12 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 215529869;
-			PBXWorkspaceStateSaveDate = 215529869;
+			PBXPerProjectTemplateStateSaveDate = 216343600;
+			PBXWorkspaceStateSaveDate = 216343600;
 		};
 		perUserProjectItems = {
-			4F77914E0CD8BA6000125605 /* PBXTextBookmark */ = 4F77914E0CD8BA6000125605 /* PBXTextBookmark */;
-			4F7791500CD8BA6000125605 /* PBXTextBookmark */ = 4F7791500CD8BA6000125605 /* PBXTextBookmark */;
-			4F77918A0CD8BEFE00125605 /* PBXTextBookmark */ = 4F77918A0CD8BEFE00125605 /* PBXTextBookmark */;
-			4F77918B0CD8BEFE00125605 /* PBXTextBookmark */ = 4F77918B0CD8BEFE00125605 /* PBXTextBookmark */;
-			4F77918E0CD8BEFE00125605 /* PBXBookmark */ = 4F77918E0CD8BEFE00125605 /* PBXBookmark */;
-			4F77918F0CD8BEFE00125605 /* PBXTextBookmark */ = 4F77918F0CD8BEFE00125605 /* PBXTextBookmark */;
+			4F6451F50CE524D100B14742 /* PBXTextBookmark */ = 4F6451F50CE524D100B14742 /* PBXTextBookmark */;
+			4F7791A20CD8BFAE00125605 /* PBXTextBookmark */ = 4F7791A20CD8BFAE00125605 /* PBXTextBookmark */;
 		};
 		sourceControlManager = 4FDCB6510B6E16C2009534FD /* Source Control */;
 		userBuildSettings = {
@@ -129,7 +125,7 @@
 			sepNavSelRange = "{293, 0}";
 			sepNavVisRange = "{0, 535}";
 			sepNavVisRect = "{{0, 0}, {631, 742}}";
-			sepNavWindowFrame = "{{918, 196}, {670, 832}}";
+			sepNavWindowFrame = "{{908, 146}, {670, 832}}";
 		};
 	};
 	32A70AAB03705E1F00C91783 /* AppscriptDemo_Prefix.pch */ = {
@@ -145,7 +141,7 @@
 			sepNavIntBoundsRect = "{{0, 0}, {824, 938}}";
 			sepNavSelRange = "{0, 0}";
 			sepNavVisRange = "{0, 1728}";
-			sepNavWindowFrame = "{{204, 196}, {883, 832}}";
+			sepNavWindowFrame = "{{104, -10}, {883, 832}}";
 		};
 	};
 	4F5CA5640B760DC20013C44E /* appscriptexample.m */ = {
@@ -164,41 +160,15 @@
 			sepNavVisRect = "{{0, 0}, {884, 181}}";
 		};
 	};
-	4F77914E0CD8BA6000125605 /* PBXTextBookmark */ = {
+	4F6451F50CE524D100B14742 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
-		comments = "error: event.h: No such file or directory";
-		fRef = 4F77914F0CD8BA6000125605 /* application.h */;
-		rLen = 1;
-		rLoc = 12;
-		rType = 1;
-	};
-	4F77914F0CD8BA6000125605 /* application.h */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.c.h;
-		name = application.h;
-		path = /Users/has/Library/Frameworks/Appscript.framework/Headers/application.h;
-		sourceTree = "<absolute>";
-	};
-	4F7791500CD8BA6000125605 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 4F7791510CD8BA6000125605 /* application.h */;
-		name = "application.h: 98";
+		fRef = 08FB7796FE84155DC02AAC07 /* AppscriptDemo.m */;
+		name = "AppscriptDemo.m: 10";
 		rLen = 0;
-		rLoc = 2487;
+		rLoc = 293;
 		rType = 0;
-		vrLen = 1247;
+		vrLen = 535;
 		vrLoc = 0;
-	};
-	4F7791510CD8BA6000125605 /* application.h */ = {
-		isa = PBXFileReference;
-		name = application.h;
-		path = /Users/has/Library/Frameworks/Appscript.framework/Headers/application.h;
-		sourceTree = "<absolute>";
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1102, 1330}}";
-			sepNavSelRange = "{2487, 0}";
-			sepNavVisRange = "{0, 1247}";
-		};
 	};
 	4F7791740CD8BC4E00125605 /* aemexample.h */ = {
 		uiCtxt = {
@@ -216,7 +186,7 @@
 			sepNavWindowFrame = "{{555, 8}, {652, 1020}}";
 		};
 	};
-	4F77918A0CD8BEFE00125605 /* PBXTextBookmark */ = {
+	4F7791A20CD8BFAE00125605 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 08FB7796FE84155DC02AAC07 /* AppscriptDemo.m */;
 		name = "AppscriptDemo.m: 10";
@@ -224,30 +194,6 @@
 		rLoc = 293;
 		rType = 0;
 		vrLen = 535;
-		vrLoc = 0;
-	};
-	4F77918B0CD8BEFE00125605 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 08FB7796FE84155DC02AAC07 /* AppscriptDemo.m */;
-		name = "AppscriptDemo.m: 10";
-		rLen = 0;
-		rLoc = 293;
-		rType = 0;
-		vrLen = 535;
-		vrLoc = 0;
-	};
-	4F77918E0CD8BEFE00125605 /* PBXBookmark */ = {
-		isa = PBXBookmark;
-		fRef = 4F5CA55D0B760D310013C44E /* aemexample.m */;
-	};
-	4F77918F0CD8BEFE00125605 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 4F5CA55D0B760D310013C44E /* aemexample.m */;
-		name = "aemexample.m: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 1728;
 		vrLoc = 0;
 	};
 	4FDCB6470B6E16B9009534FD /* AppscriptDemo */ = {

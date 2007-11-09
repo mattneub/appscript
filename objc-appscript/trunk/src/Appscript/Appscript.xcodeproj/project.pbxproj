@@ -19,7 +19,7 @@
 		4F7C7EAF0C5B68420033C219 /* SendThreadSafe.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F7C7EAD0C5B68420033C219 /* SendThreadSafe.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4F7CA9050B727AE5007010CE /* reference.h in Headers */ = {isa = PBXBuildFile; fileRef = 4FDCB2F30B6D0CD0009534FD /* reference.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4F7CA9060B727AE5007010CE /* reference.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FDCB2F40B6D0CD0009534FD /* reference.m */; };
-		4F9BFD6C0CD4CD74003BDDE0 /* event.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F9BFD6A0CD4CD74003BDDE0 /* event.h */; };
+		4F9BFD6C0CD4CD74003BDDE0 /* event.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F9BFD6A0CD4CD74003BDDE0 /* event.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4F9BFD6D0CD4CD74003BDDE0 /* event.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F9BFD6B0CD4CD74003BDDE0 /* event.m */; };
 		4FDCB2E00B6D0BAF009534FD /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4FDCB2DE0B6D0BAF009534FD /* Carbon.framework */; };
 		4FDCB2E10B6D0BAF009534FD /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4FDCB2DF0B6D0BAF009534FD /* CoreFoundation.framework */; };
@@ -285,10 +285,12 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "Appscript" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 0867D691FE84028FC02AAC07 /* Appscript */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
+			projectRoot = "";
 			targets = (
 				8DC2EF4F0486A6940098B216 /* Appscript */,
 			);
@@ -366,7 +368,6 @@
 		1DEB91AF08733DA50010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(NATIVE_ARCH)";
 				DEPLOYMENT_LOCATION = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -385,6 +386,7 @@
 		1DEB91B208733DA50010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(NATIVE_ARCH)";
 				DEPLOYMENT_LOCATION = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
@@ -397,6 +399,10 @@
 		1DEB91B308733DA50010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = (
+					ppc,
+					i386,
+				);
 				DEPLOYMENT_LOCATION = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
