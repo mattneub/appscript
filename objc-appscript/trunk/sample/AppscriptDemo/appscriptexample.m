@@ -6,6 +6,7 @@ void appscriptExample(void) {
     TEApplication *textedit;
 	TEMakeCommand *makeCmd;
 	TEGetCommand *getCmd;
+	NSError *error;
     id result;
     
     textedit = [[TEApplication alloc]
@@ -19,45 +20,41 @@ void appscriptExample(void) {
     makeCmd = [[[textedit make] new_: [TEConstant document]]
 					 withProperties: [NSDictionary dictionaryWithObjectsAndKeys:
 											@"Hi 2!", [TEConstant text], nil]];
-	result = [makeCmd send];
+	result = [makeCmd sendWithError: &error];
     if (result) 
         NSLog(@"result:\n%@\n\n", result);
     else
-        NSLog(@"error:\nnumber: %i\nmessage: %@\n\n",
-		      [makeCmd errorNumber], [makeCmd errorString]);
+        NSLog(@"error: %i\n\t\tmessage: %@\n\n", [error code], [error localizedDescription]);
 
     // tell application "TextEdit" to get text of document 1
 	
 	NSLog(@"get text of document 1:\n");
     getCmd = [[[[textedit documents] at: 1] text] get];
-	result = [getCmd send];
+	result = [getCmd sendWithError: &error];
     if (result) 
         NSLog(@"result:\n%@\n\n", result);
     else
-        NSLog(@"error:\nnumber: %i\nmessage: %@\n\n",
-		      [getCmd errorNumber], [getCmd errorString]);
+        NSLog(@"error: %i\n\t\tmessage: %@\n\n", [error code], [error localizedDescription]);
 
     // tell application "TextEdit" to get document 100
 	
 	NSLog(@"get document 100:\n");
     getCmd = [[[[textedit documents] at: 100] text] get];
-	result = [getCmd send];
+	result = [getCmd sendWithError: &error];
     if (result) 
         NSLog(@"result:\n%@\n\n", result);
     else
-        NSLog(@"error:\nnumber: %i\nmessage: %@\n\n",
-		      [getCmd errorNumber], [getCmd errorString]);
+        NSLog(@"error: %i\n\t\tmessage: %@\n\n", [error code], [error localizedDescription]);
 	
     // tell application "TextEdit" to get every document
 
 	NSLog(@"get every document:\n");
     getCmd = [[textedit documents] get];
-	result = [getCmd send];
+	result = [getCmd sendWithError: &error];
     if (result) 
         NSLog(@"result:\n%@\n\n", result);
     else
-        NSLog(@"error:\nnumber: %i\nmessage: %@\n\n",
-		      [getCmd errorNumber], [getCmd errorString]);
+        NSLog(@"error: %i\n\t\tmessage: %@\n\n", [error code], [error localizedDescription]);
 
     [textedit release];
 

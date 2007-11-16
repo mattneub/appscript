@@ -5,6 +5,7 @@ void aemExample(void) {
 
     AEMApplication *textedit;
     AEMEvent *evt;
+	NSError *error;
     id result;
     
     textedit = [[AEMApplication alloc]
@@ -20,12 +21,11 @@ void aemExample(void) {
     [evt setParameter: [NSDictionary dictionaryWithObjectsAndKeys:
                         @"Hi!", [AEMType typeWithCode: 'ctxt'], nil]
            forKeyword: 'prdt'];
-    result = [evt send];
+    result = [evt sendWithError: &error];
     if (result) 
         NSLog(@"result:\n%@\n\n", result);
     else
-        NSLog(@"error:\nnumber: %i\nmessage: %@\n\n",
-		      [evt errorNumber], [evt errorString]);
+        NSLog(@"error: %i\n\t\tmessage: %@\n\n", [error code], [error localizedDescription]);
 
     // tell application "TextEdit" to get text of document 1
 	
@@ -33,36 +33,33 @@ void aemExample(void) {
     evt = [textedit eventWithEventClass: 'core' eventID: 'getd'];
     [evt setParameter: [[[AEMApp elements: 'docu'] at: 1] property: 'ctxt']
            forKeyword: keyDirectObject];
-    result = [evt send];
+    result = [evt sendWithError: &error];
     if (result) 
         NSLog(@"result:\n%@\n\n", result);
     else
-        NSLog(@"error:\nnumber: %i\nmessage: %@\n\n",
-		      [evt errorNumber], [evt errorString]);
+        NSLog(@"error: %i\n\t\tmessage: %@\n\n", [error code], [error localizedDescription]);
 
     // tell application "TextEdit" to get document 100
 	
 	NSLog(@"get document 100:\n");
     evt = [textedit eventWithEventClass: 'core' eventID: 'getd'];
     [evt setParameter: [[AEMApp elements: 'docu'] at: 100] forKeyword: keyDirectObject];
-    result = [evt send];
+    result = [evt sendWithError: &error];
     if (result) 
         NSLog(@"result:\n%@\n\n", result);
     else
-        NSLog(@"error:\nnumber: %i\nmessage: %@\n\n",
-		      [evt errorNumber], [evt errorString]);
+        NSLog(@"error: %i\n\t\tmessage: %@\n\n", [error code], [error localizedDescription]);
 	
     // tell application "TextEdit" to get every document
 
 	NSLog(@"get every document:\n");
     evt = [textedit eventWithEventClass: 'core' eventID: 'getd'];
     [evt setParameter: [AEMApp elements: 'docu'] forKeyword: keyDirectObject];
-    result = [evt send];
+    result = [evt sendWithError: &error];
     if (result) 
         NSLog(@"result:\n%@\n\n", result);
     else
-        NSLog(@"error:\nnumber: %i\nmessage: %@\n\n",
-		      [evt errorNumber], [evt errorString]);
+        NSLog(@"error: %i\n\t\tmessage: %@\n\n", [error code], [error localizedDescription]);
 
     [textedit release];
 

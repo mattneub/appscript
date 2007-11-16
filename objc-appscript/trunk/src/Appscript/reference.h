@@ -139,7 +139,7 @@ enumConsidsAndIgnores = 'csig'
  * type before returning it. May be a standard AE type (e.g. [ASConstant alias])
  * or, occasionally, an application-defined type.
  */
-- (id)requestType:(ASConstant *)type;
+- (id)requestType:(ASConstant *)type; // TO DO: rename to -requestedType: (?)
 
 /*
  * Specify the AE type that the returned AEDesc must be coerced to before unpacking.
@@ -149,36 +149,45 @@ enumConsidsAndIgnores = 'csig'
  * fails, -send: will return nil and set the command object's error number to -1700
  * (errAECoercionFail).
  */
-- (id)resultType:(DescType)type;
+- (id)resultType:(DescType)type; // TO DO: rename to -coerceResultToType:
+
+// TO DO: add -coerceResultToListOfType:
  
 // send events
 
 /*
- * Send the event. If an error occurs, returns NULL; clients can then use
- * errorNumber, errorString methods to extract error info.
+ * Send the event.
  *
- * Note that it's possible to invoke -send more than once, if wished. This will
- * clear any previous error state and re-send the same AppleEvent instance.
+ * Return value
+ *
+ *    The value returned by the application, or an NSNull instance if no value was returned,
+ *    or nil if an error occurred.
+ *
+ * Notes
+ *
+ *    A single event can be sent more than once if desired.
  */
 - (id)send;
 
-/*
- * Get error number for the last event that was sent. Returns 0 if no error occurred.
- */
-- (OSErr)errorNumber;
 
 /*
- * Get error string for the last event that was sent. Returns nil if no error occurred.
+ * Send the event.
+ *
+ * error
+ *    On return, an NSError object that describes an Apple Event Manager or application
+ *    error if one has occurred, otherwise nil. Pass nil if not required.
+ *
+ * Return value
+ *
+ *    The value returned by the application, or an NSNull instance if no value was returned,
+ *    or nil if an error occurred.
+ *
+ * Notes
+ *
+ *    A single event can be sent more than once if desired.
  */
-- (NSString *)errorString;
+- (id)sendWithError:(NSError **)error;
 
-// TO DO: methods for getting OSA error info
-
-/*
- * Convenience method for raising an "AEMEventSendError" NSException based on
- * the current error state.
- */
-- (void)raise;
 
 @end
 

@@ -22,7 +22,10 @@
 <div id="content">
 
 
-<p class="hilitebox">Note: the appscript command API is currently unfinished and may change in future. Transaction and return IDs are not yet supported, the send mode API may be added to or replaced, and the design of the error reporting system has still to be finalised.</p>
+<p class="hilitebox">Note: the appscript command API is currently unfinished and may change in future. Transaction and return IDs are not yet supported, and the send mode API may be added to or replaced.</p>
+
+<p class="hilitebox">Note: the error reporting API for appscript commands is now finalized - see <code>-sendWithError:</code> - and the previous <code>-errorNumber</code>, <code>-errorString</code> and <code>-raise</code> methods removed. Existing code should be updated to use the new API as necessary.</p>
+
 
 <h2>Using commands</h2>
 
@@ -122,12 +125,16 @@
 
 <pre><code>- (id)resultType:(DescType)type;</code></pre>
 
-<p>Whereas the <code>-requestType:</code> method adds a <code>kAERequestedType</code> parameter to the outgoing event, this coercion is performed locally by the <code>-send:</code> method using a built-in/user-installed AE coercion handler if one is available. Note that if the coercion fails, <code>-send:</code> will return <code>nil</code> and set the command object's error number to <code>errAECoercionFail</code> (-1700).</p>
+<p>Whereas the <code>-requestType:</code> method adds a <code>kAERequestedType</code> parameter to the outgoing event, this coercion is performed locally by the <code>-sendWithError:</code> method using a built-in/user-installed AE coercion handler if one is available. Note that if the coercion fails, <code>-sendWithError:</code> will return <code>nil</code> and the associated <code>NSError</code> instance will have error code -1700 (<code>errAECoercionFail</code>).</p>
 
 
 <h3>Sending a command</h3>
 
-<p>To send a command, just call its <code>-send</code> method. This will send the command to the application and return one of the following:</p>
+<p>To send a command, just call its <code>-sendWithError:</code> method:</p>
+
+<pre><code>- (id)sendWithError:(NSError **)error;</code></pre>
+
+<p>This will send the command to the application and return one of the following:</p>
 
 <ul>
 <li>If the command is successful and the application supplies a return value, that value is returned.</li>
@@ -137,44 +144,12 @@
 <li>If the command is unsuccessful, either due to an Apple Event Manager error or an application error, <code>nil</code> is returned to indicate failure.</li>
 </ul>
 
+<p>Detailed error information is provided via the <code>-sendWithError:</code> method's <code>error</code> argument. On return, this will contain an NSError object that describes the Apple Event Manager or application error if one has occurred, or nil if the command was successful.</p>
 
-<h3>Checking for command errors</h3>
+<p>If detailed error information is not required, pass <code>nil</code> as the <code>-sendWithError:</code> method's error argument, or invoke the command object's <code>-send</code> method which provides a convenient shortcut:</p>
 
-<p>Code that needs to know if an application command was unsuccessful should check the <code>-send</code> method's return value to see if it returned nil. If it did, error information can be obtained by calling the command object's <code>-errorNumber</code> and <code>-errorString</code> methods:</p>
+<pre><code>- (id)send;</code></pre>
 
-<pre><code>- (OSErr)errorNumber;
-- (NSString *)errorString;</code></pre>
-
-<h3>Example</h3>
-
-<p>AppleScript:</p>
-
-<pre><code>try
-    tell application "TextEdit"
-        return make new document with properties {text:"Hi!"}
-    end tell
-on error errString number errNumber
-    return "error:\n number: " & errNumber & "\n message: " & errString 
-end try</code></pre>
-
-<p>ObjC:</p>
-
-<pre><code>TEApplication *textedit;
-TEMakeCommand *makeCmd;
-id result;
-
-textedit = [[TEApplication alloc] initWithName: @"TextEdit.app"];
-
-makeCmd = [[[textedit make]
-                      new_: [TEConstant document]]
-            withProperties: [NSDictionary dictionaryWithObjectsAndKeys:
-                                      @"Hi 2!", [TEConstant text], nil]];
-result = [makeCmd send];
-if (result) 
-    NSLog(@"result:\n%@\n\n", result);
-else
-    NSLog(@"error:\n number: %i\n message: %@\n\n",
-            [makeCmd errorNumber], [makeCmd errorString]);</code></pre>
 
 
 <h2>Examples</h2>
@@ -182,22 +157,54 @@ else
 <pre><code>// tell application &quot;TextEdit&quot; to activate
 [[textedit activate] send]
 
+
 // tell application &quot;TextEdit&quot; to open fileRefList
 [[textedit open: fileRefList] send]
 
-// tell application &quot;Finder&quot; to get version
-[[[finder version] get] send]
 
-// tell application &quot;Finder&quot; to set name of file &quot;foo.txt&quot; of home to &quot;bar.txt&quot;
+// tell application &quot;Finder&quot; to get version
+[[[finder version] get] send]</code></pre>
+
+<pre><code>// tell application &quot;Finder&quot; to set name of file &quot;foo.txt&quot; of home to &quot;bar.txt&quot;
 [[[[[[[finder home] files] byName: @"foo.txt"] name] set] to: @"bar.txt"] send]
+
 
 // tell application &quot;TextEdit&quot; to count (text of first document) each paragraph
 [[[[[[textedit documents] first] text] count] each: [TEConstant paragraph]] send]
 
+
 // tell application &quot;TextEdit&quot; to make new document at end of documents
-[[[[[textedit documents] end] make] new_: [TEConstant document]] send]<!--
+[[[[[textedit documents] end] make] new_: [TEConstant document]] send]
+
+
 // tell application &quot;Finder&quot; to get items of home as alias list
-[finder home] items] get(:result_type =&gt; :alias)--></code></pre>
+[[[[[finder home] items] get] requestType: [TEConstant alias]] send]</code></pre>
+
+<pre><code>// try
+//     tell application "TextEdit"
+//         return make new document with properties {text:"Hi!"}
+//     end tell
+// on error errString number errNumber
+//     return "error:\n number: " & errNumber & "\n message: " & errString 
+// end try
+
+TEApplication *textedit;
+TEMakeCommand *makeCmd;
+id result;
+NSError *error;
+
+textedit = [[TEApplication alloc] initWithName: @"TextEdit.app"];
+
+makeCmd = [[[textedit make]
+                      new_: [TEConstant document]]
+            withProperties: [NSDictionary dictionaryWithObjectsAndKeys:
+                                      @"Hi 2!", [TEConstant text], nil]];
+result = [makeCmd sendWithError: &error];
+if (result) 
+    NSLog(@"result:\n%@\n\n", result);
+else
+    NSLog(@"error:\n number: %i\n message: %@\n\n",
+            [error code], [error localizedDescription]);</code></pre>
 
 
 

@@ -159,6 +159,7 @@
 	AS_event = [[appData target] eventWithEventClass: classCode
 											 eventID: code
 											  codecs: appData];
+	[AS_event retain];
 	if (!AS_event) return nil; // TO DO: better error reporting?
 	if (directParameter)
 		if (![AS_event setParameter: directParameter forKeyword: keyDirectObject]) return nil;
@@ -169,6 +170,11 @@
 			if (![AS_event setParameter: parentReference forKeyword: keyDirectObject]) return nil;
 		}
 	return self;
+}
+
+- (void)dealloc {
+	[AS_event release];
+	[super dealloc];
 }
 
 - (AEMEvent *)AS_aemEvent {
@@ -196,19 +202,11 @@
 }
 
 - (id)send {
-	return [AS_event sendWithMode: sendMode timeout: timeout];
+	return [self sendWithError: nil];
 }
 
-- (OSErr)errorNumber {
-	return [AS_event errorNumber];
-}
-
-- (NSString *)errorString {
-	return [AS_event errorString];
-}
-
-- (void)raise {
-	[AS_event raise];
+- (id)sendWithError:(NSError **)error {
+	return [AS_event sendWithMode: sendMode timeout: timeout error: error];
 }
 
 // TO DO: attribute methods

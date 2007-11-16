@@ -34,7 +34,6 @@
 	AEDisposeDesc(event);
 	free(event);
 	[codecs release];
-	[errorString release];
 	[super dealloc];
 }
 
@@ -111,19 +110,17 @@
  * retrieve the error description.
  */
 
-- (id)sendWithMode:(AESendMode)sendMode timeout:(long)timeoutInTicks {
-	OSErr err;
+- (id)sendWithMode:(AESendMode)sendMode timeout:(long)timeoutInTicks error:(NSError **)error {
+	OSErr err, errorNumber;
+	NSString *errorString;
+	NSDictionary *errorInfo;
 	AEDesc replyDesc = {typeNull, NULL};
 	AEDesc classDesc, idDesc;
 	OSType classCode, idCode;
-	NSAppleEventDescriptor *replyData, *errorNumberDesc, *errorStringDesc, *result;
-	
-	// clear any previous error info
-	errorNumber = noErr;
-	if (errorString) {
-		[errorString release];
-		errorString = nil;
-	}
+	NSAppleEventDescriptor *replyData, *result;
+
+	if (error)
+		*error = nil;
 	// send event
 	errorNumber = sendProc(event, &replyDesc, sendMode, timeoutInTicks);
 	if (errorNumber) {
@@ -139,32 +136,41 @@
 			err = AEGetDescData(&idDesc, &idCode, sizeof(idCode));
 			AEDisposeDesc(&idDesc);
 			if (!err) return nil;
-			if (classCode == kCoreEventClass && idCode == kAEQuitApplication) {
-				errorNumber = noErr;
+			if (classCode == kCoreEventClass && idCode == kAEQuitApplication)
 				return [NSNull null];
-			}
 		}
 		// for any other Apple Event Manager errors, set error condition and return nil
+		if (error) {
+			// TO DO: include a nicely-formatted representation of this Apple event
+			errorString = [NSString stringWithFormat: @"Apple Event Manager error (%i)", errorNumber];
+			errorInfo = [NSDictionary dictionaryWithObject: errorString forKey: NSLocalizedDescriptionKey];
+			*error = [NSError errorWithDomain: @"NSOSStatusErrorDomain" code: errorNumber userInfo: errorInfo];
+		}
 		return nil; // note: clients should check if return value is nil to determine if event failed
 	}
 	// extract reply data, if any
 	if (replyDesc.descriptorType != typeNull) {
 		replyData = [[NSAppleEventDescriptor alloc] initWithAEDescNoCopy: &replyDesc];
-		// if application returned an error, set error condition and return nil
-		errorNumberDesc = [replyData paramDescriptorForKeyword: keyErrorNumber];
-		errorStringDesc = [replyData paramDescriptorForKeyword: keyErrorString];
-		if (errorNumberDesc || errorStringDesc) {
-			if (errorNumberDesc)
-				errorNumber = (OSErr)[errorNumberDesc int32Value];
-			if (errorStringDesc)
-				errorString = [[errorStringDesc stringValue] retain];
-			if (errorNumber || errorString) { // Some apps (e.g. Finder) may return noErr on success, so ignore that
+		// if application returned an error, set error condition if required and return nil
+		/*
+			note: Apple spec says that both errn and errs parameters should be checked to determine if an error
+			 occurred; however, AppleScript only checks for a errn so we copy its behaviour for compatibility.
+			
+			Note: some apps (e.g. Finder) may return noErr on success, so ignore that too.
+		*/
+		errorNumber = (OSErr)[[replyData paramDescriptorForKeyword: keyErrorNumber] int32Value];
+		if (errorNumber) {
+			if (error) {
 				// TO DO: get any other error info
-				if (!errorNumber)
-					errorNumber = errOSAGeneralError; // if only error string was given, set error number
-				[replyData release];
-				return nil; // note: clients should check if return value is nil to determine if event failed
+				// TO DO: include a nicely-formatted representation of this Apple event
+				errorString = [[replyData paramDescriptorForKeyword: keyErrorString] stringValue];
+				if (!errorString)
+					errorString = [NSString stringWithFormat: @"Application error (%i)", errorNumber];
+				errorInfo = [NSDictionary dictionaryWithObject: errorString forKey: NSLocalizedDescriptionKey];
+				*error = [NSError errorWithDomain: @"NSOSStatusErrorDomain" code: errorNumber userInfo: errorInfo];
 			}
+			[replyData release];
+			return nil; // note: clients should check if return value is nil to determine if event failed
 		}
 		// if application returned a result, unpack and return it
 		result = [replyData paramDescriptorForKeyword: keyAEResult];
@@ -172,7 +178,11 @@
 		if (requiredResultType != typeWildCard && [result descriptorType] != requiredResultType) {
 			result = [result coerceToDescriptorType: requiredResultType];
 			if (!result) {
+				// TO DO: include a nicely-formatted representation of this Apple event
 				errorNumber = errAECoercionFail;
+				errorString = [NSString stringWithFormat: @"Result coercion error (%i)", errorNumber];
+				errorInfo = [NSDictionary dictionaryWithObject: errorString forKey: NSLocalizedDescriptionKey];
+				*error = [NSError errorWithDomain: @"NSOSStatusErrorDomain" code: errorNumber userInfo: errorInfo];
 				return nil; // note: clients should check if return value is nil to determine if event failed
 			}
 		}
@@ -182,35 +192,12 @@
 	return [NSNull null];
 }
 
-- (id)sendWithTimeout:(long)timeoutInTicks {
-	return [self sendWithMode: kAEWaitReply timeout: timeoutInTicks];
-}
-
-- (id)sendWithMode:(AESendMode)sendMode {
-	return [self sendWithMode: sendMode timeout: kAEDefaultTimeout];
+- (id)sendWithError:(NSError **)error {
+	return [self sendWithMode: kAEWaitReply timeout: kAEDefaultTimeout error: error];
 }
 
 - (id)send {
-	return [self sendWithMode: kAEWaitReply timeout: kAEDefaultTimeout];
-}
-
-// Error reporting.
-
-- (OSErr)errorNumber {
-	return errorNumber;
-}
-
-- (NSString *)errorString {
-	if (errorNumber)
-		return errorString;
-	else
-		return nil;
-}
-
-- (void)raise {
-	if (errorNumber)
-		[NSException raise: @"AEMEventSendError"
-					format: @"%@ (%i)", errorString, errorNumber];
+	return [self sendWithMode: kAEWaitReply timeout: kAEDefaultTimeout error: nil];
 }
 
 @end

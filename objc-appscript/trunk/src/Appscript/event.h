@@ -56,9 +56,6 @@ typedef enum {
 	AEMSendProcPtr sendProc;
 	// type to coerce returned value to before unpacking it
 	DescType requiredResultType;
-	// error info
-	OSErr errorNumber;
-	NSString *errorString;
 }
 
 /*
@@ -102,36 +99,35 @@ typedef enum {
 
 /*
  * Send event.
+ 
+ * Parameters
  *
- * (Note: a single event can be sent multiple times if desired.)
+ * sendMode
+ *    kAEWaitReply
  *
- * (Note: if an Apple Event Manager/application error occurs, these methods will return nil.
- * Clients should test for this, then use the -errorNumber and -errorString methods to
- * retrieve the error description.
+ * timeoutInTicks
+ *    kAEDefaultTimeout
+ *
+ * error
+ *    On return, an NSError object that describes an Apple Event Manager or application
+ *    error if one has occurred, otherwise nil. Pass nil if not required.
+ *
+ * Return value
+ *
+ *    The value returned by the application, or an NSNull instance if no value was returned,
+ *    or nil if an error occurred.
+ *
+ * Notes
+ *
+ *    A single event can be sent more than once if desired.
+ *
  */
 
-- (id)sendWithMode:(AESendMode)sendMode timeout:(long)timeoutInTicks;
+- (id)sendWithMode:(AESendMode)sendMode timeout:(long)timeoutInTicks error:(NSError **)error;
 
-- (id)sendWithTimeout:(long)timeoutInTicks;
+- (id)sendWithError:(NSError **)error;
 
-- (id)sendWithMode:(AESendMode)sendMode;
-
-- (id)send;
-
-/*
- * Get error information for last event sent, assuming it failed.
- */ 
-
-- (OSErr)errorNumber;
-
-- (NSString *)errorString;
-
-/*
- * Convenience method for raising an exception containing error information
- * for last event sent, assuming it failed.
- */
-
-- (void)raise;
+- (id)send; // TO DO: delete?
 
 @end
 
