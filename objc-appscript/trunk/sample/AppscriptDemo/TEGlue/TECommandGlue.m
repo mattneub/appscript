@@ -1,7 +1,7 @@
 /*
  * TECommandGlue.m
  *
- * /Applications/TextEdit.app
+ * /applications/textedit.app
  * osaglue 0.2.0
  *
  */

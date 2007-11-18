@@ -1,12 +1,12 @@
 /*
  * TEReferenceGlue.h
  *
- * /Applications/TextEdit.app
+ * /applications/textedit.app
  * osaglue 0.2.0
  *
  */
 
-#import <Appscript/Appscript.h>
+#import <Foundation/Foundation.h>
 
 
 #import "Appscript/Appscript.h"
@@ -101,6 +101,7 @@
 - (TEReference *)pagesDown;
 - (TEReference *)path;
 - (TEReference *)properties;
+- (TEReference *)requestedPrintTime;
 - (TEReference *)resizable;
 - (TEReference *)size;
 - (TEReference *)startingPage;

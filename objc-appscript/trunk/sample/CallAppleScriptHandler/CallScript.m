@@ -1,6 +1,6 @@
 /*
  * Simple demonstration of calling an AppleScript handler (in this case
- * an 'addNumbers' subroutine) via NSAppleScript -executeAppleEvent:error:
+ * an 'joinText' subroutine) via NSAppleScript -executeAppleEvent:error:
  * using objc-appscript (specifically its aem API) to create and pack the
  * the Apple event and unpack the script result.
  *
@@ -20,7 +20,7 @@ int main (int argc, const char * argv[]) {
 	AEMCodecs *codecs = [[AEMCodecs alloc] init];
 
 	// Build parameter list for script
-	NSArray *params = [NSArray arrayWithObjects:@"1", @"2", nil];
+	NSArray *params = [NSArray arrayWithObjects:@"Hello ", @"World!", nil];
 
 	// Create 'ascrpsbr' (AppleScript subroutine) AEMEvent
 	AEMEvent *evt = [app eventWithEventClass:kASAppleScriptSuite
@@ -30,7 +30,7 @@ int main (int argc, const char * argv[]) {
 	// (Note: unless enclosed in pipes, subroutine names are 
 	// case-insensitive and should be all lowercase , e.g.:
 	// 'FooBar' -> @"foobar", '|FooBar|' -> @"FooBar")
-	[evt setParameter:@"addnumbers" forKeyword:keyASSubroutineName];
+	[evt setParameter:@"jointext" forKeyword:keyASSubroutineName];
 
 	// Add parameter list to AEMEvent
 	[evt setParameter:params forKeyword:keyDirectObject];
@@ -40,9 +40,9 @@ int main (int argc, const char * argv[]) {
 
 	// Compile (or load) the AppleScript
 	NSAppleScript *scpt = [[NSAppleScript alloc] initWithSource:
-			@"on addNumbers(arg1, arg2)\n"
-			@"	return arg1 + arg2\n"
-			@"end addNumbers"];
+			@"on joinText(arg1, arg2)\n"
+			@"	return arg1 & arg2\n"
+			@"end joinText"];
 
 	// Send event to AppleScript
 	NSDictionary *error;

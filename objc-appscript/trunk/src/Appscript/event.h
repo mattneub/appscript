@@ -13,6 +13,23 @@
 
 
 /**********************************************************************/
+// NSError constants
+
+NSString *kAEMErrorDomain; // @"AEMErrorDomain"; domain name for NSErrors // TO DO: rename "ASErrorDomain"?
+
+/*
+ * -sendWithError: will return an NSError containing error code, localized description, and a userInfo dictionary
+ * containing kAEMErrorNumberKey (this has the same value as -[NSError code]) and zero or more other keys:
+ */
+
+NSString *kAEMErrorNumberKey;			// @"ErrorNumber"; error number returned by Apple Event Manager or application
+NSString *kAEMErrorStringKey;			// @"ErrorString"; error string returned by application, if given
+NSString *kAEMErrorBriefMessageKey;		// @"ErrorBriefMessage"; brief error string returned by application, if given
+NSString *kAEMErrorExpectedTypeKey;		// @"ErrorExpectedType"; AE type responsible for a coercion error (-1700), if given
+NSString *kAEMErrorOffendingObjectKey;	// @"ErrorOffendingObject"; value or object specifer responsible for error, if given
+
+
+/**********************************************************************/
 // typedefs
 
 typedef OSErr(*AEMCreateProcPtr)(AEEventClass theAEEventClass,
@@ -51,11 +68,12 @@ typedef enum {
  */
 
 @interface AEMEvent : NSObject {
-	AEDesc *event;
+	AppleEvent *event;
 	id codecs;
 	AEMSendProcPtr sendProc;
 	// type to coerce returned value to before unpacking it
-	DescType requiredResultType;
+	DescType resultType;
+	BOOL isResultList, shouldUnpackResult;
 }
 
 /*
@@ -93,9 +111,16 @@ typedef enum {
 
 - (AEMEvent *)setParameter:(id)value forKeyword:(AEKeyword)key;
 
-// Specify an AE type to coerce the reply descriptor to before unpacking it.
+// TO DO: attribute and parameter accessor, deletion methods
 
-- (AEMEvent *)setResultType:(DescType)type;
+// Specify an AE type to coerce the reply descriptor to before unpacking it.
+// (Default = unpack as typeWildCard)
+
+- (AEMEvent *)unpackResultAsType:(DescType)type;
+
+- (AEMEvent *)unpackResultAsListOfType:(DescType)type;
+
+- (AEMEvent *)dontUnpackResult;
 
 /*
  * Send event.

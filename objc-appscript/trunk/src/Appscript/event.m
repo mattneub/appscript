@@ -9,6 +9,22 @@
 
 
 /**********************************************************************/
+// NSError userInfo constants
+
+NSString *kAEMErrorDomain				= @"AEMErrorDomain";
+
+NSString *kAEMErrorNumberKey			= @"ErrorNumber";
+NSString *kAEMErrorStringKey			= @"ErrorString";
+NSString *kAEMErrorBriefMessageKey		= @"ErrorBriefMessage";
+NSString *kAEMErrorExpectedTypeKey		= @"ErrorExpectedType";
+NSString *kAEMErrorOffendingObjectKey	= @"ErrorOffendingObject";
+
+
+/**********************************************************************/
+
+
+// note: [desc stringValue] doesn't work in 10.5 for typeType descs, so use the following workaround:
+#define osTypeToString(osType) [[[NSAppleEventDescriptor descriptorWithTypeCode: osType] coerceToDescriptorType: typeUnicodeText] stringValue]
 
 
 @implementation AEMEvent
@@ -22,11 +38,13 @@
 		   sendProc:(AEMSendProcPtr)sendProc_ {
 	self = [super init];
 	if (!self) return self;
-	event = event_; // take ownership of the Apple event AEDesc
+	event = event_; // note: AEMEvent instance takes ownership of the given AppleEvent descriptor
 	[codecs_ retain];
 	codecs = codecs_;
 	sendProc = sendProc_;
-	requiredResultType = typeWildCard;
+	resultType = typeWildCard;
+	isResultList = NO;
+	shouldUnpackResult = YES;
 	return self;
 }
 
@@ -93,8 +111,22 @@
 	return err ? nil : self;
 }
 
-- (AEMEvent *)setResultType:(DescType)type {
-	requiredResultType = type;
+- (AEMEvent *)unpackResultAsType:(DescType)type {
+	resultType = type;
+	isResultList = NO;
+	shouldUnpackResult = YES;
+	return self;
+}
+
+- (AEMEvent *)unpackResultAsListOfType:(DescType)type {
+	resultType = type;
+	isResultList = YES;
+	shouldUnpackResult = YES;
+	return self;
+}
+
+- (AEMEvent *)dontUnpackResult {
+	shouldUnpackResult = NO;
 	return self;
 }
 
@@ -112,19 +144,20 @@
 
 - (id)sendWithMode:(AESendMode)sendMode timeout:(long)timeoutInTicks error:(NSError **)error {
 	OSErr err, errorNumber;
-	NSString *errorString;
+	NSString *errorString, *errorDescription;
 	NSDictionary *errorInfo;
 	AEDesc replyDesc = {typeNull, NULL};
 	AEDesc classDesc, idDesc;
 	OSType classCode, idCode;
 	NSAppleEventDescriptor *replyData, *result;
+	NSAppleEventDescriptor *errorMessage, *errorObject, *errorType;
 
 	if (error)
 		*error = nil;
 	// send event
 	errorNumber = sendProc(event, &replyDesc, sendMode, timeoutInTicks);
 	if (errorNumber) {
-		// ignore errors caused by application quitting normally after being sent a quit event
+		// ignore 'invalid connection' errors caused by application quitting normally after being sent a quit event
 		if (errorNumber == connectionInvalid) {
 			err = AEGetAttributeDesc(event, keyEventClassAttr, typeType, &classDesc);
 			if (!err) return nil;
@@ -139,57 +172,122 @@
 			if (classCode == kCoreEventClass && idCode == kAEQuitApplication)
 				return [NSNull null];
 		}
-		// for any other Apple Event Manager errors, set error condition and return nil
+		// for any other Apple Event Manager errors, generate an NSError if one is requested, then return nil
 		if (error) {
-			// TO DO: include a nicely-formatted representation of this Apple event
-			errorString = [NSString stringWithFormat: @"Apple Event Manager error (%i)", errorNumber];
-			errorInfo = [NSDictionary dictionaryWithObject: errorString forKey: NSLocalizedDescriptionKey];
-			*error = [NSError errorWithDomain: @"NSOSStatusErrorDomain" code: errorNumber userInfo: errorInfo];
+			errorDescription = [NSString stringWithFormat: @"Apple Event Manager error %i", errorNumber];
+			errorInfo = [NSDictionary dictionaryWithObjectsAndKeys: 
+					errorDescription, NSLocalizedDescriptionKey,
+					[NSNumber numberWithInt: errorNumber], kAEMErrorNumberKey,
+					nil];
+			*error = [NSError errorWithDomain: kAEMErrorDomain code: errorNumber userInfo: errorInfo];
 		}
-		return nil; // note: clients should check if return value is nil to determine if event failed
+		return nil;
 	}
 	// extract reply data, if any
-	if (replyDesc.descriptorType != typeNull) {
-		replyData = [[NSAppleEventDescriptor alloc] initWithAEDescNoCopy: &replyDesc];
-		// if application returned an error, set error condition if required and return nil
-		/*
-			note: Apple spec says that both errn and errs parameters should be checked to determine if an error
-			 occurred; however, AppleScript only checks for a errn so we copy its behaviour for compatibility.
-			
-			Note: some apps (e.g. Finder) may return noErr on success, so ignore that too.
-		*/
-		errorNumber = (OSErr)[[replyData paramDescriptorForKeyword: keyErrorNumber] int32Value];
-		if (errorNumber) {
-			if (error) {
-				// TO DO: get any other error info
-				// TO DO: include a nicely-formatted representation of this Apple event
-				errorString = [[replyData paramDescriptorForKeyword: keyErrorString] stringValue];
-				if (!errorString)
-					errorString = [NSString stringWithFormat: @"Application error (%i)", errorNumber];
-				errorInfo = [NSDictionary dictionaryWithObject: errorString forKey: NSLocalizedDescriptionKey];
-				*error = [NSError errorWithDomain: @"NSOSStatusErrorDomain" code: errorNumber userInfo: errorInfo];
-			}
-			[replyData release];
-			return nil; // note: clients should check if return value is nil to determine if event failed
+	if (replyDesc.descriptorType == typeNull) return [NSNull null]; // application didn't return anything
+	// wrap AEDesc as NSAppleEventDescriptor for convenience // TO DO: might be easier to use C API and wrap AEDescs later
+	replyData = [[NSAppleEventDescriptor alloc] initWithAEDescNoCopy: &replyDesc];
+	/*
+	 * Check for an application error
+	 *
+	 *	Note: Apple spec says that both keyErrorNumber and keyErrorString parameters should be checked to determine if an 
+	 *	error occurred; however, AppleScript only checks keyErrorNmber so we copy its behaviour for compatibility.
+	 *	
+	 *	Note: some apps (e.g. Finder) may return noErr on success, so ignore that too.
+	 */
+	errorNumber = (OSErr)[[replyData paramDescriptorForKeyword: keyErrorNumber] int32Value];
+	if (errorNumber) {
+		// if an application error occurred, generate an NSError if one is requested, then return nil
+		if (error) {
+			errorString = [[replyData paramDescriptorForKeyword: keyErrorString] stringValue];
+			if (errorString)
+				errorDescription = [NSString stringWithFormat: @"Application error: %@ (%i)", errorString, errorNumber];
+			else
+				errorDescription = [NSString stringWithFormat: @"Application error %i", errorNumber];
+			errorInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys: 
+					errorDescription, NSLocalizedDescriptionKey,
+					[NSNumber numberWithInt: errorNumber], kAEMErrorNumberKey,
+					nil];
+			if (errorString)
+				[errorInfo setValue: errorString forKey: kAEMErrorStringKey];
+			if (errorMessage = [replyData paramDescriptorForKeyword: kOSAErrorBriefMessage])
+				[errorInfo setValue: [errorMessage stringValue] forKey: kAEMErrorBriefMessageKey];
+			if (errorObject = [replyData paramDescriptorForKeyword: kOSAErrorOffendingObject])
+				[errorInfo setValue: [codecs unpack: errorObject] forKey: kAEMErrorOffendingObjectKey];
+			if (errorType = [replyData paramDescriptorForKeyword: kOSAErrorExpectedType])
+				[errorInfo setValue: [codecs unpack: errorType] forKey: kAEMErrorExpectedTypeKey];
+			*error = [NSError errorWithDomain: kAEMErrorDomain code: errorNumber userInfo: errorInfo];
 		}
-		// if application returned a result, unpack and return it
-		result = [replyData paramDescriptorForKeyword: keyAEResult];
 		[replyData release];
-		if (requiredResultType != typeWildCard && [result descriptorType] != requiredResultType) {
-			result = [result coerceToDescriptorType: requiredResultType];
-			if (!result) {
-				// TO DO: include a nicely-formatted representation of this Apple event
-				errorNumber = errAECoercionFail;
-				errorString = [NSString stringWithFormat: @"Result coercion error (%i)", errorNumber];
-				errorInfo = [NSDictionary dictionaryWithObject: errorString forKey: NSLocalizedDescriptionKey];
-				*error = [NSError errorWithDomain: @"NSOSStatusErrorDomain" code: errorNumber userInfo: errorInfo];
-				return nil; // note: clients should check if return value is nil to determine if event failed
-			}
-		}
-		if (result) return [codecs unpack: result];
+		return nil;
 	}
-	// application didn't return anything
-	return [NSNull null];
+	/*
+	 * Check for an application result, returning NSNull instance if none was given
+	 */
+	result = [replyData paramDescriptorForKeyword: keyAEResult];
+	[replyData release];
+	if (!result) return [NSNull null];
+	/*
+	 * If client invoked -dontUnpackResult, return the descriptor as-is
+	 */
+	if (!shouldUnpackResult) return result;
+	/*
+	 * Unpack result, performing any coercions specified via -unpackResultAs[ListOf]Type: before unpacking the descriptor
+	 */
+	if (isResultList) {
+		if ([result descriptorType] != typeAEList) 
+			result = [result coerceToDescriptorType: typeAEList];
+		if (resultType == typeWildCard)
+			result = [codecs unpack: result];
+		else {
+			NSMutableArray *resultList;
+			NSAppleEventDescriptor *item;
+			int i, length;
+			resultList = [NSMutableArray array];
+			length = [result numberOfItems];
+			for (i = 1; i <= length; i++) {
+				item = [result descriptorAtIndex: i];
+				if (resultType != typeWildCard && [item descriptorType] != resultType) {
+					NSAppleEventDescriptor *originalItem = item;
+					item = [item coerceToDescriptorType: resultType];
+					if (!item) { // a coercion error occurred
+						if (error) {
+							errorDescription = [NSString stringWithFormat: 
+									@"Couldn't coerce item %i of result list to type '%@': %@", i, osTypeToString(resultType), result];
+							errorInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+									[NSAppleEventDescriptor descriptorWithTypeCode: resultType], kAEMErrorExpectedTypeKey,
+									originalItem, kAEMErrorOffendingObjectKey,
+									errorDescription, NSLocalizedDescriptionKey, 
+									[NSNumber numberWithInt: errorNumber], kAEMErrorNumberKey, 
+									nil];
+							*error = [NSError errorWithDomain: kAEMErrorDomain code: errAECoercionFail userInfo: errorInfo];
+						}
+						return nil;
+					}
+				}
+				[resultList addObject: [codecs unpack: item]];
+			}
+			return resultList;
+		}
+	}
+	if (resultType != typeWildCard && [result descriptorType] != resultType) {
+		NSAppleEventDescriptor *originalResult = result;
+		result = [result coerceToDescriptorType: resultType];
+		if (!result) { // a coercion error occurred
+			if (error) {
+				errorDescription = [NSString stringWithFormat: @"Couldn't coerce result to type '%@': %@", osTypeToString(resultType), result];
+				errorInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+						[NSAppleEventDescriptor descriptorWithTypeCode: resultType], kAEMErrorExpectedTypeKey,
+						originalResult, kAEMErrorOffendingObjectKey,
+						errorDescription, NSLocalizedDescriptionKey, 
+						[NSNumber numberWithInt: errorNumber], kAEMErrorNumberKey, 
+						nil];
+				*error = [NSError errorWithDomain: kAEMErrorDomain code: errAECoercionFail userInfo: errorInfo];
+			}
+			return nil;
+		}
+	}
+	return [codecs unpack: result];
 }
 
 - (id)sendWithError:(NSError **)error {

@@ -1,12 +1,12 @@
 /*
  * TEConstantGlue.h
  *
- * /Applications/TextEdit.app
+ * /applications/textedit.app
  * osaglue 0.2.0
  *
  */
 
-#import <Appscript/Appscript.h>
+#import <Foundation/Foundation.h>
 
 
 #import "Appscript/Appscript.h"
@@ -57,6 +57,7 @@
 + (TEConstant *)path;
 + (TEConstant *)printSettings;
 + (TEConstant *)properties;
++ (TEConstant *)requestedPrintTime;
 + (TEConstant *)resizable;
 + (TEConstant *)size;
 + (TEConstant *)startingPage;

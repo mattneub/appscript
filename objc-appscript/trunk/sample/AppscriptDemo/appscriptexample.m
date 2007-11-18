@@ -24,7 +24,7 @@ void appscriptExample(void) {
     if (result) 
         NSLog(@"result:\n%@\n\n", result);
     else
-        NSLog(@"error: %i\n\t\tmessage: %@\n\n", [error code], [error localizedDescription]);
+        NSLog(@"error:\n%@\n\n", [error description]);
 
     // tell application "TextEdit" to get text of document 1
 	
@@ -34,7 +34,7 @@ void appscriptExample(void) {
     if (result) 
         NSLog(@"result:\n%@\n\n", result);
     else
-        NSLog(@"error: %i\n\t\tmessage: %@\n\n", [error code], [error localizedDescription]);
+        NSLog(@"error:\n%@\n\n", error);
 
     // tell application "TextEdit" to get document 100
 	
@@ -44,7 +44,7 @@ void appscriptExample(void) {
     if (result) 
         NSLog(@"result:\n%@\n\n", result);
     else
-        NSLog(@"error: %i\n\t\tmessage: %@\n\n", [error code], [error localizedDescription]);
+        NSLog(@"error:\n%@\n\n", error);
 	
     // tell application "TextEdit" to get every document
 
@@ -54,7 +54,7 @@ void appscriptExample(void) {
     if (result) 
         NSLog(@"result:\n%@\n\n", result);
     else
-        NSLog(@"error: %i\n\t\tmessage: %@\n\n", [error code], [error localizedDescription]);
+        NSLog(@"error:\n%@\n\n", error);
 
     [textedit release];
 

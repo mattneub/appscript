@@ -1,12 +1,12 @@
 /*
  * TECommandGlue.h
  *
- * /Applications/TextEdit.app
+ * /applications/textedit.app
  * osaglue 0.2.0
  *
  */
 
-#import <Appscript/Appscript.h>
+#import <Foundation/Foundation.h>
 
 
 #import "Appscript/Appscript.h"

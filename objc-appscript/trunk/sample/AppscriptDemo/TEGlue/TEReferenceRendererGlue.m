@@ -1,7 +1,7 @@
 /*
  * TEReferenceRendererGlue.m
  *
- * /Applications/TextEdit.app
+ * /applications/textedit.app
  * osaglue 0.2.0
  *
  */
@@ -37,6 +37,7 @@
         case 'lwld': return @"pagesDown";
         case 'ppth': return @"path";
         case 'pALL': return @"properties";
+        case 'lwqt': return @"requestedPrintTime";
         case 'prsz': return @"resizable";
         case 'ptsz': return @"size";
         case 'lwfp': return @"startingPage";

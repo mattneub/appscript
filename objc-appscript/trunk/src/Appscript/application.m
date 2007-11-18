@@ -59,6 +59,10 @@
 	return [self initWithTargetType: kAEMTargetFileURL data: AEMFindAppWithName(name)];
 }
 
+- (id)initWithBundleID:(NSString *)bundleID {
+	return [self initWithTargetType: kAEMTargetFileURL data: AEMFindAppWithBundleID(bundleID)];
+}
+
 - (id)initWithPath:(NSString *)path {
 	return [self initWithTargetType: kAEMTargetFileURL data: [NSURL fileURLWithPath: path]];	
 }

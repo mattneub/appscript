@@ -42,6 +42,9 @@
 		case kASTargetName:
 			target = [[aemApplicationClass alloc] initWithName: targetData];
 			break;
+		case kASTargetBundleID:
+			target = [[aemApplicationClass alloc] initWithBundleID: targetData];
+			break;
 		case kASTargetPath:
 			target = [[aemApplicationClass alloc] initWithPath: targetData];
 			break;
@@ -191,22 +194,32 @@
 	return self;
 }
 
-- (id)requestType:(ASConstant *)type {
+- (id)requestedType:(ASConstant *)type {
 	if (![AS_event setParameter: type forKeyword: keyAERequestedType]) return nil;
 	return self;
 }
 
-- (id)resultType:(DescType)type {
-	[AS_event setResultType: type];
+- (id)returnType:(DescType)type {
+	[AS_event unpackResultAsType: type];
 	return self;
 }
 
-- (id)send {
-	return [self sendWithError: nil];
+- (id)returnListOfType:(DescType)type {
+	[AS_event unpackResultAsListOfType: type];
+	return self;
+}
+
+- (id)returnDescriptor {
+	[AS_event dontUnpackResult];
+	return self;
 }
 
 - (id)sendWithError:(NSError **)error {
 	return [AS_event sendWithMode: sendMode timeout: timeout error: error];
+}
+
+- (id)send {
+	return [self sendWithError: nil];
 }
 
 // TO DO: attribute methods

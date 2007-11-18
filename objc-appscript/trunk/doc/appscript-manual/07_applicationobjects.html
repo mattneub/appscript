@@ -28,7 +28,9 @@
 <pre><code>-initWithName:(NSString *)name; // name of local application
                                 // including .app suffix, if any
 
--initWithPath:(NSString *)path; // full path to local application
+-initWithBundleID:(NSString *)bundleID; // bundle ID of local application
+
+<!-- -initWithPath:(NSString *)path; // full path to local application -->
 
 -initWithURL:(NSURL *)url; // file URL for a local application, or
                            // eppc URL for a remote process
@@ -50,13 +52,19 @@ ICalApplication *ical = [[ICalApplication alloc] initWithName: @"iCal.app"];
 #import "TEGlue.h"
 
 TEApplication *textedit = [[TEApplication alloc]
-                            initWithPath: @"/Applications/TextEdit.app"];
+                            initWithBundleID: @"com.apple.textedit"];
 
 
 #import "ITunesGlue.h"
 
 NSURL *url = [NSURL URLWithString: @"eppc://Jan%20Smith@G4.local/iTunes"];
 ITunesApplication *itunes = [[ITunesApplication alloc] initWithURL: url];</code></pre>
+
+
+<p>Note that local applications will be launched if not already running when <code>-initWithName:</code>, <code>-initWithBundleID</code> or <code>-initWithURL</code> is invoked, and events will be sent to the running application according to its process ID. If the process is later terminated, that process ID is no longer valid and events sent subsequently using this application object will fail as application objects currently don't provide a 'reconnect' facility.</p>
+
+<p>If <code>-initWithURL:</code> is invoked with an <code>eppc://</code> URL, or if <code>-initWithPID:</code> or <code>-initWithDescriptor:</code> are used, the caller is responsible for ensuring the target application is running before sending any events to it.</p>
+
 
 
 <h2>Basic commands</h2>
@@ -126,7 +134,7 @@ ITunesApplication *itunes = [[ITunesApplication alloc] initWithURL: url];</code>
 
 <p>When you create an Application object by application name, bundle id or creator type, appscript uses LaunchServices to locate an application matching that description. If you have more than one copy of the same application installed, you can identify the one you want by providing its full path, otherwise LaunchServices will identify the newest copy for you.</p>
 
-<p>Appscript identifies running applications by their process ids so it's possible to control multiple versions of an application running at the same time if their Application objects are created using process ids or eppc URLs.</p>
+<p>Appscript identifies locally run applications by their process ids so it's possible to control multiple versions of an application running at the same time if their Application objects are created using process ids or <code>eppc://</code> URLs.</p>
 
 
 <h3>Using <code>launch</code> vs <code>run</code></h3>

@@ -1,7 +1,7 @@
 /*
  * TEConstantGlue.m
  *
- * /Applications/TextEdit.app
+ * /applications/textedit.app
  * osaglue 0.2.0
  *
  */
@@ -47,6 +47,7 @@
         case 'ppth': return [self path];
         case 'pset': return [self printSettings];
         case 'pALL': return [self properties];
+        case 'lwqt': return [self requestedPrintTime];
         case 'prsz': return [self resizable];
         case 'ptsz': return [self size];
         case 'lwst': return [self standard];
@@ -327,6 +328,13 @@
     static TEConstant *constantObj;
     if (!constantObj)
         constantObj = [TEConstant constantWithName: @"properties" type: typeType code: 'pALL'];
+    return constantObj;
+}
+
++ (TEConstant *)requestedPrintTime {
+    static TEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [TEConstant constantWithName: @"requestedPrintTime" type: typeType code: 'lwqt'];
     return constantObj;
 }
 

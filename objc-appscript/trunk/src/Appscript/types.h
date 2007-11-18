@@ -8,7 +8,6 @@
 #import <Foundation/Foundation.h>
 #import <Carbon/Carbon.h>
 
-// TO DO: HFS path support in AEMFileBase
 
 /**********************************************************************/
 // convenience macros

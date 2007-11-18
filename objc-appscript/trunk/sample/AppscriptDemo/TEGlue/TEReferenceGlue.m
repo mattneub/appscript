@@ -1,7 +1,7 @@
 /*
  * TEReferenceGlue.m
  *
- * /Applications/TextEdit.app
+ * /applications/textedit.app
  * osaglue 0.2.0
  *
  */
@@ -493,6 +493,11 @@
 - (TEReference *)properties {
     return [TEReference referenceWithAppData: AS_appData
                     aemReference: [AS_aemReference property: 'pALL']];
+}
+
+- (TEReference *)requestedPrintTime {
+    return [TEReference referenceWithAppData: AS_appData
+                    aemReference: [AS_aemReference property: 'lwqt']];
 }
 
 - (TEReference *)resizable {

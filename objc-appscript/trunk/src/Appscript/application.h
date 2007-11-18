@@ -13,23 +13,6 @@
 #import "event.h"
 
 
-/*
- * TO DO:
- *
- * - provide protocol/abstract base class for Event class, as clients can provide their own
- *
- * - returnID support; note: returnID is an argument to AECreateAppleEvent(), so we may want
- *   to move this call into AEMEvent and defer it long enough to give clients an opportunity
- *   to call -[AEMEvent setReturnID:]. Setting returnID in -[AEMApplication eventWith...]
- *   is another option, although the appscript layer would then need to avoid instantiating
- *   AEMEvent when a command is first called, again to allow clients an opportunity to set
- *   the returnID if they wish to.
- *
- * - default [Cocoa?] error message strings in AEMEvent error reporting?
- *
- *
- */
-
 /**********************************************************************/
 // Application class
 
@@ -51,7 +34,9 @@
 
 - (id)initWithName:(NSString *)name;
 
-- (id)initWithPath:(NSString *)path;
+- (id)initWithBundleID:(NSString *)bundleID;
+
+- (id)initWithPath:(NSString *)path; // TO DO: probably delete
 
 - (id)initWithURL:(NSURL *)url;
 

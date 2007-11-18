@@ -1,7 +1,7 @@
 /*
  * TEApplicationGlue.m
  *
- * /Applications/TextEdit.app
+ * /applications/textedit.app
  * osaglue 0.2.0
  *
  */
@@ -36,7 +36,11 @@
     return [self initWithTargetType: kASTargetName data: name];
 }
 
-// TO DO: initWithBundleID, initWithSignature
+// TO DO: initWithSignature
+
+- (id)initWithBundleID:(NSString *)bundleID {
+    return [self initWithTargetType: kASTargetBundleID data: bundleID];    
+}
 
 - (id)initWithPath:(NSString *)path {
     return [self initWithTargetType: kASTargetPath data: path];    

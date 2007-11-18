@@ -13,7 +13,8 @@
 typedef enum {
 	kASTargetCurrent,
 	kASTargetName,
-	kASTargetPath,
+	kASTargetBundleID,
+	kASTargetPath, // TO DO: delete initWithPath option? (clients can use fileURLs in -initWithURL:)
 	kASTargetURL,
 	kASTargetPID,
 	kASTargetDescriptor,
@@ -138,36 +139,38 @@ enumConsidsAndIgnores = 'csig'
  * handler supports this, it will attempt to coerce the event's result to this
  * type before returning it. May be a standard AE type (e.g. [ASConstant alias])
  * or, occasionally, an application-defined type.
+ *
+ * Note that most applications don't support this, and those that do usually
+ * only support it for 'get' events (e.g. Finder).
  */
-- (id)requestType:(ASConstant *)type; // TO DO: rename to -requestedType: (?)
+- (id)requestedType:(ASConstant *)type;
 
 /*
  * Specify the AE type that the returned AEDesc must be coerced to before unpacking.
- * Whereas the -resultType: method adds a kAERequestedType parameter to the outgoing
- * event, this coercion is performed locally by the -send: method using a built-in/
- * user-installed AE coercion handler if one is available. Note that if the coercion
- * fails, -send: will return nil and set the command object's error number to -1700
- * (errAECoercionFail).
+ * Whereas the -requestedType: method adds a kAERequestedType parameter to the outgoing
+ * event, this coercion is performed locally by the -sendWithError: method using a
+ * built-in or user-installed AE coercion handler if one is available. Note that if
+ * the coercion fails, -sendWithError: will return nil and the associated NSError's
+ * error code will be -1700 (errAECoercionFail).
+ *
+ * If the specified type is typeWildCard (the default), no coercion is performed.
  */
-- (id)resultType:(DescType)type; // TO DO: rename to -coerceResultToType:
-
-// TO DO: add -coerceResultToListOfType:
- 
-// send events
+- (id)returnType:(DescType)type;
 
 /*
- * Send the event.
- *
- * Return value
- *
- *    The value returned by the application, or an NSNull instance if no value was returned,
- *    or nil if an error occurred.
- *
- * Notes
- *
- *    A single event can be sent more than once if desired.
+ * Similar to -returnType:, except that the returned AEDesc is first coerced to
+ * to typeAEList; each list item is then coerced to the specified type.
  */
-- (id)send;
+- (id)returnListOfType:(DescType)type;
+
+/*
+ * Invoke -returnDescriptor to have -sendWithError: return the returned AEDesc as
+ * an NSAppleEventDescriptor without unpacking it.
+ *
+ */
+- (id)returnDescriptor;
+
+// send events
 
 
 /*
@@ -187,6 +190,20 @@ enumConsidsAndIgnores = 'csig'
  *    A single event can be sent more than once if desired.
  */
 - (id)sendWithError:(NSError **)error;
+
+/*
+ * Send the event with minimal error reporting.
+ *
+ * Return value
+ *
+ *    The value returned by the application, or an NSNull instance if no value was returned,
+ *    or nil if an error occurred.
+ *
+ * Notes
+ *
+ *    Convenience method; [evt send] is equivalent to [evt sendWithError: nil]
+ */
+- (id)send;
 
 
 @end

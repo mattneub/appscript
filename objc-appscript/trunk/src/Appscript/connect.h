@@ -10,15 +10,6 @@
 #import <CoreFoundation/CoreFoundation.h>
 
 
-/*
- * TO DO:
- *
- * - convenience wrappers for AEMLaunchApplication(): AEMLaunchApp(), AEMRunApp(), AEMOpenFilesWithApp()
- *
- * - better error reporting in AEMFindApplication(), AEMLaunchApplication()
- *
- */
-
 
 /**********************************************************************/
 // find/launch/get PIDs for local applications
