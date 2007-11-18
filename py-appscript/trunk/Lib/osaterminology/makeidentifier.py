@@ -164,6 +164,7 @@ kObjCAppscriptReservedWords = [
 	"initWithPID",
 	"initWithDescriptor",
 	"beginTransaction",
+	"beginTransactionWithSession",
 	"abortTransaction",
 	"endTransaction",
 	
@@ -174,12 +175,12 @@ kObjCAppscriptReservedWords = [
 	# used by ASCommand
 	"sendMode",
 	"timeout",
-	"requestType",
-	"resultType",
+	"requestedType",
+	"returnType",
+	"returnListOfType",
+	"returnDescriptor",
 	"send",
-	"errorNumber",
-	"errorString",
-	"raise",
+	"sendWithError",
 	
 	# TO DO: delete some/all of these?
 	"ignore",
