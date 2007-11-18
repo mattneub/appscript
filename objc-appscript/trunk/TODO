@@ -78,15 +78,12 @@ Might also provide shortcuts that return C ints and floats (note: any errors wou
 
 - transaction support
 
-
 - returnID support; note: returnID is an argument to AECreateAppleEvent(), so we may want to move this call into AEMEvent and defer it long enough to give clients an opportunity to call -[AEMEvent setReturnID:]. Setting returnID in -[AEMApplication eventWith...] is another option, although the appscript layer would then need to avoid instantiating AEMEvent when a command is first called, again to allow clients an opportunity to set the returnID if they wish to.
-
 
 - AEMApplication initialisers should have option of returning NSError indicating reason for failure (couldn't find application, couldn't launch application, etc.)
 
 
 ======= aem/event.h =======
-
 
 - define formal protocol or abstract base class for AEMEvent class, as clients can install their own choice of event class in AEMApplication if they wish
 
@@ -123,7 +120,7 @@ Might also provide shortcuts that return C ints and floats (note: any errors wou
 
 - finish AEMCodecs specifier unpackers
 
-- unit types
+- implement unit types support
 
 - HFS path support in AEMFileBase
 
@@ -132,24 +129,16 @@ Might also provide shortcuts that return C ints and floats (note: any errors wou
 
 ======= miscellaneous =======
 
-
 - NSErrors should include human-readable default error description; could use GetMacOSStatusCommentString if on 10.4 or later (see Debugging.h), otherwise will need to supply a lookup table for common Carbon error codes, c.f. rb-appscript. Probably also a good idea to include a lookup table for pre-Leopard Cocoa Scripting error strings, c.f. rb-appscript.
-
 
 - should objc-appscript classes that are used by both aem and appscript layers be renamed to use AS prefix (e.g. AEMAlias -> ASAlias)? This might be less confusing for majority of users who use higher-level appscript API only. Should ALL classes be renamed to use 'AS' prefix, with API level indicated by secondary means?
 
-
 - should NSError domain - currently "AEMErrorDomain" - be renamed "ASErrorDomain"? (See above.)
-
 
 - i386 safety? 64-bit safety? GC (-finalize) support?
 
-
-- provide convenience macros, e.g.:
-
-	#AEMInt(index) [NSNumber numberWithInt: index]
+- provide convenience macros, e.g.: #AEMInt(index) [NSNumber numberWithInt: index]
 
 - add 'strict' options for class and command generation to osaglue: -k option would create individual classes according to application dictionary; -c option would enforce type checking/coercion in command parameters and result. This would allow users to take advantage of ObjC static typing for applications whose dictionaries are sufficiently accurate to avoid compatibility problems.
 
-
-- 
+- finish aem documentation, header comments
