@@ -9,10 +9,12 @@ from getopt import getopt
 from sys import argv, stderr, exit
 from StringIO import StringIO
 
+import appscript
 from appscript import terminology
 from osaterminology.getterminology import getaete
 from osaterminology.dom import aeteparser, osadictionary
-from osaterminology.renderers import htmldoc
+from osaterminology.renderers import htmldoc, quickdoc
+from osaterminology.makeidentifier import getconverter
 import aem
 from aemreceive import *
 
@@ -31,11 +33,13 @@ for domain in ['flds', 'fldl', 'fldu']:
 	osaxen = aem.app.property(domain).property('$scr').elements('file').byfilter(
 			aem.its.property('asty').eq('osax').OR(aem.its.property('extn').eq('osax')))
 #	for name, path in zip(osaxen.name(), osaxen.POSIX_path()):
-	for name, path in zip(_se.event('coregetd', {'----': osaxen.property('pnam')}).send(), 
-			_se.event('coregetd', {'----': osaxen.property('posx')}).send()):
-		if name.lower().endswith('.osax'):
-			name = name[:-5]
-		_osaxpathsbyname[name.lower()] = path
+	if _se.event('coredoex', {'----': osaxen.property('pnam')}).send(): # domain has ScriptingAdditions folder
+		names = _se.event('coregetd', {'----': osaxen.property('pnam')}).send()
+		paths = _se.event('coregetd', {'----': osaxen.property('posx')}).send()
+		for name, path in zip(names, paths):
+			if name.lower().endswith('.osax'):
+				name = name[:-5]
+			_osaxpathsbyname[name.lower()] = path
 
 
 #######
@@ -49,8 +53,15 @@ def getaetedata(appname):
 		return getaete(aem.findapp.byname(appname))
 
 def _makehelpobj(appname, style):
-	aetedata = getaetedata(appname)
-	helpobj = appscriptsupport.Help(aetedata, appname, style, StringIO())
+	# TO DO: osax support
+	try:
+		if appname.startswith('eppc://'):
+			appobj = appscript.app(url=appname)
+		else:
+			appobj = appscript.app(appname)
+	except appscript.ApplicationNotFoundError:
+		raise EventHandlerError(-10000, 'Application %s not found.' % appname)
+	helpobj = appscriptsupport.Help(appobj, style, StringIO())
 #	del helpobj._handlers['h']
 #	del helpobj._handlers['s']
 	return helpobj
@@ -64,9 +75,31 @@ _sessionID = 0
 #######
 # Event handlers
 
-def exporthtml(appname, style, optstr):
-	opts, args = getopt(optstr, 'NHs:cah')
+def exporttext(appname, style, optstr):
+	opts, args = getopt(optstr, 'NHTs:cah')
 	opts = dict(opts)
+	out = StringIO()
+	if _osaxpathsbyname.has_key(appname):
+		appname = _osaxpathsbyname[appname]
+	else:
+		appname = aem.findapp.byname(appname)
+	quickdoc.app(appname, out, getconverter(style))
+	return out.getvalue()
+
+installeventhandler(exporttext,
+		'ASDiTEXT',
+		('Appl', 'appname', 'utxt'),
+		('Styl', 'style', 'utxt'),
+		('Opts', 'optstr', 'utxt'))
+
+
+def exporthtml(appname, style, optstr):
+	opts, args = getopt(optstr, 'NHTs:cah')
+	opts = dict(opts)
+	if _osaxpathsbyname.has_key(appname):
+		appname = _osaxpathsbyname[appname]
+	else:
+		appname = aem.findapp.byname(appname)
 	aetedata = getaetedata(appname)
 	terms = aeteparser.parseaetes(aetedata, appname, style)
 	options = [option for flag, option in [('-c', 'collapse'), ('-a', 'showall')] if opts.has_key(flag)]

@@ -119,7 +119,9 @@ SYNOPSIS
 
     asdict -H [ -a ] [ -c ] [ -s style ] app-or-osax-name
 
-    asdict [ -N ] [ -s style ] app-or-osax-name [ viewer-options ]
+    asdict -T [ -s style ] app-or-osax-name
+
+    asdict [ -N ] [ -s style ] app-name [ viewer-options ]
     
     asdict [ -h ] [ -v ]
 
@@ -131,13 +133,15 @@ DESCRIPTION
     
     *    interactive viewer
     *    non-interactive viewer
-    *    HTML exporter
+    *    plain text/HTML exporter
     
    Command Options
 
     The following options are available:
     
-    -H         export dictionary as HTML data
+    -H         export dictionary as single HTML file
+    
+    -T         export dictionary as plain text file
     
     -N         run viewer in non-interactive mode
 
@@ -163,6 +167,8 @@ DESCRIPTION
     
     The -H and -N options are mutually exclusive. If neither is given, the
     viewer runs in interactive mode (the default).
+    
+    Note: the viewer modes don't currently support scripting additions.
     
 """ + _viewerhelp + """
 
@@ -271,7 +277,7 @@ def doevent(eventid, **args):
 	except MacOS.Error, err:
 		print 'err', err
 		if err[0] in [-600, -609]:
-			exit('Error: ASDictionary is no longer running. Please restart asdict to continue.')
+			exit('Error: ASDictionary has quit or relaunched since asdict was started. Please re-run asdict to continue.')
 		else:
 			exit('An unexpected error occurred when contacting ASDictionary: %i' % err[0])
 	# handle error if given
@@ -298,7 +304,7 @@ def doevent(eventid, **args):
 #######
 # parse asdict arguments
 
-opts, args = getopt(argv[1:], 'NHs:cahv')
+opts, args = getopt(argv[1:], 'NHTs:cahv')
 opts = dict(opts)
 
 if opts.has_key('-v'): # print version number
@@ -322,8 +328,11 @@ vieweroptions = ' '.join(args[1:]).strip()
 # render/export
 ensureasdictionary()
 
-if opts.has_key('-H'): # export HTML
-	print doevent('HTML', Appl=appname, Styl=style, Opts=' '.join(argv[1:]))
+if opts.has_key('-H') or opts.has_key('-T'): 
+	if opts.has_key('-H'): # export HTML
+		print doevent('HTML', Appl=appname, Styl=style, Opts=' '.join(argv[1:]))
+	if opts.has_key('-T'): # export plain text
+		print doevent('TEXT', Appl=appname, Styl=style, Opts=' '.join(argv[1:]))
 elif opts.has_key('-N'): # non-interactive mode
 	print >> _out, doevent('Help', Appl=appname, Styl=style, Opts=vieweroptions or '-o')
 else:

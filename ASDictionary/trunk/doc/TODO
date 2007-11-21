@@ -1,10 +1,6 @@
 ''TO DO
 
-- there is a problem where an event sent immediately after launching results in an 'unknown command' (-1708) error; not sure why but need to find out and fix
-
-- add '-w size' option for setting linewrap in appscript support
-
-- add 'visibility' option to asdict's defaults system
+- there is a problem where a 'export dictionaries' command sent immediately after launching results in an 'unknown command' (-1708) error; not sure why but need to find out and fix; in the meantime, clients should add a delay inbetween launching and calling the command as a workaround
 
 - add plain text and frame-based HTML export options to asdict
 
@@ -14,4 +10,4 @@
 
 - (full sdef support in osaterminology)
 
-- create asdict-installer.pkg for asdict
+- add private support for objc-appscript's osaglue tool (note: this can't happen until objc-appscript's API is stable)

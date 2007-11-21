@@ -7,6 +7,7 @@ from pprint import pprint, pformat
 from sys import stdout
 from StringIO import StringIO
 from subprocess import Popen
+import textwrap
 
 import aem, appscript
 from aemreceive import *
@@ -18,6 +19,13 @@ from appscript import reference, terminology, terminologyparser
 
 __all__ = ['Help']
 
+from AppKit import NSUserDefaults
+
+if not NSUserDefaults.standardUserDefaults().stringForKey_(u'rubyInterpreter'):
+	NSUserDefaults.standardUserDefaults().setObject_forKey_(u'/usr/bin/ruby', u'rubyInterpreter')
+
+if not NSUserDefaults.standardUserDefaults().integerForKey_(u'lineWrap'):
+	NSUserDefaults.standardUserDefaults().setInteger_forKey_(78, u'lineWrap')
 
 #######
 # Data renderers
@@ -26,6 +34,8 @@ class DefaultRenderer:
 	
 	def rendervalue(self, value, prettyprint=False):
 		return prettyprint and pformat(value) or repr(value)
+	
+	renderreference = rendervalue
 		
 	def rendervalues(self, values, prettyprint=False):
 		return [prettyprint and pformat(value) or repr(value) for value in values]
@@ -44,7 +54,7 @@ class RubyRenderer:
 	
 	@staticmethod
 	def _findrubyinterpreter():
-		return '/usr/local/bin/ruby' # TO DO: how to locate ruby interpreter?
+		return NSUserDefaults.standardUserDefaults().stringForKey_(u'rubyInterpreter')
 	
 	@staticmethod
 	def _findrubyrenderer():
@@ -74,13 +84,17 @@ class RubyRenderer:
 	def rendervalue(self, value , prettyprint=False):
 		return self.rendervalues([value], prettyprint)[0]
 	
-	def rendervalues(self, values, prettyprint=False):
+	def renderreference(self, value , prettyprint=False):
+		return self.rendervalues([value], prettyprint, True)[0]
+	
+	def rendervalues(self, values, prettyprint=False, isreference=False):
 		try:
 			return self._target().event('AppSFmt_', {
 					'Cons': self._appdata.constructor,
 					'Iden': self._appdata.identifier,
 					'PPri': prettyprint,
 					'Data': values,
+					'IsRe': isreference,
 					}, codecs=self._appdata).send()
 		except aem.CommandError, e:
 			# TO DO: if error -600 (e.g. due to crash)
@@ -102,11 +116,6 @@ def quit():
 ######################################################################
 # PRIVATE
 ######################################################################
-
-class _Out:
-	"""Default target for writing help text; prints to stdout."""
-	def write(self, s):
-		stdout.write(s.encode('utf8', 'replace'))
 
 
 ############################
@@ -256,8 +265,9 @@ For example, to print an overview of TextEdit, a description of its make command
 
     app('TextEdit.app').help('-o -t make -i document')"""
 	
+	# TO DO: osax support
 	
-	def __init__(self, appobj, style='py-appscript', out=_Out()):
+	def __init__(self, appobj, style='py-appscript', out=StringIO()):
 		"""
 			aetes : list of AEDesc -- list of aetes
 			out : anything -- any file-like object that implements a write(str) method
@@ -475,7 +485,7 @@ For example, to print an overview of TextEdit, a description of its make command
 			tokens = flags.split()
 			print >> self.output, '=' * 78 + '\nHelp (%s)' % ' '.join(tokens)
 			if ref:
-				print >> self.output, '\nReference: %s' % self.datarenderer.rendervalue(ref)
+				print >> self.output, '\nReference: %s' % self.datarenderer.renderreference(ref)
 			i = 0
 			while i < len(tokens):
 				print >> self.output, '\n' + '-' * 78
@@ -531,7 +541,7 @@ def help(constructor, identity, style, flags, aemreference, commandname=''):
 			appobj = appscript.app()
 		else:
 			raise RuntimeError, 'Unknown constructor: %r' % constructor
-		output = StringIO()
+		output = StringIO()		
 		helpobj = Help(appobj, style, output)
 		_cache[id] = (appobj, helpobj, output)
 	ref, helpobj, output = _cache[id]
@@ -541,9 +551,20 @@ def help(constructor, identity, style, flags, aemreference, commandname=''):
 	if commandname:
 		ref = getattr(ref, commandname)
 	helpobj.help(flags, ref)
-	return output.getvalue()
+	s = output.getvalue()
+	print `s`
+	if NSUserDefaults.standardUserDefaults().boolForKey_(u'enableLineWrap'):
+		res = []
+		textwrapper = textwrap.TextWrapper(width=NSUserDefaults.standardUserDefaults().integerForKey_(u'lineWrap'), 
+				subsequent_indent=' ' * 12)
+		for line in s.split('\n'):
+			res.append(textwrapper.fill(line))
+		s = u'\n'.join(res)
+	print `s`
+	return s
 
-installeventhandler(help, # TO DO: add 'Inte' param giving path to [Ruby] interpreter to use when running rubyrenderer
+
+installeventhandler(help,
 		'AppSHelp',
 		('Cons', 'constructor', kAE.typeChar),
 		('Iden', 'identity', kAE.typeWildCard),

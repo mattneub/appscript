@@ -38,13 +38,11 @@
 
 
 
-  			<record-type name="export result" code="ExpR" plural="" description="A record containing the result of a single export operation.">
-				<properties>
-					<property name="success" code="Succ" type="type" description="Was the dictionary successfully exported?"/>
-					<property name="source" code="Sour" type="file" description="The application or scripting addition source file."/>
-					<property name="destination" code="Dest" type="file" description="The exported dictionary file/folder if the export succeeded, or 'missing value' if it failed."/>
-					<property name="error message" code="ErrS" type="text" description="An error description if the export failed, or 'missing value' if it succeeded."/>
-				</properties>
+  			<record-type name="export result" code="ExpR" plural="export results" description="A record containing the result of a single export operation.">
+				<property name="success" code="Succ" type="type" description="Was the dictionary successfully exported?"/>
+				<property name="source" code="Sour" type="file" description="The application or scripting addition source file."/>
+				<property name="destination" code="Dest" type="file" description="The exported dictionary file/folder if the export succeeded, or 'missing value' if it failed."/>
+				<property name="error message" code="ErrS" type="text" description="An error description if the export failed, or 'missing value' if it succeeded."/>
 			</record-type>
 
 
@@ -57,17 +55,17 @@
 
 				<parameter name="to" code="ToFo" type="file" description="The folder to export to."/>
 
-				<parameter name="using file formats" code="Form" description="The folder to export to.">
+				<parameter name="using file formats" code="Form" description="The output format(s) to use." optional="yes">
 					<type type="file formats" list="yes"/>
 				</parameter>
 
-				<parameter name="using styles" code="Styl" description="The folder to export to.">
+				<parameter name="using styles" code="Styl" description="The terminology style(s) to use." optional="yes">
 					<type type="styles" list="yes"/>
 				</parameter>
 
-				<parameter name="compacting classes" code="ClaC" type="boolean" description="If two or more classes share the same name, should they be combined into one?"/>
-				<parameter name="showing hidden items" code="SInv" type="boolean" description="Should hidden suites, commands, classes, etc. be shown?"/>
-				<parameter name="exporting to subfolders" code="SubF" type="boolean" description="Should the exported dictionaries be grouped into subfolders according to style and file format?"/>
+				<parameter name="compacting classes" code="ClaC" type="boolean" description="If two or more classes share the same name, should they be combined into one?" optional="yes"/>
+				<parameter name="showing hidden items" code="SInv" type="boolean" description="Should hidden suites, commands, classes, etc. be shown?" optional="yes"/>
+				<parameter name="exporting to subfolders" code="SubF" type="boolean" description="Should the exported dictionaries be grouped into subfolders according to style and file format?" optional="yes"/>
 
 				<result description="A list of records describing the outcome of each export operation.">
 					<type type="export result" list="yes"/>

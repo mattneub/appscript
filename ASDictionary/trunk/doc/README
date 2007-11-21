@@ -17,6 +17,14 @@ USAGE
 4. Click 'Export', and select a destination folder for the generated files.
 
 -----------------------------------
+APPSCRIPT SUPPORT
+
+The appscript bridges for Python and Ruby depend on ASDictionary to support their built-in help systems. You can set the preferences for ASDictionary's appscript support via its Preferences window. 
+
+In particular, rb-appscript users should check that the 'Ruby interpreter' option provides a valid path to a ruby interpreter (the default is /usr/bin/ruby), and ensure the Ruby installation used by that interpreter has rb-appscript installed. If a valid interpreter path is not given, or the Ruby installation specified does not have rb-appscript installed, rb-appscript's help system will display references and values using Python rather than Ruby syntax.
+
+
+-----------------------------------
 NOTES
 
 - Caution: ASDictionary will overwrite any existing files when exporting dictionaries.

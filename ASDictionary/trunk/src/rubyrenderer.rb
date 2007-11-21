@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 
+begin; require 'rubygems'; rescue LoadError; end
+
 require 'appscript'
 require 'pp'
 
@@ -62,10 +64,12 @@ class Application
 			else
 				raise RuntimeError, "Unknown constructor: #{constructor}"
 			end
-			@_cache[id] = appobj.AS_app_data
+			@_cache[id] = appobj
 		end
-		values = unpack_param(request, 'Data', @_cache[id])
-		if unpack_param(request, 'PPri')
+		values = unpack_param(request, 'Data', @_cache[id].AS_app_data)
+		if unpack_param(request, 'IsRe') # is reference? (typeNull should appear as app object, not nil)
+			strings = values.collect { |o| o == nil ? @_cache[id].inspect : o.inspect }
+		elsif unpack_param(request, 'PPri') # pretty print?
 			strings = values.collect { |o| o.pretty_inspect }
 		else
 			strings = values.collect { |o| o.inspect }
@@ -82,7 +86,6 @@ end
 application = Application.new
 
 ########
-
 
 AE.install_event_handler('AppS', 'Fmt_', AEHandler.new(application, :handle_render))
 
