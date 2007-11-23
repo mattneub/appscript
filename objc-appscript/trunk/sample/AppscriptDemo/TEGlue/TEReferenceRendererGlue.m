@@ -1,8 +1,8 @@
 /*
  * TEReferenceRendererGlue.m
  *
- * /applications/textedit.app
- * osaglue 0.2.0
+ * /Applications/TextEdit.app
+ * osaglue 0.3.0
  *
  */
 

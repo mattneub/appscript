@@ -7,12 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4F53A30D0CDBCAA900403A46 /* Appscript.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F53A30C0CDBCAA900403A46 /* Appscript.framework */; };
 		4F551EF10CF057AE005661F9 /* MLApplicationGlue.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F551EE70CF057AE005661F9 /* MLApplicationGlue.m */; };
 		4F551EF20CF057AE005661F9 /* MLCommandGlue.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F551EE90CF057AE005661F9 /* MLCommandGlue.m */; };
 		4F551EF30CF057AE005661F9 /* MLConstantGlue.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F551EEB0CF057AE005661F9 /* MLConstantGlue.m */; };
 		4F551EF40CF057AE005661F9 /* MLReferenceGlue.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F551EEE0CF057AE005661F9 /* MLReferenceGlue.m */; };
 		4F551EF50CF057AE005661F9 /* MLReferenceRendererGlue.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F551EF00CF057AE005661F9 /* MLReferenceRendererGlue.m */; };
+		4FC0EFD20CF68B2C000F8548 /* Appscript.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4FC0EFD10CF68B2C000F8548 /* Appscript.framework */; };
 		8DD76F9A0486AA7600D96B5E /* AttachToMail.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FB7796FE84155DC02AAC07 /* AttachToMail.m */; settings = {ATTRIBUTES = (); }; };
 		8DD76F9C0486AA7600D96B5E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08FB779EFE84155DC02AAC07 /* Foundation.framework */; };
 		8DD76F9F0486AA7600D96B5E /* AttachToMail.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = C6859EA3029092ED04C91782 /* AttachToMail.1 */; };
@@ -35,7 +35,6 @@
 		08FB7796FE84155DC02AAC07 /* AttachToMail.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AttachToMail.m; sourceTree = "<group>"; };
 		08FB779EFE84155DC02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		32A70AAB03705E1F00C91783 /* AttachToMail_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttachToMail_Prefix.pch; sourceTree = "<group>"; };
-		4F53A30C0CDBCAA900403A46 /* Appscript.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Appscript.framework; path = ../Library/Frameworks/Appscript.framework; sourceTree = SOURCE_ROOT; };
 		4F551EE60CF057AE005661F9 /* MLApplicationGlue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLApplicationGlue.h; sourceTree = "<group>"; };
 		4F551EE70CF057AE005661F9 /* MLApplicationGlue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLApplicationGlue.m; sourceTree = "<group>"; };
 		4F551EE80CF057AE005661F9 /* MLCommandGlue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLCommandGlue.h; sourceTree = "<group>"; };
@@ -47,6 +46,7 @@
 		4F551EEE0CF057AE005661F9 /* MLReferenceGlue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLReferenceGlue.m; sourceTree = "<group>"; };
 		4F551EEF0CF057AE005661F9 /* MLReferenceRendererGlue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLReferenceRendererGlue.h; sourceTree = "<group>"; };
 		4F551EF00CF057AE005661F9 /* MLReferenceRendererGlue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLReferenceRendererGlue.m; sourceTree = "<group>"; };
+		4FC0EFD10CF68B2C000F8548 /* Appscript.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Appscript.framework; path = ../../../../Library/Frameworks/Appscript.framework; sourceTree = SOURCE_ROOT; };
 		8DD76FA10486AA7600D96B5E /* AttachToMail */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = AttachToMail; sourceTree = BUILT_PRODUCTS_DIR; };
 		C6859EA3029092ED04C91782 /* AttachToMail.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = AttachToMail.1; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -57,7 +57,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8DD76F9C0486AA7600D96B5E /* Foundation.framework in Frameworks */,
-				4F53A30D0CDBCAA900403A46 /* Appscript.framework in Frameworks */,
+				4FC0EFD20CF68B2C000F8548 /* Appscript.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -88,7 +88,7 @@
 		08FB779DFE84155DC02AAC07 /* External Frameworks and Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				4F53A30C0CDBCAA900403A46 /* Appscript.framework */,
+				4FC0EFD10CF68B2C000F8548 /* Appscript.framework */,
 				08FB779EFE84155DC02AAC07 /* Foundation.framework */,
 			);
 			name = "External Frameworks and Libraries";
@@ -190,6 +190,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../Library/Frameworks\"",
+					"\"$(SRCROOT)/../../../../Library/Frameworks\"",
 				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
@@ -210,6 +211,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../Library/Frameworks\"",
+					"\"$(SRCROOT)/../../../../Library/Frameworks\"",
 				);
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;

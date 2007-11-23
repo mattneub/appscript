@@ -35,21 +35,20 @@
 }
 
 - (BOOL)connect {
+	NSError *error;
+	
 	switch (targetType) {
 		case kASTargetCurrent:
 			target = [[aemApplicationClass alloc] init];
 			break;
 		case kASTargetName:
-			target = [[aemApplicationClass alloc] initWithName: targetData];
+			target = [[aemApplicationClass alloc] initWithName: targetData error: &error];
 			break;
 		case kASTargetBundleID:
-			target = [[aemApplicationClass alloc] initWithBundleID: targetData];
-			break;
-		case kASTargetPath:
-			target = [[aemApplicationClass alloc] initWithPath: targetData];
+			target = [[aemApplicationClass alloc] initWithBundleID: targetData error: &error];
 			break;
 		case kASTargetURL:
-			target = [[aemApplicationClass alloc] initWithURL: targetData];
+			target = [[aemApplicationClass alloc] initWithURL: targetData error: &error];
 			break;
 		case kASTargetPID:
 			target = [[aemApplicationClass alloc] initWithPID: [targetData unsignedLongValue]];

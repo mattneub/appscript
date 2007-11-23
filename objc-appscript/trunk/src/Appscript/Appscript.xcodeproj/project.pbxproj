@@ -28,8 +28,6 @@
 		4FDCB2FA0B6D0CD0009534FD /* application.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FDCB2EC0B6D0CD0009534FD /* application.m */; };
 		4FDCB2FB0B6D0CD0009534FD /* codecs.h in Headers */ = {isa = PBXBuildFile; fileRef = 4FDCB2ED0B6D0CD0009534FD /* codecs.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4FDCB2FC0B6D0CD0009534FD /* codecs.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FDCB2EE0B6D0CD0009534FD /* codecs.m */; };
-		4FDCB2FD0B6D0CD0009534FD /* connect.h in Headers */ = {isa = PBXBuildFile; fileRef = 4FDCB2EF0B6D0CD0009534FD /* connect.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4FDCB2FE0B6D0CD0009534FD /* connect.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FDCB2F00B6D0CD0009534FD /* connect.m */; };
 		4FDCB3030B6D0CD0009534FD /* specifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 4FDCB2F50B6D0CD0009534FD /* specifier.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4FDCB3040B6D0CD0009534FD /* specifier.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FDCB2F60B6D0CD0009534FD /* specifier.m */; };
 		4FDCB32C0B6D14A6009534FD /* Appscript.h in Headers */ = {isa = PBXBuildFile; fileRef = 4FDCB32B0B6D14A6009534FD /* Appscript.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -62,8 +60,6 @@
 		4FDCB2EC0B6D0CD0009534FD /* application.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = application.m; sourceTree = "<group>"; };
 		4FDCB2ED0B6D0CD0009534FD /* codecs.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = codecs.h; sourceTree = "<group>"; };
 		4FDCB2EE0B6D0CD0009534FD /* codecs.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = codecs.m; sourceTree = "<group>"; };
-		4FDCB2EF0B6D0CD0009534FD /* connect.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = connect.h; sourceTree = "<group>"; };
-		4FDCB2F00B6D0CD0009534FD /* connect.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = connect.m; sourceTree = "<group>"; };
 		4FDCB2F10B6D0CD0009534FD /* parser.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = parser.h; sourceTree = "<group>"; };
 		4FDCB2F20B6D0CD0009534FD /* parser.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = parser.m; sourceTree = "<group>"; };
 		4FDCB2F30B6D0CD0009534FD /* reference.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = reference.h; sourceTree = "<group>"; };
@@ -207,8 +203,6 @@
 				4FDCB2EC0B6D0CD0009534FD /* application.m */,
 				4F9BFD6A0CD4CD74003BDDE0 /* event.h */,
 				4F9BFD6B0CD4CD74003BDDE0 /* event.m */,
-				4FDCB2EF0B6D0CD0009534FD /* connect.h */,
-				4FDCB2F00B6D0CD0009534FD /* connect.m */,
 				4F7C7EAD0C5B68420033C219 /* SendThreadSafe.h */,
 				4F7C7EAC0C5B68420033C219 /* SendThreadSafe.c */,
 			);
@@ -244,7 +238,6 @@
 				4FDCB2F90B6D0CD0009534FD /* application.h in Headers */,
 				4F9BFD6C0CD4CD74003BDDE0 /* event.h in Headers */,
 				4FDCB2FB0B6D0CD0009534FD /* codecs.h in Headers */,
-				4FDCB2FD0B6D0CD0009534FD /* connect.h in Headers */,
 				4FDCB3030B6D0CD0009534FD /* specifier.h in Headers */,
 				4FDCB32C0B6D14A6009534FD /* Appscript.h in Headers */,
 				4FDCB4B20B6D5F21009534FD /* types.h in Headers */,
@@ -315,7 +308,6 @@
 			files = (
 				4FDCB2FA0B6D0CD0009534FD /* application.m in Sources */,
 				4FDCB2FC0B6D0CD0009534FD /* codecs.m in Sources */,
-				4FDCB2FE0B6D0CD0009534FD /* connect.m in Sources */,
 				4FDCB3040B6D0CD0009534FD /* specifier.m in Sources */,
 				4FDCB4B30B6D5F21009534FD /* types.m in Sources */,
 				4F25FAC30B6E79CE0050D532 /* base.m in Sources */,

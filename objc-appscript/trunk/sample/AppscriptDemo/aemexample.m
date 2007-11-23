@@ -9,7 +9,7 @@ void aemExample(void) {
     id result;
     
     textedit = [[AEMApplication alloc]
-                 initWithPath: @"/Applications/TextEdit.app"];
+                 initWithBundleID: @"com.apple.textedit"];
     NSLog(@"textedit:\n%@\n\n", textedit);
     
     // tell application "TextEdit" to \

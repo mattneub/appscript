@@ -1,8 +1,8 @@
 /*
  * TEApplicationGlue.h
  *
- * /applications/textedit.app
- * osaglue 0.2.0
+ * /Applications/TextEdit.app
+ * osaglue 0.3.0
  *
  */
 
@@ -19,7 +19,6 @@
 - (id)init;
 - (id)initWithName:(NSString *)name;
 - (id)initWithBundleID:(NSString *)bundleID;
-- (id)initWithPath:(NSString *)path;
 - (id)initWithURL:(NSURL *)url;
 - (id)initWithPID:(pid_t)pid;
 - (id)initWithDescriptor:(NSAppleEventDescriptor *)desc;

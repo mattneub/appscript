@@ -2,7 +2,7 @@
  * MLCommandGlue.h
  *
  * /Applications/Mail.app
- * osaglue 0.2.0
+ * osaglue 0.3.0
  *
  */
 

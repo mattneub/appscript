@@ -7,12 +7,11 @@ int main (int argc, const char * argv[]) {
 	int err = 0;
 	
 	/*
-	 * The data to insert. Hardcoded here for demonstration purposes; modify the image path
-	 * to suit before running the demo.
+	 * The data to insert. Hardcoded here for demonstration purposes; modify to suit.
 	 */
 	NSString *subjectText = @"Hello!";
 	NSString *contentText = @"My favourite photo:\n\n";
-	NSString *attachmentPath = @"/PATH/TO/IMAGE.jpg";
+	NSString *attachmentPath = @"/Library/Desktop Pictures/Nature/Clown Fish.jpg";
     
 	/*
 	 * Create a new application object for Mail.

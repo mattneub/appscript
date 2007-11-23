@@ -2,7 +2,7 @@
  * MLApplicationGlue.m
  *
  * /Applications/Mail.app
- * osaglue 0.2.0
+ * osaglue 0.3.0
  *
  */
 
@@ -36,14 +36,8 @@
     return [self initWithTargetType: kASTargetName data: name];
 }
 
-// TO DO: initWithSignature
-
 - (id)initWithBundleID:(NSString *)bundleID {
     return [self initWithTargetType: kASTargetBundleID data: bundleID];    
-}
-
-- (id)initWithPath:(NSString *)path {
-    return [self initWithTargetType: kASTargetPath data: path];    
 }
 
 - (id)initWithURL:(NSURL *)url {

@@ -2,7 +2,7 @@
  * MLApplicationGlue.h
  *
  * /Applications/Mail.app
- * osaglue 0.2.0
+ * osaglue 0.3.0
  *
  */
 
@@ -19,7 +19,6 @@
 - (id)init;
 - (id)initWithName:(NSString *)name;
 - (id)initWithBundleID:(NSString *)bundleID;
-- (id)initWithPath:(NSString *)path;
 - (id)initWithURL:(NSURL *)url;
 - (id)initWithPID:(pid_t)pid;
 - (id)initWithDescriptor:(NSAppleEventDescriptor *)desc;

@@ -14,7 +14,6 @@ typedef enum {
 	kASTargetCurrent,
 	kASTargetName,
 	kASTargetBundleID,
-	kASTargetPath, // TO DO: delete initWithPath option? (clients can use fileURLs in -initWithURL:)
 	kASTargetURL,
 	kASTargetPID,
 	kASTargetDescriptor,
