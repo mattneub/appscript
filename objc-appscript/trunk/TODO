@@ -80,7 +80,7 @@ Might also provide shortcuts that return C ints and floats (note: any errors wou
 
 - returnID support; note: returnID is an argument to AECreateAppleEvent(), so we may want to move this call into AEMEvent and defer it long enough to give clients an opportunity to call -[AEMEvent setReturnID:]. Setting returnID in -[AEMApplication eventWith...] is another option, although the appscript layer would then need to avoid instantiating AEMEvent when a command is first called, again to allow clients an opportunity to set the returnID if they wish to.
 
-- AEMApplication initialisers should have option of returning NSError indicating reason for failure (couldn't find application, couldn't launch application, etc.)
+- add convenience shortcuts for +launchApplication:event:flags:error:, e.g. +launchApp:, +runApp:, +openFiles:withApp: (?)
 
 
 ======= aem/event.h =======
@@ -95,15 +95,17 @@ Might also provide shortcuts that return C ints and floats (note: any errors wou
 
 - check if kOSAErrorOffendingObject can be any type (the OSA API docs suggest that it may have to be an object specifier, but really aren't clear); currently, -sendWithError: returns anything for kAEMErrorOffendingObject when raising its own coercion error
 
+- add the following methods to AEMEvent:
 
-======= aem/connect.m =======
+	- (id)attributeForKeyword:(AEKeyword)key;
+	- (id)parameterForKeyword:(AEKeyword)key;
 
-- convenience wrappers for AEMLaunchApplication(): AEMLaunchApp(), AEMRunApp(), AEMOpenFilesWithApp()
+	- (void)removeAttributeForKeyword:(AEKeyword)key;
+	- (void)removeParameterForKeyword:(AEKeyword)key;
 
-- add an NSError** arg to AEMFindApplication(), AEMLaunchApplication()
+- add the following convenience method to AEMEvent(?):
 
-- all these C functions should probably become class methods of AEMApplication
-
+	- (AEMEvent *)unpackResultAsList;
 
 ======= aem query builder =======
 
@@ -131,9 +133,7 @@ Might also provide shortcuts that return C ints and floats (note: any errors wou
 
 - NSErrors should include human-readable default error description; could use GetMacOSStatusCommentString if on 10.4 or later (see Debugging.h), otherwise will need to supply a lookup table for common Carbon error codes, c.f. rb-appscript. Probably also a good idea to include a lookup table for pre-Leopard Cocoa Scripting error strings, c.f. rb-appscript.
 
-- should objc-appscript classes that are used by both aem and appscript layers be renamed to use AS prefix (e.g. AEMAlias -> ASAlias)? This might be less confusing for majority of users who use higher-level appscript API only. Should ALL classes be renamed to use 'AS' prefix, with API level indicated by secondary means?
-
-- should NSError domain - currently "AEMErrorDomain" - be renamed "ASErrorDomain"? (See above.)
+- should objc-appscript classes that are used by both aem and appscript layers be renamed to use AS prefix (e.g. AEMAlias -> ASAlias)? This might be less confusing for majority of users who use higher-level appscript API only. Should ALL classes be renamed to use 'AS' prefix, with API level indicated by secondary means? Or maybe a more distinctive 'OA'/'OCA'/'OAS'/'OCAS' prefix to avoid any confusion with 'AS' prefix used by parts of Carbon OSA API?
 
 - i386 safety? 64-bit safety? GC (-finalize) support?
 

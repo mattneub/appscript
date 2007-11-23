@@ -149,8 +149,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 217367201;
-			PBXWorkspaceStateSaveDate = 217367201;
+			PBXPerProjectTemplateStateSaveDate = 217551064;
+			PBXWorkspaceStateSaveDate = 217551064;
 		};
 		sourceControlManager = 4F0E63B00B6230AB00F8D0E1 /* Source Control */;
 		userBuildSettings = {
@@ -204,9 +204,9 @@
 	};
 	4F1E9DEE0B74EDCB00D4DCBF /* referencerenderer.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {615, 4396}}";
-			sepNavSelRange = "{0, 0}";
-			sepNavVisRange = "{0, 1323}";
+			sepNavIntBoundsRect = "{{0, 0}, {1207, 4368}}";
+			sepNavSelRange = "{210, 5}";
+			sepNavVisRange = "{0, 1013}";
 			sepNavVisRect = "{{0, 2505}, {700, 268}}";
 			sepNavWindowFrame = "{{277, 0}, {674, 832}}";
 		};
@@ -279,29 +279,29 @@
 	};
 	4F9BFD6A0CD4CD74003BDDE0 /* event.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1207, 2100}}";
-			sepNavSelRange = "{1751, 20}";
-			sepNavVisRange = "{1043, 1052}";
+			sepNavIntBoundsRect = "{{0, 0}, {924, 2226}}";
+			sepNavSelRange = "{3481, 31}";
+			sepNavVisRange = "{0, 2026}";
 			sepNavVisRect = "{{0, 0}, {794, 899}}";
 			sepNavWindowFrame = "{{476, 0}, {983, 1028}}";
 		};
 	};
 	4F9BFD6B0CD4CD74003BDDE0 /* event.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {910, 4382}}";
-			sepNavSelRange = "{694, 143}";
-			sepNavVisRange = "{0, 1711}";
+			sepNavIntBoundsRect = "{{0, 0}, {910, 4606}}";
+			sepNavSelRange = "{214, 52}";
+			sepNavVisRange = "{0, 1749}";
 			sepNavVisRect = "{{0, 0}, {794, 899}}";
 			sepNavWindowFrame = "{{292, 0}, {969, 1028}}";
 		};
 	};
 	4FDCB2EB0B6D0CD0009534FD /* application.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1207, 1988}}";
-			sepNavSelRange = "{970, 0}";
-			sepNavVisRange = "{365, 1000}";
+			sepNavIntBoundsRect = "{{0, 0}, {744, 2016}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{1150, 1775}";
 			sepNavVisRect = "{{0, 0}, {709, 899}}";
-			sepNavWindowFrame = "{{11, 0}, {803, 1028}}";
+			sepNavWindowFrame = "{{642, 0}, {803, 1028}}";
 		};
 	};
 	4FDCB2EC0B6D0CD0009534FD /* application.m */ = {
@@ -368,9 +368,9 @@
 	};
 	4FDCB2F50B6D0CD0009534FD /* specifier.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {611, 4102}}";
+			sepNavIntBoundsRect = "{{0, 0}, {611, 4158}}";
 			sepNavSelRange = "{520, 0}";
-			sepNavVisRange = "{0, 1600}";
+			sepNavVisRange = "{2530, 1521}";
 			sepNavVisRect = "{{0, 0}, {854, 955}}";
 			sepNavWindowFrame = "{{897, 196}, {670, 832}}";
 		};

@@ -11,7 +11,7 @@
 /**********************************************************************/
 // NSError userInfo constants
 
-NSString *kAEMErrorDomain				= @"AEMErrorDomain";
+NSString *kAEMErrorDomain				= @"net.sourceforge.appscript.objc-appscript.ErrorDomain";
 
 NSString *kAEMErrorNumberKey			= @"ErrorNumber";
 NSString *kAEMErrorStringKey			= @"ErrorString";

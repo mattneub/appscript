@@ -14,7 +14,7 @@
 /**********************************************************************/
 // NSError constants
 
-NSString *kAEMErrorDomain; // @"AEMErrorDomain"; domain name for NSErrors // TO DO: rename "ASErrorDomain"?
+NSString *kAEMErrorDomain; // @"net.sourceforge.appscript.objc-appscript.ErrorDomain"; domain name for NSErrors returned by appscript
 
 /*
  * -sendWithError: will return an NSError containing error code, localized description, and a userInfo dictionary
@@ -63,7 +63,7 @@ typedef enum {
 /**********************************************************************/
 // Event class
 /*
- * Note: clients shouldn't instantiate this directly; instead use AEMApplication methods.
+ * Note: clients shouldn't instantiate AEMEvent directly; instead use AEMApplication -eventWith... methods.
  */
 
 @interface AEMEvent : NSObject {
@@ -110,7 +110,6 @@ typedef enum {
 
 - (AEMEvent *)setParameter:(id)value forKeyword:(AEKeyword)key;
 
-// TO DO: attribute and parameter accessor, deletion methods
 
 // Specify an AE type to coerce the reply descriptor to before unpacking it.
 // (Default = unpack as typeWildCard)
@@ -149,9 +148,11 @@ typedef enum {
 
 - (id)sendWithMode:(AESendMode)sendMode timeout:(long)timeoutInTicks error:(NSError **)error;
 
+// shortcuts for -sendWithMode:timeout:error:
+
 - (id)sendWithError:(NSError **)error;
 
-- (id)send; // TO DO: delete?
+- (id)send;
 
 @end
 
