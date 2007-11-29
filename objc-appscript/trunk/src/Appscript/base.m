@@ -20,6 +20,13 @@
  *	- (NSArray *)comparableData;
  */
 
+- (id)init {
+	self = [super init];
+	if (!self) return self;
+	cachedDesc = nil;
+	return self;
+}
+
 // pack specifier into NSAppleEventDescriptor
 - (NSAppleEventDescriptor *)packSelf:(id)codecs { // stub method; subclasses will override this
 	return nil;
