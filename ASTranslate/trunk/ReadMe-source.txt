@@ -2,7 +2,7 @@ ASTranslate project source
 
 Requirements:
 
-- appscript 0.16.1 <http://appscript.sourceforge.net>
+- appscript 0.16.1+ <http://appscript.sourceforge.net>
 
 - pyobjc <http://pyobjc.sourceforge.net>
 
@@ -10,6 +10,6 @@ Requirements:
 
 --
 
-To build, cd to ASTranslate-source-0.3.0 directory and run:
+To build, cd to ASTranslate-source-0.3.1 directory and run:
 
 	python setup.py py2app

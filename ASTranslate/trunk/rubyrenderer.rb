@@ -59,7 +59,7 @@ class Application
 		params = []
 		keyword_params = unpack_param(request, 'KPar', app_data)
 		keyword_params.each do |key, value|
-			params << "#{param_by_code[key.code].inspect} => #{value.inspect}"
+			params << "#{param_by_code[key].inspect} => #{value.inspect}"
 		end
 		# format attributes
 		result_type = unpack_param(request, 'RTyp', app_data)

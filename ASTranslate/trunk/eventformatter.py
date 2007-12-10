@@ -1,4 +1,4 @@
-#!/usr/local/bin/python2.4
+#!/usr/bin/python
 
 import struct, traceback
 from CarbonX import kAE, kOSA
@@ -45,9 +45,14 @@ def makeCustomSendProc(rubyapp, appendResult, origSendProc):
 				_appCache[(target.type, target.data)] = (app, appData, commandsbycode)
 			app, appData, commandsbycode = _appCache[(target.type, target.data)]
 			# unpack parameters
-			params = appData.unpack(event.AECoerceDesc(kAE.typeAERecord))
-			resultType = params.pop(aem.AEType('rtyp'), None)
-			directParam = params.pop(aem.AEType('----'), None)
+			
+			desc = event.AECoerceDesc(kAE.typeAERecord)
+			params = {}
+			for i in range(desc.AECountItems()):
+				key, value = desc.AEGetNthDesc(i + 1, kAE.typeWildCard)
+				params[key] = appData.unpack(value)
+			resultType = params.pop('rtyp', None)
+			directParam = params.pop('----', None)
 			
 			try:
 				subject = appData.unpack(event.AEGetAttributeDesc(kOSA.keySubjectAttr, kAE.typeWildCard))
@@ -57,13 +62,13 @@ def makeCustomSendProc(rubyapp, appendResult, origSendProc):
 			# apply special cases
 			if subject is not None:
 				target = subject
-			elif eventcode == 'corecrel' and params.has_key(aem.AEType('insh')):
+			elif eventcode == 'corecrel' and params.has_key('insh'):
 				# Special case: if 'make' command has an 'at' parameter, use 'at' parameter as target reference
-				target = params.pop(aem.AEType('insh'))
+				target = params.pop('insh')
 			elif eventcode == 'coresetd':
 				# Special case: for 'set' command, use direct parameter as target reference and use 'to' parameter for direct argument
 				target = directParam
-				directParam = params.pop(aem.AEType('data'))
+				directParam = params.pop('data')
 			elif isinstance(directParam, appscript.reference.Reference):
 				# Special case: if direct parameter is a reference, use this as target reference
 				target = directParam
@@ -76,7 +81,7 @@ def makeCustomSendProc(rubyapp, appendResult, origSendProc):
 			if directParam is not None:
 				args.append(`directParam`)
 			for key, val in params.items():
-				args.append('%s=%r' % (argNames[key.code], val))
+				args.append('%s=%r' % (argNames[key], val))
 			if resultType:
 				args.append('resulttype=%r' % resultType)
 			if modeFlags & kAE.kAEWaitReply != kAE.kAEWaitReply:
@@ -118,7 +123,7 @@ if __name__ == '__main__':
 	from subprocess import Popen
 	import aem
 	
-	_rubyproc = Popen(['ruby', '/Users/has/ruby_renderer.rb'])
+	_rubyproc = Popen(['/usr/bin/ruby', '/Users/has/appscript/ASTranslate/rubyrenderer.rb'])
 	_rubyapp = aem.Application(pid=_rubyproc.pid)
 	
 	
@@ -131,7 +136,8 @@ if __name__ == '__main__':
 		scpt.compile('''
 		--ignoring application responses
 		--with timeout of 20 seconds
-		--tell app "Finder" to get folder 1 of home as alias
+		
+		tell app "Finder" to get folder 1 of home as alias
 		
 		--tell app "textedit" to get end of documents
 		
@@ -141,11 +147,13 @@ if __name__ == '__main__':
 		
 		--tell app "finder" to get items (folder "Documents") thru (file -2) of folder "has" of folder "users" of startup disk
 		
-		tell app "finder" to get items "Documents" thru -2 of home
+		--tell app "finder" to get items "Documents" thru -2 of home
 		
 		--tell app "textedit" to get words (word 3) thru (word 5) of document 1
 		
 		--tell application "TextEdit" to make document
+		
+		--tell application "RagTime 6" to get note alert text
 		
 		--end
 		--end

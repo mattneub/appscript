@@ -36,8 +36,12 @@ NOTES
 
 - Ruby translations are only available if rb-appscript is installed on the host machine's default Ruby installation. (The command line ruby interpreter used by ASTranslate is determined by the host's /bin/sh $PATH environment variable.)
 
+- Source code is available via svn; see <http://appscript.sourceforge.net>.
+
 -----------------------------------
 HISTORY
+
+2007-12-10 -- 0.3.1; fixed a bug where commands wouldn't translate if a parameter's AE code was also used by a class/property/enumerator in the same application dictionary [MM]
 
 2007-06-25 -- 0.3.0; added rb-appscript support; subject ('subj') attributes now display correctly
 
