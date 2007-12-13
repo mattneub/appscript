@@ -36,7 +36,7 @@ static NSAppleEventDescriptor *kEnumAND,
 
 
 // blank record used by -packSelf: to construct test descriptors
-static NSAppleEventDescriptor *kNullRecord;
+static NSAppleEventDescriptor *kEmptyRecord;
 
 
 void initTestModule(void) { // called automatically
@@ -56,7 +56,7 @@ void initTestModule(void) { // called automatically
 	ENUMERATOR(OR);
 	ENUMERATOR(NOT);
 	// miscellaneous
-	kNullRecord = [[NSAppleEventDescriptor alloc] initRecordDescriptor];
+	kEmptyRecord = [[NSAppleEventDescriptor alloc] initRecordDescriptor];
 }
 
 void disposeTestModule(void) {
@@ -74,7 +74,7 @@ void disposeTestModule(void) {
 	[kEnumOR release];
 	[kEnumNOT release];
 	// miscellaneous
-	[kNullRecord release];
+	[kEmptyRecord release];
 }
 
 
@@ -152,7 +152,7 @@ void disposeTestModule(void) {
 
 - (NSAppleEventDescriptor *)packSelf:(id)codecs {
 	if (!cachedDesc) {
-		cachedDesc = [kNullRecord coerceToDescriptorType: typeCompDescriptor];
+		cachedDesc = [[kEmptyRecord coerceToDescriptorType: typeCompDescriptor] retain];
 		[cachedDesc setDescriptor: [codecs pack: operand1] forKeyword: keyAEObject1];
 		[cachedDesc setDescriptor: [self operator] forKeyword: keyAECompOperator];
 		[cachedDesc setDescriptor: [codecs pack: operand2] forKeyword: keyAEObject2];
@@ -330,7 +330,7 @@ void disposeTestModule(void) {
 
 - (NSAppleEventDescriptor *)packSelf:(id)codecs {
 	if (!cachedDesc) {
-		cachedDesc = [kNullRecord coerceToDescriptorType: typeCompDescriptor];
+		cachedDesc = [[kEmptyRecord coerceToDescriptorType: typeCompDescriptor] retain];
 		[cachedDesc setDescriptor: [codecs pack: operand2] forKeyword: keyAEObject1];
 		[cachedDesc setDescriptor: [self operator] forKeyword: keyAECompOperator];
 		[cachedDesc setDescriptor: [codecs pack: operand1] forKeyword: keyAEObject2];
@@ -386,7 +386,7 @@ void disposeTestModule(void) {
 
 - (NSAppleEventDescriptor *)packSelf:(id)codecs {
 	if (!cachedDesc) {
-		cachedDesc = [kNullRecord coerceToDescriptorType: typeLogicalDescriptor];
+		cachedDesc = [[kEmptyRecord coerceToDescriptorType: typeLogicalDescriptor] retain];
 		[cachedDesc setDescriptor: [self operator] forKeyword: keyAELogicalOperator];
 		[cachedDesc setDescriptor: [codecs pack: operands] forKeyword: keyAELogicalTerms];
 	}

@@ -25,8 +25,8 @@ Basic get/set, allowing client to specify the result type for 'get' (note: these
 
 	-getAs:
 	-getAs:error:
-	-getListOf:
-	-getListOf:error:
+	-getAsListOf:
+	-getAsListOf:error:
 
 	-setTo:
 	-setTo:error:
@@ -39,21 +39,27 @@ Basic get/set, allowing client to specify the result type for 'get' (note: these
 
 		[[[textedit documents] text] getListOf: typeUnicodeText]
 
-Might also provide shortcuts for getting some common types:
+Might also provide shortcuts for getting the most common types:
 
+	-getAsObject
 	-getAsString
-	-getAsStringWithError:
 	-getAsNumber
-	-getAsNumberWithError:
-	-getListOfString
-	-getListOfStringWithError:
+	-getAsList
+	-getAsListOfString
 	etc.
+
+possibly with 'error:' variants instead of/as well:
+
+	-getAsObjectWithError:
+	-getAsListOfStringWithError:
+	etc.
+
 
 Might also provide shortcuts that return C ints and floats (note: any errors would be indicated by error arg only):
 
-	-getIntWithError:
-	-getUIntWithError:
-	-getDoubleWithError:
+	-getAsIntWithError:
+	-getAsUIntWithError:
+	-getAsDoubleWithError:
 	etc.
 
 (Note: shortcuts that return C primitives will also be useful if osaglue provides a 'strict' option for commands where numerical and boolean parameters take C ints and floats rather than NSNumbers and AEMBooleans.)

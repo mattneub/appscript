@@ -27,6 +27,11 @@
 	return self;
 }
 
+- (void)dealloc {
+	[cachedDesc release];
+	[super dealloc];
+}
+
 // pack specifier into NSAppleEventDescriptor
 - (NSAppleEventDescriptor *)packSelf:(id)codecs { // stub method; subclasses will override this
 	return nil;

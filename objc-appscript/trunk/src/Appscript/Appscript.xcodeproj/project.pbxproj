@@ -166,8 +166,8 @@
 				4F1E9F410B75305800D4DCBF /* constant.m */,
 				4FDCB2F30B6D0CD0009534FD /* reference.h */,
 				4FDCB2F40B6D0CD0009534FD /* reference.m */,
-				4F1E9DED0B74EDCB00D4DCBF /* referencerenderer.h */,
 				4F1E9DEE0B74EDCB00D4DCBF /* referencerenderer.m */,
+				4F1E9DED0B74EDCB00D4DCBF /* referencerenderer.h */,
 			);
 			name = base;
 			sourceTree = "<group>";
