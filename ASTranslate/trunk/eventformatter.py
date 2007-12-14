@@ -62,9 +62,13 @@ def makeCustomSendProc(rubyapp, appendResult, origSendProc):
 			# apply special cases
 			if subject is not None:
 				target = subject
-			elif eventcode == 'corecrel' and params.has_key('insh'):
-				# Special case: if 'make' command has an 'at' parameter, use 'at' parameter as target reference
-				target = params.pop('insh')
+# Note: appscript now only packs target as 'at' parameter if it's an insertion location; if it's an object specifier, it's packed as subject
+# attribute instead. (This is for better application compatibility, since not all applications treat the 'make' command's 'at' parameter
+# and subject attribute interchangeably, so users need to have the final say here. While it would be possible to show the special-case
+# form for insertion locs only here, the simplest thing is just to use the non-special-case format where the 'at' parameter appears as-is.
+#			elif eventcode == 'corecrel' and params.has_key('insh'):
+#				# Special case: if 'make' command has an 'at' parameter, use 'at' parameter as target reference
+#				target = params.pop('insh')
 			elif eventcode == 'coresetd':
 				# Special case: for 'set' command, use direct parameter as target reference and use 'to' parameter for direct argument
 				target = directParam
