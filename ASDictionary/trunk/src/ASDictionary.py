@@ -175,6 +175,7 @@ class AEProgress:
 	kClassKey = AEType('pcls')
 	kClassValue = AEType('ExpR')
 	#kNameKey = AEType('pnam')
+	kSuccessKey = AEType('Succ')
 	kSourceKey = AEType('Sour')
 	kDestKey = AEType('Dest')
 	kErrorKey = AEType('ErrS')
@@ -196,9 +197,11 @@ class AEProgress:
 		self._results[-1][self.kDestKey] = mactypes.File(outpath)
 		
 	def didsucceed(self):
+		self._results[-1][self.kSuccessKey] = True
 		self._results[-1][self.kErrorKey] = self.kMissingValue
 		
 	def didfail(self, errormessage):
+		self._results[-1][self.kSuccessKey] = False
 		self._results[-1][self.kDestKey] = self.kMissingValue
 		self._results[-1][self.kErrorKey] = errormessage
 	
