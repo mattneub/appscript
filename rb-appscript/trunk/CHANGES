@@ -1,4 +1,4 @@
-2007-11-?? -- 0.5.0 (beta 2)
+2007-12-?? -- 0.5.0 (beta 2)
 
 - added hfs_path, #hfs_path methods to MacTypes::Alias, MacTypes::FileURL; existing path, #path methods now use CFURL functions to convert between POSIX paths and URLs
 
@@ -24,7 +24,15 @@
 
 - improved behaviour of Appscript::Application#AS_new_reference when argument is nil
 
-- OSAX::Application initialiser now optionally accepts static terminology 'glue' module as its second argument
+- OSAX::Application initialiser now optionally accepts static terminology 'glue' module as its second argument. This is partly to provide scripts that need to run in 64-bit processes with a workaround for accessing the OSAX module, which can't yet automatically obtain osax terminology under 64-bit (see TODO file).
+
+- fixed minor formatting flaw in generic references' #to_s method
+
+- added process_exists_for_path?, process_exists_for_pid?, process_exists_for_url?, process_exists_for_desc? class methods to AEM::Application
+
+- added Appscript::Application#is_running? method
+
+- deprecated AEM::Application.is_running?; existing code should be updated to use process_exists_for_path? method instead
 
 
 2007-08-17 -- 0.4.0 (beta 1)

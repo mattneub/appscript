@@ -107,9 +107,34 @@ module AEM
 			Connect.launch_app_with_launch_event(path)
 		end
 		
-		def Application.is_running?(path)
-			# Checks if a local application is running.
-			return Connect.is_running?(path)
+		def Application.is_running?(path) # TO DO: delete
+			$stderr.puts('Warning! AEM::Application.is_running? is deprecated; use process_exists_for_path? instead.')
+			return Connect.process_exists_for_path?(path)
+		end
+		
+		def Application.process_exists_for_path?(path)
+			# Does a local process launched from the specified application file exist?
+			# Note: if path is invalid, an AE::MacOSError is raised.
+			return Connect.process_exists_for_path?(path)
+		end
+	
+		def Application.process_exists_for_pid?(pid)
+			# Is there a local application process with the given unix process id?
+			return Connect.process_exists_for_pid?(pid)
+		end
+		
+		def Application.process_exists_for_url?(url)
+			# Does an application process specified by the given eppc:// URL exist?
+			# Returns false if process doesn't exist or if access to it isn't allowed.
+			# (Implementation note: this method sends an Apple event to the specified process and checks for errors.)
+			return Connect.process_exists_for_url?(url)
+		end
+		
+		def Application.process_exists_for_desc?(desc)
+			# Does an application process specified by the given AEAddressDesc exist?
+			# Returns false if process doesn't exist or if access to it isn't allowed.
+			# (Implementation note: this method sends an Apple event to the specified process and checks for errors.)
+			return Connect.process_exists_for_desc?(desc)
 		end
 		
 		#######

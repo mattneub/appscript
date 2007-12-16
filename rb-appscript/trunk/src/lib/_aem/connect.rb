@@ -1,4 +1,4 @@
-#!/usr/local/bin/ruby
+#!/usr/bin/ruby
 # Copyright (C) 2006 HAS. 
 # Released under MIT License.
 
@@ -86,8 +86,11 @@ module Connect
 		end
 	end
 	
-	def Connect.is_running?(path)
-		# Is a local application running?
+	##
+	
+	def Connect.process_exists_for_path?(path)
+		# Does a local process launched from the specified application file exist?
+		# Note: if path is invalid, an AE::MacOSError is raised.
 		begin
 			AE.psn_for_application_path(path)
 			return true
@@ -99,6 +102,42 @@ module Connect
 			end
 		end
 	end
+
+	def Connect.process_exists_for_pid?(pid)
+		# Is there a local application process with the given unix process id?
+		begin
+			AE.psn_for_process_id(pid)
+			return true
+		rescue AE::MacOSError => err
+			if err.to_i == -600
+				return false
+			else
+				raise
+			end
+		end
+	end
+	
+	def Connect.process_exists_for_url?(url)
+		# Does an application process specified by the given eppc:// URL exist?
+		# Note: this will send a 'launch' Apple event to the target application.
+		return process_exists_for_desc?(AE::AEDesc.new(KAE::TypeApplicationURL, url))
+	end
+	
+	def Connect.process_exists_for_desc?(desc)
+		# Does an application process specified by the given AEAddressDesc exist?
+		# Returns false if process doesn't exist OR remote Apple events aren't allowed.
+		# Note: this will send a 'launch' Apple event to the target application.
+		begin
+			# will usually raise error -1708 if process is running (and responding to events), 
+			# and various errors if the process doesn't exist/can't be reached
+			Send::Event.new(desc, 'ascrnoop').send
+		rescue Send::CommandError => err
+			return (not [-600, -905].include?(err.to_i)) # not running/no network access
+		end
+		return true
+	end
+	
+	##
 	
 	CurrentApp = make_address_desc([0, KCurrentProcess])
 	

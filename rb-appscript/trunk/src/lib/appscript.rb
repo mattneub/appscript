@@ -81,12 +81,13 @@ module Appscript
 		def _init_help_agent
 			begin
 				apppath = FindApp.by_id(ASDictionaryBundleID)
-				is_running = AEM::Application.is_running?(apppath)
+				asdictionary_is_running = AEM::Application.process_exists_for_path?(apppath)
 				@_help_agent = AEM::Application.by_path(apppath)
-				if not is_running # hide ASDictionary after launching it
+				if not asdictionary_is_running # hide ASDictionary after launching it # TO DO: something less kludgy
 					AEM::Application.by_path(FindApp.by_id('com.apple.systemevents')).event('coresetd', {
 							'----' => AEM.app.elements('prcs').by_name('ASDictionary').property('pvis'), 
 							'data' => false}).send
+					# TO DO: need to kludge a short (1 sec?) delay here as a workaround for ASDictionary's current event handling glitches 
 				end
 				return true
 			rescue FindApp::ApplicationNotFoundError
@@ -314,9 +315,9 @@ module Appscript
 			s= @_call[0]
 			@_call[1, @_call.length].each do |name, args|					if name == :[]
 					if args.length == 1
-						s += "[#{args[0]}]"
+						s += "[#{args[0].inspect}]"
 					else
-						s += "[#{args[0]}, #{args[1]}]"
+						s += "[#{args[0].inspect}, #{args[1].inspect}]"
 					end
 				else
 					if args.length > 0
@@ -501,7 +502,7 @@ module Appscript
 			rescue => e
 				if e.is_a?(AEM::CommandError)
 					if [-600, -609].include?(e.number) and @AS_app_data.constructor == :by_path
-						if not AEM::Application.is_running?(@AS_app_data.identifier)
+						if not AEM::Application.process_exists_for_path?(@AS_app_data.identifier)
 							if code == 'ascrnoop'
 								AEM::Application.launch(@AS_app_data.identifier)
 							elsif code != 'aevtoapp'
@@ -586,6 +587,25 @@ module Appscript
 		end
 		
 		alias_method :inspect, :to_s
+		
+		#######
+		# Utility methods
+		
+		def is_running?
+			identifier = @AS_app_data.identifier
+			case @AS_app_data.constructor
+				when :by_path
+					return AEM::Application.process_exists_for_path?(identifier)
+				when :by_pid
+					return AEM::Application.process_exists_for_pid?(identifier)
+				when :by_url
+					return AEM::Application.process_exists_for_url?(identifier)
+				when :by_aem_app
+					return AEM::Application.process_exists_for_desc?(identifier.address_desc)
+			else # when :current
+				return true
+			end
+		end
 		
 		#######
 		# Public properties and methods; these are called by end-user and other clients (e.g. generic references)

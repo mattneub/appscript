@@ -494,6 +494,18 @@ rbAE_psnForApplicationPath(VALUE self, VALUE path)
 
 
 static VALUE
+rbAE_psnForPID(VALUE self, VALUE pid)
+{
+	OSStatus err = noErr;
+	ProcessSerialNumber psn = {0, kNoProcess};
+
+	err = GetProcessForPID(NUM2INT(pid), &psn);
+	if (err != 0) rbAE_raiseMacOSError("Can't get next process.", err); // -600 if process not found
+	return rb_ary_new3(2, INT2NUM(psn.highLongOfPSN), INT2NUM(psn.lowLongOfPSN));
+}
+
+
+static VALUE
 rbAE_launchApplication(VALUE self, VALUE path, VALUE firstEvent, VALUE flags)
 {
 	FSRef appRef;
@@ -936,6 +948,7 @@ Init_ae (void)
 	
 	rb_define_module_function(mAE, "find_application", rbAE_findApplication, 3);
 	rb_define_module_function(mAE, "psn_for_application_path", rbAE_psnForApplicationPath, 1);
+	rb_define_module_function(mAE, "psn_for_process_id", rbAE_psnForPID, 1);
 	rb_define_module_function(mAE, "launch_application", rbAE_launchApplication, 3);
 	
 	rb_define_module_function(mAE, "convert_posix_path_to_url", 

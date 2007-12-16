@@ -25,7 +25,7 @@
 
 <h2>The <code>Application</code> class</h2>
 
-<p>The <code>Application</code> class represents an application to which Apple events will be sent. Its constructor allows applications to be identified in one of four ways: by full path, by eppc URL, by custom <code>AEAddressDesc</code>, or the host application if no other value is given. Its main method, <code>event</code>, is used to construct the Apple events to send. Several utility methods are also provided.</p>
+<p>The <code>Application</code> class represents an application to which Apple events will be sent. Its constructor allows applications to be identified in one of four ways: by full path, by eppc URL, by custom <code>AEAddressDesc</code>, or the host application if no other value is given. Its main method, <code>#event</code>, is used to construct the Apple events to send. Several utility methods are also provided.</p>
 
 <pre><code>Application -- the target application
 
@@ -35,9 +35,31 @@
                 already running, and send it a 'ascrnoop' event
             path : string -- application's path, e.g. '/Applications/iCal.app'
 
-        is_running?(path) -- Is an application currently running?
+        process_exists_for_path?(path) -- Does a local process launched
+                from the specified application file exist?
             path : string -- application's path, e.g. '/Applications/iCal.app'
+            Result : boolean -- Note: if path is invalid, an AE::MacOSError
+                    is raised.
+
+        process_exists_for_pid?(pid) -- Is there a local application process
+                with the given unix process id?
+			return Connect.process_exists_for_pid?(pid)
+            pid : integer
             Result : boolean
+		
+        process_exists_for_url?(url) -- Does an application process specified
+                by the given eppc:// URL exist?
+            url : string -- url for remote process
+                    (e.g. 'eppc://user:pass@0.0.0.1/TextEdit')
+            Result : boolean -- Returns false if process doesn't exist, or if
+                    access isn't allowed.
+
+        process_exists_for_desc?(desc) -- Does an application process specified
+                by the given AEAddressDesc exist?
+            desc : AEDesc -- AEAddressDesc for application
+            Result : boolean -- Returns false if process doesn't exist, or if
+                    access isn't allowed.
+
     
     Constructors:
 
@@ -104,22 +126,22 @@ KAE::TypeProcessSerialNumber</code></pre>
 
 <h2>Transactions</h2>
 
-<p>The <code>begin_transaction</code> and <code>end_transaction</code> methods are used to start and stop transaction sessions for applications that support this. All events <em>created</em> while a transaction session is active will be identified as part of that transaction.</p>
+<p>The <code>#begin_transaction</code> and <code>#end_transaction</code> methods are used to start and stop transaction sessions for applications that support this. All events <em>created</em> while a transaction session is active will be identified as part of that transaction.</p>
 
 <p>Note that during a transaction, sending the application an event not created during that transaction will cause an error. Similarly, sending the application an event created during a transaction after that transaction has ended will cause an error.</p>
 
-<p>The <code>end_transaction</code> method must be called to close both successful and failed transactions on completion. If a transaction session is accidentally left open, aem will attempt to close it when the <code>Application</code> object is garbage-collected, although this cannot be guaranteed to succeed.</p>
+<p>The <code>#end_transaction</code> method must be called to close both successful and failed transactions on completion. If a transaction session is accidentally left open, aem will attempt to close it when the <code>Application</code> object is garbage-collected, although this cannot be guaranteed to succeed.</p>
 
 
 <h2>Reconnecting to local applications</h2>
 
-<p>Because local applications are identified by process serial number, an existing <code>Application</code> object created using the <code>path</code> argument will no longer hold a valid <code>AEAddressDesc</code> if the target application quits. Sending events to an invalid address will cause a <code>CommandError</code> -600 ("application isn't running") or -609 ("connection is invalid") to be raised.</p>
+<p>Because local applications are identified by process serial number, an existing <code>Application</code> object created using the <code>by_path</code> constructor will no longer hold a valid <code>AEAddressDesc</code> if the target application subsequently quits. Sending events to an invalid address will cause a <code>CommandError</code> -600 ("application isn't running") or -609 ("connection is invalid") to be raised.</p>
 
-<p>The <code>is_running?</code> class method can be used to check if a local application is running or not, given its full path.</p>
+<p>The <code>process_exists_for_path?</code> class method can be used to check if a local application is running or not, given its full path.</p>
 
-<p>Calling the <code>reconnect</code> method will create a new <code>AEAddressDesc</code> for an existing <code>Application</code> object. If the application is not running at the time, it will be started automatically.</p>
+<p>Calling the <code>#reconnect</code> method will create a new <code>AEAddressDesc</code> for an existing <code>Application</code> object that was originally created via the <code>by_path</code> constructor. If the application is not running at the time, it will be started automatically.</p>
 
-<p>Note that only <code>Event</code> instances created after <code>reconnect</code> is called will receive the new <code>AEAddressDesc</code>.  Any <code>Event</code> instances created before <code>reconnect</code> is called will still contain the old <code>AEAddressDesc</code>. Also note that the <code>reconnect</code> method will only work for <code>Application</code> objects created using the <code>by_path</code> constructor.</p>
+<p>Note that only <code>Event</code> instances created after <code>#reconnect</code> is called will receive the new <code>AEAddressDesc</code>.  Any <code>Event</code> instances created before <code>reconnect</code> is called will still contain the old <code>AEAddressDesc</code>.</p>
 
 
 </div>

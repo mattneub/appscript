@@ -3,7 +3,7 @@
 for f in `ls | grep '^test_'`;
 do
 	echo $f
-	/usr/local/bin/ruby -w $f
+	/usr/bin/ruby -w $f
 	echo
 	echo
 done
