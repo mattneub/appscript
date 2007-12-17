@@ -95,6 +95,8 @@ Might also provide shortcuts that return C ints and floats (note: any errors wou
 
 - what to do if an AEMEvent/ASCommand attribute or parameter is nil? raise error? ignore it?
 
+- -setParameter:forKeyword:, etc. should raise 'unexpected error' exception instead of returning nil
+
 - include an aem-/appscript-style representation of Apple event in localizedDescription string of NSErrors returned by -[AEMEvent sendWithError:], -[ASEvent sendWithError:] ?
 
 - -[AEMEvent description] should return aem-style representation of event
@@ -121,10 +123,12 @@ Might also provide shortcuts that return C ints and floats (note: any errors wou
 
 - see also .h files
 
+- eliminate minor risk of leaking memory due to race conditions in -packSelf: methods
+
 
 ======= aem type converter =======
 
-- should AEMCodecs raise exception if -pack, -unpack methods fail?
+- should AEMCodecs raise exception if -unpack method fails? (probably)
 
 - finish AEMCodecs specifier unpackers
 
@@ -139,7 +143,7 @@ Might also provide shortcuts that return C ints and floats (note: any errors wou
 
 - NSErrors should include human-readable default error description; could use GetMacOSStatusCommentString if on 10.4 or later (see Debugging.h), otherwise will need to supply a lookup table for common Carbon error codes, c.f. rb-appscript. Probably also a good idea to include a lookup table for pre-Leopard Cocoa Scripting error strings, c.f. rb-appscript.
 
-- should objc-appscript classes that are used by both aem and appscript layers be renamed to use AS prefix (e.g. AEMAlias -> ASAlias)? This might be less confusing for majority of users who use higher-level appscript API only. Should ALL classes be renamed to use 'AS' prefix, with API level indicated by secondary means? Or maybe a more distinctive 'OA'/'OCA'/'OAS'/'OCAS' prefix to avoid any confusion with 'AS' prefix used by parts of Carbon OSA API?
+- should objc-appscript classes that are used by both aem and appscript layers be renamed to use AS prefix (e.g. AEMAlias -> ASAlias)? This might be less confusing for majority of users who use higher-level appscript API only. Should ALL classes use 'AS' prefix (e.g. AEMApplication -> ASAEMApplication)? Or maybe a more distinctive 'OA'/'OCA'/'OAS'/'OCAS' prefix to avoid any confusion with 'AS' prefix used by parts of Carbon OSA API?
 
 - i386 safety? 64-bit safety? GC (-finalize) support?
 
