@@ -20,6 +20,9 @@ from CarbonX import kAE
 from osaterminology import getterminology, makeidentifier
 from osadictionary import *
 
+
+import applescripttypes, appscripttypes
+
 ######################################################################
 # PRIVATE
 ######################################################################
@@ -282,8 +285,7 @@ class AppscriptHandler(Handler):
 			d['name'] += '_'
 		Handler.start_command(self, d)
 	
-	def result(self):	
-		import applescripttypes, appscripttypes
+	def result(self):
 		# convert AppleScript type names to AE codes to appscript type names
 		# (note: wouldn't need to do this if appscript used AppleScript-style type names)
 		if not self.applescripttypesbyname:

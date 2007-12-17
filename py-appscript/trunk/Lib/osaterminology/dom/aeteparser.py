@@ -21,6 +21,9 @@ from osadictionary import *
 from osaterminology import getterminology, makeidentifier
 from osaterminology.sax import aeteparser
 
+# moved following from typemodule methods as putting them there causes import(?) problems in ASDictionary
+import applescripttypes, appscripttypes, objcappscripttypes
+
 
 ######################################################################
 
@@ -197,7 +200,6 @@ class AppleScriptParser(_Parser):
 	elementnamesareplural = False
 	
 	def typemodule(self):
-		import applescripttypes
 		return applescripttypes
 
 
@@ -208,7 +210,6 @@ class AppscriptParser(_Parser):
 	elementnamesareplural = True
 	
 	def typemodule(self):
-		import appscripttypes
 		return appscripttypes
 	
 	def start_command(self, code, name, description, directarg, reply):
@@ -221,7 +222,6 @@ class ObjCAppscriptParser(AppscriptParser):
 	asname = staticmethod(makeidentifier.getconverter('objc-appscript'))
 	
 	def typemodule(self):
-		import objcappscripttypes
 		return objcappscripttypes
 
 

@@ -1,5 +1,9 @@
 HISTORY
 
+2007-12-17 -- 0.10.?
+- added 'isrunning'/'is_running?'/'isRunning' to reserved py-/rb-/objc-appscript keywords
+- rearranged some module imports in dom.aeteparser, dom.sdefparser as they were causing errors in ASDictionary
+
 2007-07-26 -- 0.10.4
 - sax.aeteparser no longer raises error if aete isn't fully parsed
 

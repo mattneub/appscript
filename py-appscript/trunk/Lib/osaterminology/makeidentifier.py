@@ -155,6 +155,9 @@ kObjCAppscriptReservedWords = [
 	"NOT",
 	"OR",
 	
+	# miscellaneous
+	"isRunning",
+	
 	# used by osaglue-generated XXApplication classes
 	"initWithName",
 	"initWithBundleID",
@@ -226,6 +229,7 @@ kPyAppscriptReservedWords = [
 	"begintransaction",
 	"aborttransaction",
 	"endtransaction",
+	"isrunning",
 	"resulttype",
 	"ignore",
 	"timeout",
@@ -304,6 +308,7 @@ kRbAppscriptReservedWords = [
 	"is_a?",
 	"is_in",
 	"is_not_in",
+	"is_running?",
 	"keywords",
 	"kind_of?",
 	"last",
@@ -400,10 +405,6 @@ class CamelCaseConverter(_Converter):
 
 
 class UnderscoreConverter(_Converter):
-
-	def __init__(self, reservedWords):
-		self._cache = {}
-		self._reservedWords = set(reservedWords)
 		
 	def convert(self, s):
 		"""Convert string to identifier.
