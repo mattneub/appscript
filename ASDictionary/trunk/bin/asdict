@@ -129,7 +129,7 @@ SYNOPSIS
 DESCRIPTION
 
     asdict provides options for viewing and exporting scriptable application
-    and scripting addition dictionaries. It has three operating modes:
+    dictionaries. It has three operating modes:
     
     *    interactive viewer
     *    non-interactive viewer
@@ -165,10 +165,12 @@ DESCRIPTION
     *    py-appscript      (py)
     *    rb-appscript      (rb)
     
-    The -H and -N options are mutually exclusive. If neither is given, the
-    viewer runs in interactive mode (the default).
+    The -H, -T and -N options are mutually exclusive. If none of these
+    options is given, the viewer runs in interactive mode (the default).
     
-    Note: the viewer modes don't currently support scripting additions.
+    The -H and -T export options may be used to export both application and 
+    scripting addition dictionaries. The interactive and non-interactive 
+    viewer modes currently support applications only.
     
 """ + _viewerhelp + """
 
@@ -182,9 +184,6 @@ EXAMPLES
     iCal> -u
     iCal> -t view_calendar
     iCal> -t calendar -i calendar -r calendar
-    
-    asdict -s as StandardAdditions -t display dialog
-    StandardAdditions> -t dialog reply
     
     asdict Finder
     Finder> default style
@@ -328,11 +327,10 @@ vieweroptions = ' '.join(args[1:]).strip()
 # render/export
 ensureasdictionary()
 
-if opts.has_key('-H') or opts.has_key('-T'): 
-	if opts.has_key('-H'): # export HTML
-		print doevent('HTML', Appl=appname, Styl=style, Opts=' '.join(argv[1:]))
-	if opts.has_key('-T'): # export plain text
-		print doevent('TEXT', Appl=appname, Styl=style, Opts=' '.join(argv[1:]))
+if opts.has_key('-H'): # export HTML (note: no autowrap)
+	print doevent('HTML', Appl=appname, Styl=style, Opts=' '.join(argv[1:]))
+elif opts.has_key('-T'): # export plain text (note: no autowrap)
+	print doevent('TEXT', Appl=appname, Styl=style, Opts=' '.join(argv[1:]))
 elif opts.has_key('-N'): # non-interactive mode
 	print >> _out, doevent('Help', Appl=appname, Styl=style, Opts=vieweroptions or '-o')
 else:

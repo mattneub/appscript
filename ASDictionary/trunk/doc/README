@@ -5,6 +5,7 @@ ABOUT
 
 ASDictionary exports scriptable Mac applications' dictionaries in plain text or HTML format. Requires Mac OS 10.3.9 or later. 
 
+
 -----------------------------------
 USAGE
 
@@ -16,6 +17,7 @@ USAGE
 
 4. Click 'Export', and select a destination folder for the generated files.
 
+
 -----------------------------------
 APPSCRIPT SUPPORT
 
@@ -25,19 +27,38 @@ In particular, rb-appscript users should check that the 'Ruby interpreter' optio
 
 
 -----------------------------------
+COMMAND LINE SUPPORT
+
+The optional asdict command-line tool can be used to:
+
+- export application dictionaries as plain text and HTML files
+- view individual suite, class and command definitions
+- display inheritance and containment trees.
+
+Like ASDictionary, asdict supports AppleScript- and appscript-style terminology and can operate in both interactive and non-interactive modes. 
+
+To install asdict, cd to the ASDictionary-0.9.0/bin folder in Terminal.app and run:
+
+	sudo cp asdict /usr/local/bin && chmod 755 /usr/local/bin/asdict
+
+To view the full documentation for asdict, run:
+
+	/usr/local/bin/asdict -h
+
+
+-----------------------------------
 NOTES
 
 - Caution: ASDictionary will overwrite any existing files when exporting dictionaries.
 
-- AppleScript and appscript users can also export application and scripting dictionaries using ASDictionary's 'export dictionaries' command. See ASDictionary's own dictionary for details.
-
-- The optional asdict tool can be used to view or export application dictionaries from the command line in both interactive and non-interactive modes. To install asdict, open the bundled asdict-installer.pkg file and follow the instructions.
+- AppleScript and appscript users can also export application and scripting dictionaries using ASDictionary's 'export' command. See ASDictionary's own dictionary for details.
 
 - Exporting larger dictionaries may take several seconds; GUI responsiveness may be limited during this time. HTML export options take longer due to the additional processing involved.
 
 - While ASDictionary is fairly tolerant of weird and buggy application dictionaries, HTML generation may fail on a few especially strange ones. Should this happen, please submit a bug report.
 
 - Many thanks to the following for comments, suggestions and bug reports: Philip Aker, Emmanuel Levy, Tim Mansour, Jake Pietrykowski, Courtney Schwartz
+
 
 -----------------------------------
 DONATIONS
@@ -47,6 +68,7 @@ ASDictionary is free to use; however, any donations will be gratefully received 
 	http://sourceforge.net/projects/appscript
 
 Many thanks to all those who have already contributed.
+
 
 -----------------------------------
 AUTHOR
