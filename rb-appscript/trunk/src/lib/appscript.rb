@@ -87,7 +87,7 @@ module Appscript
 					AEM::Application.by_path(FindApp.by_id('com.apple.systemevents')).event('coresetd', {
 							'----' => AEM.app.elements('prcs').by_name('ASDictionary').property('pvis'), 
 							'data' => false}).send
-					# TO DO: need to kludge a short (1 sec?) delay here as a workaround for ASDictionary's current event handling glitches 
+					sleep(1) # KLUDGE: need a short delay here to workaround ASDictionary 0.9.0's event handling glitches # TO DO: delete after ASDictionary is fixed
 				end
 				return true
 			rescue FindApp::ApplicationNotFoundError
