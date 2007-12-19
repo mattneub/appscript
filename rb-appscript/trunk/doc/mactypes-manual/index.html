@@ -92,6 +92,8 @@ Appscript.app('TextEdit').open(f)
 
 <p>Comparing an <code>Alias</code> object against a <code>FileURL</code> object always returns false, even if both point to the same location.</p>
 
+<p>Remember that aliases can change when the corresponding filesystem object is moved, so take care when using <code>Alias</code> objects in situations that involve comparing or hashing them (e.g. <code>Hash</code> keys).</p>
+
 
 <h2><code>MacTypes::FileURL</code></h2>
 
@@ -173,6 +175,8 @@ Appscript.app('older app').documents[1].save(:in => fs_spec)</code></pre>
 
 <p>Note that AEDescs of <code>TypeFSRef</code> can represent existing filesystem locations only. AEDescs of <code>TypeFileURL</code> can represent both existing and non-existing locations. AEDescs of <code>TypeFSS</code> (FSSpecs) are deprecated on Mac OS X due to lack of proper Unicode and long filename support, and are retained for backwards compatibility with older applications only.</p>
 
+<p>Be aware that <code>FileURL#==</code> does not normalize file URLs; thus minor differences in capitalization, etc. can result in <code>FileURL#==</code> returning <code>false</code> even if both objects happen to identify the same filesystem location.</p>
+
 
 
 
@@ -247,6 +251,6 @@ MacTypes::Alias.path('/some/non/existent/location')
 </div>
 
 <!--footer-->
-<p class="footer">&copy; 2006 HAS</p>
+<p class="footer">&copy; 2007 HAS</p>
 </body>
 </html>

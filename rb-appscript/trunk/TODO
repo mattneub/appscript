@@ -4,10 +4,8 @@ TO DO
 
 - can numbers in range (2**63)..(2**64 - 1) safely be packed as typeUInt64 on 10.5+? Or stick with packing those as lossy 64-bit floating point for compatibility?
 
-- support typeISO8601DateTime ('isot'); defined in 10.2+ and possibly earlier (unpack only? need to investigate)
-
-- define KAE::TypeCFAbsoluteTime ('cfat') constant; possibly add unpacking support too?
+- unpack support for typeISO8601DateTime (10.1+), typeCFAbsoluteTime (10.5+)?
 
 - _aem/connect.rb module refers directly to Send::Event instead of going via the AEM::Application::Event hook, which might cause problems when used in an OSA component or other situation where client needs to customise all event creation and/or dispatch.
 
-- In MacTypes, Alias#== and FileURL#== methods currently compare for equality based on filesystem paths, which may return false in some situations where it should return true. Should really use OS routines to test for equality, or at least normalise the path strings before comparing them.
+- #== and #hash methods in MacTypes::Alias, MacTypes::FileURL lack robustness; see notes in mactypes manual for details. Could these be improved? (Note: some mactypes unit tests may fail in some situations due to 'dumb' nature of these methods.)

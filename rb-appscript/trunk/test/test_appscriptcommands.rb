@@ -3,10 +3,11 @@
 require 'test/unit'
 require 'appscript'
 
-class AS_SafeObject
-	def self.hide(name)
-	end
-end
+# rb-appscript 0.5.0+ should no longer require the following kludge:
+#class AS_SafeObject
+#	def self.hide(name)
+#	end
+#end
 
 class TC_AppscriptNewApp < Test::Unit::TestCase
 

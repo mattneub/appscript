@@ -27,11 +27,11 @@ Please note that the version of Ruby included with Mac OS X 10.4 is missing the 
 ======================================================================
 NOTES
 
-- rb-appscript 0.4.0 is the first beta release. Except for bug fixes, no further changes are planned prior to the 1.0 release.
+- rb-appscript 0.5.0 is the second beta release. Please file bug reports if you encounter any problems.
 
-- rb-appscript 0.4.0 contains a couple of API changes from earlier versions; see the CHANGES file and documentation for details
+- rb-appscript 0.5.0 contains bug fixes, minor API changes and requested enhancements; see the CHANGES file and documentation for details.
 
-- rb-appscript 0.4.0  provides preliminary 64-bit support for OS X 10.5 in the following modules: AE, AEM, Appscript. Note that the OSAX module currently remains 32-bit only; this will be addressed after OS X 10.5 is released.
+- rb-appscript 0.5.0  provides 64-bit support for OS X 10.5 in the following modules: AE, AEM, Appscript. The OSAX module provides partial 64-bit support; see the osax manual for details.
 
 ======================================================================
 AUTHOR
@@ -41,6 +41,6 @@ AUTHOR
 ======================================================================
 COPYRIGHT
 
-Copyright (C) 2006 HAS 
+Copyright (C) 2006 - 2007 HAS 
 
 Appscript is released under the MIT License. See the LICENSE file for more information.

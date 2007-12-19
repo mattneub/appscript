@@ -74,6 +74,7 @@ ReservedKeywords = [
 	"is_a?",
 	"is_in",
 	"is_not_in",
+	"is_running?",
 	"its",
 	"keywords",
 	"kind_of?",

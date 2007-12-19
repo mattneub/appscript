@@ -1485,4 +1485,5 @@ module KAE
 	# new in 10.5
 	TypeUInt16 = 'ushr'
 	TypeUInt64 = 'ucom'
+	TypeCFAbsoluteTime = 'cfat'
 end
