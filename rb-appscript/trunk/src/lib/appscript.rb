@@ -90,10 +90,12 @@ module Appscript
 					sleep(1) # KLUDGE: need a short delay here to workaround ASDictionary 0.9.0's event handling glitches # TO DO: delete after ASDictionary is fixed
 				end
 				return true
-			rescue FindApp::ApplicationNotFoundError
-				$stderr.puts("No help available: ASDictionary application not found.")
-				return false
+			rescue FindApp::ApplicationNotFoundError => e
+				$stderr.puts("No help available: ASDictionary application not found (#{e}).")
+			rescue AEM::CantLaunchApplicationError => e
+				$stderr.puts("No help available: can't launch ASDictionary application (#{e}).")
 			end
+			return false
 		end
 		
 		def _display_help(flags, ref)
@@ -112,20 +114,24 @@ module Appscript
 		end
 		
 		def help(flags, ref)
-			if not @_help_agent
-				return ref if not _init_help_agent
-			end
-			e = _display_help(flags, ref)
-			if e and [-600, -609].include?(e.number) # not running
-				return ref if not _init_help_agent
-				e = _display_help(flags, ref)
-			end
-			if e
-				if e.number == -1708 # event wasn't handled, presumably because available ASDictionary is too old
-					$stderr.puts("No help available: ASDictionary 0.9.0 or later required.")
-				else
-					$stderr.puts("No help available: ASDictionary raised an error: #{e}.")
+			begin
+				if not @_help_agent
+					return ref if not _init_help_agent
 				end
+				e = _display_help(flags, ref)
+				if e and [-600, -609].include?(e.number) # not running
+					return ref if not _init_help_agent
+					e = _display_help(flags, ref)
+				end
+				if e
+					if e.number == -1708 # event wasn't handled, presumably because available ASDictionary is too old
+						$stderr.puts("No help available: ASDictionary 0.9.0 or later required.")
+					else
+						$stderr.puts("No help available: ASDictionary raised an error: #{e}.")
+					end
+				end
+			rescue => err
+				$stderr.puts("No help available: unknown error: #{err}")
 			end
 			return ref
 		end
