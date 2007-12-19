@@ -128,8 +128,10 @@ module Connect
 		# Returns false if process doesn't exist OR remote Apple events aren't allowed.
 		# Note: this will send a 'launch' Apple event to the target application.
 		begin
-			# will usually raise error -1708 if process is running (and responding to events), 
-			# and various errors if the process doesn't exist/can't be reached
+			# This will usually raise error -1708 if process is running, and various errors
+			# if the process doesn't exist/can't be reached. If app is running but busy,
+			# AESendMessage may return a timeout error (this should be -1712, but
+			# -609 is often returned instead for some reason).
 			Send::Event.new(desc, 'ascrnoop').send
 		rescue Send::CommandError => err
 			return (not [-600, -905].include?(err.to_i)) # not running/no network access

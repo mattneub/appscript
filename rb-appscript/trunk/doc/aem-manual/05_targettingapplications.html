@@ -31,10 +31,6 @@
 
     Class methods:
 
-        launch(path) -- launch an application in background if not
-                already running, and send it a 'ascrnoop' event
-            path : string -- application's path, e.g. '/Applications/iCal.app'
-
         process_exists_for_path?(path) -- Does a local process launched
                 from the specified application file exist?
             path : string -- application's path, e.g. '/Applications/iCal.app'
@@ -42,8 +38,7 @@
                     is raised.
 
         process_exists_for_pid?(pid) -- Is there a local application process
-                with the given unix process id?
-			return Connect.process_exists_for_pid?(pid)
+                with the given Unix process id?
             pid : integer
             Result : boolean
 		
@@ -56,9 +51,13 @@
 
         process_exists_for_desc?(desc) -- Does an application process specified
                 by the given AEAddressDesc exist?
-            desc : AEDesc -- AEAddressDesc for application
+            desc : AE::AEDesc -- AEAddressDesc for application
             Result : boolean -- Returns false if process doesn't exist, or if
                     access isn't allowed.
+
+        launch(path) -- launch an application in background if not
+                already running, and send it a 'ascrnoop' event
+            path : string -- application's path, e.g. '/Applications/iCal.app'
 
     
     Constructors:
