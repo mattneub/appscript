@@ -1,12 +1,14 @@
 HISTORY
 
-2007-??-?? -- 0.18.0
+2007-12-19 -- 0.18.0
 
 - reference.Reference.__getitem__ now accepts real references and aem specifiers as by-filter test clauses (previously only accepted GenericReference)
 
 - no longer raises error if aete isn't fully parsed
 
-- built-in help() system now requires external AppscriptHelpAgent.app to operate; now prints help info to stderr only 
+- built-in help() system now requires ASDictionary.app to operate; now prints help info to stderr only 
+
+- added Reference.isrunning method
 
 
 2007-04-19 -- 0.17.3

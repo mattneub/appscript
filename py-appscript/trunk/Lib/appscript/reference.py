@@ -5,6 +5,7 @@ Lots of syntactic sugar allows users to construct query-based references using f
 (C) 2004 HAS"""
 
 import struct, MacOS, sys
+from time import sleep
 
 from CarbonX import kAE, kOSA
 from CarbonX.AE import AECreateList, AECreateDesc
@@ -245,11 +246,20 @@ class AppData(aem.Codecs):
 	
 	def _initHelpAgent(self): # TO DO: need to check ASDictionary is version 0.9.0 or later
 		try:
-			self._helpAgent = aem.Application(aem.findapp.byid(self._kHelpAgentID))
+			apppath = aem.findapp.byid(self._kHelpAgentID)
+			asdictionaryisrunning = aem.Application.processexistsforpath(apppath)
+			self._helpAgent = aem.Application(apppath)
+			if not asdictionaryisrunning: # hide ASDictionary after launching it # TO DO: something less kludgy
+				aem.Application(aem.findapp.byid('com.apple.systemevents')).event('coresetd', {
+						'----': aem.app.elements('prcs').byname('ASDictionary').property('pvis'), 
+						'data': False}).send()
+				sleep(1) # KLUDGE: need a short delay here to workaround ASDictionary 0.9.0's event handling glitches # TO DO: delete after ASDictionary is fixed
 			return True
 		except aem.findapp.ApplicationNotFoundError:
 			print >> sys.stderr,  "No help available: ASDictionary application not found."
-			return False
+		except aem.CantLaunchApplicationError:
+			print >> sys.stderr,  "No help available: can't launch ASDictionary application."
+		return False
 	
 	def _displayHelp(self, flags, ref):
 		if isinstance(ref, Command):
@@ -271,16 +281,22 @@ class AppData(aem.Codecs):
 			return e
 	
 	def help(self, flags, ref):
-		if not self._helpAgent: # initialise help system upon first use
-			if not self._initHelpAgent():
-				return ref # if ASDictionary is unavailable then do nothing
-		e = self._displayHelp(flags, ref)
-		if e and e.number in [-600, -609]: # ASDictionary is no longer running, so reconnect
-			if not self._initHelpAgent():
-				return ref # if ASDictionary is unavailable then do nothing
+		try:
+			if not self._helpAgent: # initialise help system upon first use
+				if not self._initHelpAgent():
+					return ref # if ASDictionary is unavailable then do nothing
 			e = self._displayHelp(flags, ref)
-		if e:
-			print >> sys.stderr, "No help available: ASDictionary raised an error: %r." % e
+			if e and e.number in [-600, -609]: # ASDictionary is no longer running, so reconnect
+				if not self._initHelpAgent():
+					return ref # if ASDictionary is unavailable then do nothing
+				e = self._displayHelp(flags, ref)
+			if e:
+				if e.number:
+					print >> sys.stderr, "No help available: ASDictionary 0.9.0 or later required."
+				else:
+					print >> sys.stderr, "No help available: ASDictionary raised an error: %r." % e
+		except Exception, err:
+			print >> sys.stderr, "No help available: unknown error: %r" % err
 		return ref
 
 
@@ -408,7 +424,7 @@ class Command(_Base):
 			if e.number in [-600, -609] and self.AS_appdata.constructor == 'path': # event was sent to a local app for which we no longer have a valid address (i.e. the application has quit since this aem.Application object was made).
 				# - If application is running under a new process id, we just update the aem.Application object and resend the event.
 				# - If application isn't running, then we see if the event being sent is one of those allowed to relaunch the application (i.e. 'run' or 'launch'). If it is, the aplication is relaunched, the process id updated and the event resent; if not, the error is rethrown.
-				if not self.AS_appdata.target.isrunning(self.AS_appdata.identifier):
+				if not self.AS_appdata.target.processexistsforpath(self.AS_appdata.identifier):
 					if self._code == 'ascrnoop':
 						aem.Application.launch(self.AS_appdata.identifier) # relaunch app in background
 					elif self._code != 'aevtoapp': # only 'launch' and 'run' are allowed to restart a local application that's been quit
@@ -469,6 +485,22 @@ class Reference(_Base):
 		val = renderreference(self.AS_appdata, self.AS_aemreference)
 		self.__repr__ = lambda: val
 		return val
+		
+	# miscellaneous
+	
+	def isrunning(self):
+		constructor = self.AS_appdata.constructor
+		identifier = self.AS_appdata.identifier
+		if constructor == 'path':
+			return aem.Application.processexistsforpath(identifier)
+		elif constructor == 'pid':
+			return aem.Application.processexistsforpid(identifier)
+		elif constructor == 'url':
+			return aem.Application.processexistsforurl(identifier)
+		elif constructor == 'aemapp':
+			return aem.Application.processexistsforpath(identifier.addressdesc)
+		else: # constructor == 'current'
+			return True
 	
 	# Public properties and methods; these are called by end-user and other clients (e.g. generic references)
 	

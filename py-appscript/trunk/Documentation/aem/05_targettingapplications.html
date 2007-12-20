@@ -37,16 +37,35 @@
 
     Static methods:
 
+        processexistsforpath(path) -- Does a local process launched
+                from the specified application file exist?
+            path : string -- application's path, e.g. '/Applications/iCal.app'
+            Result : boolean -- Note: if path is invalid, an AE::MacOSError
+                    is raised.
+
+        processexistsforpid(pid) -- Is there a local application process
+                with the given unix process id?
+            pid : integer
+            Result : boolean
+		
+        processexistsforurl(url) -- Does an application process specified
+                by the given eppc:// URL exist?
+            url : string -- url for remote process
+                    (e.g. 'eppc://user:pass@0.0.0.1/TextEdit')
+            Result : bool -- Returns false if process doesn't exist, or if
+                    access isn't allowed.
+
+        processexistsfordesc(desc) -- Does an application process specified
+                by the given AEAddressDesc exist?
+            desc : AEAddressDesc -- AEAddressDesc for application
+            Result : bool -- Returns false if process doesn't exist, or if
+                    access isn't allowed.
+
         launch(path) -- launch an application in background if not
                 already running, and send it a 'ascrnoop' event
             path : FSRef | str -- path to application, 
                     e.g. '/Applications/TextEdit.app'
 
-        isrunning(path) -- is the specifed application currently running?
-            path : FSRef | str -- application's path,
-                    e.g. '/Applications/iCal.app'
-            Result : bool
-    
     Methods:
 
         __init__(self, path=None, pid=None, url=None, desc=None,

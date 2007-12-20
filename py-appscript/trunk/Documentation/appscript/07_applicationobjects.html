@@ -154,6 +154,18 @@ set(reference, to) -- Set an object's data.
 <p>Appscript identifies running applications by their process ids so it's possible to control multiple versions of an application running at the same time if their Application objects are created using process ids or eppc URLs.</p>
 
 
+<h3>Checking if an application is running</h3>
+
+<p>You can check if the application specified by an Application object is currently running by calling its <code>isrunning</code> method. This is useful if you don't want to perform commands on an application that isn't already running. For example:</p>
+
+<pre><code>te = app('TextEdit')
+# Only perform TextEdit-related commands if it's already running:
+if te.isrunning:
+    # all TextEdit-related code goes here...</code></pre>
+
+<p class="hilitebox">Remember that appscript automatically launches a non-running application the first time your script makes reference to any of its properties, elements or commands. To avoid accidental launches, <em>all</em> code relating to that application must be included in a conditional block that only executes if <code>isrunning</code> returns <code>True</code>.</p>
+
+
 <h3>Launch errors</h3>
 
 <p>If the application can't be launched for some reason (e.g. if it's in the Trash), an <code>appscript.CantLaunchApplicationError</code> error will be raised. This provides a description of the problem (if it's a standard LaunchServices error) along with the original OS error number, which you can also obtain by casting the error object to an integer.</p>
@@ -163,9 +175,7 @@ set(reference, to) -- Set an object's data.
 
 <p>When appscript launches a non-running application, it normally sends it a <code>run</code> command as part of the launching process. If you wish to avoid this, you should start the application by sending it a <code>launch</code> command before doing anything else. For example:</p>
 
-<pre><code>#/!/usr/bin/env python
-
-te = app('TextEdit')
+<pre><code>te = app('TextEdit')
 te.launch()
 # other TextEdit-related code goes here...</code></pre>
 

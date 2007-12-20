@@ -28,13 +28,7 @@ NOTES
 
 
 ======================================================================
-DEPENDENCIES
-
-- HTMLTemplate -- see <http://www.python.org/pypi/HTMLTemplate>
-
-
-======================================================================
 COPYRIGHT
 
-(C) 2006 HAS <hhas -at- users - sourceforge - net> <http://appscript.sourceforge.net>
+(C) 2006 - 2007 HAS <hhas -at- users - sourceforge - net> <http://appscript.sourceforge.net>
 

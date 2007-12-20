@@ -1,6 +1,6 @@
 HISTORY
 
-2007-??-?? -- 0.13.0
+2007-12-19 -- 0.13.0
 
 - Codecs.unpackunknown no longer causes infinite recursion if a record-like AEDesc is given and there's no typeAERecord unpacker available to unpack it after unpackunknown converts it to a record descriptor
 
@@ -17,6 +17,10 @@ HISTORY
 - now raises CantLaunchApplicationError if unable to launch an application (previously raised MacOS.Error; users)
 
 - now raises CantLaunchApplicationError instead of MacOS.Error if unable to launch an application. Users should update existing code as necessary.
+
+- added processexistsforpath, processexistsforpid, processexistsforurl, processexistsfordesc static methods to aem.Application
+
+- deprecated aem.Application.isrunning; any existing code that uses this method should be updated to use processexistsforpath instead
 
 
 2007-01-20 -- 0.12.1

@@ -108,10 +108,17 @@ class Application(BASE):
 	# Launch a local application without sending it the usual 'run' event (aevtoapp):
 	launch = staticmethod(connect.launchapp)
 	
-	# Check if a local application specified by path is running:
-	isrunning = staticmethod(connect.isrunning)
+	# Check if an application specified by path/pid/URL/AEAddressDesc is running:
+	processexistsforpath = staticmethod(connect.processexistsforpath)
+	processexistsforpid = staticmethod(connect.processexistsforpid)
+	processexistsforurl = staticmethod(connect.processexistsforurl)
+	processexistsfordesc = staticmethod(connect.processexistsfordesc)
 	
+	isrunning = staticmethod(connect.processexistsforpath) # DEPRECATED; TO DO: remove
+	 
 	#######
+	
+	addressdesc = property(lambda self: self._address)
 	
 	def reconnect(self):
 		"""If application has quit since this Application object was created, its AEAddressDesc is no longer valid so this Application object will not work even when application is restarted. reconnect() will update this Application object's AEAddressDesc so it's valid again.

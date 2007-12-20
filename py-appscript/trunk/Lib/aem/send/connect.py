@@ -13,7 +13,8 @@ from send import Event
 from aem.types import Codecs
 from errors import errorMessage
 
-__all__ = ['launchapp', 'isrunning', 'currentapp', 'localapp', 'remoteapp']
+__all__ = ['launchapp', 'processexistsforpath', 'processexistsforpid', 'processexistsforurl', 
+		'processexistsfordesc', 'currentapp', 'localapp', 'remoteapp', 'CantLaunchApplicationError']
 
 ######################################################################
 # PRIVATE
@@ -91,9 +92,12 @@ def launchapp(path):
 		AECreateAppleEvent('ascr', 'noop', _makePSNAddressDesc(psn), kAE.kAutoGenerateReturnID, 
 				kAE.kAnyTransactionID).AESendMessage(kAE.kAEWaitReply, kAE.kAEDefaultTimeout)
 
+##
 
-def isrunning(path):
-	"""Is a local application running?"""
+def processexistsforpath(path):
+	"""Does a local process launched from the specified application file exist?
+		Note: if path is invalid, an AE::MacOSError is raised.
+	"""
 	try:
 		_psnForApplicationPath(path)
 		return True
@@ -102,6 +106,39 @@ def isrunning(path):
 			return False
 		else:
 			raise
+
+def processexistsforpid(pid):
+	"""Is there a local application process with the given unix process id?"""
+	try:
+		PSN.PSNForProcessID(pid)
+		return True
+	except MacOS.Error, err:
+		if err[0] == -600: 
+			return False
+		else:
+			raise
+
+def processexistsforurl(url):
+	"""Does an application process specified by the given eppc:// URL exist?
+		Note: this will send a 'launch' Apple event to the target application.
+	"""
+	return processexistsfordesc(AECreateDesc(kAE.typeApplicationURL, url))
+
+def processexistsfordesc(desc):
+	"""Does an application process specified by the given AEAddressDesc exist?
+		Returns false if process doesn't exist OR remote Apple events aren't allowed.
+		Note: this will send a 'launch' Apple event to the target application.
+	"""
+	try:
+		# This will usually raise error -1708 if process is running, and various errors
+		# if the process doesn't exist/can't be reached. If app is running but busy,
+		# AESendMessage may return a timeout error (this should be -1712, but
+		# -609 is often returned instead for some reason).
+		Event(desc, 'ascrnoop').send()
+	except MacOS.Error, err:
+		return err[0] not in [-600, -905]
+	return True
+
 
 #######
 

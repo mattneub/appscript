@@ -146,6 +146,22 @@ static PyObject *Launch_LSFindApplicationForInfo(PyObject *_self, PyObject *_arg
 }
 
 
+static PyObject *PSN_PSNForProcessID(PyObject *_self, PyObject *_args)
+{
+	OSStatus _err = noErr;
+	int pid;
+	ProcessSerialNumber psn = {0, kNoProcess};
+	
+	if (!PyArg_ParseTuple(_args, "i", &pid))
+		return NULL;
+	_err = GetProcessForPID((pid_t)pid, &psn);
+	if (_err != noErr) return PyMac_Error(_err);
+	return Py_BuildValue("kk", 
+						 psn.highLongOfPSN, 
+						 psn.lowLongOfPSN);
+}
+
+
 /**********************************************************************/
 /* 
  * List of methods defined in the module
@@ -158,6 +174,8 @@ static PyMethodDef PSN_methods[] =
 		PyDoc_STR("(FSSpec fss, AEDesc firstEvent, unsigned short flags) --> (unsigned long highLongOfPSN, unsigned long lowLongOfPSN)")},
 	{"LSFindApplicationForInfo", (PyCFunction)Launch_LSFindApplicationForInfo, 1,
 		PyDoc_STR("(OSType inCreator, CFStringRef inBundleID, CFStringRef inName) -> (FSRef outAppRef, CFURLRef outAppURL)")},
+  	{"PSNForProcessID", PSN_PSNForProcessID, METH_VARARGS,
+		PyDoc_STR("(int pid) --> (unsigned long highLongOfPSN, unsigned long lowLongOfPSN)")},
 	{NULL, NULL, 0, NULL}
 };
 
