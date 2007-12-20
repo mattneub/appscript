@@ -273,13 +273,14 @@ def _osaxInfo():
 		_osaxcache = {}
 		for domain in [_sysev.system_domain, _sysev.local_domain, _sysev.user_domain]:
 			osaxen = domain.scripting_additions_folder.files[appscript.its.visible == True]
-			for name, path in zip(osaxen.name(), osaxen.POSIX_path()):
-				if name.lower().endswith('.osax'):
-					name = name[:-5]
-				elif name.lower().endswith('.app'):
-					name = name[:-4]
-				if not _osaxcache.has_key(name.lower()):
-					_osaxcache[name] = path
+			if osaxen.name.exists():
+				for name, path in zip(osaxen.name(), osaxen.POSIX_path()):
+					if name.lower().endswith('.osax'):
+						name = name[:-5]
+					elif name.lower().endswith('.app'):
+						name = name[:-4]
+					if not _osaxcache.has_key(name.lower()):
+						_osaxcache[name] = path
 	return _osaxcache
 
 def osaxNames():

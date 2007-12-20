@@ -1,12 +1,12 @@
 ASDictionary
 
------------------------------------
+----------------------------------------------------------------------
 ABOUT
 
 ASDictionary exports scriptable Mac applications' dictionaries in plain text or HTML format. Requires Mac OS 10.3.9 or later. 
 
 
------------------------------------
+----------------------------------------------------------------------
 USAGE
 
 1. Use the 'Dictionary' menu to select one or more scriptable applications or scripting additions, or drag-and-drop one or more application and/or scripting addition files onto ASDictionary's application icon or Export window.
@@ -18,19 +18,10 @@ USAGE
 4. Click 'Export', and select a destination folder for the generated files.
 
 
------------------------------------
-APPSCRIPT SUPPORT
-
-The appscript bridges for Python and Ruby depend on ASDictionary to support their built-in help systems. You can set the preferences for ASDictionary's appscript support via its Preferences window. 
-
-In particular, rb-appscript users should check that the 'Ruby interpreter' option provides a valid path to a ruby interpreter (the default is /usr/bin/ruby), and ensure the Ruby installation used by that interpreter has rb-appscript installed. If a valid interpreter path is not given, or the Ruby installation specified does not have rb-appscript installed, rb-appscript's help system will display references and values using Python rather than Ruby syntax.
-
-
------------------------------------
-COMMAND LINE SUPPORT
+----------------------------------------------------------------------
+COMMAND LINE TOOLS
 
 The optional asdict command-line tool can be used to:
-
 - export application dictionaries as plain text and HTML files
 - view individual suite, class and command definitions
 - display inheritance and containment trees.
@@ -46,12 +37,10 @@ To view the full documentation for asdict, run:
 	/usr/local/bin/asdict -h
 
 
------------------------------------
+----------------------------------------------------------------------
 NOTES
 
 - Caution: ASDictionary will overwrite any existing files when exporting dictionaries.
-
-- AppleScript and appscript users can also export application and scripting dictionaries using ASDictionary's 'export' command. See ASDictionary's own dictionary for details.
 
 - Exporting larger dictionaries may take several seconds; GUI responsiveness may be limited during this time. HTML export options take longer due to the additional processing involved.
 
@@ -60,7 +49,15 @@ NOTES
 - Many thanks to the following for comments, suggestions and bug reports: Philip Aker, Emmanuel Levy, Tim Mansour, Jake Pietrykowski, Courtney Schwartz
 
 
------------------------------------
+----------------------------
+Appscript Support
+
+The appscript bridges for Python and Ruby depend on ASDictionary to support their built-in help systems. You can set the preferences for ASDictionary's appscript support via its Preferences window. 
+
+In particular, rb-appscript users should check that the 'Ruby interpreter' option provides a valid path to a ruby interpreter (the default is /usr/bin/ruby), and ensure the Ruby installation used by that interpreter has rb-appscript installed. If a valid interpreter path is not given, or the Ruby installation specified does not have rb-appscript installed, rb-appscript's help system will display references and values using Python rather than Ruby syntax.
+
+
+----------------------------------------------------------------------
 DONATIONS
 
 ASDictionary is free to use; however, any donations will be gratefully received and will help to support future development. You can donate to the appscript project (which ASDictionary belongs to) via its project page at sourceforge.net:
@@ -70,7 +67,7 @@ ASDictionary is free to use; however, any donations will be gratefully received 
 Many thanks to all those who have already contributed.
 
 
------------------------------------
-AUTHOR
+----------------------------------------------------------------------
+CONTACT
 
 - HAS -- <hhas -at- users - sourceforge - net> <http://appscript.sourceforge.net>
