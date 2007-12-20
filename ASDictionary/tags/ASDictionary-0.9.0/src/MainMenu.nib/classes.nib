@@ -1,0 +1,36 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {clear = id; export = id; showLog = id; }; 
+            CLASS = ASDictionary; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                filenameTableView = id; 
+                itemName = id; 
+                logDrawer = id; 
+                logPanel = id; 
+                logTextView = id; 
+                mainWindow = id; 
+                progressBar = id; 
+                progressPanel = id; 
+                selectedFilesController = id; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
+            ACTIONS = {
+                "" = id; 
+                chooseFromApplicationList = id; 
+                chooseFromFileBrowser = id; 
+                chooseInstalledAdditions = id; 
+                chooseRunningApplications = id; 
+                export = id; 
+                stopProcessing = id; 
+            }; 
+            CLASS = FirstResponder; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = NSObject; 
+        }
+    ); 
+    IBVersion = 1; 
+}
