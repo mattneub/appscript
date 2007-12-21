@@ -4,6 +4,8 @@ from osaterminology.dom.osadictionary import kAll, Nodes
 
 from codecs import getencoder
 
+strtohex = getencoder('hex_codec')
+
 
 ######################################################################
 
@@ -47,7 +49,14 @@ class AppscriptTypeRenderer(TypeRendererBase):
 	
 	def escapecode(self, s):
 		# format non-ASCII characters as '\x00' hex values for readability (also backslash and single and double quotes)
-		return ''.join([(31 < ord(c) < 128) and c not in '\\\'"' and c or '\\x%2.0x' % ord(c) for c in s])
+		res = ''
+		for c in s:
+			n = ord(c)
+			if 31 < n < 128 and c not in '\\\'"':
+				res += c
+			else:
+				res += '\\x%02x' % n
+		return res
 	
 	def elementname(self, type): # appscript uses plural names for elements
 		type = type.realvalue()
@@ -55,15 +64,13 @@ class AppscriptTypeRenderer(TypeRendererBase):
 
 
 class ObjCAppscriptTypeRenderer(AppscriptTypeRenderer):
-	_type = '<AEMType %s>'
-	_enum = '<AEMEnum %s>'
+	_type = '<ASType %s>'
+	_enum = '<ASEnum %s>'
 	_keyword = '%s'
-	
-	_hexencode = getencoder('hex_codec')
 	
 	def escapecode(self, s):
 		if [c for c in s if not (31 < ord(c) < 128) or c in '\\\'"']:
-			return '0x' + self._hexencode(s)[0]
+			return '0x' + strtohex(s)[0]
 		else:
 			return "'%s'" % s
 

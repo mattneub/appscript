@@ -235,6 +235,7 @@ kPyAppscriptReservedWords = [
 	"timeout",
 	"waitreply",
 	"help",
+	"as", # not in kwlist before Python 2.5, so defined here to ensure scripts are portable between versions
 	 ] + keyword.kwlist
 
 
