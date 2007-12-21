@@ -1,0 +1,224 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<title>osax</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<style type="text/css" media="all"><!--@import url(../appscript-manual/full.css);--></style>
+
+</head>
+<body>
+
+<h1>osax</h1>
+
+<!-- top navigation -->
+<div class="navbar">
+    <a href="../index.html">Up</a>
+</div>
+
+<!-- content -->
+<div id="content">
+<h2>What is osax?</h2>
+
+<p>The <code>OSAX</code> module provides an easy way to call scripting additions (a.k.a. OSAXen) from Ruby. It exports a single public class, <code>ScriptingAddition</code>, and two functions, <code>osax</code> and <code>scripting_additions</code>.</p>
+
+<p>The <code>ScriptingAddition</code> class represents a single scripting addition. It is similar to an appscript application object, except that it defines commands for the specified scripting addition instead of the application's normal commands. </p>
+
+<p>Once you've created a <code>ScriptingAddition</code> instance, you can invoke its commands in exactly the same way as you would call a scriptable application's commands in appscript.</p>
+
+<p>For example:</p>
+
+<pre><code>require "osax"
+
+sa = OSAX::ScriptingAddition.new("StandardAdditions")
+
+sa.say("Hello world", :using=&gt;"Victoria")</code></pre>
+
+<p>The default application commands (<code>run</code>, <code>activate</code>, <code>quit</code>, etc.) are also available; see the appscript manual for details on those.</p>
+
+<p>By default, <code>ScriptingAddition</code> objects are targetted at the current application. You can obtain a <code>ScriptingAddition</code> object targetted at another application by calling one of its <code>by...</code> methods.</p>
+
+
+
+<h2><code>OSAX.scripting_additions</code></h2>
+
+<p>The <code>scripting_additions</code> function returns the names of all installed scripting additions:</p>
+
+<pre><code>require "osax"
+
+p OSAX.scripting_additions
+# Result: ["Digital Hub Scripting", "StandardAdditions", ...]</code></pre>
+
+
+
+<h2><code>OSAX.osax</code></h2>
+
+<p>The <code>osax</code> function provides a convenient shortcut for creating new <code>ScriptingAddition</code> instances.</p>
+
+<pre><code>osax(name=nil, app_name=nil) -- convenience method for
+        creating a new ScriptingAddition instance
+    name : String | nil -- scripting addition's name
+            (nil = "StandardAdditions")
+    app_name : String | nil -- target application's name/path, or nil
+            for current application
+    Result : ScriptingAddition</code></pre>
+
+<p>For example:</p>
+
+<pre><code>require "osax"
+
+sa = OSAX.osax
+
+p sa
+# Result: #&lt;OSAX::ScriptingAddition
+#           name="StandardAdditions"
+#           target=AEM::Application.current&gt;</code></pre>
+
+<p>In addition, the <code>osax</code> function accepts an application name as an optional second argument, allowing you to specify the application you want to handle the scripting addition's commands, e.g.:</p>
+
+<pre><code>OSAX.osax("StandardAdditions", "System Events")</code></pre>
+
+<p>is shorthand for:</p>
+
+<pre><code>OSAX::ScriptingAddition.new("StandardAdditions").by_name("System Events")</code></pre>
+
+<p>To specify applications by other means (e.g. URL), create a <code>ScriptingAddition</code> object first, then call the appropriate <code>by...</code> method.</p>
+
+<p>For convenience, if both arguments are nil then a <code>ScriptingAddition</code> object for StandardAdditions is created and returned. This object is also cached internally for efficiency and returned as-is in subsequent calls; thus, for example:</p>
+
+<pre><code>sa = osax
+sa.some_command
+sa.another_command</code></pre>
+
+<p>could also be written as:</p>
+
+<pre><code>osax.some_command
+osax.another_command</code></pre>
+
+<p>without the additional overhead of creating a new ScriptingAddition object each time.</p>
+
+
+
+<h2><code>OSAX::ScriptingAddition</code></h2>
+
+<pre><code>ScriptingAddition -- represents a single scripting addition and its
+        target application
+
+    Constructors:
+
+        ScriptingAddition.new(name, terms=nil) -- make a ScriptingAddition
+                object for the specified scripting addition, targetted
+                at the current application
+                
+                name: string -- a scripting addition's name, 
+                        e.g. "StandardAdditions"; basically its filename
+                        minus the '.osax' suffix
+                
+                terms : module or nil -- an optional terminology glue
+                        module,as exported by Terminology.dump; if
+                        given, ScriptingAddition will use this instead 
+                        of retrieving the terminology dynamically
+
+    Methods:
+
+        # Introspection:
+
+        commands -- returns names of all available commands
+
+        parameters(command_name) -- returns a command's parameter names
+
+        # Specifying a different target application:
+
+        # Each of the following methods returns a new ScriptingAddition
+        # instance targetted at the specified application. The arguments
+        # are the same as for the by_name, by_creator, etc. methods in
+        # appscript.
+        
+        by_name(name) -- name or full path of application, e.g. "Finder"
+
+        by_creator(creator) -- four-character creator code, e.g. "ttxt"
+
+        by_id(id) -- bundle id, e.g. "com.apple.ical"
+
+        by_pid(pid) -- Unix process ID, e.g. 4005
+
+        by_url(url) -- eppc URL, e.g. "eppc://jukebox-mac.local/iTunes"</code></pre>
+
+
+<h2>Examples</h2>
+
+<pre><code>require "osax"
+
+# Create a new ScriptingAddition object:
+
+sa = OSAX.osax
+
+
+# List all available commands:
+
+p sa.commands
+# Result: ["ASCII_character", "ASCII_number", "activate", ...]
+
+
+# Call some commands:
+
+sa.beep
+
+p sa.path_to(:scripts_folder)
+# Result: MacTypes::Alias.at("/Users/foo/Library/Scripts/")
+
+p sa.display_dialog("Ruby says hello!",
+                    :buttons=&gt;["Hi!", "Howdy!", "Duuuude!"],
+                    :default_button=&gt;3)
+# Result: {:button_returned=&gt;"Howdy!"}</code></pre>
+
+
+<h2>Notes</h2>
+
+<h3>GUI interaction</h3>
+
+<p>When using scripting addition commands that require GUI access (e.g. <code>display_dialog</code>) targetted at the command-line Ruby interpreter, the osax module will automatically convert the non-GUI interpreter process into a full GUI process to allow these commands to operate correctly. If you want to avoid this, target these commands at a faceless GUI application such as System Events instead:</p>
+
+<pre><code>sa = OSAX.osax("StandardAdditions", "System Events")
+sa.activate # give focus to System Events
+p sa.display_dialog("Ruby says hello!",
+                    :buttons=&gt;["Hi!", "Howdy!", "Duuuude!"],
+                    :default_button=&gt;3)
+# Result: {:button_returned=&gt;"Duuuude!"}</code></pre>
+
+
+<h3>64-bit limitations</h3>
+
+<p>The <code>osax</code> module currently only supports dynamic retrieval of scripting addition terminology when running in 32-bit processes. To use it in 64-bit processes, use the <code>Terminology</code> module's <code>dump</code> method to export a static terminology 'glue' module for the desired scripting addition (running it in a 32-bit process), then import that module and pass it as the second argument to the <code>ScriptingAddition</code> class's initialiser. For example, to export a glue module for Standard Additions:</p>
+
+<pre><code>require 'appscript'
+
+Terminology.dump('/System/Library/ScriptingAdditions/StandardAdditions.osax', 
+        'StandardAdditions', 'standard_additions.rb')</code></pre>
+
+<p>To create a new <code>ScriptingAddition</code> instance using the terminology provided by this glue module:</p>
+
+<pre><code>require 'osax'
+require 'standard_additions'
+
+sa = OSAX::ScriptingAddition.new('StandardAdditions', StandardAdditions)</code></pre>
+
+
+<h3>Known problems</h3>
+
+<p>When using the <code>osax</code> module within RubyCocoa-based applications, avoid creating <code>ScriptingAddition</code> instances before the main event loop is started as this can result in the application behaving strangely (minimised windows don't expand correctly) due to a bug in OS X's <code>OSAGetAppTerminology</code> function.</p>
+
+
+
+</div>
+
+<!-- bottom navigation -->
+<div class="navbar">
+    <a href="../index.html">Up</a>
+</div>
+
+<!--footer-->
+<p class="footer">&copy; 2007 HAS</p>
+</body>
+</html>
