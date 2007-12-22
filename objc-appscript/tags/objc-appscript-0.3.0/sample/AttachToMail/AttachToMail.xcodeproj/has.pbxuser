@@ -1,0 +1,110 @@
+// !$*UTF8*$!
+{
+	08FB7793FE84155DC02AAC07 /* Project object */ = {
+		activeArchitecture = i386;
+		activeBuildConfigurationName = Debug;
+		activeExecutable = 4F53A3060CDBCA8C00403A46 /* AttachToMail */;
+		activeTarget = 8DD76F960486AA7600D96B5E /* AttachToMail */;
+		addToTargets = (
+			8DD76F960486AA7600D96B5E /* AttachToMail */,
+		);
+		codeSenseManager = 4F53A3110CDBCAA900403A46 /* Code sense */;
+		executables = (
+			4F53A3060CDBCA8C00403A46 /* AttachToMail */,
+		);
+		perUserDictionary = {
+			PBXConfiguration.PBXFileTableDataSource3.PBXFileTableDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					230,
+					20,
+					48,
+					43,
+					43,
+					20,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+					PBXFileDataSource_Target_ColumnID,
+				);
+			};
+			PBXPerProjectTemplateStateSaveDate = 217483762;
+			PBXWorkspaceStateSaveDate = 217483762;
+		};
+		sourceControlManager = 4F53A3100CDBCAA900403A46 /* Source Control */;
+		userBuildSettings = {
+		};
+	};
+	08FB7796FE84155DC02AAC07 /* AttachToMail.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {739, 1300}}";
+			sepNavSelRange = "{287, 0}";
+			sepNavVisRange = "{0, 2648}";
+			sepNavWindowFrame = "{{413, 0}, {798, 1028}}";
+		};
+	};
+	4F53A3060CDBCA8C00403A46 /* AttachToMail */ = {
+		isa = PBXExecutable;
+		activeArgIndices = (
+		);
+		argumentStrings = (
+		);
+		autoAttachOnCrash = 1;
+		breakpointsEnabled = 0;
+		configStateDict = {
+		};
+		customDataFormattersEnabled = 1;
+		debuggerPlugin = GDBDebugging;
+		disassemblyDisplayState = 0;
+		dylibVariantSuffix = "";
+		enableDebugStr = 1;
+		environmentEntries = (
+		);
+		executableSystemSymbolLevel = 0;
+		executableUserSymbolLevel = 0;
+		libgmallocEnabled = 0;
+		name = AttachToMail;
+		sourceDirectories = (
+		);
+	};
+	4F53A3100CDBCAA900403A46 /* Source Control */ = {
+		isa = PBXSourceControlManager;
+		fallbackIsa = XCSourceControlManager;
+		isSCMEnabled = 0;
+		scmConfiguration = {
+		};
+	};
+	4F53A3110CDBCAA900403A46 /* Code sense */ = {
+		isa = PBXCodeSenseManager;
+		indexTemplatePath = "";
+	};
+	4F551EE90CF057AE005661F9 /* MLCommandGlue.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {910, 4074}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{2427, 1142}";
+			sepNavWindowFrame = "{{15, -5}, {969, 1028}}";
+		};
+	};
+	4F551EEE0CF057AE005661F9 /* MLReferenceGlue.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {910, 23380}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{15899, 2163}";
+			sepNavWindowFrame = "{{285, 0}, {969, 1028}}";
+		};
+	};
+	8DD76F960486AA7600D96B5E /* AttachToMail */ = {
+		activeExec = 0;
+		executables = (
+			4F53A3060CDBCA8C00403A46 /* AttachToMail */,
+		);
+	};
+}
