@@ -64,7 +64,7 @@ TO DO: customisation options: subclassing and extending pack/unpack, overriding 
 
 <h3>Booleans</h3>
 
-<p>The <code>AEMBoolean</code> class represents the <code>typeTrue</code> and <code>typeFalse</code> Apple event types. AEM provides two macros, <code>AEMTrue</code> and <code>AEMFalse</code>, for creating instances of this class. <code>AEMBoolean</code> also provides a <code>-boolValue</code> method for obtaining a primitive <code>BOOL</code> value from an <code>AEMBoolean</code> instance.</p>
+<p>The <code>ASBoolean</code> class represents the <code>typeTrue</code> and <code>typeFalse</code> Apple event types. AEM provides two macros, <code>ASTrue</code> and <code>ASFalse</code>, for creating instances of this class. <code>ASBoolean</code> also provides a <code>-boolValue</code> method for obtaining a primitive <code>BOOL</code> value from an <code>ASBoolean</code> instance.</p>
 
 
 
@@ -109,11 +109,11 @@ TO DO: customisation options: subclassing and extending pack/unpack, overriding 
 
 <h3>File objects</h3>
 
-<p>While Mac OS X's Foundation API  provides an <code>NSURL</code> class suitable for representing values of the <code>typeFileURL</code> Apple event type, it doesn't provide class-based wrappers for the Carbon <code>Alias</code>, <code>FSRef</code> and (obsolete) <code>FSSpec</code> types commonly used to represent filesystem objects and locations, so AEM provides its own wrapper classes to compensate for this: <code>AEMAlias</code>, <code>AEMFSRef</code> and <code>AEMFSSpec</code>. Their APIs are shown below:</p>
+<p>While Mac OS X's Foundation API  provides an <code>NSURL</code> class suitable for representing values of the <code>typeFileURL</code> Apple event type, it doesn't provide class-based wrappers for the Carbon <code>Alias</code>, <code>FSRef</code> and (obsolete) <code>FSSpec</code> types commonly used to represent filesystem objects and locations, so AEM provides its own wrapper classes to compensate for this: <code>ASAlias</code>, <code>ASFileRef</code> and <code>ASFileSpec</code>. Their APIs are shown below:</p>
 
 <pre><code>//abstract base class
 
-@interface AEMFileBase : NSObject
+@interface ASFileBase : NSObject
 
 - (id)initWithPath:(NSString *)path;
 
@@ -128,7 +128,7 @@ TO DO: customisation options: subclassing and extending pack/unpack, overriding 
 
 // concrete classes
 
-@interface AEMAlias : AEMFileBase
+@interface ASAlias : ASFileBase
 
 + (id)aliasWithPath:(NSString *)path;
 
@@ -137,26 +137,26 @@ TO DO: customisation options: subclassing and extending pack/unpack, overriding 
 @end
 
 
-@interface AEMFSRef : AEMFileBase
+@interface ASFileRef : ASFileBase
 
-+ (id)fsrefWithPath:(NSString *)path;
++ (id)fileRefWithPath:(NSString *)path;
 
-+ (id)fsrefWithFileURL:(NSURL *)url;
++ (id)fileRefWithFileURL:(NSURL *)url;
 
 @end
 
 
-@interface AEMFSSpec : AEMFileBase
+@interface ASFileSpec : ASFileBase
 
-+ (id)fsspecWithPath:(NSString *)path;
++ (id)fileSpecWithPath:(NSString *)path;
 
-+ (id)fsspecWithFileURL:(NSURL *)url;
++ (id)fileSpecWithFileURL:(NSURL *)url;
 
 @end</code></pre>
 
 <p>All paths and URLs must be absolute, and only POSIX paths and file:// URLs are accepted.</p>
 
-<p class="hilitebox">Note that most scriptable applications do not use or understand POSIX paths, and while the Apple Event Manager does provide some built-in coercions for converting between path strings and alias/file objects, these work with HFS paths only. Therefore, when specifying files and folders to scriptable applications, use <code>AEMAlias</code>, <code>AEMFSRef</code>, <code>AEMFSSpec</code> or <code>NSURL</code> objects - not path strings - unless otherwise indicated.</p>
+<p class="hilitebox">Note that most scriptable applications do not use or understand POSIX paths, and while the Apple Event Manager does provide some built-in coercions for converting between path strings and alias/file objects, these work with HFS paths only. Therefore, when specifying files and folders to scriptable applications, use <code>ASAlias</code>, <code>ASFileRef</code>, <code>ASFileSpec</code> or <code>NSURL</code> objects - not path strings - unless otherwise indicated.</p>
 
 
 

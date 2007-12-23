@@ -39,11 +39,11 @@
 [TEConstant no]
 [TEConstant ask]</code></pre>
 
-<p>Occasionally an application dictionary defines a type or enumerator without providing it with a corresponding name name. In these cases, the value will be represented as a raw <code>AEMType</code> or <code>AEMEnum</code> instance instead, e.g.: <!--The aem package's documentation provides more information on these lower-level objects, should you need to use them.--></p>
+<p>Occasionally an application dictionary defines a type or enumerator without providing it with a corresponding name name. In these cases, the value will be represented as a raw <code>ASAEMType</code> or <code>ASAEMEnum</code> instance instead, e.g.: <!--The aem package's documentation provides more information on these lower-level objects, should you need to use them.--></p>
 
-<pre><code>[AEMType typeWithCode: 'abcd']
+<pre><code>[ASAEMType typeWithCode: 'abcd']
 
-[AEMEnum enumWithCode: 'xyz ']</code></pre>
+[ASAEMEnum enumWithCode: 'xyz ']</code></pre>
 
 <h2>Common AE types</h2>
 
@@ -53,7 +53,7 @@
 </thead>
 <tbody>
 <tr><td><code>typeNull</code></td><td><code>null</code></td><td><code>NSNull</code></td></tr>
-<tr><td><code>typeBoolean</code></td><td><code>boolean</code></td><td><code>AEMBoolean</code></td></tr>
+<tr><td><code>typeBoolean</code></td><td><code>boolean</code></td><td><code>ASBoolean</code></td></tr>
 <tr><td><code>typeInteger</code></td><td><code>integer</code></td><td><code>NSNumber</code></td></tr>
 <tr><td><code>typeFloat</code></td><td><code>float</code></td><td><code>NSNumber</code></td></tr>
 <tr><td><code>typeChar</code> *</td><td><code>string</code></td><td><code>NSString</code></td></tr>
@@ -63,10 +63,10 @@
 <tr><td><code>typeAEList</code></td><td><code>list</code></td><td><code>NSArray</code></td></tr>
 <tr><td><code>typeAERecord</code></td><td><code>record</code></td><td><code>NSDictionary</code></td></tr>
 <tr><td><code>typeLongDateTime</code></td><td><code>date</code></td><td><code>NSDate</code></td></tr>
-<tr><td><code>typeAlias</code></td><td><code>alias</code></td><td><code>AEMAlias</code></td></tr>
+<tr><td><code>typeAlias</code></td><td><code>alias</code></td><td><code>ASAlias</code></td></tr>
 <tr><td><code>typeFileURL</code></td><td><code>fileURL</code></td><td><code>NSURL</code></td></tr>
-<tr><td><code>typeFSRef</code></td><td><code>fileRef</code></td><td><code>AEMFSRef</code></td></tr>
-<tr><td><code>typeFSS</code> *</td><td><code>fileSpecification</code></td><td><code>AEMFSSpec</code></td></tr>
+<tr><td><code>typeFSRef</code></td><td><code>fileRef</code></td><td><code>ASFileRef</code></td></tr>
+<tr><td><code>typeFSS</code> *</td><td><code>fileSpecification</code></td><td><code>ASFileSpec</code></td></tr>
 <tr><td><code>typeObjectSpecifier</code></td><td><code>reference</code></td><td><code>ASReference</code> **</td></tr>
 <tr><td><code>typeInsertionLoc</code></td><td><code>locationReference</code></td><td><code>ASReference</code> **</td></tr>
 <tr><td><code>typeType</code></td><td><code>typeClass</code></td><td><code>ASConstant</code> **</td></tr>
@@ -101,7 +101,7 @@
 
 <p>FSSpecs are also supported for sake of backwards-compatibility with older Carbon applications that sometimes still use them. They're deprecated in OS X, however, due to lack of proper Unicode and long filename support, and their use is discouraged.</p>
 
-<p>See the aem manual's <a href="../aem-manual/04_types.html">Types chapter</a> for more information on <code>AEMAlias</code>, <code>AEMFSRef</code> and <code>AEMFSSpec</code>.</p>
+<p>See the aem manual's <a href="../aem-manual/04_types.html">Types chapter</a> for more information on <code>ASAlias</code>, <code>ASFileRef</code> and <code>ASFileSpec</code>.</p>
 
 <!-- TO DO
 <p>When asking an application to coerce a return value into a file type you must specify the exact type (<code>alias</code>, <code>fileURL</code>, <code>fileRef</code>, or <code>fileSpecification</code>) in the <code>get</code> command. e.g. To get an <code>NSURL</code> object for the current user's home folder, you would usually use:</p>
@@ -113,7 +113,7 @@
 
 <h3>Records</h3>
 
-<p>The <code>typeAERecord</code> AE type is a struct-like data structure containing zero or more properties. Appscript represents AE records as <code>NSMutableDictionary</code> instances. The keys in this dictionary are usually <code>ASConstant</code> subclass instances representing appscript-style property names, e.g. <code>[TEConstant text]</code>, although they may also be <code>AEMType</code> values or strings.</p>
+<p>The <code>typeAERecord</code> AE type is a struct-like data structure containing zero or more properties. Appscript represents AE records as <code>NSMutableDictionary</code> instances. The keys in this dictionary are usually <code>ASConstant</code> subclass instances representing appscript-style property names, e.g. <code>[TEConstant text]</code>, although they may also be <code>ASAEMType</code> values or strings.</p>
 
 <p>If a dictionary contains a <code>class_</code> (or <code>'pcls'</code>) key, appscript will pack the remaining items into an AE record, then coerce it to the type specified by this 'class' property. Similarly, when unpacking an record-like AEDesc with a custom type code, appscript will unpack it as a dictionary with the type represented by a <code>class_</code> entry.</p>
 
@@ -121,7 +121,7 @@
 
 <h3>Types and enumerators</h3>
 
-<p>The <code>typeType</code> and <code>typeEnumerated</code> AE types are unpacked as <code>ASConstant</code> subclass instances when the corresponding terminology is available, otherwise they are unpacked as <code>AEMType</code> and <code>AEMEnum</code> respectively.</td></tr>
+<p>The <code>typeType</code> and <code>typeEnumerated</code> AE types are unpacked as <code>ASConstant</code> subclass instances when the corresponding terminology is available, otherwise they are unpacked as <code>ASAEMType</code> and <code>ASAEMEnum</code> respectively.</td></tr>
 
 <!-- TO DO
 <h3>Unit types</h3>

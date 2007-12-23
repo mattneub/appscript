@@ -40,8 +40,6 @@
 		0867D69BFE84028FC02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		089C1667FE841158C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		32DBCF5E0370ADEE00C91783 /* Appscript_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Appscript_Prefix.pch; sourceTree = "<group>"; };
-		4F196CB60B7786000095502E /* bridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bridge.h; sourceTree = "<group>"; };
-		4F196CB70B7786000095502E /* bridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = bridge.m; sourceTree = "<group>"; };
 		4F1E9DED0B74EDCB00D4DCBF /* referencerenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = referencerenderer.h; sourceTree = "<group>"; };
 		4F1E9DEE0B74EDCB00D4DCBF /* referencerenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = referencerenderer.m; sourceTree = "<group>"; };
 		4F1E9F400B75305800D4DCBF /* constant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = constant.h; sourceTree = "<group>"; };
@@ -146,17 +144,15 @@
 			name = "Other Sources";
 			sourceTree = "<group>";
 		};
-		4F196CC70B7789220095502E /* bridge */ = {
+		4F196CC70B7789220095502E /* aete parser */ = {
 			isa = PBXGroup;
 			children = (
-				4F196CB60B7786000095502E /* bridge.h */,
-				4F196CB70B7786000095502E /* bridge.m */,
 				4FDCB2F10B6D0CD0009534FD /* parser.h */,
 				4FDCB2F20B6D0CD0009534FD /* parser.m */,
 				4FDCB2F70B6D0CD0009534FD /* terminology.h */,
 				4FDCB2F80B6D0CD0009534FD /* terminology.m */,
 			);
-			name = bridge;
+			name = "aete parser";
 			sourceTree = "<group>";
 		};
 		4F196CC80B7789500095502E /* base */ = {
@@ -223,7 +219,7 @@
 			isa = PBXGroup;
 			children = (
 				4F196CC80B7789500095502E /* base */,
-				4F196CC70B7789220095502E /* bridge */,
+				4F196CC70B7789220095502E /* aete parser */,
 			);
 			name = Appscript;
 			sourceTree = "<group>";

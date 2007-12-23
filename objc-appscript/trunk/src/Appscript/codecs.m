@@ -35,11 +35,11 @@
 	CFAbsoluteTime cfTime;
 	LongDateTime longDate;
 	NSData *data;
-	NSAppleEventDescriptor *result;
+	NSAppleEventDescriptor *result = nil;
 		
 	if ([anObject isKindOfClass: [AEMQuery class]])
 		result = [anObject packSelf: self];
-	else if ([anObject isKindOfClass: [AEMBoolean class]])
+	else if ([anObject isKindOfClass: [ASBoolean class]])
 		return [anObject desc];
 	else if ([anObject isKindOfClass: [NSNumber class]]) {
 		switch (*[anObject objCType]) {
@@ -102,7 +102,7 @@
 		result = [self packArray: anObject];
 	else if ([anObject isKindOfClass: [NSDictionary class]])
 		result = [self packDictionary: anObject];
-	else if ([anObject isKindOfClass: [AEMFileBase class]])
+	else if ([anObject isKindOfClass: [ASFileBase class]])
 		return [anObject desc];
 	else if ([anObject isKindOfClass: [NSURL class]]) {
 		if ([anObject isFileURL]) {
@@ -225,9 +225,9 @@
 		case typeUnicodeText:
 			return [desc stringValue];
 		case typeFalse:
-			return AEMFalse;
+			return ASFalse;
 		case typeTrue:
-			return AEMTrue;
+			return ASTrue;
 		case typeLongDateTime:
 			[[desc data] getBytes: &longTime length: sizeof(longTime)];
 			if (UCConvertLongDateTimeToCFAbsoluteTime(longTime, &cfTime)) return nil;
@@ -237,16 +237,16 @@
 		case typeAERecord:
 			return [self unpackAERecord: desc];
 		case typeAlias: 
-			return [AEMAlias aliasWithDescriptor: desc];
+			return [ASAlias aliasWithDescriptor: desc];
 		case typeFileURL:
 			string = [[NSString alloc] initWithData: [desc data] encoding: NSUTF8StringEncoding];
 			url = [NSURL URLWithString: string];
 			[string release];
 			return url;
 		case typeFSRef:
-			return [AEMFSRef fsrefWithDescriptor: desc];
+			return [ASFileRef fileRefWithDescriptor: desc];
 		case typeFSS:
-			return [AEMFSSpec fsspecWithDescriptor: desc];
+			return [ASFileSpec fileSpecWithDescriptor: desc];
 		case typeType:
 			return [self unpackType: desc];
 		case typeEnumerated:
@@ -298,7 +298,7 @@
 		case typeVersion:
 		case typeBoolean:
 			[[desc data] getBytes: &boolean length: sizeof(boolean)];
-			return boolean ? AEMTrue : AEMFalse;
+			return boolean ? ASTrue : ASFalse;
 	}
 	// TO DO: unit types
 	return [self unpackUnknown: desc];

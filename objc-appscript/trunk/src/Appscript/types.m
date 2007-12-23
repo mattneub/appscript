@@ -15,21 +15,21 @@
 /**********************************************************************/
 // Booleans
 
-static AEMBoolean *trueValue;
-static AEMBoolean *falseValue;
+static ASBoolean *trueValue;
+static ASBoolean *falseValue;
 
 
-@implementation AEMBoolean
+@implementation ASBoolean
 
 + (id)True {
 	if (!trueValue)
-		trueValue = [[AEMBoolean alloc] initWithBool: YES];
+		trueValue = [[ASBoolean alloc] initWithBool: YES];
 	return trueValue;
 }
 
 + (id)False {
 	if (!falseValue)
-		falseValue = [[AEMBoolean alloc] initWithBool: NO];
+		falseValue = [[ASBoolean	alloc] initWithBool: NO];
 	return falseValue;
 }
 
@@ -64,7 +64,7 @@ static AEMBoolean *falseValue;
 
 // TO DO: methods for working with Carbon Alias, FSRef, FSSpec types?
 
-@implementation AEMFileBase
+@implementation ASFileBase
 
 - (id)initWithPath:(NSString *)path {
 	return [self initWithFileURL: [NSURL fileURLWithPath: path]];
@@ -88,7 +88,7 @@ static AEMBoolean *falseValue;
 	self = [super init];
 	if (!self) return self;
 	desc = [[desc_ coerceToDescriptorType: [self descriptorType]] retain];
-	if (!desc) return nil; // failed coercion, e.g. due to creating an AEMAlias with a typeFileURL descriptor for a non-existent file
+	if (!desc) return nil; // failed coercion, e.g. due to creating an ASAlias with a typeFileURL descriptor for a non-existent file
 	return self;
 }
 
@@ -125,18 +125,18 @@ static AEMBoolean *falseValue;
 @end
 
 
-@implementation AEMAlias
+@implementation ASAlias
 
 + (id)aliasWithPath:(NSString *)path {
-	return [[[AEMAlias alloc] initWithPath: path] autorelease];
+	return [[[ASAlias alloc] initWithPath: path] autorelease];
 }
 
 + (id)aliasWithFileURL:(NSURL *)url {
-	return [[[AEMAlias alloc] initWithFileURL: url] autorelease];
+	return [[[ASAlias alloc] initWithFileURL: url] autorelease];
 }
 
 + (id)aliasWithDescriptor:(NSAppleEventDescriptor *)desc_ {
-	return [[[AEMAlias alloc] initWithDescriptor: desc_] autorelease];
+	return [[[ASAlias alloc] initWithDescriptor: desc_] autorelease];
 }
 
 - (DescType)descriptorType {
@@ -146,18 +146,18 @@ static AEMBoolean *falseValue;
 @end
 
 
-@implementation AEMFSRef
+@implementation ASFileRef
 
-+ (id)fsrefWithPath:(NSString *)path {
-	return [[[AEMFSRef alloc] initWithPath: path] autorelease];
++ (id)fileRefWithPath:(NSString *)path {
+	return [[[ASFileRef alloc] initWithPath: path] autorelease];
 }
 
-+ (id)fsrefWithFileURL:(NSURL *)url {
-	return [[[AEMFSRef alloc] initWithFileURL: url] autorelease];
++ (id)fileRefWithFileURL:(NSURL *)url {
+	return [[[ASFileRef alloc] initWithFileURL: url] autorelease];
 }
 
-+ (id)fsrefWithDescriptor:(NSAppleEventDescriptor *)desc_ {
-	return [[[AEMFSRef alloc] initWithDescriptor: desc_] autorelease];
++ (id)fileRefWithDescriptor:(NSAppleEventDescriptor *)desc_ {
+	return [[[ASFileRef alloc] initWithDescriptor: desc_] autorelease];
 }
 
 - (DescType)descriptorType {
@@ -167,18 +167,18 @@ static AEMBoolean *falseValue;
 @end
 
 
-@implementation AEMFSSpec
+@implementation ASFileSpec
 
-+ (id)fsspecWithPath:(NSString *)path {
-	return [[[AEMFSSpec alloc] initWithPath: path] autorelease];
++ (id)fileSpecWithPath:(NSString *)path {
+	return [[[ASFileSpec alloc] initWithPath: path] autorelease];
 }
 
-+ (id)fsspecWithFileURL:(NSURL *)url {
-	return [[[AEMFSSpec alloc] initWithFileURL: url] autorelease];
++ (id)fileSpecWithFileURL:(NSURL *)url {
+	return [[[ASFileSpec alloc] initWithFileURL: url] autorelease];
 }
 
-+ (id)fsspecWithDescriptor:(NSAppleEventDescriptor *)desc_ {
-	return [[[AEMFSSpec alloc] initWithDescriptor: desc_] autorelease];
++ (id)fileSpecWithDescriptor:(NSAppleEventDescriptor *)desc_ {
+	return [[[ASFileSpec alloc] initWithDescriptor: desc_] autorelease];
 }
 
 - (DescType)descriptorType {

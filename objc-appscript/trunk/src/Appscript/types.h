@@ -12,15 +12,15 @@
 /**********************************************************************/
 // convenience macros
 
-#define AEMTrue [AEMBoolean True]
-#define AEMFalse [AEMBoolean False]
+#define ASTrue [ASBoolean True]
+#define ASFalse [ASBoolean False]
 
 
 /**********************************************************************/
 // Boolean class represents AEDescs of typeTrue and typeFalse
 
 
-@interface AEMBoolean : NSObject {
+@interface ASBoolean : NSObject {
 	BOOL boolValue;
 	NSAppleEventDescriptor *cachedDesc;
 }
@@ -29,7 +29,7 @@
 
 + (id)False;
 
-// client's shouldn't call -initWithBool: directly; use +True/+False (or AEMTrue/AEMFalse macros) instead
+// client's shouldn't call -initWithBool: directly; use +True/+False (or ASTrue/ASFalse macros) instead
 - (id)initWithBool:(BOOL)boolValue_;
 
 - (BOOL)boolValue;
@@ -43,7 +43,7 @@
 // file object classes represent AEDescs of typeAlias, typeFSRef, typeFSSpec
 
 //abstract base class
-@interface AEMFileBase : NSObject {
+@interface ASFileBase : NSObject {
 	NSAppleEventDescriptor *desc;
 }
 
@@ -67,7 +67,7 @@
 /***********************************/
 // concrete classes
 
-@interface AEMAlias : AEMFileBase
+@interface ASAlias : ASFileBase
 
 + (id)aliasWithPath:(NSString *)path;
 
@@ -78,24 +78,24 @@
 @end
 
 
-@interface AEMFSRef : AEMFileBase
+@interface ASFileRef : ASFileBase
 
-+ (id)fsrefWithPath:(NSString *)path;
++ (id)fileRefWithPath:(NSString *)path;
 
-+ (id)fsrefWithFileURL:(NSURL *)url;
++ (id)fileRefWithFileURL:(NSURL *)url;
 
-+ (id)fsrefWithDescriptor:(NSAppleEventDescriptor *)desc_;
++ (id)fileRefWithDescriptor:(NSAppleEventDescriptor *)desc_;
 
 @end
 
 
-@interface AEMFSSpec : AEMFileBase
+@interface ASFileSpec : ASFileBase
 
-+ (id)fsspecWithPath:(NSString *)path;
++ (id)fileSpecWithPath:(NSString *)path;
 
-+ (id)fsspecWithFileURL:(NSURL *)url;
++ (id)fileSpecWithFileURL:(NSURL *)url;
 
-+ (id)fsspecWithDescriptor:(NSAppleEventDescriptor *)desc_;
++ (id)fileSpecWithDescriptor:(NSAppleEventDescriptor *)desc_;
 
 @end
 

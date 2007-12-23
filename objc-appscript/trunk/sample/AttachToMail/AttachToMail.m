@@ -36,7 +36,7 @@ int main (int argc, const char * argv[]) {
 	MLMakeCommand *makeCmd = [[[mail make] new_: [MLConstant outgoingMessage]] 
 								 withProperties: [NSDictionary dictionaryWithObjectsAndKeys: 
 																subjectText, [MLConstant subject],
-																AEMTrue,	 [MLConstant visible],
+																ASTrue,		 [MLConstant visible],
 																nil]];
 	MLReference *msg = [makeCmd send];
 	
@@ -76,7 +76,7 @@ int main (int argc, const char * argv[]) {
 	 * Bring Mail to front and show the message if its visibility was previously set to false.
 	 */ 
 	[[mail activate] send];
-	[[[[msg visible] set] to: AEMTrue] send];
+	[[[[msg visible] set] to: ASTrue] send];
 	
 	/*
 	 * Clean up and return.
