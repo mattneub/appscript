@@ -76,11 +76,11 @@ p ref
 
 <p>Note that <code>[AEMApp elements: 'docu']</code> is itself a valid reference, identifying <em>all</em> the document elements of the application class. You do not have to call an explicit <code>all</code> selector (indeed, none is provided) as aem automatically handles the details for you. Aem even allows for some convenient shorthand, e.g. writing:</p>
 
-<pre><code>[[[AEMApp.elements: 'docu'] byTest: ...] first]</code></pre>
+<pre><code>[[[AEMApp elements: 'docu'] byTest: ...] first]</code></pre>
 
 <p>is equivalent to writing:</p>
 
-<pre><code>[[[[AEMApp.elements: 'docu'] byTest: ...] elements: 'docu'] first]</code></pre>
+<pre><code>[[[[AEMApp elements: 'docu'] byTest: ...] elements: 'docu'] first]</code></pre>
 
 <p>This allows clients to specify the first document that matches the given condition without having to specify the element class a second time. In AppleScript, the equivalent to this is:</p>
 
@@ -122,188 +122,132 @@ p ref
 
 <dl>
 <dt><code>AEMQuery</code></dt>
-<dd>Defines comparison and hashing methods. See <code>base.h</code>.</dd>
+<dd>Defines comparison and hashing methods. </dd>
 
 <dt><code>AEMPositionSpecifierBase</code></dt>
-<dd>Defines methods for identifying properties and all elements, insertion locations, elements by relative position. Also defines comparison and logical test methods for use in constructing its-based references. See <code>specifier.h</code>.</dd>
+<dd>Defines methods for identifying properties and all elements, insertion locations, elements by relative position. Also defines comparison and logical test methods for use in constructing its-based references.</dd>
 
 <dt><code>AEMMultipleElementsSpecifierBase</code></dt>
-<dd>Defines methods for identifying specific elements of a multi-element reference. See <code>specifier.h</code>.</dd>
+<dd>Defines methods for identifying specific elements of a multi-element reference.</dd>
 
 <dt><code>AEMTest</code></dt>
-<dd>Defines logical test methods for use in constructing its-based references. See <code>test.h</code>.</dd>
+<dd>Defines logical test methods for use in constructing its-based references.</dd>
 </dl>
 
 
 
-<h2>Base classes</h2>
+<h2>Abstract base classes</h2>
 
 <h3>Basic methods</h3>
 
-<pre><code>AEMQuery -- Base class for all reference form and test clause classes.
+<pre><code>AEMQuery // Base class for all reference form and test clause classes.
 
--(unsigned)hash -- aem references can be used as dictionary keys
+-(unsigned)hash;           // aem references can be used as dictionary keys
 
--(BOOL)isEqual:(id)object -- aem references can be compared for equality</code></pre>
+-(BOOL)isEqual:(id)object; // aem references can be compared for equality</code></pre>
 
-
-####### TO DO: finish rest of chapter #######
+<p>(Defined in <code>base.h</code>.)</p>
 
 
 <h3>Methods for all position specifiers</h3>
 
-<pre><code>PositionSpecifier &lt; Specifier -- base class for all property and element
-        reference forms (i.e. all forms except insertion location)
+<pre><code>AEMPositionSpecifierBase : AEMSpecifier
+        // base class for all property and element reference
+        // forms (i.e. all forms except insertion location)
 
-start
-    Result : AEMInsertionSpecifier
 
-end
-    Result : AEMInsertionSpecifier
+// Insertion location specifiers:
 
-before
-    Result : AEMInsertionSpecifier
+-(AEMInsertionSpecifier *)beginning;
+-(AEMInsertionSpecifier *)end;
+-(AEMInsertionSpecifier *)before;
+-(AEMInsertionSpecifier *)after;
 
-after
-    Result : AEMInsertionSpecifier
 
-property(code)
-    code : str -- four-char property code, e.g. 'pnam'
-    Result : AEMProperty
+// Properties and elements:
 
-user_property(name)
-    name : str
-    Result : AEMUserProperty
+-(AEMPropertySpecifier     *)property:(OSType)propertyCode;
+-(AEMUserPropertySpecifier *)userProperty:(NSString *)propertyName;
 
-elements(ccode)
-    code : str -- four-char class code, e.g. 'docu'
-    Result : AEMAllElements
+-(AEMAllElementsSpecifier  *)elements:(OSType)classCode;
 
-previous(code)
-    code : str -- four-char class code
-    Result : AEMElement
+-(AEMElementByRelativePositionSpecifier *)previous:(OSType)classCode;
+-(AEMElementByRelativePositionSpecifier *)next:(OSType)classCode;
 
-next(code)
-    code : str -- four-char class code
-    Result : AEMElement
 
--- Note: following methods are for use on
-       its-based references only
+// Comparison tests (for use on AEMIts-based references only):
 
-gt(val) -- self is greater than value
-    val : anything
-    Result : AEMTest
+- (AEMGreaterThan     *)greaterThan:    (id)object;
+- (AEMGreaterOrEquals *)greaterOrEquals:(id)object;
+- (AEMEquals          *)equals:         (id)object;
+- (AEMNotEquals       *)notEquals:      (id)object;
+- (AEMLessThan        *)lessThan:       (id)object;
+- (AEMLessOrEquals    *)lessOrEquals:   (id)object;
+- (AEMBeginsWith      *)beginsWith:     (id)object;
+- (AEMEndsWith        *)endsWith:       (id)object;
+- (AEMContains        *)contains:       (id)object;
+- (AEMIsIn            *)isIn:           (id)object;</code></pre>
 
-ge(val) -- self is greater than or equal to value
-    val : anything
-    Result : AEMTest
-    
-eq(val) -- self equals value
-    val : anything
-    Result : AEMTest
-    
-ne(val) -- self does not equal value
-    val : anything
-    Result : AEMTest
-    
-lt(val) -- self is less than value
-    val : anything
-    Result : AEMTest
-    
-le(val) -- self is less than or equal to value
-    val : anything
-    Result : AEMTest
-    
-starts_with(val) -- self starts with value
-    val : anything
-    Result : AEMTest
-    
-ends_with(val) -- self ends with value
-    val : anything
-    Result : AEMTest
-    
-contains(val) -- self contains value
-    val : anything
-    Result : AEMTest
-    
-is_in(val) -- self is in value
-    val : anything
-    Result : AEMTest
-
-and(*operands) -- equivalent to self.eq(True).and(*operands)
-    operands : Test/Test
-    Result : AEMTest
-
-or(*operands) -- equivalent to self.eq(True).or(*operands)
-    operands : Test/Test
-    Result : AEMTest
-    
-not
-    Result : AEMTest -- equivalent to self.eq(True).not</code></pre>
+<p>(Defined in <code>specifier.h</code>.)</p>
 
 
 <h3>Methods for all multi-element specifiers</h3>
 
-<pre><code>MultipleElements &lt; PositionSpecifier -- base class for all multi-
-        element reference forms
+<pre><code>AEMMultipleElementsSpecifierBase : AEMPositionSpecifierBase
+        // base class for all multi-element reference forms
 
-    Methods:
 
-first
-    Result : AEMElement
+// Single element selectors:
 
-middle
-    Result : AEMElement
+-(AEMElementByOrdinalSpecifier *)first;
+-(AEMElementByOrdinalSpecifier *)middle;
+-(AEMElementByOrdinalSpecifier *)last;
+-(AEMElementByOrdinalSpecifier *)any;
 
-last
-    Result : AEMElement
+- (AEMElementByIndexSpecifier *)at:(int)index; 
+        // convenience shortcut for -byIndex:
 
-any
-    Result : AEMElement
+- (AEMElementByIndexSpecifier *)byIndex:(id)index; 
+        // index argument is normally an integer (NSNumber), although
+        // some apps may accept other types (e.g. Finder accepts an ASAlias)
 
-by_index(key)
-    key : integer -- normally an integer, though some apps may 
-    accept other types (e.g. Finder accepts a MacTypes::Alias)
-    Result : AEMElementByIndex
+- (AEMElementByNameSpecifier  *)byName:(NSString *)name;
 
-by_name(key)
-    key : string -- the object's name
-    Result : AEMElementByName
+- (AEMElementByIDSpecifier    *)byID:(id)id_;
 
-by_id(key)
-    key : anything -- the object's unique id
-    Result : AEMElementByID
 
-by_range(start, stop)
-    start : Element -- an app- or con-based reference
-    stop : Element -- an app- or con-based reference
-    Result : AEMElementByRange
+// Multiple element selectors:
 
-by_filter(test)
-    test : Test -- an its-based reference
-    Result : AEMElementsByFilter</code></pre>
+- (AEMElementsByRangeSpecifier *)at:(int)startIndex to:(int)stopIndex; 
+        // convenience shortcut for -byRange:
+
+- (AEMElementsByRangeSpecifier *)byRange:(id)startReference to:(id)stopReference;
+        // takes two AEMApp-/AEMCon-based references; other values are expanded as needed,
+        // e.g. an NSNumber expands to a byIndex selector; an NSString to a byName selector
+
+- (AEMElementsByTestSpecifier *)byTest:(AEMTest *)testReference;
+        // testReference argument is an AEMIts-based reference</code></pre>
+
+<p>(Defined in <code>specifier.h</code>.)</p>
 
 
 <h3>Methods for all test clause classes</h3>
 
-<pre><code>Test &lt; BASE -- represents a comparison/logic test
+<pre><code>AEMTest : AEMQuery
+        // represents a comparison/logic test
 
-    Methods:
+- (AEMAND *)AND:(id)remainingOperands; 
+        // apply a logical AND test to self and one or more other operands
+        // takes a single AEMTest instance or an NSArray of AEMTest instances
 
-and(*operands) -- apply a logical 'and' test to self and
-one or more other operands
-    *operands : Test -- one or more comparison/logic test
-        objects
-    Result : AEMTest
-    
-or(*operands) -- apply a logical 'or' test to self and one
-        or more other operands
-    *operands : Test -- one or more comparison/logic test
-            objects
-    Result : AEMTest
+- (AEMOR  *)OR:(id)remainingOperands;
+        // apply a logical OR test to self and one or more other operands
+        // takes a single AEMTest instance or an NSArray of AEMTest instances
 
-not
-    Result : AEMTest -- apply a logical 'not' test to self</code></pre>
+- (AEMNOT *)NOT;
+        // apply a logical NOT test to self</code></pre>
+
+<p>(Defined in <code>specifier.h</code>.)</p>
 
 
 
@@ -311,78 +255,86 @@ not
 
 <h3>Insertion location reference form</h3>
 
-<pre><code>InsertionSpecifier &lt; Specifier -- refers to insertion point before or after/at
-        start or end of element(s); e.g. ref.before</code></pre>
+<pre><code>AEMInsertionSpecifier : AEMSpecifier 
+        // refers to insertion point before or after/at
+        //  start or end of element(s); e.g. [ref before]</code></pre>
 
 <h3>Property reference forms</h3>
 
-<pre><code>Property &lt; PositionSpecifier -- refers to a property (whose value
-        may be a basic type, application object or reference);
-        e.g. ref.property('ctxt')
+<pre><code>AEMPropertySpecifier : AEMPositionSpecifierBase
+        // refers to a property (whose value may be a basic type, application object
+        // or reference); e.g. [ref property: 'ctxt']
 
 
-UserProperty &lt; PositionSpecifier -- refers to a user-defined property 
-        (typically in an OSA applet); e.g. ref.user_property('myVar')</code></pre>
+AEMUserPropertySpecifier : AEMPositionSpecifierBase
+        // refers to a user-defined property (typically in an OSA applet);
+        // e.g. [ref userProperty: @"myVar"]</code></pre>
 
 
 <h3>Single element reference forms</h3>
 
 
-<pre><code>ElementByIndex &lt; SingleElement -- refers to a single element in the referenced 
-        container object(s) by index; e.g. ref.by_index(3)
+<pre><code>AEMElementByIndexSpecifier : AEMSingleElementSpecifierBase
+        // refers to a single element in the referenced container object(s)
+        // by index; e.g. [ref at: 3], [ref byIndex: [NSNumber numberWithInt: 3]]
 
-ElementByName &lt; SingleElement -- refers to a single element in the referenced 
-        container object(s) by name; e.g. ref.by_name('Documents')
-
-
-ElementByID &lt; SingleElement -- refers to a single element in the referenced container 
-        object(s) by unique id; e.g. ref.by_id(3456)
+AEMElementByNameSpecifier : AEMSingleElementSpecifierBase
+        // refers to a single element in the referenced container object(s)
+        // by name; e.g. [ref byName: @"Documents"]
 
 
-ElementByOrdinal &lt; SingleElement -- refers to first, middle, last or any element in 
-        the referenced container object(s); e.g. ref.first
+AEMElementByIDSpecifier : AEMSingleElementSpecifierBase
+        // refers to a single element in the referenced container object(s)
+        // by unique id; e.g. [ref byID: [NSNumber numberWithInt: 3456]]
 
 
-ElementByRelativePosition &lt; SingleElement -- refers to the previous or next element 
-        of the given class in the referenced container object(s); 
-        e.g. ref.next('cpar')</code></pre>
+AEMElementByOrdinalSpecifier : AEMSingleElementSpecifierBase
+        // refers to first, middle, last or any element in the referenced
+        // container object(s); e.g. [ref first]
+
+
+AEMElementByRelativePositionSpecifier : AEMSingleElementSpecifierBase
+        // refers to the previous or next element of the given class in the
+        // referenced container object(s); e.g. [ref next: 'cpar']</code></pre>
 
 
 <h3>Multiple element reference forms</h3>
 
-<pre><code>ElementsByRange &lt; MultipleElements -- refers to a range of elements
-        in the referenced container object(s) (including start and 
-        end points); e.g. ref.by_range(AEM.con.elements('cpar').by_index(2),
-                AEM.con.elements('cpar').last)
+<pre><code>AEMElementsByRangeSpecifier : AEMMultipleElementsSpecifierBase
+        // refers to a range of elements in the referenced container object(s),
+        including start and end points; e.g. [ref at: 2 to: -1], 
+        [ref byRange: [[AEMCon elements: 'cpar'] at: 2]
+                  to: [[AEMCon elements: 'cpar'] last]]
 
 
-ElementsByFilter &lt; MultipleElements -- refers to all elements in the
-        referenced container object(s) that fulfill a given condition; 
-        e.g. ref.by_filter(AEM.its.name.startswith('a'))
+AEMElementsByFilterSpecifier : AEMMultipleElementsSpecifierBase
+        // refers to all elements in the referenced container object(s) that
+        // fulfill a given condition; e.g. [ref byFilter:
+        //         [[AEMIts property: 'pnam'] beginsWith: @"a"]]
 
 
-AllElements(MultipleElements) -- refers to all elements of 
-        the given class in the referenced container object(s); 
-        e.g. ref.elements('docu')</code></pre>
+AEMAllElementsSpecifier : AEMMultipleElementsSpecifierBase
+        // refers to all elements of the given class in the referenced container
+        // object(s); e.g. [ref elements: 'docu']</code></pre>
 
 
 <h3>Tests</h3>
 
-<p>The <code>Test</code> class represents a comparison test or logical test, and defines methods for composing additional logical tests on top of these. Each kind of test clause is represented by a different subclass of the main <code>Test</code> class. The details are not that important, however, so they're not listed here.</p>
+<p>The <code>AEMTest</code> class represents a comparison test or logical test, and defines methods for composing additional logical tests on top of these. Each kind of test clause is represented by a different subclass of the main <code>AEMTest</code> class. The details are not that important, however, so they're not listed here.</p>
 
 
 
 
 <h3>Reference Roots</h3>
 
-<pre><code>ApplicationRoot &lt; PropertySpecifier -- AEM.app returns an instance of
-       this class
+<pre><code>AEMApplicationRoot : AEMPositionSpecifierBase
+        // the AEMApp macro returns an instance of this class
 
-CurrentContainer &lt; PropertySpecifier -- AEM.con returns an instance of
-       this class
+AEMCurrentContainerRoot : AEMPositionSpecifierBase
+        // the AEMCon macro returns an instance of this class
 
-ObjectBeingExamined &lt; PropertySpecifier -- AEM.its returns an instance
-       of this class</code></pre>
+AEMObjectBeingExaminedRoot : AEMPositionSpecifierBase
+        // the AEMIts macro returns an instance of this class</code></pre>
 
 
 
