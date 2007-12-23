@@ -1,5 +1,7 @@
 TO DO
 
+- remove _PositionSpecifier's AND, OR, NOT methods and documentation
+
 - following should work but doesn't:
 
 	Application('/System/Library/CoreServices/Finder.app').event('coregetd', {'----': app.elements('pcap')}).send()
