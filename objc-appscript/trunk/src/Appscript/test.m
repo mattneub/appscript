@@ -86,7 +86,7 @@ void disposeTestModule(void) {
 // takes a single test clause or an array of test clauses
 // note: currently performs no runtime type checks to ensure arg is/contains
 // AEMTest instances only
-- (AEMAND *)AND:(id)remainingOperands { 
+- (AEMANDTest *)AND:(id)remainingOperands { 
 	NSMutableArray *allOperands;
 	
 	allOperands = [NSArray arrayWithObject: self];
@@ -94,13 +94,13 @@ void disposeTestModule(void) {
 		[allOperands addObjectsFromArray: remainingOperands];
 	else
 		[allOperands addObject: remainingOperands];
-	return [[[AEMAND alloc] initWithOperands: allOperands] autorelease];
+	return [[[AEMANDTest alloc] initWithOperands: allOperands] autorelease];
 }
 
 // takes a single test clause or an array of test clauses
 // note: currently performs no runtime type checks to ensure arg is/contains
 // AEMTest instances only
-- (AEMOR *)OR:(id)remainingOperands {
+- (AEMORTest *)OR:(id)remainingOperands {
 	NSMutableArray *allOperands;
 	
 	allOperands = [NSArray arrayWithObject: self];
@@ -108,11 +108,11 @@ void disposeTestModule(void) {
 		[allOperands addObjectsFromArray: remainingOperands];
 	else
 		[allOperands addObject: remainingOperands];
-	return [[[AEMOR alloc] initWithOperands: allOperands] autorelease];
+	return [[[AEMORTest alloc] initWithOperands: allOperands] autorelease];
 }
 
-- (AEMNOT *)NOT {
-	return [[[AEMNOT alloc] initWithOperands: [NSArray arrayWithObject: self]] autorelease];
+- (AEMNOTTest *)NOT {
+	return [[[AEMNOTTest alloc] initWithOperands: [NSArray arrayWithObject: self]] autorelease];
 }
 
 - (NSString *)formatString { // stub method; subclasses will override
@@ -130,7 +130,7 @@ void disposeTestModule(void) {
 // Comparison tests
 
 // Abstract base class for all comparison test classes
-@implementation AEMComparisonBase
+@implementation AEMComparisonTest
 
 - (id)initWithOperand1:(id)operand1_ operand2:(id)operand2_ {
 	self = [super init];
@@ -167,7 +167,7 @@ void disposeTestModule(void) {
 // instead, call the appropriate methods on specifier objects
 // of AEMIts-based references
 
-@implementation AEMGreaterThan
+@implementation AEMGreaterThanTest
 
 - (NSString *)formatString {
 	return @"[%@ greaterThan: %@]";
@@ -184,7 +184,7 @@ void disposeTestModule(void) {
 @end
 
 
-@implementation AEMGreaterOrEquals
+@implementation AEMGreaterOrEqualsTest
 
 - (NSString *)formatString {
 	return @"[%@ greaterOrEquals: %@]";
@@ -201,7 +201,7 @@ void disposeTestModule(void) {
 @end
 
 
-@implementation AEMEquals
+@implementation AEMEqualsTest
 
 - (NSString *)formatString {
 	return @"[%@ equals: %@]";
@@ -218,7 +218,7 @@ void disposeTestModule(void) {
 @end
 
 
-@implementation AEMNotEquals
+@implementation AEMNotEqualsTest
 
 - (NSString *)formatString {
 	return @"[%@ notEquals: %@]";
@@ -237,7 +237,7 @@ void disposeTestModule(void) {
 @end
 
 
-@implementation AEMLessThan
+@implementation AEMLessThanTest
 
 - (NSString *)formatString {
 	return @"[%@ lessThan: %@]";
@@ -254,7 +254,7 @@ void disposeTestModule(void) {
 @end
 
 
-@implementation AEMLessOrEquals
+@implementation AEMLessOrEqualsTest
 
 - (NSString *)formatString {
 	return @"[%@ lessOrEquals: %@]";
@@ -271,7 +271,7 @@ void disposeTestModule(void) {
 @end
 
 
-@implementation AEMBeginsWith
+@implementation AEMBeginsWithTest
 
 - (NSString *)formatString {
 	return @"[%@ beginsWith: %@]";
@@ -288,7 +288,7 @@ void disposeTestModule(void) {
 @end
 
 
-@implementation AEMEndsWith
+@implementation AEMEndsWithTest
 
 - (NSString *)formatString {
 	return @"[%@ endsWith: %@]";
@@ -305,7 +305,7 @@ void disposeTestModule(void) {
 @end
 
 
-@implementation AEMContains
+@implementation AEMContainsTest
 
 - (NSString *)formatString {
 	return @"[%@ contains: %@]";
@@ -322,7 +322,7 @@ void disposeTestModule(void) {
 @end
 
 
-@implementation AEMIsIn
+@implementation AEMIsInTest
 
 - (NSString *)formatString {
 	return @"[%@ isIn: %@]";
@@ -349,7 +349,7 @@ void disposeTestModule(void) {
 // Logical tests
 
 // Abstract base class for all logical test classes
-@implementation AEMLogicalBase
+@implementation AEMLogicalTest
 
 - (id)initWithOperands:(NSArray *)operands_ {
 	self = [super init];
@@ -402,7 +402,7 @@ void disposeTestModule(void) {
 // logical tests
 // Note: clients should not instantiate these classes directly
 
-@implementation AEMAND
+@implementation AEMANDTest
 
 - (NSString *)formatString {
 	return @"[%@ AND: %@]";
@@ -418,7 +418,7 @@ void disposeTestModule(void) {
 @end
 
 
-@implementation AEMOR
+@implementation AEMORTest
 
 - (NSString *)formatString {
 	return @"[%@ OR: %@]";
@@ -435,7 +435,7 @@ void disposeTestModule(void) {
 @end
 
 
-@implementation AEMNOT
+@implementation AEMNOTTest
 
 - (NSString *)description {
 	return [NSString stringWithFormat: @"[%@ NOT]", [operands objectAtIndex: 0]];

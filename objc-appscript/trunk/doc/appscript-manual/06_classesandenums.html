@@ -39,11 +39,11 @@
 [TEConstant no]
 [TEConstant ask]</code></pre>
 
-<p>Occasionally an application dictionary defines a type or enumerator without providing it with a corresponding name name. In these cases, the value will be represented as a raw <code>ASAEMType</code> or <code>ASAEMEnum</code> instance instead, e.g.: <!--The aem package's documentation provides more information on these lower-level objects, should you need to use them.--></p>
+<p>Occasionally an application dictionary defines a type or enumerator without providing it with a corresponding name name. In these cases, the value will be represented as a raw <code>AEMType</code> or <code>AEMEnum</code> instance instead, e.g.: <!--The aem package's documentation provides more information on these lower-level objects, should you need to use them.--></p>
 
-<pre><code>[ASAEMType typeWithCode: 'abcd']
+<pre><code>[AEMType typeWithCode: 'abcd']
 
-[ASAEMEnum enumWithCode: 'xyz ']</code></pre>
+[AEMEnum enumWithCode: 'xyz ']</code></pre>
 
 <h2>Common AE types</h2>
 
@@ -113,7 +113,7 @@
 
 <h3>Records</h3>
 
-<p>The <code>typeAERecord</code> AE type is a struct-like data structure containing zero or more properties. Appscript represents AE records as <code>NSMutableDictionary</code> instances. The keys in this dictionary are usually <code>ASConstant</code> subclass instances representing appscript-style property names, e.g. <code>[TEConstant text]</code>, although they may also be <code>ASAEMType</code> values or strings.</p>
+<p>The <code>typeAERecord</code> AE type is a struct-like data structure containing zero or more properties. Appscript represents AE records as <code>NSMutableDictionary</code> instances. The keys in this dictionary are usually <code>ASConstant</code> subclass instances representing appscript-style property names, e.g. <code>[TEConstant text]</code>, although they may also be <code>AEMType</code> values or strings.</p>
 
 <p>If a dictionary contains a <code>class_</code> (or <code>'pcls'</code>) key, appscript will pack the remaining items into an AE record, then coerce it to the type specified by this 'class' property. Similarly, when unpacking an record-like AEDesc with a custom type code, appscript will unpack it as a dictionary with the type represented by a <code>class_</code> entry.</p>
 
@@ -121,7 +121,7 @@
 
 <h3>Types and enumerators</h3>
 
-<p>The <code>typeType</code> and <code>typeEnumerated</code> AE types are unpacked as <code>ASConstant</code> subclass instances when the corresponding terminology is available, otherwise they are unpacked as <code>ASAEMType</code> and <code>ASAEMEnum</code> respectively.</td></tr>
+<p>The <code>typeType</code> and <code>typeEnumerated</code> AE types are unpacked as <code>ASConstant</code> subclass instances when the corresponding terminology is available, otherwise they are unpacked as <code>AEMType</code> and <code>AEMEnum</code> respectively.</td></tr>
 
 <!-- TO DO
 <h3>Unit types</h3>
@@ -143,6 +143,6 @@
 </div>
 
 <!--footer-->
-<p class="footer">&copy; 2007 HAS</p>
+<p class="footer">&copy; 2008 HAS</p>
 </body>
 </html>

@@ -9,6 +9,13 @@
 #import "parser.h"
 
 
+
+typedef enum {
+	kASPropertyDef = 0,
+	kASElementDef  = 1
+} ASPreferredDefinitionType; // used in -referenceForCode:preferably:
+
+
 /**********************************************************************/
 
 
@@ -22,41 +29,46 @@
 /**********************************************************************/
 
 
-typedef enum {kPropertyDef, kElementDef} ASReferenceType;
-
-
-@interface ASReferenceDef : NSObject {
+@interface ASDefinition : NSObject {
+	NSString *name;
 	OSType code;
-	ASReferenceType type;
 }
 
-- (id) initWithCode:(OSType)code_ type:(ASReferenceType)type_;
+- (id)initWithName:(NSString *)name_ code:(OSType)code_;
 
+- (NSString *)name;
 
 - (OSType)code;
-
-- (ASReferenceType)type;
 
 @end
 
 
-@interface ASCommandDef : NSObject {
+@interface ASPropertyDef : ASDefinition
+@end
+
+
+@interface ASElementDef : ASDefinition
+@end
+
+
+@interface ASParameterDef : ASDefinition
+@end
+
+
+@interface ASCommandDef : ASDefinition {
 	OSType classCode;
-	OSType code;
 	NSMutableDictionary *parameters;
 }
 
-- (id)initWithEventClass:(OSType)classCode_
-				 eventID:(OSType)code_
-			  parameters:(NSArray *)parameters_
-		keywordConverter:(id)converter;
+- (id)initWithName:(NSString *)name_ classCode:(OSType)classCode_ idCode:(OSType)code_;
 
+- (void)addParameterName:(NSString *)name_ code:(OSType)code_; // for internal use only
 
 - (OSType)classCode;
 
-- (OSType)code;
+- (OSType)idCode; // synonymous to -code
 
-- (BOOL)parameterByName:(NSString *)name code:(OSType *)code_;
+- (ASParameterDef *)parameterForName:(NSString *)name_;
 
 @end
 
@@ -64,7 +76,7 @@ typedef enum {kPropertyDef, kElementDef} ASReferenceType;
 /**********************************************************************/
 
 
-@interface ASStringTerminology : NSObject {
+@interface ASTerminology : NSObject {
 	NSMutableDictionary *typeByName;
 	NSMutableDictionary *typeByCode;
 	
@@ -78,10 +90,11 @@ typedef enum {kPropertyDef, kElementDef} ASReferenceType;
 	id converter;
 }
 
+// PUBLIC
+
 /*
  * converter : AS keyword string to C identifer string converter; should implement:
  *		-(NSString *)convert:(NSString *)name
- *		-(NSString *)escape:(NSString *)name
  */
 - (id)initWithKeywordConverter:(id)converter_;
 
@@ -90,42 +103,39 @@ typedef enum {kPropertyDef, kElementDef} ASReferenceType;
  *		should implement the following accessors:
  *				-classes, -enumerators, -properties, -elements, -commands
  */
-- (id)addData:(id)data;
+- (void)addParserData:(id)data;
 
-// used internally:
+// PRIVATE; used by -addParserData:
 
 - (void)addTypeTableDefinitions:(NSArray *)definitions ofType:(OSType)descType;
 
 - (void)addReferenceTableDefinitions:(NSArray *)definitions
 						 toNameTable:(NSMutableDictionary *)nameTable
-						   codeTable:(NSMutableDictionary *)codeTable;
+						andCodeTable:(NSMutableDictionary *)codeTable;
 
-// Lookup methods return YES/NO to indicate if lookup was successful.
+// PUBLIC 
 
 // Used to pack/unpack typeType, typeEnumerated, typeProperty:
 
-- (BOOL)typeByName:(NSString *)name
-				  desc:(NSAppleEventDescriptor **)desc;
+- (NSAppleEventDescriptor *)typeForName:(NSString *)name;
 
-- (BOOL)typeByCode:(OSType)descData
-				  name:(NSString **)name;
+- (NSString *)typeForCode:(OSType)descData;
 
 // Used to build AEM references:
 
-- (BOOL)referenceByName:(NSString *)name
-					  code:(OSType *)code
-					  type:(ASReferenceType *)type;
+- (ASDefinition *)referenceForName:(NSString *)name;
 
 // Used by -description to render AEM references:
 
-- (BOOL)referenceByCode:(OSType)code
-					  name:(NSString **)name
-					  type:(ASReferenceType *)type; // when calling, pass preferred reference type; on return, contains actual type found
+- (ASDefinition *)referenceForCode:(OSType)code preferably:(ASPreferredDefinitionType)preferredType;
 
-// Used to pack Apple events:
+// Obtain copies of conversion tables directly, if needed:
 
-- (BOOL)commandByName:(NSString *)name
-			  definition:(ASCommandDef **)definition;
+- (NSDictionary *)propertyByNameTable;
+- (NSDictionary *)propertyByCodeTable;
+- (NSDictionary *)elementByNameTable;
+- (NSDictionary *)elementByCodeTable;
+- (NSDictionary *)commandByNameTable;
 
 @end
 

@@ -14,9 +14,9 @@
 /**********************************************************************/
 // Forward declarations
 
-@class AEMAND;
-@class AEMOR;
-@class AEMNOT;
+@class AEMANDTest;
+@class AEMORTest;
+@class AEMNOTTest;
 
 
 /**********************************************************************/
@@ -32,9 +32,9 @@ void disposeTestModule(void);
 
 @interface AEMTest : AEMQuery
 
-- (AEMAND	*)AND:(id)remainingOperands; // takes a single test clause or an NSArray of test clauses
-- (AEMOR	*)OR:(id)remainingOperands;
-- (AEMNOT	*)NOT;
+- (AEMANDTest *)AND:(id)remainingOperands; // takes a single test clause or an NSArray of test clauses
+- (AEMORTest  *)OR:(id)remainingOperands;
+- (AEMNOTTest *)NOT;
 
 - (NSString *)formatString;
 
@@ -45,7 +45,7 @@ void disposeTestModule(void);
 // Comparison tests
 
 // Abstract base class for all comparison test classes
-@interface AEMComparisonBase : AEMTest {
+@interface AEMComparisonTest : AEMTest {
 	id operand1, operand2;	
 }
 
@@ -56,34 +56,34 @@ void disposeTestModule(void);
 // comparison tests
 // Note: clients should not instantiate these classes directly
 
-@interface AEMGreaterThan : AEMComparisonBase
+@interface AEMGreaterThanTest : AEMComparisonTest
 @end
 
-@interface AEMGreaterOrEquals : AEMComparisonBase
+@interface AEMGreaterOrEqualsTest : AEMComparisonTest
 @end
 
-@interface AEMEquals : AEMComparisonBase
+@interface AEMEqualsTest : AEMComparisonTest
 @end
 
-@interface AEMNotEquals : AEMComparisonBase
+@interface AEMNotEqualsTest : AEMComparisonTest
 @end
 
-@interface AEMLessThan : AEMComparisonBase
+@interface AEMLessThanTest : AEMComparisonTest
 @end
 
-@interface AEMLessOrEquals : AEMComparisonBase
+@interface AEMLessOrEqualsTest : AEMComparisonTest
 @end
 
-@interface AEMBeginsWith : AEMComparisonBase
+@interface AEMBeginsWithTest : AEMComparisonTest
 @end
 
-@interface AEMEndsWith : AEMComparisonBase
+@interface AEMEndsWithTest : AEMComparisonTest
 @end
 
-@interface AEMContains : AEMComparisonBase
+@interface AEMContainsTest : AEMComparisonTest
 @end
 
-@interface AEMIsIn : AEMComparisonBase
+@interface AEMIsInTest : AEMComparisonTest
 @end
 
 
@@ -91,7 +91,7 @@ void disposeTestModule(void);
 // Logical tests
 
 // Abstract base class for all logical test classes
-@interface AEMLogicalBase : AEMTest {
+@interface AEMLogicalTest : AEMTest {
 	NSArray *operands;	
 }
 
@@ -104,12 +104,12 @@ void disposeTestModule(void);
 // logical tests
 // Note: clients should not instantiate these classes directly
 
-@interface AEMAND : AEMLogicalBase
+@interface AEMANDTest : AEMLogicalTest
 @end
 
-@interface AEMOR : AEMLogicalBase
+@interface AEMORTest : AEMLogicalTest
 @end
 
-@interface AEMNOT : AEMLogicalBase
+@interface AEMNOTTest : AEMLogicalTest
 @end
 

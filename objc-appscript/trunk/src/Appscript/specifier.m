@@ -252,7 +252,7 @@ void disposeSpecifierModule(void) {
 /*
  * All property and element reference forms inherit from this abstract class.
  */
-@implementation AEMPositionSpecifierBase
+@implementation AEMObjectSpecifier
 
 - (id)initWithContainer:(AEMSpecifier *)container_ key:(id)key_ wantCode:(OSType)wantCode_; {
 	self = [super initWithContainer:(AEMSpecifier *)container_ key:(id)key_];
@@ -263,44 +263,44 @@ void disposeSpecifierModule(void) {
 
 // Comparison and logic tests
 
-- (AEMGreaterThan *)greaterThan:(id)object {
-	return [[[AEMGreaterThan alloc] initWithOperand1: self operand2: object] autorelease];
+- (AEMGreaterThanTest *)greaterThan:(id)object {
+	return [[[AEMGreaterThanTest alloc] initWithOperand1: self operand2: object] autorelease];
 }
 
-- (AEMGreaterOrEquals *)greaterOrEquals:(id)object {
-	return [[[AEMGreaterOrEquals alloc] initWithOperand1: self operand2: object] autorelease];
+- (AEMGreaterOrEqualsTest *)greaterOrEquals:(id)object {
+	return [[[AEMGreaterOrEqualsTest alloc] initWithOperand1: self operand2: object] autorelease];
 }
 
-- (AEMEquals *)equals:(id)object {
-	return [[[AEMEquals alloc] initWithOperand1: self operand2: object] autorelease];
+- (AEMEqualsTest *)equals:(id)object {
+	return [[[AEMEqualsTest alloc] initWithOperand1: self operand2: object] autorelease];
 }
 
-- (AEMNotEquals *)notEquals:(id)object {
-	return [[[AEMNotEquals alloc] initWithOperand1: self operand2: object] autorelease];
+- (AEMNotEqualsTest *)notEquals:(id)object {
+	return [[[AEMNotEqualsTest alloc] initWithOperand1: self operand2: object] autorelease];
 }
 
-- (AEMLessThan *)lessThan:(id)object {
-	return [[[AEMLessThan alloc] initWithOperand1: self operand2: object] autorelease];
+- (AEMLessThanTest *)lessThan:(id)object {
+	return [[[AEMLessThanTest alloc] initWithOperand1: self operand2: object] autorelease];
 }
 
-- (AEMLessOrEquals *)lessOrEquals:(id)object {
-	return [[[AEMLessOrEquals alloc] initWithOperand1: self operand2: object] autorelease];
+- (AEMLessOrEqualsTest *)lessOrEquals:(id)object {
+	return [[[AEMLessOrEqualsTest alloc] initWithOperand1: self operand2: object] autorelease];
 }
 
-- (AEMBeginsWith *)beginsWith:(id)object {
-	return [[[AEMBeginsWith alloc] initWithOperand1: self operand2: object] autorelease];
+- (AEMBeginsWithTest *)beginsWith:(id)object {
+	return [[[AEMBeginsWithTest alloc] initWithOperand1: self operand2: object] autorelease];
 }
 
-- (AEMEndsWith *)endsWith:(id)object {
-	return [[[AEMEndsWith alloc] initWithOperand1: self operand2: object] autorelease];
+- (AEMEndsWithTest *)endsWith:(id)object {
+	return [[[AEMEndsWithTest alloc] initWithOperand1: self operand2: object] autorelease];
 }
 
-- (AEMContains *)contains:(id)object {
-	return [[[AEMContains alloc] initWithOperand1: self operand2: object] autorelease];
+- (AEMContainsTest *)contains:(id)object {
+	return [[[AEMContainsTest alloc] initWithOperand1: self operand2: object] autorelease];
 }
 
-- (AEMIsIn *)isIn:(id)object {
-	return [[[AEMIsIn alloc] initWithOperand1: self operand2: object] autorelease];
+- (AEMIsInTest *)isIn:(id)object {
+	return [[[AEMIsInTest alloc] initWithOperand1: self operand2: object] autorelease];
 }
 
 
@@ -434,7 +434,7 @@ void disposeSpecifierModule(void) {
  * the rest call its -trueSelf method to get rid of any
  * all-elements specifiers)
  */
-@implementation AEMSingleElementSpecifierBase
+@implementation AEMSingleElementSpecifier
 
 - (id)initWithContainer:(AEMSpecifier *)container_ key:(id)key_ wantCode:(OSType)wantCode_; {
 	return [super initWithContainer: [container_ trueSelf] key: key_ wantCode: wantCode_];
@@ -631,7 +631,7 @@ void disposeSpecifierModule(void) {
 /*
  * Base class for all multiple element specifiers.
  */
-@implementation AEMMultipleElementsSpecifierBase 
+@implementation AEMMultipleElementsSpecifier 
 
 // ordinal selectors
 

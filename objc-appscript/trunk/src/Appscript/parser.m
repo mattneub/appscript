@@ -12,41 +12,6 @@
 
 /**********************************************************************/
 
-/*
- * On return, resultDesc contains an autoreleased NSAppleEventDescriptor
- * containing zero or more aete descs.
- */
-extern OSStatus AEMGetAppTerminology(NSURL *fileURL,
-									 NSAppleEventDescriptor **resultDesc) {
-	OSStatus err;
-	FSRef fsRef;
-	FSSpec fsSpec;
-	ComponentInstance defaultComponent;
-	Boolean didLaunch;
-	AEDesc *theDesc;
-	
-	theDesc = malloc(sizeof(AEDesc));
-	if (!CFURLGetFSRef((CFURLRef)fileURL, &fsRef)) return errFSBadFSRef;
-	err = FSGetCatalogInfo(&fsRef, kFSCatInfoNone, NULL, NULL, &fsSpec, NULL);
-	if (err) return err;
-	// need to initialise an OSA language component in order to call OSAGetAppTerminology
-	defaultComponent = OpenDefaultComponent(kOSAComponentType, kAppleScriptSubtype);
-	err = GetComponentInstanceError(defaultComponent);
-	if (err) return err;
-	err = OSAGetAppTerminology(defaultComponent, 
-							   kOSAModeNull,
-							   &fsSpec, 
-							   0, 
-							   &didLaunch, 
-							   theDesc);
-	if (err) return err;
-	*resultDesc = [[[NSAppleEventDescriptor alloc] initWithAEDescNoCopy: theDesc] autorelease];
-	return (*resultDesc) ? noErr : 1;
-}
-
-
-/**********************************************************************/
-
 
 // not defined in OpenScripting.h for some reason
 #ifndef kAEInheritedProperties
@@ -482,9 +447,11 @@ extern OSStatus AEMGetAppTerminology(NSURL *fileURL,
 	NSString *code;
 	int i, j, n;
 	
+	if ([aetes descriptorType] != typeAEList)
+		aetes = [aetes coerceToDescriptorType: typeAEList];
 	for (i = 1; i <= [aetes numberOfItems]; i++) {
 		aete = [aetes descriptorAtIndex: i];
-		if ([aete descriptorType] == typeAETE) {
+		if ([aete descriptorType] == typeAETE || [aete descriptorType] == typeAEUT) {
 			data = [aete data];
 			aeteData = (char *)[data bytes];
 			aeteSize = [data length];
@@ -492,10 +459,6 @@ extern OSStatus AEMGetAppTerminology(NSURL *fileURL,
 			n = [self integer];
 			for (j = 0; j < n; j++)
 				[self parseSuite];
-			if (cursor != aeteSize){
-				[NSException raise: @"Bad aete"
-							format: @"Some data wasn't read (%i bytes expected, %i bytes read)", 
-									aeteSize, cursor];}
 		}
 	}
 	/* singular names are normally used in the classes table and plural names in the elements table. However, if an aete defines a singular name but not a plural name then the missing plural name is substituted with the singular name; and vice-versa if there's no singular equivalent for a plural name.

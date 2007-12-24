@@ -48,16 +48,16 @@
 @class AEMElementsByTestSpecifier;
 @class AEMAllElementsSpecifier;
 
-@class AEMGreaterThan;
-@class AEMGreaterOrEquals;
-@class AEMEquals;
-@class AEMNotEquals;
-@class AEMLessThan;
-@class AEMLessOrEquals;
-@class AEMBeginsWith;
-@class AEMEndsWith;
-@class AEMContains;
-@class AEMIsIn;
+@class AEMGreaterThanTest;
+@class AEMGreaterOrEqualsTest;
+@class AEMEqualsTest;
+@class AEMNotEqualsTest;
+@class AEMLessThanTest;
+@class AEMLessOrEqualsTest;
+@class AEMBeginsWithTest;
+@class AEMEndsWithTest;
+@class AEMContainsTest;
+@class AEMIsInTest;
 
 @class AEMSpecifier;
 @class AEMReferenceRootBase;
@@ -113,7 +113,7 @@ void disposeSpecifierModule(void);
 /*
  * All property and element reference forms inherit from this abstract class.
  */
-@interface AEMPositionSpecifierBase : AEMSpecifier {
+@interface AEMObjectSpecifier : AEMSpecifier {
 	OSType wantCode;
 }
 
@@ -121,16 +121,16 @@ void disposeSpecifierModule(void);
 
 // Comparison and logic tests
 
-- (AEMGreaterThan		*)greaterThan:(id)object;
-- (AEMGreaterOrEquals	*)greaterOrEquals:(id)object;
-- (AEMEquals			*)equals:(id)object;
-- (AEMNotEquals			*)notEquals:(id)object;
-- (AEMLessThan			*)lessThan:(id)object;
-- (AEMLessOrEquals		*)lessOrEquals:(id)object;
-- (AEMBeginsWith		*)beginsWith:(id)object;
-- (AEMEndsWith			*)endsWith:(id)object;
-- (AEMContains			*)contains:(id)object;
-- (AEMIsIn				*)isIn:(id)object;
+- (AEMGreaterThanTest		*)greaterThan:(id)object;
+- (AEMGreaterOrEqualsTest	*)greaterOrEquals:(id)object;
+- (AEMEqualsTest			*)equals:(id)object;
+- (AEMNotEqualsTest			*)notEquals:(id)object;
+- (AEMLessThanTest			*)lessThan:(id)object;
+- (AEMLessOrEqualsTest		*)lessOrEquals:(id)object;
+- (AEMBeginsWithTest		*)beginsWith:(id)object;
+- (AEMEndsWithTest			*)endsWith:(id)object;
+- (AEMContainsTest			*)contains:(id)object;
+- (AEMIsInTest				*)isIn:(id)object;
 
 // Insertion location selectors
 
@@ -159,11 +159,11 @@ void disposeSpecifierModule(void);
 /*
  * Specifier identifying an application-defined property
  */
-@interface AEMPropertySpecifier : AEMPositionSpecifierBase
+@interface AEMPropertySpecifier : AEMObjectSpecifier
 @end
 
 
-@interface AEMUserPropertySpecifier : AEMPositionSpecifierBase
+@interface AEMUserPropertySpecifier : AEMObjectSpecifier
 @end
 
 
@@ -173,25 +173,25 @@ void disposeSpecifierModule(void);
 /*
  * Abstract base class for all single element specifiers
  */
-@interface AEMSingleElementSpecifierBase : AEMPositionSpecifierBase
+@interface AEMSingleElementSpecifier : AEMObjectSpecifier
 @end
 
 /*
  * Specifiers identifying a single element by name, index, id or named ordinal
  */
-@interface AEMElementByNameSpecifier : AEMSingleElementSpecifierBase
+@interface AEMElementByNameSpecifier : AEMSingleElementSpecifier
 @end
 
-@interface AEMElementByIndexSpecifier : AEMSingleElementSpecifierBase
+@interface AEMElementByIndexSpecifier : AEMSingleElementSpecifier
 @end
 
-@interface AEMElementByIDSpecifier : AEMSingleElementSpecifierBase
+@interface AEMElementByIDSpecifier : AEMSingleElementSpecifier
 @end
 
-@interface AEMElementByOrdinalSpecifier : AEMSingleElementSpecifierBase
+@interface AEMElementByOrdinalSpecifier : AEMSingleElementSpecifier
 @end
 
-@interface AEMElementByRelativePositionSpecifier : AEMPositionSpecifierBase
+@interface AEMElementByRelativePositionSpecifier : AEMObjectSpecifier
 @end
 
 
@@ -201,7 +201,7 @@ void disposeSpecifierModule(void);
 /*
  * Base class for all multiple element specifiers.
  */
-@interface AEMMultipleElementsSpecifierBase : AEMPositionSpecifierBase 
+@interface AEMMultipleElementsSpecifier : AEMObjectSpecifier 
 
 // ordinal selectors
 
@@ -229,7 +229,7 @@ void disposeSpecifierModule(void);
 @end
 
 
-@interface AEMElementsByRangeSpecifier : AEMMultipleElementsSpecifierBase {
+@interface AEMElementsByRangeSpecifier : AEMMultipleElementsSpecifier {
 	id startReference, stopReference;
 }
 
@@ -241,11 +241,11 @@ void disposeSpecifierModule(void);
 @end
 
 
-@interface AEMElementsByTestSpecifier : AEMMultipleElementsSpecifierBase
+@interface AEMElementsByTestSpecifier : AEMMultipleElementsSpecifier
 @end
 
 
-@interface AEMAllElementsSpecifier : AEMMultipleElementsSpecifierBase
+@interface AEMAllElementsSpecifier : AEMMultipleElementsSpecifier
 @end
 
 
@@ -264,7 +264,7 @@ void disposeSpecifierModule(void);
 /**********************************************************************/
 // Reference roots
 
-@interface AEMReferenceRootBase : AEMPositionSpecifierBase
+@interface AEMReferenceRootBase : AEMObjectSpecifier
 
 // note: clients should avoid calling this initialiser directly; 
 // use AEMApp, AEMCon, AEMIts macros instead.

@@ -10,13 +10,6 @@
 
 
 /**********************************************************************/
-// wrapper for OSAGetAppTerminology
-
-extern OSStatus AEMGetAppTerminology(NSURL *fileURL,
-									 NSAppleEventDescriptor **resultDesc);
-
-
-/**********************************************************************/
 
 
 @interface ASParserDef : NSObject {
@@ -38,7 +31,6 @@ extern OSStatus AEMGetAppTerminology(NSURL *fileURL,
 @interface ASParserCommandDef : ASParserDef {
 	OSType classCode;
 	NSMutableArray *parameters;
-	unsigned hash;
 }
 
 - (id)initWithName:(NSString*)name eventClass:(OSType)classCode_ eventID:(OSType)code_;
@@ -53,7 +45,7 @@ extern OSStatus AEMGetAppTerminology(NSURL *fileURL,
 
 
 @interface ASAeteParser : NSObject {
-	char *aeteData;
+	char *aeteData; // TO DO: use NSData instead?
 	unsigned long aeteSize;
 	unsigned long cursor;
 	/* terminology tables; order is significant where synonym definitions occur */

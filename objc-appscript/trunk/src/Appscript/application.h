@@ -45,7 +45,31 @@
 
 // Check if specified application is running
 
-+ (BOOL)isApplicationRunning:(NSURL *)fileURL;
+// Does a local process launched from the specified application file exist?
+// e.g. [NSURL fileURLWithPath: @"/Applications/iCal.app"]
+// Returns false if process doesn't exist or file isn't found.
+
++(BOOL)processExistsForFileURL:(NSURL *)fileURL;
+
+
+// Is there a local application process with the given Unix process id?
+
++(BOOL)processExistsForPID:(pid_t)pid;
+
+
+// Does an application process specified by the given eppc:// URL exist?
+// e.g. [NSURL URLWithString: @"eppc://user:pass@0.0.0.1/TextEdit"]
+// Returns false if process doesn't exist, or if access isn't allowed.
+
++(BOOL)processExistsForEppcURL:(NSURL *)eppcURL;
+
+
+// Does an application process specified by the given AEAddressDesc exist?
+// Returns false if process doesn't exist, or if access isn't allowed.
+
++(BOOL)processExistsForDescriptor:(NSAppleEventDescriptor *)desc;
+
+
 
 
 // Launch an application
@@ -61,7 +85,7 @@
  * Note: addressDescForLocalApplication:error: will start application if not already running
  */
 
-+ (NSAppleEventDescriptor*)addressDescForLocalApplication:(NSURL *)fileURL error:(NSError **)error;
++ (NSAppleEventDescriptor *)addressDescForLocalApplication:(NSURL *)fileURL error:(NSError **)error;
 
 + (NSAppleEventDescriptor *)addressDescForLocalProcess:(pid_t)pid;
 

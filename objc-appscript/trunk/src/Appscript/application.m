@@ -86,7 +86,10 @@ error:
 }
 
 
-+ (BOOL)isApplicationRunning:(NSURL *)fileURL {
+// Check if specified application is running
+
+
++ (BOOL)processExistsForFileURL:(NSURL *)fileURL {
 	OSStatus err;
 	FSRef desired, found;
 	ProcessSerialNumber psn = {0, kNoProcess};
@@ -98,6 +101,29 @@ error:
 		err = GetProcessBundleLocation(&psn, &found);
 	} while (err || FSCompareFSRefs(&desired, &found));
 	return YES;
+}
+
+
++(BOOL)processExistsForPID:(pid_t)pid {
+	ProcessSerialNumber psn;
+
+	return (GetProcessForPID(pid, &psn) == noErr); // -600 if process not found
+}
+
+
++(BOOL)processExistsForEppcURL:(NSURL *)eppcURL {
+	NSData *data;
+	NSAppleEventDescriptor *desc;
+	
+	data = [[eppcURL absoluteString] dataUsingEncoding: NSUTF8StringEncoding];
+	desc = [NSAppleEventDescriptor descriptorWithDescriptorType: typeFileURL
+														   data: data];
+	return [self processExistsForDescriptor: desc];
+}
+
+
++(BOOL)processExistsForDescriptor:(NSAppleEventDescriptor *)desc {
+	return YES; // TO DO
 }
 
 

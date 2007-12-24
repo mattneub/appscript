@@ -17,41 +17,58 @@
 	return name;
 }
 
-- (NSString *)escape:(NSString *)name {
-	return name;
-}
-
 @end
 
 
 /**********************************************************************/
 
 
-@implementation ASCommandDef
+@implementation ASDefinition
 
-- (id)init {
-	return nil;
+- (id)initWithName:(NSString *)name_ code:(OSType)code_ {
+	self = [super init];
+	if (!self) return self;
+	[name_ retain];
+	name = name_;
+	code = code_;
+	return self;
 }
 
-- (id)initWithEventClass:(OSType)classCode_
-				 eventID:(OSType)code_
-			  parameters:(NSArray *)parameters_
-		keywordConverter:(id)converter {
-	NSEnumerator *enumerator;
-	ASParserDef *parameter;
-	NSNumber *codeObj;
-	
-	self = [super self];
+- (void) dealloc {
+	[name release];
+	[super dealloc];
+}
+
+- (NSString *)name {
+	return name;
+}
+
+- (OSType)code {
+	return code;
+}
+
+@end
+
+
+@implementation ASPropertyDef
+@end
+
+
+@implementation ASElementDef
+@end
+
+
+@implementation ASParameterDef
+@end
+
+
+@implementation ASCommandDef
+
+- (id)initWithName:(NSString *)name_ classCode:(OSType)classCode_ idCode:(OSType)code_ {
+	self = [super initWithName:(NSString *)name_ code:(OSType)code_];
 	if (!self) return self;
 	classCode = classCode_;
-	code = code_;
 	parameters = [[NSMutableDictionary alloc] init];
-	enumerator = [parameters_ objectEnumerator];
-	while (parameter = [enumerator nextObject]) {
-		codeObj = [[NSNumber alloc] initWithLong: [parameter code]];
-		[parameters setObject: codeObj forKey: [converter convert: [parameter name]]];
-		[codeObj release];
-	}
 	return self;
 }
 
@@ -60,22 +77,24 @@
 	[super dealloc];
 }
 
+- (void)addParameterName:(NSString *)name_ code:(OSType)code_ {
+	ASParameterDef *parameter;
+	
+	parameter = [[ASParameterDef alloc] initWithName: name_ code: code_];
+	[parameters setObject: parameter forKey: name_];
+	[parameter release];
+}
 
 - (OSType)classCode {
 	return classCode;
 }
 
-- (OSType)code {
+- (OSType)idCode {
 	return code;
 }
 
-- (BOOL)parameterByName:(NSString *)name code:(OSType *)code_ {
-	NSNumber *codeObj;
-	
-	codeObj = [parameters objectForKey: name];
-	if (!codeObj) return NO;
-	*code_ = [codeObj intValue];
-	return YES;
+- (ASParameterDef *)parameterForName:(NSString *)name_ {
+	return [parameters objectForKey: name_];
 }
 
 @end
@@ -84,7 +103,7 @@
 /**********************************************************************/
 
 
-@implementation ASStringTerminology
+@implementation ASTerminology
 
 - (id)init {
 	id converter_;
@@ -126,10 +145,11 @@
  * -(id)copyWithZone:(NSZone *)zone -- allows a copy-and-extend approach
  */
 
-- (id)addData:(id)data { // adds raw data from ASAeteParser or equivalent
-	NSEnumerator *enumerator;
+- (void)addParserData:(id)data { // adds raw data from ASAeteParser or equivalent
+	NSEnumerator *commandEnumerator, *parameterEnumerator;
 	ASParserCommandDef *parserCommandDef;
 	ASCommandDef *commandDef;
+	ASParserDef *parameterDef;
 
 	// build type tables
 	[self addTypeTableDefinitions: (NSArray *)[data properties] ofType: typeType];
@@ -138,23 +158,24 @@
 	// build reference tables
 	[self addReferenceTableDefinitions: (NSArray *)[data elements]
 						   toNameTable: elementByName
-							 codeTable: elementByCode];
+						  andCodeTable: elementByCode];
 	[self addReferenceTableDefinitions: (NSArray *)[data properties]
 						   toNameTable: propertyByName
-						     codeTable: propertyByCode];
+						  andCodeTable: propertyByCode];
 	// TO DO: if property table contains a 'text' definition, move it to element table (AppleScript always packs 'text of...' as an all-elements specifier)
 	// build command table
-	enumerator = [[data commands] objectEnumerator];
-	while (parserCommandDef = [enumerator nextObject]) {
-		commandDef = [[ASCommandDef alloc] initWithEventClass: [parserCommandDef classCode]
-													  eventID: [parserCommandDef code]
-												   parameters: [parserCommandDef parameters]
-											 keywordConverter: converter];
+	commandEnumerator = [[data commands] objectEnumerator];
+	while (parserCommandDef = [commandEnumerator nextObject]) {
+		commandDef = [[ASCommandDef alloc] initWithName: [parserCommandDef name]
+											 eventClass: [parserCommandDef classCode]
+												eventID: [parserCommandDef code]];
+		parameterEnumerator = [[parserCommandDef parameters] objectEnumerator];
+		while (parameterDef = [parameterEnumerator nextObject])
+			[commandDef addParameterName: [parameterDef name] code: [parameterDef code]];
 		[commandByName setObject: commandDef
 						  forKey: [converter convert: [parserCommandDef name]]];
 		[commandDef release];
 	}
-	return self;
 }
 
 - (void)dealloc {
@@ -208,7 +229,7 @@
 
 - (void)addReferenceTableDefinitions:(NSArray *)definitions
 						 toNameTable:(NSMutableDictionary *)nameTable
-						   codeTable:(NSMutableDictionary *)codeTable {
+						andCodeTable:(NSMutableDictionary *)codeTable {
 	ASParserDef *parserDef;
 	NSString *name;
 	NSNumber *codeObj;
@@ -238,74 +259,77 @@
 
 // Used to pack/unpack typeType, typeEnumerated, typeProperty:
 
-- (BOOL)typeByName:(NSString *)name
-				  desc:(NSAppleEventDescriptor **)desc {
-	*desc = [typeByName objectForKey: name];
-	return (*desc != nil);
+- (NSAppleEventDescriptor *)typeForName:(NSString *)name {
+	return [typeByName objectForKey: name];
 }
 
 
-- (BOOL)typeByCode:(OSType)descData
-				  name:(NSString **)name {
+- (NSString *)typeForCode:(OSType)descData {
 	NSNumber *codeObj;
+	NSString *name;
 	
 	codeObj = [[NSNumber alloc] initWithLong: descData];
-	*name = [typeByCode objectForKey: codeObj];
+	name = [typeByCode objectForKey: codeObj];
 	[codeObj release];
-	return (*name != nil);
+	return name;
 }
 
 // Used to build AEM references:
 
-- (BOOL)referenceByName:(NSString *)name
-				   code:(OSType *)code
-				   type:(ASReferenceType *)type {
-	NSNumber *codeObj;
+- (ASDefinition *)referenceForName:(NSString *)name {
+	ASDefinition *def;
 	
-	codeObj = [propertyByName objectForKey: name];
-	if (codeObj)
-		*type = kPropertyDef;
-	else {
-		codeObj = [elementByName objectForKey: name];
-		if (codeObj)
-			*type = kElementDef;
-		else
-			return NO;
-	}
-	return YES;
+	def = [propertyByName objectForKey: name];
+	if (!def)
+		def = [elementByName objectForKey: name];
+	if (!def)
+		def = [commandByName objectForKey: name];
+	return def;
 }
 
 // Used by -description to render AEM references:
 
-- (BOOL)referenceByCode:(OSType)code
-				   name:(NSString **)name
-				   type:(ASReferenceType *)type {
+- (ASDefinition *)referenceForCode:(OSType)code 
+						preferably:(ASPreferredDefinitionType)preferredType {
 	NSNumber *codeObj;
+	ASDefinition *def;
 	
 	codeObj = [[NSNumber alloc] initWithLong: code];
-	if (*type == kPropertyDef)
-		*name = [propertyByCode objectForKey: codeObj];
+	if (preferredType == kASPropertyDef)
+		def = [propertyByCode objectForKey: codeObj];
 	else
-		*name = [elementByCode objectForKey: codeObj];
-	if (!*name)
-		if (*type == kPropertyDef) {
-			*name = [elementByCode objectForKey: codeObj];
-			*type = kElementDef;
+		def = [elementByCode objectForKey: codeObj];
+	if (!def)
+		if (def == kASPropertyDef) {
+			def = [elementByCode objectForKey: codeObj];
 		} else {
-			*name = [propertyByCode objectForKey: codeObj];
-			*type = kPropertyDef;
+			def = [propertyByCode objectForKey: codeObj];
 		}
 	[codeObj release];
-	return (*name != nil);
+	return def;
 }
 
-// Used to pack Apple events:
 
-- (BOOL)commandByName:(NSString *)name
-			  definition:(ASCommandDef **)definition {
-	
-	*definition = [commandByName objectForKey: name];
-	return (*definition != nil);
+// Obtain copies of conversion tables directly, if needed:
+
+- (NSDictionary *)propertyByNameTable {
+	return [NSDictionary dictionaryWithDictionary: propertyByName];
+}
+
+- (NSDictionary *)propertyByCodeTable {
+	return [NSDictionary dictionaryWithDictionary: propertyByCode];
+}
+
+- (NSDictionary *)elementByNameTable {
+	return [NSDictionary dictionaryWithDictionary: elementByName];
+}
+
+- (NSDictionary *)elementByCodeTable {
+	return [NSDictionary dictionaryWithDictionary: elementByCode];
+}
+
+- (NSDictionary *)commandByNameTable {
+	return [NSDictionary dictionaryWithDictionary: commandByName];
 }
 
 @end
