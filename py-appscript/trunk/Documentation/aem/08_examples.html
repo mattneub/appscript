@@ -56,7 +56,7 @@ aem.app.elements('docu').byindex(1).elements('cpar').byfilter(aem.its.ne('\n'))<
 <h2>Sending Events</h2>
 
 <pre><code># quit TextEdit
-textedit.event('corequit').send()
+textedit.event('aevtquit').send()
 
 # name of TextEdit
 print textedit.event('coregetd', {'----': aem.app.property('pnam')}).send()
