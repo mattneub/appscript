@@ -5,6 +5,7 @@
 //  Copyright (C) 2007 HAS
 //
 
+#import <CoreFoundation/CoreFoundation.h>
 #import <Foundation/Foundation.h>
 #import <Carbon/Carbon.h>
 
@@ -46,6 +47,10 @@
 @interface ASFileBase : NSObject {
 	NSAppleEventDescriptor *desc;
 }
+
++ (NSURL *)HFSPathToURL:(NSString *)path;
+
++ (NSString *)URLToHFSPath:(NSURL *)url;
 
 - (id)initWithPath:(NSString *)path;
 

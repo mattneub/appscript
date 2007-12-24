@@ -66,6 +66,23 @@ static ASBoolean *falseValue;
 
 @implementation ASFileBase
 
++ (NSURL *)HFSPathToURL:(NSString *)path {
+	NSURL *url;
+	
+	url = (NSURL *)CFURLCreateWithFileSystemPath(NULL,
+												 (CFStringRef)path,
+												 kCFURLHFSPathStyle,
+												 0);
+	return [url autorelease];
+}
+
++ (NSString *)URLToHFSPath:(NSURL *)url {
+	NSString *path;
+	
+	path = (NSString *)CFURLCopyFileSystemPath((CFURLRef)url, kCFURLHFSPathStyle);
+	return [path autorelease];
+}
+
 - (id)initWithPath:(NSString *)path {
 	return [self initWithFileURL: [NSURL fileURLWithPath: path]];
 }

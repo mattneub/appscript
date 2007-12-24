@@ -74,6 +74,9 @@ Might also provide shortcuts that return C ints and floats (note: any errors wou
 - returnID support; note: returnID is an argument to AECreateAppleEvent(), so the appscript layer would then need to avoid instantiating AEMEvent when a command is first called, allowing clients an opportunity to invoke -returnID: before adding other attributes and parameters.
 
 
+- what to do if a command parameter is nil? raise error? ignore it? (Currently, if direct parameter is nil then it's ignored, but if a labelled parameter is nil AEMCodecs will raise an error.)
+
+
 ======= osaglue =======
 
 - emptying py-appscript.terminology's default typebyname, typebycode tables means that type/enum/property name collisions between AEM and application won't be detected when generating XXConstant class; need to sort this
@@ -98,7 +101,7 @@ Might also provide shortcuts that return C ints and floats (note: any errors wou
 
 - define formal protocol or abstract base class for AEMEvent class, as clients can install their own choice of event class in AEMApplication if they wish
 
-- what to do if an AEMEvent/ASCommand attribute or parameter is nil? raise error? ignore it?
+- what to do if an AEMEvent attribute or parameter is nil? raise error? ignore it? (Currently, AEMCodecs will raise an error.)
 
 - -setParameter:forKeyword:, etc. should raise 'unexpected error' exception instead of returning nil
 
@@ -138,8 +141,6 @@ Might also provide shortcuts that return C ints and floats (note: any errors wou
 - finish AEMCodecs specifier unpackers
 
 - implement unit types support
-
-- HFS path support in ASFileBase
 
 - need to investigate ASFileSpec on 64-bit
 

@@ -115,6 +115,10 @@ TO DO: customisation options: subclassing and extending pack/unpack, overriding 
 
 @interface ASFileBase : NSObject
 
++ (NSURL *)HFSPathToURL:(NSString *)path; // utility method
+
++ (NSString *)URLToHFSPath:(NSURL *)url;  // utility method
+
 - (id)initWithPath:(NSString *)path;
 
 - (id)initWithFileURL:(NSURL *)url;
