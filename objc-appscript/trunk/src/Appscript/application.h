@@ -79,6 +79,14 @@
 					 flags:(LaunchFlags)launchFlags
 					 error:(NSError **)error;
 
+// convenience shortcuts for the above
+
++ (pid_t)launchApplication:(NSURL *)appFileURL error:(NSError **)error;
+
++ (pid_t)runApplication:(NSURL *)appFileURL error:(NSError **)error;
+
++ (pid_t)openDocuments:(id)files inApplication:(NSURL *)appFileURL error:(NSError **)error;
+
 /*
  * make AEAddressDescs
  *
@@ -155,13 +163,20 @@
 				  eventID:(AEEventID)code;
 
 
+// reconnect to a local application specified by path
+
+- (BOOL)reconnect;
+
+- (BOOL)reconnectWithError:(NSError **)error;
+
+
 // transaction support
 
-- (void)beginTransaction;
+- (BOOL)beginTransactionWithError:(NSError **)error;
 
-- (void)beginTransactionWithSession:(id)session;
+- (BOOL)beginTransactionWithSession:(id)session error:(NSError **)error;
 
-- (void)endTransaction;
+- (BOOL)endTransactionWithError:(NSError **)error;
 
-- (void)abortTransaction;
+- (BOOL)abortTransactionWithError:(NSError **)error;
 @end

@@ -13,10 +13,8 @@
 /**********************************************************************/
 
 
-// not defined in OpenScripting.h for some reason
-#ifndef kAEInheritedProperties
-#define kAEInheritedProperties 'c@#^'
-#endif
+// kAEInheritedProperties isn't defined in OpenScripting.h for some reason
+#define kASAEInheritedProperties 'c@#^'
 
 // skip unneeded aete data
 #define SKIP_UINT16 cursor += 2;
@@ -315,7 +313,7 @@
 		SKIP_STRING;	// description
 		ALIGN;
 		flags = [self integer];
-		if (propertyCode != kAEInheritedProperties) {
+		if (propertyCode != kASAEInheritedProperties) {
 			// it's a normal property definition, not a superclass  definition
 			propertyDef = [[ASParserDef alloc] initWithName: propertyName code: propertyCode];
 			if (flags & 1)

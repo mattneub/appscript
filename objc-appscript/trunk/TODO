@@ -70,11 +70,16 @@ Might also provide shortcuts that return C ints and floats (note: any errors wou
 
 - -[ASCommand description] should provide appscript-style representation of command
 
+Note: best way to do this might be to have codecs unpack event (TO DO) and then call -description on result; that way, appscript API can provide its own formatting without needing to create another error? Or would it be best just to wrap original AEM error in a new one?
 
-- returnID support; note: returnID is an argument to AECreateAppleEvent(), so the appscript layer would then need to avoid instantiating AEMEvent when a command is first called, allowing clients an opportunity to invoke -returnID: before adding other attributes and parameters.
+
+- returnID support?; note: returnID is an argument to AECreateAppleEvent(), so the appscript layer would then need to avoid instantiating AEMEvent when a command is first called, allowing clients an opportunity to invoke -returnID: before adding attributes and parameters (including direct parameter and subject attribute).
 
 
 - what to do if a command parameter is nil? raise error? ignore it? (Currently, if direct parameter is nil then it's ignored, but if a labelled parameter is nil AEMCodecs will raise an error.)
+
+
+- include an appscript-style representation of Apple event in localizedDescription string of NSErrors returned by -[ASEvent sendWithError:], and/or include original event object in userInfo dictionary?
 
 
 ======= osaglue =======
@@ -90,28 +95,20 @@ Might also provide shortcuts that return C ints and floats (note: any errors wou
 
 ======= aem/application.h =======
 
-- transaction support
-
-- add convenience shortcuts for +launchApplication:event:flags:error:, e.g. +launchApplication:, +runApplication:, +openFiles:withApplication: (?)
-
-- -initWithName: should accept names with or without .app suffix
+- in +processExistsForDescriptor:, what codes should indicate running? (e.g. -1712 = running but unresponsive)
 
 
 ======= aem/event.h =======
 
 - define formal protocol or abstract base class for AEMEvent class, as clients can install their own choice of event class in AEMApplication if they wish
 
-- what to do if an AEMEvent attribute or parameter is nil? raise error? ignore it? (Currently, AEMCodecs will raise an error.)
+- what to do if an AEMEvent attribute or parameter is nil? raise error? ignore it? (Currently, AEMCodecs will raise an error when it tries to pack the value.)
 
 - -setParameter:forKeyword:, etc. should raise 'unexpected error' exception instead of returning nil
 
-- include an aem-/appscript-style representation of Apple event in localizedDescription string of NSErrors returned by -[AEMEvent sendWithError:], -[ASEvent sendWithError:] ?
-
-- -[AEMEvent description] should return aem-style representation of event
-
 - check if kOSAErrorOffendingObject can be any type (the OSA API docs suggest that it may have to be an object specifier, but really aren't clear); currently, -sendWithError: returns anything for kAEMErrorOffendingObject when raising its own coercion error
 
-- add the following methods to AEMEvent:
+- add the following methods to AEMEvent (note: scripting language wrappers will need this to render native representations):
 
 	- (id)attributeForKeyword:(AEKeyword)key;
 	- (id)parameterForKeyword:(AEKeyword)key;
@@ -119,9 +116,7 @@ Might also provide shortcuts that return C ints and floats (note: any errors wou
 	- (void)removeAttributeForKeyword:(AEKeyword)key;
 	- (void)removeParameterForKeyword:(AEKeyword)key;
 
-- add the following convenience method to AEMEvent(?):
-
-	- (AEMEvent *)unpackResultAsList;
+- include an aem-style representation of Apple event in localizedDescription string of NSErrors returned by -[AEMEvent sendWithError:], and/or include original event object in userInfo dictionary?
 
 ======= aem query builder =======
 
@@ -136,16 +131,31 @@ Might also provide shortcuts that return C ints and floats (note: any errors wou
 
 ======= aem type converter =======
 
-- should AEMCodecs raise exception if -unpack method fails? (probably)
-
 - finish AEMCodecs specifier unpackers
 
 - implement unit types support
 
 - need to investigate ASFileSpec on 64-bit
 
+Note: typeFSS is undefined in __LP64__, and AEDataModel.h states:
+
+    FSSpecs are deprecated on Mac OS X, and their use in AppleEvents is discouraged.  You should change
+    your code to use FSRefs.  In __LP64__ code, coercions into typeFSS is not supported,
+    and coercion from typeFSS is not guaranteed to work correctly in all cases.
+
 
 ======= miscellaneous =======
+
+- compiler warnings in 64-bit:
+
+	/Users/has/appscript/objc-appscript/src/Appscript/types.m:255: warning: multiple methods named '-code' found
+	/Developer/SDKs/MacOSX10.5.sdk/System/Library/Frameworks/Foundation.framework/Headers/NSError.h:53: warning: using '-(NSInteger)code'
+	/Users/has/appscript/objc-appscript/src/Appscript/types.h:141: warning: also found '-(OSType)code'
+
+	/Users/has/appscript/objc-appscript/src/Appscript/parser.m:76: warning: multiple methods named '-code' found
+	/Developer/SDKs/MacOSX10.5.sdk/System/Library/Frameworks/Foundation.framework/Headers/NSError.h:53: warning: using '-(NSInteger)code'
+	/Users/has/appscript/objc-appscript/src/Appscript/parser.h:23: warning: also found '-(OSType)code'
+
 
 - NSErrors should include human-readable default error description; could use GetMacOSStatusCommentString if on 10.4 or later (see Debugging.h), otherwise will need to supply a lookup table for common Carbon error codes, c.f. rb-appscript. Probably also a good idea to include a lookup table for pre-Leopard Cocoa Scripting error strings, c.f. rb-appscript.
 

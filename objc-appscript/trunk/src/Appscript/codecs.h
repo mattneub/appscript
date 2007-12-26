@@ -13,11 +13,21 @@
 // TO DO: support for unit types
 
 /**********************************************************************/
+// AE types not defined in older OS versions
+
+enum {
+	AS_typeUTF16ExternalRepresentation = 'ut16',
+	AS_typeUInt16 = 'ushr',
+	AS_typeUInt64 = 'ucom'
+};
+
+
+/**********************************************************************/
 
 
 @interface AEMCodecs : NSObject
 
-// TO DO: +(id)defaultCodecs;
++ (id)defaultCodecs;
 
 //- (void)addUnitTypes:(NSArray *)typeDefs; // TO DO
 

@@ -11,6 +11,14 @@
 
 
 /**********************************************************************/
+// not defined in __LP64__
+
+#ifdef __LP64__
+enum { typeFSS = 'fss ' };
+#endif
+
+
+/**********************************************************************/
 // convenience macros
 
 #define ASTrue [ASBoolean True]
@@ -95,6 +103,13 @@
 
 
 @interface ASFileSpec : ASFileBase
+/*
+ * Provided solely for backward compatibility with unreformed
+ * Classic-era applications that don't understand typeFileURL.
+ *
+ * Avoid using this class unless absolutely necessary as
+ * FSSpecs are deprecated in OS X and absent in 64-bit.
+ */
 
 + (id)fileSpecWithPath:(NSString *)path;
 

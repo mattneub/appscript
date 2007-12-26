@@ -123,7 +123,16 @@ error:
 
 
 +(BOOL)processExistsForDescriptor:(NSAppleEventDescriptor *)desc {
-	return YES; // TO DO
+	AEMApplication *app;
+	NSError *err = nil;
+	
+	app = [[self alloc] initWithDescriptor: desc];
+	[[app eventWithEventClass: 'ascr'  eventID: 'noop'] sendWithError: &err]; // should raise -1708
+	[app release];
+	if (err) // e.g. -600 = not running, -905 = no network access
+		return ([err code] == -1708); // -1708 = usual 'event not handled' error; TO DO: any other 'OK' codes?
+	else
+		return YES;
 }
 
 
@@ -139,7 +148,9 @@ error:
 					 error:(NSError **)error {
 	OSStatus err;
 	FSRef fsRef;
+#ifndef __LP64__
 	FSSpec fss;
+#endif
 	AEDesc paraDesc;
 	Size paraSize;
 	AppParametersPtr paraData = NULL; // default event is aevtoapp
@@ -157,8 +168,10 @@ error:
 		err = fnfErr;
 		goto error;
 	}
+#ifndef __LP64__
 	err = FSGetCatalogInfo(&fsRef, kFSCatInfoNone, NULL, NULL, &fss, NULL);
 	if (err) goto error;
+#endif
 	// Get Apple event data
 	if (firstEvent) {
 		err = AECoerceDesc([firstEvent aeDesc], typeAppParameters, &paraDesc);
@@ -175,7 +188,11 @@ error:
 	launchParams.launchEPBLength = extendedBlockLen;
 	launchParams.launchFileFlags = 0;
 	launchParams.launchControlFlags = launchFlags;
+#ifdef __LP64__
+	launchParams.launchAppRef = &fsRef;
+#else
 	launchParams.launchAppSpec = &fss;
+#endif
 	launchParams.launchAppParameters = paraData;
 	err = LaunchApplication(&launchParams);
 	if (err) goto error; // Can't launch application.
@@ -195,6 +212,50 @@ error:
 	return 0;
 }
 
+
++ (pid_t)launchApplication:(NSURL *)appFileURL error:(NSError **)error {
+	NSAppleEventDescriptor *evt;
+	
+	evt = [NSAppleEventDescriptor appleEventWithEventClass: 'ascr'
+												   eventID: 'noop'
+										  targetDescriptor: [NSAppleEventDescriptor nullDescriptor]
+												  returnID: kAutoGenerateReturnID
+											 transactionID: kAnyTransactionID];
+	return [self launchApplication: appFileURL
+							 event: evt
+							 flags: launchContinue | launchNoFileFlags | launchDontSwitch
+							 error: error];
+}
+
++ (pid_t)runApplication:(NSURL *)appFileURL error:(NSError **)error {
+	NSAppleEventDescriptor *evt;
+	
+	evt = [NSAppleEventDescriptor appleEventWithEventClass: 'aevt'
+												   eventID: 'oapp'
+										  targetDescriptor: [NSAppleEventDescriptor nullDescriptor]
+												  returnID: kAutoGenerateReturnID
+											 transactionID: kAnyTransactionID];
+	return [self launchApplication: appFileURL
+							 event: evt
+							 flags: launchContinue | launchNoFileFlags | launchDontSwitch
+							 error: error];
+}
+
++ (pid_t)openDocuments:(id)documentFiles inApplication:(NSURL *)appFileURL error:(NSError **)error {
+	NSAppleEventDescriptor *evt;
+	
+	evt = [NSAppleEventDescriptor appleEventWithEventClass: 'ascr'
+												   eventID: 'noop'
+										  targetDescriptor: [NSAppleEventDescriptor nullDescriptor]
+												  returnID: kAutoGenerateReturnID
+											 transactionID: kAnyTransactionID];
+	[evt setDescriptor: [[AEMCodecs defaultCodecs] pack: documentFiles] forKeyword: '----'];
+	return [self launchApplication: appFileURL
+							 event: evt
+							 flags: launchContinue | launchNoFileFlags | launchDontSwitch
+							 error: error];
+}
+
 // make AEAddressDescs
 
 + (NSAppleEventDescriptor*)addressDescForLocalApplication:(NSURL *)fileURL error:(NSError **)error {
@@ -211,9 +272,9 @@ error:
 			return nil;
 		}
 		pid = [self launchApplication: fileURL
-						event: nil
-						flags: launchContinue | launchNoFileFlags | launchDontSwitch
-						error: &tempError];
+								event: nil
+								flags: launchContinue | launchNoFileFlags | launchDontSwitch
+								error: &tempError];
 		if (tempError && [tempError code] != -600) {
 			*error = tempError;
 			return nil;
@@ -310,7 +371,11 @@ error:
 											   bundleID: nil
 												   name: name
 												  error: error];
-	if (!url) return nil;
+	if (!url)
+		if ([[name pathExtension] localizedCaseInsensitiveCompare: @"app"] != NSOrderedSame)
+			return [self initWithName: [NSString stringWithFormat: @"%@.app", name] error: error];
+		else
+			return nil;
 	return [self initWithTargetType: kAEMTargetFileURL data: url error: error];
 }
 
@@ -453,25 +518,97 @@ error:
 }
 
 
-//
+// reconnect to a local application specified by path
 
 - (BOOL)reconnect {
-	return NO; // TO DO
+	return [self reconnectWithError: nil];
 }
 
-// transaction support // TO DO
-
-- (void)beginTransaction {
-	[self beginTransactionWithSession: nil];
+- (BOOL)reconnectWithError:(NSError **)error {
+	NSAppleEventDescriptor *newAddress;
+	
+	if (error)
+		*error = nil;
+	if (targetType == kAEMTargetFileURL) {
+		newAddress = [[self class] addressDescForLocalApplication: targetData error: error];
+		if (newAddress) {
+			[addressDesc release];
+			addressDesc = [newAddress retain];
+			return YES;
+		}
+	}
+	return NO;
 }
 
-- (void)beginTransactionWithSession:(id)session {
+
+// transaction support
+
+- (BOOL)beginTransactionWithError:(NSError **)error {
+	return [self beginTransactionWithSession: nil error: error];
 }
 
-- (void)endTransaction {
+- (BOOL)beginTransactionWithSession:(id)session error:(NSError **)error {
+	AEMEvent *evt;
+	id transactionIDObj = nil;
+	NSDictionary *errorInfo;
+	
+	if (error)
+		*error = nil;
+	if (transactionID == kAnyTransactionID) {
+		evt = [self eventWithEventClass: kAEMiscStandards eventID: kAEBeginTransaction];
+		if (session)
+			[evt setParameter: session forKeyword: keyDirectObject];
+		transactionIDObj = [[evt unpackResultAsType: typeSInt32] sendWithError: error];
+		if (transactionIDObj)
+			transactionID = [transactionIDObj intValue];
+	} else if (error) {
+		errorInfo = [NSDictionary dictionaryWithObjectsAndKeys: 
+									@"Transaction is already active.", NSLocalizedDescriptionKey,
+									[NSNumber numberWithInt: errAEInTransaction], kAEMErrorNumberKey,
+									nil];
+		*error = [NSError errorWithDomain: kAEMErrorDomain code: errAEInTransaction userInfo: errorInfo];
+	}
+	return (transactionIDObj != nil);
 }
 
-- (void)abortTransaction {
+- (BOOL)endTransactionWithError:(NSError **)error {
+	AEMEvent *evt;
+	id result = nil;
+	NSDictionary *errorInfo;
+
+	if (error)
+		*error = nil;
+	if (transactionID != kAnyTransactionID) {
+		evt = [self eventWithEventClass: kAEMiscStandards eventID: kAEEndTransaction];
+		result = [evt sendWithError: error];
+	} else if (error) {
+		errorInfo = [NSDictionary dictionaryWithObjectsAndKeys: 
+									@"Transaction isn't active.", NSLocalizedDescriptionKey,
+									[NSNumber numberWithInt: errAENoSuchTransaction], kAEMErrorNumberKey,
+									nil];
+		*error = [NSError errorWithDomain: kAEMErrorDomain code: errAENoSuchTransaction userInfo: errorInfo];
+	}
+	return (result != nil);
+}
+
+- (BOOL)abortTransactionWithError:(NSError **)error {
+	AEMEvent *evt;
+	id result = nil;
+	NSDictionary *errorInfo;
+
+	if (error)
+		*error = nil;
+	if (transactionID != kAnyTransactionID) {
+		evt = [self eventWithEventClass: kAEMiscStandards eventID: kAETransactionTerminated];
+		result = [evt sendWithError: error];
+	} else if (error) {
+		errorInfo = [NSDictionary dictionaryWithObjectsAndKeys: 
+									@"Transaction isn't active.", NSLocalizedDescriptionKey,
+									[NSNumber numberWithInt: errAENoSuchTransaction], kAEMErrorNumberKey,
+									nil];
+		*error = [NSError errorWithDomain: kAEMErrorDomain code: errAENoSuchTransaction userInfo: errorInfo];
+	}
+	return (result != nil);
 }
 
 @end

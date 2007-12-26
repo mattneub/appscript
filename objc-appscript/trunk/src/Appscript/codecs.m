@@ -22,7 +22,17 @@
 /**********************************************************************/
 
 
+static AEMCodecs *defaultCodecs = nil;
+
+
 @implementation AEMCodecs
+
++ (id)defaultCodecs {
+	if (!defaultCodecs)
+		defaultCodecs = [[self alloc] init];
+	return defaultCodecs;
+}
+
 
 /***********************************/
 // main pack methods; subclasses can override to process some or all values themselves
@@ -45,7 +55,7 @@
 		switch (*[anObject objCType]) {
 			/*
 			 * note: for better compatibility with less well-designed applications that don't like
-			 * less common integer types (typeSInt64, typeUInt32, etc.), try to use typeInteger (SInt32)
+			 * less common integer types (typeSInt64, typeUInt32, etc.), try to use typeSInt32
 			 * and typeFloat (double) whenever possible
 			 */
 			case 'b':
@@ -200,108 +210,166 @@
 	LongDateTime longTime;
 	CFAbsoluteTime cfTime;
 	Boolean boolean;
+	unsigned short uint16;
 	SInt16 sint16;
 	UInt32 uint32;
 	SInt64 sint64;
+	unsigned long long uint64;
 	float float32;
 	double float64;
 	NSString *string;
 	NSURL *url;
 	NSArray *array;
+	id result = nil;
 	
 	switch ([desc descriptorType]) {
 		case typeObjectSpecifier:
-			return [self unpackObjectSpecifier: desc];
+			result = [self unpackObjectSpecifier: desc];
+			break;
 		case typeSInt32:
-			return [NSNumber numberWithLong: [desc int32Value]];
+			result = [NSNumber numberWithLong: [desc int32Value]];
+			break;
 		case typeIEEE64BitFloatingPoint:
 			[[desc data] getBytes: &float64 length: sizeof(float64)];
-			return [NSNumber numberWithDouble: float64];
+			result = [NSNumber numberWithDouble: float64];
+			break;
 		case typeChar: 
 		case typeIntlText:
 		case typeUTF8Text:
-		case typeUTF16ExternalRepresentation:
+		case AS_typeUTF16ExternalRepresentation:
 		case typeStyledText:
 		case typeUnicodeText:
-			return [desc stringValue];
+			result = [desc stringValue];
+			break;
 		case typeFalse:
-			return ASFalse;
+			result = ASFalse;
+			break;
 		case typeTrue:
-			return ASTrue;
+			result = ASTrue;
+			break;
 		case typeLongDateTime:
 			[[desc data] getBytes: &longTime length: sizeof(longTime)];
-			if (UCConvertLongDateTimeToCFAbsoluteTime(longTime, &cfTime)) return nil;
-			return [NSDate dateWithTimeIntervalSinceReferenceDate: cfTime];
+			if (UCConvertLongDateTimeToCFAbsoluteTime(longTime, &cfTime) == noErr)
+				result = [NSDate dateWithTimeIntervalSinceReferenceDate: cfTime];
+			break;
 		case typeAEList:
-			return [self unpackAEList: desc];
+			result = [self unpackAEList: desc];
+			break;
 		case typeAERecord:
-			return [self unpackAERecord: desc];
+			result = [self unpackAERecord: desc];
+			break;
 		case typeAlias: 
-			return [ASAlias aliasWithDescriptor: desc];
+			result = [ASAlias aliasWithDescriptor: desc];
+			break;
 		case typeFileURL:
 			string = [[NSString alloc] initWithData: [desc data] encoding: NSUTF8StringEncoding];
 			url = [NSURL URLWithString: string];
 			[string release];
-			return url;
+			result = url;
+			break;
 		case typeFSRef:
-			return [ASFileRef fileRefWithDescriptor: desc];
+			result = [ASFileRef fileRefWithDescriptor: desc];
+			break;
 		case typeFSS:
-			return [ASFileSpec fileSpecWithDescriptor: desc];
+			result = [ASFileSpec fileSpecWithDescriptor: desc];
+			break;
 		case typeType:
-			return [self unpackType: desc];
+			result = [self unpackType: desc];
+			break;
 		case typeEnumerated:
-			return [self unpackEnum: desc];
+			result = [self unpackEnum: desc];
+			break;
 		case typeProperty:
-			return [self unpackProperty: desc];
+			result = [self unpackProperty: desc];
+			break;
 		case typeKeyword:
-			return [self unpackKeyword: desc];
+			result = [self unpackKeyword: desc];
+			break;
 		case typeSInt16:
 			[[desc data] getBytes: &sint16 length: sizeof(sint16)];
-			return [NSNumber numberWithShort: sint16];
+			result = [NSNumber numberWithShort: sint16];
+			break;
+		case AS_typeUInt16:
+			[[desc data] getBytes: &uint16 length: sizeof(uint16)];
+			result = [NSNumber numberWithUnsignedShort: uint16];
+			break;
 		case typeUInt32:
 			[[desc data] getBytes: &uint32 length: sizeof(uint32)];
-			return [NSNumber numberWithUnsignedLong: uint32];
+			result = [NSNumber numberWithUnsignedLong: uint32];
+			break;
 		case typeSInt64:
 			[[desc data] getBytes: &sint64 length: sizeof(sint64)];
-			return [NSNumber numberWithLongLong: sint64];
+			result = [NSNumber numberWithLongLong: sint64];
+			break;
+		case AS_typeUInt64:
+			[[desc data] getBytes: &uint64 length: sizeof(uint64)];
+			result = [NSNumber numberWithUnsignedLongLong: uint64];
+			break;
 		case typeNull:
-			return [NSNull null];
+			result = [NSNull null];
+			break;
 		case typeInsertionLoc:
-			return [self unpackInsertionLoc: desc];
+			result = [self unpackInsertionLoc: desc];
+			break;
 		case typeCurrentContainer:
-			return [self con];
+			result = [self con];
+			break;
 		case typeObjectBeingExamined:
-			return [self its];
+			result = [self its];
+			break;
 		case typeCompDescriptor:
-			return [self unpackCompDescriptor: desc];
+			result = [self unpackCompDescriptor: desc];
+			break;
 		case typeLogicalDescriptor:
-			return [self unpackLogicalDescriptor: desc];
+			result = [self unpackLogicalDescriptor: desc];
+			break;
 		case typeIEEE32BitFloatingPoint:
 			[[desc data] getBytes: &float32 length: sizeof(float32)];
-			return [NSNumber numberWithDouble: float32];
+			result = [NSNumber numberWithDouble: float32];
+			break;
 		case type128BitFloatingPoint:
 			[[[desc coerceToDescriptorType: typeIEEE64BitFloatingPoint] data] getBytes: &float64 
 																				length: sizeof(float64)];
-			return [NSNumber numberWithDouble: float64];
+			result = [NSNumber numberWithDouble: float64];
+			break;
 		case typeQDPoint:
 			array = [self unpackAEList: [desc coerceToDescriptorType: typeAEList]];
-			return [NSArray arrayWithObjects: [array objectAtIndex: 1],
+			result = [NSArray arrayWithObjects: [array objectAtIndex: 1],
 											  [array objectAtIndex: 0]];
+			break;
 		case typeQDRectangle:
 			array = [self unpackAEList: [desc coerceToDescriptorType: typeAEList]];
-			return [NSArray arrayWithObjects: [array objectAtIndex: 1],
-											  [array objectAtIndex: 0],
-											  [array objectAtIndex: 3],
-											  [array objectAtIndex: 2]];
+			result = [NSArray arrayWithObjects: [array objectAtIndex: 1],
+												[array objectAtIndex: 0],
+												[array objectAtIndex: 3],
+												[array objectAtIndex: 2]];
+			break;
 		case typeRGBColor:
-			return [self unpackAEList: [desc coerceToDescriptorType: typeAEList]];
+			result = [self unpackAEList: [desc coerceToDescriptorType: typeAEList]];
+			break;
 		case typeVersion:
+			result = [[desc coerceToDescriptorType: typeUnicodeText] stringValue];
+			if (!result) { // typeVersion -> typeUnicodeText coercion isn't supported in 10.3.9 or earlier
+				[[desc data] getBytes: &uint16 length: sizeof(uint16)];
+				uint16 = CFSwapInt16HostToBig(uint16);
+				result = [NSString stringWithFormat: @"%i.%i.%i", 
+													 uint16 >> 8, 
+													 uint16 % 256 >> 4, 
+													 uint16 % 16];
+			}
+			break;
 		case typeBoolean:
 			[[desc data] getBytes: &boolean length: sizeof(boolean)];
-			return boolean ? ASTrue : ASFalse;
+			result = boolean ? ASTrue : ASFalse;
+			break;
+		default:
+			result = [self unpackUnknown: desc];
 	}
 	// TO DO: unit types
-	return [self unpackUnknown: desc];
+	if (!result)
+		[NSException raise: @"CodecsError"
+					format: @"An unexpected error occurred while unpacking an NSAppleEventDescriptor: %@", desc];
+	return result;
 }
 
 - (id)unpackUnknown:(NSAppleEventDescriptor *)desc {

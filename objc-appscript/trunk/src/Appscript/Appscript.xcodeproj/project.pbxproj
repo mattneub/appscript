@@ -396,8 +396,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = (
-					ppc,
 					i386,
+					ppc,
 				);
 				DEPLOYMENT_LOCATION = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;

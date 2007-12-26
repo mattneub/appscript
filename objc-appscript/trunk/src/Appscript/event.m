@@ -21,6 +21,34 @@ NSString *kAEMErrorOffendingObjectKey	= @"ErrorOffendingObject";
 
 
 /**********************************************************************/
+// Attribute keys
+
+typedef struct {
+	NSString *name;
+	OSType code;
+}  ASEventAttributeDescription;
+
+// All known Apple event attributes:
+static ASEventAttributeDescription attributeKeys[] = {
+	{@"EventClass       ", keyEventClassAttr},
+	{@"EventID          ", keyEventIDAttr},
+	{@"TransactionID    ", keyTransactionIDAttr},
+	{@"ReturnID         ", keyReturnIDAttr},
+	{@"Address          ", keyAddressAttr},
+	{@"OptionalKeyword  ", keyOptionalKeywordAttr},
+	{@"Timeout          ", keyTimeoutAttr},
+	{@"InteractLevel    ", keyInteractLevelAttr},
+	{@"EventSource      ", keyEventSourceAttr},
+	{@"OriginalAddress  ", keyOriginalAddressAttr},
+	{@"AcceptTimeout    ", keyAcceptTimeoutAttr},
+	{@"Considerations   ", enumConsiderations},
+	{@"ConsidsAndIgnores", enumConsidsAndIgnores},
+	{@"Subject          ", keySubjectAttr},
+	{nil, 0}
+};
+
+
+/**********************************************************************/
 
 
 // note: [desc stringValue] doesn't work in 10.5 for typeType descs, so use the following workaround:
@@ -56,15 +84,34 @@ NSString *kAEMErrorOffendingObjectKey	= @"ErrorOffendingObject";
 }
 
 - (NSString *)description {
-	OSStatus err;
-	Handle h;
-	NSString *result;
+	AEDesc aeDesc;
+	NSAppleEventDescriptor *descriptor;
+	NSMutableString *result;
+	int i = 0;
+	OSErr err;
 	
-	err = AEPrintDescToHandle(event, &h);
-	if (err) return [super description];
-	result = [NSString stringWithFormat: @"<AEMEvent %s>", *h];
-	DisposeHandle(h);
-	return result;
+	result = [NSMutableString stringWithString: @"<AEMEvent {"];
+	do {
+		err = AEGetAttributeDesc(event, 
+								 attributeKeys[i].code,
+								 typeWildCard,
+								 &aeDesc);
+		if (!err) {
+			descriptor = [[NSAppleEventDescriptor alloc] initWithAEDescNoCopy: &aeDesc];
+			[result appendFormat: @"\n    %@ = %@;", 
+					attributeKeys[i].name,
+					[[AEMCodecs defaultCodecs] unpack: descriptor]];
+			[descriptor release];
+		}
+		i += 1;
+	} while (attributeKeys[i].name != nil);
+	[result appendString: @"\n}, "];
+	err = AECoerceDesc(event, typeAERecord, &aeDesc);
+	if (err) return nil;
+	descriptor = [[NSAppleEventDescriptor alloc] initWithAEDescNoCopy: &aeDesc];
+	[result appendFormat: @"%@>", [[AEMCodecs defaultCodecs] unpack: descriptor]];
+	[descriptor release];
+	return (NSString *)result;
 }
 
 // Access underlying AEDesc
