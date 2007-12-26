@@ -360,26 +360,26 @@ void disposeTestModule(void) {
 }
 
 - (NSString *)description {
-	id target;
+	id receiver;
 	NSMutableArray *rest;
 	NSString *result;
 	
-	target = [operands objectAtIndex: 0];
+	receiver = [operands objectAtIndex: 0];
 	rest = [[NSMutableArray alloc] initWithArray: operands];
 	[rest removeObjectAtIndex: 0];
-	result = [NSString stringWithFormat: [self formatString], target, rest];
+	result = [NSString stringWithFormat: [self formatString], receiver, rest];
 	[rest release];
 	return result;
 }
 
 - (id)resolve:(id)object {
-	id target, result;
+	id receiver, result;
 	NSMutableArray *rest;
 	
-	target = [[operands objectAtIndex: 0] resolve: object];
+	receiver = [[operands objectAtIndex: 0] resolve: object];
 	rest = [[NSMutableArray alloc] initWithArray: operands];
 	[rest removeObjectAtIndex: 0];
-	result = [self resolveWithTarget:target rest:rest];
+	result = [self resolveWithReceiver:receiver rest:rest];
 	[rest release];
 	return result;
 }
@@ -393,7 +393,7 @@ void disposeTestModule(void) {
 	return cachedDesc;	
 }
 
-- (id)resolveWithTarget:(id)target rest:(NSArray *)rest { // stub method; subclasses will override
+- (id)resolveWithReceiver:(id)receiver rest:(NSArray *)rest { // stub method; subclasses will override
 	return nil;
 }
 
@@ -411,8 +411,8 @@ void disposeTestModule(void) {
 - (NSAppleEventDescriptor *)operator {
 	return kEnumAND;
 }
-- (id)resolveWithTarget:(id)target rest:(NSArray *)rest {
-	return [target AND: rest];
+- (id)resolveWithReceiver:(id)receiver rest:(NSArray *)rest {
+	return [receiver AND: rest];
 }
 
 @end
@@ -428,8 +428,8 @@ void disposeTestModule(void) {
 	return kEnumOR;
 }
 
-- (id)resolveWithTarget:(id)target rest:(NSArray *)rest {
-	return [target OR: rest];
+- (id)resolveWithReceiver:(id)receiver rest:(NSArray *)rest {
+	return [receiver OR: rest];
 }
 
 @end

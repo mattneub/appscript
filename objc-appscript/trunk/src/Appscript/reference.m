@@ -25,6 +25,7 @@
 	referenceClass = refClass;
 	targetType = type;
 	targetData = [data retain];
+	target = nil;
 	return self;
 }
 
@@ -34,21 +35,23 @@
 	[super dealloc];
 }
 
-- (BOOL)connect {
-	NSError *error;
-	
+- (BOOL)connectWithError:(NSError **)error {
+	if (target) {
+		[target release];
+		target = nil;
+	}
 	switch (targetType) {
 		case kASTargetCurrent:
 			target = [[aemApplicationClass alloc] init];
 			break;
 		case kASTargetName:
-			target = [[aemApplicationClass alloc] initWithName: targetData error: &error];
+			target = [[aemApplicationClass alloc] initWithName: targetData error: error];
 			break;
 		case kASTargetBundleID:
-			target = [[aemApplicationClass alloc] initWithBundleID: targetData error: &error];
+			target = [[aemApplicationClass alloc] initWithBundleID: targetData error: error];
 			break;
 		case kASTargetURL:
-			target = [[aemApplicationClass alloc] initWithURL: targetData error: &error];
+			target = [[aemApplicationClass alloc] initWithURL: targetData error: error];
 			break;
 		case kASTargetPID:
 			target = [[aemApplicationClass alloc] initWithPID: [targetData unsignedLongValue]];
@@ -59,9 +62,8 @@
 	return target != nil;
 }
 
-- (id)target { // returns AEMApplication instance or equivalent
-	if (!target)
-		if (![self connect]) return nil;
+- (id)targetWithError:(NSError **)error { // returns AEMApplication instance or equivalent
+	if (!target && ![self connectWithError: error]) return nil;
 	return target;
 }
 
@@ -153,16 +155,18 @@
 			  eventID:(AEEventID)code
 	  directParameter:(id)directParameter
 	  parentReference:(id)parentReference {
-
+	
 	self = [super init];
 	if (!self) return self;
 	sendMode = kAEWaitReply | kAECanSwitchLayer;
 	timeout = kAEDefaultTimeout;
-	AS_event = [[appData target] eventWithEventClass: classCode
-											 eventID: code
-											  codecs: appData];
+	// TO DO: better error reporting when getting target fails
+	// e.g. could stow NSError and return it when -sendWithError: is invoked
+	AS_event = [[appData targetWithError: nil] eventWithEventClass: classCode
+														   eventID: code
+															codecs: appData];
+	if (!AS_event) return nil;
 	[AS_event retain];
-	if (!AS_event) return nil; // TO DO: better error reporting?
 	if (directParameter)
 		if (![AS_event setParameter: directParameter forKeyword: keyDirectObject]) return nil;
 	if (parentReference)

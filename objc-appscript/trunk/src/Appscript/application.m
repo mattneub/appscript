@@ -435,10 +435,18 @@ error:
 // dealloc
 
 - (void)dealloc {
+	if (transactionID != kAnyTransactionID)
+		[self endTransactionWithError: nil];
 	[targetData release];
 	[addressDesc release];
 	[defaultCodecs release];
 	[super dealloc];
+}
+
+- (void)finalize {
+	if (transactionID != kAnyTransactionID)
+		[self endTransactionWithError: nil];
+	[super finalize];
 }
 
 // display

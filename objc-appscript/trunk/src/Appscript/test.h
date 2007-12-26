@@ -97,7 +97,7 @@ void disposeTestModule(void);
 
 - (id)initWithOperands:(NSArray *)operands_;
 
-- (id)resolveWithTarget:(id)target rest:(NSArray *)rest;
+- (id)resolveWithReceiver:(id)receiver rest:(NSArray *)rest;
 
 @end
 

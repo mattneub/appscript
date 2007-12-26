@@ -35,9 +35,11 @@ typedef enum {
 					targetType:(ASTargetType)type
 					targetData:(id)data;
 
-- (BOOL)connect;
+- (BOOL)connectWithError:(NSError **)error;
 
 - (id)target; // returns AEMApplication instance or equivalent
+
+- (id)targetWithError:(NSError **)error; // returns AEMApplication instance or equivalent
 
 @end
 
