@@ -62,68 +62,9 @@
 	return self;
 }
 
-@end
-
-
-/**********************************************************************/
-
-
-@implementation AEMDummyMethods
-
-- (id)pack:(id)obj {
-	return nil;
-}
-
-- (id)greaterThan:(id)object {
-	return nil;
-}
-
-- (id)greaterOrEquals:(id)object {
-	return nil;
-}
-
-- (id)equals:(id)object {
-	return nil;
-}
-
-- (id)notEquals:(id)object {
-	return nil;
-}
-
-- (id)lessThan:(id)object {
-	return nil;
-}
-
-- (id)lessOrEquals:(id)object {
-	return nil;
-}
-
-- (id)beginsWith:(id)object {
-	return nil;
-}
-
-- (id)endsWith:(id)object {
-	return nil;
-}
-
-- (id)contains:(id)object {
-	return nil;
-}
-
-- (id)isIn:(id)object {
-	return nil;
-}
-
-- (id)AND:(id)remainingOperands {
-	return nil;
-}
-
-- (id)OR:(id)remainingOperands {
-	return nil;
-}
-
-- (id)NOT {
-	return nil;
+- (id)customRoot:(id)rootObject {
+	return self;
 }
 
 @end
+

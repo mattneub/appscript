@@ -11,6 +11,16 @@
 
 
 /**********************************************************************/
+
+@protocol AEMCodecsProtocol
+
+- (NSAppleEventDescriptor *)pack:(id)obj;
+
+- (id)unpack:(NSAppleEventDescriptor *)desc;
+
+@end
+
+/**********************************************************************/
 // AEM reference base (shared by specifiers and tests)
 
 @interface AEMQuery : NSObject {
@@ -46,40 +56,3 @@
 
 @end
 
-
-/**********************************************************************/
-
-
-@interface AEMDummyMethods
-// avoid compiler complaining about methods defined in downstream
-// files not being found when used in upstream files
-
-- (id)pack:(id)obj; 
-
-- (id)greaterThan:(id)object;
-
-- (id)greaterOrEquals:(id)object;
-
-- (id)equals:(id)object;
-
-- (id)notEquals:(id)object;
-
-- (id)lessThan:(id)object;
-
-- (id)lessOrEquals:(id)object;
-
-- (id)beginsWith:(id)object;
-
-- (id)endsWith:(id)object;
-
-- (id)contains:(id)object;
-
-- (id)isIn:(id)object;
-
-- (id)AND:(id)remainingOperands;
-
-- (id)OR:(id)remainingOperands;
-
-- (id)NOT;
-
-@end

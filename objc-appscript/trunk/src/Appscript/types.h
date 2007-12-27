@@ -109,6 +109,13 @@ enum { typeFSS = 'fss ' };
  *
  * Avoid using this class unless absolutely necessary as
  * FSSpecs are deprecated in OS X and absent in 64-bit.
+ *
+ * To quote AEDataModel.h:
+ *
+ *     FSSpecs are deprecated on Mac OS X, and their use in AppleEvents 
+ *     is discouraged. You should change your code to use FSRefs.  In
+ *     __LP64__ code, coercions into typeFSS is not supported, and coercion
+ *     from typeFSS is not guaranteed to work correctly in all cases.
  */
 
 + (id)fileSpecWithPath:(NSString *)path;
