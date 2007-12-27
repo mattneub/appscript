@@ -261,6 +261,21 @@
 	return self;
 }
 
+- (id)waitForReply {
+	sendMode = sendMode & ~kAENoReply & ~kAEQueueReply | kAEWaitReply;
+	return self;
+}
+
+- (id)ignoreReply {
+	sendMode = sendMode & ~kAEWaitReply & ~kAEQueueReply | kAENoReply;
+	return self;
+}
+
+- (id)queueReply {
+	sendMode = sendMode & ~kAENoReply & ~kAEWaitReply | kAEQueueReply;
+	return self;
+}
+
 - (id)timeout:(long)timeout_ {
 	timeout = timeout_ * 60;
 	return self;
@@ -273,6 +288,11 @@
 
 - (id)returnType:(DescType)type {
 	[AS_event unpackResultAsType: type];
+	return self;
+}
+
+- (id)returnList {
+	[AS_event unpackResultAsType: typeAEList];
 	return self;
 }
 

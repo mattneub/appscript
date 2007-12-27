@@ -136,6 +136,21 @@ enumConsidsAndIgnores = 'csig'
 - (id)sendMode:(AESendMode)flags;
 
 /*
+ * Shortcut for setting kAEWaitReply send mode flag:
+ */
+- (id)waitForReply;
+
+/*
+ * Shortcut for setting kAENoReply send mode flag:
+ */
+- (id)ignoreReply;
+
+/*
+ * Shortcut for setting kAEQueueReply send mode flag:
+ */
+- (id)queueReply;
+
+/*
  * Specify timeout in seconds (or kAEDefaultTimeout/kAENoTimeOut).
  *
  * Default is kAEDefaultTimeout (2 minutes)
@@ -164,6 +179,11 @@ enumConsidsAndIgnores = 'csig'
  * If the specified type is typeWildCard (the default), no coercion is performed.
  */
 - (id)returnType:(DescType)type;
+
+/*
+ * Shortcut for [cmd returnType: typeAEList].
+ */
+- (id)returnList;
 
 /*
  * Similar to -returnType:, except that the returned AEDesc is first coerced to

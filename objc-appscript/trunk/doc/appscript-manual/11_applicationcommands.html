@@ -75,23 +75,29 @@
 <p>The Apple Event Manager defines the following <code>AESendMode</code> constants:</p>
 
 <pre><code>enum {
-    kAENoReply = 0x00000001,
-    kAEQueueReply = 0x00000002,
-    kAEWaitReply = 0x00000003,
+    kAENoReply               = 0x00000001,
+    kAEQueueReply            = 0x00000002,
+    kAEWaitReply             = 0x00000003,
 
-    kAENeverInteract = 0x00000010,
-    kAECanInteract = 0x00000020,
-    kAEAlwaysInteract = 0x00000030,
+    kAENeverInteract         = 0x00000010,
+    kAECanInteract           = 0x00000020,
+    kAEAlwaysInteract        = 0x00000030,
 
-    kAECanSwitchLayer = 0x00000040,
+    kAECanSwitchLayer        = 0x00000040,
 
-    kAEDontRecord = 0x00001000,
-    kAEDontExecute = 0x00002000,
+    kAEDontRecord            = 0x00001000,
+    kAEDontExecute           = 0x00002000,
 
     kAEProcessNonReplyEvents = 0x00008000
 };</code></pre>
 
 <p>By default, appscript uses <code>kAEWaitReply</code> and <code>kAECanSwitchLayer</code>.</p>
+
+<p>For convenience, a command object's reply mode can also be specified via the following methods:</p>
+
+<pre><code>- (id)ignoreReply;
+- (id)queueReply;
+- (id)waitForReply;</code></pre>
 
 <p>See the Apple Event Manager documentation for more information.</p>
 
@@ -107,7 +113,7 @@
 
 <pre><code>enum {
    kAEDefaultTimeout = -1,
-   kNoTimeOut = -2
+   kNoTimeOut        = -2
 };</code></pre>
 
 <p>See the Apple Event Manager documentation for more information.</p>
@@ -131,6 +137,8 @@
 
 <pre><code>- (id)returnType:(DescType)type;
 
+- (id)returnList;
+
 - (id)returnListOfType:(DescType)type;
 
 - (id)returnDescriptor;</code></pre>
@@ -138,6 +146,8 @@
 <p>The <code>-returnType:</code> method can be used to specify the AE type that the result descriptor returned by the application must be coerced to before unpacking. The default is <code>typeWildCard</code>.</p>
 
 <p>The <code>-returnListOfType:</code> method is similar, except that the returned result descriptor is first coerced to to <code>typeAEList</code>; each list item is then coerced to the specified type.<p>
+
+<p>The <code>-returnList</code> method provides a convenient shortcut for <code>[cmd returnType: typeAEList]</code>.</p>
 
 <p>Note that these coercions are performed on the returned value by the <code>-sendWithError:</code> method using built-in or user-installed AE coercion handlers (if available). If the coercion fails, <code>-sendWithError:</code> will return <code>nil</code> and the associated <code>NSError</code> instance will have error code -1700 (<code>errAECoercionFail</code>).</p>
 

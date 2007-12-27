@@ -2258,7 +2258,7 @@
 		fRef = 4FDCB2EB0B6D0CD0009534FD /* application.h */;
 		name = "application.h: 181";
 		rLen = 0;
-		rLoc = 5002;
+		rLoc = 5036;
 		rType = 0;
 		vrLen = 1513;
 		vrLoc = 3320;
@@ -2306,7 +2306,7 @@
 		fRef = 4FDCB2EB0B6D0CD0009534FD /* application.h */;
 		name = "application.h: 183";
 		rLen = 0;
-		rLoc = 5053;
+		rLoc = 5089;
 		rType = 0;
 		vrLen = 1513;
 		vrLoc = 3320;
@@ -2346,7 +2346,7 @@
 		fRef = 4FDCB2EB0B6D0CD0009534FD /* application.h */;
 		name = "application.h: 183";
 		rLen = 0;
-		rLoc = 5053;
+		rLoc = 5089;
 		rType = 0;
 		vrLen = 1513;
 		vrLoc = 3320;
@@ -2376,7 +2376,7 @@
 		fRef = 4FDCB2EB0B6D0CD0009534FD /* application.h */;
 		name = "application.h: 183";
 		rLen = 0;
-		rLoc = 5053;
+		rLoc = 5089;
 		rType = 0;
 		vrLen = 1513;
 		vrLoc = 3320;
@@ -2920,7 +2920,7 @@
 		fRef = 4FDCB2F40B6D0CD0009534FD /* reference.m */;
 		name = "reference.m: 276";
 		rLen = 0;
-		rLoc = 9332;
+		rLoc = 9727;
 		rType = 0;
 		vrLen = 991;
 		vrLoc = 0;
@@ -2987,7 +2987,7 @@
 		fRef = 4FDCB2F40B6D0CD0009534FD /* reference.m */;
 		name = "reference.m: 276";
 		rLen = 0;
-		rLoc = 9332;
+		rLoc = 9727;
 		rType = 0;
 		vrLen = 991;
 		vrLoc = 0;
@@ -3127,7 +3127,7 @@
 		fRef = 4FDCB2F40B6D0CD0009534FD /* reference.m */;
 		name = "reference.m: 312";
 		rLen = 0;
-		rLoc = 9332;
+		rLoc = 9727;
 		rType = 0;
 		vrLen = 991;
 		vrLoc = 0;
@@ -3159,7 +3159,7 @@
 		fRef = 4FDCB2F40B6D0CD0009534FD /* reference.m */;
 		name = "reference.m: 358";
 		rLen = 0;
-		rLoc = 9332;
+		rLoc = 9727;
 		rType = 0;
 		vrLen = 991;
 		vrLoc = 0;
@@ -3196,7 +3196,7 @@
 		fRef = 4FDCB2F30B6D0CD0009534FD /* reference.h */;
 		name = "reference.h: 244";
 		rLen = 0;
-		rLoc = 6404;
+		rLoc = 6715;
 		rType = 0;
 		vrLen = 645;
 		vrLoc = 5776;
@@ -3256,7 +3256,7 @@
 		comments = "warning: incomplete implementation of class 'ASReference'";
 		fRef = 4FDCB2F40B6D0CD0009534FD /* reference.m */;
 		rLen = 1;
-		rLoc = 372;
+		rLoc = 392;
 		rType = 1;
 	};
 	4FB2B7230D24104C00644367 /* PBXTextBookmark */ = {
@@ -3264,7 +3264,7 @@
 		fRef = 4FDCB2F40B6D0CD0009534FD /* reference.m */;
 		name = "reference.m: 355";
 		rLen = 5;
-		rLoc = 9326;
+		rLoc = 9721;
 		rType = 0;
 		vrLen = 908;
 		vrLoc = 7879;
@@ -3274,7 +3274,7 @@
 		fRef = 4FDCB2F30B6D0CD0009534FD /* reference.h */;
 		name = "reference.h: 245";
 		rLen = 0;
-		rLoc = 6491;
+		rLoc = 6802;
 		rType = 0;
 		vrLen = 672;
 		vrLoc = 5776;
@@ -3284,7 +3284,7 @@
 		fRef = 4FDCB2F30B6D0CD0009534FD /* reference.h */;
 		name = "reference.h: 235";
 		rLen = 0;
-		rLoc = 6153;
+		rLoc = 6464;
 		rType = 0;
 		vrLen = 1456;
 		vrLoc = 4992;
@@ -3294,7 +3294,7 @@
 		fRef = 4FDCB2F30B6D0CD0009534FD /* reference.h */;
 		name = "reference.h: 239";
 		rLen = 232;
-		rLoc = 6179;
+		rLoc = 6490;
 		rType = 0;
 		vrLen = 1457;
 		vrLoc = 4991;
@@ -3304,7 +3304,7 @@
 		fRef = 4FDCB2F40B6D0CD0009534FD /* reference.m */;
 		name = "reference.m: 349";
 		rLen = 0;
-		rLoc = 8665;
+		rLoc = 9060;
 		rType = 0;
 		vrLen = 1246;
 		vrLoc = 7541;
@@ -3338,7 +3338,7 @@
 		fRef = 4FDCB2F40B6D0CD0009534FD /* reference.m */;
 		name = "reference.m: 355";
 		rLen = 5;
-		rLoc = 9326;
+		rLoc = 9721;
 		rType = 0;
 		vrLen = 908;
 		vrLoc = 7879;
@@ -3348,7 +3348,7 @@
 		fRef = 4FDCB2F30B6D0CD0009534FD /* reference.h */;
 		name = "reference.h: 245";
 		rLen = 0;
-		rLoc = 6491;
+		rLoc = 6802;
 		rType = 0;
 		vrLen = 672;
 		vrLoc = 5776;
@@ -3358,7 +3358,7 @@
 		fRef = 4FDCB2F40B6D0CD0009534FD /* reference.m */;
 		name = "reference.m: 370";
 		rLen = 0;
-		rLoc = 9293;
+		rLoc = 9688;
 		rType = 0;
 		vrLen = 1453;
 		vrLoc = 7879;
@@ -3368,7 +3368,7 @@
 		fRef = 4FDCB2F30B6D0CD0009534FD /* reference.h */;
 		name = "reference.h: 248";
 		rLen = 256;
-		rLoc = 6493;
+		rLoc = 6804;
 		rType = 0;
 		vrLen = 1455;
 		vrLoc = 5303;
@@ -3378,7 +3378,7 @@
 		fRef = 4FDCB2EB0B6D0CD0009534FD /* application.h */;
 		name = "application.h: 174";
 		rLen = 0;
-		rLoc = 4788;
+		rLoc = 4822;
 		rType = 0;
 		vrLen = 1578;
 		vrLoc = 3475;
@@ -3459,7 +3459,7 @@
 	};
 	4FDCB2F30B6D0CD0009534FD /* reference.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {796, 3654}}";
+			sepNavIntBoundsRect = "{{0, 0}, {796, 3542}}";
 			sepNavSelRange = "{6493, 256}";
 			sepNavVisRange = "{5303, 1455}";
 			sepNavVisRect = "{{0, 1693}, {609, 742}}";
@@ -3468,11 +3468,11 @@
 	};
 	4FDCB2F40B6D0CD0009534FD /* reference.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {876, 5250}}";
+			sepNavIntBoundsRect = "{{0, 0}, {876, 5488}}";
 			sepNavSelRange = "{9293, 0}";
 			sepNavVisRange = "{7879, 1453}";
 			sepNavVisRect = "{{0, 2463}, {700, 268}}";
-			sepNavWindowFrame = "{{652, 0}, {935, 1028}}";
+			sepNavWindowFrame = "{{432, 0}, {935, 1028}}";
 		};
 	};
 	4FDCB2F50B6D0CD0009534FD /* specifier.h */ = {

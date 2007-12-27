@@ -167,7 +167,7 @@
 				  eventID:(AEEventID)code;
 
 
-// reconnect to a local application specified by path
+// reconnect to a local application originally specified by name, bundle ID or file URL
 
 - (BOOL)reconnect;
 
@@ -183,4 +183,6 @@
 - (BOOL)endTransactionWithError:(NSError **)error;
 
 - (BOOL)abortTransactionWithError:(NSError **)error;
+
 @end
+
