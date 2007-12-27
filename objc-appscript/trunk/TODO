@@ -155,12 +155,17 @@ Note: typeFSS is undefined in __LP64__, and AEDataModel.h states:
 	/Users/has/appscript/objc-appscript/src/Appscript/parser.h:23: warning: also found '-(OSType)code'
 
 
+- compiler warnings when [ASApplicationObj run] is used:
+
+	/Users/has/AppscriptDemo/AppscriptDemo.m:27: warning: multiple methods named '-run' found
+	/Developer/SDKs/MacOSX10.4u.sdk/System/Library/Frameworks/Foundation.framework/Headers/NSRunLoop.h:37: warning: using '-(void)run'
+	/Users/has/AppscriptDemo/TEGlue/TEReferenceGlue.h:55: warning: also found '-(TERunCommand *)run'
+
+
 - NSErrors should include human-readable default error description; could use GetMacOSStatusCommentString if on 10.4 or later (see Debugging.h), otherwise will need to supply a lookup table for common Carbon error codes, c.f. rb-appscript. Probably also a good idea to include a lookup table for pre-Leopard Cocoa Scripting error strings, c.f. rb-appscript.
 
-- i386 safety? 64-bit safety? GC (-finalize) support?
+- add 'strict' options for class and command generation to osaglue? e.g. -k option would create individual classes according to application dictionary; -c option would enforce type checking/coercion in command parameters and result. This would allow users to take advantage of ObjC static typing for applications whose dictionaries are sufficiently accurate to avoid compatibility problems.
 
-- provide convenience macros, e.g.: #AEMInt(index) [NSNumber numberWithInt: index]
-
-- add 'strict' options for class and command generation to osaglue: -k option would create individual classes according to application dictionary; -c option would enforce type checking/coercion in command parameters and result. This would allow users to take advantage of ObjC static typing for applications whose dictionaries are sufficiently accurate to avoid compatibility problems.
+- add dynamic class generation option?
 
 - finish documentation, header comments

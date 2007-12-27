@@ -67,6 +67,75 @@
 	return target;
 }
 
+- (BOOL)isRunning {
+	NSURL *url;
+	BOOL result;
+	
+	switch (targetType) {
+		case kASTargetName:
+			url = [AEMApplication findApplicationForName: targetData error: nil];
+			result = [AEMApplication processExistsForFileURL: url];
+			break;
+		case kASTargetBundleID:
+			url = [AEMApplication findApplicationForCreator: kLSUnknownCreator bundleID: targetData name: nil error: nil];
+			result = [AEMApplication processExistsForFileURL: url];
+			break;
+		case kASTargetURL:
+			if ([targetData isFileURL])
+				result = [AEMApplication processExistsForFileURL: targetData];
+			 else
+				result = [AEMApplication processExistsForEppcURL: targetData];
+			break;
+		case kASTargetPID:
+			result = [AEMApplication processExistsForPID: [targetData unsignedLongValue]];
+			break;
+		case kASTargetDescriptor:
+			result = [AEMApplication processExistsForDescriptor: targetData];
+			break;
+		default: // kASTargetCurrent
+			result = YES;
+	}
+	return result;
+}
+
+- (BOOL)launchApplicationWithError:(NSError **)error {
+	NSURL *fileURL = nil;
+	AEMApplication *app;
+	NSError *err;
+	
+	if (!error) error = &err;
+	*error = nil;
+	switch (targetType) {
+		case kASTargetName:
+			fileURL = [AEMApplication findApplicationForName: targetData error: nil];
+			break;
+		case kASTargetBundleID:
+			fileURL = [AEMApplication findApplicationForCreator: kLSUnknownCreator bundleID: targetData name: nil error: nil];
+			break;
+		case kASTargetURL:
+			if ([targetData isFileURL])
+				fileURL = targetData;
+	}
+	if (fileURL) {
+		[AEMApplication launchApplication: fileURL error: error];
+		if (!*error) {
+			app = [self targetWithError: error];
+			[app reconnectWithError: error];
+			return (!*error);
+		}	
+	} else { // will send 'launch' event to app; if app is not already running, an error will occur
+		app = [self targetWithError: error];
+		if (!app) return NO;
+		[[app eventWithEventClass: 'ascr' eventID: 'noop'] sendWithError: error];
+		if ([*error code] == -1708) { // 'event not handled' error is normal for 'launch' events, so ignore it
+			*error = nil;
+			return YES;
+		}
+	}
+	return NO;
+}
+
+
 // override pack, various unpack methods
 
 - (NSAppleEventDescriptor *)pack:(id)object {
@@ -269,6 +338,36 @@
 
 - (id)AS_aemReference {
 	return AS_aemReference;
+}
+
+- (BOOL)isRunning {
+	return [AS_appData isRunning];
+}
+
+- (BOOL)launchApplication {
+	return [self launchApplicationWithError: nil];
+}
+
+- (BOOL)launchApplicationWithError:(NSError **)error {
+	return [AS_appData launchApplicationWithError: error];
+}
+
+// transaction support
+
+- (BOOL)beginTransactionWithError:(NSError **)error {
+	 return [[AS_appData target] beginTransactionWithError: error];
+}
+
+- (BOOL)beginTransactionWithSession:(id)session error:(NSError **)error {
+	 return [[AS_appData target] beginTransactionWithSession: session error: error];
+}
+
+- (BOOL)endTransactionWithError:(NSError **)error {
+	 return [[AS_appData target] endTransactionWithError: error];
+}
+
+- (BOOL)abortTransactionWithError:(NSError **)error {
+	 return [[AS_appData target] abortTransactionWithError: error];
 }
 
 @end

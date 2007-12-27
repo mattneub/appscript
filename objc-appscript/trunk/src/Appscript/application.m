@@ -50,6 +50,23 @@
 	return (NSURL *)outAppURL;
 }
 
++ (NSURL *)findApplicationForName:(NSString *)name error:(NSError **)error {
+	NSURL *url;
+	NSError *err;
+	
+	if (!error) error = &err;
+	*error = nil;
+	if ([name characterAtIndex: 0] == '/')
+		url = [NSURL fileURLWithPath: name];
+	else
+		url = [self findApplicationForCreator: kLSUnknownCreator
+									 bundleID: nil
+										 name: name
+										error: error];
+	if (!url && [[name pathExtension] localizedCaseInsensitiveCompare: @"app"] != NSOrderedSame)
+		return [self findApplicationForName: [NSString stringWithFormat: @"%@.app", name] error: error];
+	return url;
+}
 
 + (pid_t)findProcessIDForApplication:(NSURL *)fileURL error:(NSError **)error {
 	OSStatus err;
@@ -364,18 +381,8 @@ error:
 	
 	if (!error) error = &err;
 	*error = nil;
-	if ([name characterAtIndex: 0] == '/')
-		url = [NSURL fileURLWithPath: name];
-	else
-		url = [[self class] findApplicationForCreator: kLSUnknownCreator
-											   bundleID: nil
-												   name: name
-												  error: error];
-	if (!url)
-		if ([[name pathExtension] localizedCaseInsensitiveCompare: @"app"] != NSOrderedSame)
-			return [self initWithName: [NSString stringWithFormat: @"%@.app", name] error: error];
-		else
-			return nil;
+	url = [[self class] findApplicationForName: name error: error];
+	if (!url) return nil;
 	return [self initWithTargetType: kAEMTargetFileURL data: url error: error];
 }
 

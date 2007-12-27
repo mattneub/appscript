@@ -34,6 +34,8 @@
  */
 
 // Find application files:
+// (Note: these methods are normally used internally by initializers,
+// but may be used by external clients if needed.)
 
 + (NSURL *)findApplicationForCreator:(OSType)creator
                             bundleID:(NSString *)bundleID
@@ -48,6 +50,20 @@
  * (Convenience wrapper for LaunchServices' LSFindApplicationForInfo
  * function.)
  */
+
+/*
+ * Find application by file name. 
+ *
+ * Notes:
+ * - A full path is also acceptable.
+ *
+ * - The .app suffix is optional; if not given, the method first looks
+ *   for an exact file name match, and if none is found it searches for
+ *   the same name with an .app suffix appended.
+ */
++ (NSURL *)findApplicationForName:(NSString *)name
+                            error:(NSError **)error;
+
 
 
 // Check if a process exists:
@@ -91,7 +107,21 @@
  * See Process Manager documentation for possible error codes.)
  */
 
-    
+// Convenience shortcuts for the above; these supply the appropriate
+// first event along with the launchContinue, launchNoFileFlags and
+// launchDontSwitch flags:
+
++ (pid_t)launchApplication:(NSURL *)appFileURL
+                     error:(NSError **)error; // may be nil
+
++ (pid_t)runApplication:(NSURL *)appFileURL
+                  error:(NSError **)error; // may be nil
+
++ (pid_t)openDocuments:(id)files // an ASAlias/NSURL or NSArray thereof
+         inApplication:(NSURL *)appFileURL 
+                 error:(NSError **)error; // may be nil
+
+
 // Initializers:
 
 - (id)initWithName:(NSString *)name;

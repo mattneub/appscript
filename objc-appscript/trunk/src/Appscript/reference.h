@@ -35,9 +35,18 @@ typedef enum {
 					targetType:(ASTargetType)type
 					targetData:(id)data;
 
+// creates AEMApplication instance for target application; used internally
 - (BOOL)connectWithError:(NSError **)error;
 
-- (id)targetWithError:(NSError **)error; // returns AEMApplication instance or equivalent
+// returns AEMApplication instance for target application
+- (id)targetWithError:(NSError **)error;
+
+// is target application running?
+- (BOOL)isRunning;
+
+// launch the target application without sending it the usual 'run' event;
+// equivalent to 'launch' command in AppleScript.
+- (BOOL)launchApplicationWithError:(NSError **)error;
 
 @end
 
@@ -226,6 +235,25 @@ enumConsidsAndIgnores = 'csig'
 - (id)AS_appData;
 
 - (id)AS_aemReference;
+
+// is target application running?
+- (BOOL)isRunning;
+
+// launch the target application without sending it the usual 'run' event;
+// equivalent to 'launch' command in AppleScript.
+- (BOOL)launchApplicationWithError:(NSError **)error; // may be nil
+
+- (BOOL)launchApplication; // convenience shortcut for the above
+
+// transaction support
+
+- (BOOL)beginTransactionWithError:(NSError **)error;
+
+- (BOOL)beginTransactionWithSession:(id)session error:(NSError **)error;
+
+- (BOOL)endTransactionWithError:(NSError **)error;
+
+- (BOOL)abortTransactionWithError:(NSError **)error;
 
 @end
 

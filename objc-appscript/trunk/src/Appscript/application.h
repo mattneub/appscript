@@ -31,12 +31,16 @@
 // Utility class methods
 
 // Find application by creator code, bundle ID and/or file name
+// Convenience wrapper for LSFindApplicationForInfo()
 
 + (NSURL *)findApplicationForCreator:(OSType)creator		// use kLSUnknownCreator if none
 							bundleID:(NSString *)bundleID	// use nil if none
 								name:(NSString *)name		// use nil if none
 							   error:(NSError **)error;
 
+// Find application by file name. Full path is also acceptable; .app suffix is optional.
+
++ (NSURL *)findApplicationForName:(NSString *)name error:(NSError **)error;
 
 // Get Unix process ID of first process launched from specified application
 

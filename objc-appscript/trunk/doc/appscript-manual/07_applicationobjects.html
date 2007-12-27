@@ -110,19 +110,18 @@ ITunesApplication *itunes = [[ITunesApplication alloc] initWithURL: url];</code>
 
 <p>Note that these commands are only useful in applications that define an Apple Event Object Model as part of their Apple event interface.</p>
 
-<!--
+
 <h2>Transaction support</h2>
 
-<p>Application objects implement three additional methods, <code>startTransaction</code>, <code>endTransaction</code> and <code>abortTransaction</code> that allow a sequence of related commands to be handled as a single operation by applications that support transactions, e.g. FileMaker Pro.</p>
+<p>Application objects implement four additional methods, <code>-startTransactionWithSession:</code>, <code>-startTransaction</code>, <code>-endTransaction</code> and <code>-abortTransaction</code> that allow a sequence of related commands to be handled as a single operation by applications that support transactions, e.g. FileMaker Pro.</p>
 
-<p>Once the application object's <code>startTransaction</code> method is called, all subsequent commands to that application will be sent as part of the same transaction until <code>endTransaction</code> or <code>abortTransaction</code> is called.</p>
+<p>Once the application object's <code>-startTransaction</code> or <code>-startTransactionWithSession:</code> method is called, all subsequent commands to that application will be sent as part of the same transaction until <code>-endTransaction</code> or <code>-abortTransaction</code> is called.</p>
 
-<p>The <code>startTransaction</code> method takes an optional <code>session</code> argument that indicates the specific transaction session to open (in applications that support this).</p>
+<p>The <code>-startTransactionWithSession:</code> method takes an argument that indicates the specific transaction session to open (in applications that support this).</p>
 
-<p class="hilitebox">Remember to call <code>endTransaction</code> or <code>abortTransaction</code> at the end of every transaction. (This includes transactions interrupted by a raised exception.) If a transaction is accidentally left open, appscript will try to end it automatically when the application object is garbage-collected, but this is not guaranteed to succeed.</p>
--->
+<p class="hilitebox">Remember to call <code>-endTransaction</code> or <code>-abortTransaction</code> at the end of every transaction. (This includes transactions interrupted by a raised exception.) If a transaction is accidentally left open, appscript will try to end it automatically when the application object is disposed of, but this is not guaranteed to succeed.</p>
 
-<!--
+
 <h2>Local application launching notes</h2>
 
 <p>Note: the following information only applies to local applications as appscript cannot directly launch applications on a remote Mac. To control a remote application, the application must be running beforehand or else launched indirectly (e.g. by using the remote Mac's Finder to open it).</p>
@@ -135,19 +134,53 @@ ITunesApplication *itunes = [[ITunesApplication alloc] initWithURL: url];</code>
 <p>Appscript identifies locally run applications by their process ids so it's possible to control multiple versions of an application running at the same time if their Application objects are created using process ids or <code>eppc://</code> URLs.</p>
 
 
-<h3>Using <code>launch</code> vs <code>run</code></h3>
+<h3>Checking if an application is running</h3>
 
-<p>When appscript launches a non-running application, it normally sends it a <code>run</code> command as part of the launching process. If you wish to avoid this, you should start the application by sending it a <code>launch</code> command before doing anything else. For example:</p>
+<p>You can check if the application specified by an Application object is currently running by calling its <code>-isRunning</code> method:</p>
 
-<pre><code>te = app('TextEdit')
-te.launch
-# other TextEdit-related code goes here...</code></pre>
+<pre><code>- (BOOL)isRunning;</code></pre>
 
-<p>This is useful when you want to start an application without it going through its normal startup procedure. For example, the above script will launch TextEdit without causing it to display a new, empty document (its usual behaviour).</p>
+<p>This is useful if you don't want to perform commands on an application that isn't already running. For example:</p>
 
-<p><code>launch</code> is also useful if you need to send a non-running application an <code>open</code> command as its very first instruction. For example, to send an <code>open</code> command to a non-stay-open application that batch processes one or more dropped files then quits again, you must first start it using <code>launch</code>, then send it an <code>open</code> command with the files to process. If you forget to do this, the application will first receive a <code>run</code> command and quit again before the <code>open</code> command can be handled.</p>
+<pre><code>TEApplication *textedit = [[TEApplication alloc] initWithName: @"TextEdit'];
+
+// Only perform TextEdit-related commands if it's already running:
+if ([textedit isRunning]) {
+    // all TextEdit-related commands go here...
+}
+
+[te release];</code></pre>
+
+<p class="hilitebox">Remember that objc-appscript automatically launches a non-running application the first time your script makes reference to any of its commands. To avoid accidental launches, <em>all</em> commands relating to that application must be included in a conditional block that only executes if <code>-isRunning</code> returns <code>YES</code>.</p>
 
 
+<h3>Launching applications via <code>-launchApplicationWithError:</code></h3>
+
+<p>When appscript launches a non-running application, it normally sends it a <code>run</code> command as part of the launching process. If you wish to avoid this, you should start the application by sending it a <code>launch</code> command before doing anything else:<p>
+
+<pre><code>- (BOOL)launchApplicationWithError:(NSError **)error;
+
+- (BOOL)launchApplication; // convenience shortcut for above</code></pre>
+
+<p>The result is a Boolean value indicating if the application was successfully launched (or was already running).</p>
+
+<p>This is useful when you want to start an application without it going through its normal startup procedure, and is equivalent to the using AppleScript's <code>launch</code> command. For example:</p>
+
+<pre><code>TEApplication *textedit = [[TEApplication alloc] initWithName: @"TextEdit'];
+
+[textedit launch];
+// other TextEdit-related code goes here...</code></pre>
+
+<pre><code>tell application "TextEdit"
+    launch
+    -- other TextEdit-related code goes here...
+end tell</code></pre>
+
+<p>Both of the above examples will launch TextEdit without causing it to display a new, empty document (its usual behaviour).</p>
+
+<p>The lower level <code>AEMApplication</code> class also provides several class methods that allow finer-grained control over application launches.</p>
+
+<!--
 <h3>Restarting applications</h3>
 
 <p>As soon as you start to construct a reference or command using a newly created Application objects, if the application is not already running then appscript will automatically launch it in order to obtain its terminology.</p>
