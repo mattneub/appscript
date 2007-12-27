@@ -39,7 +39,7 @@
 	if (err) {
 		errorDescription = [NSString stringWithFormat: @"Can't find application with creator '%@', "
 														"bundle ID %@, name %@ (error %i)", 
-														err, osTypeToString(creator), bundleID, name];
+														osTypeToString(creator), bundleID, name, err];
 		errorInfo = [NSDictionary dictionaryWithObjectsAndKeys: 
 									errorDescription, NSLocalizedDescriptionKey,
 									[NSNumber numberWithInt: err], kAEMErrorNumberKey,
