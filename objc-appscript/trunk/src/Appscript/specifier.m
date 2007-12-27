@@ -903,9 +903,9 @@ void disposeSpecifierModule(void) {
 	return nil;
 }
 
-// note: clients should avoid calling this initialiser directly; 
-// use AEMApp, AEMCon, AEMIts macros instead.
-- (id)initWithDescType:(DescType)descType {
+// note: clients should avoid calling this initialiser directly;
+// use provided class methods or convenience macros instead
+- (id)initWithCachedDescOfType:(DescType)descType {
 	self = [super initWithContainer: nil key: nil wantCode: '????'];
 	if (!self) return self;
 	cachedDesc = [[NSAppleEventDescriptor alloc] initWithDescriptorType: descType
@@ -927,14 +927,12 @@ void disposeSpecifierModule(void) {
 
 @implementation AEMApplicationRoot
 
-// note: clients should avoid calling this initialiser directly; 
-// use AEMApp, AEMCon, AEMIts macros instead.
 + (AEMApplicationRoot *)applicationRoot {
 	static AEMApplicationRoot *root;
 	
 	if (!root) {
 		if (!specifierModulesAreInitialized) initSpecifierModule();
-		root = [[AEMApplicationRoot alloc] initWithDescType: typeNull];
+		root = [[AEMApplicationRoot alloc] initWithCachedDescOfType: typeNull];
 	}
 	return root;
 }
@@ -959,7 +957,7 @@ void disposeSpecifierModule(void) {
 	
 	if (!root) {
 		if (!specifierModulesAreInitialized) initSpecifierModule();
-		root = [[AEMCurrentContainerRoot alloc] initWithDescType: typeCurrentContainer];
+		root = [[AEMCurrentContainerRoot alloc] initWithCachedDescOfType: typeCurrentContainer];
 	}
 	return root;
 }
@@ -977,14 +975,12 @@ void disposeSpecifierModule(void) {
 
 @implementation AEMObjectBeingExaminedRoot
 
-// note: clients should avoid calling this initialiser directly; 
-// use AEMApp, AEMCon, AEMIts macros instead.
 + (AEMObjectBeingExaminedRoot *)objectBeingExaminedRoot {
 	static AEMObjectBeingExaminedRoot *root;
 	
 	if (!root) {
 		if (!specifierModulesAreInitialized) initSpecifierModule();
-		root = [[AEMObjectBeingExaminedRoot alloc] initWithDescType: typeObjectBeingExamined];
+		root = [[AEMObjectBeingExaminedRoot alloc] initWithCachedDescOfType: typeObjectBeingExamined];
 	}
 	return root;
 }
@@ -999,3 +995,40 @@ void disposeSpecifierModule(void) {
 
 @end
 
+
+@implementation AEMCustomRoot
+
++ (AEMCustomRoot *)customRootWithObject:(id)rootObject_ {
+	if (!specifierModulesAreInitialized) initSpecifierModule();
+	return [[self alloc] initWithObject: rootObject_];
+}
+
+- (id)initWithObject:(id)rootObject_ {
+	self = [super initWithContainer: nil key: nil wantCode: '????'];
+	if (!self) return self;
+	cachedDesc = nil;
+	rootObject = [rootObject_ retain];
+	return self;
+
+}
+
+- (void)dealloc {
+	[rootObject release];
+	[super dealloc];
+}
+
+- (NSString *)description {
+	return [NSString stringWithFormat: @"AEMRoot(%@)", rootObject];
+}
+
+- (id)resolve:(id)object {
+	return [object customRoot: rootObject];
+}
+
+- (NSAppleEventDescriptor *)packSelf:(id)codecs {
+	if (!cachedDesc)
+		cachedDesc = [codecs pack: rootObject];
+	return cachedDesc;
+}
+
+@end

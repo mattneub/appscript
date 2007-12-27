@@ -75,6 +75,7 @@
 - (ASReferenceRenderer *)app;
 - (ASReferenceRenderer *)con;
 - (ASReferenceRenderer *)its;
+- (ASReferenceRenderer *)customRoot:(id)rootObject;
 
 @end
 

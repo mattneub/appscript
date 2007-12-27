@@ -98,6 +98,7 @@ enum {
 - (id)app;
 - (id)con;
 - (id)its;
+- (id)customRoot:(NSAppleEventDescriptor *)desc;
 
 - (id)unpackCompDescriptor:(NSAppleEventDescriptor *)desc;
 - (id)unpackLogicalDescriptor:(NSAppleEventDescriptor *)desc;

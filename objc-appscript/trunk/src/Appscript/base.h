@@ -42,6 +42,8 @@
 
 - (id)its;
 
+- (id)customRoot:(id)rootObject;
+
 @end
 
 

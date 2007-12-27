@@ -122,8 +122,6 @@ Note: best way to do this might be to have codecs unpack event (TO DO) and then 
 
 - comparison support
 
-- AEMCustomRoot
-
 - see also .h files
 
 - eliminate minor risk of leaking memory due to race conditions in -packSelf: methods

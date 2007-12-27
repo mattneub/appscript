@@ -20,9 +20,7 @@
  *   test methods and/or the -selector:args: method according to their needs.
  *
  * - declare protocol/base class for reference resolver objects
- *
- * - implement AEMCustomRoot
- *
+*
  * - since frameworks are never unloaded, do we really need disposeSpecifierModule()?
  */
 
@@ -32,6 +30,7 @@
 #define AEMApp [AEMApplicationRoot applicationRoot]
 #define AEMCon [AEMCurrentContainerRoot currentContainerRoot]
 #define AEMIts [AEMObjectBeingExaminedRoot objectBeingExaminedRoot]
+#define AEMRoot(object) [AEMCustomRoot customRootWithObject: object]
 
 
 /**********************************************************************/
@@ -64,6 +63,7 @@
 @class AEMApplicationRoot;
 @class AEMCurrentContainerRoot;
 @class AEMObjectBeingExaminedRoot;
+@class AEMCustomRoot;
 
 @class AEMTest;
 
@@ -264,35 +264,39 @@ void disposeSpecifierModule(void);
 /**********************************************************************/
 // Reference roots
 
-@interface AEMReferenceRootBase : AEMObjectSpecifier
+@interface AEMReferenceRootBase : AEMObjectSpecifier // abstract class
 
-// note: clients should avoid calling this initialiser directly; 
-// use AEMApp, AEMCon, AEMIts macros instead.
-- (id)initWithDescType:(DescType)descType;
+// note: clients should avoid calling this initialiser directly;
+// use provided class methods or convenience macros instead
+- (id)initWithCachedDescOfType:(DescType)descType;
 
 @end
 
 @interface AEMApplicationRoot : AEMReferenceRootBase
 
-// note: clients should avoid calling this initialiser directly; 
-// use AEMApp, AEMCon, AEMIts macros instead.
 + (AEMApplicationRoot *)applicationRoot;
 
 @end
 
 @interface AEMCurrentContainerRoot : AEMReferenceRootBase
 
-// note: clients should avoid calling this initialiser directly; 
-// use AEMApp, AEMCon, AEMIts macros instead.
 + (AEMCurrentContainerRoot *)currentContainerRoot;
 
 @end
 
 @interface AEMObjectBeingExaminedRoot : AEMReferenceRootBase
 
-// note: clients should avoid calling this initialiser directly; 
-// use AEMApp, AEMCon, AEMIts macros instead.
 + (AEMObjectBeingExaminedRoot *)objectBeingExaminedRoot;
+
+@end
+
+@interface AEMCustomRoot : AEMReferenceRootBase {
+	id rootObject;
+}
+
++ (AEMCustomRoot *)customRootWithObject:(id)object;
+
+- (id)initWithObject:(id)object;
 
 @end
 

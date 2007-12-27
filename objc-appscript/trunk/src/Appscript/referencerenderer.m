@@ -308,4 +308,9 @@
     return self;
 }
 
+- (ASReferenceRenderer *)customRoot:(id)rootObject {
+	[result appendFormat: @"%@CustomRoot(%@)", prefix, rootObject];
+    return self;
+}
+
 @end

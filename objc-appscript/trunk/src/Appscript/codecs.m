@@ -520,7 +520,7 @@ static AEMCodecs *defaultCodecs = nil;
 		case typeObjectBeingExamined:
 			return [self its];
 		default:
-			return [self unpack: desc];
+			return [self customRoot: desc];
 	}
 }
 
@@ -556,6 +556,10 @@ static AEMCodecs *defaultCodecs = nil;
 
 - (id)its {
 	return AEMIts;
+}
+
+- (id)customRoot:(NSAppleEventDescriptor *)desc {
+	return AEMRoot([self unpack: desc]);
 }
 
 - (id)unpackCompDescriptor:(NSAppleEventDescriptor *)desc {
