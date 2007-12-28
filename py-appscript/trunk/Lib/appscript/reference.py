@@ -686,7 +686,11 @@ class Application(Reference):
 			aem.Application.launch(self.AS_appdata.identifier)
 			self.AS_appdata.target.reconnect() # make sure aem.Application object's AEAddressDesc is up to date
 		else:
-			self.AS_appdata.target.event('ascrnoop').send() # will send launch event to app if already running; else will error
+			try:
+				self.AS_appdata.target.event('ascrnoop').send() # will send launch event to app if already running; else will error
+			except aem.CommandError, e:
+				if e.number != -1708:
+					raise
 
 
 #######
