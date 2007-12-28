@@ -32,12 +32,19 @@
 	[super dealloc];
 }
 
-// pack specifier into NSAppleEventDescriptor
+
+- (void)setDesc:(NSAppleEventDescriptor *)desc {
+	if (!cachedDesc)
+		[cachedDesc release];
+	cachedDesc = [desc retain];
+}
+
+
 - (NSAppleEventDescriptor *)packSelf:(id)codecs { // stub method; subclasses will override this
 	return nil;
 }
 
-// walk reference
+
 - (id)resolve:(id)object { // stub method; subclasses will override this
 	return nil;
 }

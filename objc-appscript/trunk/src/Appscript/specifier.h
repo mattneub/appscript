@@ -10,19 +10,6 @@
 #import "base.h"
 #import "test.h"
 
-/* TO DO:
- *
- * - provide an abstract AEMResolverBase class that third-party clients can subclass
- *   in order to create resolver objects to pass to AEM specifiers' -resolve: method.
- *   This base class should provide default implementations of all known specifier and
- *   test methods; these should in turn call a common -selector:args: method that does
- *   nothing by default. Subclasses can then override any of the specific specifier/
- *   test methods and/or the -selector:args: method according to their needs.
- *
- * - declare protocol/base class for reference resolver objects
-*
- * - since frameworks are never unloaded, do we really need disposeSpecifierModule()?
- */
 
 /**********************************************************************/
 
@@ -93,6 +80,23 @@ void disposeSpecifierModule(void);
 
 - (AEMReferenceRootBase *)root;
 - (AEMSpecifier *)trueSelf;
+
+@end
+
+
+/**********************************************************************/
+// Performance optimisation used by -[AEMCodecs unpackObjectSpecifier:]
+
+
+@interface AEMDeferredSpecifier : AEMSpecifier {
+	id reference;
+	NSAppleEventDescriptor *desc;
+	id codecs;
+}
+
+- (id)initWithDescriptor:(NSAppleEventDescriptor *)desc_ codecs:(id)codecs_;
+
+- (id)realReference;
 
 @end
 

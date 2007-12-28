@@ -10,7 +10,6 @@
 
 /**********************************************************************/
 // reference renderer base
-// TO DO: move this to its own file
 
 @implementation ASReferenceRenderer
 

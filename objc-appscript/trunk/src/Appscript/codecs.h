@@ -103,4 +103,16 @@ enum {
 - (id)unpackCompDescriptor:(NSAppleEventDescriptor *)desc;
 - (id)unpackLogicalDescriptor:(NSAppleEventDescriptor *)desc;
 
+/*
+ * Notes:
+ *
+ * kAEContains is also used to construct 'is in' tests, where test value is first operand and
+ * reference being tested is second operand, so need to make sure first operand is an its-based ref;
+ * if not, rearrange accordingly.
+ *
+ * Since type-checking is involved, this extra hook is provided so that appscript's ASAppData class
+ * can override this method to add its own type checking.
+ */
+- (id)unpackContainsCompDescriptorWithOperand1:(id)op1 operand2:(id)op2;
+
 @end

@@ -12,12 +12,6 @@
  * - NSAppleEventDescriptors don't work as dictionary keys; use AEMType/AEMProperty instead (or NSString for user-defined property names)
  */
 
-/*
- * TO DO:
- * - unit types support
- * - finish reference unpacking
- */
-
 
 /**********************************************************************/
 
@@ -524,9 +518,69 @@ static AEMCodecs *defaultCodecs = nil;
 	}
 }
 
+// Shallow-unpack an object specifier, retaining the container AEDesc as-is.
+// (i.e. Defers full unpacking of [most] object specifiers for efficiency.)
 - (id)unpackObjectSpecifier:(NSAppleEventDescriptor *)desc {
-	return [self fullyUnpackObjectSpecifier: desc]; // TO DO: implement deferred unpack
+	OSType wantCode, keyForm;
+	NSAppleEventDescriptor *key;
+	AEMDeferredSpecifier *container;
+	id ref;
+	
+	keyForm = [[desc descriptorForKeyword: keyAEKeyForm] enumCodeValue];
+	switch (keyForm) {
+		case formPropertyID:
+		case formAbsolutePosition:
+		case formName:
+		case formUniqueID:
+			wantCode = [[desc descriptorForKeyword: keyAEDesiredClass] typeCodeValue];
+			key = [desc descriptorForKeyword: keyAEKeyData];
+			container = [[[AEMDeferredSpecifier alloc] initWithDescriptor: [desc descriptorForKeyword: keyAEContainer]
+																   codecs: self] autorelease];
+			switch (keyForm) {
+				case formPropertyID:
+					ref = [[[AEMPropertySpecifier alloc] initWithContainer: container
+																	   key: key
+																  wantCode: wantCode] autorelease];
+					break;
+				case formAbsolutePosition:
+					if ([key descriptorType] == typeAbsoluteOrdinal) {
+						if ([key typeCodeValue] == kAEAll)
+							ref = [[[AEMAllElementsSpecifier alloc] initWithContainer: container
+																			 wantCode: wantCode] autorelease];
+						else
+							ref = [self fullyUnpackObjectSpecifier: desc]; // do a full unpack of rarely returned reference forms
+					} else
+						ref = [[[AEMElementByIndexSpecifier alloc] initWithContainer: container
+																				 key: [self unpack: key]
+																			wantCode: wantCode] autorelease];
+					break;
+				case formName:
+					ref = [[[AEMElementByNameSpecifier alloc] initWithContainer: container
+																			key: [self unpack: key]
+																	   wantCode: wantCode] autorelease];
+					break;
+				case formUniqueID:
+					ref = [[[AEMElementByIDSpecifier alloc] initWithContainer: container
+																		  key: [self unpack: key]
+																	 wantCode: wantCode] autorelease];
+			}
+			break;
+		default: // do a full unpack of more complex, rarely returned reference forms
+			ref = [self fullyUnpackObjectSpecifier: desc];
+	}
+	/*
+	 * Have the newly created specifier object cache the existing descriptor for efficiency:
+	 *
+	 * (Note: AppleScript doesn't cached object specifier descriptors returned by applications,
+	 * so application compatibility issues may very occasionally arise, although to-date there's
+	 * only one known application that has this problem. The solution is to subclass the default
+	 * codecs and override this method to call -fullyUnpackObjectSpecifier: directly, thereby
+	 * bypassing this optimisation.)
+	 */
+	[ref setDesc: desc];
+	return ref;
 }
+
 
 - (id)unpackInsertionLoc:(NSAppleEventDescriptor *)desc {
 	id ref;
@@ -563,11 +617,72 @@ static AEMCodecs *defaultCodecs = nil;
 }
 
 - (id)unpackCompDescriptor:(NSAppleEventDescriptor *)desc {
-	return nil; // TO DO
+	DescType operator;
+	id op1, op2;
+	id ref = nil;
+	
+	operator = [[desc descriptorForKeyword: keyAECompOperator] enumCodeValue];
+	op1 = [self unpack: [desc descriptorForKeyword: keyAEObject1]];
+	op2 = [self unpack: [desc descriptorForKeyword: keyAEObject2]];
+	switch (operator) {
+		case kAEGreaterThan:
+			ref = [op1 greaterThan: op2];
+			break;
+		case kAEGreaterThanEquals:
+			ref = [op1 greaterOrEquals: op2];
+			break;
+		case kAEEquals:
+			ref = [op1 equals: op2];
+			break;
+		case kAELessThan:
+			ref = [op1 lessThan: op2];
+			break;
+		case kAELessThanEquals:
+			ref = [op1 lessOrEquals: op2];
+			break;
+		case kAEBeginsWith:
+			ref = [op1 beginsWith: op2];
+			break;
+		case kAEEndsWith:
+			ref = [op1 endsWith: op2];
+			break;
+		case kAEContains:
+			ref = [self unpackContainsCompDescriptorWithOperand1: op1 operand2: op2];
+			break;
+	}
+	return ref;
 }
 
 - (id)unpackLogicalDescriptor:(NSAppleEventDescriptor *)desc {
-	return nil; // TO DO
+	DescType operator;
+	NSAppleEventDescriptor *listDesc;
+	id op1;
+	id ref = nil;
+	
+	operator = [[desc descriptorForKeyword: keyAELogicalOperator] enumCodeValue];
+	listDesc = [[desc descriptorForKeyword: keyAELogicalTerms] coerceToDescriptorType: typeAEList];
+	op1 = [self unpack: [listDesc descriptorAtIndex: 1]];
+	switch (operator) {
+		case kAEAND:
+			[listDesc removeDescriptorAtIndex: 1];
+			ref = [op1 AND: [self unpack: listDesc]];
+			break;
+		case kAEOR:
+			[listDesc removeDescriptorAtIndex: 1];
+			ref = [op1 AND: [self unpack: listDesc]];
+			break;
+		case kAENOT:
+			ref = [op1 NOT];
+			break;
+	}
+	return ref;
+}
+
+- (id)unpackContainsCompDescriptorWithOperand1:(id)op1 operand2:(id)op2 {
+	if ([op1 isKindOfClass: [AEMQuery class]] && [[op1 root] isEqualTo: AEMIts])
+		return [op1 contains: op2];
+	else
+		return [op2 isIn: op1];
 }
 
 @end

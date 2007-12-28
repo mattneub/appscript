@@ -62,7 +62,6 @@ static ASBoolean *falseValue;
 /**********************************************************************/
 // Alias, FSRef, FSSpec wrappers
 
-// TO DO: methods for working with Carbon Alias, FSRef, FSSpec types?
 
 @implementation ASFileBase
 
@@ -108,8 +107,6 @@ static ASBoolean *falseValue;
 	if (!desc) return nil; // failed coercion, e.g. due to creating an ASAlias with a typeFileURL descriptor for a non-existent file
 	return self;
 }
-
-// TO DO: -hash, -isEqual:
 
 - (NSString *)description {
 	return [NSString stringWithFormat: @"<%@ %@>", [self class], [self path]];
@@ -274,7 +271,7 @@ static ASBoolean *falseValue;
 
 - (OSType)code {
 	if (!code)
-		code = [cachedDesc typeCodeValue]; // TO DO: check this works for enums, properties, keywords; if not, extract code via -data + -getBytes:length:
+		code = [cachedDesc typeCodeValue]; // (-typeCodeValue works for descriptors of typeType, typeEnumerated, typeProperty, typeKeyword)
 	return code;
 }
 

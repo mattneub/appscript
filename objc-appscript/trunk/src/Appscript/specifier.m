@@ -190,6 +190,49 @@ void disposeSpecifierModule(void) {
 
 
 /**********************************************************************/
+// Performance optimisation used by -[AEMCodecs unpackObjectSpecifier:]
+
+
+@implementation AEMDeferredSpecifier
+
+- (id)initWithDescriptor:(NSAppleEventDescriptor *)desc_ codecs:(id)codecs_ {
+	self = [super initWithContainer: nil key: nil];
+	if (!self) return self;
+	reference = nil;
+	desc = [desc_ retain];
+	codecs = [codecs_ retain];
+	return self;
+}
+
+- (void)dealloc {
+	[reference release];
+	[desc release];
+	[codecs release];
+	[super dealloc];
+}
+
+- (id)realReference { // used internally
+	if (!reference)
+		reference = [[codecs fullyUnpackObjectSpecifier: desc] retain];
+	return reference;
+}
+
+- (NSString *)description {
+	return [[self realReference] description];
+}
+
+- (AEMReferenceRootBase *)root {
+	return [[self realReference] root];
+}
+
+- (id)resolve:(id)object {
+	return [[self realReference] resolve: object];
+}
+
+@end
+
+
+/**********************************************************************/
 // Insertion location specifier
 
 /*

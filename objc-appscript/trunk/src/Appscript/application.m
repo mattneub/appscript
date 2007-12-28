@@ -13,7 +13,6 @@
 
 /**********************************************************************/
 
-// TO DO: -reconnect
 
 @implementation AEMApplication
 

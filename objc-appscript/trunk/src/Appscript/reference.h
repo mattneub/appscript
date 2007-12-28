@@ -48,6 +48,10 @@ typedef enum {
 // equivalent to 'launch' command in AppleScript.
 - (BOOL)launchApplicationWithError:(NSError **)error;
 
+// AEMCodecs hook allowing extra typechecking to be performed here
+- (id)unpackContainsCompDescriptorWithOperand1:(id)op1 operand2:(id)op2;
+
+
 @end
 
 

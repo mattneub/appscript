@@ -197,6 +197,13 @@
 								aemReference: [super unpackInsertionLoc: desc]];
 }
 
+- (id)unpackContainsCompDescriptorWithOperand1:(id)op1 operand2:(id)op2 {
+	if ([op1 isKindOfClass: [ASReference class]] && [[[op1 AS_aemReference] root] isEqual: AEMIts])
+		return [op1 contains: op2];
+	else
+		return [super unpackContainsCompDescriptorWithOperand1: op1 operand2: op2];
+}
+
 @end
 
 

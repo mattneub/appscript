@@ -65,7 +65,7 @@ Might also provide shortcuts that return C ints and floats (note: any errors wou
 (Note: shortcuts that return C primitives will also be useful if osaglue provides a 'strict' option for commands where numerical and boolean parameters take C ints and floats rather than NSNumbers and AEMBooleans.)
 
 
-- get developer feedback and suggestions on design of command attribute packing, e.g. should -existing -sendMode: method be augmented/replaced by task-specific methods, e.g. -waitReply/-queueReply/-ignoreReply, etc.
+- get developer feedback and suggestions on design of command attribute packing, e.g. should existing -sendMode: method be augmented/replaced by task-specific methods, c.f. -waitForReply/-queueReply/-ignoreReply
 
 
 - -[ASCommand description] should provide appscript-style representation of command
@@ -120,26 +120,22 @@ Note: best way to do this might be to have codecs unpack event (TO DO) and then 
 
 ======= aem query builder =======
 
-- comparison support
+- comparison, hashing support
 
-- see also .h files
+- provide an abstract AEMResolverBase class that third-party clients can subclass in order to create resolver objects to pass to AEM specifiers' -resolve: method. This base class should provide default implementations of all known specifier and test methods; these should in turn call a common -selector:args: method that does nothing by default. Subclasses can then override any of the specific specifier/test methods and/or the -selector:args: method according to their needs.
+
+- declare protocol/base class for reference resolver objects
 
 - eliminate minor risk of leaking memory due to race conditions in -packSelf: methods
 
 
-======= aem type converter =======
+======= aem types =======
 
-- finish AEMCodecs specifier unpackers
+- implement unit types support in AEMCodecs
 
-- implement unit types support
+- add methods for working with Carbon Alias, FSRef, FSSpec types to ASAlias, ASFileRef, ASFileSpec?
 
-- need to investigate ASFileSpec on 64-bit
-
-Note: typeFSS is undefined in __LP64__, and AEDataModel.h states:
-
-    FSSpecs are deprecated on Mac OS X, and their use in AppleEvents is discouraged.  You should change
-    your code to use FSRefs.  In __LP64__ code, coercions into typeFSS is not supported,
-    and coercion from typeFSS is not guaranteed to work correctly in all cases.
+- comparison, hashing support for ASAlias, ASFileRef, ASFileSpec
 
 
 ======= miscellaneous =======
@@ -169,3 +165,5 @@ Note: typeFSS is undefined in __LP64__, and AEDataModel.h states:
 - add dynamic class generation option?
 
 - finish documentation, header comments
+
+- unit tests
