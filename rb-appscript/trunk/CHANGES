@@ -1,3 +1,8 @@
+2007-12-27 -- 0.?.?
+
+- fixed bug in Appscript::Application#launch where calling it on an application specified by_pid/by_url/by_aem_app would raise error -1708
+
+
 2007-12-18 -- 0.5.0 (beta 2)
 
 - OSAX module no longer errors on import in 10.5 if a ScriptingAdditions folder (e.g. ~/Library/ScriptingAdditions) doesn't exist

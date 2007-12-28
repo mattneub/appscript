@@ -259,7 +259,7 @@ module Appscript
 			return Reference.new(self, @reference_codecs.unpack(desc))
 		end
 				
-		def unpack_contains_comp_descriptor(op1, op2) # TO DO: is this needed?
+		def unpack_contains_comp_descriptor(op1, op2)
 			if op1.is_a?(Appscript::Reference) and op1.AS_aem_reference.AEM_root == AEMReference::Its
 				return op1.contains(op2)
 			else
@@ -881,7 +881,11 @@ module Appscript
 				AEM::Application.launch(@AS_app_data.identifier)
 				@AS_app_data.target.reconnect
 			else
-				@AS_app_data.target.event('ascrnoop').send # will send launch event to app if already running; else will error
+				begin
+					@AS_app_data.target.event('ascrnoop').send # will send launch event to app if already running; else will error
+				rescue AEM::CommandError => e
+					raise if e.to_i != -1708
+				end
 			end
 		end
 	end
