@@ -45,7 +45,7 @@
 }
 
 
-- (id)resolve:(id)object { // stub method; subclasses will override this
+- (id)resolveWithObject:(id)object { // stub method; subclasses will override this
 	return nil;
 }
  
@@ -56,6 +56,134 @@
 
 
 @implementation AEMResolver
+
+
+- (id)property:(OSType)code {
+	return self;
+}
+
+- (id)elements:(OSType)code {
+	return self;
+}
+
+
+- (id)first {
+	return self;
+}
+
+- (id)middle {
+	return self;
+}
+
+- (id)last {
+	return self;
+}
+
+- (id)any {
+	return self;
+}
+
+
+- (id)byIndex:(id)index {
+	return self;
+}
+
+- (id)byName:(NSString *)name {
+	return self;
+}
+
+- (id)byID:(id)id_ {
+	return self;
+}
+
+
+- (id)previous:(OSType)class_ {
+	return self;
+}
+
+- (id)next:(OSType)class_ {
+	return self;
+}
+
+
+- (id)byRange:(id)fromObject to:(id)toObject {
+	return self;
+}
+
+- (id)byTest:(id)testReference {
+	return self;
+}
+
+
+- (id)beginning {
+	return self;
+}
+
+- (id)end {
+	return self;
+}
+
+- (id)before {
+	return self;
+}
+
+- (id)after {
+	return self;
+}
+
+
+- (id)greaterThan:(id)object {
+	return self;
+}
+
+- (id)greaterOrEquals:(id)object {
+	return self;
+}
+
+- (id)equals:(id)object {
+	return self;
+}
+
+- (id)notEquals:(id)object {
+	return self;
+}
+
+- (id)lessThan:(id)object {
+	return self;
+}
+
+- (id)lessOrEquals:(id)object {
+	return self;
+}
+
+- (id)beginsWith:(id)object {
+	return self;
+}
+
+- (id)endsWith:(id)object {
+	return self;
+}
+
+- (id)contains:(id)object {
+	return self;
+}
+
+- (id)isIn:(id)object {
+	return self;
+}
+
+- (id)AND:(id)remainingOperands {
+	return self;
+}
+
+- (id)OR:(id)remainingOperands {
+	return self;
+}
+
+- (id)NOT {
+	return self;
+}
+
 
 - (id)app {
 	return self;

@@ -142,11 +142,25 @@ void disposeTestModule(void) {
 	return self;
 }
 
+- (BOOL)isEqual:(id)object {
+	if (self == object) return YES;
+	if (!object || ![object isMemberOfClass: [self class]]) return NO;
+	return  ([operand1 isEqual: [object operand1]] && [operand2 isEqual: [object operand2]]);
+}
+
+- (id)operand1 { // used by isEqual:
+	return operand1;
+}
+
+- (id)operand2 { // used by isEqual:
+	return operand2;
+}
+
 - (NSString *)description {
 	return [NSString stringWithFormat: [self formatString], operand1, operand2];
 }
 
-- (id)resolve:(id)object {
+- (id)resolveWithObject:(id)object {
 	return nil;
 }
 
@@ -177,8 +191,8 @@ void disposeTestModule(void) {
 	return kEnumGreaterThan;
 }
 
-- (id)resolve:(id)object {
-	return [[operand1 resolve: object] greaterThan: operand2];
+- (id)resolveWithObject:(id)object {
+	return [[operand1 resolveWithObject: object] greaterThan: operand2];
 }
 
 @end
@@ -194,8 +208,8 @@ void disposeTestModule(void) {
 	return kEnumGreaterThanEquals;
 }
 
-- (id)resolve:(id)object {
-	return [[operand1 resolve: object] greaterOrEquals: operand2];
+- (id)resolveWithObject:(id)object {
+	return [[operand1 resolveWithObject: object] greaterOrEquals: operand2];
 }
 
 @end
@@ -211,8 +225,8 @@ void disposeTestModule(void) {
 	return kEnumEquals;
 }
 
-- (id)resolve:(id)object {
-	return [[operand1 resolve: object] equals: operand2];
+- (id)resolveWithObject:(id)object {
+	return [[operand1 resolveWithObject: object] equals: operand2];
 }
 
 @end
@@ -230,8 +244,8 @@ void disposeTestModule(void) {
 	return cachedDesc;
 }
 
-- (id)resolve:(id)object {
-	return [[operand1 resolve: object] notEquals: operand2];
+- (id)resolveWithObject:(id)object {
+	return [[operand1 resolveWithObject: object] notEquals: operand2];
 }
 
 @end
@@ -247,8 +261,8 @@ void disposeTestModule(void) {
 	return kEnumLessThan;
 }
 
-- (id)resolve:(id)object {
-	return [[operand1 resolve: object] lessThan: operand2];
+- (id)resolveWithObject:(id)object {
+	return [[operand1 resolveWithObject: object] lessThan: operand2];
 }
 
 @end
@@ -264,8 +278,8 @@ void disposeTestModule(void) {
 	return kEnumLessThanEquals;
 }
 
-- (id)resolve:(id)object {
-	return [[operand1 resolve: object] lessOrEquals: operand2];
+- (id)resolveWithObject:(id)object {
+	return [[operand1 resolveWithObject: object] lessOrEquals: operand2];
 }
 
 @end
@@ -281,8 +295,8 @@ void disposeTestModule(void) {
 	return kEnumBeginsWith;
 }
 
-- (id)resolve:(id)object {
-	return [[operand1 resolve: object] beginsWith: operand2];
+- (id)resolveWithObject:(id)object {
+	return [[operand1 resolveWithObject: object] beginsWith: operand2];
 }
 
 @end
@@ -298,8 +312,8 @@ void disposeTestModule(void) {
 	return kEnumEndsWith;
 }
 
-- (id)resolve:(id)object {
-	return [[operand1 resolve: object] endsWith: operand2];
+- (id)resolveWithObject:(id)object {
+	return [[operand1 resolveWithObject: object] endsWith: operand2];
 }
 
 @end
@@ -315,8 +329,8 @@ void disposeTestModule(void) {
 	return kEnumContains;
 }
 
-- (id)resolve:(id)object {
-	return [[operand1 resolve: object] contains: operand2];
+- (id)resolveWithObject:(id)object {
+	return [[operand1 resolveWithObject: object] contains: operand2];
 }
 
 @end
@@ -338,8 +352,8 @@ void disposeTestModule(void) {
 	return cachedDesc;
 }
 
-- (id)resolve:(id)object {
-	return [[operand1 resolve: object] isIn: operand2];
+- (id)resolveWithObject:(id)object {
+	return [[operand1 resolveWithObject: object] isIn: operand2];
 }
 
 @end
@@ -359,28 +373,39 @@ void disposeTestModule(void) {
 	return self;
 }
 
+- (BOOL)isEqual:(id)object {
+	if (self == object) return YES;
+	if (!object || ![object isMemberOfClass: [self class]]) return NO;
+	return ([operands isEqual: [object operands]]);
+}
+
+- (id)operands {
+	return operands;
+}
+
 - (NSString *)description {
-	id receiver;
-	NSMutableArray *rest;
+	id operand1;
+	NSArray *otherOperands;
 	NSString *result;
+	NSRange range = {1, [operands count] - 1};
 	
-	receiver = [operands objectAtIndex: 0];
-	rest = [[NSMutableArray alloc] initWithArray: operands];
-	[rest removeObjectAtIndex: 0];
-	result = [NSString stringWithFormat: [self formatString], receiver, rest];
-	[rest release];
+	operand1 = [operands objectAtIndex: 0];
+	otherOperands = [operands subarrayWithRange: range];
+	result = [NSString stringWithFormat: [self formatString], operand1, otherOperands];
 	return result;
 }
 
-- (id)resolve:(id)object {
-	id receiver, result;
-	NSMutableArray *rest;
+- (id)resolveWithObject:(id)object {
+	id operand1, result;
+	NSArray *otherOperands;
+	NSRange range = {1, [operands count] - 1};
 	
-	receiver = [[operands objectAtIndex: 0] resolve: object];
-	rest = [[NSMutableArray alloc] initWithArray: operands];
-	[rest removeObjectAtIndex: 0];
-	result = [self resolveWithReceiver:receiver rest:rest];
-	[rest release];
+	operand1 = [[operands objectAtIndex: 0] resolveWithObject: object];
+	otherOperands = [operands subarrayWithRange: range];
+	if ([self operator] == kEnumAND)
+		result = [operand1 AND: otherOperands];
+	else
+		result = [operand1 OR: otherOperands];
 	return result;
 }
 
@@ -391,10 +416,6 @@ void disposeTestModule(void) {
 		[cachedDesc setDescriptor: [codecs pack: operands] forKeyword: keyAELogicalTerms];
 	}
 	return cachedDesc;	
-}
-
-- (id)resolveWithReceiver:(id)receiver rest:(NSArray *)rest { // stub method; subclasses will override
-	return nil;
 }
 
 @end
@@ -411,9 +432,6 @@ void disposeTestModule(void) {
 - (NSAppleEventDescriptor *)operator {
 	return kEnumAND;
 }
-- (id)resolveWithReceiver:(id)receiver rest:(NSArray *)rest {
-	return [receiver AND: rest];
-}
 
 @end
 
@@ -426,10 +444,6 @@ void disposeTestModule(void) {
 
 - (NSAppleEventDescriptor *)operator {
 	return kEnumOR;
-}
-
-- (id)resolveWithReceiver:(id)receiver rest:(NSArray *)rest {
-	return [receiver OR: rest];
 }
 
 @end
@@ -445,8 +459,8 @@ void disposeTestModule(void) {
 	return kEnumNOT;
 }
 
-- (id)resolve:(id)object {
-	return [[[operands objectAtIndex: 0] resolve: object] NOT];
+- (id)resolveWithObject:(id)object {
+	return [[[operands objectAtIndex: 0] resolveWithObject: object] NOT];
 }
 
 @end

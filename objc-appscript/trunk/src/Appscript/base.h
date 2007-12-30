@@ -43,22 +43,60 @@
 - (NSAppleEventDescriptor *)packSelf:(id)codecs;
 
 // walk reference
-- (id)resolve:(id)object;
+- (id)resolveWithObject:(id)object;
 
 @end
 
 
 /**********************************************************************/
 
+/*
+ * Base class for objects to be passed to -[AEMQuery resolveWithObject:]
+ * Each method simply returns self; subclasses can override some or all of 
+ * these methods as needed.
+ */
+@interface AEMResolver : NSObject
 
-@interface AEMResolver // TO DO: finish
+- (id)property:(OSType)code;
+- (id)elements:(OSType)code;
+
+- (id)first;
+- (id)middle;
+- (id)last;
+- (id)any;
+
+- (id)byIndex:(id)index;
+- (id)byName:(NSString *)name;
+- (id)byID:(id)id_;
+
+- (id)previous:(OSType)class_;
+- (id)next:(OSType)class_;
+
+- (id)byRange:(id)fromObject to:(id)toObject;
+- (id)byTest:(id)testReference;
+
+- (id)beginning;
+- (id)end;
+- (id)before;
+- (id)after;
+
+- (id)greaterThan:(id)object;
+- (id)greaterOrEquals:(id)object;
+- (id)equals:(id)object;
+- (id)notEquals:(id)object;
+- (id)lessThan:(id)object;
+- (id)lessOrEquals:(id)object;
+- (id)beginsWith:(id)object;
+- (id)endsWith:(id)object;
+- (id)contains:(id)object;
+- (id)isIn:(id)object;
+- (id)AND:(id)remainingOperands;
+- (id)OR:(id)remainingOperands;
+- (id)NOT;
 
 - (id)app;
-
 - (id)con;
-
 - (id)its;
-
 - (id)customRoot:(id)rootObject;
 
 @end

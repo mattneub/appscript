@@ -52,6 +52,9 @@ void disposeTestModule(void);
 
 - (id)initWithOperand1:(id)operand1_ operand2:(id)operand2_;
 
+- (id)operand1; // used by isEqual:
+- (id)operand2; // used by isEqual:
+
 @end
 
 // comparison tests
@@ -98,7 +101,7 @@ void disposeTestModule(void);
 
 - (id)initWithOperands:(NSArray *)operands_;
 
-- (id)resolveWithReceiver:(id)receiver rest:(NSArray *)rest;
+- (id)operands; // used by isEqual:
 
 @end
 

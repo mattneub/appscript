@@ -67,10 +67,6 @@ static NSAppleEventDescriptor *kFormPropertyID,
 static NSAppleEventDescriptor *kClassProperty;
 
 
-// prepacked value for use by -init...: in by-test specifier
-static NSAppleEventDescriptor *kTypeTrue;
-
-
 // blank record used by -packSelf: to construct object specifier descriptors
 static NSAppleEventDescriptor *kEmptyRecord;
 
@@ -111,9 +107,6 @@ void initSpecifierModule(void) {
 																	  bytes: &descData
 																	 length: sizeof(descData)];
 	kEmptyRecord = [[NSAppleEventDescriptor alloc] initRecordDescriptor];
-	kTypeTrue = [[NSAppleEventDescriptor alloc] initWithDescriptorType: typeTrue
-																 bytes: NULL
-																length: 0];
 	specifierModulesAreInitialized = YES;
 }
 
@@ -146,7 +139,6 @@ void disposeSpecifierModule(void) {
 	// miscellaneous
 	[kClassProperty release];
 	[kEmptyRecord release];
-	[kTypeTrue release];
 	specifierModulesAreInitialized = NO;
 }
 
@@ -185,6 +177,27 @@ void disposeSpecifierModule(void) {
 	return self;
 }
 
+- (BOOL)isEqual:(id)object {
+	id key2;
+	
+	if (self == object) return YES;
+	if (!object || ![object isMemberOfClass: [self class]]) return NO;
+	key2 = [object key];
+	if ([key isKindOfClass: [NSAppleEventDescriptor class]])
+		// NSAppleEventDescriptors compare for object identity only, so do a more thorough comparison here
+		return ([key2 isKindOfClass: [NSAppleEventDescriptor class]] 
+			&& ([key descriptorType] == [key2 descriptorType])
+			&& [[key data] isEqualToData: [key2 data]]);
+	return (([key isEqual: key2] || (key == nil && key2 == nil)) && [container isEqual: [object container]]);
+}
+
+- (id)key { // used by -isEqual:
+	return key;
+}
+
+- (id)container { // used by -isEqual:
+	return container;
+}
 
 @end
 
@@ -225,8 +238,12 @@ void disposeSpecifierModule(void) {
 	return [[self realReference] root];
 }
 
-- (id)resolve:(id)object {
-	return [[self realReference] resolve: object];
+- (id)resolveWithObject:(id)object {
+	return [[self realReference] resolveWithObject: object];
+}
+
+- (BOOL)isEqual:(id)object {
+	return [[self realReference] isEqual: object];
 }
 
 @end
@@ -268,10 +285,10 @@ void disposeSpecifierModule(void) {
 	return cachedDesc;	
 }
 
--(id)resolve:(id)object { 
+-(id)resolveWithObject:(id)object { 
 	id result;
 	
-	result = [container resolve: object];
+	result = [container resolveWithObject: object];
 	switch ([key enumCodeValue]) {
 		case kAEBeginning:
 			return [result beginning];
@@ -302,6 +319,14 @@ void disposeSpecifierModule(void) {
 	if (!self) return self;
 	wantCode = wantCode_;
 	return self;
+}
+
+- (BOOL)isEqual:(id)object {
+	return ([super isEqual: object] && wantCode == [object wantCode]);
+}
+
+- (OSType)wantCode { // used by isEqual
+	return wantCode;
 }
 
 // Comparison and logic tests
@@ -433,8 +458,8 @@ void disposeSpecifierModule(void) {
 	return cachedDesc;
 }
 
--(id)resolve:(id)object { 
-	return [[container resolve: object] property: [key typeCodeValue]];
+-(id)resolveWithObject:(id)object { 
+	return [[container resolveWithObject: object] property: [key typeCodeValue]];
 }
 
 @end
@@ -460,8 +485,8 @@ void disposeSpecifierModule(void) {
 	return cachedDesc;
 }
 
--(id)resolve:(id)object { 
-	return [[container resolve: object] userProperty: key];
+-(id)resolveWithObject:(id)object { 
+	return [[container resolveWithObject: object] userProperty: key];
 }
 
 @end
@@ -506,8 +531,8 @@ void disposeSpecifierModule(void) {
 	return cachedDesc;
 }
 
--(id)resolve:(id)object { 
-	return [[container resolve: object] byName: key];
+-(id)resolveWithObject:(id)object { 
+	return [[container resolveWithObject: object] byName: key];
 }
 
 @end
@@ -533,8 +558,8 @@ void disposeSpecifierModule(void) {
 	return cachedDesc;
 }
 
--(id)resolve:(id)object { 
-	return [[container resolve: object] byIndex: key];
+-(id)resolveWithObject:(id)object { 
+	return [[container resolveWithObject: object] byIndex: key];
 }
 
 @end
@@ -560,8 +585,8 @@ void disposeSpecifierModule(void) {
 	return cachedDesc;
 }
 
--(id)resolve:(id)object { 
-	return [[container resolve: object] byID: key];
+-(id)resolveWithObject:(id)object { 
+	return [[container resolveWithObject: object] byID: key];
 }
 
 @end
@@ -598,10 +623,10 @@ void disposeSpecifierModule(void) {
 	return cachedDesc;
 }
 
--(id)resolve:(id)object { 
+-(id)resolveWithObject:(id)object { 
 	id result;
 	
-	result = [container resolve: object];
+	result = [container resolveWithObject: object];
 	switch ([key enumCodeValue]) {
 		case kAEFirst:
 			return [result first];
@@ -650,10 +675,10 @@ void disposeSpecifierModule(void) {
 }
 
 
--(id)resolve:(id)object { 
+-(id)resolveWithObject:(id)object { 
 	id result;
 	
-	result = [container resolve: object];
+	result = [container resolveWithObject: object];
 	switch ([key enumCodeValue]) {
 		case kAEPrevious:
 			return [result previous: wantCode];
@@ -795,6 +820,20 @@ void disposeSpecifierModule(void) {
 	return self;
 }
 
+- (BOOL)isEqual:(id)object {
+	return ([super isEqual: object] && [startReference isEqual: [object startReference]]
+									&& [stopReference isEqual: [object stopReference]]); 
+}
+
+- (id)startReference { // used by isEqual:
+	return startReference;
+}
+
+- (id)stopReference { // used by isEqual:
+	return stopReference;
+}
+
+
 - (void)dealloc {
 	[startReference release];
 	[stopReference release];
@@ -828,8 +867,8 @@ void disposeSpecifierModule(void) {
 }
 
 
--(id)resolve:(id)object {
-	return [[container resolve: object] byRange: startReference to: stopReference];
+-(id)resolveWithObject:(id)object {
+	return [[container resolveWithObject: object] byRange: startReference to: stopReference];
 }
 
 @end
@@ -860,8 +899,8 @@ void disposeSpecifierModule(void) {
 }
 
 
--(id)resolve:(id)object { 
-	return [[container resolve: object] byTest: key];
+-(id)resolveWithObject:(id)object { 
+	return [[container resolveWithObject: object] byTest: key];
 }
 
 @end
@@ -902,8 +941,8 @@ void disposeSpecifierModule(void) {
 	return cachedDesc;
 }
 
--(id)resolve:(id)object { 
-	return [container resolve: object]; // forward to shim
+-(id)resolveWithObject:(id)object { 
+	return [container resolveWithObject: object]; // forward to shim
 }
 
 @end
@@ -921,6 +960,14 @@ void disposeSpecifierModule(void) {
 	return self;
 }
 
+- (BOOL)isEqual:(id)object {
+	return ([super isEqual: object] && wantCode == [object wantCode]);
+}
+
+- (OSType)wantCode { // used by isEqual
+	return wantCode;
+}
+
 - (NSString *)description {
 	return [NSString stringWithFormat: @"[%@ elements: '%@']", container, 
 			typeDescToString([NSAppleEventDescriptor descriptorWithTypeCode: wantCode])];
@@ -930,8 +977,8 @@ void disposeSpecifierModule(void) {
 	return [container packSelf: codecs]; // forward to next container
 }
 
--(id)resolve:(id)object { 
-	return [[container resolve: object] elements: wantCode];
+-(id)resolveWithObject:(id)object { 
+	return [[container resolveWithObject: object] elements: wantCode];
 }
 
 @end
@@ -984,7 +1031,7 @@ void disposeSpecifierModule(void) {
 	return @"AEMApp";
 }
 
-- (id)resolve:(id)object {
+- (id)resolveWithObject:(id)object {
 	return [object app];
 }
 
@@ -1009,7 +1056,7 @@ void disposeSpecifierModule(void) {
 	return @"AEMCon";
 }
 
-- (id)resolve:(id)object {
+- (id)resolveWithObject:(id)object {
 	return [object con];
 }
 
@@ -1032,7 +1079,7 @@ void disposeSpecifierModule(void) {
 	return @"AEMIts";
 }
 
-- (id)resolve:(id)object {
+- (id)resolveWithObject:(id)object {
 	return [object its];
 }
 
@@ -1052,7 +1099,14 @@ void disposeSpecifierModule(void) {
 	cachedDesc = nil;
 	rootObject = [rootObject_ retain];
 	return self;
+}
 
+- (BOOL)isEqual:(id)object {
+	return ([super isEqual: object] && [rootObject isEqual: [object rootObject]]);
+}
+
+- (id)rootObject { // used by isEqual
+	return rootObject;
 }
 
 - (void)dealloc {
@@ -1064,7 +1118,7 @@ void disposeSpecifierModule(void) {
 	return [NSString stringWithFormat: @"AEMRoot(%@)", rootObject];
 }
 
-- (id)resolve:(id)object {
+- (id)resolveWithObject:(id)object {
 	return [object customRoot: rootObject];
 }
 

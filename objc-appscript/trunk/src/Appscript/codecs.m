@@ -524,8 +524,9 @@ static AEMCodecs *defaultCodecs = nil;
 	OSType wantCode, keyForm;
 	NSAppleEventDescriptor *key;
 	AEMDeferredSpecifier *container;
+	AEMUnkeyedElementsShim *shim;
 	id ref;
-	
+		
 	keyForm = [[desc descriptorForKeyword: keyAEKeyForm] enumCodeValue];
 	switch (keyForm) {
 		case formPropertyID:
@@ -550,19 +551,23 @@ static AEMCodecs *defaultCodecs = nil;
 						else
 							ref = [self fullyUnpackObjectSpecifier: desc]; // do a full unpack of rarely returned reference forms
 					} else
-						ref = [[[AEMElementByIndexSpecifier alloc] initWithContainer: container
+						shim = [[[AEMUnkeyedElementsShim alloc] initWithContainer: container wantCode: wantCode] autorelease];
+						ref = [[[AEMElementByIndexSpecifier alloc] initWithContainer: shim
 																				 key: [self unpack: key]
 																			wantCode: wantCode] autorelease];
 					break;
 				case formName:
-					ref = [[[AEMElementByNameSpecifier alloc] initWithContainer: container
+					shim = [[[AEMUnkeyedElementsShim alloc] initWithContainer: container wantCode: wantCode] autorelease];
+					ref = [[[AEMElementByNameSpecifier alloc] initWithContainer: shim
 																			key: [self unpack: key]
 																	   wantCode: wantCode] autorelease];
 					break;
 				case formUniqueID:
-					ref = [[[AEMElementByIDSpecifier alloc] initWithContainer: container
+					shim = [[[AEMUnkeyedElementsShim alloc] initWithContainer: container wantCode: wantCode] autorelease];
+					ref = [[[AEMElementByIDSpecifier alloc] initWithContainer: shim
 																		  key: [self unpack: key]
 																	 wantCode: wantCode] autorelease];
+					break;
 			}
 			break;
 		default: // do a full unpack of more complex, rarely returned reference forms

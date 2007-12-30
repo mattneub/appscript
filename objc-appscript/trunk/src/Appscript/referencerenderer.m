@@ -41,7 +41,7 @@
 	NSString *string;
 	
 	renderer = [[[self class] alloc] initWithPrefix: prefix_];
-	[object resolve: renderer];
+	[object resolveWithObject: renderer];
 	if ([renderer result])
 		string = [renderer result];
 	else
@@ -177,7 +177,7 @@
 
 // by-test selector
 
-- (ASReferenceRenderer *)byTest:(ASReferenceRenderer *)testReference {
+- (ASReferenceRenderer *)byTest:(id)testReference {
 	[result insertString: @"[" atIndex: 0];
 	[result appendFormat: @" byTest: %@]", [self format: testReference]];
     return self;

@@ -78,6 +78,9 @@ void disposeSpecifierModule(void);
 
 // reserved methods
 
+- (id)key; // used by -isEqual:
+- (id)container; // used by -isEqual:
+
 - (AEMReferenceRootBase *)root;
 - (AEMSpecifier *)trueSelf;
 
@@ -122,6 +125,8 @@ void disposeSpecifierModule(void);
 }
 
 - (id)initWithContainer:(AEMSpecifier *)container_ key:(id)key_ wantCode:(OSType)wantCode_;
+
+- (OSType)wantCode; // used by isEqual
 
 // Comparison and logic tests
 
@@ -242,6 +247,9 @@ void disposeSpecifierModule(void);
 				   stop:(id)stopReference_
 			   wantCode:(OSType)wantCode_;
 
+- (id)startReference; // used by isEqual:
+- (id)stopReference; // used by isEqual:
+
 @end
 
 
@@ -301,6 +309,8 @@ void disposeSpecifierModule(void);
 + (AEMCustomRoot *)customRootWithObject:(id)object;
 
 - (id)initWithObject:(id)object;
+
+- (id)rootObject; // used by isEqual
 
 @end
 
