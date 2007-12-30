@@ -69,10 +69,8 @@
 }
 
 - (BOOL)isEqual:(id)anObject {
-	if (anObject == self) 
-		return YES;
-	if (!anObject || ![anObject isKindOfClass: [self class]]) 
-		return NO;
+	if (anObject == self) return YES;
+	if (!anObject || ![anObject isKindOfClass: [self class]]) return NO;
 	return [[self name] isEqual: [anObject name]] && [self code] == [anObject code];
 }
 

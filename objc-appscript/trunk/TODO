@@ -120,12 +120,6 @@ Note: best way to do this might be to have codecs unpack event (TO DO) and then 
 
 ======= aem query builder =======
 
-- comparison, hashing support
-
-- provide an abstract AEMResolverBase class that third-party clients can subclass in order to create resolver objects to pass to AEM specifiers' -resolve: method. This base class should provide default implementations of all known specifier and test methods; these should in turn call a common -selector:args: method that does nothing by default. Subclasses can then override any of the specific specifier/test methods and/or the -selector:args: method according to their needs.
-
-- declare protocol/base class for reference resolver objects
-
 - eliminate minor risk of leaking memory due to race conditions in -packSelf: methods
 
 

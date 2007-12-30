@@ -245,10 +245,8 @@ static ASBoolean *falseValue;
 }
 
 - (BOOL)isEqual:(id)anObject {
-	if (anObject == self) 
-		return YES;
-	if (!anObject || ![anObject isKindOfClass: [self class]]) 
-		return NO;
+	if (anObject == self) return YES;
+	if (!anObject || ![anObject isKindOfClass: [self class]]) return NO;
 	return [self code] == [anObject code];
 }
 

@@ -138,6 +138,14 @@
 
 - (id)initWithURL:(NSURL *)url;
 
+// comparison, hash support
+
+- (BOOL)isEqual:(id)object;
+
+- (AEMTargetType)targetType; // used by -isEqual:
+
+- (id)targetData; // used by -isEqual:
+
 
 // clients can call following methods to modify standard create/send behaviours
 
@@ -183,6 +191,8 @@
 - (BOOL)endTransactionWithError:(NSError **)error;
 
 - (BOOL)abortTransactionWithError:(NSError **)error;
+
+
 
 @end
 

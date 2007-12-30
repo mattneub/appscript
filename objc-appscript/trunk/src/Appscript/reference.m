@@ -350,12 +350,25 @@
 }
 
 
-- (NSAppleEventDescriptor *)AS_packSelf:(id)codecs {
-	return [AS_aemReference packSelf: codecs];
+// comparison, hash support
+
+- (BOOL)isEqual:(id)object {
+	if (self == object) return YES;
+	if (!object || ![object isMemberOfClass: [self class]]) return NO;
+	return ([[AS_appData target] isEqual: [[object AS_appData] target]]
+			&& [AS_aemReference isEqual: [object AS_aemReference]]); 
+}
+
+- (unsigned)hash {
+	return ([[AS_appData target] hash] + [AS_aemReference hash]);
 }
 
 
-// TO DO: hash, isEqual
+//
+
+- (NSAppleEventDescriptor *)AS_packSelf:(id)codecs {
+	return [AS_aemReference packSelf: codecs];
+}
 
 - (id)AS_appData {
 	return AS_appData;

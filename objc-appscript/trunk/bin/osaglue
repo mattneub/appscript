@@ -7,7 +7,7 @@ from osaterminology.makeidentifier import getconverter
 from appscript import terminology
 from aem import Application, findapp, AEType
 
-__version__ = '0.3.0'
+__version__ = '0.3.1'
 
 ######################################################################
 # default tables
@@ -385,9 +385,25 @@ _applicationclassimplementation = """
     return [self initWithTargetType: kASTargetDescriptor data: desc];
 }
 
+// misc
+
+- (PREFIXReference *)AS_newReferenceWithObject:(id)object {
+	if ([object isKindOfClass: [PREFIXReference class]])
+		return [[[PREFIXReference alloc] initWithAppData: AS_appData
+				aemReference: [object AS_aemReference]] autorelease];
+	else if ([object isKindOfClass: [AEMQuery class]])
+		return [[[PREFIXReference alloc] initWithAppData: AS_appData
+				aemReference: object] autorelease];
+	else if (!object)
+		return [[[PREFIXReference alloc] initWithAppData: AS_appData
+				aemReference: AEMApp] autorelease];
+	else
+		return [[[PREFIXReference alloc] initWithAppData: AS_appData
+				aemReference: AEMRoot(object)] autorelease];
+}
+
 @end
 """
-
 
 def renderApplicationClass(interface, implementation):
 	classdef = _applicationclassimplementation.replace(prefixtag, prefix)
@@ -491,7 +507,7 @@ def renderGlueFiles(outdir, prefix, gluename, imports, fn):
 ######################################################################
 # parse argv
 
-opts, args = getopt.getopt(sys.argv[1:], 'hvo:')
+opts, args = getopt.getopt(sys.argv[1:], 'hvo:p:')
 opts = dict(opts)
 
 
@@ -504,7 +520,7 @@ if not args or opts.has_key('-h'):
 
 SYNOPSIS
 
-    osaglue [-hv] [-o output-directory] prefix [application-name]
+    osaglue [-hv] [-o output-directory] [-p prefix] [application-name]
 
 DESCRIPTION
 
@@ -516,9 +532,9 @@ The -o option may be used to specify the directory to which the glue files
 should be written. If the directory doesn't already exist, one is created.
 If omitted, the glue files are written to the current directory.
 
-The prefix argument is prepended to the names of all glue files and classes.
+The prefix argument, -p, is prepended to the names of all glue files and classes.
 Developers should specify a unique prefix that won't cause namespace conflicts
-in their project.
+in their project. If omitted, the application name is used instead.
 
 The application-name argument may be the name or full path of the application
 for which glues should be generated. If omitted, the resulting glue files will
@@ -528,14 +544,21 @@ EXAMPLES
 
 To generate TEGlue.h and associated files for TextEdit:
 
-    osaglue -o TEGlue TE TextEdit
+    osaglue -o TEGlue -p TE TextEdit
     
 """
 	sys.exit()
 
 
 outdir = opts.get('-o', '')
-prefix = args[0]
+
+if opts.has_key('-p'):
+	prefix = opts['-p']
+elif args:
+	prefix = getconverter('objc-appscript')(args[0])
+	prefix = prefix[0].upper() + prefix[1:]
+else:
+	prefix = 'ASDefault'
 
 if outdir and not os.path.exists(outdir):
 	os.makedirs(outdir)
@@ -543,8 +566,8 @@ if outdir and not os.path.exists(outdir):
 ######################################################################
 # get tables
 
-if args[1:]:
-	apppath = findapp.byname(args[1])
+if args:
+	apppath = findapp.byname(args[0])
 	typebycode, typebyname, referencebycode, referencebyname = \
 			terminology.tablesforapp(Application(apppath), 'objc-appscript')
 else:

@@ -27,14 +27,8 @@
 
 @interface AEMQuery : NSObject {
 	NSAppleEventDescriptor *cachedDesc;
+	unsigned cachedHash;
 }
-
-/*
- * TO DO:
- *	- (unsigned)hash;
- *	- (BOOL)isEqual:(id)object;
- *	- (NSArray *)comparableData;
- */
 
 // set cached descriptor; performance optimisation, used internally by AEMCodecs
 - (void)setDesc:(NSAppleEventDescriptor *)desc;

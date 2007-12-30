@@ -13,23 +13,24 @@
 
 @implementation AEMQuery
 
-/*
- * TO DO:
- *	- (unsigned)hash;
- *	- (BOOL)isEqual:(id)object;
- *	- (NSArray *)comparableData;
- */
-
 - (id)init {
 	self = [super init];
 	if (!self) return self;
 	cachedDesc = nil;
+	cachedHash = 0;
 	return self;
 }
 
 - (void)dealloc {
 	[cachedDesc release];
 	[super dealloc];
+}
+
+
+- (unsigned)hash {
+	if (!cachedHash)
+		cachedHash = [[self description] hash];
+	return cachedHash;
 }
 
 
@@ -48,7 +49,7 @@
 - (id)resolveWithObject:(id)object { // stub method; subclasses will override this
 	return nil;
 }
- 
+
 @end
 
 
@@ -56,7 +57,6 @@
 
 
 @implementation AEMResolver
-
 
 - (id)property:(OSType)code {
 	return self;

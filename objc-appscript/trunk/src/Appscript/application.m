@@ -455,6 +455,36 @@ error:
 	[super finalize];
 }
 
+
+// comparison, hash support
+
+- (BOOL)isEqual:(id)object {
+	id targetData2;
+
+	if (self == object) return YES;
+	if (!object || ![object isMemberOfClass: [self class]] || targetType != [object targetType]) return NO;
+	targetData2 = [object targetData];
+	if ([targetData isKindOfClass: [NSAppleEventDescriptor class]])
+		// NSAppleEventDescriptors compare for object identity only, so do a more thorough comparison here
+		return ([targetData2 isKindOfClass: [NSAppleEventDescriptor class]] 
+			&& ([targetData descriptorType] == [targetData2 descriptorType])
+			&& [[targetData data] isEqualToData: [targetData2 data]]);
+	return ([targetData isEqual: targetData2] || (targetData == nil && targetData2 == nil));
+}
+
+- (AEMTargetType)targetType {
+	return targetType;
+}
+
+- (id)targetData {
+	return targetData;
+}
+
+- (unsigned)hash {
+	return [[self description] hash];
+}
+
+
 // display
 
 - (NSString *)description {
