@@ -1,0 +1,56 @@
+TO DO
+
+- support code colorization in 10.5
+
+
+- finish HTML-ising documentation
+
+
+- in applets, calling osaterminology.getterminology.getaete at the script's top level results in infinite recursion, causing the script to crash, e.g.:
+
+### start applet script ###
+
+import osax
+
+sa = osax.ScriptingAddition() # this will crash the applet
+
+def run():
+	sa.beep()
+
+###  end applet script  ###
+
+(Note that scripts run in Script Editor don't have this problem. Also, calling osaterminology.getterminology.getaete from within an event handler seems to work okay.)
+
+(Note: there is a known OS issue with invoking OSAGetAppTerminology in Cocoa apps before the main event loop is started; this may or may not be related.)
+
+
+- make script values executable? In the AppleScript component, scripts and values are effectively interchangeable, allowing clients to call OSAExecute on a script's return value. PyOSA currently doesn't allow this as scripts and values aren't interchangeable: scripts are Python modules and must have a run() function to be executable, whereas values are simple datatypes (ints, strings, lists, etc).
+
+
+- support fully qualified object specifiers (used by e.g. Automator)
+
+
+- see if it's possible to make script results display better in Script Debugger's 'Best' pane (single references don't display; references in lists/records display poorly; record keys also display poorly)
+
+
+- finish sub-interpreter support
+
+
+- add support for a config.py module that can be located at [~]/Library/PyOSA/2.x? If present, this would be executed each time a new script was created and would have access to PyOSA APIs, allowing additional configuration to be done (e.g. loading event handler definitions). (Question: what are security implications?)
+
+
+- include prebuilt appscript packages for each Python version in component bundle and have PyOSA load one of these as appropriate instead of requiring Python interpreter to have a copy already installed.
+
+
+- OSA library support?
+
+
+- ability to run scripts starting with '#!...python' in non-OSA mode; i.e. a python subprocess, with run event's args (if any) passed to ARGV, and stdout and stderr piped to script results and script errors respectively?
+
+
+- see also comments in source code
+
+
+- anything else?
+
+
