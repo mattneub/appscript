@@ -3,9 +3,14 @@ PyOSA
 ======================================================================
 IMPORTANT
 
+- The .scpt file format has changed in PyOSA 0.2.0 and is not compatible with earlier versions.
+
+Before upgrading, users should save the source code from all existing .scpt files in uncompiled (plain text) form. Once PyOSA 0.2.0 is installed, restart Script Editor and recompile each script from source, saving it as a new .scpt file in place of the original.
+
+
 - This is an early developer release, so is incomplete and may be buggy. Use at your own risk, etc.
 
-- Note that the version of Script Editor included with Mac OS X 10.4.x contains bugs that can prevent scripts loading or compiling correctly. Script Editor users should read the NOTES > Script Editor Workarounds section below before using PyOSA.
+- Note that the version of Script Editor included with Mac OS X 10.4.x and 10.5.x contains bugs that can prevent scripts loading or compiling correctly. Script Editor users should read the NOTES > Script Editor Workarounds section below before using PyOSA.
 
 
 ======================================================================
@@ -17,7 +22,7 @@ A Python OSA language component.
 ======================================================================
 INSTALLATION
 
-- Install py-appscript 0.17.2 or later <http://appscript.sourceforge.net> for Mac OS X's Apple-installed Python framework and any user-installed Python frameworks.
+- Install py-appscript 0.18.0 or later <http://appscript.sourceforge.net> for Mac OS X's Apple-installed Python framework and any user-installed Python frameworks.
 
 - Copy the PyOSA.component bundle to /Library/Components or ~/Library/Components. OSA-aware applications will detect PyOSA the next time they are launched.
 
@@ -170,7 +175,7 @@ Python 2.3 and later are supported (though some may generate interface version w
 
 ======= Script Editor Workarounds =======
 
-The Script Editor application that ships with Mac OS X 10.4.x has known bugs in its OSA language support that can prevent scripts not written in the default language (normally AppleScript) from loading or compiling correctly. (Note that MacOS X 10.3's Script Editor and Script Debugger do not have this problem.) 
+The Script Editor application that ships with Mac OS X 10.4.x and 10.5.x has known bugs in its OSA language support that can prevent scripts not written in the default language (normally AppleScript) from loading or compiling correctly. (Note that MacOS X 10.3's Script Editor and Script Debugger do not have this problem.) 
 
 The workaround is to set the default language in Script Editor's General Preferences to 'PyOSA' and restart it. (To switch back to editing AppleScripts, set the default language to 'AppleScript' and restart Script Editor again.)
 
@@ -194,14 +199,6 @@ SUBVERSION
 PyOSA:
 
 	svn checkout http://svn.macosforge.org/repository/appscript/py-osacomponent/trunk/
-
-
-======================================================================
-HISTORY
-
-- 2007-03-28 -- 0.1.1; fixes compatibility problem with Script Debugger 4; some improvements in event log support
-
-- 2007-03-26 -- 0.1.0; first release
 
 
 ======================================================================

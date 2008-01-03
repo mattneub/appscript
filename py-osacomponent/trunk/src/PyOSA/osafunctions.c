@@ -24,6 +24,12 @@ static int shouldInitialize = 1;
 
 // TO DO: check if any result vars need to be explicitly zeroed
 
+enum {
+	kOSASelectCopyDisplayString   = 0x000B,
+	kOSASelectCopySourceString    = 0x0202
+}; // these are defined by OSA.h in 10.5+, but PyOSA uses 10.4u SDK for portability
+
+
 /******************************************************************************/
 // TO DO: add beginInterpreter/endInterpreter macros to handle... functions
 
@@ -152,6 +158,14 @@ static ComponentResult handleOSADisplay(CIStorageHandle ciStorage,
 	return err;
 }
 
+/*
+static ComponentResult handleOSACopyDisplayString(CIStorageHandle ciStorage,
+												  OSAID scriptID,
+												  SInt32 modeFlags,
+												  CFAttributedStringRef *result) {
+	return -2700; // TO DO
+}
+*/
 
 static ComponentResult handleOSAScriptError(CIStorageHandle ciStorage, 
 											OSType selector, 
@@ -334,6 +348,14 @@ static ComponentResult handleOSAGetSource(CIStorageHandle ciStorage,
 	return err;
 }
 
+/*
+static ComponentResult handleOSACopySourceString(CIStorageHandle ciStorage,
+												 OSAID scriptID,
+												 SInt32 modeFlags,
+												 CFAttributedStringRef *result) {
+	return -2700; // TO DO
+}
+*/
 
 /******************************************************************************/
 /* Coercing Script Values */
@@ -722,7 +744,13 @@ static ComponentFunctionDef componentFunctionDefs[] = {
 			param(3, DescType)
 			param(4, long)
 			param(5, AEDesc *)},
-	
+	/*
+	{osaFunction(CopyDisplayString)
+			param(1, Handle)
+			param(2, OSAID)
+			param(3, SInt32)
+			param(4, CFAttributedStringRef *)}, // 10.5+; styled unicode equivalent of OSADisplay
+	*/
 	{osaFunction(ScriptError)
 			param(1, Handle)
 			param(2, OSType)
@@ -785,7 +813,13 @@ static ComponentFunctionDef componentFunctionDefs[] = {
 			param(2, OSAID)
 			param(3, DescType)
 			param(4, AEDesc *)},
-	
+	/*
+	{osaFunction(CopySourceString)
+			param(1, Handle)
+			param(2, OSAID)
+			param(3, SInt32)
+			param(4, CFAttributedStringRef *)}, // 10.5+; styled unicode equivalent of OSAGetSource
+	*/
 	/* Coercing Script Values */
 	
 	{osaFunction(CoerceFromDesc)

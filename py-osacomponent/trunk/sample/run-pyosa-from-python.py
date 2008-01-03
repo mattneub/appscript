@@ -2,7 +2,7 @@
 
 # Call PyOSA functions from Python via osascript module/CarbonX.OSA extension
 
-# note: doesn't work yet with Python 2.4/2.5 for some reason (framework functions fail to bind)
+# note: doesn't work yet with user-installed Python 2.4/2.5 for some reason (framework functions fail to bind)
 
 from osascript import *
 
