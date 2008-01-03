@@ -2,6 +2,8 @@
 
 # Displays an alphabetical list of all Address Book entries with phone numbers
 # in Safari.
+#
+# Requires HTMLTemplate <http://pypi.python.org/pypi/HTMLTemplate>
 
 import os
 from HTMLTemplate import Template

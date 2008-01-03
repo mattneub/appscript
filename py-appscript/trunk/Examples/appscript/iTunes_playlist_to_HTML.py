@@ -1,6 +1,8 @@
 #!/usr/bin/env pythonw
 
 # Generates an HTML file listing all tracks in the current iTunes playlist.
+#
+# Requires HTMLTemplate <http://pypi.python.org/pypi/HTMLTemplate>
 
 from HTMLTemplate import Template
 from appscript import *

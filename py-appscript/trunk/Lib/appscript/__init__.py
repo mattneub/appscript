@@ -3,7 +3,7 @@
 (C) 2004 HAS
 """
 
-__version__ = '0.18.0'
+__version__ = '0.18.1'
 
 __all__ = ['ApplicationNotFoundError', 'app','CommandError', 'con', 'its', 'k', 'CantLaunchApplicationError']
 
