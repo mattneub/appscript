@@ -9,6 +9,7 @@
 #import <Carbon/Carbon.h>
 #import "codecs.h"
 #import "SendThreadSafe.h"
+#import "utils.h"
 
 
 /**********************************************************************/
@@ -26,6 +27,7 @@ NSString *kAEMErrorStringKey;			// @"ErrorString"; error string returned by appl
 NSString *kAEMErrorBriefMessageKey;		// @"ErrorBriefMessage"; brief error string returned by application, if given
 NSString *kAEMErrorExpectedTypeKey;		// @"ErrorExpectedType"; AE type responsible for a coercion error (-1700), if given
 NSString *kAEMErrorOffendingObjectKey;	// @"ErrorOffendingObject"; value or object specifer responsible for error, if given
+NSString *kAEMErrorFailedEvent;			// @"ErrorFailedEvent"; the AEMEvent object that returned the error
 
 
 /**********************************************************************/
@@ -96,20 +98,17 @@ typedef enum {
 
 // Pack event's attributes and parameters, if any.
 
-- (AEMEvent *)setAttributePtr:(void *)dataPtr 
-						 size:(Size)dataSize
-			   descriptorType:(DescType)typeCode
-				   forKeyword:(AEKeyword)key;
-
-- (AEMEvent *)setParameterPtr:(void *)dataPtr 
-						 size:(Size)dataSize
-			   descriptorType:(DescType)typeCode
-				   forKeyword:(AEKeyword)key;
-
 - (AEMEvent *)setAttribute:(id)value forKeyword:(AEKeyword)key;
 
 - (AEMEvent *)setParameter:(id)value forKeyword:(AEKeyword)key;
 
+// Get/remove event's attributes and parameters.
+
+- (id)attributeForKeyword:(AEKeyword)key;
+
+- (id)parameterForKeyword:(AEKeyword)key;
+
+- (AEMEvent *)removeParameterForKeyword:(AEKeyword)key;
 
 // Specify an AE type to coerce the reply descriptor to before unpacking it.
 // (Default = unpack as typeWildCard)

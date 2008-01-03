@@ -116,7 +116,6 @@ Note: best way to do this might be to have codecs unpack event (TO DO) and then 
 	- (void)removeAttributeForKeyword:(AEKeyword)key;
 	- (void)removeParameterForKeyword:(AEKeyword)key;
 
-- include an aem-style representation of Apple event in localizedDescription string of NSErrors returned by -[AEMEvent sendWithError:], and/or include original event object in userInfo dictionary?
 
 ======= aem query builder =======
 
@@ -161,3 +160,5 @@ Note: best way to do this might be to have codecs unpack event (TO DO) and then 
 - finish documentation, header comments
 
 - unit tests
+
+- update reserved ObjC keywords in py-osaterminology

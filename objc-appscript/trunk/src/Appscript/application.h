@@ -11,6 +11,7 @@
 #import "codecs.h"
 #import "SendThreadSafe.h"
 #import "event.h"
+#import "utils.h"
 
 
 /**********************************************************************/

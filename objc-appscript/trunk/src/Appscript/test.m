@@ -89,7 +89,7 @@ void disposeTestModule(void) {
 - (AEMANDTest *)AND:(id)remainingOperands { 
 	NSMutableArray *allOperands;
 	
-	allOperands = [NSArray arrayWithObject: self];
+	allOperands = [NSMutableArray arrayWithObject: self];
 	if ([remainingOperands isKindOfClass: [NSArray class]])
 		[allOperands addObjectsFromArray: remainingOperands];
 	else
@@ -103,7 +103,7 @@ void disposeTestModule(void) {
 - (AEMORTest *)OR:(id)remainingOperands {
 	NSMutableArray *allOperands;
 	
-	allOperands = [NSArray arrayWithObject: self];
+	allOperands = [NSMutableArray arrayWithObject: self];
 	if ([remainingOperands isKindOfClass: [NSArray class]])
 		[allOperands addObjectsFromArray: remainingOperands];
 	else

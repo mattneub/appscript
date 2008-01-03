@@ -18,6 +18,7 @@ NSString *kAEMErrorStringKey			= @"ErrorString";
 NSString *kAEMErrorBriefMessageKey		= @"ErrorBriefMessage";
 NSString *kAEMErrorExpectedTypeKey		= @"ErrorExpectedType";
 NSString *kAEMErrorOffendingObjectKey	= @"ErrorOffendingObject";
+NSString *kAEMErrorFailedEvent			= @"ErrorFailedEvent";
 
 
 /**********************************************************************/
@@ -49,10 +50,6 @@ static ASEventAttributeDescription attributeKeys[] = {
 
 
 /**********************************************************************/
-
-
-// note: [desc stringValue] doesn't work in 10.5 for typeType descs, so use the following workaround:
-#define osTypeToString(osType) [[[NSAppleEventDescriptor descriptorWithTypeCode: osType] coerceToDescriptorType: typeUnicodeText] stringValue]
 
 
 @implementation AEMEvent
@@ -130,24 +127,6 @@ static ASEventAttributeDescription attributeKeys[] = {
 
 // Pack event's attributes and parameters, if any.
 
-// TO DO: these methods may need to check for nil values to protect against crashes (need to investigate further)
-
-- (AEMEvent *)setAttributePtr:(void *)dataPtr 
-				 size:(Size)dataSize
-	   descriptorType:(DescType)typeCode
-		   forKeyword:(AEKeyword)key {
-	OSErr err = AEPutAttributePtr(event, key, typeCode, dataPtr, dataSize);
-	return err ? nil : self;
-}
-
-- (AEMEvent *)setParameterPtr:(void *)dataPtr 
-				 size:(Size)dataSize
-	   descriptorType:(DescType)typeCode
-		   forKeyword:(AEKeyword)key {
-	OSErr err = AEPutParamPtr(event, key, typeCode, dataPtr, dataSize);
-	return err ? nil : self;
-}
-
 - (AEMEvent *)setAttribute:(id)value forKeyword:(AEKeyword)key {
 	OSErr err = AEPutAttributeDesc(event, key, [[codecs pack: value] aeDesc]);
 	return err ? nil : self;
@@ -157,6 +136,35 @@ static ASEventAttributeDescription attributeKeys[] = {
 	OSErr err = AEPutParamDesc(event, key, [[codecs pack: value] aeDesc]);
 	return err ? nil : self;
 }
+
+// Get attributes and parameters:
+
+- (id)attributeForKeyword:(AEKeyword)key {
+	AEDesc aeDesc;
+	NSAppleEventDescriptor *desc;
+	
+	OSErr err = AEGetAttributeDesc(event, key, typeWildCard, &aeDesc);
+	if (!err) return nil;
+	desc = [[[NSAppleEventDescriptor alloc] initWithAEDescNoCopy: &aeDesc] autorelease];
+	return [codecs unpack: desc];
+}
+
+- (id)parameterForKeyword:(AEKeyword)key {
+	AEDesc aeDesc;
+	NSAppleEventDescriptor *desc;
+	
+	OSErr err = AEGetAttributeDesc(event, key, typeWildCard, &aeDesc);
+	if (!err) return nil;
+	desc = [[[NSAppleEventDescriptor alloc] initWithAEDescNoCopy: &aeDesc] autorelease];
+	return [codecs unpack: desc];
+}
+
+- (AEMEvent *)removeParameterForKeyword:(AEKeyword)key {
+	OSErr err = AEDeleteParam(event, key);
+	return err ? nil : self;
+}
+
+//
 
 - (AEMEvent *)unpackResultAsType:(DescType)type {
 	resultType = type;
@@ -223,8 +231,9 @@ static ASEventAttributeDescription attributeKeys[] = {
 		if (error) {
 			errorDescription = [NSString stringWithFormat: @"Apple Event Manager error %i", errorNumber];
 			errorInfo = [NSDictionary dictionaryWithObjectsAndKeys: 
-					errorDescription, NSLocalizedDescriptionKey,
-					[NSNumber numberWithInt: errorNumber], kAEMErrorNumberKey,
+					errorDescription,						NSLocalizedDescriptionKey,
+					[NSNumber numberWithInt: errorNumber],	kAEMErrorNumberKey,
+					self,									kAEMErrorFailedEvent,
 					nil];
 			*error = [NSError errorWithDomain: kAEMErrorDomain code: errorNumber userInfo: errorInfo];
 		}
@@ -252,8 +261,9 @@ static ASEventAttributeDescription attributeKeys[] = {
 			else
 				errorDescription = [NSString stringWithFormat: @"Application error %i", errorNumber];
 			errorInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys: 
-					errorDescription, NSLocalizedDescriptionKey,
-					[NSNumber numberWithInt: errorNumber], kAEMErrorNumberKey,
+					errorDescription,						NSLocalizedDescriptionKey,
+					[NSNumber numberWithInt: errorNumber],	kAEMErrorNumberKey,
+					self,									kAEMErrorFailedEvent,
 					nil];
 			if (errorString)
 				[errorInfo setValue: errorString forKey: kAEMErrorStringKey];
@@ -300,12 +310,13 @@ static ASEventAttributeDescription attributeKeys[] = {
 					if (!item) { // a coercion error occurred
 						if (error) {
 							errorDescription = [NSString stringWithFormat: 
-									@"Couldn't coerce item %i of result list to type '%@': %@", i, osTypeToString(resultType), result];
+									@"Couldn't coerce item %i of result list to type '%@': %@", i, AEMDescTypeToDisplayString(resultType), result];
 							errorInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-									[NSAppleEventDescriptor descriptorWithTypeCode: resultType], kAEMErrorExpectedTypeKey,
-									originalItem, kAEMErrorOffendingObjectKey,
-									errorDescription, NSLocalizedDescriptionKey, 
-									[NSNumber numberWithInt: errorNumber], kAEMErrorNumberKey, 
+									[NSAppleEventDescriptor descriptorWithTypeCode: resultType],	kAEMErrorExpectedTypeKey,
+									originalItem,													kAEMErrorOffendingObjectKey,
+									errorDescription,												NSLocalizedDescriptionKey, 
+									[NSNumber numberWithInt: errorNumber],							kAEMErrorNumberKey, 
+									self,															kAEMErrorFailedEvent,
 									nil];
 							*error = [NSError errorWithDomain: kAEMErrorDomain code: errAECoercionFail userInfo: errorInfo];
 						}
@@ -322,12 +333,13 @@ static ASEventAttributeDescription attributeKeys[] = {
 		result = [result coerceToDescriptorType: resultType];
 		if (!result) { // a coercion error occurred
 			if (error) {
-				errorDescription = [NSString stringWithFormat: @"Couldn't coerce result to type '%@': %@", osTypeToString(resultType), result];
+				errorDescription = [NSString stringWithFormat: @"Couldn't coerce result to type '%@': %@", AEMDescTypeToDisplayString(resultType), result];
 				errorInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-						[NSAppleEventDescriptor descriptorWithTypeCode: resultType], kAEMErrorExpectedTypeKey,
-						originalResult, kAEMErrorOffendingObjectKey,
-						errorDescription, NSLocalizedDescriptionKey, 
-						[NSNumber numberWithInt: errorNumber], kAEMErrorNumberKey, 
+						[NSAppleEventDescriptor descriptorWithTypeCode: resultType],	kAEMErrorExpectedTypeKey,
+						originalResult,													kAEMErrorOffendingObjectKey,
+						errorDescription,												NSLocalizedDescriptionKey, 
+						[NSNumber numberWithInt: errorNumber],							kAEMErrorNumberKey, 
+						self,															kAEMErrorFailedEvent,
 						nil];
 				*error = [NSError errorWithDomain: kAEMErrorDomain code: errAECoercionFail userInfo: errorInfo];
 			}

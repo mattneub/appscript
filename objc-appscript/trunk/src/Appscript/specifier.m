@@ -8,11 +8,6 @@
 #import "specifier.h"
 
 
-// note: [desc stringValue] doesn't work in 10.5 for typeType descs, so use the following workaround:
-#define typeDescToString(desc) [[desc coerceToDescriptorType: typeUnicodeText] stringValue]
-
-
-
 /**********************************************************************/
 // initialise/dispose constants
 
@@ -442,7 +437,7 @@ void disposeSpecifierModule(void) {
 @implementation AEMPropertySpecifier
 
 - (NSString *)description {
-	return [NSString stringWithFormat: @"[%@ property: '%@']", container, typeDescToString(key)];
+	return [NSString stringWithFormat: @"[%@ property: '%@']", container, AEMDescTypeToDisplayString([key typeCodeValue])];
 }
 
 // reserved methods
@@ -651,10 +646,10 @@ void disposeSpecifierModule(void) {
 	switch ([key enumCodeValue]) {
 		case kAEPrevious:
 			return [NSString stringWithFormat: @"[%@ previous: %@]", container,
-					typeDescToString([NSAppleEventDescriptor descriptorWithTypeCode: wantCode])];
+					AEMDescTypeToDisplayString(wantCode)];
 		case kAENext:
 			return [NSString stringWithFormat: @"[%@ next: %@]", container,
-					typeDescToString([NSAppleEventDescriptor descriptorWithTypeCode: wantCode])];
+					AEMDescTypeToDisplayString(wantCode)];
 		default:
 			return nil;
 	}
@@ -970,7 +965,7 @@ void disposeSpecifierModule(void) {
 
 - (NSString *)description {
 	return [NSString stringWithFormat: @"[%@ elements: '%@']", container, 
-			typeDescToString([NSAppleEventDescriptor descriptorWithTypeCode: wantCode])];
+			AEMDescTypeToDisplayString(wantCode)];
 }
 
 - (NSAppleEventDescriptor *)packSelf:(id)codecs {

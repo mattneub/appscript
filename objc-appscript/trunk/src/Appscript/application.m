@@ -8,9 +8,6 @@
 #import "application.h"
 
 
-#define osTypeToString(osType) [[[NSAppleEventDescriptor descriptorWithTypeCode: osType] coerceToDescriptorType: typeUnicodeText] stringValue]
-
-
 /**********************************************************************/
 
 
@@ -38,7 +35,7 @@
 	if (err) {
 		errorDescription = [NSString stringWithFormat: @"Can't find application with creator '%@', "
 														"bundle ID %@, name %@ (error %i)", 
-														osTypeToString(creator), bundleID, name, err];
+														AEMDescTypeToDisplayString(creator), bundleID, name, err];
 		errorInfo = [NSDictionary dictionaryWithObjectsAndKeys: 
 									errorDescription, NSLocalizedDescriptionKey,
 									[NSNumber numberWithInt: err], kAEMErrorNumberKey,

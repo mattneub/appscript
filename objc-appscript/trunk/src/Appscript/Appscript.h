@@ -19,9 +19,6 @@
 #import "reference.h"
 #import "referencerenderer.h"
 
-/* TO DO
 // appscript bridge
-#import "bridge.h"
 #import "parser.h"
 #import "terminology.h"
-*/

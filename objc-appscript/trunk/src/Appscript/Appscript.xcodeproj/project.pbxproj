@@ -16,14 +16,16 @@
 		4F4856680B6E8204005264DC /* test.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F4856660B6E8204005264DC /* test.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4F4856690B6E8204005264DC /* test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F4856670B6E8204005264DC /* test.m */; };
 		4F7C7EAE0C5B68420033C219 /* SendThreadSafe.c in Sources */ = {isa = PBXBuildFile; fileRef = 4F7C7EAC0C5B68420033C219 /* SendThreadSafe.c */; };
-		4F7C7EAF0C5B68420033C219 /* SendThreadSafe.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F7C7EAD0C5B68420033C219 /* SendThreadSafe.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4F7C7EAF0C5B68420033C219 /* SendThreadSafe.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F7C7EAD0C5B68420033C219 /* SendThreadSafe.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4F7CA9050B727AE5007010CE /* reference.h in Headers */ = {isa = PBXBuildFile; fileRef = 4FDCB2F30B6D0CD0009534FD /* reference.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4F7CA9060B727AE5007010CE /* reference.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FDCB2F40B6D0CD0009534FD /* reference.m */; };
 		4F9BFD6C0CD4CD74003BDDE0 /* event.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F9BFD6A0CD4CD74003BDDE0 /* event.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4F9BFD6D0CD4CD74003BDDE0 /* event.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F9BFD6B0CD4CD74003BDDE0 /* event.m */; };
+		4FAD77B70D2A8B4900FE780B /* utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 4FAD77B50D2A8B4900FE780B /* utils.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4FAD77B80D2A8B4900FE780B /* utils.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FAD77B60D2A8B4900FE780B /* utils.m */; };
 		4FB2B2D50D1F17B500644367 /* terminology.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FDCB2F80B6D0CD0009534FD /* terminology.m */; };
-		4FB2B2D60D1F17B600644367 /* terminology.h in Headers */ = {isa = PBXBuildFile; fileRef = 4FDCB2F70B6D0CD0009534FD /* terminology.h */; };
-		4FB2B2D70D1F17BA00644367 /* parser.h in Headers */ = {isa = PBXBuildFile; fileRef = 4FDCB2F10B6D0CD0009534FD /* parser.h */; };
+		4FB2B2D60D1F17B600644367 /* terminology.h in Headers */ = {isa = PBXBuildFile; fileRef = 4FDCB2F70B6D0CD0009534FD /* terminology.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4FB2B2D70D1F17BA00644367 /* parser.h in Headers */ = {isa = PBXBuildFile; fileRef = 4FDCB2F10B6D0CD0009534FD /* parser.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4FB2B2D80D1F17BA00644367 /* parser.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FDCB2F20B6D0CD0009534FD /* parser.m */; };
 		4FDCB2E00B6D0BAF009534FD /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4FDCB2DE0B6D0BAF009534FD /* Carbon.framework */; };
 		4FDCB2E10B6D0BAF009534FD /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4FDCB2DF0B6D0BAF009534FD /* CoreFoundation.framework */; };
@@ -56,6 +58,8 @@
 		4F7C7EAD0C5B68420033C219 /* SendThreadSafe.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SendThreadSafe.h; sourceTree = "<group>"; };
 		4F9BFD6A0CD4CD74003BDDE0 /* event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = event.h; sourceTree = "<group>"; };
 		4F9BFD6B0CD4CD74003BDDE0 /* event.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = event.m; sourceTree = "<group>"; };
+		4FAD77B50D2A8B4900FE780B /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
+		4FAD77B60D2A8B4900FE780B /* utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = utils.m; sourceTree = "<group>"; };
 		4FDCB2DE0B6D0BAF009534FD /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		4FDCB2DF0B6D0BAF009534FD /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
 		4FDCB2EB0B6D0CD0009534FD /* application.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = application.h; sourceTree = "<group>"; };
@@ -144,6 +148,10 @@
 			isa = PBXGroup;
 			children = (
 				32DBCF5E0370ADEE00C91783 /* Appscript_Prefix.pch */,
+				4F7C7EAD0C5B68420033C219 /* SendThreadSafe.h */,
+				4F7C7EAC0C5B68420033C219 /* SendThreadSafe.c */,
+				4FAD77B50D2A8B4900FE780B /* utils.h */,
+				4FAD77B60D2A8B4900FE780B /* utils.m */,
 			);
 			name = "Other Sources";
 			sourceTree = "<group>";
@@ -203,8 +211,6 @@
 				4FDCB2EC0B6D0CD0009534FD /* application.m */,
 				4F9BFD6A0CD4CD74003BDDE0 /* event.h */,
 				4F9BFD6B0CD4CD74003BDDE0 /* event.m */,
-				4F7C7EAD0C5B68420033C219 /* SendThreadSafe.h */,
-				4F7C7EAC0C5B68420033C219 /* SendThreadSafe.c */,
 			);
 			name = "application connector";
 			sourceTree = "<group>";
@@ -249,6 +255,7 @@
 				4F7C7EAF0C5B68420033C219 /* SendThreadSafe.h in Headers */,
 				4FB2B2D60D1F17B600644367 /* terminology.h in Headers */,
 				4FB2B2D70D1F17BA00644367 /* parser.h in Headers */,
+				4FAD77B70D2A8B4900FE780B /* utils.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -321,6 +328,7 @@
 				4F9BFD6D0CD4CD74003BDDE0 /* event.m in Sources */,
 				4FB2B2D50D1F17B500644367 /* terminology.m in Sources */,
 				4FB2B2D80D1F17BA00644367 /* parser.m in Sources */,
+				4FAD77B80D2A8B4900FE780B /* utils.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -8,10 +8,6 @@
 #import "types.h"
 
 
-#define typeDescToString(desc) [[desc coerceToDescriptorType: typeUnicodeText] stringValue]
-
-
-
 /**********************************************************************/
 // Booleans
 
@@ -255,13 +251,13 @@ static ASBoolean *falseValue;
 		type = [cachedDesc descriptorType];
 	switch (type) {
 		case typeType:
-			return [NSString stringWithFormat: @"<AEMType %@>", typeDescToString([self desc])];
+			return [NSString stringWithFormat: @"<AEMType %@>", AEMDescTypeToDisplayString([self code])];
 		case typeEnumerated:
-			return [NSString stringWithFormat: @"<AEMEnumerated %@>", typeDescToString([self desc])];
+			return [NSString stringWithFormat: @"<AEMEnumerated %@>", AEMDescTypeToDisplayString([self code])];
 		case typeProperty:
-			return [NSString stringWithFormat: @"<AEMProperty %@>", typeDescToString([self desc])];
+			return [NSString stringWithFormat: @"<AEMProperty %@>", AEMDescTypeToDisplayString([self code])];
 		case typeKeyword:
-			return [NSString stringWithFormat: @"<AEMKeyword %@>", typeDescToString([self desc])];
+			return [NSString stringWithFormat: @"<AEMKeyword %@>", AEMDescTypeToDisplayString([self code])];
 		default:
 			return nil;
 	}
