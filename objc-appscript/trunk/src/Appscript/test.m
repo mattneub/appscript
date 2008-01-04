@@ -142,6 +142,12 @@ void disposeTestModule(void) {
 	return self;
 }
 
+- (void)dealloc {
+	[operand1 release];
+	[operand2 release];
+	[super dealloc];
+}
+
 - (BOOL)isEqual:(id)object {
 	if (self == object) return YES;
 	if (!object || ![object isMemberOfClass: [self class]]) return NO;
@@ -240,7 +246,7 @@ void disposeTestModule(void) {
 
 - (NSAppleEventDescriptor *)packSelf:(id)codecs {
 	if (!cachedDesc)
-		cachedDesc = [[[operand1 equals: operand2] NOT] packSelf: codecs];
+		cachedDesc = [[[[operand1 equals: operand2] NOT] packSelf: codecs] retain];
 	return cachedDesc;
 }
 
@@ -373,6 +379,11 @@ void disposeTestModule(void) {
 	return self;
 }
 
+- (void)dealloc {
+	[operands release];
+	[super dealloc];
+}
+
 - (BOOL)isEqual:(id)object {
 	if (self == object) return YES;
 	if (!object || ![object isMemberOfClass: [self class]]) return NO;
@@ -384,13 +395,15 @@ void disposeTestModule(void) {
 }
 
 - (NSString *)description {
-	id operand1;
-	NSArray *otherOperands;
+	id operand1, otherOperands;
 	NSString *result;
 	NSRange range = {1, [operands count] - 1};
 	
 	operand1 = [operands objectAtIndex: 0];
-	otherOperands = [operands subarrayWithRange: range];
+	if ([operands count] == 2) 
+		otherOperands = [operands objectAtIndex: 1];
+	else
+		otherOperands = [operands subarrayWithRange: range];
 	result = [NSString stringWithFormat: [self formatString], operand1, otherOperands];
 	return result;
 }

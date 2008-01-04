@@ -10,9 +10,9 @@
 
 
 typedef struct {
-	id ref1;
-	NSString *str;
-	id ref2;
+	id ref;
+	NSString *expectedStr;
+	id expectedRef;
 } TestDataType;
 
 
@@ -21,12 +21,15 @@ typedef struct {
 
 - (void) test1 {
 	
-	id ref1, ref2, ref3, desc;
-	NSString *str;
+	id ref, expectedRef, unpackedRef, desc;
+	NSString *expectedStr;
 	int i = 0;
 	AEMCodecs *c = [AEMCodecs defaultCodecs];
 	
 	TestDataType testData[] = {
+	
+		// property, all elements
+	
 		{
 			[AEMApp property: 'ctxt'], 
 			@"[AEMApp property: 'ctxt']", 
@@ -39,6 +42,7 @@ typedef struct {
 			[AEMApp elements: 'docu']
 		},
 		
+		// element by index, name, ide
 		{
 			[[AEMApp elements: 'docu'] at: 1], 
 			@"[[AEMApp elements: 'docu'] byIndex: 1]", 
@@ -75,24 +79,81 @@ typedef struct {
 			[[AEMApp elements: 'docu'] previous: 'docu'], 
 		},
 		
+		// element by named ordinal
+		
+		{
+			[[AEMApp elements: 'docu'] first], 
+			@"[[AEMApp elements: 'docu'] first]", 
+			[[AEMApp elements: 'docu'] first], 
+		},
+		
+		{
+			[[AEMApp elements: 'docu'] middle], 
+			@"[[AEMApp elements: 'docu'] middle]", 
+			[[AEMApp elements: 'docu'] middle], 
+		},
+		
+		{
+			[[AEMApp elements: 'docu'] last], 
+			@"[[AEMApp elements: 'docu'] last]", 
+			[[AEMApp elements: 'docu'] last], 
+		},
+		
+		{
+			[[AEMApp elements: 'docu'] any], 
+			@"[[AEMApp elements: 'docu'] any]", 
+			[[AEMApp elements: 'docu'] any], 
+		},
+		
+		// elements by range
+		
+		{
+			[[AEMCon elements: 'docu'] at: 3], 
+			@"[[AEMCon elements: 'docu'] byIndex: 3]", 
+			[[AEMCon elements: 'docu'] at: 3], 
+		},
+		
+		{
+			[[AEMApp elements: 'docu'] byRange: [[AEMCon elements: 'docu'] at: 3]
+											to: [[AEMCon elements: 'docu'] byName: @"foo"]], 
+			@"[[AEMApp elements: 'docu'] byRange: [[AEMCon elements: 'docu'] byIndex: 3] "
+											@"to: [[AEMCon elements: 'docu'] byName: foo]]", 
+			[[AEMApp elements: 'docu'] byRange: [[AEMCon elements: 'docu'] at: 3]
+											to: [[AEMCon elements: 'docu'] byName: @"foo"]], 
+		},
+		
+		// elements by test
+		
+		{
+			[[[AEMIts property: 'pnam'] equals: @"foo"] AND: [[AEMIts elements: 'cwor'] equals: [NSArray array]]], 
+			@"[[[AEMIts property: 'pnam'] equals: foo] AND: [[AEMIts elements: 'cwor'] equals: (\n)]]", 
+			[[[AEMIts property: 'pnam'] equals: @"foo"] AND: [[AEMIts elements: 'cwor'] equals: [NSArray array]]], 
+		},
+		
+		{
+			[[AEMCon elements: 'cwor'] notEquals: [NSArray array]],
+			@"[[AEMCon elements: 'cwor'] notEquals: (\n)]",
+			[[[AEMCon elements: 'cwor'] equals: [NSArray array]] NOT]
+		},
+		
 		{nil, @"", nil}
 	};
 	
 	do {
-		ref1 = testData[i].ref1;
-		ref2 = testData[i].ref2;
-		str = testData[i].str;
-		STAssertEqualObjects([ref1 description], str, @"Description failed.");
+		ref = testData[i].ref;
+		expectedStr = testData[i].expectedStr;
+		expectedRef = testData[i].expectedRef;
+		STAssertEqualObjects([ref description], expectedStr, @"Description failed.%@", ref);
 		
-		desc = [c pack: ref1];
+		desc = [c pack: ref];
 		STAssertEquals([desc class], [NSAppleEventDescriptor class], @"Pack failed.");
 		
 		NSLog(@"%@", desc);
-		STAssertNoThrow(ref3 = [c unpack: desc], @"Unpack errored %@", desc);
-		STAssertEqualObjects(ref3, ref1, @"Unpack failed.");
+		STAssertNoThrow(unpackedRef = [c unpack: desc], @"Unpack errored %@", desc);
+		STAssertEqualObjects(unpackedRef, expectedRef, @"Unpack failed.");
 		
 		i++;
-	} while (testData[i].ref1);
+	} while (testData[i].ref);
 	
 	
 }
