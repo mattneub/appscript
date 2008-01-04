@@ -178,12 +178,13 @@ void disposeSpecifierModule(void) {
 	if (self == object) return YES;
 	if (!object || ![object isMemberOfClass: [self class]]) return NO;
 	key2 = [object key];
-	if ([key isKindOfClass: [NSAppleEventDescriptor class]])
+	if ([key isKindOfClass: [NSAppleEventDescriptor class]]) {
 		// NSAppleEventDescriptors compare for object identity only, so do a more thorough comparison here
-		return ([key2 isKindOfClass: [NSAppleEventDescriptor class]] 
-			&& ([key descriptorType] == [key2 descriptorType])
-			&& [[key data] isEqualToData: [key2 data]]);
-	return (([key isEqual: key2] || (key == nil && key2 == nil)) && [container isEqual: [object container]]);
+		if (!AEMIsDescriptorEqualToObject(key, key2)) 
+			return NO;
+	} else if (!([key isEqual: key2] || (key == nil && key2 == nil))) 
+		return NO;
+	return ([container isEqual: [object container]]);
 }
 
 - (id)key { // used by -isEqual:
@@ -999,6 +1000,11 @@ void disposeSpecifierModule(void) {
 	return self;
 }
 
+- (BOOL)isEqual:(id)object {
+	if (self == object) return YES;
+	if (!object || ![object isMemberOfClass: [self class]]) return NO;
+	return YES;
+}
 
 - (AEMReferenceRootBase *)root {
 	return self;
@@ -1097,7 +1103,15 @@ void disposeSpecifierModule(void) {
 }
 
 - (BOOL)isEqual:(id)object {
-	return ([super isEqual: object] && [rootObject isEqual: [object rootObject]]);
+	id rootObject2;
+	
+	if (![super isEqual: object]) return NO;
+	rootObject2 = [object rootObject];
+	if ([rootObject isKindOfClass: [NSAppleEventDescriptor class]])
+		// NSAppleEventDescriptors compare for object identity only, so do a more thorough comparison here
+		return AEMIsDescriptorEqualToObject(rootObject, rootObject2);
+	else
+		return ([rootObject isEqual: rootObject2]);
 }
 
 - (id)rootObject { // used by isEqual

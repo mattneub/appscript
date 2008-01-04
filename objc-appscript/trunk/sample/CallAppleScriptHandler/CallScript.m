@@ -35,14 +35,14 @@ int main (int argc, const char * argv[]) {
 	// Add parameter list to AEMEvent
 	[evt setParameter:params forKeyword:keyDirectObject];
 
-	// Get an NSAppleEventDescriptor from AEMEvent
-	NSAppleEventDescriptor *evtDesc = [evt appleEventDescriptor];
-
 	// Compile (or load) the AppleScript
 	NSAppleScript *scpt = [[NSAppleScript alloc] initWithSource:
 			@"on joinText(arg1, arg2)\n"
 			@"	return arg1 & arg2\n"
 			@"end joinText"];
+
+	// Get an NSAppleEventDescriptor from AEMEvent
+	NSAppleEventDescriptor *evtDesc = [evt appleEventDescriptor];
 
 	// Send event to AppleScript
 	NSDictionary *error;
@@ -50,7 +50,7 @@ int main (int argc, const char * argv[]) {
 
 	// Unpack script result
 	id res = [codecs unpack:resDesc];
-	NSLog(@"Result = %@", res); // Result = 3
+	NSLog(@"Result = %@", res); // "Result = Hello World!"
 
 	[scpt release];
 	[codecs release];

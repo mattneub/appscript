@@ -11,3 +11,7 @@
 
 NSString *AEMDescTypeToDisplayString(OSType code);
 
+#define AEMIsDescriptorEqualToObject(desc, obj) ( \
+		[obj isKindOfClass: [NSAppleEventDescriptor class]] \
+		&& ([desc descriptorType] == [obj descriptorType]) \
+		&& [[desc data] isEqualToData: [obj data]])

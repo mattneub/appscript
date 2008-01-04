@@ -13,8 +13,13 @@ typedef struct {
 	id ref;
 	NSString *expectedStr;
 	id expectedRef;
-} TestDataType;
+} Test1DataType;
 
+
+typedef struct {
+	id ref1;
+	id ref2;
+} Test2DataType;
 
 
 @implementation AEMReferenceTest
@@ -26,7 +31,7 @@ typedef struct {
 	int i = 0;
 	AEMCodecs *c = [AEMCodecs defaultCodecs];
 	
-	TestDataType testData[] = {
+	Test1DataType testData[] = {
 	
 		// property, all elements
 	
@@ -172,6 +177,65 @@ typedef struct {
 			[[AEMIts elements: 'cwor'] isIn: @"foo"]
 		},
 		
+		// misc
+		
+		{
+			[[AEMApp elements: 'docu'] byTest: 
+					[[AEMIts property: 'size'] greaterOrEquals: [NSNumber numberWithInt: 42]]],
+			@"[[AEMApp elements: 'docu'] byTest: [[AEMIts property: 'size'] greaterOrEquals: 42]]",
+			[[AEMApp elements: 'docu'] byTest: 
+					[[AEMIts property: 'size'] greaterOrEquals: [NSNumber numberWithInt: 42]]],
+		},
+		
+		{
+			[[[[[[[[AEMApp elements: 'docu'] at: 1] property: 'ctxt'] elements: 'cpar'] elements: 'cha '] 
+					byRange: [NSNumber numberWithInt: 3]
+						 to: [[AEMCon elements: 'cha '] byIndex: [NSNumber numberWithInt: 55]]
+					] next: 'cha '] after],
+			@"[[[[[[[[AEMApp elements: 'docu'] byIndex: 1] property: 'ctxt'] elements: 'cpar'] elements: 'cha '] "
+					@"byRange: [[AEMCon elements: 'cha '] byIndex: 3] "
+						 @"to: [[AEMCon elements: 'cha '] byIndex: 55]"
+					@"] next: 'cha '] after]",
+			[[[[[[[[AEMApp elements: 'docu'] at: 1] property: 'ctxt'] elements: 'cpar'] elements: 'cha '] 
+					byRange: [NSNumber numberWithInt: 3]
+						 to: [[AEMCon elements: 'cha '] byIndex: [NSNumber numberWithInt: 55]]
+					] next: 'cha '] after],
+		},
+		
+		{
+			[[[[AEMIts property: 'pnam'] notEquals: @"foo"] AND: 
+					[[AEMIts elements: 'cfol'] equals: [NSArray array]]] NOT],
+			@"[[[[AEMIts property: 'pnam'] notEquals: foo] AND: [[AEMIts elements: 'cfol'] equals: (\n)]] NOT]",
+			[[[[[AEMIts property: 'pnam'] equals: @"foo"] NOT] AND: 
+					[[AEMIts elements: 'cfol'] equals: [NSArray array]]] NOT],
+		},
+		
+		// insertion
+		
+		{
+			[[AEMApp elements: 'docu'] beginning],
+			@"[[AEMApp elements: 'docu'] beginning]",
+			[[AEMApp elements: 'docu'] beginning],
+		},
+		
+		{
+			[[AEMApp elements: 'docu'] end],
+			@"[[AEMApp elements: 'docu'] end]",
+			[[AEMApp elements: 'docu'] end],
+		},
+		
+		{
+			[[[AEMApp elements: 'docu'] at: 3] before],
+			@"[[[AEMApp elements: 'docu'] byIndex: 3] before]",
+			[[[AEMApp elements: 'docu'] at: 3] before],
+		},
+		
+		{
+			[[[AEMApp elements: 'docu'] byID: @"foo"] after],
+			@"[[[AEMApp elements: 'docu'] byID: foo] after]",
+			[[[AEMApp elements: 'docu'] byID: @"foo"] after],
+		},
+		
 		{nil, @"", nil}
 	};
 	
@@ -190,8 +254,58 @@ typedef struct {
 		
 		i++;
 	} while (testData[i].ref);
+}
+
+- (void)test2 {
+	id ref1, ref2;
+	int i = 0;
 	
+	Test2DataType testData[] = {
 	
+		{
+			[[AEMApp property: 'ctxt'] property: 'ctxt'],
+			[[AEMCon property: 'ctxt'] property: 'ctxt'],
+		},
+		
+		{
+			[[AEMApp property: 'pnam'] property: 'ctxt'],
+			[[AEMApp property: 'ctxt'] property: 'ctxt'],
+		},
+		
+		{
+			[[AEMApp property: 'ctxt'] property: 'ctxt'],
+			[[AEMApp property: 'ctxt'] property: 'pnam'],
+		},
+		
+		{
+			[[AEMApp elements: 'ctxt'] property: 'ctxt'],
+			[[AEMApp property: 'ctxt'] property: 'ctxt'],
+		},
+		
+		{
+			[[AEMApp elements: 'ctxt'] property: 'ctxt'],
+			@"[[AEMApp elements: 'ctxt'] property: 'ctxt']",
+		},
+		
+		{
+			@"[[AEMApp elements: 'ctxt'] property: 'ctxt']",
+			[[AEMApp elements: 'ctxt'] property: 'ctxt'],
+		},
+		
+		// TO DO: need more complex inequality tests, including test specifiers
+		
+		{nil, nil}
+	};
+	
+	do {
+		ref1 = testData[i].ref1;
+		ref2 = testData[i].ref2;
+		
+		if ([ref1 isEqual: ref2])
+			STFail(@"Non-equal failed: %@, %@", ref1, ref2);
+		i++;
+	} while (testData[i].ref1);
+
 }
 
 @end

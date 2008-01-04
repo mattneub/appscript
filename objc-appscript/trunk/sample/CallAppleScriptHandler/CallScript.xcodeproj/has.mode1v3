@@ -379,9 +379,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>4FB2B29B0D1EC05C00644367</string>
+				<string>4FED736C0D2EE098003412D7</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>4FB2B29C0D1EC05C00644367</string>
+				<string>4FED736D0D2EE098003412D7</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -513,10 +513,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>1CD10A99069EF8BA00B06720</string>
-		<string>1C78EAAD065D492600B07095</string>
-		<string>4F7791630CD8BB3800125605</string>
-		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>/Users/has/appscript/objc-appscript/sample/CallAppleScriptHandler/CallScript.xcodeproj</string>
 	</array>
 	<key>WindowString</key>

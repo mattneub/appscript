@@ -151,7 +151,15 @@ void disposeTestModule(void) {
 - (BOOL)isEqual:(id)object {
 	if (self == object) return YES;
 	if (!object || ![object isMemberOfClass: [self class]]) return NO;
-	return  ([operand1 isEqual: [object operand1]] && [operand2 isEqual: [object operand2]]);
+	if ([operand1 isKindOfClass: [NSAppleEventDescriptor class]]) {
+		if (!AEMIsDescriptorEqualToObject(operand1, [object operand1])) return NO;
+	} else
+		if (![operand1 isEqual: [object operand1]]) return NO;
+	if ([operand2 isKindOfClass: [NSAppleEventDescriptor class]]) {
+		if (!AEMIsDescriptorEqualToObject(operand2, [object operand2])) return NO;
+	} else
+		if (![operand2 isEqual: [object operand2]]) return NO;
+	return YES;
 }
 
 - (id)operand1 { // used by isEqual:
@@ -391,6 +399,8 @@ void disposeTestModule(void) {
 - (BOOL)isEqual:(id)object {
 	if (self == object) return YES;
 	if (!object || ![object isMemberOfClass: [self class]]) return NO;
+	// note: this doesn't check for NSAppleEventDescriptor operands on the
+	// [reasonable] assumption that all operands are test instances anyway
 	return ([operands isEqual: [object operands]]);
 }
 
