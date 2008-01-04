@@ -348,6 +348,10 @@ void disposeTestModule(void) {
 	return @"[%@ isIn: %@]";
 }
 
+- (NSAppleEventDescriptor *)operator {
+	return kEnumContains;
+}
+
 - (NSAppleEventDescriptor *)packSelf:(id)codecs {
 	if (!cachedDesc) {
 		cachedDesc = [[kEmptyRecord coerceToDescriptorType: typeCompDescriptor] retain];

@@ -136,6 +136,42 @@ typedef struct {
 			[[[AEMCon elements: 'cwor'] equals: [NSArray array]] NOT]
 		},
 		
+		{
+			[[AEMIts elements: 'cwor'] equals: [NSNull null]],
+			@"[[AEMIts elements: 'cwor'] equals: <null>]",
+			[[AEMIts elements: 'cwor'] equals: [NSNull null]]
+		},
+		
+		{
+			[[[AEMIts elements: 'cwor'] property: 'leng'] greaterThan: [NSNumber numberWithInt: 0]],
+			@"[[[AEMIts elements: 'cwor'] property: 'leng'] greaterThan: 0]",
+			[[[AEMIts elements: 'cwor'] property: 'leng'] greaterThan: [NSNumber numberWithInt: 0]]
+		},
+		
+		{
+			[[AEMIts elements: 'cwor'] lessOrEquals: @""],
+			@"[[AEMIts elements: 'cwor'] lessOrEquals: ]",
+			[[AEMIts elements: 'cwor'] lessOrEquals: @""]
+		},
+		
+		{
+			[[[AEMIts elements: 'cwor'] beginsWith: @"foo"] NOT],
+			@"[[[AEMIts elements: 'cwor'] beginsWith: foo] NOT]",
+			[[[AEMIts elements: 'cwor'] beginsWith: @"foo"] NOT]
+		},
+		
+		{
+			[[AEMIts elements: 'cwor'] contains: @"foo"],
+			@"[[AEMIts elements: 'cwor'] contains: foo]",
+			[[AEMIts elements: 'cwor'] contains: @"foo"]
+		},
+		
+		{
+			[[AEMIts elements: 'cwor'] isIn: @"foo"],
+			@"[[AEMIts elements: 'cwor'] isIn: foo]",
+			[[AEMIts elements: 'cwor'] isIn: @"foo"]
+		},
+		
 		{nil, @"", nil}
 	};
 	

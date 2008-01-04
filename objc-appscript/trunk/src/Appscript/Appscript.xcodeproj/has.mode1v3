@@ -214,7 +214,7 @@
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>4FED72E50D2EA61F003412D7</string>
+						<string>4FED72ED0D2EB2A3003412D7</string>
 						<key>history</key>
 						<array>
 							<string>4FED72AA0D2E9551003412D7</string>
@@ -233,7 +233,7 @@
 				<key>PBXModuleWindowStatusBarHidden2</key>
 				<false/>
 				<key>RubberWindowFrame</key>
-				<string>649 32 780 996 0 0 1680 1028 </string>
+				<string>793 32 780 996 0 0 1680 1028 </string>
 			</dict>
 		</dict>
 		<dict>
@@ -254,7 +254,7 @@
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>4FED72E60D2EA61F003412D7</string>
+						<string>4FED72EE0D2EB2A3003412D7</string>
 						<key>history</key>
 						<array>
 							<string>4FED72CB0D2EA33C003412D7</string>
@@ -294,7 +294,7 @@
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>4FED72E70D2EA61F003412D7</string>
+						<string>4FED72EF0D2EB2A3003412D7</string>
 						<key>history</key>
 						<array>
 							<string>4FED72CA0D2EA01C003412D7</string>
@@ -334,7 +334,7 @@
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>4FED72E80D2EA61F003412D7</string>
+						<string>4FED72F00D2EB2A3003412D7</string>
 						<key>history</key>
 						<array>
 							<string>4FED72D60D2EA5B5003412D7</string>
@@ -690,8 +690,8 @@
 		<string>4FED72D40D2EA5B5003412D7</string>
 		<string>4FED72E00D2EA5B5003412D7</string>
 		<string>4FED72D90D2EA5B5003412D7</string>
-		<string>4FED72280D2E7D18003412D7</string>
 		<string>/Users/has/appscript/objc-appscript/src/Appscript/Appscript.xcodeproj</string>
+		<string>4FED72280D2E7D18003412D7</string>
 	</array>
 	<key>WindowString</key>
 	<string>838 55 756 973 0 0 1680 1028 </string>
