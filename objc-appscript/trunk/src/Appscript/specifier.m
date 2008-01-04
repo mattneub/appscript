@@ -645,10 +645,10 @@ void disposeSpecifierModule(void) {
 - (NSString *)description {
 	switch ([key enumCodeValue]) {
 		case kAEPrevious:
-			return [NSString stringWithFormat: @"[%@ previous: %@]", container,
+			return [NSString stringWithFormat: @"[%@ previous: '%@']", container,
 					AEMDescTypeToDisplayString(wantCode)];
 		case kAENext:
-			return [NSString stringWithFormat: @"[%@ next: %@]", container,
+			return [NSString stringWithFormat: @"[%@ next: '%@']", container,
 					AEMDescTypeToDisplayString(wantCode)];
 		default:
 			return nil;

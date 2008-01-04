@@ -16,12 +16,11 @@
 /**********************************************************************/
 
 
-static AEMCodecs *defaultCodecs = nil;
-
-
 @implementation AEMCodecs
 
 + (id)defaultCodecs {
+	static AEMCodecs *defaultCodecs;
+
 	if (!defaultCodecs)
 		defaultCodecs = [[self alloc] init];
 	return defaultCodecs;
@@ -550,11 +549,12 @@ static AEMCodecs *defaultCodecs = nil;
 																			 wantCode: wantCode] autorelease];
 						else
 							ref = [self fullyUnpackObjectSpecifier: desc]; // do a full unpack of rarely returned reference forms
-					} else
+					} else {
 						shim = [[[AEMUnkeyedElementsShim alloc] initWithContainer: container wantCode: wantCode] autorelease];
 						ref = [[[AEMElementByIndexSpecifier alloc] initWithContainer: shim
 																				 key: [self unpack: key]
 																			wantCode: wantCode] autorelease];
+					}
 					break;
 				case formName:
 					shim = [[[AEMUnkeyedElementsShim alloc] initWithContainer: container wantCode: wantCode] autorelease];

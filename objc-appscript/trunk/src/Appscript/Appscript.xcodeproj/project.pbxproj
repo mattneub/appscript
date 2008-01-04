@@ -39,6 +39,14 @@
 		4FDCB32C0B6D14A6009534FD /* Appscript.h in Headers */ = {isa = PBXBuildFile; fileRef = 4FDCB32B0B6D14A6009534FD /* Appscript.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4FDCB4B20B6D5F21009534FD /* types.h in Headers */ = {isa = PBXBuildFile; fileRef = 4FDCB4B00B6D5F21009534FD /* types.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4FDCB4B30B6D5F21009534FD /* types.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FDCB4B10B6D5F21009534FD /* types.m */; };
+		4FED70AD0D2E6CA8003412D7 /* AEMReferenceTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FED70AC0D2E6CA8003412D7 /* AEMReferenceTest.m */; };
+		4FED70EA0D2E72A3003412D7 /* codecs.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FDCB2EE0B6D0CD0009534FD /* codecs.m */; };
+		4FED70EC0D2E72A3003412D7 /* event.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F9BFD6B0CD4CD74003BDDE0 /* event.m */; };
+		4FED70ED0D2E72A3003412D7 /* types.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FDCB4B10B6D5F21009534FD /* types.m */; };
+		4FED70EE0D2E72A3003412D7 /* base.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F25FAC10B6E79CE0050D532 /* base.m */; };
+		4FED70EF0D2E72A3003412D7 /* test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F4856670B6E8204005264DC /* test.m */; };
+		4FED70F00D2E72A3003412D7 /* specifier.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FDCB2F60B6D0CD0009534FD /* specifier.m */; };
+		4FED70F20D2E72A3003412D7 /* utils.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FAD77B60D2A8B4900FE780B /* utils.m */; };
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
 /* End PBXBuildFile section */
 
@@ -77,11 +85,23 @@
 		4FDCB32B0B6D14A6009534FD /* Appscript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Appscript.h; sourceTree = "<group>"; };
 		4FDCB4B00B6D5F21009534FD /* types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = types.h; sourceTree = "<group>"; };
 		4FDCB4B10B6D5F21009534FD /* types.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = types.m; sourceTree = "<group>"; };
+		4FED70860D2E6B63003412D7 /* objc-appscript-test.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "objc-appscript-test.octest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4FED70870D2E6B63003412D7 /* objc-appscript-test-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "objc-appscript-test-Info.plist"; sourceTree = "<group>"; };
+		4FED70AB0D2E6CA8003412D7 /* AEMReferenceTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AEMReferenceTest.h; sourceTree = "<group>"; };
+		4FED70AC0D2E6CA8003412D7 /* AEMReferenceTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AEMReferenceTest.m; sourceTree = "<group>"; };
+		4FED70E10D2E7196003412D7 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8DC2EF5B0486A6940098B216 /* Appscript.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Appscript.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		4FED70830D2E6B63003412D7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8DC2EF560486A6940098B216 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -99,6 +119,7 @@
 			isa = PBXGroup;
 			children = (
 				8DC2EF5B0486A6940098B216 /* Appscript.framework */,
+				4FED70860D2E6B63003412D7 /* objc-appscript-test.octest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -106,11 +127,14 @@
 		0867D691FE84028FC02AAC07 /* Appscript */ = {
 			isa = PBXGroup;
 			children = (
+				4FED70E10D2E7196003412D7 /* Cocoa.framework */,
 				08FB77AEFE84172EC02AAC07 /* Classes */,
 				32C88DFF0371C24200C91783 /* Other Sources */,
 				089C1665FE841158C02AAC07 /* Resources */,
 				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
 				034768DFFF38A50411DB9C8B /* Products */,
+				4FED70870D2E6B63003412D7 /* objc-appscript-test-Info.plist */,
+				4FED70970D2E6C41003412D7 /* Test */,
 			);
 			name = Appscript;
 			sourceTree = "<group>";
@@ -234,6 +258,15 @@
 			name = Appscript;
 			sourceTree = "<group>";
 		};
+		4FED70970D2E6C41003412D7 /* Test */ = {
+			isa = PBXGroup;
+			children = (
+				4FED70AB0D2E6CA8003412D7 /* AEMReferenceTest.h */,
+				4FED70AC0D2E6CA8003412D7 /* AEMReferenceTest.m */,
+			);
+			name = Test;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -262,6 +295,24 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		4FED70850D2E6B63003412D7 /* objc-appscript-test */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4FED708A0D2E6B64003412D7 /* Build configuration list for PBXNativeTarget "objc-appscript-test" */;
+			buildPhases = (
+				4FED70810D2E6B63003412D7 /* Resources */,
+				4FED70820D2E6B63003412D7 /* Sources */,
+				4FED70830D2E6B63003412D7 /* Frameworks */,
+				4FED70840D2E6B63003412D7 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "objc-appscript-test";
+			productName = "objc-appscript-test";
+			productReference = 4FED70860D2E6B63003412D7 /* objc-appscript-test.octest */;
+			productType = "com.apple.product-type.bundle";
+		};
 		8DC2EF4F0486A6940098B216 /* Appscript */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "Appscript" */;
@@ -295,11 +346,19 @@
 			projectRoot = "";
 			targets = (
 				8DC2EF4F0486A6940098B216 /* Appscript */,
+				4FED70850D2E6B63003412D7 /* objc-appscript-test */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		4FED70810D2E6B63003412D7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8DC2EF520486A6940098B216 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -310,7 +369,38 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		4FED70840D2E6B63003412D7 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
+		4FED70820D2E6B63003412D7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4FED70EA0D2E72A3003412D7 /* codecs.m in Sources */,
+				4FED70EC0D2E72A3003412D7 /* event.m in Sources */,
+				4FED70ED0D2E72A3003412D7 /* types.m in Sources */,
+				4FED70EE0D2E72A3003412D7 /* base.m in Sources */,
+				4FED70EF0D2E72A3003412D7 /* test.m in Sources */,
+				4FED70F00D2E72A3003412D7 /* specifier.m in Sources */,
+				4FED70F20D2E72A3003412D7 /* utils.m in Sources */,
+				4FED70AD0D2E6CA8003412D7 /* AEMReferenceTest.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8DC2EF540486A6940098B216 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -416,6 +506,58 @@
 			};
 			name = Release;
 		};
+		4FED70880D2E6B64003412D7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = "$(DEVELOPER_LIBRARY_DIR)/Frameworks";
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Cocoa.framework/Headers/Cocoa.h";
+				INFOPLIST_FILE = "objc-appscript-test-Info.plist";
+				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Bundles";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Cocoa,
+					"-framework",
+					SenTestingKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = "objc-appscript-test";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		4FED70890D2E6B64003412D7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				FRAMEWORK_SEARCH_PATHS = "$(DEVELOPER_LIBRARY_DIR)/Frameworks";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Cocoa.framework/Headers/Cocoa.h";
+				INFOPLIST_FILE = "objc-appscript-test-Info.plist";
+				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Bundles";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Cocoa,
+					"-framework",
+					SenTestingKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = "objc-appscript-test";
+				WRAPPER_EXTENSION = octest;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -433,6 +575,15 @@
 			buildConfigurations = (
 				1DEB91B208733DA50010E9CD /* Debug */,
 				1DEB91B308733DA50010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4FED708A0D2E6B64003412D7 /* Build configuration list for PBXNativeTarget "objc-appscript-test" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4FED70880D2E6B64003412D7 /* Debug */,
+				4FED70890D2E6B64003412D7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

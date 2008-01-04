@@ -108,13 +108,7 @@ Note: best way to do this might be to have codecs unpack event (TO DO) and then 
 
 - check if kOSAErrorOffendingObject can be any type (the OSA API docs suggest that it may have to be an object specifier, but really aren't clear); currently, -sendWithError: returns anything for kAEMErrorOffendingObject when raising its own coercion error
 
-- add the following methods to AEMEvent (note: scripting language wrappers will need this to render native representations):
-
-	- (id)attributeForKeyword:(AEKeyword)key;
-	- (id)parameterForKeyword:(AEKeyword)key;
-
-	- (void)removeAttributeForKeyword:(AEKeyword)key;
-	- (void)removeParameterForKeyword:(AEKeyword)key;
+- provide more flexible versions of -attributeForKeyword: and -parameterForKeyword: that allow result type to be specified and can return detailed error info on failure
 
 
 ======= aem query builder =======
