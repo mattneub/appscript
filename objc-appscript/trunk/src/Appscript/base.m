@@ -2,7 +2,7 @@
 //  base.m
 //  aem
 //
-//  Copyright (C) 2007 HAS
+//   Copyright (C) 2007-2008 HAS
 //
 
 #import "base.h"

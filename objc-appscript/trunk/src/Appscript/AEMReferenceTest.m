@@ -2,11 +2,13 @@
 //  AEMReferenceTest.m
 //  Appscript
 //
-//  Created by Hamish Sanderson on 04/01/2008.
-//  Copyright 2008 __MyCompanyName__. All rights reserved.
+//   Copyright (C) 2007-2008 HAS
 //
 
 #import "AEMReferenceTest.h"
+
+// TO DO: -[NSArray description] displays empty arrays as "(\n)" on 10.5 but "()" on 10.4,
+// so some tests will currently fail on 10.4
 
 
 typedef struct {

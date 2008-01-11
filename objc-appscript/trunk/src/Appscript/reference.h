@@ -2,7 +2,7 @@
 //  reference.h
 //  appscript
 //
-//  Copyright (C) 2007 HAS
+//   Copyright (C) 2007-2008 HAS
 //
 
 #import <Foundation/Foundation.h>
@@ -36,17 +36,17 @@ typedef enum {
 					targetData:(id)data;
 
 // creates AEMApplication instance for target application; used internally
-- (BOOL)connectWithError:(NSError **)error;
+- (BOOL)connectWithError:(out NSError **)error;
 
 // returns AEMApplication instance for target application
-- (id)targetWithError:(NSError **)error;
+- (id)targetWithError:(out NSError **)error;
 
 // is target application running?
 - (BOOL)isRunning;
 
 // launch the target application without sending it the usual 'run' event;
 // equivalent to 'launch' command in AppleScript.
-- (BOOL)launchApplicationWithError:(NSError **)error;
+- (BOOL)launchApplicationWithError:(out NSError **)error;
 
 // AEMCodecs hook allowing extra typechecking to be performed here
 - (id)unpackContainsCompDescriptorWithOperand1:(id)op1 operand2:(id)op2;
@@ -221,7 +221,7 @@ enumConsidsAndIgnores = 'csig'
  *
  *    A single event can be sent more than once if desired.
  */
-- (id)sendWithError:(NSError **)error;
+- (id)sendWithError:(out NSError **)error;
 
 /*
  * Send the event with minimal error reporting.
@@ -265,19 +265,19 @@ enumConsidsAndIgnores = 'csig'
 
 // launch the target application without sending it the usual 'run' event;
 // equivalent to 'launch' command in AppleScript.
-- (BOOL)launchApplicationWithError:(NSError **)error; // may be nil
+- (BOOL)launchApplicationWithError:(out NSError **)error; // may be nil
 
 - (BOOL)launchApplication; // convenience shortcut for the above
 
 // transaction support
 
-- (BOOL)beginTransactionWithError:(NSError **)error;
+- (BOOL)beginTransactionWithError:(out NSError **)error;
 
-- (BOOL)beginTransactionWithSession:(id)session error:(NSError **)error;
+- (BOOL)beginTransactionWithSession:(id)session error:(out NSError **)error;
 
-- (BOOL)endTransactionWithError:(NSError **)error;
+- (BOOL)endTransactionWithError:(out NSError **)error;
 
-- (BOOL)abortTransactionWithError:(NSError **)error;
+- (BOOL)abortTransactionWithError:(out NSError **)error;
 
 @end
 

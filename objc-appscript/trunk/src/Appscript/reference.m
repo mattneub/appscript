@@ -2,7 +2,7 @@
 //  reference.m
 //  appscript
 //
-//  Copyright (C) 2007 HAS
+//   Copyright (C) 2007-2008 HAS
 //
 
 #import "reference.h"
@@ -35,7 +35,7 @@
 	[super dealloc];
 }
 
-- (BOOL)connectWithError:(NSError **)error {
+- (BOOL)connectWithError:(out NSError **)error {
 	if (target) {
 		[target release];
 		target = nil;
@@ -62,7 +62,7 @@
 	return target != nil;
 }
 
-- (id)targetWithError:(NSError **)error { // returns AEMApplication instance or equivalent
+- (id)targetWithError:(out NSError **)error { // returns AEMApplication instance or equivalent
 	if (!target && ![self connectWithError: error]) return nil;
 	return target;
 }
@@ -98,7 +98,7 @@
 	return result;
 }
 
-- (BOOL)launchApplicationWithError:(NSError **)error {
+- (BOOL)launchApplicationWithError:(out NSError **)error {
 	NSURL *fileURL = nil;
 	AEMApplication *app;
 	NSError *err;
@@ -313,7 +313,7 @@
 	return self;
 }
 
-- (id)sendWithError:(NSError **)error {
+- (id)sendWithError:(out NSError **)error {
 	return [AS_event sendWithMode: sendMode timeout: timeout error: error];
 }
 
@@ -388,25 +388,25 @@
 	return [self launchApplicationWithError: nil];
 }
 
-- (BOOL)launchApplicationWithError:(NSError **)error {
+- (BOOL)launchApplicationWithError:(out NSError **)error {
 	return [AS_appData launchApplicationWithError: error];
 }
 
 // transaction support
 
-- (BOOL)beginTransactionWithError:(NSError **)error {
+- (BOOL)beginTransactionWithError:(out NSError **)error {
 	 return [[AS_appData target] beginTransactionWithError: error];
 }
 
-- (BOOL)beginTransactionWithSession:(id)session error:(NSError **)error {
+- (BOOL)beginTransactionWithSession:(id)session error:(out NSError **)error {
 	 return [[AS_appData target] beginTransactionWithSession: session error: error];
 }
 
-- (BOOL)endTransactionWithError:(NSError **)error {
+- (BOOL)endTransactionWithError:(out NSError **)error {
 	 return [[AS_appData target] endTransactionWithError: error];
 }
 
-- (BOOL)abortTransactionWithError:(NSError **)error {
+- (BOOL)abortTransactionWithError:(out NSError **)error {
 	 return [[AS_appData target] abortTransactionWithError: error];
 }
 

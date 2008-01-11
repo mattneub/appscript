@@ -2,7 +2,7 @@
 //  event.m
 //  aem
 //
-//  Copyright (C) 2007 HAS
+//   Copyright (C) 2007-2008 HAS
 //
 
 #import "event.h"
@@ -197,7 +197,7 @@ static ASEventAttributeDescription attributeKeys[] = {
  * retrieve the error description.
  */
 
-- (id)sendWithMode:(AESendMode)sendMode timeout:(long)timeoutInTicks error:(NSError **)error {
+- (id)sendWithMode:(AESendMode)sendMode timeout:(long)timeoutInTicks error:(out NSError **)error {
 	OSErr err, errorNumber;
 	NSString *errorString, *errorDescription;
 	NSDictionary *errorInfo;
@@ -349,7 +349,7 @@ static ASEventAttributeDescription attributeKeys[] = {
 	return [codecs unpack: result];
 }
 
-- (id)sendWithError:(NSError **)error {
+- (id)sendWithError:(out NSError **)error {
 	return [self sendWithMode: kAEWaitReply timeout: kAEDefaultTimeout error: error];
 }
 

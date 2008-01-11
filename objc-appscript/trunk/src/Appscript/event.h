@@ -2,7 +2,7 @@
 //  event.h
 //  aem
 //
-//  Copyright (C) 2007 HAS
+//   Copyright (C) 2007-2008 HAS
 //
 
 #import <Foundation/Foundation.h>
@@ -145,11 +145,11 @@ typedef enum {
  *
  */
 
-- (id)sendWithMode:(AESendMode)sendMode timeout:(long)timeoutInTicks error:(NSError **)error;
+- (id)sendWithMode:(AESendMode)sendMode timeout:(long)timeoutInTicks error:(out NSError **)error;
 
 // shortcuts for -sendWithMode:timeout:error:
 
-- (id)sendWithError:(NSError **)error;
+- (id)sendWithError:(out NSError **)error;
 
 - (id)send;
 

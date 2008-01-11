@@ -2,8 +2,7 @@
 //  AEMReferenceTest.h
 //  Appscript
 //
-//  Created by Hamish Sanderson on 04/01/2008.
-//  Copyright 2008 __MyCompanyName__. All rights reserved.
+//   Copyright (C) 2007-2008 HAS
 //
 
 #import <SenTestingKit/SenTestingKit.h>
