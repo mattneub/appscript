@@ -32,22 +32,24 @@
 
 <p>Glues are generated using the command-line <code>osaglue</code> tool:</p>
 
-<pre><code>osaglue [-hv] [-o output-directory] prefix [application-name]</code></pre>
+<pre><code>osaglue [-hv] [-o output-directory] [-p prefix] [application-name]</code></pre>
 
-<li>The -h option prints this help and exits immediately.</li>
+<li>The <code>-h</code> option prints this help and exits immediately.</li>
 
-<li>The -v option prints osaglue's version number and exits immediately.</li>
+<li>The <code>-v</code> option prints osaglue's version number and exits immediately.</li>
 
 <li>The <code>-o</code> option may be used to specify the directory to which the glue files should be written. If the directory doesn't already exist, one is created. If omitted, the glue files are written to the current directory.</li>
 
-<li>The prefix argument is prepended to the names of all glue files and classes. Developers should specify a unique prefix that won't cause namespace conflicts in their project.</li>
+<li>The prefix argument, <code>-p</code>, is prepended to the names of all glue files and classes.
+Developers should specify a unique prefix that won't cause namespace conflicts
+in their project. If omitted, the application name is used instead.</li>
 
 <li>The application-name argument may be the name or full path of the application for which glues should be generated. If omitted, the resulting glue files will contain only the default terminology provided by appscript.</li>
 </ul>
 
 <p>For example, to output <code>TEGlue.h</code> and associated files for TextEdit to the folder <code>TEGlue</code>:</p>
 
-<pre><code>osaglue -o TEGlue TE TextEdit</code></pre>
+<pre><code>osaglue -o TEGlue -p TE TextEdit</code></pre>
 
 
 <h2>Using a glue</h2>
