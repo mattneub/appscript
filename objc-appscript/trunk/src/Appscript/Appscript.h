@@ -19,6 +19,10 @@
 #import "reference.h"
 #import "referencerenderer.h"
 
+// misc
+#import "sendthreadsafe.h"
+#import "utils.h"
+
 // appscript bridge
 #import "parser.h"
 #import "terminology.h"

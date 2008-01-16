@@ -8,7 +8,7 @@
 #import <Foundation/Foundation.h>
 #import <Carbon/Carbon.h>
 #import "codecs.h"
-#import "SendThreadSafe.h"
+#import "sendthreadsafe.h"
 #import "utils.h"
 
 

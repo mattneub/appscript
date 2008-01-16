@@ -66,13 +66,13 @@ First checked in.
 
 /*
 
-2007/06/24 -- Modified by HAS to make AESendMessageThreadSafeSynchronous API-compatible with AESendMessage; renamed SendMessageThreadSafe.
+2007/06/24 -- Modified by HAS to make AESendMessageThreadSafeSynchronous API-compatible with AESendMessage; renamed AEMSendMessageThreadSafe.
 
 */
 
 /////////////////////////////////////////////////////////////////
 
-#include "SendThreadSafe.h"
+#include "sendthreadsafe.h"
 
 #include <pthread.h>
 #include <mach/mach.h>
@@ -346,7 +346,7 @@ static void PerThreadStorageDestructor(void *keyValue)
     assert( pthread_getspecific(sPerThreadStorageKey) == NULL );
 }
 
-OSStatus SendMessageThreadSafe(
+OSStatus AEMSendMessageThreadSafe(
     AppleEvent *            eventPtr,
     AppleEvent *            replyPtr,
 	AESendMode              sendMode,

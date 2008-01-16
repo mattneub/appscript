@@ -63,7 +63,7 @@ First checked in.
 
 /*
 
-2007/06/24 -- Modified by HAS to make AESendMessageThreadSafeSynchronous API-compatible with AESendMessage; renamed SendMessageThreadSafe.
+2007/06/24 -- Modified by HAS to make AESendMessageThreadSafeSynchronous API-compatible with AESendMessage; renamed AEMSendMessageThreadSafe.
 
 */
 
@@ -122,7 +122,7 @@ First checked in.
     extern "C" {
 #endif
 
-OSStatus SendMessageThreadSafe(
+OSStatus AEMSendMessageThreadSafe(
 	AppleEvent *            eventPtr,
     AppleEvent *            replyPtr,
 	AESendMode              sendMode,

@@ -15,13 +15,13 @@
 		4F25FAC30B6E79CE0050D532 /* base.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F25FAC10B6E79CE0050D532 /* base.m */; };
 		4F4856680B6E8204005264DC /* test.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F4856660B6E8204005264DC /* test.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4F4856690B6E8204005264DC /* test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F4856670B6E8204005264DC /* test.m */; };
-		4F7C7EAE0C5B68420033C219 /* SendThreadSafe.c in Sources */ = {isa = PBXBuildFile; fileRef = 4F7C7EAC0C5B68420033C219 /* SendThreadSafe.c */; };
-		4F7C7EAF0C5B68420033C219 /* SendThreadSafe.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F7C7EAD0C5B68420033C219 /* SendThreadSafe.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4F7C7EAE0C5B68420033C219 /* sendthreadsafe.c in Sources */ = {isa = PBXBuildFile; fileRef = 4F7C7EAC0C5B68420033C219 /* sendthreadsafe.c */; };
+		4F7C7EAF0C5B68420033C219 /* sendthreadsafe.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F7C7EAD0C5B68420033C219 /* sendthreadsafe.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4F7CA9050B727AE5007010CE /* reference.h in Headers */ = {isa = PBXBuildFile; fileRef = 4FDCB2F30B6D0CD0009534FD /* reference.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4F7CA9060B727AE5007010CE /* reference.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FDCB2F40B6D0CD0009534FD /* reference.m */; };
 		4F9BFD6C0CD4CD74003BDDE0 /* event.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F9BFD6A0CD4CD74003BDDE0 /* event.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4F9BFD6D0CD4CD74003BDDE0 /* event.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F9BFD6B0CD4CD74003BDDE0 /* event.m */; };
-		4FAD77B70D2A8B4900FE780B /* utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 4FAD77B50D2A8B4900FE780B /* utils.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4FAD77B70D2A8B4900FE780B /* utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 4FAD77B50D2A8B4900FE780B /* utils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4FAD77B80D2A8B4900FE780B /* utils.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FAD77B60D2A8B4900FE780B /* utils.m */; };
 		4FB2B2D50D1F17B500644367 /* terminology.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FDCB2F80B6D0CD0009534FD /* terminology.m */; };
 		4FB2B2D60D1F17B600644367 /* terminology.h in Headers */ = {isa = PBXBuildFile; fileRef = 4FDCB2F70B6D0CD0009534FD /* terminology.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -62,8 +62,8 @@
 		4F25FAC10B6E79CE0050D532 /* base.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = base.m; sourceTree = "<group>"; };
 		4F4856660B6E8204005264DC /* test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = test.h; sourceTree = "<group>"; };
 		4F4856670B6E8204005264DC /* test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = test.m; sourceTree = "<group>"; };
-		4F7C7EAC0C5B68420033C219 /* SendThreadSafe.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = SendThreadSafe.c; sourceTree = "<group>"; };
-		4F7C7EAD0C5B68420033C219 /* SendThreadSafe.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SendThreadSafe.h; sourceTree = "<group>"; };
+		4F7C7EAC0C5B68420033C219 /* sendthreadsafe.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = sendthreadsafe.c; sourceTree = "<group>"; };
+		4F7C7EAD0C5B68420033C219 /* sendthreadsafe.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = sendthreadsafe.h; sourceTree = "<group>"; };
 		4F9BFD6A0CD4CD74003BDDE0 /* event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = event.h; sourceTree = "<group>"; };
 		4F9BFD6B0CD4CD74003BDDE0 /* event.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = event.m; sourceTree = "<group>"; };
 		4FAD77B50D2A8B4900FE780B /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
@@ -127,14 +127,12 @@
 		0867D691FE84028FC02AAC07 /* Appscript */ = {
 			isa = PBXGroup;
 			children = (
-				4FED70E10D2E7196003412D7 /* Cocoa.framework */,
 				08FB77AEFE84172EC02AAC07 /* Classes */,
 				32C88DFF0371C24200C91783 /* Other Sources */,
 				089C1665FE841158C02AAC07 /* Resources */,
 				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
-				034768DFFF38A50411DB9C8B /* Products */,
-				4FED70870D2E6B63003412D7 /* objc-appscript-test-Info.plist */,
 				4FED70970D2E6C41003412D7 /* Test */,
+				034768DFFF38A50411DB9C8B /* Products */,
 			);
 			name = Appscript;
 			sourceTree = "<group>";
@@ -172,8 +170,8 @@
 			isa = PBXGroup;
 			children = (
 				32DBCF5E0370ADEE00C91783 /* Appscript_Prefix.pch */,
-				4F7C7EAD0C5B68420033C219 /* SendThreadSafe.h */,
-				4F7C7EAC0C5B68420033C219 /* SendThreadSafe.c */,
+				4F7C7EAD0C5B68420033C219 /* sendthreadsafe.h */,
+				4F7C7EAC0C5B68420033C219 /* sendthreadsafe.c */,
 				4FAD77B50D2A8B4900FE780B /* utils.h */,
 				4FAD77B60D2A8B4900FE780B /* utils.m */,
 			);
@@ -261,6 +259,8 @@
 		4FED70970D2E6C41003412D7 /* Test */ = {
 			isa = PBXGroup;
 			children = (
+				4FED70870D2E6B63003412D7 /* objc-appscript-test-Info.plist */,
+				4FED70E10D2E7196003412D7 /* Cocoa.framework */,
 				4FED70AB0D2E6CA8003412D7 /* AEMReferenceTest.h */,
 				4FED70AC0D2E6CA8003412D7 /* AEMReferenceTest.m */,
 			);
@@ -285,7 +285,7 @@
 				4F7CA9050B727AE5007010CE /* reference.h in Headers */,
 				4F1E9DEF0B74EDCB00D4DCBF /* referencerenderer.h in Headers */,
 				4F1E9F420B75305800D4DCBF /* constant.h in Headers */,
-				4F7C7EAF0C5B68420033C219 /* SendThreadSafe.h in Headers */,
+				4F7C7EAF0C5B68420033C219 /* sendthreadsafe.h in Headers */,
 				4FB2B2D60D1F17B600644367 /* terminology.h in Headers */,
 				4FB2B2D70D1F17BA00644367 /* parser.h in Headers */,
 				4FAD77B70D2A8B4900FE780B /* utils.h in Headers */,
@@ -414,7 +414,7 @@
 				4F7CA9060B727AE5007010CE /* reference.m in Sources */,
 				4F1E9DF00B74EDCB00D4DCBF /* referencerenderer.m in Sources */,
 				4F1E9F430B75305800D4DCBF /* constant.m in Sources */,
-				4F7C7EAE0C5B68420033C219 /* SendThreadSafe.c in Sources */,
+				4F7C7EAE0C5B68420033C219 /* sendthreadsafe.c in Sources */,
 				4F9BFD6D0CD4CD74003BDDE0 /* event.m in Sources */,
 				4FB2B2D50D1F17B500644367 /* terminology.m in Sources */,
 				4FB2B2D80D1F17BA00644367 /* parser.m in Sources */,

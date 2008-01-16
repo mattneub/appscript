@@ -335,7 +335,7 @@ error:
 	if (!self) return self;
 	// hooks
 	createProc = (AEMCreateProcPtr)AECreateAppleEvent;
-	sendProc = (AEMSendProcPtr)SendMessageThreadSafe;
+	sendProc = (AEMSendProcPtr)AEMSendMessageThreadSafe;
 	eventClass = [AEMEvent class];
 	// description
 	targetType = targetType_;
