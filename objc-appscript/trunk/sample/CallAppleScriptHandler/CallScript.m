@@ -45,12 +45,15 @@ int main (int argc, const char * argv[]) {
 	NSAppleEventDescriptor *evtDesc = [evt appleEventDescriptor];
 
 	// Send event to AppleScript
-	NSDictionary *error;
+	NSDictionary *error = nil;
 	NSAppleEventDescriptor *resDesc = [scpt executeAppleEvent:evtDesc error:&error];
 
-	// Unpack script result
-	id res = [codecs unpack:resDesc];
-	NSLog(@"Result = %@", res); // "Result = Hello World!"
+	if (resDesc) {
+		// Unpack script result
+		id res = [codecs unpack:resDesc];
+		NSLog(@"Result = %@", res); // "Result = Hello World!"
+	} else
+		NSLog(@"Script error = %@", error);
 
 	[scpt release];
 	[codecs release];
