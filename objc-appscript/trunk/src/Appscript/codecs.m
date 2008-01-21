@@ -125,7 +125,7 @@
 		result = [self packUnknown: anObject];
 	if (!result)
 		[NSException raise: @"CodecsError"
-					format: @"An unexpected error occurred while packing an %@ object: %@",
+					format: @"An unexpected error occurred while packing the following %@ object: %@",
 							[anObject class], anObject];
 	return result;
 }
@@ -361,7 +361,7 @@
 	// TO DO: unit types
 	if (!result)
 		[NSException raise: @"CodecsError"
-					format: @"An unexpected error occurred while unpacking an NSAppleEventDescriptor: %@", desc];
+					format: @"An unexpected error occurred while unpacking the following NSAppleEventDescriptor: %@", desc];
 	return result;
 }
 
@@ -418,8 +418,8 @@
 		if (key == keyASUserRecordFields) {
 			length2 = [value count]; 
 			for (j = 0; j < length2; j += 2)
-				[result setObject: [value objectAtIndex: j]
-						   forKey: [value objectAtIndex: j + 1]];
+				[result setObject: [value objectAtIndex: j + 1]
+						   forKey: [value objectAtIndex: j]];
 		} else
 			[result setObject: value forKey: [self unpackAERecordKey: key]]; 
 		[valueDesc release];
