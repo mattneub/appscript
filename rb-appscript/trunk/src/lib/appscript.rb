@@ -187,15 +187,15 @@ module Appscript
 				# if hash contains a 'class' property containing a class name, coerce the AEDesc to that class
 				new_val = Hash[val]
 				if new_val.has_key?(:class_)
-					value = new_val.delete(:class_)
+					val2 = new_val.delete(:class_)
 				else
-					value = new_val.delete(ClassType)
+					val2 = new_val.delete(ClassType)
 				end
-				if value.is_a?(Symbol) # get the corresponding AEType (assuming there is one)
-					value = @type_by_name.fetch(value, value)
+				if val2.is_a?(Symbol) # get the corresponding AEType (assuming there is one)
+					val2 = @type_by_name.fetch(val2, val2)
 				end
-				if value.is_a?(AEM::AEType) # coerce the record to the desired type
-					record = record.coerce(value.code)
+				if val2.is_a?(AEM::AEType) # coerce the record to the desired type
+					record = record.coerce(val2.code)
 					val = new_val
 				end # else value wasn't a class name, so it'll be packed as a normal record property instead
 			end	
@@ -241,8 +241,8 @@ module Appscript
 				key, value = desc.get_item(i + 1, KAE::TypeWildCard)
 				if key == KAE::KeyASUserRecordFields
 					lst = unpack_aelist(value)
-					(lst.length / 2).times do |i|
-						dct[lst[i * 2]] = lst[i * 2 + 1]
+					(lst.length / 2).times do |j|
+						dct[lst[j * 2]] = lst[j * 2 + 1]
 					end
 				else
 					dct[@type_by_code.fetch(key) { AEM::AEType.new(key) }] = unpack(value)

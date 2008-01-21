@@ -151,7 +151,7 @@ module MacTypes
 		# Methods
 		
 		def desc
-			# Get as AEDesc. If constructed from Ruby, descriptor's type is always typeFileURL; if returned by aem, its type mat be typeFSS, typeFSRef or typeFileURL.
+			# Get as AEDesc. If constructed from Ruby, descriptor's type is always typeFileURL; if returned by aem, its type may be typeFSS, typeFSRef or typeFileURL.
 			if not @desc
 				@desc = AE::AEDesc.new(KAE::TypeFileURL, AE.convert_posix_path_to_url(@path))
 			end

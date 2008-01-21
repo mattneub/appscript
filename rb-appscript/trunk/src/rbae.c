@@ -11,8 +11,6 @@
 #include <CoreFoundation/CoreFoundation.h>
 #include "SendThreadSafe.h"
 
-VALUE rb_ll2big(LONG_LONG); // keeps gcc happy
-
 // AE module and classes
 static VALUE mAE;
 static VALUE cAEDesc;
@@ -79,8 +77,8 @@ rbAE_MacOSError_inspect(VALUE self)
 static DescType
 rbStringToDescType(VALUE obj)
 {
-	if (rb_obj_is_kind_of(obj, rb_cString) && RSTRING(obj)->len == 4) {
-		return CFSwapInt32HostToBig(*(DescType *)(RSTRING(obj)->ptr));
+	if (rb_obj_is_kind_of(obj, rb_cString) && RSTRING_LEN(obj) == 4) {
+		return CFSwapInt32HostToBig(*(DescType *)(RSTRING_PTR(obj)));
 	} else {
 		rb_raise(rb_eArgError, "Not a four-char-code string.");
 	}
@@ -146,7 +144,7 @@ rbAE_AEDesc_new(VALUE class, VALUE type, VALUE data)
 	
 	Check_Type(data, T_STRING);
 	err = AECreateDesc(rbStringToDescType(type),
-					   RSTRING(data)->ptr, RSTRING(data)->len,
+					   RSTRING_PTR(data), RSTRING_LEN(data),
 					   &desc);
 	if (err != noErr) rbAE_raiseMacOSError("Can't create AEDesc.", err);
 	return rbAE_wrapAEDesc(&desc);
@@ -190,7 +188,7 @@ rbAE_AEDesc_newUnflatten(VALUE class, VALUE data)
 	AEDesc desc;
 	
 	Check_Type(data, T_STRING);
-	err = AEUnflattenDesc(RSTRING(data)->ptr, &desc);
+	err = AEUnflattenDesc(RSTRING_PTR(data), &desc);
 	if (err != noErr) rbAE_raiseMacOSError("Can't create AEDesc.", err);
 	return rbAE_wrapAEDesc(&desc);
 }
@@ -438,8 +436,8 @@ rbAE_findApplication(VALUE self, VALUE creator, VALUE bundleID, VALUE name)
 	inCreator = (creator == Qnil) ? kLSUnknownCreator : rbStringToDescType(creator);
 	if (bundleID != Qnil) {
 		inBundleID = CFStringCreateWithBytes(NULL,
-											 (UInt8 *)(RSTRING(bundleID)->ptr),
-											 (CFIndex)(RSTRING(bundleID)->len),
+											 (UInt8 *)(RSTRING_PTR(bundleID)),
+											 (CFIndex)(RSTRING_LEN(bundleID)),
 											 kCFStringEncodingUTF8,
 											 false);
 		if (inBundleID == NULL) rb_raise(rb_eRuntimeError, "Invalid bundle ID string.");
@@ -448,8 +446,8 @@ rbAE_findApplication(VALUE self, VALUE creator, VALUE bundleID, VALUE name)
 	}
 	if (name != Qnil) {
 		inName = CFStringCreateWithBytes(NULL,
-										 (UInt8 *)(RSTRING(name)->ptr),
-										 (CFIndex)(RSTRING(name)->len),
+										 (UInt8 *)(RSTRING_PTR(name)),
+										 (CFIndex)(RSTRING_LEN(name)),
 										 kCFStringEncodingUTF8,
 										 false);
 		if (inName == NULL) {
@@ -557,8 +555,8 @@ rbAE_convertPOSIXPathToURL(VALUE self, VALUE path)
 	UInt8 buffer[PATH_MAX];
 
 	url = CFURLCreateFromFileSystemRepresentation(NULL,
-												  (UInt8 *)(RSTRING(path)->ptr),
-												  (CFIndex)(RSTRING(path)->len),
+												  (UInt8 *)(RSTRING_PTR(path)),
+												  (CFIndex)(RSTRING_LEN(path)),
 												  false);
 	if (url == NULL) rb_raise(rb_eRuntimeError, "Invalid POSIX path string.");
 	buffer[CFURLGetBytes(url, buffer, PATH_MAX - 1)] = '\0';
@@ -574,8 +572,8 @@ rbAE_convertHFSPathToURL(VALUE self, VALUE path)
 	UInt8 buffer[PATH_MAX];
 	
 	str = CFStringCreateWithBytes(NULL,
-								  (UInt8 *)(RSTRING(path)->ptr),
-								  (CFIndex)(RSTRING(path)->len),
+								  (UInt8 *)(RSTRING_PTR(path)),
+								  (CFIndex)(RSTRING_LEN(path)),
 								  kCFStringEncodingUTF8,
 								  false);
 	if (str == NULL) rb_raise(rb_eRuntimeError, "Invalid HFS path string.");
@@ -598,8 +596,8 @@ rbAE_convertURLToPOSIXPath(VALUE self, VALUE urlStr)
 	UInt8 buffer[PATH_MAX];
 
 	url = CFURLCreateWithBytes(NULL,
-							   (UInt8 *)(RSTRING(urlStr)->ptr),
-							   (CFIndex)(RSTRING(urlStr)->len),
+							   (UInt8 *)(RSTRING_PTR(urlStr)),
+							   (CFIndex)(RSTRING_LEN(urlStr)),
 							   kCFStringEncodingUTF8,
 							   NULL);
 	if (url == NULL) rb_raise(rb_eRuntimeError, "Invalid URL string.");
@@ -621,8 +619,8 @@ rbAE_convertURLToHFSPath(VALUE self, VALUE urlStr)
 	char buffer[PATH_MAX];
 
 	url = CFURLCreateWithBytes(NULL,
-							   (UInt8 *)(RSTRING(urlStr)->ptr),
-							   (CFIndex)(RSTRING(urlStr)->len),
+							   (UInt8 *)(RSTRING_PTR(urlStr)),
+							   (CFIndex)(RSTRING_LEN(urlStr)),
 							   kCFStringEncodingUTF8,
 							   NULL);
 	if (url == NULL) rb_raise(rb_eRuntimeError, "Invalid URL string.");
@@ -662,7 +660,7 @@ rbAE_convertUnixSecondsToLongDateTime(VALUE self, VALUE secs)
 
 	err = UCConvertCFAbsoluteTimeToLongDateTime(NUM2DBL(secs) - kCFAbsoluteTimeIntervalSince1970, &ldt);
 	if (err != noErr) rbAE_raiseMacOSError("Can't convert seconds to LongDateTime.", err);
-	return rb_ll2big(ldt);
+	return LL2NUM(ldt);
 }
 
 

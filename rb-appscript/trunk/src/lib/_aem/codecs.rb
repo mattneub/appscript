@@ -80,7 +80,7 @@ class UnitTypeCodecs
 	
 	def pack(val)
 		if val.is_a?(MacTypes::Units)
-			code, packer = @type_by_name.fetch(val.type) { |val| raise IndexError, "Unknown unit type: #{val.inspect}" }
+			code, packer = @type_by_name.fetch(val.type) { |v| raise IndexError, "Unknown unit type: #{v.inspect}" }
 			return [true, packer.call(val, code)]
 		else
 			return [false, val]
@@ -88,7 +88,7 @@ class UnitTypeCodecs
 	end
 	
 	def unpack(desc)
-		name, unpacker = @type_by_code.fetch(desc.type) { |desc| return [false, desc] }
+		name, unpacker = @type_by_code.fetch(desc.type) { |d| return [false, d] }
 		return [true, unpacker.call(desc, name)]
 	end
 end
@@ -394,8 +394,8 @@ class Codecs
 			key, value = desc.get_item(i + 1, KAE::TypeWildCard)
 			if key == KAE::KeyASUserRecordFields
 				lst = unpack_aelist(value)
-				(lst.length / 2).times do |i|
-					dct[lst[i * 2]] = lst[i * 2 + 1]
+				(lst.length / 2).times do |j|
+					dct[lst[j * 2]] = lst[j * 2 + 1]
 				end
 			else
 				dct[TypeWrappers::AEType.new(key)] = unpack(value)

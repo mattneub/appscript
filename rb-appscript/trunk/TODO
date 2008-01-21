@@ -11,3 +11,5 @@ TO DO
 - #== and #hash methods in MacTypes::Alias, MacTypes::FileURL lack robustness; see notes in mactypes manual for details. Could these be improved? (Note: some mactypes unit tests may fail in some situations due to 'dumb' nature of these methods.)
 
 - remove AEMReference::PositionSpecifier #and, #or, #not methods and documentation
+
+- simplify path-url conversion code (c.f. py-appscript-0.19.0)
