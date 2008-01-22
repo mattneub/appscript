@@ -11,3 +11,15 @@ TODO
 - allow users to convert to objc-appscript (while the quickest way would be to use objc-appscript directly, this may be best implemented as a Python-based code generator given the limitations of objc-appscript's/Cocoa's -description method)
 
 - add custom #inspect method to Ruby datetime objects to give true code representation
+
+- Following AppleScript:
+
+	tell application "Finder" to count Finder windows
+
+translates to:
+
+	app(u'/System/Library/CoreServices/Finder.app').count(each=k.Finder_window)
+
+However, Finder requires:
+
+	app(u'/System/Library/CoreServices/Finder.app').count(None, each=k.Finder_window)
