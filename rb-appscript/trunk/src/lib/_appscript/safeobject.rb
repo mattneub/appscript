@@ -143,7 +143,7 @@ class AS_SafeObject
 	]
 
 	def self.hide(name)
-		case name
+		case name.to_s # Ruby1.9 returns method names as symbols, not strings as in 1.8
 			when *EXCLUDE
 		else
 			undef_method(name) rescue nil

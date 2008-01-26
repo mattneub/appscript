@@ -51,9 +51,21 @@ module TerminologyParser
 			return @_str[@_ptr - 4, 4] # big-endian
 		end
 		
+		# Ruby 1.9 has changed the way that a character ordinal is obtained
+		maj, min, rev = RUBY_VERSION.split('.')
+		if (maj == '1' and min.to_i < 9) # is Ruby 1.8
+			def _length
+				return @_str[@_ptr]
+			end
+		else
+			def _length
+				return @_str[@_ptr].ord
+			end
+		end
+		
 		def _name
 			# Read a MacRoman-encoded Pascal keyword string.
-			count = @_str[@_ptr]
+			count = _length
 			@_ptr += 1 + count
 			s = @_str[@_ptr - count, count]
 			if not @@_name_cache.has_key?(s)
@@ -89,17 +101,17 @@ module TerminologyParser
 		
 		def parse_command
 			name = _name
-			@_ptr += 1 + @_str[@_ptr] # description string
+			@_ptr += 1 + _length # description string
 			@_ptr += @_ptr & 1 # align
 			code = _word + _word # event class + event id
 			# skip result
 			@_ptr += 4 # datatype word
-			@_ptr += 1 + @_str[@_ptr] # description string
+			@_ptr += 1 + _length # description string
 			@_ptr += @_ptr & 1 # align
 			@_ptr += 2 # flags integer
 			# skip direct parameter
 			@_ptr += 4 # datatype word
-			@_ptr += 1 + @_str[@_ptr] # description string
+			@_ptr += 1 + _length # description string
 			@_ptr += @_ptr & 1 # align
 			@_ptr += 2 # flags integer
 			#
@@ -117,7 +129,7 @@ module TerminologyParser
 				@_ptr += @_ptr & 1 # align
 				parameter_code = _word
 				@_ptr += 4 # datatype word
-				@_ptr += 1 + @_str[@_ptr] # description string
+				@_ptr += 1 + _length # description string
 				@_ptr += @_ptr & 1 # align
 				@_ptr += 2 # flags integer
 				current_command_args.push([parameter_name, parameter_code])
@@ -128,7 +140,7 @@ module TerminologyParser
 			name = _name
 			@_ptr += @_ptr & 1 # align
 			code = _word
-			@_ptr += 1 + @_str[@_ptr] # description string
+			@_ptr += 1 + _length # description string
 			@_ptr += @_ptr & 1 # align
 			is_plural = false
 			_integer.times do # properties
@@ -136,7 +148,7 @@ module TerminologyParser
 				@_ptr += @_ptr & 1 # align
 				propcode = _word
 				@_ptr += 4 # datatype word
-				@_ptr += 1 + @_str[@_ptr] # description string
+				@_ptr += 1 + _length # description string
 				@_ptr += @_ptr & 1 # align
 				flags = _integer
 				if propcode != 'c@#^' # not a superclass definition (see kAEInheritedProperties)
@@ -170,10 +182,10 @@ module TerminologyParser
 		end
 		
 		def parse_comparison # comparison info isn't used
-			@_ptr += 1 + @_str[@_ptr] # name string
+			@_ptr += 1 + _length # name string
 			@_ptr += @_ptr & 1 # align
 			@_ptr += 4 # code word
-			@_ptr += 1 + @_str[@_ptr] # description string
+			@_ptr += 1 + _length # description string
 			@_ptr += @_ptr & 1 # align
 		end
 		
@@ -183,7 +195,7 @@ module TerminologyParser
 				name = _name
 				@_ptr += @_ptr & 1 # align
 				code = _word
-				@_ptr += 1 + @_str[@_ptr] # description string
+				@_ptr += 1 + _length # description string
 				@_ptr += @_ptr & 1 # align
 				if not @_found_enumerators.has_key?(name + code)
 					@enumerators.push([name, code])
@@ -193,8 +205,8 @@ module TerminologyParser
 		end
 		
 		def parse_suite
-			@_ptr += 1 + @_str[@_ptr] # name string
-			@_ptr += 1 + @_str[@_ptr] # description string
+			@_ptr += 1 + _length # name string
+			@_ptr += 1 + _length # description string
 			@_ptr += @_ptr & 1 # align
 			@_ptr += 4 # code word
 			@_ptr += 4 # level, version integers
