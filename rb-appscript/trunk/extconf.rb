@@ -35,9 +35,18 @@ $LDFLAGS << ' -framework Carbon -framework ApplicationServices'
 
 # Avoid `ID' and `T_DATA' symbol collisions between Ruby and Carbon.
 # (adapted code from RubyAEOSA - FUJIMOTO Hisakuni  <hisa -at- fobj - com>)
-ruby_h = "#{Config::CONFIG['archdir']}/ruby.h"
-intern_h = "#{Config::CONFIG['archdir']}/intern.h"
+
+maj, min, rev = RUBY_VERSION.split('.')
+is_ruby_18 = (maj == '1' and min.to_i < 9)
+if is_ruby_18
+	header_path = Config::CONFIG['archdir']
+else
+	header_path = File.join(Config::CONFIG['rubyhdrdir'], 'ruby')
+end
+ruby_h = File.join(header_path, 'ruby.h')
+intern_h = File.join(header_path, 'intern.h')
 new_filename_prefix = 'osx_'
+
 [ ruby_h, intern_h ].each do |src_path|
     dst_fname = File.join('./src', new_filename_prefix + File.basename(src_path))
     $stderr.puts "create #{File.expand_path(dst_fname)} ..."
@@ -45,7 +54,8 @@ new_filename_prefix = 'osx_'
         IO.foreach(src_path) do |line|
             line = line.gsub(/\bID\b/, 'RB_ID')
             line = line.gsub(/\bT_DATA\b/, 'RB_T_DATA')
-            line = line.gsub(/\bintern.h\b/, "#{new_filename_prefix}intern.h")
+            line = line.gsub(/\b(?:ruby\/)?intern.h\b/, "#{new_filename_prefix}intern.h")
+            line = line.gsub('#include "defines.h"', '#include "ruby/defines.h"') if not is_ruby_18
             dstfile.puts line
         end
     end
