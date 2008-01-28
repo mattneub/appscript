@@ -212,7 +212,9 @@
 	double float64;
 	NSString *string;
 	NSURL *url;
-	NSArray *array;
+	short qdPoint[2];
+	short qdRect[4];
+	unsigned short rgbColor[3];
 	id result = nil;
 	
 	switch ([desc descriptorType]) {
@@ -326,19 +328,22 @@
 			result = [NSNumber numberWithDouble: float64];
 			break;
 		case typeQDPoint:
-			array = [self unpackAEList: [desc coerceToDescriptorType: typeAEList]];
-			result = [NSArray arrayWithObjects: [array objectAtIndex: 1],
-											  [array objectAtIndex: 0]];
+			[[desc data] getBytes: &qdPoint length: sizeof(qdPoint)];
+			result = [NSArray arrayWithObjects: [NSNumber numberWithShort: qdPoint[1]],
+												[NSNumber numberWithShort: qdPoint[0]], nil];
 			break;
 		case typeQDRectangle:
-			array = [self unpackAEList: [desc coerceToDescriptorType: typeAEList]];
-			result = [NSArray arrayWithObjects: [array objectAtIndex: 1],
-												[array objectAtIndex: 0],
-												[array objectAtIndex: 3],
-												[array objectAtIndex: 2]];
+			[[desc data] getBytes: &qdRect length: sizeof(qdRect)];
+			result = [NSArray arrayWithObjects: [NSNumber numberWithShort: qdRect[1]],
+												[NSNumber numberWithShort: qdRect[0]],
+												[NSNumber numberWithShort: qdRect[3]],
+												[NSNumber numberWithShort: qdRect[2]], nil];
 			break;
 		case typeRGBColor:
-			result = [self unpackAEList: [desc coerceToDescriptorType: typeAEList]];
+			[[desc data] getBytes: &rgbColor length: sizeof(rgbColor)];
+			result = [NSArray arrayWithObjects: [NSNumber numberWithUnsignedShort: rgbColor[0]],
+												[NSNumber numberWithUnsignedShort: rgbColor[1]],
+												[NSNumber numberWithUnsignedShort: rgbColor[2]], nil];
 			break;
 		case typeVersion:
 			result = [[desc coerceToDescriptorType: typeUnicodeText] stringValue];
