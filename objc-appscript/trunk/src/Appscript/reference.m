@@ -35,7 +35,7 @@
 	[super dealloc];
 }
 
-- (BOOL)connectWithError:(out NSError **)error {
+- (BOOL)connectWithError:(NSError **)error {
 	if (target) {
 		[target release];
 		target = nil;
@@ -62,7 +62,7 @@
 	return target != nil;
 }
 
-- (id)targetWithError:(out NSError **)error { // returns AEMApplication instance or equivalent
+- (id)targetWithError:(NSError **)error { // returns AEMApplication instance or equivalent
 	if (!target && ![self connectWithError: error]) return nil;
 	return target;
 }
@@ -98,7 +98,7 @@
 	return result;
 }
 
-- (BOOL)launchApplicationWithError:(out NSError **)error {
+- (BOOL)launchApplicationWithError:(NSError **)error {
 	NSURL *fileURL = nil;
 	AEMApplication *app;
 	NSError *err;
@@ -313,7 +313,7 @@
 	return self;
 }
 
-- (id)sendWithError:(out NSError **)error {
+- (id)sendWithError:(NSError **)error {
 	return [AS_event sendWithMode: sendMode timeout: timeout error: error];
 }
 
@@ -388,25 +388,25 @@
 	return [self launchApplicationWithError: nil];
 }
 
-- (BOOL)launchApplicationWithError:(out NSError **)error {
+- (BOOL)launchApplicationWithError:(NSError **)error {
 	return [AS_appData launchApplicationWithError: error];
 }
 
 // transaction support
 
-- (BOOL)beginTransactionWithError:(out NSError **)error {
+- (BOOL)beginTransactionWithError:(NSError **)error {
 	 return [[AS_appData target] beginTransactionWithError: error];
 }
 
-- (BOOL)beginTransactionWithSession:(id)session error:(out NSError **)error {
+- (BOOL)beginTransactionWithSession:(id)session error:(NSError **)error {
 	 return [[AS_appData target] beginTransactionWithSession: session error: error];
 }
 
-- (BOOL)endTransactionWithError:(out NSError **)error {
+- (BOOL)endTransactionWithError:(NSError **)error {
 	 return [[AS_appData target] endTransactionWithError: error];
 }
 
-- (BOOL)abortTransactionWithError:(out NSError **)error {
+- (BOOL)abortTransactionWithError:(NSError **)error {
 	 return [[AS_appData target] abortTransactionWithError: error];
 }
 

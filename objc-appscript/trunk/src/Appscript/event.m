@@ -197,7 +197,7 @@ static ASEventAttributeDescription attributeKeys[] = {
  * retrieve the error description.
  */
 
-- (id)sendWithMode:(AESendMode)sendMode timeout:(long)timeoutInTicks error:(out NSError **)error {
+- (id)sendWithMode:(AESendMode)sendMode timeout:(long)timeoutInTicks error:(NSError **)error {
 	OSErr err, errorNumber;
 	NSString *errorString, *errorDescription;
 	NSDictionary *errorInfo;
@@ -349,7 +349,7 @@ static ASEventAttributeDescription attributeKeys[] = {
 	return [codecs unpack: result];
 }
 
-- (id)sendWithError:(out NSError **)error {
+- (id)sendWithError:(NSError **)error {
 	return [self sendWithMode: kAEWaitReply timeout: kAEDefaultTimeout error: error];
 }
 

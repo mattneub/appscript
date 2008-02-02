@@ -321,6 +321,7 @@
 				8DC2EF520486A6940098B216 /* Resources */,
 				8DC2EF540486A6940098B216 /* Sources */,
 				8DC2EF560486A6940098B216 /* Frameworks */,
+				4F4F3E3D0D53B53B004F82C7 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -370,6 +371,19 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		4F4F3E3D0D53B53B004F82C7 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\nmkdir -p $BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/BridgeSupport\n\ngen_bridge_metadata -f $BUILT_PRODUCTS_DIR/$PRODUCT_NAME.framework -o $BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/BridgeSupport/$PRODUCT_NAME.bridgesupport\n\n";
+		};
 		4FED70840D2E6B63003412D7 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;

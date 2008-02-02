@@ -9,13 +9,6 @@
 #import "parser.h"
 
 
-
-typedef enum {
-	kASPropertyDef = 0,
-	kASElementDef  = 1
-} ASPreferredDefinitionType; // used in -referenceForCode:preferably:
-
-
 /**********************************************************************/
 
 
@@ -23,52 +16,33 @@ typedef enum {
 
 - (NSString *)convert:(NSString *)name;
 
+- (NSString *)escape:(NSString *)name;
+
 @end
 
 
 /**********************************************************************/
 
 
-@interface ASDefinition : NSObject {
+@interface ASCommandDef : NSObject {
 	NSString *name;
-	OSType code;
-}
-
-- (id)initWithName:(NSString *)name_ code:(OSType)code_;
-
-- (NSString *)name;
-
-- (OSType)code;
-
-@end
-
-
-@interface ASPropertyDef : ASDefinition
-@end
-
-
-@interface ASElementDef : ASDefinition
-@end
-
-
-@interface ASParameterDef : ASDefinition
-@end
-
-
-@interface ASCommandDef : ASDefinition {
-	OSType classCode;
+	OSType classCode, code;
 	NSMutableDictionary *parameters;
 }
 
-- (id)initWithName:(NSString *)name_ classCode:(OSType)classCode_ idCode:(OSType)code_;
+- (id)initWithName:(NSString *)name_ eventClass:(OSType)classCode_ eventID:(OSType)code_; // TO DO: fix names
 
-- (void)addParameterName:(NSString *)name_ code:(OSType)code_; // for internal use only
+- (void)addParameterWithName:(NSString *)name_ code:(OSType)code_; // for internal use only
 
-- (OSType)classCode;
+- (NSString *)name;
 
-- (OSType)idCode; // synonymous to -code
+- (OSType)eventClass;
 
-- (ASParameterDef *)parameterForName:(NSString *)name_;
+- (OSType)eventID;
+
+- (OSType)parameterForName:(NSString *)name_;
+
+- (NSString *)parameterForCode:(OSType)code_;
 
 @end
 
@@ -77,17 +51,16 @@ typedef enum {
 
 
 @interface ASTerminology : NSObject {
-	NSMutableDictionary *typeByName;
-	NSMutableDictionary *typeByCode;
-	
-	NSMutableDictionary *propertyByName;
-	NSMutableDictionary *propertyByCode;
-	NSMutableDictionary *elementByName;
-	NSMutableDictionary *elementByCode;
-	
-	NSMutableDictionary *commandByName;
-	
+	NSMutableDictionary *typeByName,
+						*typeByCode,
+						*propertyByName,
+						*propertyByCode,
+						*elementByName, 
+						*elementByCode,
+						*commandByName;
 	id converter;
+	NSMutableDictionary *keywordCache;
+	ASTerminology *defaultTerms;
 }
 
 // PUBLIC
@@ -95,47 +68,43 @@ typedef enum {
 /*
  * converter : AS keyword string to C identifer string converter; should implement:
  *		-(NSString *)convert:(NSString *)name
+ *		-(NSString *)escape:(NSString *)name
+ *
+ * defaultTerms may be nil
  */
-- (id)initWithKeywordConverter:(id)converter_;
+- (id)initWithKeywordConverter:(id)converter_
+			defaultTerminology:(ASTerminology *)defaultTerms_;
 
 /*
- * data : ASParser or equivalent;
- *		should implement the following accessors:
- *				-classes, -enumerators, -properties, -elements, -commands
+ * add data from ASParser or equivalent
  */
-- (void)addParserData:(id)data;
+- (void)addClasses:(NSArray *)classes
+	   enumerators:(NSArray *)enumerators
+		properties:(NSArray *)properties
+		  elements:(NSArray *)elements
+		  commands:(NSArray *)commands;
 
-// PRIVATE; used by -addParserData:
+// PRIVATE; used by addClasses:...commands: method
 
 - (void)addTypeTableDefinitions:(NSArray *)definitions ofType:(OSType)descType;
 
 - (void)addReferenceTableDefinitions:(NSArray *)definitions
 						 toNameTable:(NSMutableDictionary *)nameTable
-						andCodeTable:(NSMutableDictionary *)codeTable;
+						   codeTable:(NSMutableDictionary *)codeTable;
 
-// PUBLIC 
+- (void)addCommandTableDefinitions:(NSArray *)commands;
 
-// Used to pack/unpack typeType, typeEnumerated, typeProperty:
+// PUBLIC
+// Get conversion tables
 
-- (NSAppleEventDescriptor *)typeForName:(NSString *)name;
-
-- (NSString *)typeForCode:(OSType)descData;
-
-// Used to build AEM references:
-
-- (ASDefinition *)referenceForName:(NSString *)name;
-
-// Used by -description to render AEM references:
-
-- (ASDefinition *)referenceForCode:(OSType)code preferably:(ASPreferredDefinitionType)preferredType;
-
-// Obtain copies of conversion tables directly, if needed:
-
-- (NSDictionary *)propertyByNameTable;
-- (NSDictionary *)propertyByCodeTable;
-- (NSDictionary *)elementByNameTable;
-- (NSDictionary *)elementByCodeTable;
-- (NSDictionary *)commandByNameTable;
+- (NSMutableDictionary *)typeByNameTable;
+- (NSMutableDictionary *)typeByCodeTable;
+- (NSMutableDictionary *)propertyByNameTable;
+- (NSMutableDictionary *)propertyByCodeTable;
+- (NSMutableDictionary *)elementByNameTable;
+- (NSMutableDictionary *)elementByCodeTable;
+- (NSMutableDictionary *)commandByNameTable;
+- (NSMutableDictionary *)commandByCodeTable;
 
 @end
 

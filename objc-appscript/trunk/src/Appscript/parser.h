@@ -7,6 +7,7 @@
 
 #import <Foundation/Foundation.h>
 #import <Carbon/Carbon.h>
+#import "utils.h"
 
 
 /**********************************************************************/
@@ -30,27 +31,27 @@
 
 @interface ASParserCommandDef : ASParserDef {
 	OSType classCode;
-	NSMutableArray *parameters;
+	NSMutableSet *parameters;
 }
 
 - (id)initWithName:(NSString*)name eventClass:(OSType)classCode_ eventID:(OSType)code_;
 - (OSType)eventClass;
 - (OSType)eventID;
 - (void)addParameter:(ASParserDef *)def;
-- (NSArray *)parameters;
+- (NSSet *)parameters;
 @end
 
 
 /**********************************************************************/
 
 
-@interface ASAeteParser : NSObject {
+@interface ASAETEParser : NSObject {
 	char *aeteData; // TO DO: use NSData instead?
 	unsigned long aeteSize;
 	unsigned long cursor;
 	/* terminology tables; order is significant where synonym definitions occur */
 	NSMutableDictionary *commands;
-	NSMutableArray *properties, *elements, *classes, *enumerators;
+	NSMutableSet *properties, *elements, *classes, *enumerators;
 	/* use sets to record previously found definitions, and avoid adding duplicates to lists
 	** (i.e. 'name+code not in <set>' is quicker than using 'name+code not in <list>')
 	*/
@@ -72,7 +73,7 @@
 - (void)parseEnumeration;
 - (void)parseSuite;
 
-- (ASAeteParser *)parse:(NSAppleEventDescriptor *)aetes;
+- (ASAETEParser *)parse:(id)aetes;
 
 - (NSArray *)classes;
 - (NSArray *)enumerators;

@@ -36,17 +36,17 @@ typedef enum {
 					targetData:(id)data;
 
 // creates AEMApplication instance for target application; used internally
-- (BOOL)connectWithError:(out NSError **)error;
+- (BOOL)connectWithError:(NSError **)error;
 
 // returns AEMApplication instance for target application
-- (id)targetWithError:(out NSError **)error;
+- (id)targetWithError:(NSError **)error;
 
 // is target application running?
 - (BOOL)isRunning;
 
 // launch the target application without sending it the usual 'run' event;
 // equivalent to 'launch' command in AppleScript.
-- (BOOL)launchApplicationWithError:(out NSError **)error;
+- (BOOL)launchApplicationWithError:(NSError **)error;
 
 // AEMCodecs hook allowing extra typechecking to be performed here
 - (id)unpackContainsCompDescriptorWithOperand1:(id)op1 operand2:(id)op2;
@@ -221,7 +221,7 @@ enumConsidsAndIgnores = 'csig'
  *
  *    A single event can be sent more than once if desired.
  */
-- (id)sendWithError:(out NSError **)error;
+- (id)sendWithError:(NSError **)error;
 
 /*
  * Send the event with minimal error reporting.
@@ -265,19 +265,19 @@ enumConsidsAndIgnores = 'csig'
 
 // launch the target application without sending it the usual 'run' event;
 // equivalent to 'launch' command in AppleScript.
-- (BOOL)launchApplicationWithError:(out NSError **)error; // may be nil
+- (BOOL)launchApplicationWithError:(NSError **)error; // may be nil
 
 - (BOOL)launchApplication; // convenience shortcut for the above
 
 // transaction support
 
-- (BOOL)beginTransactionWithError:(out NSError **)error;
+- (BOOL)beginTransactionWithError:(NSError **)error;
 
-- (BOOL)beginTransactionWithSession:(id)session error:(out NSError **)error;
+- (BOOL)beginTransactionWithSession:(id)session error:(NSError **)error;
 
-- (BOOL)endTransactionWithError:(out NSError **)error;
+- (BOOL)endTransactionWithError:(NSError **)error;
 
-- (BOOL)abortTransactionWithError:(out NSError **)error;
+- (BOOL)abortTransactionWithError:(NSError **)error;
 
 @end
 

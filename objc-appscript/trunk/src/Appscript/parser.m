@@ -75,14 +75,7 @@
 }
 
 - (NSString *)description {
-	NSString *code_, *s;
-	
-	code_ = [[NSString alloc] initWithBytes: &code
-									 length: sizeof(code)
-								   encoding: NSMacOSRomanStringEncoding];
-	s = [NSString stringWithFormat: @"<DEF '%@' '%@'>", [self name], code_];
-	[code_ release];
-	return s;
+	return [NSString stringWithFormat: @"<ASParserDef '%@' '%@'>", [self name], AEMDescTypeToDisplayString(code)];
 }
 
 @end
@@ -101,7 +94,7 @@
 	self = [super initWithName: name_ code: code_];
 	if (!self) return self;
 	classCode = classCode_;
-	parameters = [[NSMutableArray alloc] init];
+	parameters = [[NSMutableSet alloc] init];
 	hash = (unsigned)classCode + (unsigned)code;
 	return self;
 }
@@ -123,8 +116,8 @@
 	[parameters addObject: paramDef];
 }
 
-- (NSArray *)parameters {
-	return (NSArray *)parameters;
+- (NSSet *)parameters {
+	return (NSSet *)parameters;
 }
 
 - (unsigned)hash {
@@ -138,19 +131,9 @@
 }
 
 - (NSString *)description {
-	NSString *classCode_, *idCode, *s;
-	
-	classCode_ = [[NSString alloc] initWithBytes: &classCode
-										  length: sizeof(classCode)
-										encoding: NSMacOSRomanStringEncoding];
-	idCode = [[NSString alloc] initWithBytes: &code
-									  length: sizeof(code)
-									encoding: NSMacOSRomanStringEncoding];
-	s = [NSString stringWithFormat: @"<EVENT '%@' '%@%@' %@>", 
-			[self name], classCode_, idCode, [self parameters]];
-	[classCode_ release];
-	[idCode release];
-	return s;
+	return [NSString stringWithFormat: @"<ASParserCommandDef '%@' '%@%@' %@>", 
+			[self name], AEMDescTypeToDisplayString(classCode), 
+			AEMDescTypeToDisplayString(code), [self parameters]];
 }
 
 @end
@@ -159,16 +142,16 @@
 /**********************************************************************/
 
 
-@implementation ASAeteParser
+@implementation ASAETEParser
 
 - (id)init {
 	self = [super init];
 	if (!self) return self;
 	commands    = [[NSMutableDictionary alloc] init];
-	properties  = [[NSMutableArray alloc] init];
-	elements    = [[NSMutableArray alloc] init];
-	classes     = [[NSMutableArray alloc] init];
-	enumerators = [[NSMutableArray alloc] init];
+	properties  = [[NSMutableSet alloc] init];
+	elements    = [[NSMutableSet alloc] init];
+	classes     = [[NSMutableSet alloc] init];
+	enumerators = [[NSMutableSet alloc] init];
 	// following are used in -parse: to supply 'missing' singular/plural class names
 	classAndElementDefsByCode = [[NSMutableDictionary alloc] init];
 	foundClassCodes           = [[NSMutableSet alloc] init];
@@ -436,27 +419,35 @@
 	}
 }
 
-- (ASAeteParser *)parse:(NSAppleEventDescriptor *)aetes {
-	NSAppleEventDescriptor *aete;
-	NSEnumerator *enumerator;
+- (void)parseAETEDescriptor:(NSAppleEventDescriptor *)aete {
 	NSData *data;
-	NSString *code;
-	int i, j, n;
-	
-	if ([aetes descriptorType] != typeAEList)
-		aetes = [aetes coerceToDescriptorType: typeAEList];
-	for (i = 1; i <= [aetes numberOfItems]; i++) {
-		aete = [aetes descriptorAtIndex: i];
-		if ([aete descriptorType] == typeAETE || [aete descriptorType] == typeAEUT) {
-			data = [aete data];
-			aeteData = (char *)[data bytes];
-			aeteSize = [data length];
-			cursor = 6; // skip version, language, script integers
-			n = [self integer];
-			for (j = 0; j < n; j++)
-				[self parseSuite];
-		}
+	int j, n;
+	if ([aete descriptorType] == typeAETE || [aete descriptorType] == typeAEUT) {
+		data = [aete data];
+		aeteData = (char *)[data bytes];
+		aeteSize = [data length];
+		cursor = 6; // skip version, language, script integers
+		n = [self integer];
+		for (j = 0; j < n; j++)
+			[self parseSuite];
 	}
+}
+
+- (ASAETEParser *)parse:(id)aetes {
+	NSEnumerator *enumerator;
+	NSString *code;
+	int i;
+	
+	if ([aetes isKindOfClass: [NSAppleEventDescriptor class]]) {
+		if ([aetes descriptorType] != typeAEList)
+			aetes = [aetes coerceToDescriptorType: typeAEList];
+		for (i = 1; i <= [aetes numberOfItems]; i++)
+			[self parseAETEDescriptor: [aetes descriptorAtIndex: i]];
+	} else if ([aetes isKindOfClass: [NSArray class]]) {
+		for (i = 0; i < [aetes count]; i++)
+			[self parseAETEDescriptor: [aetes objectAtIndex: i]];
+	} else
+		return nil; // TO DO: exception?
 	/* singular names are normally used in the classes table and plural names in the elements table. However, if an aete defines a singular name but not a plural name then the missing plural name is substituted with the singular name; and vice-versa if there's no singular equivalent for a plural name.
 	*/
 	enumerator = [foundClassCodes objectEnumerator];
@@ -481,18 +472,18 @@
 }
 
 - (NSArray *)classes {
-	return classes;
+	return [classes allObjects];
 }
 
 - (NSArray *)enumerators {
-	return enumerators;
+	return [enumerators allObjects];
 }
 - (NSArray *)properties {
-	return properties;
+	return [properties allObjects];
 }
 
 - (NSArray *)elements {
-	return elements;
+	return [elements allObjects];
 }
 - (NSArray *)commands {
 	return [commands allValues];

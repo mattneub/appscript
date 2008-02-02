@@ -145,11 +145,11 @@ typedef enum {
  *
  */
 
-- (id)sendWithMode:(AESendMode)sendMode timeout:(long)timeoutInTicks error:(out NSError **)error;
+- (id)sendWithMode:(AESendMode)sendMode timeout:(long)timeoutInTicks error:(NSError **)error;
 
 // shortcuts for -sendWithMode:timeout:error:
 
-- (id)sendWithError:(out NSError **)error;
+- (id)sendWithError:(NSError **)error;
 
 - (id)send;
 

@@ -8,6 +8,9 @@
 #import "terminology.h"
 
 
+// TO DO: cache converted names here
+
+
 /**********************************************************************/
 
 
@@ -17,84 +20,65 @@
 	return name;
 }
 
+- (NSString *)escape:(NSString *)name {
+	return name;
+
+}
+
 @end
 
 
 /**********************************************************************/
 
 
-@implementation ASDefinition
+@implementation ASCommandDef
 
-- (id)initWithName:(NSString *)name_ code:(OSType)code_ {
+- (id)initWithName:(NSString *)name_ eventClass:(OSType)classCode_ eventID:(OSType)code_ {
 	self = [super init];
 	if (!self) return self;
-	[name_ retain];
-	name = name_;
+	name = [name_ retain];
+	classCode = classCode_;
 	code = code_;
+	parameters = [[NSMutableDictionary alloc] init];
 	return self;
 }
 
-- (void) dealloc {
+- (void)dealloc {
 	[name release];
+	[parameters release];
 	[super dealloc];
+}
+
+- (NSString *)description {
+	return [NSString stringWithFormat: @"<ASCommandDef '%@' '%@%@' %@>", 
+			[self name], AEMDescTypeToDisplayString(classCode), 
+			AEMDescTypeToDisplayString(code), parameters];
+}
+
+- (void)addParameterWithName:(NSString *)name_ code:(OSType)code_ {
+	NSNumber *codeObj = [[NSNumber alloc] initWithUnsignedInt: code_];
+	[parameters setObject: codeObj forKey: name_];
+	[codeObj release];
 }
 
 - (NSString *)name {
 	return name;
 }
 
-- (OSType)code {
-	return code;
-}
-
-@end
-
-
-@implementation ASPropertyDef
-@end
-
-
-@implementation ASElementDef
-@end
-
-
-@implementation ASParameterDef
-@end
-
-
-@implementation ASCommandDef
-
-- (id)initWithName:(NSString *)name_ classCode:(OSType)classCode_ idCode:(OSType)code_ {
-	self = [super initWithName:(NSString *)name_ code:(OSType)code_];
-	if (!self) return self;
-	classCode = classCode_;
-	parameters = [[NSMutableDictionary alloc] init];
-	return self;
-}
-
-- (void)dealloc {
-	[parameters release];
-	[super dealloc];
-}
-
-- (void)addParameterName:(NSString *)name_ code:(OSType)code_ {
-	ASParameterDef *parameter;
-	
-	parameter = [[ASParameterDef alloc] initWithName: name_ code: code_];
-	[parameters setObject: parameter forKey: name_];
-	[parameter release];
-}
-
-- (OSType)classCode {
+- (OSType)eventClass {
 	return classCode;
 }
 
-- (OSType)idCode {
+- (OSType)eventID {
 	return code;
 }
 
-- (ASParameterDef *)parameterForName:(NSString *)name_ {
-	return [parameters objectForKey: name_];
+- (OSType)parameterForName:(NSString *)name_ {
+	return [[parameters objectForKey: name_] unsignedIntValue];
+}
+
+- (NSString *)parameterForCode:(OSType)code_ {
+	return nil; // TO DO
 }
 
 @end
@@ -109,72 +93,68 @@
 	id converter_;
 	
 	converter_ = [[ASNullConverter alloc] init];
-	self = [self initWithKeywordConverter: converter_];
+	self = [self initWithKeywordConverter: converter_ defaultTerminology: nil];
 	[converter_ release];
 	return self; 
 }
 
-- (id)initWithKeywordConverter:(id)converter_ {
+- (id)initWithKeywordConverter:(id)converter_
+			defaultTerminology:(ASTerminology *)defaultTerms_ {
 	self = [super init];
 	if (!self) return self;
-	[converter_ retain];
-	converter = converter_;
-	// TO DO: create following tables by copying default tables containing built-in definitions
-	typeByName = [[NSMutableDictionary alloc] init];
-	typeByCode = [[NSMutableDictionary alloc] init];
-	propertyByName = [[NSMutableDictionary alloc] init];
-	propertyByCode = [[NSMutableDictionary alloc] init];
-	elementByName = [[NSMutableDictionary alloc] init];
-	elementByCode = [[NSMutableDictionary alloc] init];
-	commandByName = [[NSMutableDictionary alloc] init];
+	keywordCache = [[NSMutableDictionary alloc] init];
+	converter = [converter_ retain];
+	defaultTerms = [defaultTerms_ retain];
+	if (defaultTerms_) {
+		typeByName = [[NSMutableDictionary alloc] initWithDictionary: [defaultTerms_ typeByNameTable]];
+		typeByCode = [[NSMutableDictionary alloc] initWithDictionary: [defaultTerms_ typeByCodeTable]];
+		propertyByName = [[NSMutableDictionary alloc] initWithDictionary: [defaultTerms_ propertyByNameTable]];
+		propertyByCode = [[NSMutableDictionary alloc] initWithDictionary: [defaultTerms_ propertyByCodeTable]];
+		elementByName = [[NSMutableDictionary alloc] initWithDictionary: [defaultTerms_ elementByNameTable]];
+		elementByCode = [[NSMutableDictionary alloc] initWithDictionary: [defaultTerms_ elementByCodeTable]];
+		commandByName = [[NSMutableDictionary alloc] initWithDictionary: [defaultTerms_ commandByNameTable]];
+	} else {
+		typeByName = [[NSMutableDictionary alloc] init];
+		typeByCode = [[NSMutableDictionary alloc] init];
+		propertyByName = [[NSMutableDictionary alloc] init];
+		propertyByCode = [[NSMutableDictionary alloc] init];
+		elementByName = [[NSMutableDictionary alloc] init];
+		elementByCode = [[NSMutableDictionary alloc] init];
+		commandByName = [[NSMutableDictionary alloc] init];
+	}
 	return self;
 }
 
 
-/* TO DO:
- *	-(id)initWithDefaultTerminology:(ASStringTerminology *)terms; -- copies tables + converter from one ASStringTerminology object to another; default tables are then also used for collision checking
- *
- * OR:
- *
- *	-(id)setDefaultTerminology:(ASStringTerminology *)terms; -- copies tables from one ASStringTerminology object to another; default tables are then also used for collision checking
- *
- * OR:
- *
- * -(id)childTable; -- returns a new ASStringTerminology instance containing default table info
- *
- * -(id)copyWithZone:(NSZone *)zone -- allows a copy-and-extend approach
+/*
+ * Add ASParser output
  */
 
-- (void)addParserData:(id)data { // adds raw data from ASAeteParser or equivalent
-	NSEnumerator *commandEnumerator, *parameterEnumerator;
-	ASParserCommandDef *parserCommandDef;
-	ASCommandDef *commandDef;
-	ASParserDef *parameterDef;
+- (void)addClasses:(NSArray *)classes
+	   enumerators:(NSArray *)enumerators
+		properties:(NSArray *)properties
+		  elements:(NSArray *)elements
+		  commands:(NSArray *)commands {
 
 	// build type tables
-	[self addTypeTableDefinitions: (NSArray *)[data properties] ofType: typeType];
-	[self addTypeTableDefinitions: (NSArray *)[data enumerators] ofType: typeEnumerated];
-	[self addTypeTableDefinitions: (NSArray *)[data classes] ofType: typeType];
+	[self addTypeTableDefinitions: properties ofType: typeType];
+	[self addTypeTableDefinitions: enumerators ofType: typeEnumerated];
+	[self addTypeTableDefinitions: classes ofType: typeType];
 	// build reference tables
-	[self addReferenceTableDefinitions: (NSArray *)[data elements]
+	[self addReferenceTableDefinitions: elements
 						   toNameTable: elementByName
-						  andCodeTable: elementByCode];
-	[self addReferenceTableDefinitions: (NSArray *)[data properties]
+							 codeTable: elementByCode];
+	[self addReferenceTableDefinitions: properties
 						   toNameTable: propertyByName
-						  andCodeTable: propertyByCode];
-	// TO DO: if property table contains a 'text' definition, move it to element table (AppleScript always packs 'text of...' as an all-elements specifier)
+							 codeTable: propertyByCode];
 	// build command table
-	commandEnumerator = [[data commands] objectEnumerator];
-	while (parserCommandDef = [commandEnumerator nextObject]) {
-		commandDef = [[ASCommandDef alloc] initWithName: [parserCommandDef name]
-											 eventClass: [parserCommandDef classCode]
-												eventID: [parserCommandDef code]];
-		parameterEnumerator = [[parserCommandDef parameters] objectEnumerator];
-		while (parameterDef = [parameterEnumerator nextObject])
-			[commandDef addParameterName: [parameterDef name] code: [parameterDef code]];
-		[commandByName setObject: commandDef
-						  forKey: [converter convert: [parserCommandDef name]]];
-		[commandDef release];
+	[self addCommandTableDefinitions: commands];
+	// special case: if property table contains a 'text' definition, move it to element table
+	// (AppleScript always packs 'text of...' as an all-elements specifier, not a property specifier)
+	NSNumber *codeObj = [propertyByName objectForKey: @"text"];
+	if (codeObj) {
+		[elementByName setObject: codeObj forKey: @"text"];
+		[propertyByName removeObjectForKey: @"text"];
 	}
 }
 
@@ -187,6 +167,8 @@
 	[elementByCode release];
 	[commandByName release];
 	[converter release];
+	[defaultTerms release];
+	[keywordCache release];
 	[super dealloc];
 }
 
@@ -195,29 +177,51 @@
 
 - (void)addTypeTableDefinitions:(NSArray *)definitions ofType:(OSType)descType {
 	ASParserDef *parserDef;
-	NSString *name;
+	NSString *name, *convertedName;
 	OSType code;
 	NSNumber *codeObj;
 	NSAppleEventDescriptor *desc;
+	NSDictionary *defaultTypeByName;
 	unsigned len, i;
 	
+	defaultTypeByName = [defaultTerms typeByNameTable];
 	len = [definitions count];
 	for (i = 0; i < len; i++) {
 		// add a definition to typeByCode table
 		// to handle synonyms, if same code appears more than once then use name from last definition in list
 		parserDef = [definitions objectAtIndex: i];
-		name = [converter convert: [parserDef name]];
+		name = [parserDef name];
+		convertedName = [keywordCache objectForKey: name];
+		if (!convertedName) {
+			convertedName = [converter convert: name];
+			[keywordCache setObject: convertedName forKey: name];
+		}
+		name = convertedName;
 		code = [parserDef code];
-		// TO DO: escape definitions that semi-overlap built-in definitions? or resolve in some other way?
-		codeObj = [[NSNumber alloc] initWithLong: code];
+		// escape definitions that semi-overlap built-in definitions
+		desc = [defaultTypeByName objectForKey: name];
+		if (desc && [desc typeCodeValue] != code)
+			name = [converter escape: name];
+		// add item
+		codeObj = [[NSNumber alloc] initWithUnsignedInt: code]; // OSType is UInt32
 		[typeByCode setObject: name forKey: codeObj];
 		[codeObj release];
 		// add a definition to typeByCode table
 		// to handle synonyms, if same name appears more than once then use code from first definition in list
 		parserDef = [definitions objectAtIndex: (len - 1 - i)];
-		name = [converter convert: [parserDef name]];
+		name = [parserDef name];
+		convertedName = [keywordCache objectForKey: name];
+		if (!convertedName) {
+			convertedName = [converter convert: name];
+			[keywordCache setObject: convertedName forKey: name];
+		}
+		name = convertedName;
 		code = [parserDef code];
-		// TO DO: escape definitions that semi-overlap built-in definitions? or resolve in some other way?
+		// escape definitions that semi-overlap built-in definitions
+		desc = [defaultTypeByName objectForKey: name];
+		if (desc && [desc typeCodeValue] != code)
+			name = [converter escape: name];
+		// add item
 		desc = [[NSAppleEventDescriptor alloc] initWithDescriptorType: descType
 																bytes: (void *)(&code)
 															   length: sizeof(code)];
@@ -229,9 +233,9 @@
 
 - (void)addReferenceTableDefinitions:(NSArray *)definitions
 						 toNameTable:(NSMutableDictionary *)nameTable
-						andCodeTable:(NSMutableDictionary *)codeTable {
+						   codeTable:(NSMutableDictionary *)codeTable {
 	ASParserDef *parserDef;
-	NSString *name;
+	NSString *name, *convertedName;
 	NSNumber *codeObj;
 	unsigned len, i;
 	
@@ -240,99 +244,120 @@
 		// add a definition to the byCode table
 		// to handle synonyms, if same code appears more than once then use name from last definition in list
 		parserDef = [definitions objectAtIndex: i];
-		name = [converter convert: [parserDef name]];
-		codeObj = [[NSNumber alloc] initWithLong: [parserDef code]];
+		name = [parserDef name];
+		convertedName = [keywordCache objectForKey: name];
+		if (!convertedName) {
+			convertedName = [converter convert: name];
+			[keywordCache setObject: convertedName forKey: name];
+		}
+		name = convertedName;
+		codeObj = [[NSNumber alloc] initWithUnsignedInt: [parserDef code]];
 		[codeTable setObject: name forKey: codeObj];
 		[codeObj release];
 		// add a definition to the byName table
 		// to handle synonyms, if same name appears more than once then use code from first definition in list
 		parserDef = [definitions objectAtIndex: (len - 1 - i)];
-		name = [converter convert: [parserDef name]];
-		codeObj = [[NSNumber alloc] initWithLong: [parserDef code]];
+		name = [parserDef name];
+		convertedName = [keywordCache objectForKey: name];
+		if (!convertedName) {
+			convertedName = [converter convert: name];
+			[keywordCache setObject: convertedName forKey: name];
+		}
+		name = convertedName;
+		codeObj = [[NSNumber alloc] initWithUnsignedInt: [parserDef code]];
 		[nameTable setObject: codeObj forKey: name];
 		[codeObj release];
 	}
 }
 
 
-// Lookup methods return YES/NO to indicate if lookup was successful.
+- (void)addCommandTableDefinitions:(NSArray *)commands {
+	NSEnumerator *parameterEnumerator;
+	ASParserCommandDef *parserCommandDef;
+	ASCommandDef *commandDef, *existingCommandDef;
+	ASParserDef *parameterDef;
+	NSString *name, *convertedName, *parameterName;
+	NSDictionary *defaultCommandByName;
+	OSType eventClass, eventID;
+	unsigned len, i;
 
-// Used to pack/unpack typeType, typeEnumerated, typeProperty:
-
-- (NSAppleEventDescriptor *)typeForName:(NSString *)name {
-	return [typeByName objectForKey: name];
-}
-
-
-- (NSString *)typeForCode:(OSType)descData {
-	NSNumber *codeObj;
-	NSString *name;
-	
-	codeObj = [[NSNumber alloc] initWithLong: descData];
-	name = [typeByCode objectForKey: codeObj];
-	[codeObj release];
-	return name;
-}
-
-// Used to build AEM references:
-
-- (ASDefinition *)referenceForName:(NSString *)name {
-	ASDefinition *def;
-	
-	def = [propertyByName objectForKey: name];
-	if (!def)
-		def = [elementByName objectForKey: name];
-	if (!def)
-		def = [commandByName objectForKey: name];
-	return def;
-}
-
-// Used by -description to render AEM references:
-
-- (ASDefinition *)referenceForCode:(OSType)code 
-						preferably:(ASPreferredDefinitionType)preferredType {
-	NSNumber *codeObj;
-	ASDefinition *def;
-	
-	codeObj = [[NSNumber alloc] initWithLong: code];
-	if (preferredType == kASPropertyDef)
-		def = [propertyByCode objectForKey: codeObj];
-	else
-		def = [elementByCode objectForKey: codeObj];
-	if (!def)
-		if (def == kASPropertyDef) {
-			def = [elementByCode objectForKey: codeObj];
-		} else {
-			def = [propertyByCode objectForKey: codeObj];
+	defaultCommandByName = [defaultTerms commandByNameTable];
+	// To handle synonyms, if two commands have same name but different codes, only the first
+	// definition should be used (iterating array in reverse ensures this)
+	len = [commands count];
+	for (i = 0; i < len; i++) {
+		parserCommandDef = [commands objectAtIndex: (len - 1 - i)];
+		name = [parserCommandDef name];
+		convertedName = [keywordCache objectForKey: name];
+		if (!convertedName) {
+			convertedName = [converter convert: name];
+			[keywordCache setObject: convertedName forKey: name];
 		}
-	[codeObj release];
-	return def;
+		name = convertedName;
+		eventClass = [parserCommandDef eventClass];
+		eventID = [parserCommandDef eventID];
+		// Avoid collisions between default commands and application-defined commands with same name
+		// but different code (e.g. 'get' and 'set' in InDesign CS2):
+		existingCommandDef = [defaultCommandByName objectForKey: name];
+		if (existingCommandDef
+				&& ([existingCommandDef eventClass] != eventClass || [existingCommandDef eventID] != eventID))
+			name = [converter escape: name];
+		// add item
+		commandDef = [[ASCommandDef alloc] initWithName: [parserCommandDef name]
+											 eventClass: eventClass
+												eventID: eventID];
+		parameterEnumerator = [[parserCommandDef parameters] objectEnumerator];
+		while (parameterDef = [parameterEnumerator nextObject]) {
+			parameterName = [parameterDef name];
+			convertedName = [keywordCache objectForKey: parameterName];
+			if (!convertedName) {
+				convertedName = [converter convert: parameterName];
+				[keywordCache setObject: convertedName forKey: parameterName];
+			}
+			parameterName = convertedName;
+			[commandDef addParameterWithName: parameterName code: [parameterDef code]];
+		}
+		[commandByName setObject: commandDef forKey: name];
+		[commandDef release];
+	}
 }
 
+// Get conversion tables
 
-// Obtain copies of conversion tables directly, if needed:
-
-- (NSDictionary *)propertyByNameTable {
-	return [NSDictionary dictionaryWithDictionary: propertyByName];
+- (NSMutableDictionary *)typeByNameTable {
+	return typeByName;
 }
 
-- (NSDictionary *)propertyByCodeTable {
-	return [NSDictionary dictionaryWithDictionary: propertyByCode];
+- (NSMutableDictionary *)typeByCodeTable {
+	return typeByCode;
 }
 
-- (NSDictionary *)elementByNameTable {
-	return [NSDictionary dictionaryWithDictionary: elementByName];
+- (NSMutableDictionary *)propertyByNameTable {
+	return propertyByName;
 }
 
-- (NSDictionary *)elementByCodeTable {
-	return [NSDictionary dictionaryWithDictionary: elementByCode];
+- (NSMutableDictionary *)propertyByCodeTable {
+	return propertyByCode;
 }
 
-- (NSDictionary *)commandByNameTable {
-	return [NSDictionary dictionaryWithDictionary: commandByName];
+- (NSMutableDictionary *)elementByNameTable {
+	return elementByName;
+}
+
+- (NSMutableDictionary *)elementByCodeTable {
+	return elementByCode;
+}
+
+- (NSMutableDictionary *)commandByNameTable {
+	return commandByName;
+}
+
+- (NSMutableDictionary *)commandByCodeTable {
+	return nil; // TO DO
 }
 
 @end
 
 
 /**********************************************************************/
+
