@@ -1,0 +1,22 @@
+TO DO
+
+- fix malloc warnings in osa extension in Python 2.5
+
+- close component instance upon OSAObj_dealloc()
+
+- OSALoadFile should probably take storable as argument as well as return it as a result
+
+- Add some/all component manager calls to OSAComponentInstance, e.g. GetComponentInfo() (which even Carbon.Cm.ComponentInstance omits); if making OSAComponentInstance a subtype of ComponentInstance is too hard (as is indicated) then either copy-n-paste the relevant functions or import Carbon.Cm and implement wrapper methods that forward operations to a Cm.CI instance. Alternatively, add a method that returns a Carbon.Cm.ComponentInstance.
+
+- implement new 10.5 APIs
+
+- 64-bit support
+
+- following fails on Python 2.5:
+
+	OSASetResumeDispatchProc((kOSAUseStandardDispatch, kOSADontUsePhac))
+
+Script ended 2008-02-04 00:02:48 +0000 (1)
+  File "/Users/has/appscript/py-osascript/sample/osa_redispatchproc.py", line 49, in <module>
+    osac.OSASetResumeDispatchProc((kOSAUseStandardDispatch, kOSADontUsePhac))
+OverflowError: long int too large to convert to int
