@@ -17,6 +17,74 @@ module RCAppscript
 	
 	
 	######################################################################
+	# KEYWORD
+	######################################################################
+	
+	# RubyCocoa doesn't play well with Symbol objects, so use 'k' namespace instead
+	
+	class RCASKeyword < NSObject # needs to support NSCopying protocol to be used as NSDictionary keys
+		
+		attr_reader :AS_name, :AS_aem_object
+		
+		def initWithName_aemObject_(name, obj)
+			init
+			@AS_name = name
+			@AS_aem_object = obj
+			return self
+		end
+		
+		def copyWithZone(zone)
+			return self.retain
+		end
+		
+		def AS_pack_self(app_data)
+			if @AS_aem_object 
+				return @AS_aem_object.desc
+			else
+				return app_data.type_by_name.fetch(@AS_name) do |n| 
+					raise IndexError, "Keyword #{n.is_a?(NSObject) ? n : n.inspect} not found."
+				end
+			end
+		end
+		
+		def ==(v)
+			return (self.class == v.class and @AS_name == v.AS_name)
+		end
+		
+		alias_method :eql?, :== 
+		
+		def hash
+			return @AS_name.hash
+		end
+		
+		def description
+			return "k.#{@AS_name}"
+		end
+		
+		alias_method :to_s, :description
+		alias_method :inspect, :description
+	end
+
+	
+	class RCASKeywordNamespace < RCASSafeObject
+		
+		def method_missing(name)
+			return RCASKeyword.alloc.initWithName_aemObject_(name, nil)
+		end
+	end
+	
+	RCk = RCASKeywordNamespace.new
+	
+	def RCAppscript.k
+		return RCAppscript::RCk
+	end
+	
+	def k
+		return RCAppscript::RCk
+	end
+	
+	
+	######################################################################
 	# APPDATA
 	######################################################################
 	
@@ -26,18 +94,28 @@ module RCAppscript
 	
 	class RCAppData < ASBridgeData
 		
-		def constructor # note: alias_method doesn't appear to work for ObjC methods
-			targetType
+		# note: alias_method doesn't appear to work for ObjC methods
+		
+		def constructor
+			return self.targetType
 		end
 		
 		def identifier
-			targetData
+			return self.targetData
 		end
 		
-		# TO DO: reference codecs methods
+		def reference_codecs
+			return self.referenceCodecs
+		end
+		
+		def reference_codecs=(codecs)
+			self.setReferenceCodecs(codecs)
+		end
+		
+		##
 		
 		RCDefaultTerms = RCASTerminology.build_default_terms
-		RCKeywordConverter = RCASTerminology::RCASKeywordConverter.new
+		RCASKeywordConverter = RCASTerminology::RCASKeywordConverter.new
 	
 		def initWithApplicationClass_constructor_identifier_terms_(aem_application_class, constructor, identifier, terms)
 			if terms == true
@@ -51,7 +129,7 @@ module RCAppscript
 					identifier,
 					terms, 
 					RCDefaultTerms, 
-					RCKeywordConverter)
+					RCASKeywordConverter)
 			return self
 		end
 		
@@ -63,8 +141,9 @@ module RCAppscript
 				@type_by_name[name.intern] = code
 			end
 			@type_by_code = {}
-			self.terminology.typeByCodeTable.each do |name, code|
-				@type_by_code[code] = name.to_s.intern
+			self.terminology.typeByCodeTable.each do |code, name|
+				# note: using NSNumbers as Hash keys doesn't work so well, so cast them first
+				@type_by_code[code.to_i] = name.to_s.intern
 			end
 			@reference_by_name = {}
 			self.terminology.elementByNameTable.each do |name, code|
@@ -122,7 +201,7 @@ module RCAppscript
 					data = data.AS_resolve(self).AS_aem_reference
 				when RCReference
 					data = data.AS_aem_reference
-				when RCKeyword
+				when RCASKeyword
 					data = data.AS_pack_self(self)
 				when true
 					return TrueDesc
@@ -134,29 +213,80 @@ module RCAppscript
 		
 		##
 		
-		ClassType = RCAppscript::AEMType.typeWithCode_(RCKAE::PClass)
+		RCClassType = RCAppscript::AEMType.typeWithCode_(RCKAE::PClass)
+		RCClassKeyword = RCAppscript.k.class_
 		
+		def packDictionary(val)
+			record = NSAppleEventDescriptor.recordDescriptor
+			desired_type_obj = val.objectForKey_(RCClassKeyword)
+			desired_type_obj = val.objectForKey_(RCClassType) if desired_type_obj == nil
+			if desired_type_obj
+				case desired_type_obj
+					when RCAppscript::RCASKeyword
+						desired_type = desired_type_obj.AS_pack_self(self).typeCodeValue
+					when RCAppscript::AEMType
+						desired_type = desired_type_obj.code
+					when NSAppleEventDescriptor
+						desired_type = desired_type_obj.typeCodeValue
+					else
+						desired_type = nil
+				end
+				if desired_type != nil
+					new_val = NSMutableDictionary.dictionaryWithDictionary_(val)
+					new_val.removeObjectForKey_(desired_type_obj)
+					record = record.coerce(desired_type)
+					val = new_val
+				end	
+			end
+			usrf = nil
+			val.each do | key, value |
+				if key.is_a?(RCAppscript::RCASKeyword)
+					key_type = @type_by_name.fetch(key.AS_name) do |k|
+						raise IndexError, "Unknown keyword: #{k.is_a?(NSObject) ? k : k.inspect}"
+					end
+					record.setDescriptor_forKeyword_(pack_(value), key_type.typeCodeValue)
+				elsif key.is_a?(RCAppscript::AEMType)
+					record.setDescriptor_forKeyword_(pack(value), key.code)
+				else
+					usrf = NSAppleEventDescriptor.listDescriptor if usrf == nil
+					usrf.insertDescriptor_atIndex_(pack(key), 0)
+					usrf.insertDescriptor_atIndex_(pack(value), 0)
+				end
+			end
+			record.setDescriptor_forKeyword_(usrf, RCKAE::KeyASUserRecordFields) if usrf
+			return record
+		end
 		
-		# TO DO: finish pack, unpack support
+		def unpack(desc)
+			super_unpack(desc)
+		end
+		
+		def unpackType(desc)
+			aem_object = super_unpackType(desc)
+			name = @type_by_code[aem_object.code]
+			return name ? RCASKeyword.alloc.initWithName_aemObject_(name, aem_object) : aem_object
+		end
+		
+		def unpackEnum(desc)
+			aem_object = super_unpackEnum(desc)
+			name = @type_by_code[aem_object.code]
+			return name ? RCASKeyword.alloc.initWithName_aemObject_(name, aem_object) : aem_object
+		end
+		
+		def unpackProperty(desc)
+			aem_object = super_unpackProperty(desc)
+			name = @type_by_code[aem_object.code]
+			return name ? RCASKeyword.alloc.initWithName_aemObject_(name, aem_object) : aem_object
+		end
+		
+		def unpackKeyword(desc)
+			aem_object = super_unpackKeyword(desc)
+			name = @type_by_code[aem_object.code]
+			return name ? RCASKeyword.alloc.initWithName_aemObject_(name, aem_object) : aem_object
+		end
 
 	end
 
-	
-	######################################################################
-	# KEYWORD
-	######################################################################
-	
-	class RCKeyword
-		
-		def initialize(name)
-			@name = name
-		end
-		
-		def AS_pack_self(app_data)
-			return app_data.type_by_name.fetch(@name) { |n| raise IndexError, "Keyword #{n} not found." }
-		end
-	end
-	
 	
 	######################################################################
 	# GENERIC REFERENCE
