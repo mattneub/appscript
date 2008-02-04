@@ -1,0 +1,29 @@
+aeserver is packaged using the standard Python Distribution Utilities (a.k.a. Distutils). To install appscript, cd to the aeserver-0.x.x directory and run:
+
+	python setup.py install
+
+Setuptools will be used if available, otherwise the setup.py script will revert to distutils.
+
+
+This will build and open a binary installer for the appscript packages, documentation and examples.
+
+aeserver requires MacPython 2.3 or later and Mac OS X 10.3 or later.
+
+
+======================================================================
+DEPENDENCIES
+
+- py-appscript 0.19.0+ <http://appscript.sourceforge.net>
+
+
+======================================================================
+NOTES
+
+- sfba module is 32-bit only due to dependency on Python's Carbon.CarbonEvt extension
+
+
+======================================================================
+COPYRIGHT
+
+(C) 2006 - 2008 HAS <hhas -at- users - sourceforge - net> <http://appscript.sourceforge.net>
+
