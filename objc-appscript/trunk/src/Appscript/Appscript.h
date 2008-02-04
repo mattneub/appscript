@@ -16,6 +16,8 @@
 
 // appscript base
 #import "constant.h"
+#import "appdata.h"
+#import "command.h"
 #import "reference.h"
 #import "referencerenderer.h"
 
@@ -26,3 +28,4 @@
 // appscript bridge
 #import "parser.h"
 #import "terminology.h"
+#import "bridgedata.h"

@@ -5,8 +5,6 @@
 //   Copyright (C) 2007-2008 HAS
 //
 
-#import <Foundation/Foundation.h>
-#import <Carbon/Carbon.h>
 #import "specifier.h"
 #import "types.h"
 

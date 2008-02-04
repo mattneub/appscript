@@ -33,12 +33,12 @@
 
 @implementation ASCommandDef
 
-- (id)initWithName:(NSString *)name_ eventClass:(OSType)classCode_ eventID:(OSType)code_ {
+- (id)initWithName:(NSString *)name_ eventClass:(OSType)eventClass_ eventID:(OSType)eventID_ {
 	self = [super init];
 	if (!self) return self;
 	name = [name_ retain];
-	classCode = classCode_;
-	code = code_;
+	eventClass = eventClass_;
+	eventID = eventID_;
 	parameters = [[NSMutableDictionary alloc] init];
 	return self;
 }
@@ -50,9 +50,9 @@
 }
 
 - (NSString *)description {
-	return [NSString stringWithFormat: @"<ASCommandDef '%@' '%@%@' %@>", 
-			[self name], AEMDescTypeToDisplayString(classCode), 
-			AEMDescTypeToDisplayString(code), parameters];
+	return [NSString stringWithFormat: @"<ASCommandDef \"%@\" '%@'/'%@' %@>", 
+			[self name], AEMDescTypeToDisplayString(eventClass), 
+			AEMDescTypeToDisplayString(eventID), parameters];
 }
 
 - (void)addParameterWithName:(NSString *)name_ code:(OSType)code_ {
@@ -66,11 +66,11 @@
 }
 
 - (OSType)eventClass {
-	return classCode;
+	return eventClass;
 }
 
 - (OSType)eventID {
-	return code;
+	return eventID;
 }
 
 - (OSType)parameterForName:(NSString *)name_ {
@@ -90,12 +90,7 @@
 @implementation ASTerminology
 
 - (id)init {
-	id converter_;
-	
-	converter_ = [[ASNullConverter alloc] init];
-	self = [self initWithKeywordConverter: converter_ defaultTerminology: nil];
-	[converter_ release];
-	return self; 
+	return [self initWithKeywordConverter: nil defaultTerminology: nil];
 }
 
 - (id)initWithKeywordConverter:(id)converter_
@@ -103,7 +98,10 @@
 	self = [super init];
 	if (!self) return self;
 	keywordCache = [[NSMutableDictionary alloc] init];
-	converter = [converter_ retain];
+	if (converter_)
+		converter = [converter_ retain];
+	else
+		converter = [[ASNullConverter alloc] init];
 	defaultTerms = [defaultTerms_ retain];
 	if (defaultTerms_) {
 		typeByName = [[NSMutableDictionary alloc] initWithDictionary: [defaultTerms_ typeByNameTable]];

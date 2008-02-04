@@ -5,11 +5,6 @@
 //   Copyright (C) 2007-2008 HAS
 //
 
-#import <CoreFoundation/CoreFoundation.h>
-#import <Foundation/Foundation.h>
-#import <Carbon/Carbon.h>
-#import "utils.h"
-
 
 /**********************************************************************/
 // not defined in __LP64__

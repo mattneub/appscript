@@ -5,13 +5,21 @@
 //   Copyright (C) 2007-2008 HAS
 //
 
-#import <CoreFoundation/CoreFoundation.h>
-#import <Foundation/Foundation.h>
-#import <Carbon/Carbon.h>
 #import "codecs.h"
 #import "sendthreadsafe.h"
 #import "event.h"
-#import "utils.h"
+
+
+/**********************************************************************/
+// typedefs
+
+typedef enum {
+	kAEMTargetCurrent,
+	kAEMTargetFileURL,
+	kAEMTargetEppcURL,
+	kAEMTargetPID,
+	kAEMTargetDescriptor,
+} AEMTargetType;
 
 
 /**********************************************************************/

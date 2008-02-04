@@ -5,11 +5,8 @@
 //   Copyright (C) 2007-2008 HAS
 //
 
-#import <Foundation/Foundation.h>
-#import <Carbon/Carbon.h>
 #import "codecs.h"
 #import "sendthreadsafe.h"
-#import "utils.h"
 
 
 /**********************************************************************/
@@ -45,15 +42,6 @@ typedef OSStatus(*AEMSendProcPtr)(const AppleEvent *event,
 								  AppleEvent *reply,
 								  AESendMode sendMode,
 								  long timeOutInTicks);
-
-
-typedef enum {
-	kAEMTargetCurrent,
-	kAEMTargetFileURL,
-	kAEMTargetEppcURL,
-	kAEMTargetPID,
-	kAEMTargetDescriptor,
-} AEMTargetType;
 
 
 /**********************************************************************/

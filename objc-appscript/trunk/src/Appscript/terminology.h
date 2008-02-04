@@ -26,13 +26,15 @@
 
 @interface ASCommandDef : NSObject {
 	NSString *name;
-	OSType classCode, code;
+	OSType eventClass, eventID;
 	NSMutableDictionary *parameters;
 }
 
-- (id)initWithName:(NSString *)name_ eventClass:(OSType)classCode_ eventID:(OSType)code_; // TO DO: fix names
+- (id)initWithName:(NSString *)name_ eventClass:(OSType)eventClass_ eventID:(OSType)eventID_;
 
-- (void)addParameterWithName:(NSString *)name_ code:(OSType)code_; // for internal use only
+- (void)addParameterWithName:(NSString *)name_ code:(OSType)code_;
+
+// PUBLIC
 
 - (NSString *)name;
 
@@ -95,7 +97,7 @@
 - (void)addCommandTableDefinitions:(NSArray *)commands;
 
 // PUBLIC
-// Get conversion tables
+// Get conversion tables (no copy)
 
 - (NSMutableDictionary *)typeByNameTable;
 - (NSMutableDictionary *)typeByCodeTable;
@@ -104,20 +106,7 @@
 - (NSMutableDictionary *)elementByNameTable;
 - (NSMutableDictionary *)elementByCodeTable;
 - (NSMutableDictionary *)commandByNameTable;
-- (NSMutableDictionary *)commandByCodeTable;
+- (NSMutableDictionary *)commandByCodeTable; // TO DO
 
 @end
 
-
-/**********************************************************************/
-
-/*
-@interface ASAppData : NSObject {
-	ASAddressType addressType;
-	id addressData;
-	id terminology;
-	AEAddressDesc *target;
-}
-// TO DO
-@end
-*/

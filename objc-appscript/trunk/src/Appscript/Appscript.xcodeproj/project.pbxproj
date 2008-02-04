@@ -15,6 +15,15 @@
 		4F25FAC30B6E79CE0050D532 /* base.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F25FAC10B6E79CE0050D532 /* base.m */; };
 		4F4856680B6E8204005264DC /* test.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F4856660B6E8204005264DC /* test.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4F4856690B6E8204005264DC /* test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F4856670B6E8204005264DC /* test.m */; };
+		4F4F3F2B0D54DEA5004F82C7 /* appdata.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F4F3F2A0D54DEA5004F82C7 /* appdata.m */; };
+		4F4F3F2E0D54DEB3004F82C7 /* command.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F4F3F2D0D54DEB3004F82C7 /* command.m */; };
+		4F4F3F370D54E0D4004F82C7 /* appdata.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F4F3F290D54DEA5004F82C7 /* appdata.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4F4F3F380D54E0DC004F82C7 /* command.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F4F3F2C0D54DEB3004F82C7 /* command.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4F4F3F390D54E0E3004F82C7 /* appdata.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F4F3F2A0D54DEA5004F82C7 /* appdata.m */; };
+		4F4F3F3A0D54E0EA004F82C7 /* command.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F4F3F2D0D54DEB3004F82C7 /* command.m */; };
+		4F4F3F9A0D54F1FE004F82C7 /* bridgedata.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F4F3F990D54F1FE004F82C7 /* bridgedata.m */; };
+		4F4F3FC30D550ACC004F82C7 /* bridgedata.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F4F3F980D54F1FE004F82C7 /* bridgedata.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4F4F3FC60D550AF0004F82C7 /* bridgedata.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F4F3F990D54F1FE004F82C7 /* bridgedata.m */; };
 		4F7C7EAE0C5B68420033C219 /* sendthreadsafe.c in Sources */ = {isa = PBXBuildFile; fileRef = 4F7C7EAC0C5B68420033C219 /* sendthreadsafe.c */; };
 		4F7C7EAF0C5B68420033C219 /* sendthreadsafe.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F7C7EAD0C5B68420033C219 /* sendthreadsafe.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4F7CA9050B727AE5007010CE /* reference.h in Headers */ = {isa = PBXBuildFile; fileRef = 4FDCB2F30B6D0CD0009534FD /* reference.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -62,6 +71,12 @@
 		4F25FAC10B6E79CE0050D532 /* base.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = base.m; sourceTree = "<group>"; };
 		4F4856660B6E8204005264DC /* test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = test.h; sourceTree = "<group>"; };
 		4F4856670B6E8204005264DC /* test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = test.m; sourceTree = "<group>"; };
+		4F4F3F290D54DEA5004F82C7 /* appdata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = appdata.h; sourceTree = "<group>"; };
+		4F4F3F2A0D54DEA5004F82C7 /* appdata.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = appdata.m; sourceTree = "<group>"; };
+		4F4F3F2C0D54DEB3004F82C7 /* command.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = command.h; sourceTree = "<group>"; };
+		4F4F3F2D0D54DEB3004F82C7 /* command.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = command.m; sourceTree = "<group>"; };
+		4F4F3F980D54F1FE004F82C7 /* bridgedata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bridgedata.h; sourceTree = "<group>"; };
+		4F4F3F990D54F1FE004F82C7 /* bridgedata.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = bridgedata.m; sourceTree = "<group>"; };
 		4F7C7EAC0C5B68420033C219 /* sendthreadsafe.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = sendthreadsafe.c; sourceTree = "<group>"; };
 		4F7C7EAD0C5B68420033C219 /* sendthreadsafe.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = sendthreadsafe.h; sourceTree = "<group>"; };
 		4F9BFD6A0CD4CD74003BDDE0 /* event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = event.h; sourceTree = "<group>"; };
@@ -192,6 +207,10 @@
 		4F196CC80B7789500095502E /* base */ = {
 			isa = PBXGroup;
 			children = (
+				4F4F3F290D54DEA5004F82C7 /* appdata.h */,
+				4F4F3F2A0D54DEA5004F82C7 /* appdata.m */,
+				4F4F3F2C0D54DEB3004F82C7 /* command.h */,
+				4F4F3F2D0D54DEB3004F82C7 /* command.m */,
 				4F1E9F400B75305800D4DCBF /* constant.h */,
 				4F1E9F410B75305800D4DCBF /* constant.m */,
 				4FDCB2F30B6D0CD0009534FD /* reference.h */,
@@ -237,6 +256,16 @@
 			name = "application connector";
 			sourceTree = "<group>";
 		};
+		4F4F3F970D54F1D2004F82C7 /* bridge */ = {
+			isa = PBXGroup;
+			children = (
+				4F4F3F980D54F1FE004F82C7 /* bridgedata.h */,
+				4F4F3F990D54F1FE004F82C7 /* bridgedata.m */,
+				4F196CC70B7789220095502E /* aete parser */,
+			);
+			name = bridge;
+			sourceTree = "<group>";
+		};
 		4FDCB4B40B6D5F7E009534FD /* AEM */ = {
 			isa = PBXGroup;
 			children = (
@@ -251,7 +280,7 @@
 			isa = PBXGroup;
 			children = (
 				4F196CC80B7789500095502E /* base */,
-				4F196CC70B7789220095502E /* aete parser */,
+				4F4F3F970D54F1D2004F82C7 /* bridge */,
 			);
 			name = Appscript;
 			sourceTree = "<group>";
@@ -289,6 +318,9 @@
 				4FB2B2D60D1F17B600644367 /* terminology.h in Headers */,
 				4FB2B2D70D1F17BA00644367 /* parser.h in Headers */,
 				4FAD77B70D2A8B4900FE780B /* utils.h in Headers */,
+				4F4F3F370D54E0D4004F82C7 /* appdata.h in Headers */,
+				4F4F3F380D54E0DC004F82C7 /* command.h in Headers */,
+				4F4F3FC30D550ACC004F82C7 /* bridgedata.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -412,6 +444,9 @@
 				4FED70F00D2E72A3003412D7 /* specifier.m in Sources */,
 				4FED70F20D2E72A3003412D7 /* utils.m in Sources */,
 				4FED70AD0D2E6CA8003412D7 /* AEMReferenceTest.m in Sources */,
+				4F4F3F2B0D54DEA5004F82C7 /* appdata.m in Sources */,
+				4F4F3F2E0D54DEB3004F82C7 /* command.m in Sources */,
+				4F4F3F9A0D54F1FE004F82C7 /* bridgedata.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -433,6 +468,9 @@
 				4FB2B2D50D1F17B500644367 /* terminology.m in Sources */,
 				4FB2B2D80D1F17BA00644367 /* parser.m in Sources */,
 				4FAD77B80D2A8B4900FE780B /* utils.m in Sources */,
+				4F4F3F390D54E0E3004F82C7 /* appdata.m in Sources */,
+				4F4F3F3A0D54E0EA004F82C7 /* command.m in Sources */,
+				4F4F3FC60D550AF0004F82C7 /* bridgedata.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -3,7 +3,10 @@
 from codecs import getencoder
 import re, os, os.path, sys, getopt
 
-from osaterminology.makeidentifier import getconverter
+try:
+	from osaterminology.makeidentifier import getconverter
+except ImportError: # py-appscript 0.19.0+
+	from appscript.makeidentifier import getconverter
 from appscript import terminology
 from aem import Application, findapp, AEType
 

@@ -5,11 +5,8 @@
 //   Copyright (C) 2007-2008 HAS
 //
 
-#import <Foundation/Foundation.h>
-#import <Carbon/Carbon.h>
 #import "base.h"
 #import "test.h"
-#import "utils.h"
 
 
 /**********************************************************************/

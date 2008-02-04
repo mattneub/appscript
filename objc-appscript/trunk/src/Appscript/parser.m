@@ -75,7 +75,7 @@
 }
 
 - (NSString *)description {
-	return [NSString stringWithFormat: @"<ASParserDef '%@' '%@'>", [self name], AEMDescTypeToDisplayString(code)];
+	return [NSString stringWithFormat: @"<ASParserDef \"%@\" '%@'>", [self name], AEMDescTypeToDisplayString(code)];
 }
 
 @end
@@ -131,7 +131,7 @@
 }
 
 - (NSString *)description {
-	return [NSString stringWithFormat: @"<ASParserCommandDef '%@' '%@%@' %@>", 
+	return [NSString stringWithFormat: @"<ASParserCommandDef \"%@\" '%@'/'%@' %@>", 
 			[self name], AEMDescTypeToDisplayString(classCode), 
 			AEMDescTypeToDisplayString(code), [self parameters]];
 }
