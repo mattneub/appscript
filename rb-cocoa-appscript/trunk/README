@@ -1,0 +1,38 @@
+Appscript Read Me
+
+======================================================================
+ABOUT
+
+rb-cocoa-appscript is an experimental appscript implementation that uses objc-appscript and RubyCocoa in place of rb-appscript's AE and AEM modules.
+
+======================================================================
+REQUIREMENTS
+
+- Mac OS X 10.3+
+- Ruby 1.8+
+- RubyCocoa 1.x+
+- objc-appscript
+
+======================================================================
+INSTALLATION
+
+$ ruby setup.rb
+
+======================================================================
+NOTES
+
+- rb-cocoa-appscript is unfinished, experimental, and not currently intended for general use.
+
+======================================================================
+AUTHOR
+
+- HAS -- hhas -at- users - sourceforge - net <http://rb-appscript.rubyforge.org> <http://appscript.sourceforge.net>
+
+======================================================================
+COPYRIGHT
+
+Copyright (C) 2006 - 2008 HAS 
+
+Appscript is released under the MIT License. See the LICENSE file for more information.
+
+setup.rb script is Copyright (c) 2000-2005 Minero Aoki
