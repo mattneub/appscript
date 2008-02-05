@@ -22,7 +22,7 @@ module RCAppscript
 	
 	# RubyCocoa doesn't play well with Symbol objects, so use 'k' namespace instead
 	
-	class RCASKeyword < NSObject # needs to support NSCopying protocol to be used as NSDictionary keys
+	class Keyword < NSObject # needs to support NSCopying protocol to be used as NSDictionary keys
 		
 		attr_reader :AS_name, :AS_aem_object
 		
@@ -66,21 +66,21 @@ module RCAppscript
 	end
 
 	
-	class RCASKeywordNamespace < RCASSafeObject
+	class KeywordNamespace < RCASSafeObject
 		
 		def method_missing(name)
-			return RCASKeyword.alloc.initWithName_aemObject_(name, nil)
+			return Keyword.alloc.initWithName_aemObject_(name, nil)
 		end
 	end
 	
-	RCk = RCASKeywordNamespace.new
+	KN = KeywordNamespace.new
 	
 	def RCAppscript.k
-		return RCAppscript::RCk
+		return RCAppscript::KN
 	end
 	
 	def k
-		return RCAppscript::RCk
+		return RCAppscript::KN
 	end
 	
 	
@@ -88,11 +88,11 @@ module RCAppscript
 	# APPDATA
 	######################################################################
 	
-	module RCAppDataAccessors
+	module AppDataAccessors
 		attr_reader :target, :type_by_name, :type_by_code, :reference_by_name, :reference_by_code
 	end
 	
-	class RCAppData < ASBridgeData
+	class AppData < ASBridgeData
 		
 		# note: alias_method doesn't appear to work for ObjC methods
 		
@@ -114,8 +114,8 @@ module RCAppscript
 		
 		##
 		
-		RCDefaultTerms = RCASTerminology.build_default_terms
-		RCASKeywordConverter = RCASTerminology::RCASKeywordConverter.new
+		DefaultTerms = RCASTerminology.build_default_terms
+		KeywordConverter = RCASTerminology::KeywordConverter.new
 	
 		def initWithApplicationClass_constructor_identifier_terms_(aem_application_class, constructor, identifier, terms)
 			if terms == true
@@ -128,8 +128,8 @@ module RCAppscript
 					constructor, 
 					identifier,
 					terms, 
-					RCDefaultTerms, 
-					RCASKeywordConverter)
+					DefaultTerms, 
+					KeywordConverter)
 			return self
 		end
 		
@@ -157,7 +157,7 @@ module RCAppscript
 			end
 			@property_by_code = self.terminology.propertyByCodeTable
 			@element_by_code = self.terminology.elementByCodeTable
-			extend(RCAppDataAccessors)
+			extend(AppDataAccessors)
 		end
 		
 		def target
@@ -197,11 +197,11 @@ module RCAppscript
 		
 		def pack(data) 
 			case data
-				when RCGenericReference
+				when GenericReference
 					data = data.AS_resolve(self).AS_aem_reference
-				when RCReference
+				when Reference
 					data = data.AS_aem_reference
-				when RCASKeyword
+				when Keyword
 					data = data.AS_pack_self(self)
 				when true
 					return TrueDesc
@@ -213,16 +213,16 @@ module RCAppscript
 		
 		##
 		
-		RCClassType = RCAppscript::AEMType.typeWithCode_(RCKAE::PClass)
-		RCClassKeyword = RCAppscript.k.class_
+		ClassType = RCAppscript::AEMType.typeWithCode_(RCKAE::PClass)
+		ClassKeyword = RCAppscript.k.class_
 		
 		def packDictionary(val)
 			record = NSAppleEventDescriptor.recordDescriptor
-			desired_type_obj = val.objectForKey_(RCClassKeyword)
-			desired_type_obj = val.objectForKey_(RCClassType) if desired_type_obj == nil
+			desired_type_obj = val.objectForKey_(ClassKeyword)
+			desired_type_obj = val.objectForKey_(ClassType) if desired_type_obj == nil
 			if desired_type_obj
 				case desired_type_obj
-					when RCAppscript::RCASKeyword
+					when RCAppscript::Keyword
 						desired_type = desired_type_obj.AS_pack_self(self).typeCodeValue
 					when RCAppscript::AEMType
 						desired_type = desired_type_obj.code
@@ -240,7 +240,7 @@ module RCAppscript
 			end
 			usrf = nil
 			val.each do | key, value |
-				if key.is_a?(RCAppscript::RCASKeyword)
+				if key.is_a?(RCAppscript::Keyword)
 					key_type = @type_by_name.fetch(key.AS_name) do |k|
 						raise IndexError, "Unknown keyword: #{k.is_a?(NSObject) ? k : k.inspect}"
 					end
@@ -258,46 +258,83 @@ module RCAppscript
 		end
 		
 		def unpack(desc)
-			super_unpack(desc)
+			case desc.descriptorType
+				when RCKAE::TypeTrue
+					return true
+				when RCKAE::TypeFalse
+					return false
+				when RCKAE::TypeBoolean
+					return desc.booleanValue
+			else
+				return super_unpack(desc)
+			end
 		end
 		
 		def unpackType(desc)
 			aem_object = super_unpackType(desc)
 			name = @type_by_code[aem_object.code]
-			return name ? RCASKeyword.alloc.initWithName_aemObject_(name, aem_object) : aem_object
+			return name ? Keyword.alloc.initWithName_aemObject_(name, aem_object) : aem_object
 		end
 		
 		def unpackEnum(desc)
 			aem_object = super_unpackEnum(desc)
 			name = @type_by_code[aem_object.code]
-			return name ? RCASKeyword.alloc.initWithName_aemObject_(name, aem_object) : aem_object
+			return name ? Keyword.alloc.initWithName_aemObject_(name, aem_object) : aem_object
 		end
 		
 		def unpackProperty(desc)
 			aem_object = super_unpackProperty(desc)
 			name = @type_by_code[aem_object.code]
-			return name ? RCASKeyword.alloc.initWithName_aemObject_(name, aem_object) : aem_object
+			return name ? Keyword.alloc.initWithName_aemObject_(name, aem_object) : aem_object
 		end
 		
 		def unpackKeyword(desc)
 			aem_object = super_unpackKeyword(desc)
 			name = @type_by_code[aem_object.code]
-			return name ? RCASKeyword.alloc.initWithName_aemObject_(name, aem_object) : aem_object
+			return name ? Keyword.alloc.initWithName_aemObject_(name, aem_object) : aem_object
 		end
+		
+		def unpackAERecordKey(key)
+			aem_object = RCAppscript::AEMType.typeWithCode_(key)
+			name = @type_by_code[key]
+			if name
+				return Keyword.alloc.initWithName_aemObject_(name, aem_object)
+			else
+				return aem_object
+			end
+		end
+		
+		def unpackObjectSpecifier(desc)
+			return RCAppscript::Reference.new(self, self.referenceCodecs.unpack(desc))
+		end
+		
+		def unpackInsertionLoc(desc)
+			return RCAppscript::Reference.new(self, self.referenceCodecs.unpack(desc))
+		end
+				
+		def unpackContainsCompDescriptorWithOperand1_operand2(op1, op2)
+			if op1.is_a?(RCAppscript::Reference) \
+					and op1.AS_aem_reference.root == RCAppscript::AEMIts
+				return op1.contains(op2)
+			else
+				return super_unpackContainsCompDescriptorWithOperand1_operand2(op1, op2)
+			end
+		end
+		
+		# TO DO: unpackUnknown(desc)
 
 	end
-
 	
 	######################################################################
 	# GENERIC REFERENCE
 	######################################################################
 	
-	RCAEMApp = RCAppscript::AEMApplicationRoot.applicationRoot
-	RCAEMCon = AEMCurrentContainerRoot.currentContainerRoot
-	RCAEMIts = AEMObjectBeingExaminedRoot.objectBeingExaminedRoot
+	AEMApp = RCAppscript::AEMApplicationRoot.applicationRoot
+	AEMCon = AEMCurrentContainerRoot.currentContainerRoot
+	AEMIts = AEMObjectBeingExaminedRoot.objectBeingExaminedRoot
 	
 	
-	class RCGenericReference < RCASSafeObject
+	class GenericReference < RCASSafeObject
 	
 		attr_reader :_call
 		protected :_call
@@ -317,7 +354,7 @@ module RCAppscript
 		end
 		
 		def method_missing(name, *args)
-			return RCAppscript::RCGenericReference.new(@_call + [[name, args]])
+			return RCAppscript::GenericReference.new(@_call + [[name, args]])
 		end
 	
 		def to_s
@@ -344,10 +381,10 @@ module RCAppscript
 		end
 		
 		def AS_resolve(app_data)
-			ref = RCReference.new(app_data, {
-					'app' => RCAppscript::RCAEMApp, 
-					'con' => RCAppscript::RCAEMCon, 
-					'its' => RCAppscript::RCAEMIts,
+			ref = Reference.new(app_data, {
+					'app' => RCAppscript::AEMApp, 
+					'con' => RCAppscript::AEMCon, 
+					'its' => RCAppscript::AEMIts,
 					}[@_call[0]])
 			@_call[1, @_call.length].each do |name, args|
 				ref = ref.send(name, *args)
@@ -360,15 +397,16 @@ module RCAppscript
 	# REFERENCE
 	######################################################################
 	
-	class RCNoArg
+	class NOVALUE
 	end
 	
-	class RCReference < RCASSafeObject
+	class Reference < RCASSafeObject
 		
 		attr_reader :AS_aem_reference, :AS_app_data
 		attr_writer :AS_aem_reference, :AS_app_data
 	
 		def initialize(app_data, aem_reference)
+			super()
 			@AS_app_data = app_data
 			@AS_aem_reference = aem_reference
 		end
@@ -377,14 +415,14 @@ module RCAppscript
 			if selector == nil
 				selector = value_if_none
 			end
-			if selector.is_a?(RCAppscript::RCGenericReference)
+			if selector.is_a?(RCAppscript::GenericReference)
 				return selector.AS_resolve(@AS_app_data).AS_aem_reference
 			elsif selector.is_a?(Reference)
 				return selector.AS_aem_reference
 			elsif selector.is_a?(String)
-				return RCAppscript::RCAEMCon.elements(@AS_aem_reference.AEM_want).by_name(selector)
+				return RCAppscript::AEMCon.elements(@AS_aem_reference.AEM_want).by_name(selector)
 			else
-				return RCAppscript::RCAEMCon.elements(@AS_aem_reference.AEM_want).by_index(selector)
+				return RCAppscript::AEMCon.elements(@AS_aem_reference.AEM_want).by_index(selector)
 			end
 		end
 		
@@ -394,17 +432,36 @@ module RCAppscript
 			return @AS_app_data.helpForFlags_reference_(flags, self) # TO DO
 		end
 		
-		# TO DO: csig attributes
+		# 'csig' attribute flags (see ASRegistry.h; note: there's no option for 'numeric strings' in 10.4)
+		
+		def Reference._pack_uint32(n) # used to pack csig attributes
+			return RCAppscript::AEMCodecs.defaultCodecs.pack(n).coerceToDescriptorType_(RCKAE::TypeUInt32)
+		end
+
+		IgnoreEnums = [
+			[RCAppscript.k.case, RCKAE::KAECaseConsiderMask, RCKAE::KAECaseIgnoreMask],
+			[RCAppscript.k.diacriticals, RCKAE::KAEDiacriticConsiderMask, RCKAE::KAEDiacriticIgnoreMask],
+			[RCAppscript.k.whitespace, RCKAE::KAEWhiteSpaceConsiderMask, RCKAE::KAEWhiteSpaceIgnoreMask],
+			[RCAppscript.k.hyphens, RCKAE::KAEHyphensConsiderMask, RCKAE::KAEHyphensIgnoreMask],
+			[RCAppscript.k.expansion, RCKAE::KAEExpansionConsiderMask, RCKAE::KAEExpansionIgnoreMask],
+			[RCAppscript.k.punctuation, RCKAE::KAEPunctuationConsiderMask, RCKAE::KAEPunctuationIgnoreMask],
+		]
+		
+		# default cons, csig attributes
+		
+		DefaultConsiderations =  RCAppscript::AEMCodecs.defaultCodecs \
+				.pack([RCAppscript::AEMEnum.enumWithCode_(RCKAE::KAECase)])
+		DefaultConsidersAndIgnores = Reference._pack_uint32(RCKAE::KAECaseIgnoreMask)
 		
 		##
 		
 		def _send_command(args, name, definition)
-			# TO DO: set RCKAE::KeySubjectAttr to nil if not otherwise specified
 			target, error = @AS_app_data.targetWithError_()
 			raise RuntimeError, error.to_s if error
 			eventClass, eventID = definition.eventClass, definition.eventID
 			event = target.eventWithEventClass_eventID_codecs_(eventClass, eventID, @AS_app_data)
-			direct_arg = RCAppscript::RCNoArg
+			subject_attr = NSAppleEventDescriptor.nullDescriptor
+			direct_param = RCAppscript::NOVALUE
 			case args.length
 				when 0
 					keyword_args = {}
@@ -412,11 +469,11 @@ module RCAppscript
 					if args[0].is_a?(Hash)
 						keyword_args = args[0]
 					else
-						direct_arg = args[0]
+						direct_param = args[0]
 						keyword_args = {}
 					end
 				when 2
-					direct_arg, keyword_args = args
+					direct_param, keyword_args = args
 			else
 				raise ArgumentError, "Too many direct parameters."
 			end
@@ -434,49 +491,65 @@ module RCAppscript
 			send_flags = RCKAE::KAECanSwitchLayer
 			# ignore application's reply?
 			send_flags += keyword_args.delete(:wait_reply) == false ? RCKAE::KAENoReply : RCKAE::KAEWaitReply
-			# TO DO: add considering/ignoring attributes
+			# add considering/ignoring attributes
+			ignore_options = keyword_args.delete(:ignore)
+			if ignore_options == nil
+				event.setAttribute_forKeyword_(DefaultConsiderations, RCKAE::EnumConsiderations)
+				event.setAttribute_forKeyword_(DefaultConsidersAndIgnores, RCKAE::EnumConsidsAndIgnores)
+			else
+				event.setAttribute_forKeyword_(ignore_options, RCKAE::EnumConsiderations)
+				csig = 0
+				IgnoreEnums.each do |option, consider_mask, ignore_mask|
+					csig += ignore_options.include?(option) ? ignore_mask : consider_mask
+				end
+				event.setAttribute_forKeyword_(Reference._pack_uint32(csig), RCKAE::EnumConsidsAndIgnores)
+			end
 			# optionally specify return value type
 			if keyword_args.has_key?(:result_type)
 				event.setParameter_forKeyword_(keyword_args.delete(:result_type), RCKAE::KeyAERequestedType)
 			end
 			# special cases
 			if @AS_aem_reference != RCAppscript::AEMApplicationRoot
-				if eventClass == 'core' and eventID == 'setd'
-					if direct_arg != RCAppscript::RCNoArg and not keyword_args.has_key?(KAE::KeyAEData)
-						keyword_args[KAE::KeyAEData] = direct_arg
-						direct_arg = @AS_aem_reference
-					elsif direct_arg != RCAppscript::RCNoArg
-						event.setAttribute_forKeyword_(@AS_aem_reference, RCKAE::KeySubjectAttr)
+				if eventClass == RCKAE::KAECoreSuite and eventID == RCKAE::KAESetData
+					if direct_param != RCAppscript::NOVALUE and not keyword_args.has_key?(KAE::KeyAEData)
+						keyword_args[KAE::KeyAEData] = direct_param
+						direct_param = @AS_aem_reference
+					elsif direct_param != RCAppscript::NOVALUE
+						subject_attr = @AS_aem_reference
 					else
-						direct_arg = @AS_aem_reference
+						direct_param = @AS_aem_reference
 					end
-				elsif eventClass == 'core' and eventID == 'crel'
-					if @AS_aem_reference.is_a?(AEMReference::InsertionSpecifier) \
+				elsif eventClass == RCKAE::KAECoreSuite and eventID == RCKAE::KAECreateElement
+					if @AS_aem_reference.is_a?(RCAppscript::AEMInsertionSpecifier) \
 							and not keyword_args.has_key?(KAE::KeyAEInsertHere)
 						keyword_args[KAE::KeyAEInsertHere] = @AS_aem_reference
 					else
-						event.setAttribute_forKeyword_(@AS_aem_reference, RCKAE::KeySubjectAttr)
+						subject_attr = @AS_aem_reference
 					end
-				elsif direct_arg != RCAppscript::RCNoArg
-					event.setAttribute_forKeyword_(@AS_aem_reference, RCKAE::KeySubjectAttr)
+				elsif direct_param != RCAppscript::NOVALUE
+					subject_attr = @AS_aem_reference
 				else
-					direct_arg = @AS_aem_reference
+					direct_param = @AS_aem_reference
 				end
 			end
 			# extract labelled parameters, if any
 			keyword_args.each do |param_name, param_value|
-				param_code = labelled_arg_terms.fetch(param_name) do |n|
-					raise ArgumentError, "Unknown keyword parameter: #{n.inspect}"
-				end
+				param_code = definition.parameterForName_(param_name)
+				raise ArgumentError, "Unknown keyword parameter: #{param_name}" if param_code == nil
 				event.setParameter_forKeyword_(param_value, param_code)
 			end
-			if direct_arg != RCAppscript::RCNoArg
-				event.setParameter_forKeyword_(direct_arg, RCKAE::KeyDirectObject)
+			if direct_param != RCAppscript::NOVALUE
+				event.setParameter_forKeyword_(direct_param, RCKAE::KeyDirectObject)
 			end
+			event.setAttribute_forKeyword_(subject_attr, RCKAE::KeySubjectAttr)
+			# build and send the Apple event, returning its result, if any
 			result, error = event.sendWithMode_timeout_error_(send_flags, timeout)
-			# TO DO: error handling
-			raise RuntimeError, error.to_s if error
-			return result
+			if not error
+				return result
+			else
+				# TO DO: finish relaunch/reconnect/resend code
+				raise RCAppscript::CommandError.new(self, name, args, error)
+			end
 		end
 		
 		
@@ -498,7 +571,7 @@ module RCAppscript
 		
 		def hash
 			if not defined? @_hash
-				@_hash = 0 # [@AS_app_data.target, @AS_aem_reference].hash # TO DO
+				@_hash = [@AS_app_data.target, @AS_aem_reference].hash
 			end
 			return @_hash
 		end
@@ -516,7 +589,19 @@ module RCAppscript
 		# Utility methods
 		
 		def is_running?
-			return true # TO DO
+			identifier = @AS_app_data.target.targetData
+			case @AS_app_data.target.targetType
+				when kAEMTargetFileURL
+					return RCAppscript::AEMApplication.processExistsForFileURL_(identifier)
+				when kAEMTargetEppcURL
+					return RCAppscript::AEMApplication.processExistsForEppcURL_(identifier)
+				when kAEMTargetPID
+					return RCAppscript::AEMApplication.processExistsForPID_(identifier)
+				when kAEMTargetDescriptor
+					return RCAppscript::AEMApplication.processExistsForDescriptor_(identifier)
+			else # when kAEMTargetCurrent
+				return true
+			end
 		end
 		
 		#######
@@ -530,9 +615,9 @@ module RCAppscript
 			selector_type, code = @AS_app_data.reference_by_name[name]
 			case selector_type # check if name is a property/element/command name, and if it is handle accordingly
 				when :property
-					return RCReference.new(@AS_app_data, @AS_aem_reference.property(code))
+					return Reference.new(@AS_app_data, @AS_aem_reference.property(code))
 				when :element
-					return RCReference.new(@AS_app_data, @AS_aem_reference.elements(code))
+					return Reference.new(@AS_app_data, @AS_aem_reference.elements(code))
 				when :command
 					return _send_command(args, name, code)
 			else 
@@ -560,65 +645,133 @@ module RCAppscript
 				case selector
 					when String
 						 new_ref = @AS_aem_reference.byName_(selector)
-					when RCAppscript::RCGenericReference
+					when RCAppscript::GenericReference
 						new_ref = @AS_aem_reference.byTest(
 								selector.AS_resolve(@AS_app_data).AS_aem_reference)
-					when RCAppscript::RCReference, RCAppscript::AEMTest
+					when RCAppscript::Reference, RCAppscript::AEMTest
 						new_ref = @AS_aem_reference.byTest(selector)
 				else
 					new_ref = @AS_aem_reference.byIndex(selector)
 				end
 			end
-			return RCAppscript::RCReference.new(@AS_app_data, new_ref)
+			return RCAppscript::Reference.new(@AS_app_data, new_ref)
 		end
 		
 		def first
-			return RCAppscript::RCReference.new(@AS_app_data, @AS_aem_reference.first)
+			return RCAppscript::Reference.new(@AS_app_data, @AS_aem_reference.first)
 		end
 		
 		def middle
-			return RCAppscript::RCReference.new(@AS_app_data, @AS_aem_reference.middle)
+			return RCAppscript::Reference.new(@AS_app_data, @AS_aem_reference.middle)
 		end
 		
 		def last
-			return RCAppscript::RCReference.new(@AS_app_data, @AS_aem_reference.last)
+			return RCAppscript::Reference.new(@AS_app_data, @AS_aem_reference.last)
 		end
 		
 		def any
-			return RCAppscript::RCReference.new(@AS_app_data, @AS_aem_reference.any)
+			return RCAppscript::Reference.new(@AS_app_data, @AS_aem_reference.any)
 		end
 		
 		def beginning
-			return RCAppscript::RCReference.new(@AS_app_data, @AS_aem_reference.beginning)
+			return RCAppscript::Reference.new(@AS_app_data, @AS_aem_reference.beginning)
 		end
 		
 		def end
-			return RCAppscript::RCReference.new(@AS_app_data, @AS_aem_reference.end)
+			return RCAppscript::Reference.new(@AS_app_data, @AS_aem_reference.end)
 		end
 		
 		def before
-			return RCAppscript::RCReference.new(@AS_app_data, @AS_aem_reference.before)
+			return RCAppscript::Reference.new(@AS_app_data, @AS_aem_reference.before)
 		end
 		
 		def after
-			return RCAppscript::RCReference.new(@AS_app_data, @AS_aem_reference.after)
+			return RCAppscript::Reference.new(@AS_app_data, @AS_aem_reference.after)
 		end
 		
 		def previous(klass)
-			return RCAppscript::RCReference.new(@AS_app_data, @AS_aem_reference.previous_(
+			return RCAppscript::Reference.new(@AS_app_data, @AS_aem_reference.previous_(
 					@AS_app_data.type_by_name.fetch(klass).typeCodeValue))
 		end
 		
 		def next(klass)
-			return RCAppscript::RCReference.new(@AS_app_data, @AS_aem_reference.next_(
+			return RCAppscript::Reference.new(@AS_app_data, @AS_aem_reference.next_(
 					@AS_app_data.type_by_name.fetch(klass).typeCodeValue))
 		end
 		
 		def ID(id)
-			return RCAppscript::RCReference.new(@AS_app_data, @AS_aem_reference.byID_(id))
+			return RCAppscript::Reference.new(@AS_app_data, @AS_aem_reference.byID_(id))
 		end
 		
-		# TO DO: test methods
+		# Following methods will be called by its-based generic references
+		
+		def gt(operand)
+			return RCAppscript::Reference.new(@AS_app_data, @AS_aem_reference.greaterThan_(operand))
+		end
+		
+		def ge(operand)
+			return RCAppscript::Reference.new(@AS_app_data, @AS_aem_reference.greaterOrEquals_(operand))
+		end
+		
+		def eq(operand) # avoid colliding with comparison operators, which are normally used to compare two references
+			return RCAppscript::Reference.new(@AS_app_data, @AS_aem_reference.equals_(operand))
+		end
+		
+		def ne(operand)
+			return RCAppscript::Reference.new(@AS_app_data, @AS_aem_reference.notEquals_(operand))
+		end
+		
+		def lt(operand)
+			return RCAppscript::Reference.new(@AS_app_data, @AS_aem_reference.lessThan_(operand))
+		end
+		
+		def le(operand)
+			return RCAppscript::Reference.new(@AS_app_data, @AS_aem_reference.lessOrEquals_(operand))
+		end
+		
+		def begins_with(operand)
+			return RCAppscript::Reference.new(@AS_app_data, @AS_aem_reference.beginsWith_(operand))
+		end
+		
+		def ends_with(operand)
+			return RCAppscript::Reference.new(@AS_app_data, @AS_aem_reference.endsWith_(operand))
+		end
+		
+		def contains(operand)
+			return RCAppscript::Reference.new(@AS_app_data, @AS_aem_reference.contains_(operand))
+		end
+		
+		def is_in(operand)
+			return RCAppscript::Reference.new(@AS_app_data, @AS_aem_reference.isIn_(operand))
+		end
+		
+		def does_not_begin_with(operand)
+			return self.begins_With(operand).not
+		end
+		
+		def does_not_end_with(operand)
+			return self.ends_with(operand).not
+		end
+		
+		def does_not_contain(operand)
+			return self.contains(operand).not
+		end
+		
+		def is_not_in(operand)
+			return self.is_in(operand).not
+		end
+		
+		def and(*operands)
+			return RCAppscript::Reference.new(@AS_app_data, @AS_aem_reference.AND(operands))
+		end
+			
+		def or(*operands)
+			return RCAppscript::Reference.new(@AS_app_data, @AS_aem_reference.OR(operands))
+		end
+		
+		def not
+			return RCAppscript::Reference.new(@AS_app_data, @AS_aem_reference.NOT)
+		end
 	end
 	
 	
@@ -626,7 +779,7 @@ module RCAppscript
 	# APPLICATION
 	######################################################################
 	
-	class RCApplication < RCReference
+	class Application < Reference
 		
 		private_class_method :new
 			
@@ -635,51 +788,51 @@ module RCAppscript
 		end
 		
 		def initialize(constructor, identifier, terms)
-			super(RCAppData.alloc.initWithApplicationClass_constructor_identifier_terms_(
-					_aem_application_class, constructor, identifier, terms), RCAEMApp)
+			super(AppData.alloc.initWithApplicationClass_constructor_identifier_terms_(
+					_aem_application_class, constructor, identifier, terms), AEMApp)
 		end
 		
 		# constructors
 		
-		def RCApplication.by_name(name, terms=true)
+		def Application.by_name(name, terms=true)
 			return new(RCAppscript::KASTargetName, name, terms)
 		end
 		
-		def RCApplication.by_id(id, terms=true)
+		def Application.by_id(id, terms=true)
 			return new(RCAppscript::KASTargetBundleID, id, terms)
 		end
 		
-		def RCApplication.by_creator(creator, terms=true)
+		def Application.by_creator(creator, terms=true)
 			raise NotImplementedError
 		end
 		
-		def RCApplication.by_pid(pid, terms=true)
+		def Application.by_pid(pid, terms=true)
 			return new(RCAppscript::KASTargetPID, pid, terms)
 		end
 		
-		def RCApplication.by_url(url, terms=true)
+		def Application.by_url(url, terms=true)
 			return new(RCAppscript::KASTargetURL, url, terms)
 		end
 		
-		def RCApplication.by_aem_app(aem_app, terms=true)
+		def Application.by_aem_app(aem_app, terms=true)
 			raise NotImplementedError
 		end
 		
-		def RCApplication.current(terms=true)
+		def Application.current(terms=true)
 			return new(RCAppscript::KASTargetCurrent, nil, terms)
 		end
 		
 		#
 		
 		def AS_new_reference(ref)
-			if ref.is_a?(RCAppscript::RCGenericReference)
+			if ref.is_a?(RCAppscript::GenericReference)
 				return ref.AS_resolve(@AS_app_data)
 			elsif ref.is_a?(RCAppscript::AEMQuery)
-				return RCAppscript::RCReference.new(@AS_app_data, ref)
+				return RCAppscript::Reference.new(@AS_app_data, ref)
 			elsif ref == nil
-				return  RCAppscript::RCReference.new(@AS_app_data, AEM.app)
+				return  RCAppscript::Reference.new(@AS_app_data, AEM.app)
 			else
-				return RCAppscript::RCReference.new(@AS_app_data, AEM.custom_root(ref))
+				return RCAppscript::Reference.new(@AS_app_data, AEM.custom_root(ref))
 			end
 		end
 		
@@ -696,13 +849,13 @@ module RCAppscript
 		end
 		
 		def launch
-			# TO DO
+			raise NotImplementedError # TO DO
 		end
 	end
 	
 	##
 	
-	class RCGenericApplication < RCGenericReference
+	class GenericApplication < GenericReference
 		
 		def initialize(app_class)
 			@_app_class = app_class
@@ -740,9 +893,9 @@ module RCAppscript
 	
 	#######
 	
-	AS_App = RCAppscript::RCGenericApplication.new(RCApplication)
-	AS_Con = RCAppscript::RCGenericReference.new(['con'])
-	AS_Its = RCAppscript::RCGenericReference.new(['its'])
+	AS_App = RCAppscript::GenericApplication.new(Application)
+	AS_Con = RCAppscript::GenericReference.new(['con'])
+	AS_Its = RCAppscript::GenericReference.new(['its'])
 	
 	
 	######################################################################
@@ -788,8 +941,40 @@ module RCAppscript
 	######################################################################
 	# COMMAND ERROR
 	######################################################################
+	# public
+	
+	class CommandError < RuntimeError
+		
+		attr_reader :reference, :name, :parameters, :real_error
+		
+		def initialize(reference, command_name, parameters, real_error)
+			@reference, @command_name, @parameters, @real_error = reference, command_name, parameters, real_error
+			super()
+		end
+		
+		def to_i
+			if @real_error.is_a?(NSError)
+				return @real_error.code
+			else
+				return -2700
+			end
+		end
+		
+		def to_s
+			if @real_error.is_a?(NSError)
+				real_error = "CommandError\n\t\tOSERROR: #{@real_error.code}\n\t\tMESSAGE: #{@real_error.localizedDescription}"
+			else
+				real_error = @real_error
+			end
+			return "#{real_error}\n\t\tCOMMAND: #{@reference}.#{@command_name}(#{(@parameters.collect { |item| item.inspect }).join(', ')})\n"
+		end
+		
+		alias_method :inspect, :to_s
+	end
 	
 	# TO DO
+	# ApplicationNotFoundError
+	# RCCantLaunchApplicationError
 	
 end
 

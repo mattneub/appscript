@@ -14,7 +14,7 @@ module RCASTerminology
 	require "cocoa_appscript/defaultterminology" # default type, enum, property, element, command definitions
 	require "cocoa_appscript/reservedkeywords" # names of all existing methods on ASReference::Application
 	
-	class RCASKeywordConverter
+	class KeywordConverter
 		LegalFirst = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_'
 		LegalRest = LegalFirst + '0123456789'
 		@@_reserved_keywords = {} # ersatz set
