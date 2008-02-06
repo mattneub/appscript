@@ -40,6 +40,11 @@ class TC_AEMReferences < Test::Unit::TestCase
 					'AEM.con.elements("docu").by_index(3), ' +
 					'AEM.con.elements("docu").by_name("foo"))', nil],
 			
+			[AEMReference::App.elements('docu').by_range(1, 'foo'),
+					'AEM.app.elements("docu").by_range(1, "foo")',
+					AEMReference::App.elements("docu").by_range(
+							AEMReference::Con.elements("docu").by_index(1), 
+							AEMReference::Con.elements("docu").by_name("foo"))],
 			
 			[AEMReference::Its.property('name').eq('foo').and(AEMReference::Its.elements('cwor').eq([])), 
 					'AEM.its.property("name").eq("foo").and(AEM.its.elements("cwor").eq([]))', nil],
@@ -103,9 +108,8 @@ class TC_AEMReferences < Test::Unit::TestCase
 		assert_not_equal(AEMReference::App.elements('ctxt').property('ctxt'), AEMReference::App.property('ctxt').property('ctxt'))
 		assert_not_equal(AEMReference::App.elements('ctxt').property('ctxt'), 333)
 		assert_not_equal(333, AEMReference::App.property('ctxt').property('ctxt'))
-#		# by-range and by-filter references do basic type checking to ensure a reference is given
-#		assert_raises(TypeError) { AEMReference::App.elements('docu').by_range(1, 2) }
-#		assert_raises(TypeError) { AEMReference::App.elements('docu').by_filter(1) }
+#		# by-filter references do basic type checking to ensure an its-based reference is given
+		assert_raises(TypeError) { AEMReference::App.elements('docu').by_filter(1) }
 		
 	end
 end

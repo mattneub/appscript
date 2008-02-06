@@ -300,6 +300,7 @@ module Appscript
 		protected :_call
 		
 		def initialize(call)
+			super()
 			@_call = call
 		end
 		
@@ -363,22 +364,18 @@ module Appscript
 		attr_writer :AS_aem_reference, :AS_app_data
 	
 		def initialize(app_data, aem_reference)
+			super()
 			@AS_app_data = app_data
 			@AS_aem_reference = aem_reference
 		end
 		
-		def _resolve_range_boundary(selector, value_if_none)
-			if selector == nil
-				selector = value_if_none
-			end
+		def _resolve_range_boundary(selector)
 			if selector.is_a?(Appscript::GenericReference)
 				return selector.AS_resolve(@AS_app_data).AS_aem_reference
 			elsif selector.is_a?(Reference)
 				return selector.AS_aem_reference
-			elsif selector.is_a?(String)
-				return AEM.con.elements(@AS_aem_reference.AEM_want).by_name(selector)
 			else
-				return AEM.con.elements(@AS_aem_reference.AEM_want).by_index(selector)
+				return selector
 			end
 		end
 		
@@ -508,6 +505,8 @@ module Appscript
 			rescue => e
 				if e.is_a?(AEM::CommandError)
 					if [-600, -609].include?(e.number) and @AS_app_data.constructor == :by_path
+						# if application isn't running at all, restart it only if command was 'run' or 'launch', otherwise error
+						# TO DO: CHECK!
 						if not AEM::Application.process_exists_for_path?(@AS_app_data.identifier)
 							if code == 'ascrnoop'
 								AEM::Application.launch(@AS_app_data.identifier)
@@ -515,11 +514,13 @@ module Appscript
 								raise CommandError.new(self, name, args, e)
 							end
 						end
+						# update AEMApplication object's AEAddressDesc
 						@AS_app_data.target.reconnect
+						# re-send command
 						begin
 							return @AS_app_data.target.event(code, params, atts, 
 									KAE::KAutoGenerateReturnID, @AS_app_data).send(timeout, send_flags)
-						rescue
+						rescue # TO DO: CHECK!
 						end
 					elsif e.number == -1708 and code == 'ascrnoop'
 						return
@@ -665,10 +666,11 @@ module Appscript
 		end
 		
 		def [](selector, end_range_selector=nil)
+			raise "Bad selector: nil not allowed." if selector == nil
 			if end_range_selector != nil
 				new_ref = @AS_aem_reference.by_range(
-						self._resolve_range_boundary(selector, 1),
-						self._resolve_range_boundary(end_range_selector, -1))
+						self._resolve_range_boundary(selector),
+						self._resolve_range_boundary(end_range_selector))
 			else
 				case selector
 					when String

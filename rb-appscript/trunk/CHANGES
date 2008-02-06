@@ -1,6 +1,10 @@
-2007-12-27 -- 0.?.?
+2008-02-?? -- 0.5.1
 
 - fixed bug in Appscript::Application#launch where calling it on an application specified by_pid/by_url/by_aem_app would raise error -1708
+
+- aem by-range specifiers now accept non-reference values (these are expanded to con-based references when packed)
+
+- fixed bug in Appscript::Reference#_send_command method's auto-reconnection code where a re-sent event that fails now raises the correct CommandError (previously re-raised the original 'invalid connection' error)
 
 
 2007-12-18 -- 0.5.0 (beta 2)

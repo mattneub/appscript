@@ -566,11 +566,6 @@ module AEMReference
 		KeyForm = AEMReference.pack_enum(KAE::FormRange)
 		
 		def initialize(wantcode, container, key)
-			key.each do |item|
-				if not (item.is_a?(Specifier) and item.AEM_root != Its)
-					raise TypeError, "Bad selector: not an application (app) or container (con) based reference: #{item.inspect}"
-				end
-			end
 			super(wantcode, container.AEM_true_self, key)
 		end
 		
@@ -579,10 +574,21 @@ module AEMReference
 		end
 	
 		def _pack_key(codecs)
-			return AEMReference.pack_list_as(KAE::TypeRangeDescriptor, [
-					[KAE::KeyAERangeStart, codecs.pack(@_key[0])], 
-					[KAE::KeyAERangeStop, codecs.pack(@_key[1])]
-					])
+			range_selectors = [
+					[KAE::KeyAERangeStart, @_key[0]], 
+					[KAE::KeyAERangeStop, @_key[1]]
+			].collect do |key, selector|
+				case selector
+					when Specifier
+						# use selector as-is (note: its-based roots aren't appropriate, but this isn't checked for)
+					when String
+						selector = AEMReference::Con.elements(@AEM_want).by_name(selector)
+				else
+					selector = AEMReference::Con.elements(@AEM_want).by_index(selector)
+				end
+				[key, codecs.pack(selector)]
+			end
+			return AEMReference.pack_list_as(KAE::TypeRangeDescriptor, range_selectors)
 		end
 		
 		def AEM_resolve(obj)

@@ -3,11 +3,6 @@
 require 'test/unit'
 require 'osax'
 
-class AS_SafeObject
-	def self.hide(name)
-	end
-end
-
 class TC_OSAX < Test::Unit::TestCase
 	
 	def test_1

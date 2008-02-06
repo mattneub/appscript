@@ -68,8 +68,8 @@ class TC_AppscriptReferences < Test::Unit::TestCase
 					@s+'.documents[its.size.ge(42)]', nil],
 			
 			[@te.documents[1, 'foo'], 
-					@s+'.documents[con.documents[1], con.documents["foo"]]', 
-					@te.documents[Appscript.con.documents[1], Appscript.con.documents['foo']]],
+					@s+'.documents[1, "foo"]',
+					@te.documents[Appscript.con.documents[1], Appscript.con.documents["foo"]]],
 			
 			[@te.documents[1].text \
 					.paragraphs.characters[
