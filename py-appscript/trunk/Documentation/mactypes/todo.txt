@@ -1,3 +1,0 @@
-TO DO
-
-- add HFS path support to Alias and File classes.
