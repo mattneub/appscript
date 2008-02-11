@@ -1,0 +1,32 @@
+Appscript is packaged using the standard Python Distribution Utilities (a.k.a. Distutils). To install appscript, cd to the appscript-0.19.0 directory and run:
+
+	python setup.py install
+
+Setuptools will be used if available, otherwise the setup.py script will revert to distutils.
+
+Building appscript from source requires the gcc compiler (supplied with Apple's Developer Tools). Setuptools is available from <http://cheeseshop.python.org/pypi>.
+
+Appscript requires MacPython 2.3 or later and Mac OS X 10.3 or later.
+
+
+======================================================================
+NOTES
+
+- Appscript 0.19.0 is a significant restructuring of the appscript 0.18.x package that removes several supplementary packages (aemreceive, osaterminology, CarbonX.OSA, osascript) to different projects and consolidates the rest. The public appscript, aem and osax APIs are unaffected by these changes, so existing code that deals only with these APIs should require no changes. The mactypes module's Alias and File classes no longer provide supplementary methods for working with Python's Carbon.Alias and Carbon.File types, so any existing code that uses these methods will need to be updated accordingly. See the CHANGES file for more details.
+
+- The following modules now provide full 64-bit support: aem, appscript, mactypes. The osax module currently provides partial 64-bit support; see doc/osax-manual for details.
+
+- Note that the CarbonX.AE package is
+
+- Python 3.0 support is planned for a future release.
+
+- ASDictionary 0.9.0 or later is now required to use appscript's built-in help() method. If ASDictionary isn't installed, interactive help won't be available but appscript will continue to operate as normal.
+
+- Appscript and aem are now at beta 1 status, so please report any problems you have either with the appscript bridge itself or with scripting individual applications. In particular, appscript is a bit more sensitive to application bugs and terminology flaws than AppleScript is, so will sometimes fail on tasks where AppleScript works; identifying these problem apps so that internal/external workarounds can be developed will be useful.
+
+
+======================================================================
+COPYRIGHT
+
+(C) 2003 - 2008 HAS <hhas -at- users - sourceforge - net> <http://appscript.sourceforge.net>
+
