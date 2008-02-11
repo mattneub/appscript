@@ -432,19 +432,21 @@ class ElementsByRange(_MultipleElements):
 	_keyForm = packEnum(kae.formRange)
 	
 	def __init__(self, wantcode, container, key):
-		for item in key:
-			if not isinstance(item, Specifier): # quick sanity check; normally relative 'con'-based refs, but absolute 'app'-based refs are legal (note: won't catch its-based references, as that'd take more code to check, but we'll just have to trust user isn't that careless)
-				raise TypeError, 'Bad argument in byrange(): %r' % item
-		_PositionSpecifier.__init__(self, wantcode, container.AEM_trueSelf(), key)
+		_MultipleElements.__init__(self, wantcode, container.AEM_trueSelf(), key)
 	
 	def __repr__(self):
 		return '%r.byrange(%r, %r)' % ((self._container,) + self._key)
 
 	def _packKey(self, codecs):
-		return packListAs(kae.typeRangeDescriptor, [
-				(kae.keyAERangeStart, codecs.pack(self._key[0])), 
-				(kae.keyAERangeStop, codecs.pack(self._key[1])),
-				])
+		rangeselectors = []
+		for key, selector in [(kae.keyAERangeStart, self._key[0]), (kae.keyAERangeStop, self._key[1])]:
+			if isinstance(selector, Specifier):
+				rangeselectors.append([key, codecs.pack(selector)])
+			elif isinstance(selector, basestring):
+				rangeselectors.append([key, codecs.pack(con.elements(self.AEM_want).byname(selector))])
+			else:
+				rangeselectors.append([key, codecs.pack(con.elements(self.AEM_want).byindex(selector))])
+		return packListAs(kae.typeRangeDescriptor, rangeselectors)
 	
 	def AEM_resolve(self, obj):
 		return self._container.AEM_resolve(obj).byrange(*self._key)
@@ -460,7 +462,7 @@ class ElementsByFilter(_MultipleElements):
 	def __init__(self, wantcode, container, key):
 		if not isinstance(key, Test):
 			raise TypeError, 'Not a test specifier: %r' % key
-		_PositionSpecifier.__init__(self, wantcode, container.AEM_trueSelf(), key)
+		_MultipleElements.__init__(self, wantcode, container.AEM_trueSelf(), key)
 	
 	def __repr__(self):
 		return '%r.byfilter(%r)' % (self._container, self._key)

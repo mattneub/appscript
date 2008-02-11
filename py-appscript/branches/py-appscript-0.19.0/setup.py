@@ -1,8 +1,7 @@
 try:
 	from setuptools import setup, Extension
 except ImportError:
-		print "Note: couldn't import setuptools so using distutils instead."
-		from distutils.core import setup, Extension
+	from distutils.core import setup, Extension
 
 
 setup(

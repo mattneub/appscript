@@ -93,8 +93,7 @@ class TC_AEMReferences(unittest.TestCase):
 		self.assertNotEqual(aem.app.elements('ctxt').property('ctxt'), aem.app.property('ctxt').property('ctxt'))
 		self.assertNotEqual(aem.app.elements('ctxt').property('ctxt'), 333)
 		self.assertNotEqual(333, aem.app.property('ctxt').property('ctxt'))
-		# by-range and by-filter references do basic type checking to ensure a reference is given
-		self.assertRaises(TypeError, aem.app.elements('docu').byrange, 1, 2)
+		# by-filter references do basic type checking to ensure a reference is given
 		self.assertRaises(TypeError, aem.app.elements('docu').byfilter, 1)
 
 

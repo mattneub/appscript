@@ -1,7 +1,5 @@
 2008-02-?? -- 0.19.0
 
-Major restructuring. This enables full 64-bit support in aem, appscript, mactypes modules and partial 64-bit support in osax module, and prepares py-appscript for future Python 3.0 support.
-
 - The following packages/modules have been removed from the appscript distribution:
 	- aemreceive (moved to py-aeserver project)
 	- CarbonX.OSA, CarbonX.kOSA, osascript (added to py-osascript project)
@@ -15,9 +13,11 @@ Users should update any existing code that refers to these modules as needed.
 
 - The aem package's internal structure has been simplified and some modules renamed. The base class for all specifier and test objects is now named 'Query' and is exported by aem's public API for typechecking use only.
 
-- Added aem.ae which consolidates all Carbon/CoreFoundation bindings into a single C extension. Eliminated all dependencies on Python's Mac-specific 32-bit APIs. Removed AEDesc methods not used by aem/appscript/aemreceive. Expanded exported C API and renamed from aeAPI to aetoolbox.
+- Added aem.ae which consolidates all Carbon/CoreFoundation bindings into a single C extension. Eliminated dependency on Python's Mac-specific 32-bit APIs. Removed AEDesc methods not used by aem/appscript/aemreceive. Expanded exported C API and renamed from aeAPI to aetoolbox.
 
-- aem.ae raises aem.ae.MacOSError exceptions. Users should update any existing code that refers to the MacOS.Error type as needed..
+- aem.ae raises aem.ae.MacOSError exceptions. Users should update any existing code that refers to the MacOS.Error type as needed.
+
+- aem.CommandError now subclasses aem.ae.MacOSError instead of MacOS.Error.
 
 - Added aem.kae, containing all constants previously defined by CarbonX.kAE and CarbonX.kOSA.
 
@@ -26,6 +26,8 @@ Users should update any existing code that refers to these modules as needed.
 - For convenience, aem and appscript modules re-export mactypes module as part of their public APIs.
 
 - Removed the following Carbon.File-dependent methods from mactypes.Alias, mactypes.File: makewithfsalias, makewithfsref, makewithfsspec, fsalias, fsref, fsspec. Added makewithhfspath, hfspath methods. Renamed makewithaedesc, aedesc methods to makewithdesc, desc. Users should update any existing code that refers to these methods as needed.
+
+- aem by-range selectors now accept non-reference values (these will be expanded to con-based references when packed)
 
 
 2007-12-19 -- 0.18.0

@@ -436,7 +436,7 @@ class Command(_Base):
 				try:
 					return self.AS_appdata.target.event(self._code, params, atts, codecs=self.AS_appdata).send(timeout, sendFlags)
 				except Exception, e:
-					pass
+					raise CommandError(self, (args, kargs), e)
 			elif e.number == -1708 and self._code == 'ascrnoop': # squelch 'not handled' error for 'launch' event
 				return
 			raise CommandError(self, (args, kargs), e)
@@ -455,16 +455,14 @@ class Reference(_Base):
 		self.AS_aemreference = aemreference # an aem app-/con-/its-based reference
 	
 	def _resolveRangeBoundary(self, selector, valueIfNone): # used by __getitem__() below
-		if selector is None:
+		if selector is None: # e.g. documents[2:]
 			selector = valueIfNone 
 		if isinstance(selector, GenericReference):
 			return selector.AS_resolve(Reference, self.AS_appdata).AS_aemreference
 		elif isinstance(selector, Reference):
 			return selector.AS_aemreference
-		elif isinstance(selector, basestring):
-			return aem.con.elements(self.AS_aemreference.AEM_want).byname(selector)
 		else:
-			return aem.con.elements(self.AS_aemreference.AEM_want).byindex(selector)
+			return selector
 	
 	# Full references are hashable and comparable for equality. (Generic references aren't, however, as __eq__() is overridden for other purposes, but the user shouldn't be troubled by this given how generic refs are normally used.)
 	

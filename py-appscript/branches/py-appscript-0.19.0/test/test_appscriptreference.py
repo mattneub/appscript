@@ -64,9 +64,9 @@ class TC_AppscriptReferences(unittest.TestCase):
 				[self.te.documents[AS.its.size >= 42], 
 						self.s+'.documents[its.size >= 42]', None],
 				
-				[self.te.documents[1:'foo'], 
-						self.s+".documents[con.documents[1]:con.documents['foo']]", 
-						self.te.documents[AS.con.documents[1]:AS.con.documents['foo']]],
+				[self.te.documents[1:'bar'], 
+						self.s+".documents[1:'bar']", 
+						self.te.documents[AS.con.documents[1]:AS.con.documents['bar']]],
 				
 				[self.te.documents[1].text \
 						.paragraphs.characters[

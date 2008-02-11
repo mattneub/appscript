@@ -51,11 +51,11 @@ class _Formatter:
 		return self
 	
 	def byrange(self, sel1, sel2):
-		self.result += '[%s:%s]' %(renderreference(self._appData, sel1), renderreference(self._appData, sel2))
+		self.result += '[%s:%s]' %(self._format(sel1), self._format(sel2))
 		return self
 		
 	def byfilter(self, sel):
-		self.result += '[%s]' % renderreference(self._appData, sel)
+		self.result += '[%s]' % self._format(sel)
 		return self
 	
 	def previous(self, sel):
