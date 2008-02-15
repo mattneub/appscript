@@ -26,16 +26,12 @@ _kCurrentProcess = 2
 
 _defaultCodecs = Codecs()
 
-_nullAddressDesc = ae.AECreateDesc(kae.typeProcessSerialNumber, struct.pack('LL', 0, _kNoProcess)) # CarbonX complains if you pass None as address in AECreateAppleEvent, so we give it one to throw away
+_nullAddressDesc = ae.AECreateDesc(kae.typeProcessSerialNumber, struct.pack('LL', 0, _kNoProcess)) # ae.AECreateAppleEvent complains if you pass None as address, so we give it one to throw away
 
 _launchEvent = Event(_nullAddressDesc, 'ascrnoop').AEM_event
 _runEvent = Event(_nullAddressDesc, 'aevtoapp').AEM_event
 
 #######
-
-def _makePSNAddressDesc(psn):
-	return ae.AECreateDesc(kae.typeProcessSerialNumber, struct.pack('LL', *psn))
-
 
 def _launchApplication(path, event):
 	try:
@@ -85,7 +81,7 @@ def launchapp(path):
 	"""Send a 'launch' event to an application. If application is not already running, it will be launched in background first."""
 	try:
 		# If app is already running, calling LaunchApplication will send a 'reopen' event, so need to check for this first:
-		psn = ae.PSNForApplicationPath(path)
+		pid = ae.PIDForApplicationPath(path)
 	except ae.MacOSError, err:
 		if err[0] == -600: # Application isn't running, so launch it and send it a 'launch' event:
 			sleep(1)
@@ -93,7 +89,7 @@ def launchapp(path):
 		else:
 			raise
 	else: # App is already running, so send it a 'launch' event:
-		ae.AECreateAppleEvent('ascr', 'noop', _makePSNAddressDesc(psn), kae.kAutoGenerateReturnID, 
+		ae.AECreateAppleEvent('ascr', 'noop', localappbypid(pid), kae.kAutoGenerateReturnID, 
 				kae.kAnyTransactionID).AESendMessage(kae.kAEWaitReply, kae.kAEDefaultTimeout)
 
 ##
@@ -103,7 +99,7 @@ def processexistsforpath(path):
 		Note: if path is invalid, a MacOSError is raised.
 	"""
 	try:
-		ae.PSNForApplicationPath(path)
+		ae.PIDForApplicationPath(path)
 		return True
 	except ae.MacOSError, err:
 		if err[0] == -600: 
@@ -113,14 +109,7 @@ def processexistsforpath(path):
 
 def processexistsforpid(pid):
 	"""Is there a local application process with the given unix process id?"""
-	try:
-		ae.PSNForProcessID(pid)
-		return True
-	except ae.MacOSError, err:
-		if err[0] == -600: 
-			return False
-		else:
-			raise
+	return ae.IsValidPID(pid)
 
 def processexistsforurl(url):
 	"""Does an application process specified by the given eppc:// URL exist?
@@ -156,14 +145,14 @@ def localapp(path):
 	"""
 	# Always create AEAddressDesc by process serial number; that way there's no confusion if multiple versions of the same app are running
 	try:
-		psn = ae.PSNForApplicationPath(path)
+		pid = ae.PIDForApplicationPath(path)
 	except ae.MacOSError, err:
 		if err[0] == -600: # Application isn't running, so launch it in background and send it a standard 'run' event.
 			sleep(1)
-			psn = _launchApplication(path, _runEvent)
+			pid = _launchApplication(path, _runEvent)
 		else:
 			raise
-	return _makePSNAddressDesc(psn)
+	return localappbypid(pid)
 
 
 def localappbypid(pid):
@@ -171,7 +160,7 @@ def localappbypid(pid):
 		pid : integer -- Unix process id
 		Result : AEAddressDesc
 	"""
-	return ae.AECreateDesc(kae.typeKernelProcessID, struct.pack('L', pid))
+	return ae.AECreateDesc(kae.typeKernelProcessID, struct.pack('i', pid))
 
 
 def remoteapp(url):

@@ -7,7 +7,8 @@ from appscript import *
 from appscript import reference, terminology
 import aem
 
-__all__ = ['ApplicationNotFoundError', 'ScriptingAddition','CommandError', 'k', 'scriptingadditions']
+__all__ = ['ApplicationNotFoundError', 'ScriptingAddition','CommandError', 
+		'k', 'scriptingadditions', 'mactypes']
 
 
 ######################################################################

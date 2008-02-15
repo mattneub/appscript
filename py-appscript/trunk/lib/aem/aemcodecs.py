@@ -339,16 +339,15 @@ class Codecs:
 	def packBool(self, val):
 		return val and self.kTrueDesc or self.kFalseDesc
 	
-	def packInt(self, val):
-		return AECreateDesc(kae.typeSInt32, struct.pack('l', val))
-	
 	def packLong(self, val):
 		if (-2**31) <= val < (2**31): # pack as typeSInt32 if possible (non-lossy)
-			return self.pack(int(val))
+			return AECreateDesc(kae.typeSInt32, struct.pack('i', val))
 		elif (-2**63) <= val < (2**63): # else pack as typeSInt64 if possible (non-lossy)
 			return AECreateDesc(kae.typeSInt64, struct.pack('q', val))
 		else: # else pack as typeFloat (lossy)
 			return self.pack(float(val))
+	
+	packInt = packLong # note: Python int = C long, so may need to pack as typeSInt64 on 64-bit
 	
 	def packFloat(self, val):
 		return AECreateDesc(kae.typeFloat, struct.pack('d', val))
@@ -454,10 +453,10 @@ class Codecs:
 		return struct.unpack('H', desc.data)[0]
 	
 	def unpackSInt32(self, desc):
-		return struct.unpack('l', desc.data)[0]
+		return struct.unpack('i', desc.data)[0]
 	
 	def unpackUInt32(self, desc):
-		return struct.unpack('L', desc.data)[0]
+		return struct.unpack('I', desc.data)[0]
 	
 	def unpackSInt64(self, desc):
 		return struct.unpack('q', desc.data)[0]

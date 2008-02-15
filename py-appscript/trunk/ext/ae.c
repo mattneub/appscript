@@ -395,7 +395,7 @@ static PyObject *AEDesc_AESendMessage(AEDescObject *_self, PyObject *_args) // t
 	AESendMode sendMode;
 	long timeOutInTicks;
 
-	if (!PyArg_ParseTuple(_args, "ll",
+	if (!PyArg_ParseTuple(_args, "il",
 						  &sendMode,
 						  &timeOutInTicks))
 		return NULL;
@@ -406,19 +406,6 @@ static PyObject *AEDesc_AESendMessage(AEDescObject *_self, PyObject *_args) // t
 	if (_err != noErr) return AE_MacOSError(_err);
 	_res = Py_BuildValue("O&",
 						 AE_AEDesc_New, &reply);
-	return _res;
-}
-
-static PyObject *AEDesc_AutoDispose(AEDescObject *_self, PyObject *_args)
-{
-	PyObject *_res = NULL;
-
-	int onoff, old;
-	if (!PyArg_ParseTuple(_args, "i", &onoff))
-	        return NULL;
-	old = _self->ob_owned;
-	_self->ob_owned = onoff;
-	_res = Py_BuildValue("i", old);
 	return _res;
 }
 
@@ -466,9 +453,7 @@ static PyMethodDef AEDesc_methods[] = {
 	{"AEPutAttributeDesc", (PyCFunction)AEDesc_AEPutAttributeDesc, 1,
 	 PyDoc_STR("(AEKeyword theAEKeyword, AEDesc theAEDesc) -> None")},
 	{"AESendMessage", (PyCFunction)AEDesc_AESendMessage, 1,
-	 PyDoc_STR("(AESendMode sendMode, long timeOutInTicks) -> (AppleEvent reply)")}, 
-	{"AutoDispose", (PyCFunction)AEDesc_AutoDispose, 1,
-	 PyDoc_STR("(int)->int. Automatically AEDisposeDesc the object on Python object cleanup")},
+	 PyDoc_STR("(AESendMode sendMode, long timeOutInTicks) -> (AppleEvent reply)")},
 	{NULL, NULL, 0}
 };
 
@@ -639,7 +624,7 @@ static PyObject *AE_AECreateAppleEvent(PyObject *_self, PyObject *_args)
 	AETransactionID transactionID;
 	AppleEvent result;
 
-	if (!PyArg_ParseTuple(_args, "O&O&O&hl",
+	if (!PyArg_ParseTuple(_args, "O&O&O&hi",
 	                      AE_GetOSType, &theAEEventClass,
 	                      AE_GetOSType, &theAEEventID,
 	                      AE_AEDesc_Convert, &target,
@@ -695,7 +680,7 @@ static PyObject *AE_AEInstallEventHandler(PyObject *_self, PyObject *_args)
 		return NULL;
 	_err = AEInstallEventHandler(theAEEventClass,
 	                             theAEEventID,
-	                             handler__proc__, (long)handler,
+	                             handler__proc__, (SRefCon)handler,
 	                             0);
 	if (_err != noErr) return AE_MacOSError(_err);
 	Py_INCREF(Py_None);
@@ -740,7 +725,7 @@ static PyObject *AE_AEGetEventHandler(PyObject *_self, PyObject *_args)
 		return NULL;
 	_err = AEGetEventHandler(theAEEventClass,
 	                         theAEEventID,
-	                         &handler__proc__, (long *)&handler,
+	                         &handler__proc__, (SRefCon *)&handler,
 	                         0);
 	if (_err != noErr) return AE_MacOSError(_err);
 	_res = Py_BuildValue("O",
@@ -764,7 +749,7 @@ static PyObject *AE_AEInstallCoercionHandler(PyObject *_self, PyObject *_args)
 		return NULL;
 	_err = AEInstallCoercionHandler(fromType,
 	                                toType,
-	                                handler__proc__, (long)handler,
+	                                handler__proc__, (SRefCon)handler,
 	                                1, 0);
 	if (_err != noErr) return AE_MacOSError(_err);
 	Py_INCREF(Py_None);
@@ -808,7 +793,7 @@ static PyObject *AE_AEGetCoercionHandler(PyObject *_self, PyObject *_args)
 		return NULL;
 	_err = AEGetCoercionHandler(fromType,
 	                         toType,
-	                         &handler__proc__, (long *)&handler,
+	                         &handler__proc__, (SRefCon *)&handler,
 	                         &fromTypeIsDesc,
 	                         0);
 	if (_err != noErr) return AE_MacOSError(_err);
@@ -918,7 +903,7 @@ static PyObject *AE_ConvertPathToURL(PyObject* self, PyObject* args)
 	CFIndex len;
 	char buffer[PATH_MAX];
 	
-	if (!PyArg_ParseTuple(args, "esi", "utf8", &cStr, &style))
+	if (!PyArg_ParseTuple(args, "esl", "utf8", &cStr, &style))
 		return NULL;
 	str = CFStringCreateWithBytes(NULL,
 								  (UInt8 *)cStr,
@@ -928,10 +913,10 @@ static PyObject *AE_ConvertPathToURL(PyObject* self, PyObject* args)
 	if (!str) return AE_MacOSError(1000);
 	url = CFURLCreateWithFileSystemPath(NULL,
 										str,
-										style,
+										(CFURLPathStyle)style,
 										false);
 	PyMem_Free(cStr);
-	if (!url) return AE_MacOSError(1000);
+	if (!url) return AE_MacOSError(1001);
 	len = CFURLGetBytes(url, (UInt8 *)buffer, PATH_MAX);
 	CFRelease(url);
 	return PyUnicode_DecodeUTF8(buffer, len, NULL);
@@ -948,7 +933,9 @@ static PyObject *AE_ConvertURLToPath(PyObject* self, PyObject* args)
 	char buffer[PATH_MAX];
 	Boolean err;
 
-	if (!PyArg_ParseTuple(args, "esi", "utf8", &cStr, &style))
+	if (!PyArg_ParseTuple(args, "esl", 
+						  "utf8", &cStr, 
+						  &style))
 		return NULL;
 	url = CFURLCreateWithBytes(NULL,
 							   (UInt8 *)cStr,
@@ -957,15 +944,15 @@ static PyObject *AE_ConvertURLToPath(PyObject* self, PyObject* args)
 							   NULL);
 	PyMem_Free(cStr);
 	if (!url) return AE_MacOSError(1000);
-	str = CFURLCopyFileSystemPath(url, style);
+	str = CFURLCopyFileSystemPath(url, (CFURLPathStyle)style);
 	CFRelease(url);
-	if (!str) return AE_MacOSError(1000);
+	if (!str) return AE_MacOSError(1001);
 	err = CFStringGetCString(str,
 							 buffer,
 							 PATH_MAX,
 							 kCFStringEncodingUTF8);
 	CFRelease(str);
-	if (!err) return AE_MacOSError(1000);
+	if (!err) return AE_MacOSError(1002);
 	return PyUnicode_DecodeUTF8(buffer, strlen(buffer), NULL);
 }
 
@@ -1057,10 +1044,11 @@ static int AE_GetFSRef(PyObject *v, FSRef *fsr)
 }
 
 
-static PyObject *AE_PSNForApplicationPath(PyObject* self, PyObject* args)
+static PyObject *AE_PIDForApplicationPath(PyObject* self, PyObject* args)
 {
 	ProcessSerialNumber psn = {0, kNoProcess};
 	FSRef appRef, foundRef;
+	pid_t pid;
 	OSStatus err;
 	
 	if (!PyArg_ParseTuple(args, "O&", 
@@ -1072,7 +1060,9 @@ static PyObject *AE_PSNForApplicationPath(PyObject* self, PyObject* args)
 		err = GetProcessBundleLocation(&psn, &foundRef);
 		if (err == noErr && FSCompareFSRefs(&appRef, &foundRef) == noErr) break;
 	}
-	return Py_BuildValue("kk", psn.highLongOfPSN, psn.lowLongOfPSN);
+	err = GetProcessPID(&psn, &pid);
+	if (err) return AE_MacOSError(err);
+	return Py_BuildValue("i", pid);
 }
 
 
@@ -1089,6 +1079,7 @@ static PyObject *AE_LaunchApplication(PyObject* self, PyObject* args)
 	AppParametersPtr paraData;
 	ProcessSerialNumber psn;
 	LaunchParamBlockRec launchParams;
+	pid_t pid;
 	OSErr err = noErr;
 	
 	if (!PyArg_ParseTuple(args, "O&O&H", 
@@ -1119,14 +1110,14 @@ static PyObject *AE_LaunchApplication(PyObject* self, PyObject* args)
 	err = LaunchApplication(&launchParams);
 	if (err != noErr) return AE_MacOSError(err);
 	psn = launchParams.launchProcessSN;
-	return Py_BuildValue("kk", 
-						 psn.highLongOfPSN, 
-						 psn.lowLongOfPSN);
+	err = GetProcessPID(&psn, &pid);
+	if (err) return AE_MacOSError(err);
+	return Py_BuildValue("i", pid);
 }
 
 
 // only needed for checking pid exists
-static PyObject *AE_PSNForProcessID(PyObject *_self, PyObject *_args)
+static PyObject *AE_IsValidPID(PyObject *_self, PyObject *_args)
 {
 	OSStatus _err = noErr;
 	int pid;
@@ -1135,10 +1126,7 @@ static PyObject *AE_PSNForProcessID(PyObject *_self, PyObject *_args)
 	if (!PyArg_ParseTuple(_args, "i", &pid))
 		return NULL;
 	_err = GetProcessForPID((pid_t)pid, &psn);
-	if (_err != noErr) return AE_MacOSError(_err);
-	return Py_BuildValue("kk", 
-						 psn.highLongOfPSN, 
-						 psn.lowLongOfPSN);
+	return Py_BuildValue("b", (Boolean)(_err != noErr));
 }
 
 
@@ -1319,12 +1307,12 @@ static PyMethodDef AE_methods[] = {
 	{"FindApplicationForInfo", (PyCFunction)AE_LSFindApplicationForInfo, 1,
 		PyDoc_STR("(OSType inCreator, CFStringRef inBundleID, CFStringRef inName) -> (unicode outAppURL)")},
 	 
-	{"PSNForApplicationPath", AE_PSNForApplicationPath, METH_VARARGS,
-		PyDoc_STR("(unicode path) --> (unsigned long highLongOfPSN, unsigned long lowLongOfPSN)")},
+	{"PIDForApplicationPath", AE_PIDForApplicationPath, METH_VARARGS,
+		PyDoc_STR("(unicode path) --> (pid_t pid)")},
   	{"LaunchApplication", (PyCFunction)AE_LaunchApplication, METH_VARARGS,
-		PyDoc_STR("(unicode path, AEDesc firstEvent, unsigned short flags) --> (unsigned long highLongOfPSN, unsigned long lowLongOfPSN)")},
-  	{"PSNForProcessID", (PyCFunction)AE_PSNForProcessID, METH_VARARGS,
-		PyDoc_STR("(int pid) --> (unsigned long highLongOfPSN, unsigned long lowLongOfPSN)")},
+		PyDoc_STR("(unicode path, AEDesc firstEvent, unsigned short flags) --> (pid_t pid)")},
+  	{"IsValidPID", (PyCFunction)AE_IsValidPID, METH_VARARGS,
+		PyDoc_STR("(pid_t pid) --> (Boolean result)")},
 
   	{"CopyScriptingDefinition", (PyCFunction) AE_CopyScriptingDefinition, METH_VARARGS,
 		PyDoc_STR("(unicode path) --> (unicode sdef)")},

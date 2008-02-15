@@ -12,4 +12,4 @@ from aem import CantLaunchApplicationError
 from reference import app, CommandError
 from genericreference import con, its
 from keywordwrapper import k
-import mactypes
+from aem import mactypes
