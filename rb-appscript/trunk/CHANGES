@@ -6,6 +6,10 @@
 
 - fixed bug in Appscript::Reference#_send_command method's auto-reconnection code where a re-sent event that fails now raises the correct CommandError (previously re-raised the original 'invalid connection' error)
 
+- fixed bug when packing Fixnums in 64-bit Ruby
+
+- basic Ruby 1.9 compatibility
+
 
 2007-12-18 -- 0.5.0 (beta 2)
 

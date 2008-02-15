@@ -13,3 +13,5 @@ TO DO
 - remove AEMReference::PositionSpecifier #and, #or, #not methods and documentation
 
 - simplify path-url conversion code (c.f. py-appscript-0.19.0)
+
+- support string encodings in Ruby 1.9

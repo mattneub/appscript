@@ -168,7 +168,16 @@ class Codecs
 		case val
 			when AEMReference::Base then val.AEM_pack_self(self)
 			
-			when Fixnum then AE::AEDesc.new(KAE::TypeSInt32, [val].pack('l'))
+			when Fixnum, Bignum then
+				if SInt32Bounds === val
+					AE::AEDesc.new(KAE::TypeSInt32, [val].pack('l')) 
+				elsif SInt64Bounds === val
+					AE::AEDesc.new(KAE::TypeSInt64, [val].pack('q'))
+				elsif UInt64Bounds === val
+					pack_uint64(val)
+				else
+					AE::AEDesc.new(KAE::TypeFloat, [val.to_f].pack('d'))
+				end
 			
 			when String then 
 				begin
@@ -213,17 +222,6 @@ class Codecs
 				AE::AEDesc.new(KAE::TypeKeyword, Codecs.four_char_code(val.code))
 			
 			when AE::AEDesc then val
-			
-			when Bignum
-				if SInt32Bounds === val
-					AE::AEDesc.new(KAE::TypeSInt32, [val].pack('l')) 
-				elsif SInt64Bounds === val
-					AE::AEDesc.new(KAE::TypeSInt64, [val].pack('q'))
-				elsif UInt64Bounds === val
-					pack_uint64(val)
-				else
-					AE::AEDesc.new(KAE::TypeFloat, [val.to_f].pack('d'))
-				end
 				
 			when NilClass then NullDesc
 		else
