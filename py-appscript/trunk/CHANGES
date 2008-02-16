@@ -33,6 +33,8 @@ Users should update any existing code that refers to these modules as needed.
 
 - Removed AND, OR methods and NOT property from aemreference._PositionSpecifier as these shortcuts are no longer supported
 
+- help system now encodes text to UTF8 before writing it to stderr
+
 
 2007-12-19 -- 0.18.0
 

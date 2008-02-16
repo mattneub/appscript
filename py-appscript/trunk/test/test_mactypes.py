@@ -9,7 +9,7 @@ class TC_MacTypes(unittest.TestCase):
 	dir = '/private/tmp'
 	
 	def setUp(self):
-		self.path1 = '/private' + os.tempnam(self.dir, 'py-mactypes-test.') # tempnam raises a security warning re. security; it's part of the test code, not mactypes, so ignore it
+		self.path1 = os.tempnam(self.dir, 'py-mactypes-test.') # tempnam raises a security warning re. security; it's part of the test code, not mactypes, so ignore it
 		file(self.path1, 'w').close()
 		fname = os.path.split(self.path1)[1]
 		self.path2 = os.path.join(self.dir, 'moved-' + fname)

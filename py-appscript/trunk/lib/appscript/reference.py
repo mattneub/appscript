@@ -247,6 +247,11 @@ class AppData(aem.Codecs):
 		
 	# Help system
 	
+	def _write(self, s):
+		if isinstance(s, unicode):
+			s= s.encode('utf8')
+		print >> sys.stderr, s
+	
 	def _initHelpAgent(self):
 		try:
 			apppath = aem.findapp.byid(self.kHelpAgentBundleID)
@@ -259,9 +264,9 @@ class AppData(aem.Codecs):
 				sleep(1) # KLUDGE: need a short delay here to workaround ASDictionary 0.9.0's event handling glitches # TO DO: delete after ASDictionary is fixed
 			return True
 		except aem.findapp.ApplicationNotFoundError:
-			print >> sys.stderr,  "No help available: ASDictionary application not found."
+			self._write("No help available: ASDictionary application not found.")
 		except aem.CantLaunchApplicationError:
-			print >> sys.stderr,  "No help available: can't launch ASDictionary application."
+			self._write("No help available: can't launch ASDictionary application.")
 		return False
 	
 	def _displayHelp(self, flags, ref):
@@ -271,14 +276,14 @@ class AppData(aem.Codecs):
 		else:
 			commandName = ''
 		try:
-			print >> sys.stderr, self._helpAgent.event('AppSHelp', {
+			self._write(self._helpAgent.event('AppSHelp', {
 					'Cons': self.constructor,
 					'Iden': self.identifier,
 					'Styl': 'py-appscript',
 					'Flag': flags,
 					'aRef': self.pack(ref),
 					'CNam': commandName
-					}).send()
+					}).send())
 			return None
 		except aem.CommandError, e:
 			return e
@@ -295,11 +300,13 @@ class AppData(aem.Codecs):
 				e = self._displayHelp(flags, ref)
 			if e:
 				if e.number:
-					print >> sys.stderr, "No help available: ASDictionary 0.9.0 or later required."
+					self._write("No help available: ASDictionary 0.9.0 or later required.")
 				else:
-					print >> sys.stderr, "No help available: ASDictionary raised an error: %r." % e
+					self._write("No help available: ASDictionary raised an error: %r." % e)
 		except Exception, err:
-			print >> sys.stderr, "No help available: unknown error: %r" % err
+			self._write("No help available: unknown error: %s" % err)
+			from traceback import print_exc
+			print_exc()
 		return ref
 
 
