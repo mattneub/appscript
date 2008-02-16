@@ -14,6 +14,10 @@ module MacTypes
 	require "ae"
 	require "kae"
 	
+	KCFURLPOSIXPathStyle = 0
+	KCFURLHFSPathStyle = 1
+	KCFURLWindowsPathStyle = 2
+	
 	class FileBase
 		
 		def FileBase._coerce(desc, type, path=nil)
@@ -61,20 +65,20 @@ module MacTypes
 		def Alias.path(path)
 			# Make Alias object from POSIX path.
 			return new(FileBase._coerce(
-					AE::AEDesc.new(KAE::TypeFileURL, AE.convert_posix_path_to_url(path)),
+					AE::AEDesc.new(KAE::TypeFileURL, AE.convert_path_to_url(path, KCFURLPOSIXPathStyle)),
 					KAE::TypeAlias, path))
 		end
 		
 		def Alias.hfs_path(path)
 			# Make Alias object from HFS path.
 			return new(FileBase._coerce(
-					AE::AEDesc.new(KAE::TypeFileURL, AE.convert_hfs_path_to_url(path)),
+					AE::AEDesc.new(KAE::TypeFileURL, AE.convert_path_to_url(path, KCFURLHFSPathStyle)),
 					KAE::TypeAlias, path))
 		end
 		
 		def Alias.url(url)
 			# Make Alias object from file URL. Note: only the path portion of the URL is used; the domain will always be localhost.
-			return Alias.path(AE.convert_url_to_posix_path(url))
+			return Alias.path(AE.convert_url_to_path(url, KCFURLPOSIXPathStyle))
 		end
 		
 		def Alias.desc(desc)
@@ -93,12 +97,12 @@ module MacTypes
 		
 		def path
 			# Get as POSIX path.
-			return AE.convert_url_to_posix_path(FileBase._coerce(@desc, KAE::TypeFileURL).data)
+			return AE.convert_url_to_path(FileBase._coerce(@desc, KAE::TypeFileURL).data, KCFURLPOSIXPathStyle)
 		end
 		
 		def hfs_path
 			# Get as HFS path.
-			return AE.convert_url_to_hfs_path(FileBase._coerce(@desc, KAE::TypeFileURL).data)
+			return AE.convert_url_to_path(FileBase._coerce(@desc, KAE::TypeFileURL).data, KCFURLHFSPathStyle)
 		end
 		
 		alias_method :to_s, :path
@@ -139,12 +143,12 @@ module MacTypes
 		
 		def FileURL.hfs_path(path)
 			# Make FileURL object from HFS path.
-			return new(AE.convert_url_to_posix_path(AE.convert_hfs_path_to_url(path)), nil)
+			return new(AE.convert_url_to_path(AE.convert_path_to_url(path, KCFURLHFSPathStyle), KCFURLPOSIXPathStyle), nil)
 		end
 		
 		def FileURL.url(url)
 			# Make FileURL object from file URL. Note: only the path portion of the URL is used; the domain will always be localhost.
-			return FileURL.path(AE.convert_url_to_posix_path(url))
+			return FileURL.path(AE.convert_url_to_path(url, KCFURLPOSIXPathStyle))
 		end
 		
 		def FileURL.desc(desc)
@@ -157,7 +161,7 @@ module MacTypes
 		def desc
 			# Get as AEDesc. If constructed from Ruby, descriptor's type is always typeFileURL; if returned by aem, its type may be typeFSS, typeFSRef or typeFileURL.
 			if not @desc
-				@desc = AE::AEDesc.new(KAE::TypeFileURL, AE.convert_posix_path_to_url(@path))
+				@desc = AE::AEDesc.new(KAE::TypeFileURL, AE.convert_path_to_url(@path, KCFURLPOSIXPathStyle))
 			end
 			return @desc
 		end
@@ -170,13 +174,13 @@ module MacTypes
 		def path
 			# Get as POSIX path.
 			if not @path
-				@path = AE.convert_url_to_posix_path(FileBase._coerce(@desc, KAE::TypeFileURL).data)
+				@path = AE.convert_url_to_path(FileBase._coerce(@desc, KAE::TypeFileURL).data, KCFURLPOSIXPathStyle)
 			end
 			return @path
 		end
 		
 		def hfs_path
-			return AE.convert_url_to_hfs_path(AE.convert_posix_path_to_url(path))
+			return AE.convert_url_to_path(AE.convert_path_to_url(path, KCFURLPOSIXPathStyle), KCFURLHFSPathStyle)
 		end
 		
 		alias_method :to_s, :path

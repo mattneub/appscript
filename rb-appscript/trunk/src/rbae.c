@@ -554,23 +554,7 @@ rbAE_launchApplication(VALUE self, VALUE path, VALUE firstEvent, VALUE flags)
 // HFS/POSIX path conversions
 
 static VALUE
-rbAE_convertPOSIXPathToURL(VALUE self, VALUE path)
-{
-	CFURLRef url;
-	UInt8 buffer[PATH_MAX];
-
-	url = CFURLCreateFromFileSystemRepresentation(NULL,
-												  (UInt8 *)(RSTRING_PTR(path)),
-												  (CFIndex)(RSTRING_LEN(path)),
-												  false);
-	if (url == NULL) rb_raise(rb_eRuntimeError, "Invalid POSIX path string.");
-	buffer[CFURLGetBytes(url, buffer, PATH_MAX - 1)] = '\0';
-	CFRelease(url);
-	return rb_str_new2((char *)buffer);
-}
-
-static VALUE
-rbAE_convertHFSPathToURL(VALUE self, VALUE path)
+rbAE_convertPathToURL(VALUE self, VALUE path, VALUE pathStyle)
 {
 	CFStringRef str;
 	CFURLRef url;
@@ -581,42 +565,20 @@ rbAE_convertHFSPathToURL(VALUE self, VALUE path)
 								  (CFIndex)(RSTRING_LEN(path)),
 								  kCFStringEncodingUTF8,
 								  false);
-	if (str == NULL) rb_raise(rb_eRuntimeError, "Invalid HFS path string.");
+	if (str == NULL) rb_raise(rb_eRuntimeError, "Bad path string.");
 	url = CFURLCreateWithFileSystemPath(NULL,
 										str,
-										kCFURLHFSPathStyle,
+										NUM2LONG(pathStyle),
 										false);
 	CFRelease(str);
-	if (url == NULL) rb_raise(rb_eRuntimeError, "Invalid HFS path string.");
+	if (url == NULL) rb_raise(rb_eRuntimeError, "Invalid path.");
 	buffer[CFURLGetBytes(url, buffer, PATH_MAX - 1)] = '\0';
 	CFRelease(url);
 	return rb_str_new2((char *)buffer);
 }
 
 static VALUE
-rbAE_convertURLToPOSIXPath(VALUE self, VALUE urlStr)
-{
-	Boolean err;
-	CFURLRef url;
-	UInt8 buffer[PATH_MAX];
-
-	url = CFURLCreateWithBytes(NULL,
-							   (UInt8 *)(RSTRING_PTR(urlStr)),
-							   (CFIndex)(RSTRING_LEN(urlStr)),
-							   kCFStringEncodingUTF8,
-							   NULL);
-	if (url == NULL) rb_raise(rb_eRuntimeError, "Invalid URL string.");
-	err = CFURLGetFileSystemRepresentation(url,
-										   true,
-										   buffer,
-										   PATH_MAX);
-	CFRelease(url);
-	if (!err) rb_raise(rb_eRuntimeError, "Can't get POSIX path.");
-	return rb_str_new2((char *)buffer);
-}
-
-static VALUE
-rbAE_convertURLToHFSPath(VALUE self, VALUE urlStr)
+rbAE_convertURLToPath(VALUE self, VALUE urlStr, VALUE pathStyle)
 {
 	Boolean err;
 	CFURLRef url;
@@ -628,16 +590,16 @@ rbAE_convertURLToHFSPath(VALUE self, VALUE urlStr)
 							   (CFIndex)(RSTRING_LEN(urlStr)),
 							   kCFStringEncodingUTF8,
 							   NULL);
-	if (url == NULL) rb_raise(rb_eRuntimeError, "Invalid URL string.");
-	str = CFURLCopyFileSystemPath(url, kCFURLHFSPathStyle);
+	if (url == NULL) rb_raise(rb_eRuntimeError, "Bad URL string.");
+	str = CFURLCopyFileSystemPath(url, NUM2LONG(pathStyle));
 	CFRelease(url);
-	if (str == NULL) rb_raise(rb_eRuntimeError, "Can't get HFS path.");
+	if (str == NULL) rb_raise(rb_eRuntimeError, "Can't get path.");
 	err = CFStringGetCString(str,
 							 buffer,
 							 PATH_MAX,
 							 kCFStringEncodingUTF8);
 	CFRelease(str);
-	if (!err) rb_raise(rb_eRuntimeError, "Can't get HFS path.");
+	if (!err) rb_raise(rb_eRuntimeError, "Can't get path.");
 	return rb_str_new2(buffer);
 }
 
@@ -954,14 +916,10 @@ Init_ae (void)
 	rb_define_module_function(mAE, "psn_for_process_id", rbAE_psnForPID, 1);
 	rb_define_module_function(mAE, "launch_application", rbAE_launchApplication, 3);
 	
-	rb_define_module_function(mAE, "convert_posix_path_to_url", 
-							  rbAE_convertPOSIXPathToURL, 1);
-	rb_define_module_function(mAE, "convert_hfs_path_to_url", 
-							  rbAE_convertHFSPathToURL, 1);
-	rb_define_module_function(mAE, "convert_url_to_posix_path", 
-							  rbAE_convertURLToPOSIXPath, 1);
-	rb_define_module_function(mAE, "convert_url_to_hfs_path", 
-							  rbAE_convertURLToHFSPath, 1);
+	rb_define_module_function(mAE, "convert_path_to_url", 
+							  rbAE_convertPathToURL, 2);
+	rb_define_module_function(mAE, "convert_url_to_path", 
+							  rbAE_convertURLToPath, 2);
 
 	rb_define_module_function(mAE, "convert_long_date_time_to_unix_seconds", 
 							  rbAE_convertLongDateTimeToUnixSeconds, 1);

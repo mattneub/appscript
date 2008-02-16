@@ -281,25 +281,6 @@ module AEMReference
 		def is_in(val)
 			return IsIn.new(self, val)
 		end
-	
-		# Logic tests; these should only be used on its-based references:
-		
-		# Note: these are convenience methods allowing boolean tests to be written in shorthand form;
-		# e.g. AEM.its.visible.and(...) will automatically expand to AEM.its.visible.eq(true).and(...)
-		# The Test class implements the actual logic test methods
-		
-		def and(*operands)
-			return Equals.new(self, true).and(*operands)
-		end
-			
-		def or(*operands)
-			return Equals.new(self, true).or(*operands)
-		end
-		
-		def not
-			return Equals.new(self, true).not
-		end
-		
 		
 		# Insertion references:
 		

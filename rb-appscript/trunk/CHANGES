@@ -12,6 +12,8 @@
 
 - fixed minor bug and improved error reporting in Appscript::Reference#[]
 
+- removed AEMReference::PositionSpecifier's #and, #or, #not methods as these shortcuts are no longer supported
+
 - basic Ruby 1.9 compatibility
 
 

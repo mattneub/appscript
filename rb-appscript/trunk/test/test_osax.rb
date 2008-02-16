@@ -1,4 +1,4 @@
-#!/usr/local/bin/ruby -w
+#!/usr/bin/ruby -w
 
 require 'test/unit'
 require 'osax'

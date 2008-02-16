@@ -1,4 +1,4 @@
-#!/usr/local/bin/ruby -w
+#!/usr/bin/ruby -w
 
 require 'test/unit'
 require "_aem/mactypes"
@@ -13,6 +13,10 @@ class TC_MacTypes < Test::Unit::TestCase
 		# puts "path: #{@path1}" # e.g. /tmp/codecs-test.HWr1EnE3
 	end
 	
+	def normalize(path)
+		return path.gsub(/\/+/, '/') # quick-n-dirty
+	end
+	
 	def test_alias
 		# make alias
 		f = MacTypes::Alias.path(@path1)
@@ -22,10 +26,10 @@ class TC_MacTypes < Test::Unit::TestCase
 		
 		# get path
 		# note that initial /tmp/codecs-test... path will automatically change to /private/tmp/codecs-test...
-		p1 = '/private'+@path1
-		p2 = '/private'+@path2
-		
-		assert_equal("MacTypes::Alias.path(#{p1.inspect})", f.inspect)
+		p1 = normalize('/private'+@path1)
+		p2 = normalize('/private'+@path2)
+				
+		assert_equal(p1, normalize(f.path))
 		
 		#puts "alias path 1: #{f}" # e.g. /private/tmp/codecs-test.HWr1EnE3
 		assert_equal(p1, f.to_s)
@@ -40,7 +44,7 @@ class TC_MacTypes < Test::Unit::TestCase
 		# puts "alias path 2: #{f}" # /private/tmp/moved-codecs-test.HWr1EnE3
 		assert_equal(p2, f.to_s)
 
-		assert_equal("MacTypes::Alias.path(#{p2.inspect})", f.inspect)
+		assert_equal(p2, normalize(f.path))
 		
 		# check a FileNotFoundError is raised if getting path/FileURL for a filesystem object that no longer exists
 		`rm #{@path2}`
