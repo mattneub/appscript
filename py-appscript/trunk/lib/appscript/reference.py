@@ -424,21 +424,34 @@ class Command(_Base):
 		try:
 			return self.AS_appdata.target.event(self._code, params, atts, codecs=self.AS_appdata).send(timeout, sendFlags)
 		except aem.CommandError, e:
-			if e.number in [-600, -609] and self.AS_appdata.constructor == 'path': # event was sent to a local app for which we no longer have a valid address (i.e. the application has quit since this aem.Application object was made).
-				# - If application is running under a new process id, we just update the aem.Application object and resend the event.
-				# - If application isn't running, then we see if the event being sent is one of those allowed to relaunch the application (i.e. 'run' or 'launch'). If it is, the aplication is relaunched, the process id updated and the event resent; if not, the error is rethrown.
+			if e.number == -1708 and self._code == 'ascrnoop':
+				return # 'launch' events always return 'not handled' errors; just ignore these
+			elif e.number in [-600, -609] and self.AS_appdata.constructor == 'path':
+				#
+				# Event was sent to a local app for which we no longer have a valid address
+				# (i.e. the application has quit since this aem.Application object was made).
+				#
+				# - If application is running under a new process id, we just update the 
+				#   aem.Application object and resend the event.
+				#
+				# - If application isn't running, then we see if the event being sent is one of 
+				#   those allowed to relaunch the application (i.e. 'run' or 'launch'). If it is, the
+				#   application is relaunched, the process id updated and the event resent;
+				#   if not, the error is rethrown.
+				#
 				if not self.AS_appdata.target.processexistsforpath(self.AS_appdata.identifier):
 					if self._code == 'ascrnoop':
 						aem.Application.launch(self.AS_appdata.identifier) # relaunch app in background
 					elif self._code != 'aevtoapp': # only 'launch' and 'run' are allowed to restart a local application that's been quit
 						raise CommandError(self, (args, kargs), e)
-				self.AS_appdata.target.reconnect() # update aem.Application object so it has a valid address for app
+				# update AEMApplication object's AEAddressDesc
+				self.AS_appdata.target.reconnect()
+				# re-send command
 				try:
-					return self.AS_appdata.target.event(self._code, params, atts, codecs=self.AS_appdata).send(timeout, sendFlags)
-				except Exception, e:
+					return self.AS_appdata.target.event(self._code, params, atts, 
+							codecs=self.AS_appdata).send(timeout, sendFlags)
+				except aem.CommandError, e:
 					raise CommandError(self, (args, kargs), e)
-			elif e.number == -1708 and self._code == 'ascrnoop': # squelch 'not handled' error for 'launch' event
-				return
 			raise CommandError(self, (args, kargs), e)
 	
 	def AS_formatCommand(self, args):
@@ -517,19 +530,24 @@ class Reference(_Base):
 		else: # kCommand (note: 'code' variable here actually contains a (code, args) struct)
 			return Command(self.AS_appdata, self.AS_aemreference, self.__repr__, name, code)
 	
-	def __getitem__(self, selector): # by name/index
-		if isinstance(selector, basestring):
+	def __getitem__(self, selector):
+		if isinstance(selector, basestring): # by-name
 			return Reference(self.AS_appdata, self.AS_aemreference.byname(selector))
-		elif isinstance(selector, GenericReference):
-			return Reference(self.AS_appdata, self.AS_aemreference.byfilter(
-					selector.AS_resolve(Reference, self.AS_appdata).AS_aemreference))
-		elif isinstance(selector, (Reference, Test)):
-			return Reference(self.AS_appdata, self.AS_aemreference.byfilter(selector))
-		elif isinstance(selector, slice):
+		elif isinstance(selector, (GenericReference, Reference, Test)): # by-test
+			if isinstance(selector, GenericReference):
+				testclause = selector.AS_resolve(Reference, self.AS_appdata).AS_aemreference
+			elif isinstance(selector, Reference):
+				testclause = selector.AS_aemreference
+			else:
+				testclause = selector
+			if not isinstance(testclause, Test):
+				raise TypeError, 'Not an its-based test: %r' % selector
+			return Reference(self.AS_appdata, self.AS_aemreference.byfilter(testclause))
+		elif isinstance(selector, slice): # by-range
 			return Reference(self.AS_appdata, self.AS_aemreference.byrange(
 					self._resolveRangeBoundary(selector.start, 1),
 					self._resolveRangeBoundary(selector.stop, -1)))
-		else:
+		else: # by-index
 			return Reference(self.AS_appdata, self.AS_aemreference.byindex(selector))
 	
 	first = property(lambda self: Reference(self.AS_appdata, self.AS_aemreference.first))
@@ -664,7 +682,7 @@ class Application(Reference):
 	def AS_newreference(self, ref):
 		"""Create a new appscript reference from an aem reference."""
 		if isinstance(ref, GenericReference):
-			return ref.AS_resolve(self.AS_appdata)
+			return ref.AS_resolve(Reference, self.AS_appdata)
 		elif isinstance(ref, aem.types.BASE):
 			return Reference(self.AS_appdata, ref)
 		elif ref is None:

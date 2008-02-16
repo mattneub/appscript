@@ -29,6 +29,8 @@ Users should update any existing code that refers to these modules as needed.
 
 - aem by-range selectors now accept non-reference values (these will be expanded to con-based references when packed)
 
+- fixed bug in appscript.Reference.AS_newreference
+
 
 2007-12-19 -- 0.18.0
 
