@@ -31,6 +31,8 @@ Users should update any existing code that refers to these modules as needed.
 
 - fixed bug in appscript.Reference.AS_newreference
 
+- Removed AND, OR methods and NOT property from aemreference._PositionSpecifier as these shortcuts are no longer supported
+
 
 2007-12-19 -- 0.18.0
 

@@ -219,21 +219,6 @@ class _PositionSpecifier(Specifier):
 		"""isin(anything) --> isin test"""
 		return IsIn(self, val)
 	
-	# Logic tests; these should only be used on its-based references:
-	
-	# Note: these three methods allow boolean tests to be written in shorthand form;
-	# e.g. 'its.foo.AND(...)' will automatically expand to 'its.foo.eq(True).AND(...)'
-	
-	def AND(self, *operands):
-		"""AND(test, ...) --> logical AND test"""
-		return Equals(self, True).AND(*operands)
-		
-	def OR(self, * operands):
-		"""OR(test, ...) --> logical OR test"""
-		return Equals(self, True).OR(*operands)
-	
-	NOT = property(lambda self: Equals(self, True).NOT, doc="NOT --> logical NOT test")
-	
 	# Insertion references can be used on any kind of element reference, and also on property references where the property represents a one-to-one relationship, e.g. textedit.documents[1].text.end is valid:
 		
 	beginning = property(lambda self: InsertionSpecifier(self, self._kBeginning, 'beginning'), doc="beginning --> insertion location")

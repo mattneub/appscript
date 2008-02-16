@@ -161,8 +161,6 @@ p ref
         end -&gt; InsertionSpecifier
         before -&gt; InsertionSpecifier
         after -&gt; InsertionSpecifier
-    
-        NOT -&gt; Test -- apply logical NOT to self.eq(True)
 
     Methods:
         property(propertycode)
@@ -226,14 +224,6 @@ p ref
     
         isin(val) -- self is in value
             val : anything
-            Result : Test
-
-        AND(*operands) -- equivalent to self.eq(True).AND(*operands)
-            operands : Test/Test
-            Result : Test
-        
-        OR(*operands) -- equivalent to self.eq(True).OR(*operands)
-            operands : Test/Test
             Result : Test</code></pre>
 
 
