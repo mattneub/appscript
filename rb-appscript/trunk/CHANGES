@@ -8,6 +8,10 @@
 
 - fixed bug when packing Fixnums in 64-bit Ruby
 
+- fixed a memory leak in AE.get_app_terminology
+
+- fixed minor bug and improved error reporting in Appscript::Reference#[]
+
 - basic Ruby 1.9 compatibility
 
 
