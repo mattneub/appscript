@@ -1,6 +1,10 @@
-#!/usr/local/bin/ruby -w
-# Copyright (C) 2006 HAS. 
-# Released under MIT License.
+#
+# rb-appscript
+#
+# aemreference -- an object-oriented API for constructing object specifier AEDescs
+#
+# Copyright (C) 2006-2008 HAS. Released under MIT License.
+#
 
 ######################################################################
 # Endianness support

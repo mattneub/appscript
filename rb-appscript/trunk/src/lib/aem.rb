@@ -1,6 +1,11 @@
-#!/usr/local/bin/ruby
-# Copyright (C) 2006 HAS. 
-# Released under MIT License.
+#
+# rb-appscript
+#
+# aem -- a mid-level object-oriented API for creating and sending Apple events
+#    using raw AE codes; may be used directly or via high-level appscript wrapper
+#
+# Copyright (C) 2006-2008 HAS. Released under MIT License.
+#
 
 require "ae"
 require "kae"

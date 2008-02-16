@@ -1,6 +1,10 @@
-#!/usr/local/bin/ruby -w
-# Copyright (C) 2006 HAS. 
-# Released under MIT License.
+#
+# rb-appscript
+#
+# mactypes -- Ruby classes representing Alias, FileURL and unit type AEDescs
+#
+# Copyright (C) 2006-2008 HAS. Released under MIT License.
+#
 
 module MacTypes
 	# Defines wrapper classes for Mac OS datatypes that don't have a suitable Ruby equivalent.

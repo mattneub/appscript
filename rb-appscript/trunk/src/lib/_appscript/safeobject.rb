@@ -1,4 +1,14 @@
-#!/usr/local/bin/ruby
+#
+# rb-appscript
+#
+# safeobject -- ensure Appscript::Reference#method_missing works reliably
+#
+# New code Copyright (C) 2006-2008 HAS
+# Original code Copyright (C) 2005 Thomas Sawyer, Jim Weirich; see below for original copyright
+#
+
+# Notes:
+
 # A modified, updated version of basicobject (http://facets.rubyforge.org/), used to provide
 # Appscript::Reference and Appscript#GenericReference with stable superclasses.
 

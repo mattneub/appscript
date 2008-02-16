@@ -1,6 +1,10 @@
-#!/usr/local/bin/ruby
-# Copyright (C) 2006 HAS. 
-# Released under MIT License.
+#
+# rb-appscript
+#
+# typewrappers -- Ruby classes representing type, enumerator, property and keyword AEDescs
+#
+# Copyright (C) 2006-2008 HAS. Released under MIT License.
+#
 
 module TypeWrappers
 	

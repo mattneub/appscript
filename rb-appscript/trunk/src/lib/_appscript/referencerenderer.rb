@@ -1,6 +1,10 @@
-#!/usr/local/bin/ruby
-# Copyright (C) 2006 HAS. 
-# Released under MIT License.
+#
+# rb-appscript
+#
+# referencerenderer -- obtain an appscript-style string representation of an aem reference
+#
+# Copyright (C) 2006-2008 HAS. Released under MIT License.
+#
 
 require "_aem/aemreference"
 

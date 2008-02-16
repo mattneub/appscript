@@ -1,6 +1,11 @@
-#!/usr/local/bin/ruby
-# Copyright (C) 2006 HAS. 
-# Released under MIT License.
+#
+# rb-appscript
+#
+# reservedkeywords -- names of methods already used by Ruby's Object class
+#    and appscript's Reference class
+#
+# Copyright (C) 2006-2008 HAS. Released under MIT License.
+#
 
 # This list is mirrored in ch.6 of the appscript manual and in py-appscript's osaterminology.makeidentifier module
 

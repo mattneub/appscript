@@ -1,6 +1,10 @@
-#!/usr/bin/ruby
-# Copyright (C) 2006 HAS. 
-# Released under MIT License.
+#
+# rb-appscript
+#
+# connect -- launch applications and create AEAddressDescs
+#
+# Copyright (C) 2006-2008 HAS. Released under MIT License.
+#
 
 module Connect
 	# Creates Apple event descriptor records of typeProcessSerialNumber, typeKernelProcessID and typeApplicationURL, used to specify the target application in Send::Event constructor.

@@ -1,6 +1,10 @@
-#!/usr/local/bin/ruby
-# Copyright (C) 2006 HAS. 
-# Released under MIT License.
+#
+# rb-appscript
+#
+# terminology -- retrieve and convert an application's terminology into lookup tables
+#
+# Copyright (C) 2006-2008 HAS. Released under MIT License.
+#
 
 ######################################################################
 # TERMINOLOGY PARSER

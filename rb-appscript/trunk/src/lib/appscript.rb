@@ -1,6 +1,11 @@
-#!/usr/local/bin/ruby
-# Copyright (C) 2006 HAS. 
-# Released under MIT License.
+#
+# rb-appscript
+#
+# appscript -- syntactically sugared wrapper around the mid-level aem API;
+#    provides a high-level, easy-to-use API for creating and sending Apple events
+#
+# Copyright (C) 2006-2008 HAS. Released under MIT License.
+#
 
 require "_aem/mactypes"
 
@@ -502,32 +507,41 @@ module Appscript
 			begin
 				return @AS_app_data.target.event(code, params, atts, 
 						KAE::KAutoGenerateReturnID, @AS_app_data).send(timeout, send_flags)
-			rescue => e
-				if e.is_a?(AEM::CommandError)
-					if [-600, -609].include?(e.number) and @AS_app_data.constructor == :by_path
-						# if application isn't running at all, restart it only if command was 'run' or 'launch', otherwise error
-						# TO DO: CHECK!
-						if not AEM::Application.process_exists_for_path?(@AS_app_data.identifier)
-							if code == 'ascrnoop'
-								AEM::Application.launch(@AS_app_data.identifier)
-							elsif code != 'aevtoapp'
-								raise CommandError.new(self, name, args, e)
-							end
+			rescue AEM::CommandError => e
+				if e.number == -1708 and code == 'ascrnoop'
+					return # 'launch' events always return 'not handled' errors; just ignore these
+				elsif [-600, -609].include?(e.number) and @AS_app_data.constructor == :by_path 
+					#
+					# Event was sent to a local app for which we no longer have a valid address
+					# (i.e. the application has quit since this AEM::Application object was made).
+					#
+					# - If application is running under a new process id, we just update the 
+					#   AEM::Application object and resend the event.
+					#
+					# - If application isn't running, then we see if the event being sent is one of 
+					#   those allowed to relaunch the application (i.e. 'run' or 'launch'). If it is, the
+					#   application is relaunched, the process id updated and the event resent;
+					#   if not, the error is rethrown.
+					#
+					if not AEM::Application.process_exists_for_path?(@AS_app_data.identifier)
+						if code == 'ascrnoop'
+							AEM::Application.launch(@AS_app_data.identifier)
+						elsif code != 'aevtoapp'
+							raise CommandError.new(self, name, args, e)
 						end
-						# update AEMApplication object's AEAddressDesc
-						@AS_app_data.target.reconnect
-						# re-send command
-						begin
-							return @AS_app_data.target.event(code, params, atts, 
-									KAE::KAutoGenerateReturnID, @AS_app_data).send(timeout, send_flags)
-						rescue # TO DO: CHECK!
-						end
-					elsif e.number == -1708 and code == 'ascrnoop'
-						return
+					end
+					# update AEMApplication object's AEAddressDesc
+					@AS_app_data.target.reconnect
+					# re-send command
+					begin
+						return @AS_app_data.target.event(code, params, atts, 
+								KAE::KAutoGenerateReturnID, @AS_app_data).send(timeout, send_flags)
+					rescue AEM::CommandError => e
+						raise CommandError.new(self, name, args, e)
 					end
 				end
-				raise CommandError.new(self, name, args, e)
 			end
+			raise CommandError.new(self, name, args, e)
 		end
 		
 		
@@ -628,7 +642,7 @@ module Appscript
 					return _send_command(args, name, code[0], code[1])
 			else 
 				# see if it's a method that has been added to Object class [presumably] at runtime, but excluded
-				# by AE_SafeObject to avoid potential conflicts with property/element/command names
+				# by AS_SafeObject to avoid potential conflicts with property/element/command names
 				begin
 					# Notes:
 					# rb-appscript has to prevent arbitrary methods that are added to Ruby's base Object class
@@ -666,7 +680,7 @@ module Appscript
 		end
 		
 		def [](selector, end_range_selector=nil)
-			raise "Bad selector: nil not allowed." if selector == nil
+			raise TypeError, "Bad selector: nil not allowed." if selector == nil
 			if end_range_selector != nil
 				new_ref = @AS_aem_reference.by_range(
 						self._resolve_range_boundary(selector),
@@ -675,11 +689,19 @@ module Appscript
 				case selector
 					when String
 						 new_ref = @AS_aem_reference.by_name(selector)
-					when Appscript::GenericReference
-						new_ref = @AS_aem_reference.by_filter(
-								selector.AS_resolve(@AS_app_data).AS_aem_reference)
-					when Appscript::Reference, AEMReference::Test
-						new_ref = @AS_aem_reference.by_filter(selector)
+					when Appscript::GenericReference, Appscript::Reference, AEMReference::Test
+						case selector
+							when Appscript::GenericReference
+								test_clause = selector.AS_resolve(@AS_app_data).AS_aem_reference
+							when Appscript::Reference
+								test_clause = selector.AS_aem_reference
+						else
+							test_clause = selector	
+						end
+						if not test_clause.is_a?(AEMReference::Test)
+							raise TypeError, "Not an its-based test: #{selector}"
+						end
+						new_ref = @AS_aem_reference.by_filter(test_clause)
 				else
 					new_ref = @AS_aem_reference.by_index(selector)
 				end

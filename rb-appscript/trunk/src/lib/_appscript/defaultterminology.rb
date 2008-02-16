@@ -1,6 +1,10 @@
-#!/usr/local/bin/ruby
-# Copyright (C) 2006 HAS. 
-# Released under MIT License.
+#
+# rb-appscript
+#
+# defaultterminology -- lookup tables for default type, enumerator and command definitions
+#
+# Copyright (C) 2006-2008 HAS. Released under MIT License.
+#
 
 module DefaultTerminology
 	# Defines built-in terminology available for any application. When constructing the terminology tables for a particular application, the Terminology module will duplicate these tables and then add application-specific terms to create the finished lookup tables.

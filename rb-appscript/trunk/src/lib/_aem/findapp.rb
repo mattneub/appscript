@@ -1,6 +1,10 @@
-#!/usr/local/bin/ruby
-# Copyright (C) 2006 HAS. 
-# Released under MIT License.
+#
+# rb-appscript
+#
+# findapp -- locate an application by name, bundle ID or creator code
+#
+# Copyright (C) 2006-2008 HAS. Released under MIT License.
+#
 
 module FindApp
 	# Support module for obtaining the full path to a local application given its name, bundle id or creator type. If application isn't found, an ApplicationNotFoundError exception is raised.

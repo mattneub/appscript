@@ -1,5 +1,10 @@
 /*
- *  Copyright (C) 2006 HAS
+ * rb-appscript
+ *
+ * ae -- a low-level API providing a basic Ruby wrapper around the various 
+ *    Apple Event Manager, Process Manager and Launch Services APIs used by aem
+ *
+ *  Copyright (C) 2006-2008 HAS. Released under MIT License.
  *
  *  Thanks to:
  *  - FUJIMOTO Hisakuni, author of RubyAEOSA
@@ -674,22 +679,22 @@ rbAE_OSAGetAppTerminology(VALUE self, VALUE path)
 	rb_raise(rb_eNotImpError, "AE.get_app_terminology isn't available in 64-bit processes.\n");
 	return Qnil;
 #else
+	static ComponentInstance defaultComponent;
 	FSRef appRef;
 	FSSpec fss;
-	ComponentInstance defaultComponent;
 	Boolean didLaunch;
 	AEDesc theDesc;
 	OSErr err = noErr;
 	
-	if (OSAGetAppTerminology == NULL)
-		rb_raise(rb_eNotImpError, "OSAGetAppTerminology unavailable.\n");
 	err = FSPathMakeRef((UInt8 *)StringValuePtr(path), &appRef, NULL);
 	if (err != 0) rbAE_raiseMacOSError("Couldn't make FSRef.", err);
 	err = FSGetCatalogInfo(&appRef, kFSCatInfoNone, NULL, NULL, &fss, NULL);
 	if (err != 0) rbAE_raiseMacOSError("Couldn't make FSSpec.", err);
-	defaultComponent = OpenDefaultComponent(kOSAComponentType, 'ascr');
-	err = GetComponentInstanceError(defaultComponent);
-	if (err != 0) rbAE_raiseMacOSError("Couldn't make default component instance.", err);
+	if (!defaultComponent) {
+		defaultComponent = OpenDefaultComponent(kOSAComponentType, 'ascr');
+		err = GetComponentInstanceError(defaultComponent);
+		if (err != 0) rbAE_raiseMacOSError("Couldn't make default component instance.", err);
+	}
 	err = OSAGetAppTerminology(defaultComponent, 
 							   kOSAModeNull,
 							   &fss, 

@@ -1,13 +1,14 @@
-#!/usr/local/bin/ruby
+#
+# rb-appscript
+#
+# osax -- invoke scripting addition (OSAX) commands from Ruby
+#
+# Copyright (C) 2006-2008 HAS. Released under MIT License.
+#
 
 require "appscript"
 
 module OSAX
-
-	# Allows scripting additions (a.k.a. OSAXen) to be called from Ruby.
-	#
-	# Note: currently 32-bit only; attempting to create a new ScriptingAddition instance
-	# in a 64-bit process will result in a NotImplementedError.
 	
 	######################################################################
 	# PRIVATE

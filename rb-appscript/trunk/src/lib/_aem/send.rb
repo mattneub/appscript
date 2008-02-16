@@ -1,6 +1,10 @@
-#!/usr/local/bin/ruby
-# Copyright (C) 2006 HAS. 
-# Released under MIT License.
+#
+# rb-appscript
+#
+# send -- Event class represents a packed AppleEvent that's ready to send via AESendMessage
+#
+# Copyright (C) 2006-2008 HAS. Released under MIT License.
+#
 
 module Send
 

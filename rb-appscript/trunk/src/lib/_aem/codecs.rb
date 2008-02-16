@@ -1,6 +1,10 @@
-#!/usr/local/bin/ruby
-# Copyright (C) 2006 HAS. 
-# Released under MIT License.
+#
+# rb-appscript
+#
+# codecs -- convert native Ruby objects to AEDescs, and vice-versa
+#
+# Copyright (C) 2006-2008 HAS. Released under MIT License.
+#
 
 require "ae"
 require "kae"
