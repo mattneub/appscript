@@ -11,7 +11,7 @@ from StringIO import StringIO
 
 import appscript
 from appscript import terminology
-from osaterminology.getterminology import getaete
+from aem.ae import GetAppTerminology as getaete
 from osaterminology.dom import aeteparser, osadictionary
 from osaterminology.renderers import htmldoc, quickdoc
 from osaterminology.makeidentifier import getconverter

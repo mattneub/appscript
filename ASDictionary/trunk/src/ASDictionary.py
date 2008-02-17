@@ -72,7 +72,7 @@ def namefrompath(path):
 ######################################################################
 # Main export function
 
-from osaterminology.getterminology import getaete
+from aem.ae import GetAppTerminology as getaete
 from osaterminology.dom import aeteparser
 from osaterminology.renderers import quickdoc, htmldoc, htmldoc2
 from osaterminology.makeidentifier import getconverter

@@ -4,7 +4,8 @@ Requirements:
 
 - Python 2.4+ <http://www.python.org>
 
-- appscript 0.18.0+ <http://appscript.sourceforge.net>
+- appscript 0.19.0+ <http://appscript.sourceforge.net>
+- aeserver 0.5.0+
 
 - PyObjC <http://pyobjc.sourceforge.net/>
 
