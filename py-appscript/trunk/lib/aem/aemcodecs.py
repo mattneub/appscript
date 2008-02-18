@@ -489,11 +489,11 @@ class Codecs:
 	
 	def unpackUnicodeText(self, desc):
 		# typeUnicodeText = native endian UTF16 with optional BOM
-		# TO DO: typeUnicodeText is not recommended as of 10.4; not sure how backwards-compatible a switch to typeUTF16ExternalRepresentation would be
 		return unicode(desc.data, 'utf16')
 	
 	def unpackUTF16ExternalRepresentation(self, desc): 
-		# type UTF16ExternalRepresentation = big-endian UTF16 with optional byte-order-mark OR little-endian UTF16 with required byte-order-mark
+		# type UTF16ExternalRepresentation = big-endian UTF16 with optional byte-order-mark 
+		# OR little-endian UTF16 with required byte-order-mark
 		if desc.data.startswith(BOM_UTF16_LE):
 			return unicode(desc.data, 'UTF-16LE')
 		else:

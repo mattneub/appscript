@@ -2,10 +2,6 @@ TO DO
 
 ============================ aem ============================
 
-	typeFileURL = 'furl'
-	typeUTF8Text = 'utf8'
-	typeUTF16ExternalRepresentation = 'ut16'
-
 - following should work but doesn't:
 
 	Application('/System/Library/CoreServices/Finder.app').event('coregetd', {'----': app.elements('pcap')}).send()
@@ -23,7 +19,7 @@ TO DO
 	- typeTextStyles
 
 
-- find a way to avoid GUI process starting when running from python2.4/python2.5; calling Process Manager functions (GetNextEvent, GetProcessBundleLocation, LaunchApplication) seems to trigger this. e.g. Might be BSD APIs that could be used instead, in which case could use AEAddressDescs of typeKernelProcessID ('kpid')
+- find a way to avoid GUI process starting when running from python2.4/python2.5; calling Process Manager functions (GetNextEvent, GetProcessBundleLocation, LaunchApplication) seems to trigger this. e.g. Might be BSD APIs that could be used instead.
 
 
 - in CommandError, extract and report any kOSA... error parameters, if present
@@ -52,16 +48,13 @@ print its == its.eq(True)
 - How should terminology module handle malformed aetes? Ignore them? Raise proper error (except for zero-length aetes, which AS seems to ignore)?
 
 
-- Relaunching an application immediately after quitting it often results in an invalid connection error (-609) as LaunchApplication is being called before the application has actually quit. Not sure if there's a practical solution to this - users may just have to live with it.
-
-
 - Introspection support. Users should be able to examine both references' structure and obtain terminology for the referenced properties and elements.
 
 
 - More tests.
 
 
-- See modules for additional TO DO/TO CHECK/TO DECIDE comments.
+- See aso TO DOs in reference.py, terminology.py
 
 
 - expose classes for typechecking purposes as necessary
@@ -79,7 +72,6 @@ print its == its.eq(True)
 
 - full 64-bit support
 
-- rename ScriptingAddition class to OSAX, OR add 'osax' function as shortcut as-per rb-appscript
 
 ============================ misc ============================
 

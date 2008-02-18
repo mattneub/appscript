@@ -122,8 +122,6 @@ class Application(Query):
 	processexistsforurl = staticmethod(aemconnect.processexistsforurl)
 	processexistsfordesc = staticmethod(aemconnect.processexistsfordesc)
 	
-	isrunning = staticmethod(aemconnect.processexistsforpath) # DEPRECATED; TO DO: remove
-	 
 	#######
 	
 	addressdesc = property(lambda self: self._address)

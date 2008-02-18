@@ -27,6 +27,8 @@ Users should update any existing code that refers to these modules as needed.
 
 - Removed the following Carbon.File-dependent methods from mactypes.Alias, mactypes.File: makewithfsalias, makewithfsref, makewithfsspec, fsalias, fsref, fsspec. Added makewithhfspath, hfspath methods. Renamed makewithaedesc, aedesc methods to makewithdesc, desc. Users should update any existing code that refers to these methods as needed.
 
+- removed aem.Application.isrunning; use aem.Application.processexistsforpath instead
+
 - aem by-range selectors now accept non-reference values (these will be expanded to con-based references when packed)
 
 - fixed bug in appscript.Reference.AS_newreference

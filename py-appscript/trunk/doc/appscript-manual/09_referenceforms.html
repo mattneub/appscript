@@ -131,10 +131,10 @@ paragraphs[-1].previous(k.character)</code></pre>
 
 <p>Some applications can handle more complex range references. For example, the following will work in Tex-Edit Plus:</p>
 
-<pre><code>ref.words[cont.characters[5]:cont.paragraphs[-2]]</code></pre>
+<pre><code>ref.words[con.characters[5]:con.paragraphs[-2]]</code></pre>
 
 <p>Syntax:</p>
-<pre><code>elements[stop]
+<pre><code>elements[start:stop]
         start : str | unicode | int | reference -- beginning of range
         stop : str | unicode | int | reference -- end of range</code></pre>
 	
@@ -160,7 +160,7 @@ text[con.characters[5]:con.words[-2]]</code></pre>
 its.size
 its.words.first</code></pre></li>
 
-<li><p>One or more conditional tests, implemented as operators on the reference being tested. Each method takes a test reference or a value as their sole argument.</p>
+<li><p>One or more conditional tests, implemented as operators on the reference being tested. Each method takes a test reference or a value as its sole argument.</p>
 
 <p>Syntax:</p>
 <pre><code>reference &lt; value
