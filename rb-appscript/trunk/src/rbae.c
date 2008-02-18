@@ -41,6 +41,14 @@ AEEventHandlerUPP upp_GenericEventHandler;
 AECoercionHandlerUPP upp_GenericCoercionHandler;
 
 
+// these macros were added in 1.8.6
+
+#if !defined(RSTRING_LEN)
+#define RSTRING_LEN(x) (RSTRING(x)->len)
+#define RSTRING_PTR(x) (RSTRING(x)->ptr)
+#endif
+
+
 /**********************************************************************/
 // Raise MacOS error
 

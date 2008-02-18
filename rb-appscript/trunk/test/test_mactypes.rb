@@ -1,5 +1,7 @@
 #!/usr/bin/ruby -w
 
+begin; require 'rubygems'; rescue LoadError; end
+
 require 'test/unit'
 require "_aem/mactypes"
 
