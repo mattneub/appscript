@@ -37,7 +37,7 @@ sa.say("Hello world", :using=&gt;"Victoria")</code></pre>
 
 <p>The default application commands (<code>run</code>, <code>activate</code>, <code>quit</code>, etc.) are also available; see the appscript manual for details on those.</p>
 
-<p>By default, <code>ScriptingAddition</code> objects are targetted at the current application. You can obtain a <code>ScriptingAddition</code> object targetted at another application by calling one of its <code>by...</code> methods.</p>
+<p>By default, <code>ScriptingAddition</code> objects are targeted at the current application. You can obtain a <code>ScriptingAddition</code> object targeted at another application by calling one of its <code>by...</code> methods.</p>
 
 
 
@@ -108,7 +108,7 @@ osax.another_command</code></pre>
     Constructors:
 
         ScriptingAddition.new(name, terms=nil) -- make a ScriptingAddition
-                object for the specified scripting addition, targetted
+                object for the specified scripting addition, targeted
                 at the current application
                 
                 name: string -- a scripting addition's name, 
@@ -131,7 +131,7 @@ osax.another_command</code></pre>
         # Specifying a different target application:
 
         # Each of the following methods returns a new ScriptingAddition
-        # instance targetted at the specified application. The arguments
+        # instance targeted at the specified application. The arguments
         # are the same as for the by_name, by_creator, etc. methods in
         # appscript.
         
@@ -178,7 +178,7 @@ p sa.display_dialog("Ruby says hello!",
 
 <h3>GUI interaction</h3>
 
-<p>When using scripting addition commands that require GUI access (e.g. <code>display_dialog</code>) targetted at the command-line Ruby interpreter, the osax module will automatically convert the non-GUI interpreter process into a full GUI process to allow these commands to operate correctly. If you want to avoid this, target these commands at a faceless GUI application such as System Events instead:</p>
+<p>When using scripting addition commands that require GUI access (e.g. <code>display_dialog</code>) targeted at the command-line Ruby interpreter, the osax module will automatically convert the non-GUI interpreter process into a full GUI process to allow these commands to operate correctly. If you want to avoid this, target these commands at a faceless GUI application such as System Events instead:</p>
 
 <pre><code>sa = OSAX.osax("StandardAdditions", "System Events")
 sa.activate # give focus to System Events

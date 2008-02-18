@@ -10,7 +10,7 @@ spec = Gem::Specification.new do |s|
 	s.files = Dir["**/*"].delete_if { |name| ["MakeFile", "ae.bundle", "mkmf.log", "rbae.o", "SendThreadSafe.o", "src/osx_ruby.h", "src/osx_intern.h"].include?(name) }
 	s.extensions = "extconf.rb"
 	s.test_files = Dir["test/test_*.rb"]
-	s.platform = Gem::Platform::CURRENT
+#	s.platform = Gem::Platform::CURRENT
 	s.required_ruby_version = ">= 1.8"
 end
 

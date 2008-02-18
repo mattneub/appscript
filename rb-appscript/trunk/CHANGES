@@ -1,4 +1,4 @@
-2008-02-?? -- 0.5.1
+2008-02-18 -- 0.5.1
 
 - fixed bug in Appscript::Application#launch where calling it on an application specified by_pid/by_url/by_aem_app would raise error -1708
 
