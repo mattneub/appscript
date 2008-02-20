@@ -125,7 +125,7 @@ class File(_Base):
 		obj = klass(_NoPath)
 		obj._desc = AECreateDesc(kae.typeFileURL, url)
 		obj._url = url
-		obj_path = ConvertURLToPath(url, kCFURLPOSIXPathStyle)
+		obj._path = ConvertURLToPath(url, kCFURLPOSIXPathStyle)
 		return obj
 	makewithurl = classmethod(makewithurl)
 		
@@ -155,6 +155,8 @@ class File(_Base):
 			self._path = ConvertURLToPath(self.url, kCFURLPOSIXPathStyle)
 		return self._path
 	path = property(path, _ro, doc="Get as POSIX path.")
+	
+	hfspath = property(lambda self: ConvertURLToPath(self.url, kCFURLHFSPathStyle), _ro, doc="Get as HFS path.")
 	
 	def url(self):
 		if self._url is None:
