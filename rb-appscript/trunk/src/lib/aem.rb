@@ -112,11 +112,6 @@ module AEM
 			Connect.launch_app_with_launch_event(path)
 		end
 		
-		def Application.is_running?(path) # TO DO: delete
-			$stderr.puts('Warning! AEM::Application.is_running? is deprecated; use process_exists_for_path? instead.')
-			return Connect.process_exists_for_path?(path)
-		end
-		
 		def Application.process_exists_for_path?(path)
 			# Does a local process launched from the specified application file exist?
 			# Note: if path is invalid, an AE::MacOSError is raised.
