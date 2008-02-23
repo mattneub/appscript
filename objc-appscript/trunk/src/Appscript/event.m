@@ -215,15 +215,15 @@ static ASEventAttributeDescription attributeKeys[] = {
 		// ignore 'invalid connection' errors caused by application quitting normally after being sent a quit event
 		if (errorNumber == connectionInvalid) {
 			err = AEGetAttributeDesc(event, keyEventClassAttr, typeType, &classDesc);
-			if (!err) return nil;
+			if (err) return nil;
 			err = AEGetDescData(&classDesc, &classCode, sizeof(classCode));
 			AEDisposeDesc(&classDesc);
-			if (!err) return nil;
+			if (err) return nil;
 			err = AEGetAttributeDesc(event, keyEventIDAttr, typeType, &idDesc);
-			if (!err) return nil;
+			if (err) return nil;
 			err = AEGetDescData(&idDesc, &idCode, sizeof(idCode));
 			AEDisposeDesc(&idDesc);
-			if (!err) return nil;
+			if (err) return nil;
 			if (classCode == kCoreEventClass && idCode == kAEQuitApplication)
 				return [NSNull null];
 		}

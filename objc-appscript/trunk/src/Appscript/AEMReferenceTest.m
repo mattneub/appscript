@@ -195,7 +195,7 @@ typedef struct {
 						 to: [[AEMCon elements: 'cha '] byIndex: [NSNumber numberWithInt: 55]]
 					] next: 'cha '] after],
 			@"[[[[[[[[AEMApp elements: 'docu'] byIndex: 1] property: 'ctxt'] elements: 'cpar'] elements: 'cha '] "
-					@"byRange: [[AEMCon elements: 'cha '] byIndex: 3] "
+					@"byRange: 3 "
 						 @"to: [[AEMCon elements: 'cha '] byIndex: 55]"
 					@"] next: 'cha '] after]",
 			[[[[[[[[AEMApp elements: 'docu'] at: 1] property: 'ctxt'] elements: 'cpar'] elements: 'cha '] 

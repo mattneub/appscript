@@ -798,21 +798,8 @@ void disposeSpecifierModule(void) {
 			   wantCode:(OSType)wantCode_ {
 	self = [super initWithContainer: [container_ trueSelf] key: nil wantCode: wantCode_];
 	if (!self) return self;
-	// expand non-reference values to con-based references
-	// (note: doesn't bother to check if references are app- or con-based;
-	//	will assume users are smart enough not to try passing its-based references)
-	if ([startReference_ isKindOfClass: [NSString class]])
-		startReference_ = [[AEMCon elements: wantCode_] byName: startReference_];
-	else if (![startReference_ isKindOfClass: [AEMSpecifier class]])
-		startReference_ = [[AEMCon elements: wantCode_] byIndex: startReference_];
-	if (![stopReference_ isKindOfClass: [AEMSpecifier class]])
-		stopReference_ = [[AEMCon elements: wantCode_] byName: stopReference_];
-	else if (![stopReference_ isKindOfClass: [AEMSpecifier class]])
-		stopReference_ = [[AEMCon elements: wantCode_] byIndex: stopReference_];
-	[startReference_ retain];
-	[stopReference_ retain];
-	startReference = startReference_;
-	stopReference = stopReference_;
+	startReference = [startReference_ retain];
+	stopReference = [stopReference_ retain];
 	return self;
 }
 
@@ -847,8 +834,29 @@ void disposeSpecifierModule(void) {
 
 - (NSAppleEventDescriptor *)packSelf:(id)codecs {
 	NSAppleEventDescriptor *keyDesc;
+	id startReference_, stopReference_;
 	
 	if (!cachedDesc) {
+		// expand non-reference values to con-based references
+		// (note: doesn't bother to check if references are app- or con-based;
+		//	will assume users are smart enough not to try passing its-based references)
+		if ([startReference isKindOfClass: [AEMSpecifier class]] 
+				|| [startReference isKindOfClass: [NSAppleEventDescriptor class]] 
+				&& [startReference descriptorType] == typeObjectSpecifier)
+			startReference_ = startReference;
+		if ([startReference isKindOfClass: [NSString class]])
+			startReference_ = [[AEMCon elements: wantCode] byName: startReference];
+		else
+			startReference_ = [[AEMCon elements: wantCode] byIndex: startReference_];
+		if ([stopReference isKindOfClass: [AEMSpecifier class]] 
+				|| [stopReference isKindOfClass: [NSAppleEventDescriptor class]] 
+				&& [stopReference descriptorType] == typeObjectSpecifier)
+			stopReference_ = stopReference;
+		if ([stopReference isKindOfClass: [NSString class]])
+			stopReference_ = [[AEMCon elements: wantCode] byName: stopReference];
+		else
+			stopReference_ = [[AEMCon elements: wantCode] byIndex: stopReference_];
+		// pack descriptor
 		keyDesc = [kEmptyRecord coerceToDescriptorType: typeRangeDescriptor];
 		[keyDesc setDescriptor: [codecs pack: startReference] forKeyword: keyAERangeStart];
 		[keyDesc setDescriptor: [codecs pack: stopReference] forKeyword: keyAERangeStop];
