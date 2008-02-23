@@ -847,7 +847,7 @@ void disposeSpecifierModule(void) {
 		if ([startReference isKindOfClass: [NSString class]])
 			startReference_ = [[AEMCon elements: wantCode] byName: startReference];
 		else
-			startReference_ = [[AEMCon elements: wantCode] byIndex: startReference_];
+			startReference_ = [[AEMCon elements: wantCode] byIndex: startReference];
 		if ([stopReference isKindOfClass: [AEMSpecifier class]] 
 				|| [stopReference isKindOfClass: [NSAppleEventDescriptor class]] 
 				&& [stopReference descriptorType] == typeObjectSpecifier)
@@ -855,11 +855,11 @@ void disposeSpecifierModule(void) {
 		if ([stopReference isKindOfClass: [NSString class]])
 			stopReference_ = [[AEMCon elements: wantCode] byName: stopReference];
 		else
-			stopReference_ = [[AEMCon elements: wantCode] byIndex: stopReference_];
+			stopReference_ = [[AEMCon elements: wantCode] byIndex: stopReference];
 		// pack descriptor
 		keyDesc = [kEmptyRecord coerceToDescriptorType: typeRangeDescriptor];
-		[keyDesc setDescriptor: [codecs pack: startReference] forKeyword: keyAERangeStart];
-		[keyDesc setDescriptor: [codecs pack: stopReference] forKeyword: keyAERangeStop];
+		[keyDesc setDescriptor: [codecs pack: startReference_] forKeyword: keyAERangeStart];
+		[keyDesc setDescriptor: [codecs pack: stopReference_] forKeyword: keyAERangeStop];
 		cachedDesc = [[kEmptyRecord coerceToDescriptorType: typeObjectSpecifier] retain];
 		[cachedDesc setDescriptor: [NSAppleEventDescriptor descriptorWithTypeCode: wantCode]
 					   forKeyword: keyAEDesiredClass];
