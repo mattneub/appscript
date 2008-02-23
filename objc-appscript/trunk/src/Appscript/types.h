@@ -25,7 +25,7 @@ enum { typeFSS = 'fss ' };
 // Boolean class represents AEDescs of typeTrue and typeFalse
 
 
-@interface ASBoolean : NSObject {
+@interface ASBoolean : NSObject <AEMSelfPackingProtocol> {
 	BOOL boolValue;
 	NSAppleEventDescriptor *cachedDesc;
 }
@@ -48,7 +48,7 @@ enum { typeFSS = 'fss ' };
 // file object classes represent AEDescs of typeAlias, typeFSRef, typeFSSpec
 
 //abstract base class
-@interface ASFileBase : NSObject {
+@interface ASFileBase : NSObject <AEMSelfPackingProtocol> {
 	NSAppleEventDescriptor *desc;
 }
 
@@ -126,7 +126,7 @@ enum { typeFSS = 'fss ' };
 /**********************************************************************/
 
 // abstract base class for AEMType, AEMEnum, AEMProperty, AEMKeyword
-@interface AEMTypeBase : NSObject {
+@interface AEMTypeBase : NSObject <AEMSelfPackingProtocol> {
 	DescType type;
 	OSType code;
 	NSAppleEventDescriptor *cachedDesc;

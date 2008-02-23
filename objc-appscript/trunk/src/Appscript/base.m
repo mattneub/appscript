@@ -9,7 +9,7 @@
 
 
 /**********************************************************************/
-// AEM reference base (shared by specifiers and tests)
+// AEM query base (shared by specifiers and tests)
 
 @implementation AEMQuery
 
@@ -41,12 +41,11 @@
 }
 
 
-- (NSAppleEventDescriptor *)packSelf:(id)codecs { // stub method; subclasses will override this
+- (id)resolveWithObject:(id)object { // stub method; subclasses will override this
 	return nil;
 }
 
-
-- (id)resolveWithObject:(id)object { // stub method; subclasses will override this
+- (NSAppleEventDescriptor *)packSelf:(id)codecs { // stub method; subclasses will override this
 	return nil;
 }
 

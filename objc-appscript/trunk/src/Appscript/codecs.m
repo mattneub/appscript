@@ -40,10 +40,8 @@
 	NSData *data;
 	NSAppleEventDescriptor *result = nil;
 		
-	if ([anObject isKindOfClass: [AEMQuery class]])
+	if ([anObject conformsToProtocol: @protocol(AEMSelfPackingProtocol)]) // AEM application, Boolean, file, type, specifier objects
 		result = [anObject packSelf: self];
-	else if ([anObject isKindOfClass: [ASBoolean class]])
-		return [anObject desc];
 	else if ([anObject isKindOfClass: [NSNumber class]]) {
 		switch (*[anObject objCType]) {
 			/*
@@ -105,8 +103,6 @@
 		result = [self packArray: anObject];
 	else if ([anObject isKindOfClass: [NSDictionary class]])
 		result = [self packDictionary: anObject];
-	else if ([anObject isKindOfClass: [ASFileBase class]])
-		return [anObject desc];
 	else if ([anObject isKindOfClass: [NSURL class]]) {
 		if ([anObject isFileURL]) {
 			data = [[anObject absoluteString] dataUsingEncoding: NSUTF8StringEncoding];
@@ -114,9 +110,7 @@
 																   data: data];
 		} else
 			return [self packUnknown: anObject];
-	} else if ([anObject isKindOfClass: [AEMTypeBase class]])
-		result = [anObject desc];
-	else if ([anObject isKindOfClass: [NSAppleEventDescriptor class]])
+	} else if ([anObject isKindOfClass: [NSAppleEventDescriptor class]])
 		result = anObject;
 	else if ([anObject isKindOfClass: [NSNull class]])
 		result = [NSAppleEventDescriptor nullDescriptor];
@@ -693,6 +687,46 @@
 		return [op1 contains: op2];
 	else
 		return [op2 isIn: op1];
+}
+
+
+// optional
+
+- (NSString *)unpackApplicationBundleID:(NSAppleEventDescriptor *)desc {
+	return [[[NSString alloc] initWithData: [desc data] encoding: NSUTF8StringEncoding] autorelease];
+}
+
+- (NSURL *)unpackApplicationURL:(NSAppleEventDescriptor *)desc {
+	NSString *str; 
+	NSURL *url;
+	
+	str = [[NSString alloc] initWithData: [desc data] encoding: NSUTF8StringEncoding];
+	url = [NSURL URLWithString: str];
+	[str release];
+	return url;
+}
+
+- (OSType)unpackApplicationSignature:(NSAppleEventDescriptor *)desc {
+	OSType sig;
+	
+	[[desc data] getBytes: &sig length: sizeof(sig)];
+	return sig;
+}
+
+- (pid_t)unpackProcessID:(NSAppleEventDescriptor *)desc {
+	pid_t pid;
+	
+	[[desc data] getBytes: &pid length: sizeof(pid)];
+	return pid;
+}
+
+- (pid_t)unpackProcessSerialNumber:(NSAppleEventDescriptor *)desc {
+	ProcessSerialNumber psn = {0, 0};
+	pid_t pid;
+	
+	[[desc data] getBytes: &psn length: sizeof(psn)];
+	if (!GetProcessPID(&psn, &pid)) return 0;
+	return pid;
 }
 
 @end

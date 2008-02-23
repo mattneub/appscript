@@ -15,3 +15,26 @@ NSString *AEMDescTypeToDisplayString(OSType code);
 		[obj isKindOfClass: [NSAppleEventDescriptor class]] \
 		&& ([desc descriptorType] == [obj descriptorType]) \
 		&& [[desc data] isEqualToData: [obj data]])
+
+
+/**********************************************************************/
+// supported by all self-packing objects
+
+@protocol AEMSelfPackingProtocol
+
+- (NSAppleEventDescriptor *)packSelf:(id)codecs;
+
+@end
+
+
+/**********************************************************************/
+
+@protocol AEMCodecsProtocol
+
+- (NSAppleEventDescriptor *)pack:(id)obj;
+
+- (id)unpack:(NSAppleEventDescriptor *)desc;
+
+- (id)fullyUnpackObjectSpecifier:(NSAppleEventDescriptor *)desc;
+
+@end

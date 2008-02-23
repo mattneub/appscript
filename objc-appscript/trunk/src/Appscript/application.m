@@ -482,6 +482,17 @@ error:
 }
 
 
+// get address desc
+
+- (NSAppleEventDescriptor *)packSelf:(id)codecs {
+	return addressDesc;
+}
+
+- (NSAppleEventDescriptor *)desc {
+	return addressDesc;
+}
+
+
 // display
 
 - (NSString *)description {

@@ -48,6 +48,10 @@ static ASBoolean *falseValue;
 	return boolValue;
 }
 
+- (NSAppleEventDescriptor *)packSelf:(id)codecs {
+	return cachedDesc;
+}
+
 - (NSAppleEventDescriptor *)desc {
 	return cachedDesc;
 }
@@ -122,6 +126,10 @@ static ASBoolean *falseValue;
 	url = [NSURL URLWithString: string];
 	[string release];
 	return url;
+}
+
+- (NSAppleEventDescriptor *)packSelf:(id)codecs {
+	return desc;
 }
 
 - (NSAppleEventDescriptor *)desc {
@@ -269,12 +277,16 @@ static ASBoolean *falseValue;
 	return code;
 }
 
-- (NSAppleEventDescriptor *)desc {
+- (NSAppleEventDescriptor *)packSelf:(id)codecs {
 	if (!cachedDesc)
 		cachedDesc = [[NSAppleEventDescriptor alloc] initWithDescriptorType: type
 																	  bytes: &code
 																	 length: sizeof(code)];
 	return cachedDesc;
+}
+
+- (NSAppleEventDescriptor *)desc {
+	return [self packSelf: nil];
 }
 
 - (id)copyWithZone:(NSZone *)zone {

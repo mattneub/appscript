@@ -5,23 +5,13 @@
 //   Copyright (C) 2007-2008 HAS
 //
 
+#import "utils.h"
 
-/**********************************************************************/
-
-@protocol AEMCodecsProtocol
-
-- (NSAppleEventDescriptor *)pack:(id)obj;
-
-- (id)unpack:(NSAppleEventDescriptor *)desc;
-
-- (id)fullyUnpackObjectSpecifier:(NSAppleEventDescriptor *)desc;
-
-@end
 
 /**********************************************************************/
 // AEM reference base (shared by specifiers and tests)
 
-@interface AEMQuery : NSObject {
+@interface AEMQuery : NSObject <AEMSelfPackingProtocol> {
 	NSAppleEventDescriptor *cachedDesc;
 	unsigned cachedHash;
 }
@@ -29,11 +19,11 @@
 // set cached descriptor; performance optimisation, used internally by AEMCodecs
 - (void)setDesc:(NSAppleEventDescriptor *)desc;
 
-// pack specifier into NSAppleEventDescriptor; used internally by AEMCodecs
-- (NSAppleEventDescriptor *)packSelf:(id)codecs;
-
 // walk reference
 - (id)resolveWithObject:(id)object;
+
+// pack reference
+- (NSAppleEventDescriptor *)packSelf:(id)codecs;
 
 @end
 

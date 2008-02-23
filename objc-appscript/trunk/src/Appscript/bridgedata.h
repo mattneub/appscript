@@ -33,14 +33,4 @@
 
 - (ASTerminology *)terminology;
 
-- (NSString *)unpackApplicationBundleID:(NSAppleEventDescriptor *)desc;
-
-- (NSURL *)unpackApplicationURL:(NSAppleEventDescriptor *)desc;
-
-- (OSType)unpackApplicationSignature:(NSAppleEventDescriptor *)desc;
-
-- (pid_t)unpackProcessID:(NSAppleEventDescriptor *)desc;
-
-- (pid_t)unpackProcessSerialNumber:(NSAppleEventDescriptor *)desc;
-
 @end

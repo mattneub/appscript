@@ -7,6 +7,7 @@
 
 #import "specifier.h"
 #import "types.h"
+#import "utils.h"
 
 // TO DO: support for unit types
 
@@ -23,7 +24,7 @@ enum {
 /**********************************************************************/
 
 
-@interface AEMCodecs : NSObject
+@interface AEMCodecs : NSObject <AEMCodecsProtocol>
 
 + (id)defaultCodecs;
 
@@ -112,5 +113,22 @@ enum {
  * can override this method to add its own type checking.
  */
 - (id)unpackContainsCompDescriptorWithOperand1:(id)op1 operand2:(id)op2;
+
+
+/**********************************************************************/
+/*
+ * The following methods are not called by -unpack:, but are provided for benefit of
+ * subclasses that may wish to use them.
+ */
+
+- (NSString *)unpackApplicationBundleID:(NSAppleEventDescriptor *)desc;
+
+- (NSURL *)unpackApplicationURL:(NSAppleEventDescriptor *)desc;
+
+- (OSType)unpackApplicationSignature:(NSAppleEventDescriptor *)desc;
+
+- (pid_t)unpackProcessID:(NSAppleEventDescriptor *)desc;
+
+- (pid_t)unpackProcessSerialNumber:(NSAppleEventDescriptor *)desc;
 
 @end

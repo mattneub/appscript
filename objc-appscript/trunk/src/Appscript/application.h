@@ -25,7 +25,7 @@ typedef enum {
 /**********************************************************************/
 // Application class
 
-@interface AEMApplication : NSObject {
+@interface AEMApplication : NSObject <AEMSelfPackingProtocol> {
 	AEMTargetType targetType;
 	id targetData;
 	NSAppleEventDescriptor *addressDesc;
