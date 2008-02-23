@@ -23,7 +23,7 @@ module RCASTerminology
 		def convert(s)
 			legal = LegalFirst
 			res = ''
-			s.split(//).each do |c|
+			s.to_s.split(//).each do |c|
 				if legal[c]
 					res += c
 				else
@@ -44,7 +44,7 @@ module RCASTerminology
 		end
 		
 		def escape(s)
-			return s + '_'
+			return s.to_s + '_'
 		end
 	end
 	

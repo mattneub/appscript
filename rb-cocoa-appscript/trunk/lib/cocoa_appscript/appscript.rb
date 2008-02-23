@@ -1,10 +1,5 @@
 #!/usr/bin/ruby
 
-# TO DO: RubyCocoa performs lossy conversion of Symbols to NSCFStrings; 
-# this is a problem when packing arrays/dictionaries of symbols, as they won't pack as correct AE type
-# may be best to use bound 'k' namespace instead, which is also more reliable in embedded use
-
-
 module RCAppscript
 
 	require 'osx/cocoa'
@@ -321,8 +316,24 @@ module RCAppscript
 			end
 		end
 		
-		# TO DO: unpackUnknown(desc)
-
+		def unpackUnknown(desc)
+			return case desc.descriptorType
+				when RCKAE::TypeApplicationBundleID
+					RCAppscript.app.by_id(self.unpackApplicationBundleID(desc))
+				when RCKAE::TypeApplicationURL
+					RCAppscript.app.by_url(self.unpackApplicationURL(desc))
+				when RCKAE::TypeApplSignature
+					RCAppscript.app.by_creator([self.unpackApplicationURL(desc)].pack('I'))
+				when RCKAE::TypeKernelProcessID
+					RCAppscript.app.by_pid(self.unpackProcessID(desc))
+				when RCKAE::TypeProcessSerialNumber
+					RCAppscript.app.by_pid(self.unpackProcessSerialNumber(desc))
+				when RCKAE::TypeMachPort
+					RCAppscript.app.by_aem_app(RCAppscript::AEMApplication.alloc.initWithDescriptor(desc))
+			else
+				super_unpackUnknown(desc)
+			end
+		end
 	end
 	
 	######################################################################
@@ -459,7 +470,6 @@ module RCAppscript
 			target, error = @AS_app_data.targetWithError_()
 			raise RuntimeError, error.to_s if error
 			eventClass, eventID = definition.eventClass, definition.eventID
-			event = target.eventWithEventClass_eventID_codecs_(eventClass, eventID, @AS_app_data)
 			subject_attr = NSAppleEventDescriptor.nullDescriptor
 			direct_param = RCAppscript::NOVALUE
 			case args.length
@@ -494,20 +504,18 @@ module RCAppscript
 			# add considering/ignoring attributes
 			ignore_options = keyword_args.delete(:ignore)
 			if ignore_options == nil
-				event.setAttribute_forKeyword_(DefaultConsiderations, RCKAE::EnumConsiderations)
-				event.setAttribute_forKeyword_(DefaultConsidersAndIgnores, RCKAE::EnumConsidsAndIgnores)
+				enum_considerations = DefaultConsiderations
+				enum_consids_and_ignores = DefaultConsidersAndIgnores
 			else
-				event.setAttribute_forKeyword_(ignore_options, RCKAE::EnumConsiderations)
+				enum_considerations = ignore_options
 				csig = 0
 				IgnoreEnums.each do |option, consider_mask, ignore_mask|
 					csig += ignore_options.include?(option) ? ignore_mask : consider_mask
 				end
-				event.setAttribute_forKeyword_(Reference._pack_uint32(csig), RCKAE::EnumConsidsAndIgnores)
+				enum_consids_and_ignores = Reference._pack_uint32(csig)
 			end
 			# optionally specify return value type
-			if keyword_args.has_key?(:result_type)
-				event.setParameter_forKeyword_(keyword_args.delete(:result_type), RCKAE::KeyAERequestedType)
-			end
+			result_type = keyword_args.delete(:result_type) { RCAppscript::NOVALUE }
 			# special cases
 			if @AS_aem_reference != RCAppscript::AEMApplicationRoot
 				if eventClass == RCKAE::KAECoreSuite and eventID == RCKAE::KAESetData
@@ -532,24 +540,65 @@ module RCAppscript
 					direct_param = @AS_aem_reference
 				end
 			end
+			# pack event
+			event = target.eventWithEventClass_eventID_codecs_(eventClass, eventID, @AS_app_data)
+			event.setAttribute_forKeyword_(enum_considerations, RCKAE::EnumConsiderations)
+			event.setAttribute_forKeyword_(enum_consids_and_ignores, RCKAE::EnumConsidsAndIgnores)
+			event.setAttribute_forKeyword_(subject_attr, RCKAE::KeySubjectAttr)
+			event.setParameter_forKeyword_(direct_param, RCKAE::KeyDirectObject) if direct_param != RCAppscript::NOVALUE
+			event.setParameter_forKeyword_(result_type, RCKAE::KeyAERequestedType) if result_type != RCAppscript::NOVALUE
 			# extract labelled parameters, if any
 			keyword_args.each do |param_name, param_value|
 				param_code = definition.parameterForName_(param_name)
 				raise ArgumentError, "Unknown keyword parameter: #{param_name}" if param_code == nil
 				event.setParameter_forKeyword_(param_value, param_code)
 			end
-			if direct_param != RCAppscript::NOVALUE
-				event.setParameter_forKeyword_(direct_param, RCKAE::KeyDirectObject)
-			end
-			event.setAttribute_forKeyword_(subject_attr, RCKAE::KeySubjectAttr)
 			# build and send the Apple event, returning its result, if any
 			result, error = event.sendWithMode_timeout_error_(send_flags, timeout)
-			if not error
-				return result
-			else
-				# TO DO: finish relaunch/reconnect/resend code
-				raise RCAppscript::CommandError.new(self, name, args, error)
+			return result if not error
+			# relaunch/reconnect/resend/raise exception as needed
+			# 'launch' events always return 'not handled' errors; just ignore these
+			return if error.code == -1708 and eventClass == RCKAE::KASAppleScriptSuite and eventID == RCKAE::KASLaunchEvent
+			if [-600, -609].include?(error.code) and target.targetType == RCAppscript::KAEMTargetFileURL
+				#
+				# Event was sent to a local app for which we no longer have a valid address
+				# (i.e. the application has quit since this AEM::Application object was made).
+				#
+				# - If application is running under a new process id, we just update the 
+				#   AEM::Application object and resend the event.
+				#
+				# - If application isn't running, then we see if the event being sent is one of 
+				#   those allowed to relaunch the application (i.e. 'run' or 'launch'). If it is, the
+				#   application is relaunched, the process id updated and the event resent;
+				#   if not, the error is rethrown.
+				#
+				p RCAppscript::AEMApplication.processExistsForFileURL_(target.targetData)
+				# TO DO: next call should yield bool, but is int so block never executes as 'not 0' -> false (global check, fix)
+				if not RCAppscript::AEMApplication.processExistsForFileURL_(target.targetData)
+					if eventClass == RCKAE::KASAppleScriptSuite and eventID == RCKAE::KASLaunchEvent
+						pid, error = RCAppscript::AEMApplication.launchApplication_error_(target.targetData)
+						raise RuntimeError, error.to_s if error # TO DO: error class
+					elsif eventClass != RCKAE::KCoreEventClass or eventID != RCKAE::KAEOpenApplication
+						raise RCAppscript::CommandError.new(self, name, args, error)
+					end
+				end
+				# update AEMApplication object's AEAddressDesc
+				success, error = target.reconnectWithError_()
+				raise RuntimeError, error.to_s if error # TO DO: error class
+				# re-send command
+				event = target.eventWithEventClass_eventID_codecs_(eventClass, eventID, @AS_app_data)
+				event.setAttribute_forKeyword_(enum_considerations, RCKAE::EnumConsiderations)
+				event.setAttribute_forKeyword_(enum_consids_and_ignores, RCKAE::EnumConsidsAndIgnores)
+				event.setAttribute_forKeyword_(subject_attr, RCKAE::KeySubjectAttr)
+				event.setParameter_forKeyword_(direct_param, RCKAE::KeyDirectObject) if direct_param != RCAppscript::NOVALUE
+				keyword_args.each do |param_name, param_value|
+					event.setParameter_forKeyword_(param_value, definition.parameterForName_(param_name))
+				end
+				event.setParameter_forKeyword_(result_type, RCKAE::KeyAERequestedType) if result_type != RCAppscript::NOVALUE
+				result, error = event.sendWithMode_timeout_error_(send_flags, timeout)
+				return result if not error
 			end
+			raise RCAppscript::CommandError.new(self, name, args, error)
 		end
 		
 		
@@ -589,19 +638,7 @@ module RCAppscript
 		# Utility methods
 		
 		def is_running?
-			identifier = @AS_app_data.target.targetData
-			case @AS_app_data.target.targetType
-				when kAEMTargetFileURL
-					return RCAppscript::AEMApplication.processExistsForFileURL_(identifier)
-				when kAEMTargetEppcURL
-					return RCAppscript::AEMApplication.processExistsForEppcURL_(identifier)
-				when kAEMTargetPID
-					return RCAppscript::AEMApplication.processExistsForPID_(identifier)
-				when kAEMTargetDescriptor
-					return RCAppscript::AEMApplication.processExistsForDescriptor_(identifier)
-			else # when kAEMTargetCurrent
-				return true
-			end
+			return @AS_app_data.isRunning
 		end
 		
 		#######
@@ -803,7 +840,7 @@ module RCAppscript
 		end
 		
 		def Application.by_creator(creator, terms=true)
-			raise NotImplementedError
+			raise NotImplementedError # TO DO
 		end
 		
 		def Application.by_pid(pid, terms=true)
@@ -811,6 +848,8 @@ module RCAppscript
 		end
 		
 		def Application.by_url(url, terms=true)
+			url = NSURL.URLWithString_(url) if not url.is_a?(NSURL)
+			raise TypeError, "Bad URL: #{url}" if url == nil
 			return new(RCAppscript::KASTargetURL, url, terms)
 		end
 		
@@ -830,9 +869,10 @@ module RCAppscript
 			elsif ref.is_a?(RCAppscript::AEMQuery)
 				return RCAppscript::Reference.new(@AS_app_data, ref)
 			elsif ref == nil
-				return  RCAppscript::Reference.new(@AS_app_data, AEM.app)
+				return  RCAppscript::Reference.new(@AS_app_data, RCAppscript::AEMApp)
 			else
-				return RCAppscript::Reference.new(@AS_app_data, AEM.custom_root(ref))
+				return RCAppscript::Reference.new(@AS_app_data, 
+						RCAppscript::AEMCustomRoot.customRootWithObject_(ref))
 			end
 		end
 		
@@ -848,8 +888,25 @@ module RCAppscript
 			@AS_app_data.target.endTransaction
 		end
 		
+		def _launch_app(url)
+			pid, error = RCAppscript::AEMApplication.launchApplication_error_(url)
+			raise RuntimeError, error.to_s if error # TO DO: error class
+			success, error = @AS_app_data.target.reconnectWithError_()
+			raise RuntimeError, error.to_s if error # TO DO: error class
+		end
+		
 		def launch
-			raise NotImplementedError # TO DO
+			if @AS_app_data.targetType == RCAppscript::KASTargetName
+				url, error = RCAppscript::AEMApplication.findApplicationForName_error_(@AS_app_data.targetData)
+				raise RuntimeError, error.to_s if error # TO DO: error class
+				_launch_app(url)
+			elsif @AS_app_data.targetType == RCAppscript::KASTargetURL and @AS_app_data.targetData.isFileURL
+				_launch_app(@AS_app_data.targetData)
+			else
+				event = target.eventWithEventClass_eventID_(RCKAE::KASAppleScriptSuite, RCKAE::KASLaunchEvent)
+				result, error = event.sendWithError_()
+				raise RuntimeError, error.to_s if error.code != -1708 # TO DO: error class
+			end
 		end
 	end
 	
@@ -974,7 +1031,7 @@ module RCAppscript
 	
 	# TO DO
 	# ApplicationNotFoundError
-	# RCCantLaunchApplicationError
+	# CantLaunchApplicationError
 	
 end
 
