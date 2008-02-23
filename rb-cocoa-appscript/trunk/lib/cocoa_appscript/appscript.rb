@@ -422,21 +422,6 @@ module RCAppscript
 			@AS_aem_reference = aem_reference
 		end
 		
-		def _resolve_range_boundary(selector, value_if_none)
-			if selector == nil
-				selector = value_if_none
-			end
-			if selector.is_a?(RCAppscript::GenericReference)
-				return selector.AS_resolve(@AS_app_data).AS_aem_reference
-			elsif selector.is_a?(Reference)
-				return selector.AS_aem_reference
-			elsif selector.is_a?(String)
-				return RCAppscript::AEMCon.elements(@AS_aem_reference.AEM_want).by_name(selector)
-			else
-				return RCAppscript::AEMCon.elements(@AS_aem_reference.AEM_want).by_index(selector)
-			end
-		end
-		
 		#######
 		
 		def help(flags='-t')
@@ -675,9 +660,7 @@ module RCAppscript
 
 		def [](selector, end_range_selector=nil)
 			if end_range_selector != nil
-				new_ref = @AS_aem_reference.byRange_to_(
-						self._resolve_range_boundary(selector, 1),
-						self._resolve_range_boundary(end_range_selector, -1))
+				new_ref = @AS_aem_reference.byRange_to_(selector, end_range_selector)
 			else
 				case selector
 					when String
