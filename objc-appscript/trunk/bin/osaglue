@@ -10,7 +10,7 @@ except ImportError: # py-appscript 0.19.0+
 from appscript import terminology
 from aem import Application, findapp, AEType
 
-__version__ = '0.3.1'
+__version__ = '0.3.2'
 
 ######################################################################
 # default tables
@@ -586,6 +586,51 @@ referencebyname = referencebyname.items()
 referencebyname.sort(lambda a, b: cmp(a[1][0], b[1][0]) or cmp(a[0], b[0]))
 referencebycode = referencebycode.items()
 referencebycode.sort(lambda a, b: cmp(a[1][1], b[1][1]))
+
+
+######################################################################
+# render AEM constants
+
+def renderAEMConstant(type, name, code, header):
+	name = type + prefix + name[0].upper() + name[1:]
+	code = formatcode(code)
+	print >> header, "\t%s = %s" % (name, code)
+
+def renderAEMHeader(outdir, prefix):
+	filename = prefix + 'AEMConstants.h'
+	header = open(os.path.join(outdir, filename), 'w')
+	print >> header, """/*
+ * %s
+ * 
+ * %s
+ * osaglue %s
+ *
+ */
+#import "Appscript/Appscript.h"
+
+// Type/Enum Names
+enum {""" % (filename, apppath, __version__)
+	for name, code in typebyname:
+		renderAEMConstant('k', name, code.code, header)
+	print >> header, "};\n"
+	print >> header, "enum {"
+	for name, (kind, data) in referencebyname:
+		if kind != 'c':
+			renderAEMConstant(kind, name, data, header)
+	print >> header, "};\n"
+	for name, (kind, data) in referencebyname:
+		if kind == 'c':
+			print >> header, "enum {"
+			code = data[0]
+			renderAEMConstant('c', name, code, header)
+			params = data[1].items()
+			params.sort()
+			for name, code in params:
+				renderAEMConstant('pp', name, code, header)
+			print >> header, "};\n"
+	header.close()
+
+renderAEMHeader(outdir, prefix)
 
 
 ######################################################################
