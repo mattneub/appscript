@@ -4,6 +4,11 @@ from codecs import getencoder
 import re, os, os.path, sys, getopt
 
 try:
+	set
+except: # Python 2.3
+	from sets import Set as set
+
+try:
 	from osaterminology.makeidentifier import getconverter
 except ImportError: # py-appscript 0.19.0+
 	from appscript.makeidentifier import getconverter
@@ -594,7 +599,7 @@ referencebycode.sort(lambda a, b: cmp(a[1][1], b[1][1]))
 def renderAEMConstant(type, name, code, header):
 	name = type + prefix + name[0].upper() + name[1:]
 	code = formatcode(code)
-	print >> header, "\t%s = %s" % (name, code)
+	print >> header, "\t%s = %s," % (name, code)
 
 def renderAEMHeader(outdir, prefix):
 	filename = prefix + 'AEMConstants.h'
@@ -618,15 +623,21 @@ enum {""" % (filename, apppath, __version__)
 		if kind != 'c':
 			renderAEMConstant(kind, name, data, header)
 	print >> header, "};\n"
+	knownparams = set()
 	for name, (kind, data) in referencebyname:
 		if kind == 'c':
 			print >> header, "enum {"
 			code = data[0]
-			renderAEMConstant('c', name, code, header)
+			renderAEMConstant('ec', name, code[:4], header)
+			renderAEMConstant('ed', name, code[4:], header)
 			params = data[1].items()
 			params.sort()
 			for name, code in params:
-				renderAEMConstant('pp', name, code, header)
+				if name in knownparams:
+					print >> header, "//",
+				else:
+					knownparams.add(name)
+				renderAEMConstant('ep', name, code, header)
 			print >> header, "};\n"
 	header.close()
 
