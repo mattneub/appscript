@@ -34,7 +34,7 @@
 }
 
 
-- (void)setDesc:(NSAppleEventDescriptor *)desc {
+- (void)setCachedDesc:(NSAppleEventDescriptor *)desc {
 	if (!cachedDesc)
 		[cachedDesc release];
 	cachedDesc = [desc retain];
@@ -45,8 +45,14 @@
 	return nil;
 }
 
-- (NSAppleEventDescriptor *)packSelf:(id)codecs { // stub method; subclasses will override this
+- (NSAppleEventDescriptor *)packWithCodecsNoCache:(id)codecs { // stub method; subclasses will override this
 	return nil;
+}
+
+- (NSAppleEventDescriptor *)packWithCodecs:(id)codecs {
+	if (!cachedDesc)
+		cachedDesc = [[self packWithCodecsNoCache: codecs] retain];
+	return cachedDesc;
 }
 
 @end

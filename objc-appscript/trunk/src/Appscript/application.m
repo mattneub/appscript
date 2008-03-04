@@ -484,7 +484,7 @@ error:
 
 // get address desc
 
-- (NSAppleEventDescriptor *)packSelf:(id)codecs {
+- (NSAppleEventDescriptor *)packWithCodecs:(id)codecs {
 	return addressDesc;
 }
 

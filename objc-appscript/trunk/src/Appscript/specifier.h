@@ -276,9 +276,8 @@ void disposeSpecifierModule(void);
 
 @interface AEMReferenceRootBase : AEMObjectSpecifier // abstract class
 
-// note: clients should avoid calling this initialiser directly;
+// note: clients should avoid initialising this class directly;
 // use provided class methods or convenience macros instead
-- (id)initWithCachedDescOfType:(DescType)descType;
 
 @end
 

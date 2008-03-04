@@ -24,7 +24,9 @@ enum {
 /**********************************************************************/
 
 
-@interface AEMCodecs : NSObject <AEMCodecsProtocol>
+@interface AEMCodecs : NSObject <NSCopying, AEMCodecsProtocol> {
+	id applicationRootDescriptor;
+}
 
 + (id)defaultCodecs;
 
@@ -55,6 +57,9 @@ enum {
  */
 - (NSAppleEventDescriptor *)packArray:(NSArray *)anObject;
 - (NSAppleEventDescriptor *)packDictionary:(NSDictionary *)anObject;
+
+- (void)setApplicationRootDescriptor:(NSAppleEventDescriptor *)desc;
+- (NSAppleEventDescriptor *)applicationRootDescriptor;
 
 
 /**********************************************************************/

@@ -31,6 +31,14 @@
 	[super dealloc];
 }
 
+- (id)copyWithZone:(NSZone *)zone {
+	ASAppDataBase *obj = [super copyWithZone: zone];
+	if (!obj) return obj;
+	[obj->targetData retain];
+	[obj->target retain];
+	return obj;
+}
+
 - (BOOL)connectWithError:(NSError **)error {
 	if (target) {
 		[target release];

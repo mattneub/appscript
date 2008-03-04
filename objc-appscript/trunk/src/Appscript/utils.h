@@ -22,7 +22,7 @@ NSString *AEMDescTypeToDisplayString(OSType code);
 
 @protocol AEMSelfPackingProtocol
 
-- (NSAppleEventDescriptor *)packSelf:(id)codecs;
+- (NSAppleEventDescriptor *)packWithCodecs:(id)codecs;
 
 @end
 
@@ -32,6 +32,8 @@ NSString *AEMDescTypeToDisplayString(OSType code);
 @protocol AEMCodecsProtocol
 
 - (NSAppleEventDescriptor *)pack:(id)obj;
+
+- (NSAppleEventDescriptor *)applicationRootDescriptor;
 
 - (id)unpack:(NSAppleEventDescriptor *)desc;
 

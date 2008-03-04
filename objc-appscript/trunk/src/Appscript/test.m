@@ -35,7 +35,7 @@ static NSAppleEventDescriptor *kEnumAND,
 							  *kEnumNOT;
 
 
-// blank record used by -packSelf: to construct test descriptors
+// blank record used by -packWithCodecs: to construct test descriptors
 static NSAppleEventDescriptor *kEmptyRecord;
 
 
@@ -178,14 +178,12 @@ void disposeTestModule(void) {
 	return nil;
 }
 
-- (NSAppleEventDescriptor *)packSelf:(id)codecs {
-	if (!cachedDesc) {
-		cachedDesc = [[kEmptyRecord coerceToDescriptorType: typeCompDescriptor] retain];
-		[cachedDesc setDescriptor: [codecs pack: operand1] forKeyword: keyAEObject1];
-		[cachedDesc setDescriptor: [self operator] forKeyword: keyAECompOperator];
-		[cachedDesc setDescriptor: [codecs pack: operand2] forKeyword: keyAEObject2];
-	}
-	return cachedDesc;
+- (NSAppleEventDescriptor *)packWithCodecsNoCache:(id)codecs {
+	NSAppleEventDescriptor *desc = [kEmptyRecord coerceToDescriptorType: typeCompDescriptor];
+	[desc setDescriptor: [codecs pack: operand1] forKeyword: keyAEObject1];
+	[desc setDescriptor: [self operator] forKeyword: keyAECompOperator];
+	[desc setDescriptor: [codecs pack: operand2] forKeyword: keyAEObject2];
+	return desc;
 }
 
 @end
@@ -252,10 +250,8 @@ void disposeTestModule(void) {
 	return @"[%@ notEquals: %@]";
 }
 
-- (NSAppleEventDescriptor *)packSelf:(id)codecs {
-	if (!cachedDesc)
-		cachedDesc = [[[[operand1 equals: operand2] NOT] packSelf: codecs] retain];
-	return cachedDesc;
+- (NSAppleEventDescriptor *)packWithCodecsNoCache:(id)codecs {
+	return [[[operand1 equals: operand2] NOT] packWithCodecs: codecs];
 }
 
 - (id)resolveWithObject:(id)object {
@@ -360,14 +356,12 @@ void disposeTestModule(void) {
 	return kEnumContains;
 }
 
-- (NSAppleEventDescriptor *)packSelf:(id)codecs {
-	if (!cachedDesc) {
-		cachedDesc = [[kEmptyRecord coerceToDescriptorType: typeCompDescriptor] retain];
-		[cachedDesc setDescriptor: [codecs pack: operand2] forKeyword: keyAEObject1];
-		[cachedDesc setDescriptor: [self operator] forKeyword: keyAECompOperator];
-		[cachedDesc setDescriptor: [codecs pack: operand1] forKeyword: keyAEObject2];
-	}
-	return cachedDesc;
+- (NSAppleEventDescriptor *)packWithCodecsNoCache:(id)codecs {
+	NSAppleEventDescriptor *desc = [kEmptyRecord coerceToDescriptorType: typeCompDescriptor];
+	[desc setDescriptor: [codecs pack: operand2] forKeyword: keyAEObject1];
+	[desc setDescriptor: [self operator] forKeyword: keyAECompOperator];
+	[desc setDescriptor: [codecs pack: operand1] forKeyword: keyAEObject2];
+	return desc;
 }
 
 - (id)resolveWithObject:(id)object {
@@ -436,13 +430,11 @@ void disposeTestModule(void) {
 	return result;
 }
 
-- (NSAppleEventDescriptor *)packSelf:(id)codecs {
-	if (!cachedDesc) {
-		cachedDesc = [[kEmptyRecord coerceToDescriptorType: typeLogicalDescriptor] retain];
-		[cachedDesc setDescriptor: [self operator] forKeyword: keyAELogicalOperator];
-		[cachedDesc setDescriptor: [codecs pack: operands] forKeyword: keyAELogicalTerms];
-	}
-	return cachedDesc;	
+- (NSAppleEventDescriptor *)packWithCodecsNoCache:(id)codecs {
+	NSAppleEventDescriptor *desc = [kEmptyRecord coerceToDescriptorType: typeLogicalDescriptor];
+	[desc setDescriptor: [self operator] forKeyword: keyAELogicalOperator];
+	[desc setDescriptor: [codecs pack: operands] forKeyword: keyAELogicalTerms];
+	return desc;	
 }
 
 @end

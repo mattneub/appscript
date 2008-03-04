@@ -629,7 +629,7 @@ enum {""" % (filename, apppath, __version__)
 			print >> header, "enum {"
 			code = data[0]
 			renderAEMConstant('ec', name, code[:4], header)
-			renderAEMConstant('ed', name, code[4:], header)
+			renderAEMConstant('ei', name, code[4:], header)
 			params = data[1].items()
 			params.sort()
 			for name, code in params:

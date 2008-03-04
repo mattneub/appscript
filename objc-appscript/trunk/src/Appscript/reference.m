@@ -49,7 +49,7 @@
 //
 
 - (NSAppleEventDescriptor *)AS_packSelf:(id)codecs {
-	return [AS_aemReference packSelf: codecs];
+	return [AS_aemReference packWithCodecs: codecs];
 }
 
 - (id)AS_appData {

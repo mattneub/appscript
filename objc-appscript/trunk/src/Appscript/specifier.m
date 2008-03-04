@@ -58,11 +58,11 @@ static NSAppleEventDescriptor *kFormPropertyID,
 							  *kFormTest;
 
 
-// prepacked value for keyDesiredClass for use by -packSelf: in property specifiers
+// prepacked value for keyDesiredClass for use by -packWithCodecs: in property specifiers
 static NSAppleEventDescriptor *kClassProperty;
 
 
-// blank record used by -packSelf: to construct object specifier descriptors
+// blank record used by -packWithCodecs: to construct object specifier descriptors
 static NSAppleEventDescriptor *kEmptyRecord;
 
 
@@ -272,13 +272,11 @@ void disposeSpecifierModule(void) {
 	}
 }
 
-- (NSAppleEventDescriptor *)packSelf:(id)codecs {
-	if (!cachedDesc) {
-		cachedDesc = [[kEmptyRecord coerceToDescriptorType: typeInsertionLoc] retain];
-		[cachedDesc setDescriptor: [container packSelf: codecs] forKeyword: keyAEObject];
-		[cachedDesc setDescriptor: key forKeyword: keyAEPosition];
-	}
-	return cachedDesc;	
+- (NSAppleEventDescriptor *)packWithCodecsNoCache:(id)codecs {
+	NSAppleEventDescriptor *desc = [kEmptyRecord coerceToDescriptorType: typeInsertionLoc];
+	[desc setDescriptor: [container packWithCodecs: codecs] forKeyword: keyAEObject];
+	[desc setDescriptor: key forKeyword: keyAEPosition];
+	return desc;	
 }
 
 -(id)resolveWithObject:(id)object { 
@@ -443,15 +441,13 @@ void disposeSpecifierModule(void) {
 
 // reserved methods
 
-- (NSAppleEventDescriptor *)packSelf:(id)codecs {
-	if (!cachedDesc) {
-		cachedDesc = [[kEmptyRecord coerceToDescriptorType: typeObjectSpecifier] retain];
-		[cachedDesc setDescriptor: kClassProperty forKeyword: keyAEDesiredClass];
-		[cachedDesc setDescriptor: kFormPropertyID forKeyword: keyAEKeyForm];
-		[cachedDesc setDescriptor: key forKeyword: keyAEKeyData];
-		[cachedDesc setDescriptor: [container packSelf: codecs] forKeyword: keyAEContainer];
-	}
-	return cachedDesc;
+- (NSAppleEventDescriptor *)packWithCodecsNoCache:(id)codecs {
+	NSAppleEventDescriptor *desc = [kEmptyRecord coerceToDescriptorType: typeObjectSpecifier];
+	[desc setDescriptor: kClassProperty forKeyword: keyAEDesiredClass];
+	[desc setDescriptor: kFormPropertyID forKeyword: keyAEKeyForm];
+	[desc setDescriptor: key forKeyword: keyAEKeyData];
+	[desc setDescriptor: [container packWithCodecs: codecs] forKeyword: keyAEContainer];
+	return desc;
 }
 
 -(id)resolveWithObject:(id)object { 
@@ -469,16 +465,14 @@ void disposeSpecifierModule(void) {
 
 // reserved methods
 
-- (NSAppleEventDescriptor *)packSelf:(id)codecs {
-	if (!cachedDesc) {
-		cachedDesc = [[kEmptyRecord coerceToDescriptorType: typeObjectSpecifier] retain];
-		[cachedDesc setDescriptor: kClassProperty forKeyword: keyAEDesiredClass];
-		[cachedDesc setDescriptor: kFormUserPropertyID forKeyword: keyAEKeyForm];
-		[cachedDesc setDescriptor: [[NSAppleEventDescriptor descriptorWithString: key] coerceToDescriptorType: typeChar]
-					   forKeyword: keyAEKeyData];
-		[cachedDesc setDescriptor: [container packSelf: codecs] forKeyword: keyAEContainer];
-	}
-	return cachedDesc;
+- (NSAppleEventDescriptor *)packWithCodecsNoCache:(id)codecs {
+	NSAppleEventDescriptor *desc = [kEmptyRecord coerceToDescriptorType: typeObjectSpecifier];
+	[desc setDescriptor: kClassProperty forKeyword: keyAEDesiredClass];
+	[desc setDescriptor: kFormUserPropertyID forKeyword: keyAEKeyForm];
+	[desc setDescriptor: [[NSAppleEventDescriptor descriptorWithString: key] coerceToDescriptorType: typeChar]
+				   forKeyword: keyAEKeyData];
+	[desc setDescriptor: [container packWithCodecs: codecs] forKeyword: keyAEContainer];
+	return desc;
 }
 
 -(id)resolveWithObject:(id)object { 
@@ -515,16 +509,14 @@ void disposeSpecifierModule(void) {
 
 // reserved methods
 
-- (NSAppleEventDescriptor *)packSelf:(id)codecs {
-	if (!cachedDesc) {
-		cachedDesc = [[kEmptyRecord coerceToDescriptorType: typeObjectSpecifier] retain];
-		[cachedDesc setDescriptor: [NSAppleEventDescriptor descriptorWithTypeCode: wantCode]
-					   forKeyword: keyAEDesiredClass];
-		[cachedDesc setDescriptor: kFormName forKeyword: keyAEKeyForm];
-		[cachedDesc setDescriptor: [codecs pack: key] forKeyword: keyAEKeyData];
-		[cachedDesc setDescriptor: [container packSelf: codecs] forKeyword: keyAEContainer];
-	}
-	return cachedDesc;
+- (NSAppleEventDescriptor *)packWithCodecsNoCache:(id)codecs {
+	NSAppleEventDescriptor *desc = [kEmptyRecord coerceToDescriptorType: typeObjectSpecifier];
+	[desc setDescriptor: [NSAppleEventDescriptor descriptorWithTypeCode: wantCode]
+			 forKeyword: keyAEDesiredClass];
+	[desc setDescriptor: kFormName forKeyword: keyAEKeyForm];
+	[desc setDescriptor: [codecs pack: key] forKeyword: keyAEKeyData];
+	[desc setDescriptor: [container packWithCodecs: codecs] forKeyword: keyAEContainer];
+	return desc;
 }
 
 -(id)resolveWithObject:(id)object { 
@@ -542,16 +534,14 @@ void disposeSpecifierModule(void) {
 
 // reserved methods
 
-- (NSAppleEventDescriptor *)packSelf:(id)codecs {
-	if (!cachedDesc) {
-		cachedDesc = [[kEmptyRecord coerceToDescriptorType: typeObjectSpecifier] retain];
-		[cachedDesc setDescriptor: [NSAppleEventDescriptor descriptorWithTypeCode: wantCode]
-					   forKeyword: keyAEDesiredClass];
-		[cachedDesc setDescriptor: kFormAbsolutePosition forKeyword: keyAEKeyForm];
-		[cachedDesc setDescriptor: [codecs pack: key] forKeyword: keyAEKeyData];
-		[cachedDesc setDescriptor: [container packSelf: codecs] forKeyword: keyAEContainer];
-	}
-	return cachedDesc;
+- (NSAppleEventDescriptor *)packWithCodecsNoCache:(id)codecs {
+	NSAppleEventDescriptor *desc = [kEmptyRecord coerceToDescriptorType: typeObjectSpecifier];
+	[desc setDescriptor: [NSAppleEventDescriptor descriptorWithTypeCode: wantCode]
+			 forKeyword: keyAEDesiredClass];
+	[desc setDescriptor: kFormAbsolutePosition forKeyword: keyAEKeyForm];
+	[desc setDescriptor: [codecs pack: key] forKeyword: keyAEKeyData];
+	[desc setDescriptor: [container packWithCodecs: codecs] forKeyword: keyAEContainer];
+	return desc;
 }
 
 -(id)resolveWithObject:(id)object { 
@@ -569,16 +559,14 @@ void disposeSpecifierModule(void) {
 
 // reserved methods
 
-- (NSAppleEventDescriptor *)packSelf:(id)codecs {
-	if (!cachedDesc) {
-		cachedDesc = [[kEmptyRecord coerceToDescriptorType: typeObjectSpecifier] retain];
-		[cachedDesc setDescriptor: [NSAppleEventDescriptor descriptorWithTypeCode: wantCode]
-					   forKeyword: keyAEDesiredClass];
-		[cachedDesc setDescriptor: kFormUniqueID forKeyword: keyAEKeyForm];
-		[cachedDesc setDescriptor: [codecs pack: key] forKeyword: keyAEKeyData];
-		[cachedDesc setDescriptor: [container packSelf: codecs] forKeyword: keyAEContainer];
-	}
-	return cachedDesc;
+- (NSAppleEventDescriptor *)packWithCodecsNoCache:(id)codecs {
+	NSAppleEventDescriptor *desc = [kEmptyRecord coerceToDescriptorType: typeObjectSpecifier];
+	[desc setDescriptor: [NSAppleEventDescriptor descriptorWithTypeCode: wantCode]
+			 forKeyword: keyAEDesiredClass];
+	[desc setDescriptor: kFormUniqueID forKeyword: keyAEKeyForm];
+	[desc setDescriptor: [codecs pack: key] forKeyword: keyAEKeyData];
+	[desc setDescriptor: [container packWithCodecs: codecs] forKeyword: keyAEContainer];
+	return desc;
 }
 
 -(id)resolveWithObject:(id)object { 
@@ -607,16 +595,14 @@ void disposeSpecifierModule(void) {
 
 // reserved methods
 
-- (NSAppleEventDescriptor *)packSelf:(id)codecs {
-	if (!cachedDesc) {
-		cachedDesc = [[kEmptyRecord coerceToDescriptorType: typeObjectSpecifier] retain];
-		[cachedDesc setDescriptor: [NSAppleEventDescriptor descriptorWithTypeCode: wantCode]
-					   forKeyword: keyAEDesiredClass];
-		[cachedDesc setDescriptor: kFormAbsolutePosition forKeyword: keyAEKeyForm];
-		[cachedDesc setDescriptor: key forKeyword: keyAEKeyData];
-		[cachedDesc setDescriptor: [container packSelf: codecs] forKeyword: keyAEContainer];
-	}
-	return cachedDesc;
+- (NSAppleEventDescriptor *)packWithCodecsNoCache:(id)codecs {
+	NSAppleEventDescriptor *desc = [kEmptyRecord coerceToDescriptorType: typeObjectSpecifier];
+	[desc setDescriptor: [NSAppleEventDescriptor descriptorWithTypeCode: wantCode]
+			 forKeyword: keyAEDesiredClass];
+	[desc setDescriptor: kFormAbsolutePosition forKeyword: keyAEKeyForm];
+	[desc setDescriptor: key forKeyword: keyAEKeyData];
+	[desc setDescriptor: [container packWithCodecs: codecs] forKeyword: keyAEContainer];
+	return desc;
 }
 
 -(id)resolveWithObject:(id)object { 
@@ -658,16 +644,14 @@ void disposeSpecifierModule(void) {
 
 // reserved methods
 
-- (NSAppleEventDescriptor *)packSelf:(id)codecs {
-	if (!cachedDesc) {
-		cachedDesc = [[kEmptyRecord coerceToDescriptorType: typeObjectSpecifier] retain];
-		[cachedDesc setDescriptor: [NSAppleEventDescriptor descriptorWithTypeCode: wantCode]
-					   forKeyword: keyAEDesiredClass];
-		[cachedDesc setDescriptor: kFormRelativePosition forKeyword: keyAEKeyForm];
-		[cachedDesc setDescriptor: key forKeyword: keyAEKeyData];
-		[cachedDesc setDescriptor: [container packSelf: codecs] forKeyword: keyAEContainer];
-	}
-	return cachedDesc;
+- (NSAppleEventDescriptor *)packWithCodecsNoCache:(id)codecs {
+	NSAppleEventDescriptor *desc = [kEmptyRecord coerceToDescriptorType: typeObjectSpecifier];
+	[desc setDescriptor: [NSAppleEventDescriptor descriptorWithTypeCode: wantCode]
+			 forKeyword: keyAEDesiredClass];
+	[desc setDescriptor: kFormRelativePosition forKeyword: keyAEKeyForm];
+	[desc setDescriptor: key forKeyword: keyAEKeyData];
+	[desc setDescriptor: [container packWithCodecs: codecs] forKeyword: keyAEContainer];
+	return desc;
 }
 
 
@@ -832,42 +816,40 @@ void disposeSpecifierModule(void) {
 
 // reserved methods
 
-- (NSAppleEventDescriptor *)packSelf:(id)codecs {
-	NSAppleEventDescriptor *keyDesc;
+- (NSAppleEventDescriptor *)packWithCodecsNoCache:(id)codecs {
+	NSAppleEventDescriptor *keyDesc, *desc;
 	id startReference_, stopReference_;
 	
-	if (!cachedDesc) {
-		// expand non-reference values to con-based references
-		// (note: doesn't bother to check if references are app- or con-based;
-		//	will assume users are smart enough not to try passing its-based references)
-		if ([startReference isKindOfClass: [AEMSpecifier class]] 
-				|| [startReference isKindOfClass: [NSAppleEventDescriptor class]] 
-				&& [startReference descriptorType] == typeObjectSpecifier)
-			startReference_ = startReference;
-		if ([startReference isKindOfClass: [NSString class]])
-			startReference_ = [[AEMCon elements: wantCode] byName: startReference];
-		else
-			startReference_ = [[AEMCon elements: wantCode] byIndex: startReference];
-		if ([stopReference isKindOfClass: [AEMSpecifier class]] 
-				|| [stopReference isKindOfClass: [NSAppleEventDescriptor class]] 
-				&& [stopReference descriptorType] == typeObjectSpecifier)
-			stopReference_ = stopReference;
-		if ([stopReference isKindOfClass: [NSString class]])
-			stopReference_ = [[AEMCon elements: wantCode] byName: stopReference];
-		else
-			stopReference_ = [[AEMCon elements: wantCode] byIndex: stopReference];
-		// pack descriptor
-		keyDesc = [kEmptyRecord coerceToDescriptorType: typeRangeDescriptor];
-		[keyDesc setDescriptor: [codecs pack: startReference_] forKeyword: keyAERangeStart];
-		[keyDesc setDescriptor: [codecs pack: stopReference_] forKeyword: keyAERangeStop];
-		cachedDesc = [[kEmptyRecord coerceToDescriptorType: typeObjectSpecifier] retain];
-		[cachedDesc setDescriptor: [NSAppleEventDescriptor descriptorWithTypeCode: wantCode]
-					   forKeyword: keyAEDesiredClass];
-		[cachedDesc setDescriptor: kFormRange forKeyword: keyAEKeyForm];
-		[cachedDesc setDescriptor: keyDesc forKeyword: keyAEKeyData];
-		[cachedDesc setDescriptor: [container packSelf: codecs] forKeyword: keyAEContainer];
-	}
-	return cachedDesc;
+	// expand non-reference values to con-based references
+	// (note: doesn't bother to check if references are app- or con-based;
+	//	will assume users are smart enough not to try passing its-based references)
+	if ([startReference isKindOfClass: [AEMSpecifier class]] 
+			|| [startReference isKindOfClass: [NSAppleEventDescriptor class]] 
+			&& [startReference descriptorType] == typeObjectSpecifier)
+		startReference_ = startReference;
+	if ([startReference isKindOfClass: [NSString class]])
+		startReference_ = [[AEMCon elements: wantCode] byName: startReference];
+	else
+		startReference_ = [[AEMCon elements: wantCode] byIndex: startReference];
+	if ([stopReference isKindOfClass: [AEMSpecifier class]] 
+			|| [stopReference isKindOfClass: [NSAppleEventDescriptor class]] 
+			&& [stopReference descriptorType] == typeObjectSpecifier)
+		stopReference_ = stopReference;
+	if ([stopReference isKindOfClass: [NSString class]])
+		stopReference_ = [[AEMCon elements: wantCode] byName: stopReference];
+	else
+		stopReference_ = [[AEMCon elements: wantCode] byIndex: stopReference];
+	// pack descriptor
+	keyDesc = [kEmptyRecord coerceToDescriptorType: typeRangeDescriptor];
+	[keyDesc setDescriptor: [codecs pack: startReference_] forKeyword: keyAERangeStart];
+	[keyDesc setDescriptor: [codecs pack: stopReference_] forKeyword: keyAERangeStop];
+	desc = [kEmptyRecord coerceToDescriptorType: typeObjectSpecifier];
+	[desc setDescriptor: [NSAppleEventDescriptor descriptorWithTypeCode: wantCode]
+			 forKeyword: keyAEDesiredClass];
+	[desc setDescriptor: kFormRange forKeyword: keyAEKeyForm];
+	[desc setDescriptor: keyDesc forKeyword: keyAEKeyData];
+	[desc setDescriptor: [container packWithCodecs: codecs] forKeyword: keyAEContainer];
+	return desc;
 }
 
 
@@ -890,16 +872,14 @@ void disposeSpecifierModule(void) {
 
 // reserved methods
 
-- (NSAppleEventDescriptor *)packSelf:(id)codecs {
-	if (!cachedDesc) {
-		cachedDesc = [[kEmptyRecord coerceToDescriptorType: typeObjectSpecifier] retain];
-		[cachedDesc setDescriptor: [NSAppleEventDescriptor descriptorWithTypeCode: wantCode]
-					   forKeyword: keyAEDesiredClass];
-		[cachedDesc setDescriptor: kFormTest forKeyword: keyAEKeyForm];
-		[cachedDesc setDescriptor: [codecs pack: key] forKeyword: keyAEKeyData];
-		[cachedDesc setDescriptor: [container packSelf: codecs] forKeyword: keyAEContainer];
-	}
-	return cachedDesc;
+- (NSAppleEventDescriptor *)packWithCodecsNoCache:(id)codecs {
+	NSAppleEventDescriptor *desc = [kEmptyRecord coerceToDescriptorType: typeObjectSpecifier];
+	[desc setDescriptor: [NSAppleEventDescriptor descriptorWithTypeCode: wantCode]
+			 forKeyword: keyAEDesiredClass];
+	[desc setDescriptor: kFormTest forKeyword: keyAEKeyForm];
+	[desc setDescriptor: [codecs pack: key] forKeyword: keyAEKeyData];
+	[desc setDescriptor: [container packWithCodecs: codecs] forKeyword: keyAEContainer];
+	return desc;
 }
 
 
@@ -933,16 +913,14 @@ void disposeSpecifierModule(void) {
 	return container; 
 }
 
-- (NSAppleEventDescriptor *)packSelf:(id)codecs {
-	if (!cachedDesc) {
-		cachedDesc = [[kEmptyRecord coerceToDescriptorType: typeObjectSpecifier] retain];
-		[cachedDesc setDescriptor: [NSAppleEventDescriptor descriptorWithTypeCode: wantCode]
-					   forKeyword: keyAEDesiredClass];
-		[cachedDesc setDescriptor: kFormAbsolutePosition forKeyword: keyAEKeyForm];
-		[cachedDesc setDescriptor: kOrdinalAll forKeyword: keyAEKeyData];
-		[cachedDesc setDescriptor: [container packSelf: codecs] forKeyword: keyAEContainer];
-	}
-	return cachedDesc;
+- (NSAppleEventDescriptor *)packWithCodecsNoCache:(id)codecs {
+	NSAppleEventDescriptor *desc = [kEmptyRecord coerceToDescriptorType: typeObjectSpecifier];
+	[desc setDescriptor: [NSAppleEventDescriptor descriptorWithTypeCode: wantCode]
+			 forKeyword: keyAEDesiredClass];
+	[desc setDescriptor: kFormAbsolutePosition forKeyword: keyAEKeyForm];
+	[desc setDescriptor: kOrdinalAll forKeyword: keyAEKeyData];
+	[desc setDescriptor: [container packWithCodecs: codecs] forKeyword: keyAEContainer];
+	return desc;
 }
 
 -(id)resolveWithObject:(id)object { 
@@ -977,8 +955,8 @@ void disposeSpecifierModule(void) {
 			AEMDescTypeToDisplayString(wantCode)];
 }
 
-- (NSAppleEventDescriptor *)packSelf:(id)codecs {
-	return [container packSelf: codecs]; // forward to next container
+- (NSAppleEventDescriptor *)packWithCodecsNoCache:(id)codecs {
+	return [container packWithCodecs: codecs]; // forward to next container
 }
 
 -(id)resolveWithObject:(id)object { 
@@ -993,21 +971,6 @@ void disposeSpecifierModule(void) {
 
 @implementation AEMReferenceRootBase
 
-- (id)init {
-	return nil;
-}
-
-// note: clients should avoid calling this initialiser directly;
-// use provided class methods or convenience macros instead
-- (id)initWithCachedDescOfType:(DescType)descType {
-	self = [super initWithContainer: nil key: nil wantCode: '????'];
-	if (!self) return self;
-	cachedDesc = [[NSAppleEventDescriptor alloc] initWithDescriptorType: descType
-																  bytes: NULL
-																 length: 0];
-	return self;
-}
-
 - (BOOL)isEqual:(id)object {
 	if (self == object) return YES;
 	if (!object || ![object isMemberOfClass: [self class]]) return NO;
@@ -1018,9 +981,10 @@ void disposeSpecifierModule(void) {
 	return self;
 }
 
-- (NSAppleEventDescriptor *)packSelf:(id)codecs {
+- (NSAppleEventDescriptor *)packWithCodecsNoCache:(id)codecs {
 	return cachedDesc;
 }
+
 @end
 
 
@@ -1031,7 +995,7 @@ void disposeSpecifierModule(void) {
 	
 	if (!root) {
 		if (!specifierModulesAreInitialized) initSpecifierModule();
-		root = [[AEMApplicationRoot alloc] initWithCachedDescOfType: typeNull];
+		root = [[AEMApplicationRoot alloc] initWithContainer: nil key: nil wantCode: '????'];
 	}
 	return root;
 }
@@ -1042,6 +1006,10 @@ void disposeSpecifierModule(void) {
 
 - (id)resolveWithObject:(id)object {
 	return [object app];
+}
+
+- (NSAppleEventDescriptor *)packWithCodecsNoCache:(id)codecs {
+	return [codecs applicationRootDescriptor];
 }
 
 @end
@@ -1056,7 +1024,10 @@ void disposeSpecifierModule(void) {
 	
 	if (!root) {
 		if (!specifierModulesAreInitialized) initSpecifierModule();
-		root = [[AEMCurrentContainerRoot alloc] initWithCachedDescOfType: typeCurrentContainer];
+		root = [[AEMCurrentContainerRoot alloc] initWithContainer: nil key: nil wantCode: '????'];
+		[root setCachedDesc: [[NSAppleEventDescriptor alloc] initWithDescriptorType: typeCurrentContainer
+																			  bytes: NULL
+																			 length: 0]];
 	}
 	return root;
 }
@@ -1079,7 +1050,10 @@ void disposeSpecifierModule(void) {
 	
 	if (!root) {
 		if (!specifierModulesAreInitialized) initSpecifierModule();
-		root = [[AEMObjectBeingExaminedRoot alloc] initWithCachedDescOfType: typeObjectBeingExamined];
+		root = [[AEMObjectBeingExaminedRoot alloc] initWithContainer: nil key: nil wantCode: '????'];
+		[root setCachedDesc: [[NSAppleEventDescriptor alloc] initWithDescriptorType: typeObjectBeingExamined
+																			  bytes: NULL
+																			 length: 0]];
 	}
 	return root;
 }
@@ -1105,7 +1079,6 @@ void disposeSpecifierModule(void) {
 - (id)initWithObject:(id)rootObject_ {
 	self = [super initWithContainer: nil key: nil wantCode: '????'];
 	if (!self) return self;
-	cachedDesc = nil;
 	rootObject = [rootObject_ retain];
 	return self;
 }
@@ -1139,10 +1112,8 @@ void disposeSpecifierModule(void) {
 	return [object customRoot: rootObject];
 }
 
-- (NSAppleEventDescriptor *)packSelf:(id)codecs {
-	if (!cachedDesc)
-		cachedDesc = [codecs pack: rootObject];
-	return cachedDesc;
+- (NSAppleEventDescriptor *)packWithCodecsNoCache:(id)codecs {
+	return [codecs pack: rootObject];
 }
 
 @end

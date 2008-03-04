@@ -34,6 +34,16 @@
 	[super dealloc];
 }
 
+- (id)copyWithZone:(NSZone *)zone {
+	ASBridgeData *obj = [super copyWithZone: zone];
+	if (!obj) return obj;
+	[obj->referenceCodecs retain];
+	[obj->terms retain];
+	[obj->defaultTerms retain];
+	[obj->converter retain];
+	return obj;
+}
+
 - (id)aetesWithError:(NSError **)error {
 	AEMApplication *targetApp;
 	AEMEvent *event;

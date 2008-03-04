@@ -27,6 +27,27 @@
 }
 
 
+- (id)init {
+	self = [super init];
+	if (!self) return self;
+	applicationRootDescriptor = [[NSAppleEventDescriptor nullDescriptor] retain];
+	return self;
+}
+
+
+- (void)dealloc {
+	[applicationRootDescriptor release];
+	[super dealloc];
+}
+
+
+- (id)copyWithZone:(NSZone *)zone {
+	AEMCodecs *obj = (AEMCodecs *)NSCopyObject(self, 0, zone);
+	if (!obj) return obj;
+	[obj->applicationRootDescriptor retain];
+	return obj;
+}
+
 /***********************************/
 // main pack methods; subclasses can override to process some or all values themselves
 
@@ -41,7 +62,7 @@
 	NSAppleEventDescriptor *result = nil;
 		
 	if ([anObject conformsToProtocol: @protocol(AEMSelfPackingProtocol)]) // AEM application, Boolean, file, type, specifier objects
-		result = [anObject packSelf: self];
+		result = [anObject packWithCodecs: self];
 	else if ([anObject isKindOfClass: [NSNumber class]]) {
 		switch (*[anObject objCType]) {
 			/*
@@ -187,6 +208,16 @@
 	if (userProperties)
 		[result setDescriptor: userProperties forKeyword: keyASUserRecordFields];
 	return result;
+}
+
+
+- (void)setApplicationRootDescriptor:(NSAppleEventDescriptor *)desc {
+	[applicationRootDescriptor release];
+	applicationRootDescriptor = [desc retain];
+}
+
+- (NSAppleEventDescriptor *)applicationRootDescriptor {
+	return applicationRootDescriptor;
 }
 
 
@@ -581,7 +612,7 @@
 	 * codecs and override this method to call -fullyUnpackObjectSpecifier: directly, thereby
 	 * bypassing this optimisation.)
 	 */
-	[ref setDesc: desc];
+	[ref setCachedDesc: desc];
 	return ref;
 }
 

@@ -118,7 +118,7 @@ static ASEventAttributeDescription attributeKeys[] = {
 }
 
 
-- (NSAppleEventDescriptor *)appleEventDescriptor {
+- (NSAppleEventDescriptor *)appleEventDescriptor { // TO DO: consistent names (desc vs appleEventDescriptor)
 	AppleEvent eventCopy;
 	
 	AEDuplicateDesc(event, &eventCopy);

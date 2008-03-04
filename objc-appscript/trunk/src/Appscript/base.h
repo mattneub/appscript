@@ -17,13 +17,16 @@
 }
 
 // set cached descriptor; performance optimisation, used internally by AEMCodecs
-- (void)setDesc:(NSAppleEventDescriptor *)desc;
+- (void)setCachedDesc:(NSAppleEventDescriptor *)desc;
 
 // walk reference
 - (id)resolveWithObject:(id)object;
 
 // pack reference
-- (NSAppleEventDescriptor *)packSelf:(id)codecs;
+- (NSAppleEventDescriptor *)packWithCodecsNoCache:(id)codecs;
+
+// pack reference, caching result for efficiency
+- (NSAppleEventDescriptor *)packWithCodecs:(id)codecs;
 
 @end
 

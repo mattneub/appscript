@@ -149,6 +149,8 @@ Note: best way to do this might be to have codecs unpack event (TO DO) and then 
 
 - add 'strict' options for class and command generation to osaglue? e.g. -k option would create individual classes according to application dictionary; -c option would enforce type checking/coercion in command parameters and result. This would allow users to take advantage of ObjC static typing for applications whose dictionaries are sufficiently accurate to avoid compatibility problems.
 
+- if client asks for return to be coerced to list and command doesn't return a result, return empty NSArray instead of NSNull
+
 - add dynamic class generation option?
 
 - finish documentation, header comments

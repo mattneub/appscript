@@ -414,7 +414,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\nmkdir -p $BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/BridgeSupport\n\ngen_bridge_metadata -f $BUILT_PRODUCTS_DIR/$PRODUCT_NAME.framework -o $BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/BridgeSupport/$PRODUCT_NAME.bridgesupport\n\n";
+			shellScript = "\nif command -v gen_bridge_metadata &>/dev/null\nthen\n\nmkdir -p $BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/BridgeSupport\n\ngen_bridge_metadata -f $BUILT_PRODUCTS_DIR/$PRODUCT_NAME.framework -o $BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/BridgeSupport/$PRODUCT_NAME.bridgesupport\n\nfi\n\n";
 		};
 		4FED70840D2E6B63003412D7 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
