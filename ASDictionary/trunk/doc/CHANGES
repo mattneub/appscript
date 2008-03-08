@@ -1,5 +1,8 @@
 CHANGES
 
+2008-??-?? -- 0.?.?
+- improved display of Ruby Time objects in appscript support
+
 2007-12-20 -- 0.9.0
 - added asdict tool
 - now supports drag-and-drop of files from Finder to application icon and Export window

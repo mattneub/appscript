@@ -11,9 +11,3 @@ TO DO
 - full sdef support (see py-appscript's osaterminology package)
 
 - add scripting addition support to asdict's viewer modes
-
-- fix class name capitalisation for objc-appscript style dictionaries
-
-- asdict should allow users to specify a class name prefix when exporting objc-appscript style dictionaries
-
-- better rendering of Ruby dates

@@ -257,7 +257,7 @@ Notes:
 
     - When the -i option is used on a specific class that has multiple inheritance, this will be represented by multiple graphs. When the -i option is used for all classes, classes with multiple inheritance will appear at multiple points in the graph. In both cases, the class's subclasses will appear once in full, then abbreviated for space thereafter.
 
-    - The -s option may take time to process if there are many properties and/or elements to get. When the -s option is used on a command, the command's arguments and result are displayed separately when called.
+    - The -s option may take time to process if there are many properties and/or elements to get.
 
     - When the -t option is used, one-to-one relationships are shown as '-NAME', one-to-many as '=NAME'; a property's class is shown in angle brackets; a trailing arrow, '->', indicates a class's relationships are already given elsewhere.
 
@@ -414,7 +414,7 @@ For example, to print an overview of TextEdit, a description of its make command
 	def _printRefValue(self, ref):
 			try:
 				print >> self.output, self.datarenderer.rendervalue(ref.get(), True)
-			except:
+			except Exception, e:
 				print >> self.output, 'UNAVAILABLE'
 	
 	
