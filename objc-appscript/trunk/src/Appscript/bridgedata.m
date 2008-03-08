@@ -19,7 +19,6 @@
 			  keywordConverter:(id)converter_ {
 	self = [super initWithApplicationClass: appClass targetType: type targetData: data];
 	if (!self) return self;
-	referenceCodecs = [[AEMCodecs defaultCodecs] retain];
 	terms = [terms_ retain];
 	defaultTerms = [defaultTerms_ retain];
 	converter = [converter_ retain];
@@ -27,7 +26,6 @@
 }
 
 - (void)dealloc {
-	[referenceCodecs release];
 	[terms release];
 	[defaultTerms release];
 	[converter release];
@@ -37,7 +35,6 @@
 - (id)copyWithZone:(NSZone *)zone {
 	ASBridgeData *obj = [super copyWithZone: zone];
 	if (!obj) return obj;
-	[obj->referenceCodecs retain];
 	[obj->terms retain];
 	[obj->defaultTerms retain];
 	[obj->converter retain];
@@ -96,15 +93,6 @@
 
 - (id)targetData {
 	return targetData;
-}
-
-- (void)setReferenceCodecs:(id)codecs_ {
-	[referenceCodecs release];
-	referenceCodecs = [codecs_ retain];
-}
-
-- (id)referenceCodecs {
-	return referenceCodecs;
 }
 
 - (ASTerminology *)terminology {

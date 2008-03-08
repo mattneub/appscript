@@ -8,6 +8,7 @@
 #import "event.h"
 #import "constant.h"
 #import "appdata.h"
+#import "utils.h"
 
 // TO DO: returnID support
 // TO DO: method for setting considering/ignoring attributes

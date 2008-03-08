@@ -5,11 +5,11 @@
 //   Copyright (C) 2007-2008 HAS
 //
 
+#import "unittype.h"
 #import "specifier.h"
 #import "types.h"
 #import "utils.h"
 
-// TO DO: support for unit types
 
 /**********************************************************************/
 // AE types not defined in older OS versions
@@ -26,11 +26,43 @@ enum {
 
 @interface AEMCodecs : NSObject <NSCopying, AEMCodecsProtocol> {
 	id applicationRootDescriptor;
+	BOOL disableCache, disableUnicode;
+	DescType textType;
+	NSMutableDictionary *unitTypeDefinitionByName, *unitTypeDefinitionByCode;
 }
 
 + (id)defaultCodecs;
 
-//- (void)addUnitTypes:(NSArray *)typeDefs; // TO DO
+
+/**********************************************************************/
+// compatibility options
+
+/*
+ * Some applications may define custom unit types in addition to those
+ * normally recognised by AppleScript/appscript. Clients can add
+ * definitions for these types to an AEMCodecs object so that these
+ * types can be packed and unpacked automatically.
+ */
+- (void)addUnitTypeDefinition:(AEMUnitTypeDefinition *)definition;
+
+/*
+ * When unpacking object specifiers, unlike AppleScript, appscript caches
+ * the original AEDesc for efficiency, allowing the resulting AEMQuery to
+ * be re-packed much more quickly. Occasionally this causes compatibility
+ * problems with applications that returned subtly malformed specifiers.
+ * To force an AEMCodecs object to fully unpack and repack object specifiers,
+ * call its -dontCacheUnpackedSpecifiers method.
+ */
+- (void)dontCacheUnpackedSpecifiers;
+
+/*
+ * Some older (pre-OS X) applications may require text to be passed as 
+ * typeChar or typeIntlText rather than the usual typeUnicodeText. To force
+ * an AEMCodecs object to pack strings as one of these older types, call 
+ * its -packStringsAsType: method, specifying the type you want used instead.
+ */
+- (void)packStringsAsType:(DescType)type;
+
 
 /**********************************************************************/
 // main pack methods

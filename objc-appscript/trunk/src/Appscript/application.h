@@ -8,6 +8,7 @@
 #import "codecs.h"
 #import "sendthreadsafe.h"
 #import "event.h"
+#import "utils.h"
 
 
 /**********************************************************************/

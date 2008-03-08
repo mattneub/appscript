@@ -5,8 +5,8 @@
 //   Copyright (C) 2007-2008 HAS
 //
 
-#import <Foundation/Foundation.h>
 #import "parser.h"
+#import "utils.h"
 
 
 /**********************************************************************/

@@ -8,9 +8,9 @@
 #import "appdata.h"
 #import "parser.h"
 #import "terminology.h"
+#import "utils.h"
 
 @interface ASBridgeData : ASAppDataBase {
-	AEMCodecs *referenceCodecs;
 	id terms;
 	ASTerminology *defaultTerms;
 	id converter;
@@ -26,10 +26,6 @@
 - (ASTargetType)targetType;
 
 - (id)targetData;
-
-- (void)setReferenceCodecs:(id)codecs_;
-
-- (id)referenceCodecs;
 
 - (ASTerminology *)terminology;
 

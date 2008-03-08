@@ -40,3 +40,4 @@ NSString *AEMDescTypeToDisplayString(OSType code);
 - (id)fullyUnpackObjectSpecifier:(NSAppleEventDescriptor *)desc;
 
 @end
+

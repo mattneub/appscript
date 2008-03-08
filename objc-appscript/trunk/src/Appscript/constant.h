@@ -5,7 +5,7 @@
 //   Copyright (C) 2007-2008 HAS
 //
 
-#import <Foundation/Foundation.h>
+#import "utils.h"
 
 /**********************************************************************/
 // base class for application-specific constants

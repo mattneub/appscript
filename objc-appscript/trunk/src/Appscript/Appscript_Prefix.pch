@@ -4,7 +4,6 @@
 
 #if __OBJC__
 #import <Foundation/Foundation.h>
-#import "utils.h"
 #endif
 
 #import <CoreFoundation/CoreFoundation.h>

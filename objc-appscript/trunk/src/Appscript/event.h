@@ -7,6 +7,7 @@
 
 #import "codecs.h"
 #import "sendthreadsafe.h"
+#import "utils.h"
 
 
 /**********************************************************************/

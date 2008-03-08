@@ -31,6 +31,9 @@
 	self = [super init];
 	if (!self) return self;
 	applicationRootDescriptor = [[NSAppleEventDescriptor nullDescriptor] retain];
+	AEMGetDefaultUnitTypeDefinitions(&unitTypeDefinitionByName, &unitTypeDefinitionByCode);
+	disableCache = NO;
+	disableUnicode = NO;
 	return self;
 }
 
@@ -48,6 +51,25 @@
 	return obj;
 }
 
+
+
+/**********************************************************************/
+// compatibility options
+
+- (void)addUnitTypeDefinition:(AEMUnitTypeDefinition *)definition {
+	[unitTypeDefinitionByName setObject: definition forKey: [definition name]];
+	[unitTypeDefinitionByCode setObject: definition forKey: [NSNumber numberWithUnsignedInt: [definition code]]];
+}
+
+- (void)dontCacheUnpackedSpecifiers {
+	disableCache = YES;
+}
+
+- (void)packStringsAsType:(DescType)type {
+	disableUnicode = YES;
+	textType = type;
+}
+
 /***********************************/
 // main pack methods; subclasses can override to process some or all values themselves
 
@@ -59,6 +81,7 @@
 	CFAbsoluteTime cfTime;
 	LongDateTime longDate;
 	NSData *data;
+	AEMUnitTypeDefinition *unitTypeDefinition;
 	NSAppleEventDescriptor *result = nil;
 		
 	if ([anObject conformsToProtocol: @protocol(AEMSelfPackingProtocol)]) // AEM application, Boolean, file, type, specifier objects
@@ -86,8 +109,8 @@
 				if (uint32 < 0x7FFFFFFF)
 					goto packAsSInt32;
 				result = [NSAppleEventDescriptor descriptorWithDescriptorType: typeUInt32
-																	  bytes: &uint32
-																	 length: sizeof(uint32)];
+																		bytes: &uint32
+																	   length: sizeof(uint32)];
 				break;
 			case 'q':
 				packAsSInt64:
@@ -95,8 +118,8 @@
 					if (sint64 >= 0x80000000 && sint64 < 0x7FFFFFFF)
 						goto packAsSInt32;
 					result = [NSAppleEventDescriptor descriptorWithDescriptorType: typeSInt64
-																		  bytes: &sint64
-																		 length: sizeof(sint64)];
+																			bytes: &sint64
+																		   length: sizeof(sint64)];
 					break;
 			case 'Q':
 				uint64 = [anObject unsignedLongLongValue];
@@ -112,14 +135,16 @@
 																			bytes: &float64
 																		   length: sizeof(float64)];
 		}
-	} else if ([anObject isKindOfClass: [NSString class]])
+	} else if ([anObject isKindOfClass: [NSString class]]) {
 		result = [NSAppleEventDescriptor descriptorWithString: anObject];
-	else if ([anObject isKindOfClass: [NSDate class]]) {
+		if (disableUnicode)
+			result = [result coerceToDescriptorType: textType];
+	} else if ([anObject isKindOfClass: [NSDate class]]) {
 		cfTime = [anObject timeIntervalSinceReferenceDate];
 		if (!UCConvertCFAbsoluteTimeToLongDateTime(cfTime, &longDate))
 			result = [NSAppleEventDescriptor descriptorWithDescriptorType: typeLongDateTime
-																  bytes: &longDate
-																 length: sizeof(longDate)];
+																	bytes: &longDate
+																   length: sizeof(longDate)];
 	} else if ([anObject isKindOfClass: [NSArray class]])
 		result = [self packArray: anObject];
 	else if ([anObject isKindOfClass: [NSDictionary class]])
@@ -135,8 +160,13 @@
 		result = anObject;
 	else if ([anObject isKindOfClass: [NSNull class]])
 		result = [NSAppleEventDescriptor nullDescriptor];
-	// TO DO: unit types
-	else
+	else if ([anObject isKindOfClass: [ASUnits class]]) {
+		unitTypeDefinition = [unitTypeDefinitionByName objectForKey: [anObject units]];
+		if (!unitTypeDefinition)
+			[NSException raise: @"CodecsError"
+						format: @"Can't pack ASUnits object (unknown unit type): %@", anObject];
+		result = [unitTypeDefinition pack: anObject];
+	} else
 		result = [self packUnknown: anObject];
 	if (!result)
 		[NSException raise: @"CodecsError"
@@ -240,6 +270,7 @@
 	short qdPoint[2];
 	short qdRect[4];
 	unsigned short rgbColor[3];
+	AEMUnitTypeDefinition *unitTypeDefinition;
 	id result = nil;
 	
 	switch ([desc descriptorType]) {
@@ -386,9 +417,12 @@
 			result = boolean ? ASTrue : ASFalse;
 			break;
 		default:
-			result = [self unpackUnknown: desc];
+			unitTypeDefinition = [unitTypeDefinitionByName objectForKey: [NSNumber numberWithUnsignedInt: [desc descriptorType]]];
+			if (unitTypeDefinition)
+				result = [unitTypeDefinition unpack: desc];
+			else
+				result = [self unpackUnknown: desc];
 	}
-	// TO DO: unit types
 	if (!result)
 		[NSException raise: @"CodecsError"
 					format: @"An unexpected error occurred while unpacking the following NSAppleEventDescriptor: %@", desc];
@@ -555,6 +589,9 @@
 	AEMDeferredSpecifier *container;
 	AEMUnkeyedElementsShim *shim;
 	id ref;
+	
+	if (disableCache)
+		return [self fullyUnpackObjectSpecifier: desc];
 		
 	keyForm = [[desc descriptorForKeyword: keyAEKeyForm] enumCodeValue];
 	switch (keyForm) {

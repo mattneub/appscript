@@ -5,6 +5,7 @@
 //   Copyright (C) 2007-2008 HAS
 //
 
+#import "utils.h"
 
 /**********************************************************************/
 // not defined in __LP64__
@@ -180,3 +181,29 @@ enum { typeFSS = 'fss ' };
 
 @end
 
+
+/**********************************************************************/
+// Unit types
+
+@interface ASUnits : NSObject {
+	NSNumber *value;
+	NSString *units;
+}
+
++ (id)unitsWithNumber:(NSNumber *)value_ type:(NSString *)units_;
+
++ (id)unitsWithInt:(int)value_ type:(NSString *)units_;
+
++ (id)unitsWithDouble:(double)value_ type:(NSString *)units_;
+
+- (id)initWithNumber:(NSNumber *)value_ type:(NSString *)units_;
+
+- (NSNumber *)numberValue;
+
+- (int)intValue;
+
+- (double)doubleValue;
+
+- (NSString *)units;
+
+@end

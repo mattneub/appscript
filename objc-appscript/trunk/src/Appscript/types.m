@@ -350,3 +350,67 @@ static ASBoolean *falseValue;
 
 @end
 
+
+/**********************************************************************/
+// Unit types
+
+@implementation ASUnits
+
++ (id)unitsWithNumber:(NSNumber *)value_ type:(NSString *)units_ {
+	return [[[ASUnits alloc] initWithNumber: value_ type: units_] autorelease];
+}
+
++ (id)unitsWithInt:(int)value_ type:(NSString *)units_ {
+	return [[[ASUnits alloc] initWithNumber: [NSNumber numberWithInt: value_] type: units_] autorelease];
+}
+
++ (id)unitsWithDouble:(double)value_ type:(NSString *)units_ {
+	return [[[ASUnits alloc] initWithNumber: [NSNumber numberWithDouble: value_] type: units_] autorelease];
+}
+
+- (id)initWithNumber:(NSNumber *)value_ type:(NSString *)units_ {
+	self = [super init];
+	if (!self) return self;
+	value = [value_ retain];
+	units = [units_ retain];
+	return self;
+}
+
+- (void)dealloc {
+	[value release];
+	[units release];
+	[super dealloc];
+}
+
+- (NSString *)description {
+	return [NSString stringWithFormat: @"<%@ %@>", value, units];
+}
+
+- (unsigned)hash {
+	return (unsigned)([value hash] + [units hash]);
+}
+
+- (BOOL)isEqual:(id)anObject {
+	if (anObject == self) return YES;
+	if (!anObject || ![anObject isKindOfClass: [self class]]) return NO;
+	return ([value isEqual: [anObject numberValue]] && [units isEqual: [anObject units]]);
+}
+
+- (NSNumber *)numberValue {
+	return value;
+}
+
+- (int)intValue {
+	return [value intValue];
+}
+
+- (double)doubleValue {
+	return [value doubleValue];
+}
+
+- (NSString *)units {
+	return units;
+}
+
+@end
+
