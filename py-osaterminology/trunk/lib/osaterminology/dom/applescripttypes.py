@@ -45,7 +45,7 @@ class AeutTypesParser(aeteparser.Receiver):
 ##
 
 p = AeutTypesParser()
-aeteparser.parse(getaeut(), p)
+aeteparser.parse(getaeut('ascr'), p)
 
 ######################################################################
 # PUBLIC

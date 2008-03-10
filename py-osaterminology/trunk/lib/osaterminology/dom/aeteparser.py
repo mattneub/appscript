@@ -1,4 +1,7 @@
-#!/usr/bin/env pythonw
+"""aeteparser -- parse an application's aete, given an application path, file path(s) or aete string. Returns a Dictionary object model.
+
+(C) 2006 HAS
+"""
 
 # TO DO: synonym support, e.g. In Word:
 
@@ -10,16 +13,11 @@
 # TO DO: any plural classes without matching singular classes should be made singular too
 
 
-"""aeteparser -- parse an application's aete, given an application path, file path(s) or aete string. Returns a Dictionary object model.
-
-(C) 2006 HAS
-"""
-
-from aem.ae import AECreateDesc
+from aem.ae import AECreateDesc, GetAppTerminology as getaete, GetSysTerminology as getaeut
 from aem import kae
 
 from osadictionary import *
-from osaterminology import getterminology, makeidentifier
+from osaterminology import makeidentifier
 from osaterminology.sax import aeteparser
 
 # moved following from typemodule methods as putting them there causes import(?) problems in ASDictionary
@@ -254,7 +252,7 @@ def parseaetes(aetes, path='', style='appscript'):
 
 
 def parselang(code='ascr', style='appscript'):
-	return parseaetes(getterminology.getaeut(code), '', style)
+	return parseaetes(getaeut(code), '', style)
 
 
 def parsefile(paths, style='appscript'):
@@ -269,6 +267,6 @@ def parsefile(paths, style='appscript'):
 	
 
 def parseapp(path, style='appscript'):
-	return parseaetes(getterminology.getaete(path), path, style)
+	return parseaetes(getaete(path), path, style)
 
 
