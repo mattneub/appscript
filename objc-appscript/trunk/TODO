@@ -113,12 +113,10 @@ Note: best way to do this might be to have codecs unpack event (TO DO) and then 
 
 ======= aem query builder =======
 
-- eliminate minor risk of leaking memory due to race conditions in -packSelf: methods
+- eliminate minor risk of leaking memory due to race conditions in -packWithCodecs: methods
 
 
 ======= aem types =======
-
-- implement unit types support in AEMCodecs
 
 - add methods for working with Carbon Alias, FSRef, FSSpec types to ASAlias, ASFileRef, ASFileSpec?
 
