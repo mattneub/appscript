@@ -6,11 +6,13 @@ Setuptools will be used if available, otherwise the setup.py script will revert 
 
 Building osascript from source requires the gcc compiler (supplied with Apple's Developer Tools). Setuptools is available from <http://cheeseshop.python.org/pypi>.
 
-osascript requires MacPython 2.3 or later and Mac OS X 10.3 or later.
-
 
 ======================================================================
-NOTES
+DEPENDENCIES
+
+- Python 2.3+
+- Mac OS X 10.3+ 
+- appscript 0.19.0+
 
 
 ======================================================================

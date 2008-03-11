@@ -1,4 +1,7 @@
-#!/usr/local/bin/python
+"""osascript
+
+(C) HAS 2006-2008
+"""
 
 import MacOS
 from Carbon.Cm import OpenDefaultComponent
