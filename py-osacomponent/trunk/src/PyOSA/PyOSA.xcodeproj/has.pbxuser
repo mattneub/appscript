@@ -98,12 +98,6 @@
 			PBXPerProjectTemplateStateSaveDate = 227011211;
 			PBXWorkspaceStateSaveDate = 227011211;
 		};
-		perUserProjectItems = {
-			4F687A840D87ED5100B7D436 /* PBXTextBookmark */ = 4F687A840D87ED5100B7D436 /* PBXTextBookmark */;
-			4F687A850D87ED5100B7D436 /* PBXTextBookmark */ = 4F687A850D87ED5100B7D436 /* PBXTextBookmark */;
-			4F687A860D87ED5100B7D436 /* PBXTextBookmark */ = 4F687A860D87ED5100B7D436 /* PBXTextBookmark */;
-			4F687A870D87ED5100B7D436 /* PBXTextBookmark */ = 4F687A870D87ED5100B7D436 /* PBXTextBookmark */;
-		};
 		sourceControlManager = 4F196DE90B7CD54A0095502E /* Source Control */;
 		userBookmarkGroup = 4FA814880BB7E171004D5DFF /* PBXBookmarkGroup */;
 		userBuildSettings = {
@@ -168,11 +162,11 @@
 	};
 	4F19755E0B7CD5D00095502E /* PyOSA.r */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {761, 1218}}";
+			sepNavIntBoundsRect = "{{0, 0}, {764, 1246}}";
 			sepNavSelRange = "{0, 0}";
-			sepNavVisRange = "{0, 1683}";
+			sepNavVisRange = "{0, 2256}";
 			sepNavVisRect = "{{0, 694}, {803, 524}}";
-			sepNavWindowFrame = "{{210, 0}, {820, 832}}";
+			sepNavWindowFrame = "{{394, 0}, {823, 1028}}";
 		};
 	};
 	4F1975760B7CEF8D0095502E /* hostcallbacks.h */ = {
@@ -299,50 +293,13 @@
 			sepNavWindowFrame = "{{550, 0}, {782, 1028}}";
 		};
 	};
-	4F687A840D87ED5100B7D436 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 4F25B73C0B887053000AD995 /* carbonxtoolbox.h */;
-		name = "carbonxtoolbox.h: 26";
-		rLen = 0;
-		rLoc = 568;
-		rType = 0;
-		vrLen = 1029;
-		vrLoc = 0;
-	};
-	4F687A850D87ED5100B7D436 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		comments = "error: 'AEDescX_Convert' undeclared (first use in this function)";
-		fRef = 4F1975770B7CEF8D0095502E /* hostcallbacks.c */;
-		rLen = 1;
-		rLoc = 60;
-		rType = 1;
-	};
-	4F687A860D87ED5100B7D436 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 4F25B73C0B887053000AD995 /* carbonxtoolbox.h */;
-		name = "carbonxtoolbox.h: 26";
-		rLen = 0;
-		rLoc = 568;
-		rType = 0;
-		vrLen = 1029;
-		vrLoc = 0;
-	};
-	4F687A870D87ED5100B7D436 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 4F1975770B7CEF8D0095502E /* hostcallbacks.c */;
-		name = "hostcallbacks.c: 149";
-		rLen = 0;
-		rLoc = 4077;
-		rType = 0;
-		vrLen = 1132;
-		vrLoc = 961;
-	};
 	4F6F349B0B8B287F00D81F58 /* pyosa_setup.py */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {645, 1162}}";
-			sepNavSelRange = "{0, 0}";
+			sepNavIntBoundsRect = "{{0, 0}, {621, 1148}}";
+			sepNavSelRange = "{2030, 0}";
+			sepNavVisRange = "{399, 2124}";
 			sepNavVisRect = "{{0, 0}, {645, 742}}";
-			sepNavWindowFrame = "{{417, 0}, {684, 832}}";
+			sepNavWindowFrame = "{{394, 0}, {680, 1028}}";
 		};
 	};
 	4F6F35D40B8B3F5200D81F58 /* pyosa_appscript.py */ = {

@@ -22,7 +22,7 @@ A Python OSA language component.
 ======================================================================
 INSTALLATION
 
-- Install py-appscript 0.18.0 or later <http://appscript.sourceforge.net> for Mac OS X's Apple-installed Python framework and any user-installed Python frameworks.
+- Install py-appscript 0.19.0 or later <http://appscript.sourceforge.net> for Mac OS X's Apple-installed Python framework and any user-installed Python frameworks.
 
 - Copy the PyOSA.component bundle to /Library/Components or ~/Library/Components. OSA-aware applications will detect PyOSA the next time they are launched.
 
@@ -157,7 +157,7 @@ OSA scripts are typically written using an OSA script editor such as Apple's own
 
 Python 2.3 and later are supported (though some may generate interface version warnings as 100% compatibility support isn't yet complete).
 
-- Appscript 0.17.2 or later must be installed in the Python framework used by PyOSA. If appscript is not found, or is an older version, an error message will be printed to Console and the component will refuse to load. (This is to protect against hard crashes due to API incompatibilities with older CarbonX.AE extensions.)
+- Appscript 0.19.0 or later must be installed in the Python framework used by PyOSA. If appscript is not found, or is an older version, an error message will be printed to Console and the component will refuse to load. (This is to protect against hard crashes due to API incompatibilities.)
 
 
 ======= PyOSA Known Issues =======
@@ -198,7 +198,7 @@ SUBVERSION
 
 PyOSA:
 
-	svn checkout http://svn.macosforge.org/repository/appscript/py-osacomponent/trunk/
+	svn checkout http://svn.macosforge.org/repository/appscript/py-osacomponent/
 
 
 ======================================================================
@@ -216,6 +216,6 @@ Many thanks to: Philip Aker, Bill Fancher, Bob Ippolito, Chris Nebel, Donovan Pr
 ======================================================================
 COPYRIGHT
 
-(C) 2007 HAS
+(C) 2007-2008 HAS
 
 PyOSA is released under the MIT License. See LICENSE for details.
