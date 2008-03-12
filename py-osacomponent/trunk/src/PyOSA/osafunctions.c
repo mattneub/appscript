@@ -73,7 +73,7 @@ static ComponentResult handleOSAStore(CIStorageHandle ciStorage,
 	result = PyObject_CallMethod(state->scriptManager, "store", "(l)",
 																modeFlags);
 	if (!result) return raisePythonError(ciStorage, scriptID);
-	if (!AEDescX_ConvertDisown(result, resultingScriptData))
+	if (!AE_AEDesc_ConvertDisown(result, resultingScriptData))
 		err = pyosa_errNotAnAEDesc;
 	if (!err)
 		err = OSAAddStorageType(resultingScriptData->dataHandle, COMPONENT_OSTYPE);
@@ -103,7 +103,7 @@ static ComponentResult handleOSALoad(CIStorageHandle ciStorage,
 	err = createScriptState(ciStorage, NULL, resultingScriptID, &state);
 	if (err) return err;
 	result = PyObject_CallMethod(state->scriptManager, "load", "O&l",
-															   AEDescX_NewBorrowed, scriptData,
+															   AE_AEDesc_NewBorrowed, scriptData,
 															   modeFlags);
 	if (!result) return raisePythonError(ciStorage, *resultingScriptID);
 	Py_DECREF(result);
@@ -151,7 +151,7 @@ static ComponentResult handleOSADisplay(CIStorageHandle ciStorage,
 																  PyMac_BuildOSType, desiredType,
 																  modeFlags);
 	if (!result) return raisePythonError(ciStorage, scriptValueID);
-	if (!AEDescX_ConvertDisown(result, resultingText))
+	if (!AE_AEDesc_ConvertDisown(result, resultingText))
 		err = pyosa_errNotAnAEDesc;
 	Py_DECREF(result);
 //	printDesc(resultingText, "OSADisplay result");
@@ -189,7 +189,7 @@ static ComponentResult handleOSAScriptError(CIStorageHandle ciStorage,
 		PyErr_Print();
 		return errOSASystemError;
 	}
-	if (!AEDescX_ConvertDisown(result, resultingErrorDescription))
+	if (!AE_AEDesc_ConvertDisown(result, resultingErrorDescription))
 		err = pyosa_errNotAnAEDesc;
 	Py_DECREF(result);
 	return noErr;
@@ -312,7 +312,7 @@ static ComponentResult handleOSACompile(CIStorageHandle ciStorage,
 		if (err) return err;
 	}
 	result = PyObject_CallMethod(state->scriptManager, "compile", "O&l",
-																  AEDescX_NewBorrowed, sourceData,
+																  AE_AEDesc_NewBorrowed, sourceData,
 																  modeFlags);
 	if (!result) return raisePythonError(ciStorage, *previousAndResultingScriptID); // TO DO: also dispose script state?
 	Py_DECREF(result);
@@ -341,7 +341,7 @@ static ComponentResult handleOSAGetSource(CIStorageHandle ciStorage,
 	result = PyObject_CallMethod(state->scriptManager, "sourceasaedesc", "(O&)",
 																	PyMac_BuildOSType, desiredType);
 	if (!result) return raisePythonError(ciStorage, scriptID);
-	if (!AEDescX_ConvertDisown(result, resultingSourceData))
+	if (!AE_AEDesc_ConvertDisown(result, resultingSourceData))
 		err = pyosa_errNotAnAEDesc;
 	Py_DECREF(result);
 //	printDesc(resultingSourceData, "OSAGetSource result");
@@ -372,7 +372,7 @@ static ComponentResult handleOSACoerceFromDesc(CIStorageHandle ciStorage,
 	err = createScriptState(ciStorage, NULL, resultingScriptValueID, &state);
 	if (err) return err;
 	result = PyObject_CallMethod(state->scriptManager, "coercefromdesc", "O&l",
-																		 AEDescX_NewBorrowed, scriptData,
+																		 AE_AEDesc_NewBorrowed, scriptData,
 																		 modeFlags);
 	if (!result) return raisePythonError(ciStorage, *resultingScriptValueID); // TO DO: also dispose script state?
 	Py_DECREF(result);
@@ -395,7 +395,7 @@ static ComponentResult handleOSACoerceToDesc(CIStorageHandle ciStorage,
 																	   PyMac_BuildOSType, desiredType, 
 																	   modeFlags);
 	if (!result) return raisePythonError(ciStorage, scriptValueID);
-	if (!AEDescX_ConvertDisown(result, resultingValue))
+	if (!AE_AEDesc_ConvertDisown(result, resultingValue))
 		err = pyosa_errNotAnAEDesc;
 	Py_DECREF(result);
 //	printDesc(resultingValue, "OSACoerceToDesc result");
@@ -473,7 +473,7 @@ static ComponentResult handleOSASetDefaultTarget(CIStorageHandle ciStorage,
 	if (target)
 		actualTarget = *target;
 	result = PyObject_CallMethod((**ciStorage).appscriptServices, "setdefaulttarget", "O&",
-																					  AEDescX_NewBorrowed, &actualTarget);
+																					  AE_AEDesc_NewBorrowed, &actualTarget);
 	if (!result) return raisePythonError(ciStorage, 0);
 	Py_DECREF(result);
 	return noErr;
@@ -613,7 +613,7 @@ static ComponentResult handleOSAExecuteEvent(CIStorageHandle ciStorage,
 	state = getScriptState(ciStorage, contextID);
 	if (!state) return errOSAInvalidID;
 	result = PyObject_CallMethod(state->scriptManager, "executeevent", "O&l",
-																	   AEDescX_NewBorrowed, theAppleEvent,
+																	   AE_AEDesc_NewBorrowed, theAppleEvent,
 																	   modeFlags);
 	if (!result) return raisePythonError(ciStorage, contextID);
 	return createValue(ciStorage, result, state, resultingScriptValueID);
@@ -631,9 +631,9 @@ static ComponentResult handleOSADoEvent(CIStorageHandle ciStorage,
 	state = getScriptState(ciStorage, contextID);
 	if (!state) return errOSAInvalidID;
 	result = PyObject_CallMethod(state->scriptManager, "doevent", "O&lO&",
-																  AEDescX_NewBorrowed, theAppleEvent,
+																  AE_AEDesc_NewBorrowed, theAppleEvent,
 																  modeFlags, 
-																  AEDescX_NewBorrowed, reply);
+																  AE_AEDesc_NewBorrowed, reply);
 	if (!result) return raisePythonError(ciStorage, contextID);
 	Py_DECREF(result);
 	return noErr;

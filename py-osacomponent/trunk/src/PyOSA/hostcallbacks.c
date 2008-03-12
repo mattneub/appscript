@@ -58,7 +58,7 @@ static PyObject* invokeCreateProc(PyObject *self, PyObject *args) {
 	if (!PyArg_ParseTuple(args, "O&O&O&hlO",
 								PyMac_GetOSType, &theAEEventClass,
 								PyMac_GetOSType, &theAEEventID,
-								AEDescX_Convert, &target,
+								AE_AEDesc_Convert, &target,
 								&returnID,
 								&transactionID,
 								&callbacksObj)) return NULL;
@@ -75,7 +75,7 @@ static PyObject* invokeCreateProc(PyObject *self, PyObject *args) {
 										callbacks->createRefCon,
 										callbacks->createProc);
 	if (err) return PyMac_Error(err);
-	return Py_BuildValue("O&", AEDescX_New, &result);
+	return Py_BuildValue("O&", AE_AEDesc_New, &result);
 }
 
 
@@ -88,7 +88,7 @@ static PyObject* invokeSendProc(PyObject *self, PyObject *args) {
 	long timeOutInTicks;
 	
 	if (!PyArg_ParseTuple(args, "O&llO",
-								AEDescX_Convert, &theAppleEvent,
+								AE_AEDesc_Convert, &theAppleEvent,
 								&sendMode,
 								&timeOutInTicks,
 								&callbacksObj)) return NULL;
@@ -105,7 +105,7 @@ static PyObject* invokeSendProc(PyObject *self, PyObject *args) {
 							callbacks->sendRefCon,
 							callbacks->sendProc);
 	if (err) return PyMac_Error(err);
-	return Py_BuildValue("O&", AEDescX_New, &reply);
+	return Py_BuildValue("O&", AE_AEDesc_New, &reply);
 }
 
 
@@ -128,7 +128,7 @@ static PyObject* invokeContinueProc(PyObject *self, PyObject *args) {
 	
 	
 	if (!PyArg_ParseTuple(args, "O&O",
-							AEDescX_Convert, &theAppleEvent,
+							AE_AEDesc_Convert, &theAppleEvent,
 							&callbacksObj)) return NULL;
 	if (PyCObject_Check(callbacksObj))
 		callbacks = ((CallbacksRef)PyCObject_AsVoidPtr(callbacksObj));
@@ -146,7 +146,7 @@ static PyObject* invokeContinueProc(PyObject *self, PyObject *args) {
 //	fprintf(stderr, "done (err = %i)\n", err);
 	#endif
 	if (err != noErr) return PyMac_Error(err);
-	return Py_BuildValue("O&", AEDescX_New, &reply);
+	return Py_BuildValue("O&", AE_AEDesc_New, &reply);
 }
 
 

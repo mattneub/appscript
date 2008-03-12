@@ -1,6 +1,6 @@
 /* 
 ** carbonxtoolbox - CarbonX.AE new/convert functions:
-** AEDescX_New, AEDescX_NewBorrowed, AEDescX_Convert, AEDescX_ConvertDisown
+** AE_AEDesc_New, AE_AEDesc_NewBorrowed, AE_AEDesc_Convert, AE_AEDesc_ConvertDisown
 **
 ** (C) 2006 HAS
 */
@@ -8,18 +8,38 @@
 #include <Carbon/Carbon.h>
 #include "pythonloader.h"
 
-// lifted from CarbonX
-// IMPORTANT: appscript-0.17.2+ must be installed or memory errors will occur (AEDescX_ConvertDisown was added in 0.17.2 unstable branch)
+/* 
+ * aemtoolbox.h
+ *
+ * Provides access to the following aem.ae C functions:
+ *
+ * AE_AEDesc_New, AE_AEDesc_NewBorrowed
+ * AE_AEDesc_Convert, AE_AEDesc_ConvertDisown
+ * AE_GetMacOSErrorException, AE_MacOSError
+ * AE_GetOSType, AE_BuildOSType
+ *
+ * Extensions that need to use these functions should include aetoolbox.c
+ *
+ * (C) 2006-2008 HAS
+ */
 
-typedef struct CarbonXAE_API {
-	PyObject *(*Ptr_AEDescX_New)(AppleEvent *);
-	PyObject *(*Ptr_AEDescX_NewBorrowed)(AppleEvent *);
-	int (*Ptr_AEDescX_Convert)(PyObject *, AppleEvent *);
-	int (*Ptr_AEDescX_ConvertDisown)(PyObject *, AEDesc *);
-} CarbonXAE_API;
+typedef struct AE_CAPI {
+	PyObject *(*Ptr_AE_AEDesc_New)(AppleEvent *);
+	PyObject *(*Ptr_AE_AEDesc_NewBorrowed)(AppleEvent *);
+	int	(*Ptr_AE_AEDesc_Convert)(PyObject *, AppleEvent *);
+	int (*Ptr_AE_AEDesc_ConvertDisown)(PyObject *, AppleEvent *);
+	PyObject *(*Ptr_AE_GetMacOSErrorException)(void);
+	PyObject *(*Ptr_AE_MacOSError)(int err);
+	int (*Ptr_AE_GetOSType)(PyObject *v, OSType *pr);
+	PyObject *(*Ptr_AE_BuildOSType)(OSType t);
+} AE_CAPI;
 
 
-PyObject *AEDescX_New(AppleEvent * cobj);
-PyObject *AEDescX_NewBorrowed(AppleEvent * cobj);
-int AEDescX_Convert(PyObject *pyobj, AppleEvent *cobj);
-int AEDescX_ConvertDisown(PyObject *pyobj, AppleEvent *cobj);
+PyObject *AE_AEDesc_New(AppleEvent * cobj);
+PyObject *AE_AEDesc_NewBorrowed(AppleEvent * cobj);
+int AE_AEDesc_Convert(PyObject *pyobj, AppleEvent *cobj);
+int AE_AEDesc_ConvertDisown(PyObject *pyobj, AppleEvent *cobj);
+PyObject *AE_GetMacOSErrorException(void);
+PyObject *AE_MacOSError(int err);
+int AE_GetOSType(PyObject *v, OSType *pr);
+PyObject *AE_BuildOSType(OSType t);

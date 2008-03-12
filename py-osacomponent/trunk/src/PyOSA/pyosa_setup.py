@@ -62,16 +62,14 @@ except ImportError:
 	raise RuntimeError, "Appscript module not found."
 
 
-# check appscript __version__, and disable component if it's earlier than 0.17.2
-# to prevent older CarbonX.AE extensions causing fatal memory errors due to their
-# incompatible C API
+# check appscript __version__, and disable component if it's earlier than 0.19.0
 
 vers, subvers, patch = getattr(appscript, '__version__', '0.0.0').split('.')
-if int(vers) == 0 and (int(subvers) < 18): # or (int(subvers) == 17 and int(patch) < 2)):
+if int(vers) == 0 and (int(subvers) < 19): # or (int(subvers) == 17 and int(patch) < 2)):
 	print >> sys.stderr, "*" * 70
-	print >> sys.stderr, "PyOSA: can't open component: appscript version is too old (0.18.0+ required)."
+	print >> sys.stderr, "PyOSA: can't open component: appscript version is too old (0.19.0+ required)."
 	print >> sys.stderr, "*" * 70
-	raise RuntimeError, "Appscript version is too old (0.18.0+ required)."
+	raise RuntimeError, "Appscript version is too old (0.19.0+ required)."
 
 if DEBUG:
 	print >> sys.stderr, 'PyOSA: using appscript %s\n' % appscript.__version__
