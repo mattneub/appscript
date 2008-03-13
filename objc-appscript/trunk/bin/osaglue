@@ -9,11 +9,21 @@ except: # Python 2.3
 	from sets import Set as set
 
 try:
-	from osaterminology.makeidentifier import getconverter
-except ImportError: # py-appscript 0.19.0+
-	from appscript.makeidentifier import getconverter
-from appscript import terminology
-from aem import Application, findapp, AEType
+	try:
+		from osaterminology.makeidentifier import getconverter
+	except ImportError: # py-appscript 0.19.0+
+		from appscript.makeidentifier import getconverter
+	from appscript import terminology
+	from aem import Application, findapp, AEType
+except ImportError:
+	print >> sys.stderr, """Sorry, py-appscript 0.18.1 or later is required to use osaglue.
+Please see the following page for more information:
+
+    http://appscript.sourceforge.net/py-appscript/install.html
+	
+Please install py-appscript and run this command again."""
+	sys.exit()
+
 
 __version__ = '0.3.2'
 
