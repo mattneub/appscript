@@ -523,7 +523,7 @@ if opts.has_key('-v'):
 	print __version__
 	sys.exit()
 
-if not args or opts.has_key('-h'):
+if opts.has_key('-h'):
 	print """osaglue -- Generate .h and .m glue files for objc-appscript.
 
 SYNOPSIS
