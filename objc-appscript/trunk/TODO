@@ -82,6 +82,14 @@ Note: best way to do this might be to have codecs unpack event (TO DO) and then 
 - include an appscript-style representation of Apple event in localizedDescription string of NSErrors returned by -[ASEvent sendWithError:], and/or include original event object in userInfo dictionary?
 
 
+- improve application objects' -description method to provide more accurate representation, e.g.
+
+	<EXApplication name="Hello World.app">
+
+
+- improve error reporting when unable to connect to an application; see command.m
+
+
 ======= osaglue =======
 
 - emptying py-appscript.terminology's default typebyname, typebycode tables means that type/enum/property name collisions between AEM and application won't be detected when generating XXConstant class; need to sort this
