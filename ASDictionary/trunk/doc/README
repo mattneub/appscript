@@ -7,6 +7,16 @@ ASDictionary exports scriptable Mac applications' dictionaries in plain text or 
 
 
 ----------------------------------------------------------------------
+INSTALLATION
+
+To install ASDictionary, simply open the ASDictionary-0.9.0.dmg and drag the ASDictionary application to your Applications folder.
+
+To install the asdict command line tool (this is optional), cd to the ASDictionary-0.9.0/bin folder in Terminal and run:
+
+	sudo cp asdict /usr/local/bin && chmod 755 /usr/local/bin/asdict
+
+
+----------------------------------------------------------------------
 USAGE
 
 1. Use the 'Dictionary' menu to select one or more scriptable applications or scripting additions, or drag-and-drop one or more application and/or scripting addition files onto ASDictionary's application icon or Export window.
@@ -21,16 +31,12 @@ USAGE
 ----------------------------------------------------------------------
 COMMAND LINE TOOLS
 
-The optional asdict command-line tool can be used to:
+The asdict command line tool can be used to:
 - export application dictionaries as plain text and HTML files
 - view individual suite, class and command definitions
 - display inheritance and containment trees.
 
 Like ASDictionary, asdict supports AppleScript- and appscript-style terminology and can operate in both interactive and non-interactive modes. 
-
-To install asdict, cd to the ASDictionary-0.9.0/bin folder in Terminal.app and run:
-
-	sudo cp asdict /usr/local/bin && chmod 755 /usr/local/bin/asdict
 
 To view the full documentation for asdict, run:
 
