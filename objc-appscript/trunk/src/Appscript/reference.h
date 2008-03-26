@@ -8,6 +8,7 @@
 #import "application.h"
 #import "constant.h"
 #import "specifier.h"
+#import "command.h"
 #import "utils.h"
 
 
@@ -48,6 +49,28 @@
 - (BOOL)endTransactionWithError:(NSError **)error;
 
 - (BOOL)abortTransactionWithError:(NSError **)error;
+
+// get/set shortcuts
+
+// shortcut for [[[ref set] to: value] send]
+- (id)setItem:(id)data;
+- (id)setItem:(id)data error:(NSError **)error;
+
+// shortcut for [[ref get] send]
+- (id)getItem; 
+- (id)getItemWithError:(NSError **)error;
+
+// shortcut for [[[ref get] returnList] send]
+- (id)getList;
+- (id)getListWithError:(NSError **)error;
+
+// shortcut for [[[[ref get] requestedType: typeClass] returnType: descType] send]
+- (id)getItemOfType:(DescType)type;
+- (id)getItemOfType:(DescType)type error:(NSError **)error;
+
+// shortcut for [[[[ref get] requestedType: typeClass] returnListOfType: descType] send]
+- (id)getListOfType:(DescType)type;
+- (id)getListOfType:(DescType)type error:(NSError **)error;
 
 @end
 

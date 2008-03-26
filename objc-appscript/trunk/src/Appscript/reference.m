@@ -56,7 +56,7 @@
 	return AS_appData;
 }
 
-// TO DO: AS_newReference, get+set shortcuts
+// TO DO: AS_newReference
 
 - (id)AS_aemReference {
 	return AS_aemReference;
@@ -90,6 +90,79 @@
 
 - (BOOL)abortTransactionWithError:(NSError **)error {
 	 return [[AS_appData target] abortTransactionWithError: error];
+}
+
+
+// get/set shortcuts
+
+- (id)setItem:(id)data {
+	return [self setItem: data error: nil];
+}
+
+- (id)setItem:(id)data error:(NSError **)error {
+	ASCommand *cmd = [ASCommand commandWithAppData: AS_appData
+										eventClass: kAECoreSuite
+										   eventID: kAESetData
+								   directParameter: nil
+								   parentReference: self];
+	[[cmd AS_aemEvent] setParameter: data forKeyword: keyAEData];
+	return [cmd sendWithError: error];
+}
+
+- (id)getItem {
+	return [self getItemWithError: nil];
+}
+
+- (id)getItemWithError:(NSError **)error {
+	return [[ASCommand commandWithAppData: AS_appData
+							   eventClass: kAECoreSuite
+								  eventID: kAEGetData
+						  directParameter: nil
+						  parentReference: self] sendWithError: error];
+}
+
+- (id)getList {
+	return [self getListWithError: nil];
+}
+
+- (id)getListWithError:(NSError **)error {
+	return [[[ASCommand commandWithAppData: AS_appData
+								eventClass: kAECoreSuite
+								   eventID: kAEGetData
+						   directParameter: nil
+						   parentReference: self] returnList] sendWithError: error];
+}
+
+- (id)getItemOfType:(DescType)type {
+	return [self getItemOfType: type error: nil];
+}
+
+- (id)getItemOfType:(DescType)type error:(NSError **)error {
+	ASCommand *cmd = [ASCommand commandWithAppData: AS_appData
+										eventClass: kAECoreSuite
+										   eventID: kAEGetData
+								   directParameter: nil
+								   parentReference: self];
+	[[cmd AS_aemEvent] setParameter: [NSAppleEventDescriptor descriptorWithTypeCode:type]
+						 forKeyword: keyAERequestedType];
+	[cmd returnType: type];
+	return [cmd sendWithError: error];
+}
+
+- (id)getListOfType:(DescType)type {
+	return [self getListOfType: type error: nil];
+}
+
+- (id)getListOfType:(DescType)type error:(NSError **)error {
+	ASCommand *cmd = [ASCommand commandWithAppData: AS_appData
+										eventClass: kAECoreSuite
+										   eventID: kAEGetData
+								   directParameter: nil
+								   parentReference: self];
+	[[cmd AS_aemEvent] setParameter: [NSAppleEventDescriptor descriptorWithTypeCode:type]
+						 forKeyword: keyAERequestedType];
+	[cmd returnListOfType: type];
+	return [cmd sendWithError: error];
 }
 
 @end
