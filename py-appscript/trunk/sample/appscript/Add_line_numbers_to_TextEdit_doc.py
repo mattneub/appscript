@@ -10,5 +10,5 @@ textref = app('TextEdit').documents[1].text
 lc = textref.paragraphs.count()
 fstr = '%%.%ii ' % (int(log10(lc)) + 1)
 for i in range(lc):
-    textref.paragraphs[i+1].characters.start.make(
+    textref.paragraphs[i+1].characters.beginning.make(
             new=k.character, with_data=fstr % i)

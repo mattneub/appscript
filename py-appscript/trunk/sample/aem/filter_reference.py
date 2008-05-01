@@ -2,13 +2,13 @@
 
 from aem import *
 
-# tell app "Finder" to get every item of home whose name starts with "d" and name is not "Documents"
+# tell app "Finder" to get every item of home whose name begins with "d" and name is not "Documents"
 
 print Application(findapp.byname('Finder')).event('coregetd', {'----': 
 
 		app.property('home').elements('cobj').byfilter(
 
-				its.property('pnam').startswith('d') .AND (its.property('pnam').ne('Documents'))
+				its.property('pnam').beginswith('d') .AND (its.property('pnam').ne('Documents'))
 		
 				)
 		}).send()
