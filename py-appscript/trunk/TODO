@@ -54,13 +54,13 @@ print its == its.eq(True)
 - More tests.
 
 
-- See aso TO DOs in reference.py, terminology.py
-
-
-- expose classes for typechecking purposes as necessary
+- See also TO DOs in reference.py, terminology.py
 
 
 - Allow multiple instances of same application to be launched and/or controlled. (Currently clients can launch new instances themselves, then create Application objects using their PIDs.)
+
+
+- improve rendering when a custom root is used
 
 
 ============================ mactypes ============================

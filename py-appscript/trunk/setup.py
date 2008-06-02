@@ -17,7 +17,7 @@ setup(
 		ext_modules = [
 			Extension('aem.ae',
 				sources=['ext/ae.c'],
-				extra_compile_args=['-DMAC_OS_X_VERSION_MIN_REQUIRED=MAC_OS_X_VERSION_10_2'],
+				extra_compile_args=['-DMAC_OS_X_VERSION_MIN_REQUIRED=MAC_OS_X_VERSION_10_3'],
 				extra_link_args=[
 						'-framework', 'CoreFoundation', 
 						'-framework', 'ApplicationServices',

@@ -690,7 +690,7 @@ class Application(Reference):
 		"""Create a new appscript reference from an aem reference."""
 		if isinstance(ref, GenericReference):
 			return ref.AS_resolve(Reference, self.AS_appdata)
-		elif isinstance(ref, aem.types.BASE):
+		elif isinstance(ref, aem.Query):
 			return Reference(self.AS_appdata, ref)
 		elif ref is None:
 			return Reference(self.AS_appdata, aem.app)
@@ -758,4 +758,5 @@ class CommandError(Exception):
 	def __str__(self):
 		return "%s\n\tFailed command: %s" % (self.realerror, 
 				self.command.AS_formatCommand(self.parameters))
+
 
