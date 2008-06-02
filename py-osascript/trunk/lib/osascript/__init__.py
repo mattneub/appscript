@@ -37,7 +37,7 @@ class Interpreter:
 	def __init__(self, type='ascr', codecs=_defaultCodecs):
 		self._type = type
 		self.OC_codecs = codecs
-		self.OC_ci = _OSAComponentInstance(_OpenDefaultComponent(kOSAComponentType, type))
+		self.OC_ci = OSAComponentInstance(OpenDefaultComponent(kOSAComponentType, type))
 		self.OC_compilecallbacks = (None, None, None, None)
 		self.OC_recordcallbacks = (None, None, None, None)
 		self.OC_runcallbacks = (None, None, None, None)
