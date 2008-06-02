@@ -11,7 +11,7 @@ require "_aem/mactypes"
 
 module Appscript
 
-	Version = '0.5.0'
+	Version = '0.5.2'
 
 	# The following methods and classes are of interest to end users:
 	# app, con, its, CommandError, ApplicationNotFoundError, CantLaunchApplicationError
@@ -71,6 +71,12 @@ module Appscript
 				@type_by_code, @type_by_name, @reference_by_code, @reference_by_name = Terminology.tables_for_module(@_terms)
 			end
 			extend(AppDataAccessors)
+		end
+		
+		#######
+		
+		def dont_cache_unpacked_specifiers
+			@reference_codecs.dont_cache_unpacked_specifiers
 		end
 		
 		#######
@@ -527,7 +533,7 @@ module Appscript
 						if code == 'ascrnoop'
 							AEM::Application.launch(@AS_app_data.identifier)
 						elsif code != 'aevtoapp'
-							raise CommandError.new(self, name, args, e)
+							raise CommandError.new(self, name, args, e, @AS_app_data)
 						end
 					end
 					# update AEMApplication object's AEAddressDesc
@@ -537,11 +543,11 @@ module Appscript
 						return @AS_app_data.target.event(code, params, atts, 
 								KAE::KAutoGenerateReturnID, @AS_app_data).send(timeout, send_flags)
 					rescue AEM::CommandError => e
-						raise CommandError.new(self, name, args, e)
+						raise CommandError.new(self, name, args, e, @AS_app_data)
 					end
 				end
 			end
-			raise CommandError.new(self, name, args, e)
+			raise CommandError.new(self, name, args, e, @AS_app_data)
 		end
 		
 		
@@ -1008,12 +1014,31 @@ module Appscript
 		
 		attr_reader :reference, :name, :parameters, :real_error
 		
-		def initialize(reference, command_name, parameters, real_error)
-			@reference, @command_name, @parameters, @real_error = reference, command_name, parameters, real_error
+		def initialize(reference, command_name, parameters, real_error, codecs)
+			@reference, @command_name, @parameters = reference, command_name, parameters
+			@real_error, @codecs = real_error, codecs
 			super()
 		end
 		
-		def to_i
+		def to_s
+			if @real_error.is_a?(AEM::CommandError)
+				err = "CommandError\n\t\tOSERROR: #{error_number}"
+				err += "\n\t\tMESSAGE: #{error_message}" if error_message != ''
+				[
+					["\n\t\tOFFENDING OBJECT", KAE::KOSAErrorOffendingObject],
+					["\n\t\tEXPECTED TYPE", KAE::KOSAErrorExpectedType],
+					["\n\t\tPARTIAL RESULT", KAE::KOSAErrorPartialResult],
+				].each do |label, key|
+					desc = @real_error.raw[key]
+					err += "#{label}: #{@codecs.unpack(desc).inspect}" if desc
+				end
+			else
+				err = @real_error
+			end
+			return "#{err}\n\t\tCOMMAND: #{@reference}.#{@command_name}(#{(@parameters.collect { |item| item.inspect }).join(', ')})\n"
+		end
+		
+		def error_number
 			if @real_error.is_a?(AE::MacOSError) or @real_error.is_a?(AEM::CommandError)
 				return @real_error.to_i
 			else
@@ -1021,8 +1046,28 @@ module Appscript
 			end
 		end
 		
-		def to_s
-			return "#{@real_error}\n\t\tCOMMAND: #{@reference}.#{@command_name}(#{(@parameters.collect { |item| item.inspect }).join(', ')})\n"
+		alias_method :to_i, :error_number
+		
+		def error_message
+			return @real_error.message
+		end
+		
+		def offending_object
+			return nil if not @real_error.is_a?(AEM::CommandError)
+			desc = @real_error.raw[KAE::KOSAErrorOffendingObject]
+			return desc ? @codecs.unpack(desc) : nil
+		end
+		
+		def expected_type
+			return nil if not @real_error.is_a?(AEM::CommandError)
+			desc = @real_error.raw[KAE::KOSAErrorExpectedType]
+			return desc ? @codecs.unpack(desc) : nil
+		end
+		
+		def partial_result
+			return nil if not @real_error.is_a?(AEM::CommandError)
+			desc = @real_error.raw[KAE::KOSAErrorPartialResult]
+			return desc ? @codecs.unpack(desc) : nil
 		end
 	end
 	

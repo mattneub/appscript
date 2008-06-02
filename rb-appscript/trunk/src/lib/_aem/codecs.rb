@@ -123,6 +123,12 @@ end
 
 ######################################################################
 
+module DisableObjectSpecifierCaching
+	def unpack_object_specifier(desc)
+		return fully_unpack_object_specifier(desc)
+	end
+end
+
 
 class Codecs
 	# Provides pack and unpack methods for converting data between Ruby and AE types.
@@ -135,12 +141,37 @@ class Codecs
 
 	def initialize
 		@unit_type_codecs = UnitTypeCodecs.new
+		@pack_text_as_type = KAE::TypeUnicodeText
 	end
+	
+	######################################################################
+	# Compatibility options
 	
 	def add_unit_types(type_defs)
 		# register custom unit type definitions with this Codecs instance
 		# e.g. Adobe apps define additional unit types (ciceros, pixels, etc.)
 		@unit_type_codecs.add_types(type_defs)
+	end
+	
+	def dont_cache_unpacked_specifiers
+		# When unpacking object specifiers, unlike AppleScript, appscript caches
+		# the original AEDesc for efficiency, allowing the resulting reference to
+		# be re-packed much more quickly. Occasionally this causes compatibility
+		# problems with applications that returned subtly malformed specifiers.
+		# To force a Codecs object to fully unpack and repack object specifiers,
+		# call its dont_cache_unpacked_specifiers method.
+		extend(DisableObjectSpecifierCaching)
+	end
+
+	def pack_strings_as_type(code)
+		# Some older (pre-OS X) applications may require text to be passed as 
+		# typeChar or typeIntlText rather than the usual typeUnicodeText. To force
+		# an AEM::Codecs object to pack strings as one of these older types, call 
+		# its pack_strings_as_type method, specifying the type you want used instead.
+		if not (code.is_a?(String) and code.length == 4)
+			raise ArgumentError, "Code must be a four-character string: #{code.inspect}"
+		end
+		@pack_text_as_type = code
 	end
 
 	######################################################################
@@ -193,10 +224,10 @@ class Codecs
 					# and existing applications don't choke, this code can be similarly upgraded.
 					# Note: while the BOM is optional in typeUnicodeText, it's not included by AS
 					# and some apps, e.g. iTunes 7, will handle it incorrectly, so it's omitted here.)
-					AE::AEDesc.new(KAE::TypeUTF8Text, val).coerce(KAE::TypeUnicodeText)
+					AE::AEDesc.new(KAE::TypeUTF8Text, val).coerce(@pack_text_as_type)
 				rescue AE::MacOSError => e
 					if e.to_i == -1700 # couldn't coerce to TypeUnicodeText
-						raise TypeError, "Not valid UTF8 data: #{val.inspect}"
+						raise TypeError, "Not valid UTF8 data or couldn't coerce to type %{@pack_text_as_type}: #{val.inspect}"
 					else
 						raise
 					end
