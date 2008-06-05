@@ -41,7 +41,7 @@ static ASBoolean *falseValue;
 }
 
 - (NSString *)description {
-	return boolValue ? @"True" : @"False";
+	return boolValue ? @"ASTrue" : @"ASFalse";
 }
 
 - (BOOL)boolValue {
@@ -108,10 +108,6 @@ static ASBoolean *falseValue;
 	return self;
 }
 
-- (NSString *)description {
-	return [NSString stringWithFormat: @"<%@ %@>", [self class], [self path]];
-}
-
 - (NSString *)path {
 	return [[self url] path];
 }
@@ -157,6 +153,10 @@ static ASBoolean *falseValue;
 	return [[[ASAlias alloc] initWithDescriptor: desc_] autorelease];
 }
 
+- (NSString *)description {
+	return [NSString stringWithFormat: @"[ASAlias aliasWithPath: %@]", AEMObjectToDisplayString([self path])];
+}
+
 - (DescType)descriptorType {
 	return typeAlias;
 }
@@ -178,6 +178,10 @@ static ASBoolean *falseValue;
 	return [[[ASFileRef alloc] initWithDescriptor: desc_] autorelease];
 }
 
+- (NSString *)description {
+	return [NSString stringWithFormat: @"[ASFileRef fileRefWithPath: %@]", AEMObjectToDisplayString([self path])];
+}
+
 - (DescType)descriptorType {
 	return typeFSRef;
 }
@@ -197,6 +201,10 @@ static ASBoolean *falseValue;
 
 + (id)fileSpecWithDescriptor:(NSAppleEventDescriptor *)desc_ {
 	return [[[ASFileSpec alloc] initWithDescriptor: desc_] autorelease];
+}
+
+- (NSString *)description {
+	return [NSString stringWithFormat: @"[ASFileSpec fileSpecWithPath: %@]", AEMObjectToDisplayString([self path])];
 }
 
 - (DescType)descriptorType {
@@ -254,23 +262,6 @@ static ASBoolean *falseValue;
 	return [self code] == [anObject code];
 }
 
-- (NSString *)description {
-	if (!type)
-		type = [cachedDesc descriptorType];
-	switch (type) {
-		case typeType:
-			return [NSString stringWithFormat: @"<AEMType %@>", AEMDescTypeToDisplayString([self code])];
-		case typeEnumerated:
-			return [NSString stringWithFormat: @"<AEMEnumerated %@>", AEMDescTypeToDisplayString([self code])];
-		case typeProperty:
-			return [NSString stringWithFormat: @"<AEMProperty %@>", AEMDescTypeToDisplayString([self code])];
-		case typeKeyword:
-			return [NSString stringWithFormat: @"<AEMKeyword %@>", AEMDescTypeToDisplayString([self code])];
-		default:
-			return nil;
-	}
-}
-
 - (OSType)code {
 	if (!code)
 		code = [cachedDesc typeCodeValue]; // (-typeCodeValue works for descriptors of typeType, typeEnumerated, typeProperty, typeKeyword)
@@ -309,6 +300,10 @@ static ASBoolean *falseValue;
 	return [super initWithDescriptorType: typeType code: code_ desc: nil];
 }
 
+- (NSString *)description {
+	return [NSString stringWithFormat: @"[AEMType typeWthCode: %@]", AEMDescTypeToDisplayString([self code])];
+}
+
 @end
 
 
@@ -320,6 +315,10 @@ static ASBoolean *falseValue;
 
 - (id)initWithCode:(OSType)code_ {
 	return [super initWithDescriptorType: typeEnumerated code: code_ desc: nil];
+}
+
+- (NSString *)description {
+	return [NSString stringWithFormat: @"[AEMEnum enumWithCode: %@]", AEMDescTypeToDisplayString([self code])];
 }
 
 @end
@@ -335,6 +334,10 @@ static ASBoolean *falseValue;
 	return [super initWithDescriptorType: typeProperty code: code_ desc: nil];
 }
 
+- (NSString *)description {
+	return [NSString stringWithFormat: @"[AEMProperty propertyWithCode: %@]", AEMDescTypeToDisplayString([self code])];
+}
+
 @end
 
 
@@ -346,6 +349,10 @@ static ASBoolean *falseValue;
 
 - (id)initWithCode:(OSType)code_ {
 	return [super initWithDescriptorType: typeKeyword code: code_ desc: nil];
+}
+
+- (NSString *)description {
+	return [NSString stringWithFormat: @"[AEMKeyword keywordWithCode: %@]", AEMDescTypeToDisplayString([self code])];
 }
 
 @end
@@ -383,7 +390,8 @@ static ASBoolean *falseValue;
 }
 
 - (NSString *)description {
-	return [NSString stringWithFormat: @"<%@ %@>", value, units];
+	return [NSString stringWithFormat: @"[ASUnits unitsWithNumber: %@ type: %@]", 
+			AEMObjectToDisplayString(value), AEMObjectToDisplayString(units)];
 }
 
 - (unsigned)hash {

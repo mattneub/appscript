@@ -34,6 +34,9 @@ enum {
 + (id)defaultCodecs;
 
 
++ (NSString *)displayObject:(NSObject *)obj;
+
+
 /**********************************************************************/
 // compatibility options
 

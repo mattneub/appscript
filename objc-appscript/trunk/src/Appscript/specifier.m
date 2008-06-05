@@ -460,7 +460,7 @@ void disposeSpecifierModule(void) {
 @implementation AEMUserPropertySpecifier
 
 - (NSString *)description {
-	return [NSString stringWithFormat: @"[%@ userProperty: '%@']", container, key];
+	return [NSString stringWithFormat: @"[%@ userProperty: '%@']", container, AEMObjectToDisplayString(key)];
 }
 
 // reserved methods
@@ -504,7 +504,7 @@ void disposeSpecifierModule(void) {
 @implementation AEMElementByNameSpecifier
 
 - (NSString *)description {
-	return [NSString stringWithFormat: @"[%@ byName: %@]", container, key];
+	return [NSString stringWithFormat: @"[%@ byName: %@]", container, AEMObjectToDisplayString(key)];
 }
 
 // reserved methods
@@ -529,7 +529,7 @@ void disposeSpecifierModule(void) {
 @implementation AEMElementByIndexSpecifier
 
 - (NSString *)description {
-	return [NSString stringWithFormat: @"[%@ byIndex: %@]", container, key];
+	return [NSString stringWithFormat: @"[%@ byIndex: %@]", container, AEMObjectToDisplayString(key)];
 }
 
 // reserved methods
@@ -554,7 +554,7 @@ void disposeSpecifierModule(void) {
 @implementation AEMElementByIDSpecifier
 
 - (NSString *)description {
-	return [NSString stringWithFormat: @"[%@ byID: %@]", container, key];
+	return [NSString stringWithFormat: @"[%@ byID: %@]", container, AEMObjectToDisplayString(key)];
 }
 
 // reserved methods
@@ -810,8 +810,8 @@ void disposeSpecifierModule(void) {
 - (NSString *)description {
 	return [NSString stringWithFormat: @"[%@ byRange: %@ to: %@]",
 									   container,
-									   startReference,
-									   stopReference];
+									   AEMObjectToDisplayString(startReference),
+									   AEMObjectToDisplayString(stopReference)];
 }
 
 // reserved methods
@@ -1105,7 +1105,7 @@ void disposeSpecifierModule(void) {
 }
 
 - (NSString *)description {
-	return [NSString stringWithFormat: @"AEMRoot(%@)", rootObject];
+	return [NSString stringWithFormat: @"AEMRoot(%@)", AEMObjectToDisplayString(rootObject)];
 }
 
 - (id)resolveWithObject:(id)object {

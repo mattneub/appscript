@@ -20,7 +20,7 @@
 					20,
 					243,
 					20,
-					48.16259765625,
+					48,
 					43,
 					43,
 					20,
@@ -35,12 +35,8 @@
 					PBXFileDataSource_Target_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 227283942;
-			PBXWorkspaceStateSaveDate = 227283942;
-		};
-		perUserProjectItems = {
-			4F687BF20D8C147A00B7D436 /* PBXBookmark */ = 4F687BF20D8C147A00B7D436 /* PBXBookmark */;
-			4F687C1F0D8C37E700B7D436 /* PBXTextBookmark */ = 4F687C1F0D8C37E700B7D436 /* PBXTextBookmark */;
+			PBXPerProjectTemplateStateSaveDate = 233223387;
+			PBXWorkspaceStateSaveDate = 233223387;
 		};
 		sourceControlManager = 4F687BDD0D8C13EC00B7D436 /* Source Control */;
 		userBuildSettings = {
@@ -48,7 +44,7 @@
 	};
 	08FB7796FE84155DC02AAC07 /* SendEmail.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {685, 1092}}";
+			sepNavIntBoundsRect = "{{0, 0}, {685, 1064}}";
 			sepNavSelRange = "{455, 32}";
 			sepNavVisRange = "{0, 2532}";
 			sepNavWindowFrame = "{{633, 0}, {744, 1028}}";
@@ -112,20 +108,6 @@
 			sepNavVisRange = "{0, 2812}";
 			sepNavWindowFrame = "{{15, -5}, {744, 1028}}";
 		};
-	};
-	4F687BF20D8C147A00B7D436 /* PBXBookmark */ = {
-		isa = PBXBookmark;
-		fRef = 08FB7796FE84155DC02AAC07 /* SendEmail.m */;
-	};
-	4F687C1F0D8C37E700B7D436 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 08FB7796FE84155DC02AAC07 /* SendEmail.m */;
-		name = "SendEmail.m: 14";
-		rLen = 32;
-		rLoc = 455;
-		rType = 0;
-		vrLen = 2532;
-		vrLoc = 0;
 	};
 	8DD76F960486AA7600D96B5E /* SendEmail */ = {
 		activeExec = 0;

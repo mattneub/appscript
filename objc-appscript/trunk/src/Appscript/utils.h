@@ -10,6 +10,7 @@
 
 
 NSString *AEMDescTypeToDisplayString(OSType code);
+NSString *AEMObjectToDisplayString(NSObject *obj);
 
 #define AEMIsDescriptorEqualToObject(desc, obj) ( \
 		[obj isKindOfClass: [NSAppleEventDescriptor class]] \

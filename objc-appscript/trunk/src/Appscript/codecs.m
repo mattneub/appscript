@@ -53,6 +53,11 @@
 
 
 
++ (NSString *)displayObject:(NSObject *)obj {
+	return AEMObjectToDisplayString(obj);
+}
+
+
 /**********************************************************************/
 // compatibility options
 

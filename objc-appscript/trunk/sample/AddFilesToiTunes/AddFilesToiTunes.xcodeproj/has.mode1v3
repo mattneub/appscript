@@ -231,6 +231,8 @@
 			<key>Layout</key>
 			<array>
 				<dict>
+					<key>BecomeActive</key>
+					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -267,12 +269,14 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateExpansionKey</key>
 							<array>
 								<string>08FB7794FE84155DC02AAC07</string>
+								<string>08FB7795FE84155DC02AAC07</string>
 								<string>1C37FABC05509CD000000102</string>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>3</integer>
+									<integer>4</integer>
+									<integer>1</integer>
 									<integer>0</integer>
 								</array>
 							</array>
@@ -341,8 +345,6 @@
 							<string>0pt</string>
 						</dict>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -379,9 +381,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>4F2F4E540D85BD91004C31AD</string>
+				<string>4F1993B80DA52FB60081702B</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>4F2F4E550D85BD91004C31AD</string>
+				<string>4F1993B90DA52FB60081702B</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -515,7 +517,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>4F2F4E560D85BD91004C31AD</string>
 		<string>/Users/has/appscript/objc-appscript/sample/AddFilesToiTunes/AddFilesToiTunes.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
