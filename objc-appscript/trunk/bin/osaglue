@@ -15,6 +15,7 @@ try:
 		from appscript.makeidentifier import getconverter
 	from appscript import terminology
 	from aem import Application, findapp, AEType
+	import aem
 except ImportError:
 	print >> sys.stderr, """Sorry, py-appscript 0.18.1 or later is required to use osaglue.
 Please see the following page for more information:
@@ -25,7 +26,10 @@ Please install py-appscript and run this command again."""
 	sys.exit()
 
 
-__version__ = '0.3.2'
+__version__ = '0.3.3'
+
+
+gLoadOSAX = ''
 
 ######################################################################
 # default tables
@@ -374,6 +378,7 @@ _applicationclassimplementation = """
                                                targetData: targetData_];
     self = [super initWithAppData: appData aemReference: AEMApp];
     if (!self) return self;
+    %s
     return self;
 }
 
@@ -406,25 +411,24 @@ _applicationclassimplementation = """
 // misc
 
 - (PREFIXReference *)AS_newReferenceWithObject:(id)object {
-	if ([object isKindOfClass: [PREFIXReference class]])
-		return [[[PREFIXReference alloc] initWithAppData: AS_appData
-				aemReference: [object AS_aemReference]] autorelease];
-	else if ([object isKindOfClass: [AEMQuery class]])
-		return [[[PREFIXReference alloc] initWithAppData: AS_appData
-				aemReference: object] autorelease];
-	else if (!object)
-		return [[[PREFIXReference alloc] initWithAppData: AS_appData
-				aemReference: AEMApp] autorelease];
-	else
-		return [[[PREFIXReference alloc] initWithAppData: AS_appData
-				aemReference: AEMRoot(object)] autorelease];
+    if ([object isKindOfClass: [PREFIXReference class]])
+        return [[[PREFIXReference alloc] initWithAppData: AS_appData
+                aemReference: [object AS_aemReference]] autorelease];
+    else if ([object isKindOfClass: [AEMQuery class]])
+        return [[[PREFIXReference alloc] initWithAppData: AS_appData
+                aemReference: object] autorelease];
+    else if (!object)
+        return [[[PREFIXReference alloc] initWithAppData: AS_appData
+                aemReference: AEMApp] autorelease];
+    else
+        return [[[PREFIXReference alloc] initWithAppData: AS_appData
+                aemReference: AEMRoot(object)] autorelease];
 }
-
 @end
 """
 
 def renderApplicationClass(interface, implementation):
-	classdef = _applicationclassimplementation.replace(prefixtag, prefix)
+	classdef = _applicationclassimplementation.replace(prefixtag, prefix) % gLoadOSAX
 	print >> interface, '@interface %sApplication : %sReference' % (prefix, prefix)
 	for methoddef in interfacemethodspattern.findall(classdef):
 		print >> interface, '%s;' % methoddef
@@ -525,7 +529,7 @@ def renderGlueFiles(outdir, prefix, gluename, imports, fn):
 ######################################################################
 # parse argv
 
-opts, args = getopt.getopt(sys.argv[1:], 'hvo:p:')
+opts, args = getopt.getopt(sys.argv[1:], 'hvo:p:x:')
 opts = dict(opts)
 
 
@@ -538,7 +542,7 @@ if opts.has_key('-h'):
 
 SYNOPSIS
 
-    osaglue [-hv] [-o output-directory] [-p prefix] [application-name]
+    osaglue [-hvx] [-o output-directory] [-p prefix] [-x osax-name] [application-name]
 
 DESCRIPTION
 
@@ -553,6 +557,11 @@ If omitted, the glue files are written to the current directory.
 The prefix argument, -p, is prepended to the names of all glue files and classes.
 Developers should specify a unique prefix that won't cause namespace conflicts
 in their project. If omitted, the application name is used instead.
+
+If the -x argument is given, it must be the name of an installed scripting addition
+or the full path to a scripting addition at any location. In this case, osaglue will
+generate glue files containing the terminology for that scripting addition, allowing
+its commands to be invoked within a given (usually current) application.
 
 The application-name argument may be the name or full path of the application
 for which glues should be generated. If omitted, the resulting glue files will
@@ -580,14 +589,47 @@ else:
 
 if outdir and not os.path.exists(outdir):
 	os.makedirs(outdir)
+	
+osaxname = opts.get('-x', '')
 
 ######################################################################
 # get tables
+
+def _findosax(osaxname):
+	se = aem.Application(aem.findapp.byid('com.apple.systemevents'))
+	for domaincode in ['flds', 'fldl', 'fldu']:
+		osax = aem.app.property(domaincode).property('$scr').elements('file').byfilter(
+				aem.its.property('pnam').eq(osaxname)
+				.OR(aem.its.property('pnam').eq('%s.osax' % osaxname))).byindex(1)
+		if se.event('coredoex', {'----': osax}).send(): # domain has ScriptingAdditions folder
+			return se.event('coregetd', {'----': osax.property('posx')}).send()
+	raise RuntimeError, "Scripting addition %r not found."
+
+
 
 if args:
 	apppath = findapp.byname(args[0])
 	typebycode, typebyname, referencebycode, referencebyname = \
 			terminology.tablesforapp(Application(apppath), 'objc-appscript')
+elif osaxname:
+	if not osaxname.startswith('/'):
+		osaxname = _findosax(osaxname)
+	apppath = '[%s]' % osaxname
+	from OSATerminology import GetAppTerminology # uses Python's own OSATerminology for compatibility
+	from CarbonX.AE import AECreateDesc # tablesforaetes doesn't recognise Carbon.AE._AEDesc, so will make CarbonX version
+	aete = GetAppTerminology(osaxname)[0]
+	aete = AECreateDesc(aete.type, aete.data)
+	typebycode, typebyname, referencebycode, referencebyname = \
+			terminology.tablesforaetes([aete], 'objc-appscript')
+	gLoadOSAX = """
+    // make sure osaxen are loaded
+    static int isReady = 0;
+    if (!isReady) {
+        isReady = 1;
+        AEMApplication *targetApp = [[self AS_appData] targetWithError: nil];
+	[[targetApp eventWithEventClass: kASAppleScriptSuite eventID: kGetAEUT] send];
+    }
+"""
 else:
 	apppath = '<default terminology>'
 	typebycode, typebyname, referencebycode, referencebyname = \
