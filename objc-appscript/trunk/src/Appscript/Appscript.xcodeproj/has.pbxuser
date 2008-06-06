@@ -149,8 +149,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 234364554;
-			PBXWorkspaceStateSaveDate = 234364554;
+			PBXPerProjectTemplateStateSaveDate = 234450483;
+			PBXWorkspaceStateSaveDate = 234450483;
 		};
 		sourceControlManager = 4F0E63B00B6230AB00F8D0E1 /* Source Control */;
 		userBuildSettings = {
@@ -319,18 +319,18 @@
 	};
 	4F9BFD6A0CD4CD74003BDDE0 /* event.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {694, 1932}}";
+			sepNavIntBoundsRect = "{{0, 0}, {694, 2128}}";
 			sepNavSelRange = "{0, 0}";
-			sepNavVisRange = "{0, 2163}";
+			sepNavVisRange = "{2599, 1518}";
 			sepNavVisRect = "{{0, 0}, {794, 899}}";
-			sepNavWindowFrame = "{{84, 0}, {753, 1028}}";
+			sepNavWindowFrame = "{{520, 0}, {753, 1028}}";
 		};
 	};
 	4F9BFD6B0CD4CD74003BDDE0 /* event.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {878, 5418}}";
+			sepNavIntBoundsRect = "{{0, 0}, {923, 5404}}";
 			sepNavSelRange = "{2439, 0}";
-			sepNavVisRange = "{1915, 988}";
+			sepNavVisRange = "{1625, 1813}";
 			sepNavVisRect = "{{0, 0}, {794, 899}}";
 			sepNavWindowFrame = "{{380, 0}, {982, 1028}}";
 		};
@@ -479,9 +479,9 @@
 	};
 	4FDCB4B10B6D5F21009534FD /* types.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {878, 6034}}";
-			sepNavSelRange = "{8714, 11}";
-			sepNavVisRange = "{8697, 599}";
+			sepNavIntBoundsRect = "{{0, 0}, {819, 5754}}";
+			sepNavSelRange = "{6092, 0}";
+			sepNavVisRange = "{5280, 1405}";
 			sepNavVisRect = "{{0, 3892}, {608, 742}}";
 			sepNavWindowFrame = "{{394, 0}, {878, 1028}}";
 		};
@@ -526,10 +526,11 @@
 	};
 	8DC2EF5A0486A6940098B216 /* Info.plist */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {608, 718}}";
-			sepNavSelRange = "{0, 0}";
+			sepNavIntBoundsRect = "{{0, 0}, {701, 762}}";
+			sepNavSelRange = "{693, 0}";
+			sepNavVisRange = "{0, 693}";
 			sepNavVisRect = "{{0, 0}, {608, 718}}";
-			sepNavWindowFrame = "{{15, -5}, {647, 832}}";
+			sepNavWindowFrame = "{{774, -46}, {760, 851}}";
 		};
 	};
 }

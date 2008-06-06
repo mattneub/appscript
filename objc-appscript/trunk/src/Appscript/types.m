@@ -301,7 +301,7 @@ static ASBoolean *falseValue;
 }
 
 - (NSString *)description {
-	return [NSString stringWithFormat: @"[AEMType typeWthCode: %@]", AEMDescTypeToDisplayString([self code])];
+	return [NSString stringWithFormat: @"[AEMType typeWithCode: '%@']", AEMDescTypeToDisplayString([self code])];
 }
 
 @end
@@ -318,7 +318,7 @@ static ASBoolean *falseValue;
 }
 
 - (NSString *)description {
-	return [NSString stringWithFormat: @"[AEMEnum enumWithCode: %@]", AEMDescTypeToDisplayString([self code])];
+	return [NSString stringWithFormat: @"[AEMEnum enumWithCode: '%@']", AEMDescTypeToDisplayString([self code])];
 }
 
 @end
@@ -335,7 +335,7 @@ static ASBoolean *falseValue;
 }
 
 - (NSString *)description {
-	return [NSString stringWithFormat: @"[AEMProperty propertyWithCode: %@]", AEMDescTypeToDisplayString([self code])];
+	return [NSString stringWithFormat: @"[AEMProperty propertyWithCode: '%@']", AEMDescTypeToDisplayString([self code])];
 }
 
 @end
@@ -352,7 +352,7 @@ static ASBoolean *falseValue;
 }
 
 - (NSString *)description {
-	return [NSString stringWithFormat: @"[AEMKeyword keywordWithCode: %@]", AEMDescTypeToDisplayString([self code])];
+	return [NSString stringWithFormat: @"[AEMKeyword keywordWithCode: '%@']", AEMDescTypeToDisplayString([self code])];
 }
 
 @end
