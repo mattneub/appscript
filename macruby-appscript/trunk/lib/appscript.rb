@@ -59,7 +59,7 @@ module Appscript
 	end
 
 	
-	class KeywordNamespace < ASSafeObject
+	class KeywordNamespace < MRASafeObject
 		
 		def method_missing(name)
 			return Keyword.alloc.initWithName_aemObject_(name, nil)
@@ -99,8 +99,8 @@ module Appscript
 		
 		##
 		
-		DefaultTerms = ASTerminology.build_default_terms
-		KeywordConverter = ASTerminology::KeywordConverter.new
+		DefaultTerms = MRATerminology.build_default_terms
+		KeywordConverter = MRATerminology::KeywordConverter.new
 			
 		def initWithApplicationClass_constructor_identifier_terms_(aem_application_class, constructor, identifier, terms)
 			if terms == true
@@ -343,7 +343,7 @@ module Appscript
 	AEMIts = AEMObjectBeingExaminedRoot.objectBeingExaminedRoot
 	
 	
-	class GenericReference < ASSafeObject
+	class GenericReference < MRASafeObject
 	
 		attr_reader :_call
 		protected :_call
@@ -409,7 +409,7 @@ module Appscript
 	class NOVALUE
 	end
 	
-	class Reference < ASSafeObject
+	class Reference < MRASafeObject
 		
 		attr_reader :AS_aem_reference, :AS_app_data
 		attr_writer :AS_aem_reference, :AS_app_data
@@ -610,7 +610,7 @@ module Appscript
 		
 		def to_s
 			if not defined? @_to_s
-				@_to_s = ASReferenceRenderer.render(@AS_app_data, @AS_aem_reference)
+				@_to_s = MRAReferenceRenderer.render(@AS_app_data, @AS_aem_reference)
 			end
 			return @_to_s
 		end
@@ -642,7 +642,7 @@ module Appscript
 					return _send_command(args, name, code)
 			else 
 				# see if it's a method that has been added to Object class [presumably] at runtime, but excluded
-				# by ASSafeObject to avoid potential conflicts with property/element/command names
+				# by MRASafeObject to avoid potential conflicts with property/element/command names
 				begin
 					meth = Object.instance_method(name)
 				rescue NameError # message not handled
@@ -931,9 +931,9 @@ module Appscript
 	
 	#######
 	
-	AS_App = Appscript::GenericApplication.new(Application)
-	AS_Con = Appscript::GenericReference.new(['con'])
-	AS_Its = Appscript::GenericReference.new(['its'])
+	MRA_App = Appscript::GenericApplication.new(Application)
+	MRA_Con = Appscript::GenericReference.new(['con'])
+	MRA_Its = Appscript::GenericReference.new(['its'])
 	
 	
 	######################################################################
@@ -943,36 +943,36 @@ module Appscript
 	
 	def Appscript.app(*args)
 		if args == []
-			return AS_App
+			return MRA_App
 		else
-			return AS_App.by_name(*args)
+			return MRA_App.by_name(*args)
 		end
 	end
 
 	def Appscript.con
-		return AS_Con
+		return MRA_Con
 	end
 	
 	def Appscript.its
-		return AS_Its
+		return MRA_Its
 	end
 	
 	# also define app, con, its as instance methods so that clients can 'include Appscript'
 	
 	def app(*args)
 		if args == []
-			return AS_App
+			return MRA_App
 		else
-			return AS_App.by_name(*args)
+			return MRA_App.by_name(*args)
 		end
 	end
 
 	def con
-		return AS_Con
+		return MRA_Con
 	end
 	
 	def its
-		return AS_Its
+		return MRA_Its
 	end
 	
 	

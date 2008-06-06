@@ -4,7 +4,7 @@
 framework 'Appscript'
 
 
-class ASReferenceRenderer < AEMResolver
+class MRAReferenceRenderer < AEMResolver
 	# Generates string representations of appscript references from aem object specifiers.
 
 	private_class_method :new
@@ -20,7 +20,7 @@ class ASReferenceRenderer < AEMResolver
 	def _format(val)
 		case val
 			when AEMQuery
-				return ASReferenceRenderer.render(@_app_data, val)
+				return MRAReferenceRenderer.render(@_app_data, val)
 			when NSString
 				return val.to_s.inspect
 			# TO DO: reformat ObjC values as Ruby values
@@ -234,7 +234,7 @@ class ASReferenceRenderer < AEMResolver
 	
 	# public
 	
-	def ASReferenceRenderer.render(app_data, aem_reference)
+	def MRAReferenceRenderer.render(app_data, aem_reference)
 		f = self.alloc.initWithAppData_(app_data)
 		begin
 			aem_reference.resolveWithObject_(f)

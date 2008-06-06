@@ -4,7 +4,7 @@
 
 # This list is mirrored in ch.6 of the appscript manual and in py-appscript's osaterminology.makeidentifier module
 
-ReservedKeywords = [
+MRAReservedKeywords = [
 	"==",
 	"===",
 	"=~",
