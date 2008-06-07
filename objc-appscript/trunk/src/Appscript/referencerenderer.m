@@ -29,13 +29,13 @@
 
 /*******/
 
-// application-specific subclasses can override this method to provide their own prefix codes
+// application-specific subclasses should override this method to provide their own prefix codes
 + (NSString *)render:(id)object {
-	return [[self class] render: object withPrefix: @"AS"];
+	return [[self class] render: object withPrefix: @"AS"]; // TO DO: stub this
 }
 
 // takes an AEM specifier/test object and class name prefix, and returns an autoreleased string
-// clients should avoid calling this directly; use +render: instead
+// clients should avoid calling this directly; subclass and override +render: instead
 + (NSString *)render:(id)object withPrefix:(NSString *)prefix_ {
 	id renderer;
 	NSString *string;
@@ -71,7 +71,7 @@
 	if ([object isKindOfClass: [AEMQuery class]])
 		return [[self class] render: object];
 	else
-		return [object description];
+		return [AEMCodecs displayObject: object];
 }
 
 /*******/
