@@ -4,6 +4,14 @@ require 'appscript'
 
 #######
 
+class Time
+	def inspect
+		self.strftime("Time.local(%Y, %m, %d, %H, %M, %S)")
+	end
+end
+
+#######
+
 class AEHandler
 
 	# instances of this class are installed via AE.install_event_handler and

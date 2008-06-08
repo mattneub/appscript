@@ -1,7 +1,7 @@
 """
 Requirements:
 
-- appscript 0.16.1+ <http://appscript.sourceforge.net>
+- appscript 0.19.0+ <http://appscript.sourceforge.net>
 
 - pyobjc <http://pyobjc.sourceforge.net>
 
@@ -15,26 +15,36 @@ To build, cd to this directory and run:
 
 """
 
-
-from distutils.core import setup
+from distutils.core import setup, Extension
 import py2app
+from plistlib import Plist
 
-plist = dict(
-    CFBundleDocumentTypes = [
-        dict(
-            CFBundleTypeExtensions=[],
-            CFBundleTypeName="Text File",
-            CFBundleTypeRole="Editor",
-            NSDocumentClass="ASTranslateDocument",
-            CFBundleIdentifier="net.sourceforge.appscript.astranslate"
-        ),
-    ]
-)
+version = '0.4.0'
 
+
+# TO DO: include Appscript.framework
 
 setup(
-    app=["ASTranslate.py"],
-    version='0.3.1',
-    data_files=["MainMenu.nib", "ASTranslateDocument.nib", "rubyrenderer.rb"],
-    options=dict(py2app=dict(plist=plist)),
+	app=["ASTranslate.py"],
+	data_files=["MainMenu.nib", "ASTranslateDocument.nib", "rubyrenderer.rb"],
+	options=dict(
+		
+		py2app=dict(
+			plist=Plist(
+				CFBundleIdentifier="net.sourceforge.appscript.astranslate",
+				CFBundleVersion=version,
+				CFBundleShortVersionString=version,
+				NSHumanReadableCopyright="(C) 2007-2008 HAS",
+				CFBundleDocumentTypes = [
+					dict(
+						CFBundleTypeExtensions=[],
+						CFBundleTypeName="Text File",
+						CFBundleTypeRole="Editor",
+						NSDocumentClass="ASTranslateDocument"
+					)
+				]
+			)
+		)
+	)
 )
+
