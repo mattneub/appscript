@@ -4,7 +4,7 @@
 """
 
 from aem import AEType, AEEnum, CommandError, findapp, ae
-import appscripttypedefs
+import defaultterminology
 
 from terminologyparser import buildtablesforaetes
 from keywordwrapper import Keyword
@@ -41,11 +41,11 @@ _terminologyCache = {} # cache parsed terminology
 _typebyname = {} # used to encode class and enumerator keywords
 _typebycode = {} # used to decode class (typeType) and enumerator (typeEnum) descriptors
 
-for _, enumerators in appscripttypedefs.enumerations:
+for _, enumerators in defaultterminology.enumerations:
 	for name, code in enumerators:
 		_typebyname[name] = AEEnum(code)
 		_typebycode[code] = Keyword(name)
-for defs in [appscripttypedefs.types, appscripttypedefs.properties]:
+for defs in [defaultterminology.types, defaultterminology.properties]:
 	for name, code in defs:
 		_typebyname[name] = AEType(code)
 		_typebycode[code] = Keyword(name)
@@ -54,36 +54,17 @@ for defs in [appscripttypedefs.types, appscripttypedefs.properties]:
 # e.g. app(...).documents.text <-> app.elements('docu').property('ctxt')
 # e.g. app(...).quit(saving=k.ask) <-> Application(...).event('aevtquit', {'savo': AEEnum('ask ')})
 
-_defaultcommands = {
-		# 'run', 'open', 'print' and 'quit' are Required Suite commands so should always be available.
-		'run': (kCommand, ('aevtoapp', {})),
-		'open': (kCommand, ('aevtodoc', {})),
-		'print_': (kCommand, ('aevtpdoc', {})),
-		'quit': (kCommand, ('aevtquit', {'saving': 'savo'})),
-		# 'reopen' and 'activate' aren't normally listed in terminology.
-		'reopen': (kCommand, ('aevtrapp', {})),
-		'activate': (kCommand, ('miscactv', {})),
-		# 'launch' is a special case not listed in terminology. The 'real' implementation is actually in reference.Reference, as it needs to use the Process Manager to launch an application without sending it a run/open event.
-		'launch': (kCommand, ('ascrnoop', {})),
-		# 'get' and 'set' command often aren't listed in terminology
-		'get': (kCommand, ('coregetd', {})),
-		'set': (kCommand, ('coresetd', {'to': 'data'})),
-		# some apps (e.g. Safari) which support GetURL events may omit it from their terminology; 'open location' is the name Standard Additions defines for this event
-		'open_location': (kCommand, ('GURLGURL', {'window': 'WIND'})), 
-		}
+_referencebycode = {} # used to decode property and element specifiers
+_referencebyname = {} # used to encode property and element specifiers and Apple events
+_defaultcommands = {}
 
-_referencebycode = { # used to decode property and element specifiers
-		# some apps, e.g. Jaguar Finder, may omit 'class' property from terminology
-		'ppcls': (kProperty, 'class_'),
-		# some apps, e.g. iTunes, may omit 'id' property from terminology
-		'pID  ': (kProperty, 'id'),
-		}
 
-_referencebyname = { # used to encode property and element specifiers and Apple events
-		'class_': (kProperty, 'pcls'),
-		'id': (kProperty, 'ID  '),
-		}
-_referencebyname.update(_defaultcommands)
+for name, code in defaultterminology.properties:
+	_referencebycode[kProperty + code] = (kProperty, name)
+	_referencebyname[name] = (kProperty, code)
+
+for name, code, params in defaultterminology.commands:
+	_referencebyname[name] = _defaultcommands[name] = (kCommand, (code, dict(params)))
 
 
 ######################################################################

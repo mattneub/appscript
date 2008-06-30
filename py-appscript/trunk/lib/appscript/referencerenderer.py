@@ -10,9 +10,11 @@ from aem import Query
 ######################################################################
 
 class _Formatter:
-	def __init__(self, appData):
+	def __init__(self, appData, nested=False):
 		self._appData = appData
-		if self._appData.constructor == 'current':
+		if nested:
+			self.root = 'app'
+		elif self._appData.constructor == 'current':
 			self.root = 'app()'
 		elif self._appData.constructor == 'path':
 			self.root = 'app(%r)' % self._appData.identifier
@@ -22,7 +24,7 @@ class _Formatter:
 	
 	def _format(self, val):
 		if isinstance(val, Query):
-			return renderreference(self._appData, val)
+			return renderreference(self._appData, val, True)
 		else:
 			return repr(val)
 	
@@ -130,7 +132,7 @@ class _Formatter:
 # PUBLIC
 ######################################################################
 
-def renderreference(appdata, aemreference):
+def renderreference(appdata, aemreference, nested=False):
 	"""Take an aem reference, e.g.:
 	
 		app.elements('docu').byindex(1).property('ctxt')
@@ -141,7 +143,7 @@ def renderreference(appdata, aemreference):
 		
 	Used by Reference.__repr__().
 	"""
-	f = _Formatter(appdata)
+	f = _Formatter(appdata, nested)
 	try:
 		aemreference.AEM_resolve(f)
 	except:

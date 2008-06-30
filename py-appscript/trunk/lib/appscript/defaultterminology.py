@@ -1,4 +1,4 @@
-"""appscripttypedefs -- translation tables between appscript-style typenames and corresponding AE codes
+"""defaultterminology -- translation tables between appscript-style typenames and corresponding AE codes
 
 (C) 2005-2008 HAS
 """
@@ -176,7 +176,8 @@ pseudotypes = [ # non-concrete types that are only used for documentation purpos
 
 
 properties = [
-		('class_', 'pcls'), # used as a key in AERecord structures that have a custom class
+		('class_', 'pcls'), # used as a key in AERecord structures that have a custom class; also some apps (e.g. Jaguar Finder) may omit it from their dictionaries despite using it
+		('id', 'ID  '), # some apps (e.g. iTunes) may omit 'id' property from terminology despite using it
 ]
 
 
@@ -198,4 +199,27 @@ enumerations = [
 			('application_responses', 'rmte'),
 		]),
 ]
+
+
+commands = [
+	# required suite
+	('run', 'aevtoapp', []),
+	('open', 'aevtodoc', []),
+	('print_', 'aevtpdoc', []),
+	('quit', 'aevtquit', [('saving', 'savo')]),
+	# 'reopen' and 'activate' aren't listed in required suite, but should be
+	('reopen', 'aevtrapp', []),
+	('activate', 'miscactv', []),
+	# 'launch' is a special case not listed in the required suite and implementation is provided by
+	# the Apple event bridge (not the target applications), which uses the Process Manager/
+	# LaunchServices to launch an application without sending it the usual run/open event.
+	('launch', 'ascrnoop', []),
+	# 'get' and 'set' commands are often omitted from applications' core suites, even when used
+	('get', 'coregetd', []),
+	('set', 'coresetd', [('to', 'data')]),
+	# some apps (e.g. Safari) which support GetURL events may omit it from their terminology; 
+	# 'open location' is the name Standard Additions defines for this event, so use it here
+	('open_location', 'GURLGURL', [('window', 'WIND')]), 
+]
+
 
