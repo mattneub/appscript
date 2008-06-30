@@ -7,7 +7,7 @@ from Foundation import NSUserDefaults
 import osascript, aem
 
 import eventformatter
-import rubyrenderer
+import rubyrenderer, objcrenderer
 
 
 NibClassBuilder.extractClasses("MainMenu")
@@ -30,6 +30,7 @@ if not _userDefaults.integerForKey_(u'defaultOutputLanguage'):
 class ASApplicationDelegate(NibClassBuilder.AutoBaseClass):
 
 	def applicationDidFinishLaunching_(self, notification):
+		objcrenderer.initialize()
 		rubyrenderer.initialize()
 
 	def applicationWillTerminate_(self, notification):
@@ -96,6 +97,7 @@ class ASTranslateDocument(NibClassBuilder.AutoBaseClass): # (NSDocument)
 		return False
 
 #######
+
 
 AppHelper.runEventLoop()
 

@@ -26,11 +26,12 @@ version = '0.4.0'
 
 setup(
 	app=["ASTranslate.py"],
-	data_files=["MainMenu.nib", "ASTranslateDocument.nib", "rubyrenderer.rb"],
+	data_files=["MainMenu.nib", "ASTranslateDocument.nib"],
 	options=dict(
 		
 		py2app=dict(
 			plist=Plist(
+				NSAppleScriptEnabled=True,
 				CFBundleIdentifier="net.sourceforge.appscript.astranslate",
 				CFBundleVersion=version,
 				CFBundleShortVersionString=version,

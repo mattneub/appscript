@@ -87,11 +87,16 @@ def makeCustomSendProc(addResultFn, origSendProc):
 			
 			# render
 			for key, renderer in [(kPython, pythonrenderer), (kRuby, rubyrenderer), (kObjC, objcrenderer)]:
-				addResultFn(key, renderer.renderCommand(
-						appPath, addressdesc, eventcode, 
-						targetRef, directParam, params, 
-						resultType, modeFlags, timeout, 
-						appData))
+				try:
+					addResultFn(key, renderer.renderCommand(
+							appPath, addressdesc, eventcode, 
+							targetRef, directParam, params, 
+							resultType, modeFlags, timeout, 
+							appData))
+				except Exception, e:
+					traceback.print_exc()
+					s = 'Untranslated event %r' % eventcode
+					addResultFn(key, s)
 
 		except Exception, e:
 			traceback.print_exc()

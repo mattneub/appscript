@@ -2,15 +2,7 @@ TODO
 
 - add 'result' tab allowing users to view script's result value as-per Script Editor
 
-- add 'Send Apple events' checkbox which, when unchecked, prevents events being sent to target applications. This will be useful for translating potentially destructive commands without the command being carried out (it also means that the result of one command cannot be used in another, of course, hence the need for this behaviour to be optional).
-
-- allow path to ruby interpreter to be set in preferences
-
 - users should be able to independently select formats for both input and output panes, e.g. to convert from py-appscript to AppleScript, rb-appscript to py-appscript, etc.
-
-- allow users to convert to objc-appscript (while the quickest way would be to use objc-appscript directly, this may be best implemented as a Python-based code generator given the limitations of objc-appscript's/Cocoa's -description method)
-
-- add custom #inspect method to Ruby datetime objects to give true code representation
 
 - Following AppleScript:
 
