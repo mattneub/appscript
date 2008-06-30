@@ -16,6 +16,7 @@ setup(
 		platforms=['Mac OS X'],
 		packages = [
 			'osaterminology',
+			'osaterminology/defaultterminology',
 			'osaterminology/dom',
 			'osaterminology/renderers',
 			'osaterminology/sax',
