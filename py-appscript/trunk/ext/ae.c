@@ -1130,6 +1130,75 @@ static PyObject *AE_IsValidPID(PyObject *_self, PyObject *_args)
 }
 
 
+
+static PyObject *AE_AddressDescToPath(PyObject *_self, PyObject *_args)
+{
+	AEDesc desc;
+	ProcessSerialNumber psn;
+	pid_t pid;
+	OSType creatorType = kLSUnknownCreator;
+	Size cSize;
+	char *cStr;
+	CFStringRef bundleID = NULL;
+	FSRef fsref;
+	UInt8 path[PATH_MAX];
+	PyObject* pathObj;
+	OSStatus err;
+	
+	if (!PyArg_ParseTuple(_args, "O&",
+						  AE_AEDesc_Convert, &desc))
+	return NULL;
+	
+	switch (desc.descriptorType) {
+	
+		case typeKernelProcessID:
+			err = AEGetDescData(&desc, &pid, sizeof(pid));
+			if (err) return AE_MacOSError(err);
+			err = GetProcessForPID(pid, &psn);
+			if (err) return AE_MacOSError(err);
+			err = GetProcessBundleLocation(&psn, &fsref);
+			if (err) return AE_MacOSError(err);
+			break;
+		
+		case typeProcessSerialNumber:
+			err = AEGetDescData(&desc, &psn, sizeof(psn));
+			if (err) return AE_MacOSError(err);
+			err = GetProcessBundleLocation(&psn, &fsref);
+			if (err) return AE_MacOSError(err);
+			break;
+		
+		case typeApplSignature:
+			err = AEGetDescData(&desc, &creatorType, sizeof(creatorType));
+			if (err) return AE_MacOSError(err);
+			err = LSFindApplicationForInfo(creatorType, bundleID, NULL, &fsref, NULL);
+			if (err) return AE_MacOSError(err);
+			break;
+		
+		case typeApplicationBundleID:
+			cSize = AEGetDescDataSize(&desc);
+			cStr = malloc((size_t)cSize);
+			if (!cStr) return AE_MacOSError(errAECoercionFail);
+			err = AEGetDescData(&desc, cStr, cSize);
+			if (err) return AE_MacOSError(err);
+			bundleID = CFStringCreateWithBytes(NULL, (UInt8 *)cStr, (CFIndex)cSize, kCFStringEncodingUTF8, 0);
+			free(cStr);
+			if (!bundleID) return AE_MacOSError(errAECoercionFail);
+			err = LSFindApplicationForInfo(creatorType, bundleID, NULL, &fsref, NULL);
+			if (err) return AE_MacOSError(err);
+			break;
+		
+		case typeMachPort: // unsupported
+		case typeApplicationURL: // unsupported (remote applications)
+		default: 
+			return AE_MacOSError(errAECoercionFail);
+	}
+
+	err = FSRefMakePath(&fsref, path, sizeof(path));
+	if (err) return AE_MacOSError(err);
+	pathObj = PyUnicode_DecodeUTF8((char *)path, strlen((char *)path), NULL);
+	return Py_BuildValue("O", pathObj);
+}
+
 /* ------------------------ Get aete/aeut/sdef ------------------------ */
 
 
@@ -1313,6 +1382,9 @@ static PyMethodDef AE_methods[] = {
 		PyDoc_STR("(unicode path, AEDesc firstEvent, unsigned short flags) --> (pid_t pid)")},
   	{"IsValidPID", (PyCFunction)AE_IsValidPID, METH_VARARGS,
 		PyDoc_STR("(pid_t pid) --> (Boolean result)")},
+		
+  	{"AddressDescToPath", (PyCFunction)AE_AddressDescToPath, METH_VARARGS,
+		PyDoc_STR("(AEAddressDesc desc) --> (unicode path)")},
 
   	{"CopyScriptingDefinition", (PyCFunction) AE_CopyScriptingDefinition, METH_VARARGS,
 		PyDoc_STR("(unicode path) --> (unicode sdef)")},

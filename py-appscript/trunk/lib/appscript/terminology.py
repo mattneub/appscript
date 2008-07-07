@@ -122,25 +122,25 @@ def _makeReferenceTable(properties, elements, commands):
 defaulttables = _makeTypeTable([], [], []) + _makeReferenceTable([], [], []) # (typebycode, typebyname, referencebycode, referencebyname)
 
 
-def aetesforapp(app):
+def aetesforapp(aemapp):
 	"""Get aetes from local/remote app via an ascrgdte event; result is a list of byte strings."""
 	try:
-		aetes = app.event('ascrgdte', {'----':0}).send(120 * 60)
+		aetes = aemapp.event('ascrgdte', {'----':0}).send(120 * 60)
 	except Exception, e: # (e.g.application not running)
 		if isinstance(e, CommandError) and e.number == -192:
 			aetes = []
 		else:
-			raise RuntimeError, "Can't get terminology for application (%r): %s" % (app, e)
+			raise RuntimeError, "Can't get terminology for application (%r): %s" % (aemapp, e)
 	if not isinstance(aetes, list):
 		aetes = [aetes]
 	return [aete for aete in aetes if isinstance(aete, ae.AEDesc) and aete.type == 'aete' and aete.data]
 
 
-def tablesforaetes(aetes, style='py-appscript'):
+def tablesforaetes(aetes):
 	"""Build terminology tables from a list of unpacked aete byte strings.
 		Result : tuple of dict -- (typebycode, typebyname, referencebycode, referencebyname)
 	"""
-	classes, enums, properties, elements, commands = buildtablesforaetes(aetes, style)
+	classes, enums, properties, elements, commands = buildtablesforaetes(aetes)
 	return _makeTypeTable(classes, enums, properties) + _makeReferenceTable(properties, elements, commands)
 
 
@@ -152,14 +152,14 @@ def tablesformodule(terms):
 			+ _makeReferenceTable(terms.properties, terms.elements, terms.commands)
 
 
-def tablesforapp(app, style='py-appscript'):
+def tablesforapp(aemapp):
 	"""Build terminology tables for an application.
-		app : aem.Application
+		aemapp : aem.Application
 		Result : tuple of dict -- (typebycode, typebyname, referencebycode, referencebyname)
 	"""
-	if not _terminologyCache.has_key(app.AEM_identity):
-		_terminologyCache[app.AEM_identity] = tablesforaetes(aetesforapp(app), style)
-	return _terminologyCache[app.AEM_identity]
+	if not _terminologyCache.has_key(aemapp.AEM_identity):
+		_terminologyCache[aemapp.AEM_identity] = tablesforaetes(aetesforapp(aemapp))
+	return _terminologyCache[aemapp.AEM_identity]
 
 
 ######################################################################

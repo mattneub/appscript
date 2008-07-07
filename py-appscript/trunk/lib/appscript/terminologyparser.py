@@ -10,9 +10,10 @@ try:
 	set
 except NameError: # Python 2.3
 	from sets import Set as set
+import string
 
-from makeidentifier import getconverter
 from aem.ae import AEDesc
+from reservedkeywords import kReservedKeywords
 
 
 ######################################################################
@@ -20,8 +21,18 @@ from aem.ae import AEDesc
 ######################################################################
 
 class Parser:
-	def __init__(self, style):
-		self.convert = getconverter(style)
+	_keywordCache = {}
+	_reservedWords = set(kReservedKeywords)
+	_specialConversions = {
+			' ': '_',
+			'-': '_',
+			'&': 'and',
+			'/': '_',
+	}
+	_legalChars = string.ascii_letters + '_'
+	_alphanum = _legalChars + string.digits
+		
+	def __init__(self):
 		# terminology tables; order is significant where synonym definitions occur
 		self.commands = {}
 		self.properties = []
@@ -39,6 +50,29 @@ class Parser:
 		self._spareClassNames = {}
 		self._foundClassCodes = set()
 		self._foundElementCodes = set()
+	
+	def convert(self, s):
+		"""Convert string to identifier.
+			s : str
+			Result : str
+		"""
+		if not self._keywordCache.has_key(s):
+			legal = self._legalChars
+			res = ''
+			for c in s:
+				if c in legal:
+					res += c
+				elif self._specialConversions.has_key(c):
+					res += self._specialConversions[c]
+				else:
+					if res == '':
+						res = '_' # avoid creating an invalid identifier
+					res += '0x%2.2X' % ord(c)
+				legal = self._alphanum
+			if res in self._reservedWords or res.startswith('_') or res.startswith('AS_'):
+				res += '_'
+			self._keywordCache[s] = str(res)
+		return self._keywordCache[s]
 		
 	def integer(self):
 		"""Read a 2-byte integer."""
@@ -194,14 +228,13 @@ class LittleEndianParser(Parser):
 # PUBLIC
 ######################################################################
 
-def buildtablesforaetes(aetes, style='py-appscript'):
+def buildtablesforaetes(aetes):
 	"""
 		aetes : list of AEDesc
-		style : str
 	"""
 	if pack("H", 1) == '\x00\x01': # is it big-endian?
-		return Parser(style).parse(aetes)
+		return Parser().parse(aetes)
 	else:
-		return LittleEndianParser(style).parse(aetes)
+		return LittleEndianParser().parse(aetes)
 
 
