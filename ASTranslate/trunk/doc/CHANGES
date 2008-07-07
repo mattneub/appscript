@@ -4,7 +4,7 @@
 - removed external Ruby/rb-appscript dependency
 - sending events to applications is now optional
 - 'make' commands' 'at' parameters now appear as-is rather than use appscript's special-case format which has changed since ASTranslate was written
-
+- general formatting improvements
 
 2007-12-10 -- 0.3.1
 

@@ -22,13 +22,11 @@ from plistlib import Plist
 version = '0.4.0'
 
 
-# TO DO: include Appscript.framework
-
 setup(
 	app=["ASTranslate.py"],
 	data_files=["MainMenu.nib", "ASTranslateDocument.nib"],
 	options=dict(
-		
+	
 		py2app=dict(
 			plist=Plist(
 				NSAppleScriptEnabled=True,
@@ -44,7 +42,9 @@ setup(
 						NSDocumentClass="ASTranslateDocument"
 					)
 				]
-			)
+			),
+			resources=['ASTranslate.icns'],
+			iconfile='ASTranslate.icns'
 		)
 	)
 )

@@ -6,15 +6,12 @@ import aem, appscript
 from appscript import mactypes
 from osaterminology import makeidentifier
 
-from terminology import *
+from osaterminology.tables.tablebuilder import *
 
 #######
 
-_formatterCache = {}
-_self = aem.Application()
 _codecs = aem.Codecs()
-_convert = makeidentifier.getconverter('rb-appscript')
-_terminology = Terminology('rb-appscript')
+_terminology = TerminologyTableBuilder('rb-appscript')
 
 ######################################################################
 # PRIVATE
@@ -26,9 +23,10 @@ kNotNested = -1
 
 
 class _Formatter:
-	def __init__(self, typebycode, referencebycode, appvar, nested=kNested, indent=''):
+	def __init__(self, typebycode, referencebycode, root='app', nested=kNotNested, indent=''):
 		self._referencebycode = referencebycode
 		self._typebycode = typebycode
+		self._root = root
 		self._nested = nested
 		self._indent = indent
 		self._valueFormatters = {
@@ -49,7 +47,6 @@ class _Formatter:
 				aem.AEProp: self.formatConstant,
 				aem.AEKey: self.formatConstant,
 		}
-		self.root = appvar
 		self.result =''
 	
 	#######
@@ -70,7 +67,17 @@ class _Formatter:
 	##
 	
 	def formatUnicodeText(self, val): # str, unicode
-		return "'%s'" % val.replace('\\', '\\\\').replace("'", "\\'").replace('\r', '\\r').replace('\n', '\\n').replace('\t', '\\t') # '
+		s = val.replace('\\', '\\\\').replace('"', '\\"').replace('#{', '\\#{').replace('\r', '\\r').replace('\n', '\\n').replace('\t', '\\t') # "
+		s = s.encode('utf8')
+		r = []
+		for c in s:
+			i = ord(c)
+			if 32 <= i < 127:
+				r.append(c)
+			else:
+				r.append('\\%03o' % i)
+		s = ''.join(r)
+		return '"%s"' % s
 	
 	def formatStr(self, val):
 		return self.formatUnicodeText(_codecs.unpack(_codecs.pack(val).AECoerceDesc('utxt')))
@@ -89,16 +96,32 @@ class _Formatter:
 	##
 	
 	def formatList(self, val):
-			self._indent += '\t'
-			tmp = ['\n%s%s,' % (self._indent, self.format(v)) for v in val]
-			self._indent = self._indent[:-1]
-			return '[%s]' % ''.join(tmp)
+		values = [self.format(v) for v in val]
+		s = '[%s]' % ', '.join(values)
+		if len(s) < 40:
+			return s
+		else:
+			self._indent += '    '
+			tmp = ['\n%s%s' % (self._indent, v) for v in values]
+			self._indent = self._indent[:-4]
+			return '[%s\n%s]' % (','.join(tmp), self._indent)
 	
 	def formatDict(self, val):
-		self._indent += '\t'
-		tmp =['\n%s%s => %s,' % (self._indent, self.format(v), self.format(k)) for k, v in val.items()]
-		self._indent = self._indent[:-1]
-		return '{%s}' % ''.join(tmp)
+		if val:
+			self._indent += '    '
+			tmp = []
+			for k, v in val.items():
+				s = '\n%s%s => ' % (self._indent, self.format(k))
+				indent = self._indent
+				indent2 = len(s)
+				self._indent += ' ' * (indent2 - 5)
+				s += self.format(v)
+				self._indent = indent
+				tmp.append(s)
+			self._indent = self._indent[:-4]
+			return '{%s\n%s}' % (','.join(tmp), self._indent)
+		else:
+			return '{}'
 	
 	##
 	
@@ -158,13 +181,15 @@ class _Formatter:
 			if self._nested:
 				self.result = 'app'
 			else:
-				self.result = self.root
+				self.result = self._root
+		elif name == 'con':
+			self.result = 'con'
+		elif name == 'its':
+			self.result = 'its'
 		elif name == 'NOT':
 			self.result = '%s.not' % self.result
 		else:
-			if name not in ['con', 'its']: # TO DO
-				self.result += '.'
-			self.result += name
+			self.result = '%s.%s' % (self.result, name)
 		return self
 	
 	def gt(self, sel):
@@ -225,7 +250,8 @@ class _Formatter:
 		if isinstance(val, (appscript.Reference, appscript.Keyword)): # kludge; TO DO: eventformatter should pass aem objects to each renderer module
 			val = _codecs.unpack(_appData.pack(val))
 		if isinstance(val, aem.Query):
-			f = _Formatter(self._typebycode, self._referencebycode, self.root, self._nested + 1, self._indent)
+			f = _Formatter(self._typebycode, self._referencebycode, 
+					self._root, self._nested + 1, self._indent)
 			val.AEM_resolve(f)
 			return f.result
 		else:
@@ -235,27 +261,28 @@ class _Formatter:
 # PUBLIC
 ######################################################################
 
+_formattercache = {}
 
 def renderCommand(apppath, addressdesc, 
 		eventcode, 
 		targetref, directparam, paramsdict, 
 		resulttype, modeflags, timeout, 
 		appdata):
-	global _appData
+	global _appData # kludge; TO DO: eventformatter should pass aem objects to each renderer module
 	_appData = appdata
 	try:
-		if not _formatterCache.has_key((addressdesc.type, addressdesc.data)):
+		if not _formattercache.has_key((addressdesc.type, addressdesc.data)):
 			typebycode, typebyname, referencebycode, referencebyname = \
 					_terminology.tablesforapp(aem.Application(desc=addressdesc))
-			_formatterCache[(addressdesc.type, addressdesc.data)] = typebycode, referencebycode
-		typebycode, referencebycode = _formatterCache[(addressdesc.type, addressdesc.data)]
+			_formattercache[(addressdesc.type, addressdesc.data)] = typebycode, referencebycode
+		typebycode, referencebycode = _formattercache[(addressdesc.type, addressdesc.data)]
 		
 		appname = os.path.splitext(os.path.basename(apppath))[0]
-		f = _Formatter(typebycode, referencebycode, '', kNotNested)
+		f = _Formatter(typebycode, referencebycode)
 		appvar = 'app(%s)' % f.format(appname)
 		
 		if targetref and not isinstance(targetref, appscript.Application):
-			f = _Formatter(typebycode, referencebycode, appvar, kNotNested)
+			f = _Formatter(typebycode, referencebycode, appvar)
 			target = f.format(targetref)
 		else:
 			target = appvar
@@ -263,27 +290,29 @@ def renderCommand(apppath, addressdesc,
 		commandname, paramnamebycode = referencebycode[kCommand+eventcode][1]
 		
 		args = []
+		f = _Formatter(typebycode, referencebycode, appvar, kNested)
 		
 		if directparam is not None:
-			args.append(_Formatter(typebycode, referencebycode, appvar).format(directparam))
+			args.append(f.format(directparam))
 		
 		for k, v in paramsdict.items():
-			f = _Formatter(typebycode, referencebycode, appvar)
 			args.append(':%s => %s' % (paramnamebycode[k], f.format(v)))
 		
 		if resulttype:
-			code = _codecs.unpack(appdata.pack(resulttype)).code
-			args.append(':result_type => :%s' % typebycode[code]) # .AS_name
+			args.append(':result_type => %s' % f.format(resulttype))
 		if timeout != -1:
 			args.append(':timeout => %i' % (timeout / 60))
 		if modeflags & 3 == aem.kae.kAENoReply:
 			args.append(':wait_reply => false')
 		
-		return '%s.%s(%s)' % (target, commandname, ', '.join(args))
+		if args:
+			args = '(%s)' % ', '.join(args)
+		else:
+			args = ''
+		return '%s.%s%s' % (target, commandname, args)
 		
 	except Exception, e:
 		import traceback
-		
 		return '%s\n\n%s' % (e, traceback.format_exc())
 
 

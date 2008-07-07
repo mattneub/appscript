@@ -6,7 +6,7 @@ import aem, appscript
 from appscript import mactypes
 from osaterminology import makeidentifier
 
-from terminology import *
+from osaterminology.tables.tablebuilder import *
 
 #######
 
@@ -14,7 +14,7 @@ _formatterCache = {}
 _self = aem.Application()
 _codecs = aem.Codecs()
 _convert = makeidentifier.getconverter('objc-appscript')
-_terminology = Terminology('objc-appscript')
+_terminology = TerminologyTableBuilder('objc-appscript')
 
 ######################################################################
 # PRIVATE

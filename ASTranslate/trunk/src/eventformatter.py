@@ -7,7 +7,6 @@ from Foundation import NSUserDefaults
 from aem import kae, ae
 import appscript, aem, mactypes
 import appscript.reference
-import astranslate_cglue
 
 import pythonrenderer, rubyrenderer, objcrenderer
 
@@ -45,7 +44,7 @@ def makeCustomSendProc(addResultFn, origSendProc):
 		# unpack required attributes
 		try:
 			eventcode, addressdesc = _unpackEventAttributes(event)
-			appPath = astranslate_cglue.psntopath(*struct.unpack('LL', addressdesc.data))
+			appPath = ae.AddressDescToPath(addressdesc)
 			
 			# get app instance and associated data
 			if not _appCache.has_key((addressdesc.type, addressdesc.data)):
