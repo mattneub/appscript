@@ -20,6 +20,7 @@ setup(
 			'osaterminology/dom',
 			'osaterminology/renderers',
 			'osaterminology/sax',
+			'osaterminology/tables',
 		],
 		extra_path = "aeosa",
 		package_dir = { '': 'lib' }

@@ -3,25 +3,6 @@
 (C) 2005-2008 HAS
 """
 
-# import pyappscript, rbappscript, objcappscript
-
-# TO DO: have a single constants file
-
-
-'''
-typebycode = {}
-
-for defs in [appscripttypedefs.types, 
-		appscripttypedefs.pseudotypes]:
-	for name, code in defs:
-		typebycode[code] = name
-
-
-enumerationbycode = dict(appscripttypedefs.enumerations)
-
-
-'''
-
 def getterms(style='py-appscript'):
 	if style == 'py-appscript':
 		import pyappscript as terms

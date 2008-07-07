@@ -4,6 +4,8 @@
 
 (C) 2006 HAS"""
 
+# TO DO: objc-appscript support
+
 # TO DO: find app with missing savo and see how this is represented
 
 # Note: OSACopyScriptingDefinition's aete->sdef conversion has bug where classes and commands defined in hidden 'tpnm' suite aren't included in generated sdef (though enumerations are)
@@ -300,8 +302,8 @@ class AppscriptHandler(Handler):
 				elif self.applescripttypesbyname.has_key(type.name):
 					type.code = self.applescripttypesbyname[type.name]
 				if type.code:
-					if appscripttypes.typebycode.has_key(type.code):
-						type.name = appscripttypes.typebycode[type.code]
+					if appscripttypemodule.typebycode.has_key(type.code):
+						type.name = appscripttypemodule.typebycode[type.code]
 					else:
 						type.name = '' # TO DO: decide
 		return Handler.result(self)
@@ -310,10 +312,12 @@ class AppscriptHandler(Handler):
 
 class PyAppscriptHandler(AppscriptHandler):
 	asname = staticmethod(makeidentifier.getconverter('py-appscript'))
+	appscripttypemodule = appscripttypes.typetables('py-appscript')
 
 
 class RbAppscriptHandler(AppscriptHandler):
 	asname = staticmethod(makeidentifier.getconverter('rb-appscript'))
+	appscripttypemodule = appscripttypes.typetables('rb-appscript')
 
 
 handlers = {

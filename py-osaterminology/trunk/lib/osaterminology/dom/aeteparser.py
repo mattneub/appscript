@@ -21,7 +21,7 @@ from osaterminology import makeidentifier
 from osaterminology.sax import aeteparser
 
 # moved following from typemodule methods as putting them there causes import(?) problems in ASDictionary
-import applescripttypes, appscripttypes, objcappscripttypes
+import applescripttypes, appscripttypes
 
 
 ######################################################################
@@ -178,14 +178,13 @@ class _Parser(aeteparser.Receiver):
 		for klass in self._classes:
 			klass.pluralname = self._pluralclassnames.get(klass.code, klass.name)
 		# Add names, etc. for AEM-defined types and enumerations
-		defs = self.typemodule()
 		for type in self._types.values():
 			if not type.name: # not an application-defined class
-				if defs.typebycode.has_key(type.code): # it's an AEM-defined type
-					type.name = defs.typebycode[type.code]
-				elif defs.enumerationbycode.has_key(type.code): # it's an AEM-defined enumeration
+				if self.typemodule.typebycode.has_key(type.code): # it's an AEM-defined type
+					type.name = self.typemodule.typebycode[type.code]
+				elif self.typemodule.enumerationbycode.has_key(type.code): # it's an AEM-defined enumeration
 					type._add_(Enumeration(self._visibility, '', k, '', True, None))
-					for name, code in defs.enumerationbycode[code]:
+					for name, code in self.typemodule.enumerationbycode[code]:
 						type._add_(Enumerator(self._visibility, name, code, '', True))
 				# else it's unknown, in which case leave it as-is
 		# Return Dictionary instance
@@ -197,19 +196,14 @@ class _Parser(aeteparser.Receiver):
 
 class AppleScriptParser(_Parser):
 	elementnamesareplural = False
-	
-	def typemodule(self):
-		return applescripttypes
+	typemodule = applescripttypes
 
 
 #######
 # appscript dictionary parser
 
-class AppscriptParser(_Parser):
+class _AppscriptParser(_Parser):
 	elementnamesareplural = True
-	
-	def typemodule(self):
-		return appscripttypes
 	
 	def start_command(self, code, name, description, directarg, reply):
 		if (name == 'get' and code != 'coregetd') or (name == 'set' and code != 'coresetd'):
@@ -217,19 +211,20 @@ class AppscriptParser(_Parser):
 		_Parser.start_command(self, code, name, description, directarg, reply)
 
 
-class ObjCAppscriptParser(AppscriptParser):
+
+class ObjCAppscriptParser(_AppscriptParser):
 	asname = staticmethod(makeidentifier.getconverter('objc-appscript'))
-	
-	def typemodule(self):
-		return objcappscripttypes
+	typemodule = appscripttypes.typetables('objc-appscript')
 
 
-class PyAppscriptParser(AppscriptParser):
+class PyAppscriptParser(_AppscriptParser):
 	asname = staticmethod(makeidentifier.getconverter('py-appscript'))
+	typemodule = appscripttypes.typetables('py-appscript')
 
 
-class RbAppscriptParser(AppscriptParser):
+class RbAppscriptParser(_AppscriptParser):
 	asname = staticmethod(makeidentifier.getconverter('rb-appscript'))
+	typemodule = appscripttypes.typetables('rb-appscript')
 
 
 _parsers = {
