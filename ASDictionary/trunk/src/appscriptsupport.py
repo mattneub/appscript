@@ -6,7 +6,6 @@
 from pprint import pprint, pformat
 from sys import stdout
 from StringIO import StringIO
-from subprocess import Popen
 import textwrap
 
 import aem, appscript
@@ -17,12 +16,11 @@ from osaterminology.renderers import textdoc, inheritance, relationships
 
 from appscript import reference, terminology, terminologyparser
 
+from rubyrenderer import RubyRenderer
+
 __all__ = ['Help']
 
 from AppKit import NSUserDefaults
-
-if not NSUserDefaults.standardUserDefaults().stringForKey_(u'rubyInterpreter'):
-	NSUserDefaults.standardUserDefaults().setObject_forKey_(u'/usr/bin/ruby', u'rubyInterpreter')
 
 if not NSUserDefaults.standardUserDefaults().integerForKey_(u'lineWrap'):
 	NSUserDefaults.standardUserDefaults().setInteger_forKey_(78, u'lineWrap')
@@ -30,87 +28,13 @@ if not NSUserDefaults.standardUserDefaults().integerForKey_(u'lineWrap'):
 #######
 # Data renderers
 
-class DefaultRenderer:
+class PythonRenderer:
 	
 	def rendervalue(self, value, prettyprint=False):
 		return prettyprint and pformat(value) or repr(value)
 	
-	renderreference = rendervalue
-		
-	def rendervalues(self, values, prettyprint=False):
-		return [prettyprint and pformat(value) or repr(value) for value in values]
-
-_defaultrenderer = DefaultRenderer()
 
 #######
-
-
-class RubyRenderer:
-
-	#######
-	# manage ruby subprocess
-
-	_rubyapp = None
-	
-	@staticmethod
-	def _findrubyinterpreter():
-		return NSUserDefaults.standardUserDefaults().stringForKey_(u'rubyInterpreter')
-	
-	@staticmethod
-	def _findrubyrenderer():
-		from AppKit import NSBundle
-		return NSBundle.mainBundle().pathForResource_ofType_('rubyrenderer', 'rb')
-	
-	@classmethod
-	def _target(klass):
-		if not klass._rubyapp:
-			klass._rubyproc = Popen([klass._findrubyinterpreter(), klass._findrubyrenderer()])
-			klass._rubyapp = aem.Application(pid= klass._rubyproc.pid)
-		return klass._rubyapp
-	
-	@classmethod
-	def quit(self):
-		try:
-			self._target().event('aevtquit').send()
-		except:
-			pass	
-	
-	#######
-	
-	def __init__(self, appobj):
-		self._appobj = appobj
-		self._appdata = appobj.AS_appdata
-	
-	def rendervalue(self, value , prettyprint=False):
-		return self.rendervalues([value], prettyprint)[0]
-	
-	def renderreference(self, value , prettyprint=False):
-		return self.rendervalues([value], prettyprint, True)[0]
-	
-	def rendervalues(self, values, prettyprint=False, isreference=False):
-		try:
-			return self._target().event('AppSFmt_', {
-					'Cons': self._appdata.constructor,
-					'Iden': self._appdata.identifier,
-					'PPri': prettyprint,
-					'Data': values,
-					'IsRe': isreference,
-					}, codecs=self._appdata).send()
-		except aem.CommandError, e:
-			# TO DO: if error -600 (e.g. due to crash)
-			import sys, traceback
-			print >> sys.stderr, '*' * 78
-			print >> sys.stderr, "ASDictionary warning: Couldn't translate values to Ruby:" \
-					"\n\tAPP: %r\n\tDATA: %r" % (self._appobj, values)
-			traceback.print_exc(file=sys.stderr)
-			print >> sys.stderr, '*' * 78
-			return [repr(value) for value in values]
-
-
-#######
-
-def quit():
-	RubyRenderer.quit()
 
 
 ######################################################################
@@ -277,9 +201,9 @@ For example, to print an overview of TextEdit, a description of its make command
 		self.terms = aeteparser.parseaetes(aetes, appname, style)
 		self.style = style
 		if style == 'rb-appscript':
-			self.datarenderer = RubyRenderer(appobj)
+			self.datarenderer = RubyRenderer(appobj, aetes)
 		else:
-			self.datarenderer = _defaultrenderer
+			self.datarenderer = PythonRenderer()
 		self.output = out
 	
 	def overview(self):
@@ -436,7 +360,7 @@ For example, to print an overview of TextEdit, a description of its make command
 				if value.kind == 'class':
 					print >> self.output, 'Current state of referenced object(s)'
 					if definition:
-						print >> self.output, '\n--- Get reference ---\n\n', ref.get()
+						print >> self.output, '\n--- Get reference ---\n\n', self.datarenderer.rendervalue(ref.get())
 					for heading, attributeNames in [
 							('---- Properties ----', value.full().properties().names()),
 							('----- Elements -----', value.full().elements().names())]:
@@ -485,7 +409,7 @@ For example, to print an overview of TextEdit, a description of its make command
 			tokens = flags.split()
 			print >> self.output, '=' * 78 + '\nHelp (%s)' % ' '.join(tokens)
 			if ref:
-				print >> self.output, '\nReference: %s' % self.datarenderer.renderreference(ref)
+				print >> self.output, '\nReference: %s' % self.datarenderer.rendervalue(ref)
 			i = 0
 			while i < len(tokens):
 				print >> self.output, '\n' + '-' * 78
@@ -552,7 +476,6 @@ def help(constructor, identity, style, flags, aemreference, commandname=''):
 		ref = getattr(ref, commandname)
 	helpobj.help(flags, ref)
 	s = output.getvalue()
-	print `s`
 	if NSUserDefaults.standardUserDefaults().boolForKey_(u'enableLineWrap'):
 		res = []
 		textwrapper = textwrap.TextWrapper(width=NSUserDefaults.standardUserDefaults().integerForKey_(u'lineWrap'), 
@@ -560,7 +483,6 @@ def help(constructor, identity, style, flags, aemreference, commandname=''):
 		for line in s.split('\n'):
 			res.append(textwrapper.fill(line))
 		s = u'\n'.join(res)
-	print `s`
 	return s
 
 

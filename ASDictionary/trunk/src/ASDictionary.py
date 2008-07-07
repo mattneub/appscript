@@ -4,7 +4,7 @@
 """
 
 __name__ = 'ASDictionary'
-__version__ = '0.9.0'
+__version__ = '0.10.0'
 
 import objc
 from Foundation import NSUserDefaultsDidChangeNotification
@@ -347,7 +347,6 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 	
 	def applicationWillTerminate_(self, notification):
 		userDefaults.setObject_forKey_(list(self.logDrawer.contentSize()), u'LogDrawer')
-		appscriptsupport.quit()
 
 	
 	#######

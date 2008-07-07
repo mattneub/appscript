@@ -25,7 +25,7 @@ from plistlib import Plist
 import os
 
 name = 'ASDictionary'
-version='0.9.0'
+version='0.9.1'
 
 os.system('''
 sdp -fa %s.sdef;
@@ -34,7 +34,7 @@ Rez %sScripting.r -o %s.rsrc -useDF
 
 setup(
 	app=[name+".py"],
-	data_files=["MainMenu.nib", "rubyrenderer.rb"],
+	data_files=["MainMenu.nib"],
 	options=dict(
 	
 
@@ -43,7 +43,7 @@ setup(
 				NSAppleScriptEnabled=True,
 				CFBundleVersion=version,
 				CFBundleShortVersionString=version,
-				NSHumanReadableCopyright="(C) 2007 HAS",
+				NSHumanReadableCopyright="(C) 2005-2008 HAS",
 				CFBundleIdentifier="net.sourceforge.appscript.asdictionary",
 				CFBundleDocumentTypes = [
 					dict(
