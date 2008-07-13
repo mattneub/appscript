@@ -21,7 +21,6 @@ _terminology = TerminologyTableBuilder('objc-appscript')
 ######################################################################
 
 
-
 class _Formatter:
 	def __init__(self, typebycode, referencebycode, appvar, prefix, indent=''):
 		self._referencebycode = referencebycode
@@ -173,6 +172,7 @@ class _Formatter:
 	
 	def __getattr__(self, name):
 		if name == 'app':
+			# TO DO: use 'PREFIXApp' instead of self.root for generic references (i.e. any refs except target ref)
 			self.result = self.root
 		elif name == 'con':
 			self.result = '%sCon' % self._prefix

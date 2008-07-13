@@ -28,13 +28,7 @@ if not _userDefaults.integerForKey_(u'defaultOutputLanguage'):
 #######
 
 class ASApplicationDelegate(NibClassBuilder.AutoBaseClass):
-
-	def applicationDidFinishLaunching_(self, notification):
-		objcrenderer.initialize()
-		rubyrenderer.initialize()
-
-	def applicationWillTerminate_(self, notification):
-		rubyrenderer.cleanup()
+	pass
 
 
 #######
