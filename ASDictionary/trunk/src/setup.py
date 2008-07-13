@@ -4,8 +4,9 @@ Requirements:
 
 - Python 2.4+ <http://www.python.org>
 
-- appscript 0.19.0+ <http://appscript.sourceforge.net>
-- aeserver 0.5.0+
+- py-appscript 0.19.0+ <http://appscript.sourceforge.net>
+- py-aeserver 0.2.0+
+- py-osaterminology 0.12.0+
 
 - PyObjC <http://pyobjc.sourceforge.net/>
 
@@ -25,7 +26,7 @@ from plistlib import Plist
 import os
 
 name = 'ASDictionary'
-version='0.9.1'
+version='0.10.0'
 
 os.system('''
 sdp -fa %s.sdef;

@@ -72,7 +72,7 @@ def namefrompath(path):
 ######################################################################
 # Main export function
 
-from aem.ae import GetAppTerminology as getaete
+from aem.ae import MacOSError, GetAppTerminology
 from osaterminology.dom import aeteparser
 from osaterminology.renderers import quickdoc, htmldoc, htmldoc2
 from osaterminology.makeidentifier import getconverter
@@ -101,7 +101,12 @@ def _export(items, styles, plainText, singleHTML, frameHTML, options, outFolder,
 		name, path = item['name'], item['path']
 		progress.nextitem(name, path)
 		try:
-			aetes = getaete(path)
+			try:
+				aetes = GetAppTerminology(path)
+			except MacOSError, e:
+				if e.args[0] != -192:
+					raise
+				aetes = []
 			if not bool(aetes):
 				progress.didfail(u"No terminology found.")
 				continue
@@ -252,7 +257,7 @@ userDefaults = NSUserDefaults.standardUserDefaults()
 # OSATerminology.so functions should not be called before main event loop
 # is started, otherwise it triggers strange behaviour where minimised windows
 # refuse to expand when clicked on in Dock. (This is a Cocoa/Carbon issue.)
-# Since osax.ScriptingAddition constructor calls osaterminology.getterminology.getaete
+# Since osax.ScriptingAddition constructor calls aem.ae.GetAppTerminology
 # (which in turn calls OSATerminology.OSAGetAppTerminology), it should not be
 # called here (ie. at top level of script).
 #
@@ -547,7 +552,8 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 		NSApp().stopModalWithCode_(-128)
 	
 	def windowWillClose_(self, sender): # quit on main window close
-		NSApp().terminate_(sender)
+		if sender.object() == self.mainWindow:
+			NSApp().terminate_(sender)
 
 
 ######################################################################
