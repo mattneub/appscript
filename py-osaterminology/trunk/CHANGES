@@ -1,5 +1,9 @@
-2008-02-?? -- 0.??.?
+2008-07-12 -- 0.12.0
 - moved to py-osaterminology project
+- updated to use py-appscript 0.19.0+
+- removed getterminology package; clients should use aem.ae extension's GetAppTerminology/GetSysTerminology/CopyScriptingDefinition functions directly for now (note that these behave slightly differently to getaete/getaeut/getsdef, raising aem.ae.MacOSError -192 if no terminology resource found)
+- organised default terminology modules into new 'defaultterminology' package
+- other structural improvements
 
 2007-12-20 -- 0.11.0
 - added 'isrunning'/'is_running?'/'isRunning' to reserved py-/rb-/objc-appscript keywords
