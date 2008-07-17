@@ -1,7 +1,8 @@
-2008-07-16 -- 0.4.1
+2008-07-17 -- 0.4.1
 
 - fixed bug in script error reporting
 - fixed missing prefixes in objc-appscript renderer
+- changed prefix style
 
 
 2008-07-13 -- 0.4.0

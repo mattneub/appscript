@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import types, datetime, os.path
+import types, datetime, os.path, re
 
 import aem, appscript
 from appscript import mactypes
@@ -248,6 +248,17 @@ class _Formatter:
 		else:
 			return self._valueFormatters[val.__class__](val)
 
+
+def makeprefix(name):
+	m = re.findall('\\b.*?([A-Z])\W*?([A-Z]*)', name.upper())
+	s = m[0][0]
+	if len(m) >= 2:
+		s += m[1][0]
+	else:
+		s += m[0][1][0]
+	return s
+
+
 ######################################################################
 # PUBLIC
 ######################################################################
@@ -269,7 +280,7 @@ def renderCommand(apppath, addressdesc,
 		
 		appname = os.path.splitext(os.path.basename(apppath))[0]
 		appvar = _convert(appname.lower())
-		prefix = _convert(appname.capitalize())
+		prefix = makeprefix(appname)
 		
 		s = '// To create glue:  osaglue  -o %sGlue  -t %s  %s\n\n' % (prefix, prefix, appname)
 		
