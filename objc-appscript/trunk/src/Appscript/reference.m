@@ -74,6 +74,14 @@
 	return [AS_appData launchApplicationWithError: error];
 }
 
+- (BOOL)reconnectApplication {
+	return [[AS_appData targetWithError: nil] reconnect];
+}
+
+- (BOOL)reconnectApplicationWithError:(NSError **)error {
+	return [[AS_appData targetWithError: error] reconnectWithError: error];
+}
+
 // transaction support
 
 - (BOOL)beginTransactionWithError:(NSError **)error {

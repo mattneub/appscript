@@ -40,6 +40,17 @@
 
 - (BOOL)launchApplication; // convenience shortcut for the above
 
+
+// restart local application and/or update AEAddressDesc if needed
+// (typically used after application has quit; refreshes existing
+// application object without the need to recreate it)
+// note: only works for apps specified by name/path/bundle ID
+
+- (BOOL)reconnectApplicationWithError:(NSError **)error;
+
+- (BOOL)reconnectApplication;
+
+
 // transaction support
 
 - (BOOL)beginTransactionWithError:(NSError **)error;
