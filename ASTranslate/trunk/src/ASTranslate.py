@@ -4,6 +4,8 @@ import AppKit
 from PyObjCTools import NibClassBuilder, AppHelper
 from Foundation import NSUserDefaults
 
+import MacOS
+
 import osascript, aem
 
 import eventformatter
@@ -82,6 +84,10 @@ class ASTranslateDocument(NibClassBuilder.AutoBaseClass): # (NSDocument)
 			self.codeView.setSelectedRange_((start, end - start))
 			errstr = u'%s Error:\n%s (%i)' % (errorKind, e.message, e.number)
 			self._addResult(eventformatter.kAll, errstr)
+		except (aem.ae.MacOSError, MacOS.Error), e:
+			errstr = u'%s Error: %i' % (errorKind, e.args[0])
+			self._addResult(eventformatter.kAll, errstr)
+			
 	
 	def selectStyle_(self, sender):
 		self.resultView.setString_(u'\n\n'.join(self._resultStores[self.currentStyle]))

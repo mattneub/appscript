@@ -242,7 +242,7 @@ class _Formatter:
 		if isinstance(val, (appscript.Reference, appscript.Keyword)): # kludge; TO DO: eventformatter should pass aem objects to each renderer module
 			val = _codecs.unpack(_appData.pack(val))
 		if isinstance(val, aem.Query):
-			f = _Formatter(self._typebycode, self._referencebycode, self.root, self._indent)
+			f = _Formatter(self._typebycode, self._referencebycode, self.root, self._prefix, self._indent)
 			val.AEM_resolve(f)
 			return f.result
 		else:

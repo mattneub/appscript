@@ -1,7 +1,11 @@
 """
 Requirements:
 
-- appscript 0.19.0+ <http://appscript.sourceforge.net>
+- py-appscript 0.19.0+ <http://appscript.sourceforge.net>
+
+- py-osascript 0.5.0+
+
+- py-osaterminology 0.11.0+
 
 - pyobjc <http://pyobjc.sourceforge.net>
 
@@ -19,7 +23,7 @@ from distutils.core import setup, Extension
 import py2app
 from plistlib import Plist
 
-version = '0.4.0'
+version = '0.4.1'
 
 
 setup(

@@ -15,3 +15,4 @@ translates to:
 However, Finder requires:
 
 	app(u'/System/Library/CoreServices/Finder.app').count(None, each=k.Finder_window)
+
