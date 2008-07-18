@@ -8,10 +8,12 @@ from aem import AEType, AEEnum, CommandError, findapp, ae
 from tableparser import buildtablesforaetes
 import osaterminology.defaultterminology
 
-__all__ = ['kProperty', 'kElement', 'kCommand', 'TerminologyTableBuilder']
+__all__ = ['kType', 'kEnum', 'kProperty', 'kElement', 'kCommand', 'TerminologyTableBuilder']
 
 ######################################################################
 
+kType = 't'
+kEnum = 'n'
 kProperty = 'p'
 kElement = 'e'
 kCommand = 'c'
@@ -32,11 +34,11 @@ class TerminologyTableBuilder:
 		self._terminologycache = {} # cache parsed terminology
 		for _, enumerators in defaultterminology.enumerations:
 			for name, code in enumerators:
-				self._typebyname[name] = code # AEEnum(code)
+				self._typebyname[name] = (kEnum, code) # AEEnum(code)
 				self._typebycode[code] = name # Keyword(name)
 		for defs in [defaultterminology.types, defaultterminology.properties]:
 			for name, code in defs:
-				self._typebyname[name] = code # AEType(code)
+				self._typebyname[name] = (kType, code) # AEType(code)
 				self._typebycode[code] = name # Keyword(name)
 		for name, code in defaultterminology.properties:
 			self._referencebycode[kProperty + code] = (kProperty, name)
@@ -51,15 +53,15 @@ class TerminologyTableBuilder:
 	def _maketypetable(self, classes, enums, properties):
 		typebycode = self._typebycode.copy()
 		typebyname = self._typebyname.copy()
-		for klass, table in [(AEType, properties), (AEEnum, enums), (AEType, classes)]:
+		for kind, table in [(kType, properties), (kEnum, enums), (kType, classes)]:
 			for i, (name, code) in enumerate(table):
-				if self._typebyname.has_key(name) and self._typebyname[name] != code: # .code != code:
+				if name in self._typebyname and self._typebyname[name][1] != code: # .code != code:
 					name += '_'
 				typebycode[code] = name # Keyword(name)
 				name, code = table[-i - 1]
-				if self._typebyname.has_key(name) and self._typebyname[name] != code: # .code != code:
+				if name in self._typebyname and self._typebyname[name][1] != code: # .code != code:
 					name += '_'
-				typebyname[name] = code # klass(code)
+				typebyname[name] = (kind, code) # klass(code)
 		return typebycode, typebyname
 	
 	
@@ -71,10 +73,10 @@ class TerminologyTableBuilder:
 				referencebycode[kind+code] = (kind, name)
 				name, code = table[-i - 1]
 				referencebyname[name] = (kind, code)
-		if referencebyname.has_key('text'):
+		if 'text' in referencebyname:
 			referencebyname['text'] = (kElement, referencebyname['text'][1])
 		for name, code, args in commands[::-1]:
-			if self._defaultcommands.has_key(name) and code != self._defaultcommands[name][1][0]:
+			if name in self._defaultcommands and code != self._defaultcommands[name][1][0]:
 				name += '_'
 			referencebyname[name] = (kCommand, (code, dict(args)))
 			referencebycode[kCommand+code] = (kCommand, (name, dict([(v, k) for k, v in args])))
@@ -122,7 +124,7 @@ class TerminologyTableBuilder:
 			app : aem.Application
 			Result : tuple of dict -- (typebycode, typebyname, referencebycode, referencebyname)
 		"""
-		if not self._terminologycache.has_key(app.AEM_identity):
+		if app.AEM_identity not in self._terminologycache:
 			self._terminologycache[app.AEM_identity] = self.tablesforaetes(self.aetesforapp(app))
 		return self._terminologycache[app.AEM_identity]
 

@@ -157,6 +157,19 @@ kObjCAppscriptReservedWords = [
 	
 	# miscellaneous
 	"isRunning",
+	"launchApplication",
+	"launchApplicationWithError",
+	"reconnectApplication",
+	"reconnectApplicationWithError",
+	
+	# shortcuts
+	"setItem",
+	"getItem",
+	"getItemWithError",
+	"getList",
+	"getListWithError",
+	"getItemOfType",
+	"getListOfType",
 	
 	# used by osaglue-generated XXApplication classes
 	"initWithName",
@@ -170,6 +183,9 @@ kObjCAppscriptReservedWords = [
 	"beginTransactionWithSession",
 	"abortTransaction",
 	"endTransaction",
+	"beginTransactionWithError",
+	"endTransactionWithError",
+	"abortTransactionWithError",
 	
 	# used by ASConstant
 	"constantWithName",

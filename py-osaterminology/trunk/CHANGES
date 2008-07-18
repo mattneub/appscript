@@ -1,8 +1,13 @@
+2008-07-17 -- 0.12.1
+- added 'id_' property definition to objc-appscript default terminology
+- changed structure of TerminologyTableBuilder's typebyname table to indicate type or enum
+
 2008-07-12 -- 0.12.0
 - moved to py-osaterminology project
 - updated to use py-appscript 0.19.0+
 - removed getterminology package; clients should use aem.ae extension's GetAppTerminology/GetSysTerminology/CopyScriptingDefinition functions directly for now (note that these behave slightly differently to getaete/getaeut/getsdef, raising aem.ae.MacOSError -192 if no terminology resource found)
 - organised default terminology modules into new 'defaultterminology' package
+- added tables package
 - other structural improvements
 
 2007-12-20 -- 0.11.0

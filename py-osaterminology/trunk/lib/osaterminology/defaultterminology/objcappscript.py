@@ -137,10 +137,9 @@ pseudotypes = [ # non-concrete types that are only used for documentation purpos
 ]
 
 
-properties = [ # TO DO: needed?
-		# some apps (e.g. Jaguar Finder) may not define a 'class' property in their dictionaries
-		# defined here since it may be used as a key in record-like structures
-		('class_', 'pcls'),
+properties = [
+		('class_', 'pcls'), # used as a key in AERecord structures that have a custom class; also some apps (e.g. Jaguar Finder) may omit it from their dictionaries despite using it
+		('id_', 'ID  '), # some apps (e.g. iTunes) may omit 'id' property from terminology despite using it
 ]
 
 
