@@ -16,6 +16,7 @@ DEPENDENCIES
 ======================================================================
 NOTES
 
+- Distutil users should delete older non-egg installations (see site-packages/aeosa) before installation
 
 ======================================================================
 COPYRIGHT

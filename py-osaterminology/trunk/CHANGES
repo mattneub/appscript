@@ -1,3 +1,7 @@
+2008-??-?? -- 0.??.?
+
+- restructured makeidentifier
+
 2008-07-17 -- 0.12.1
 - added 'id_' property definition to objc-appscript default terminology
 - changed structure of TerminologyTableBuilder's typebyname table to indicate type or enum
