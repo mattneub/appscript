@@ -1,0 +1,166 @@
+TO DO
+
+======= appscript =======
+
+- implement all-in-one shortcuts for get, set commands? Some possibilities:
+
+Basic get/set (note: names have 'Data' appended [c.f. keyAEGetData, keyAESetData] to help distinguish 'get' shortcut from normal -get method):
+
+	-getData
+	-getDataWithError:
+
+	-setData:
+	-setData:error:
+
+	Example:
+
+		// get text of document 1
+
+		[[[[[textedit documents] at: 1] text] get] send]
+
+		[[[[textedit documents] at: 1] text] getData]
+
+
+Basic get/set, allowing client to specify the result type for 'get' (note: these methods may be preferable to the above - need to see what users prefer):
+
+	-getAs:
+	-getAs:error:
+	-getAsListOf:
+	-getAsListOf:error:
+
+	-setTo:
+	-setTo:error:
+
+	Example:	
+
+		// get text of documents as list of strings
+
+		[[[[[textedit documents] text] get] returnListOfType: typeUnicodeText] send]
+
+		[[[textedit documents] text] getListOf: typeUnicodeText]
+
+Might also provide shortcuts for getting the most common types:
+
+	-getAsObject
+	-getAsString
+	-getAsNumber
+	-getAsList
+	-getAsListOfString
+	etc.
+
+possibly with 'error:' variants instead of/as well:
+
+	-getAsObjectWithError:
+	-getAsListOfStringWithError:
+	etc.
+
+
+Might also provide shortcuts that return C ints and floats (note: any errors would be indicated by error arg only):
+
+	-getAsIntWithError:
+	-getAsUIntWithError:
+	-getAsDoubleWithError:
+	etc.
+
+(Note: shortcuts that return C primitives will also be useful if osaglue provides a 'strict' option for commands where numerical and boolean parameters take C ints and floats rather than NSNumbers and AEMBooleans.)
+
+
+- get developer feedback and suggestions on design of command attribute packing, e.g. should existing -sendMode: method be augmented/replaced by task-specific methods, c.f. -waitForReply/-queueReply/-ignoreReply
+
+
+- -[ASCommand description] should provide appscript-style representation of command
+
+Note: best way to do this might be to have codecs unpack event (TO DO) and then call -description on result; that way, appscript API can provide its own formatting without needing to create another error? Or would it be best just to wrap original AEM error in a new one?
+
+
+- returnID support?; note: returnID is an argument to AECreateAppleEvent(), so the appscript layer would then need to avoid instantiating AEMEvent when a command is first called, allowing clients an opportunity to invoke -returnID: before adding attributes and parameters (including direct parameter and subject attribute).
+
+
+- what to do if a command parameter is nil? raise error? ignore it? (Currently, if direct parameter is nil then it's ignored, but if a labelled parameter is nil AEMCodecs will raise an error.)
+
+
+- include an appscript-style representation of Apple event in localizedDescription string of NSErrors returned by -[ASEvent sendWithError:], and/or include original event object in userInfo dictionary?
+
+
+- improve application objects' -description method to provide more accurate representation, e.g.
+
+	<EXApplication name="Hello World.app">
+
+
+- improve error reporting when unable to connect to an application; see command.m
+
+
+======= osaglue =======
+
+- emptying py-appscript.terminology's default typebyname, typebycode tables means that type/enum/property name collisions between AEM and application won't be detected when generating XXConstant class; need to sort this
+
+- finish py-appscript.terminology support (note: hooking osaglue into nominally private py-appscript code is not ideal; use objc-appscript's own aete parser when done)
+
+- finish py-osaterminology support (should see about implementing a proper extensible plugin architecture)
+
+- rename asglue
+
+
+======= aem/application.h =======
+
+- in +processExistsForDescriptor:, what codes should indicate running? (e.g. -1712 = running but unresponsive)
+
+
+======= aem/event.h =======
+
+- define formal protocol or abstract base class for AEMEvent class, as clients can install their own choice of event class in AEMApplication if they wish
+
+- what to do if an AEMEvent attribute or parameter is nil? raise error? ignore it? (Currently, AEMCodecs will raise an error when it tries to pack the value.)
+
+- -setParameter:forKeyword:, etc. should raise 'unexpected error' exception instead of returning nil
+
+- check if kOSAErrorOffendingObject can be any type (the OSA API docs suggest that it may have to be an object specifier, but really aren't clear); currently, -sendWithError: returns anything for kAEMErrorOffendingObject when raising its own coercion error
+
+- provide more flexible versions of -attributeForKeyword: and -parameterForKeyword: that allow result type to be specified and can return detailed error info on failure
+
+
+======= aem query builder =======
+
+- eliminate minor risk of leaking memory due to race conditions in -packWithCodecs: methods
+
+
+======= aem types =======
+
+- add methods for working with Carbon Alias, FSRef, FSSpec types to ASAlias, ASFileRef, ASFileSpec?
+
+- comparison, hashing support for ASAlias, ASFileRef, ASFileSpec
+
+
+======= miscellaneous =======
+
+- compiler warnings in 64-bit:
+
+	/Users/has/appscript/objc-appscript/src/Appscript/types.m:255: warning: multiple methods named '-code' found
+	/Developer/SDKs/MacOSX10.5.sdk/System/Library/Frameworks/Foundation.framework/Headers/NSError.h:53: warning: using '-(NSInteger)code'
+	/Users/has/appscript/objc-appscript/src/Appscript/types.h:141: warning: also found '-(OSType)code'
+
+	/Users/has/appscript/objc-appscript/src/Appscript/parser.m:76: warning: multiple methods named '-code' found
+	/Developer/SDKs/MacOSX10.5.sdk/System/Library/Frameworks/Foundation.framework/Headers/NSError.h:53: warning: using '-(NSInteger)code'
+	/Users/has/appscript/objc-appscript/src/Appscript/parser.h:23: warning: also found '-(OSType)code'
+
+
+- compiler warnings when [ASApplicationObj run] is used:
+
+	/Users/has/AppscriptDemo/AppscriptDemo.m:27: warning: multiple methods named '-run' found
+	/Developer/SDKs/MacOSX10.4u.sdk/System/Library/Frameworks/Foundation.framework/Headers/NSRunLoop.h:37: warning: using '-(void)run'
+	/Users/has/AppscriptDemo/TEGlue/TEReferenceGlue.h:55: warning: also found '-(TERunCommand *)run'
+
+
+- NSErrors should include human-readable default error description; could use GetMacOSStatusCommentString if on 10.4 or later (see Debugging.h), otherwise will need to supply a lookup table for common Carbon error codes, c.f. rb-appscript. Probably also a good idea to include a lookup table for pre-Leopard Cocoa Scripting error strings, c.f. rb-appscript.
+
+- add 'strict' options for class and command generation to osaglue? e.g. -k option would create individual classes according to application dictionary; -c option would enforce type checking/coercion in command parameters and result. This would allow users to take advantage of ObjC static typing for applications whose dictionaries are sufficiently accurate to avoid compatibility problems.
+
+- if client asks for return to be coerced to list and command doesn't return a result, return empty NSArray instead of NSNull
+
+- add dynamic class generation option?
+
+- finish documentation, header comments
+
+- unit tests
+
+- update reserved ObjC keywords in py-osaterminology

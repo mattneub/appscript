@@ -1,0 +1,274 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 44;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		4F2F4E280D85B357004C31AD /* ITApplicationGlue.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F2F4E1E0D85B357004C31AD /* ITApplicationGlue.m */; };
+		4F2F4E290D85B357004C31AD /* ITCommandGlue.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F2F4E200D85B357004C31AD /* ITCommandGlue.m */; };
+		4F2F4E2A0D85B357004C31AD /* ITConstantGlue.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F2F4E220D85B357004C31AD /* ITConstantGlue.m */; };
+		4F2F4E2B0D85B357004C31AD /* ITReferenceGlue.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F2F4E250D85B357004C31AD /* ITReferenceGlue.m */; };
+		4F2F4E2C0D85B357004C31AD /* ITReferenceRendererGlue.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F2F4E270D85B357004C31AD /* ITReferenceRendererGlue.m */; };
+		4F2F4E4A0D85BD7D004C31AD /* Appscript.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F2F4E490D85BD7D004C31AD /* Appscript.framework */; };
+		8DD76F9A0486AA7600D96B5E /* AddFilesToiTunes.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FB7796FE84155DC02AAC07 /* AddFilesToiTunes.m */; settings = {ATTRIBUTES = (); }; };
+		8DD76F9C0486AA7600D96B5E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08FB779EFE84155DC02AAC07 /* Foundation.framework */; };
+		8DD76F9F0486AA7600D96B5E /* AddFilesToiTunes.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = C6859EA3029092ED04C91782 /* AddFilesToiTunes.1 */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		8DD76F9E0486AA7600D96B5E /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 8;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+				8DD76F9F0486AA7600D96B5E /* AddFilesToiTunes.1 in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		08FB7796FE84155DC02AAC07 /* AddFilesToiTunes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddFilesToiTunes.m; sourceTree = "<group>"; };
+		08FB779EFE84155DC02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		32A70AAB03705E1F00C91783 /* AddFilesToiTunes_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddFilesToiTunes_Prefix.pch; sourceTree = "<group>"; };
+		4F2F4E1C0D85B357004C31AD /* ITAEMConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ITAEMConstants.h; sourceTree = "<group>"; };
+		4F2F4E1D0D85B357004C31AD /* ITApplicationGlue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ITApplicationGlue.h; sourceTree = "<group>"; };
+		4F2F4E1E0D85B357004C31AD /* ITApplicationGlue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ITApplicationGlue.m; sourceTree = "<group>"; };
+		4F2F4E1F0D85B357004C31AD /* ITCommandGlue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ITCommandGlue.h; sourceTree = "<group>"; };
+		4F2F4E200D85B357004C31AD /* ITCommandGlue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ITCommandGlue.m; sourceTree = "<group>"; };
+		4F2F4E210D85B357004C31AD /* ITConstantGlue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ITConstantGlue.h; sourceTree = "<group>"; };
+		4F2F4E220D85B357004C31AD /* ITConstantGlue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ITConstantGlue.m; sourceTree = "<group>"; };
+		4F2F4E230D85B357004C31AD /* ITGlue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ITGlue.h; sourceTree = "<group>"; };
+		4F2F4E240D85B357004C31AD /* ITReferenceGlue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ITReferenceGlue.h; sourceTree = "<group>"; };
+		4F2F4E250D85B357004C31AD /* ITReferenceGlue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ITReferenceGlue.m; sourceTree = "<group>"; };
+		4F2F4E260D85B357004C31AD /* ITReferenceRendererGlue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ITReferenceRendererGlue.h; sourceTree = "<group>"; };
+		4F2F4E270D85B357004C31AD /* ITReferenceRendererGlue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ITReferenceRendererGlue.m; sourceTree = "<group>"; };
+		4F2F4E490D85BD7D004C31AD /* Appscript.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Appscript.framework; path = ../../../../Library/Frameworks/Appscript.framework; sourceTree = SOURCE_ROOT; };
+		8DD76FA10486AA7600D96B5E /* addtoitunes */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = addtoitunes; sourceTree = BUILT_PRODUCTS_DIR; };
+		C6859EA3029092ED04C91782 /* AddFilesToiTunes.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = AddFilesToiTunes.1; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8DD76F9B0486AA7600D96B5E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8DD76F9C0486AA7600D96B5E /* Foundation.framework in Frameworks */,
+				4F2F4E4A0D85BD7D004C31AD /* Appscript.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		08FB7794FE84155DC02AAC07 /* AddFilesToiTunes */ = {
+			isa = PBXGroup;
+			children = (
+				08FB7795FE84155DC02AAC07 /* Source */,
+				C6859EA2029092E104C91782 /* Documentation */,
+				08FB779DFE84155DC02AAC07 /* External Frameworks and Libraries */,
+				1AB674ADFE9D54B511CA2CBB /* Products */,
+			);
+			name = AddFilesToiTunes;
+			sourceTree = "<group>";
+		};
+		08FB7795FE84155DC02AAC07 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				4F2F4E1B0D85B357004C31AD /* ITGlue */,
+				32A70AAB03705E1F00C91783 /* AddFilesToiTunes_Prefix.pch */,
+				08FB7796FE84155DC02AAC07 /* AddFilesToiTunes.m */,
+			);
+			name = Source;
+			sourceTree = "<group>";
+		};
+		08FB779DFE84155DC02AAC07 /* External Frameworks and Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				4F2F4E490D85BD7D004C31AD /* Appscript.framework */,
+				08FB779EFE84155DC02AAC07 /* Foundation.framework */,
+			);
+			name = "External Frameworks and Libraries";
+			sourceTree = "<group>";
+		};
+		1AB674ADFE9D54B511CA2CBB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8DD76FA10486AA7600D96B5E /* addtoitunes */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		4F2F4E1B0D85B357004C31AD /* ITGlue */ = {
+			isa = PBXGroup;
+			children = (
+				4F2F4E1C0D85B357004C31AD /* ITAEMConstants.h */,
+				4F2F4E1D0D85B357004C31AD /* ITApplicationGlue.h */,
+				4F2F4E1E0D85B357004C31AD /* ITApplicationGlue.m */,
+				4F2F4E1F0D85B357004C31AD /* ITCommandGlue.h */,
+				4F2F4E200D85B357004C31AD /* ITCommandGlue.m */,
+				4F2F4E210D85B357004C31AD /* ITConstantGlue.h */,
+				4F2F4E220D85B357004C31AD /* ITConstantGlue.m */,
+				4F2F4E230D85B357004C31AD /* ITGlue.h */,
+				4F2F4E240D85B357004C31AD /* ITReferenceGlue.h */,
+				4F2F4E250D85B357004C31AD /* ITReferenceGlue.m */,
+				4F2F4E260D85B357004C31AD /* ITReferenceRendererGlue.h */,
+				4F2F4E270D85B357004C31AD /* ITReferenceRendererGlue.m */,
+			);
+			path = ITGlue;
+			sourceTree = "<group>";
+		};
+		C6859EA2029092E104C91782 /* Documentation */ = {
+			isa = PBXGroup;
+			children = (
+				C6859EA3029092ED04C91782 /* AddFilesToiTunes.1 */,
+			);
+			name = Documentation;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		8DD76F960486AA7600D96B5E /* AddFilesToiTunes */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1DEB927408733DD40010E9CD /* Build configuration list for PBXNativeTarget "AddFilesToiTunes" */;
+			buildPhases = (
+				8DD76F990486AA7600D96B5E /* Sources */,
+				8DD76F9B0486AA7600D96B5E /* Frameworks */,
+				8DD76F9E0486AA7600D96B5E /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AddFilesToiTunes;
+			productInstallPath = "$(HOME)/bin";
+			productName = AddFilesToiTunes;
+			productReference = 8DD76FA10486AA7600D96B5E /* addtoitunes */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		08FB7793FE84155DC02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 1DEB927808733DD40010E9CD /* Build configuration list for PBXProject "AddFilesToiTunes" */;
+			compatibilityVersion = "Xcode 3.0";
+			hasScannedForEncodings = 1;
+			mainGroup = 08FB7794FE84155DC02AAC07 /* AddFilesToiTunes */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8DD76F960486AA7600D96B5E /* AddFilesToiTunes */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8DD76F990486AA7600D96B5E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8DD76F9A0486AA7600D96B5E /* AddFilesToiTunes.m in Sources */,
+				4F2F4E280D85B357004C31AD /* ITApplicationGlue.m in Sources */,
+				4F2F4E290D85B357004C31AD /* ITCommandGlue.m in Sources */,
+				4F2F4E2A0D85B357004C31AD /* ITConstantGlue.m in Sources */,
+				4F2F4E2B0D85B357004C31AD /* ITReferenceGlue.m in Sources */,
+				4F2F4E2C0D85B357004C31AD /* ITReferenceRendererGlue.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		1DEB927508733DD40010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../Library/Frameworks\"",
+					"\"$(SRCROOT)/../../../../Library/Frameworks\"",
+				);
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = AddFilesToiTunes_Prefix.pch;
+				INSTALL_PATH = /usr/local/bin;
+				PRODUCT_NAME = addtoitunes;
+				ZERO_LINK = YES;
+			};
+			name = Debug;
+		};
+		1DEB927608733DD40010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../Library/Frameworks\"",
+					"\"$(SRCROOT)/../../../../Library/Frameworks\"",
+				);
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = AddFilesToiTunes_Prefix.pch;
+				INSTALL_PATH = /usr/local/bin;
+				PRODUCT_NAME = addtoitunes;
+			};
+			name = Release;
+		};
+		1DEB927908733DD40010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PREBINDING = NO;
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
+			};
+			name = Debug;
+		};
+		1DEB927A08733DD40010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (
+					ppc,
+					i386,
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PREBINDING = NO;
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1DEB927408733DD40010E9CD /* Build configuration list for PBXNativeTarget "AddFilesToiTunes" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB927508733DD40010E9CD /* Debug */,
+				1DEB927608733DD40010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1DEB927808733DD40010E9CD /* Build configuration list for PBXProject "AddFilesToiTunes" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB927908733DD40010E9CD /* Debug */,
+				1DEB927A08733DD40010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 08FB7793FE84155DC02AAC07 /* Project object */;
+}

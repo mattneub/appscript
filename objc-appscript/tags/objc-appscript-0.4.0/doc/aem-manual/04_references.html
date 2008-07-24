@@ -1,0 +1,430 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<title>aem | 4. References</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<style type="text/css" media="all"><!--@import url(full.css);--></style>
+
+</head>
+<body>
+
+<h1>4. References</h1>
+
+<!-- top navigation -->
+<div class="navbar">
+	<a href="03_packingandunpackingdata.html">Previous</a> | <a href="index.html">Up</a> | <a href="05_targettingapplications.html">Next</a>
+</div>
+
+<!-- content -->
+<div id="content">
+
+
+<h2>About references</h2>
+
+<p>An Apple Event Object Model query (a.k.a. "reference") essentially consists of a linked list made up of one or more Apple event descriptors (AEDescs) of, for the most part, <code>typeObjectSpecifier</code>. Object specifiers are used to identify properties and elements in the application's AEOM. Each object specifer contains four fields:</p>
+
+<dl>
+<dt>want</dt>
+<dd>four-char-code indicating desired element(s)'s class code (e.g. <code>'docu'</code> = document), or <code>'prop'</code> if it's a property specifier</dd>
+
+<dt>from</dt>
+<dd>an object specifer identifying container object(s)</dd>
+
+<dt>form</dt>
+<dd>four-char-code indicating how the element(s) should be selected (by index [<code>'indx'</code>], name [<code>'name'</code>], etc.), or <code>'prop'</code> if it's a property specifier</dd>
+
+<dt>seld</dt>
+<dd>selector data (e.g. in a by-name specifier, this would be a string)</dd>
+</dl>
+
+<p>The Apple Event Manager provides several ways to construct object specifiers and assemble them into a complete reference, but these are all rather verbose and low-level. The aem layer hides all these details behind an object-oriented wrapper that uses chained property and method calls to gather the data needed to create object specifiers and assemble them into linked lists.</p>
+
+<p>For example, consider the reference <code>text of document 1</code>. The code for constructing this reference using <code>NSAppleEventDescriptor</code> would be:</p>
+
+<pre><code>NSAppleEventDescriptor *ref0, *ref1, *ref2;
+
+// Application root:
+ref0 = [NSAppleEventDescriptor nullDescriptor];
+
+// Pack 'document 1' element specifier:
+ref1 = [NSAppleEventDescriptor recordDescriptor];
+[ref1 setDescriptor: [NSAppleEventDescriptor descriptorWithTypeCode: 'docu']
+         forKeyword: 'want'];
+[ref1 setDescriptor: [NSAppleEventDescriptor descriptorWithEnumCode: 'indx']
+         forKeyword: 'form'];
+[ref1 setDescriptor: [NSAppleEventDescriptor descriptorWithInt32: 1]
+         forKeyword: 'seld'];
+[ref1 setDescriptor: ref0 forKeyword: 'from'];
+ref1 = [ref2 coerceToDescriptorType: 'obj '];
+
+// Pack 'text' property specifier:
+ref2 = [NSAppleEventDescriptor recordDescriptor];
+[ref2 setDescriptor: [NSAppleEventDescriptor descriptorWithTypeCode: 'prop']
+         forKeyword: 'want'];
+[ref2 setDescriptor: [NSAppleEventDescriptor descriptorWithEnumCode: 'prop']
+         forKeyword: 'form'];
+[ref2 setDescriptor: [NSAppleEventDescriptor descriptorWithTypeCode: 'ctxt']
+         forKeyword: 'seld'];
+[ref2 setDescriptor: ref1 forKeyword: 'from'];
+ref2 = [ref2 coerceToDescriptorType: 'obj '];
+
+NSLog(@"ref2 = %@", ref2);</code></pre>
+
+<p>This code works by creating each AEDesc of <code>typeAERecord</code> in turn, populating it, then coercing it to <code>typeObjectSpecifier</code>. Each AEDesc is nested within the next to form a linked list of object specifier records; the last (innermost) descriptor in the finished list indicates the reference's root object in the AEOM (in this case, the <code>application</code> object, which is represented by a null descriptor).</p>
+
+<p>Now, compare the above with the aem equivalent:</p>
+
+<pre><code>id ref = [[[AEMApp elements: 'docu'] at: 1] property: 'ctxt'];</code></pre>
+
+<p>As you can see, aem still uses low-level four-character codes to identify the <code>text</code> property and <code>document</code> class, but is otherwise a high-level object-oriented API. Once again, each reference begins with a root object, in this case <code>AEMApp</code>. New aem specifiers are constructed by method calls; each call returning a new specifier object whose own methods can be called, and so on. This allows clients to build up a chain of aem specifier objects that aem can later pack into AEDescs for sending to applications.</p>
+
+<p>One more thing to notice: in aem, specifying a class of elements and indicating which of those elements should be selected are performed by separate method calls, although the information provided will eventually be packed into a single AEDesc of <code>typeObjectSpecifier</code>. This two-step approach makes it easier to integrate aem with the higher-level appscript bridge, which also uses two calls to construct element specifiers (one to specify the element class, e.g. <code>-document</code>, and another to specify the selection, e.g. <code>-at: 1</code>).</p>
+
+<p>Note that <code>[AEMApp elements: 'docu']</code> is itself a valid reference, identifying <em>all</em> the document elements of the application class. You do not have to call an explicit <code>all</code> selector (indeed, none is provided) as aem automatically handles the details for you. Aem even allows for some convenient shorthand, e.g. writing:</p>
+
+<pre><code>[[[AEMApp elements: 'docu'] byTest: ...] first]</code></pre>
+
+<p>is equivalent to writing:</p>
+
+<pre><code>[[[[AEMApp elements: 'docu'] byTest: ...] elements: 'docu'] first]</code></pre>
+
+<p>This allows clients to specify the first document that matches the given condition without having to specify the element class a second time. In AppleScript, the equivalent to this is:</p>
+
+<pre><code>first document whose ...</code></pre>
+
+<p>which is short for:</p>
+
+<pre><code>first document of (documents whose ...)</code></pre>
+
+<p>(Again, this additional behaviour primarily exists to serve the syntactically sugared appscript layer.)</p>
+
+
+
+<h2>Reference forms</h2>
+
+<p>Aem defines a number of classes representing each of the AEOM reference forms. There are nine AEOM reference forms:</p>
+
+<ul>
+<li>insertion location</li>
+<li>property</li>
+<li>user property</li>
+<li>element by absolute position (index or ordinal)</li>
+<li>element by name</li>
+<li>element by id</li>
+<li>element by relative position</li>
+<li>elements by range</li>
+<li>elements by test</li>
+</ul>
+
+<p>Each of these reference forms is represented by a different aem specifier class, apart from the absolute position form which is represented by three different classes according to the kind of selector used: a numerical index (e.g. <code>1</code>, <code>-3</code>), a named ordinal identifying a single element (<code>first</code>, <code>middle</code>, <code>last</code>, <code>any</code>), or a named ordinal identifying all elements (<code>all</code>).</p>
+
+<p>The following diagram shows the aem reference class hierarchy (slightly simplified for legibility):</p>
+
+<p><img src="aemreferenceinheritance.gif" title="aem reference class hierarchy" />
+
+<p>(Concrete classes are shown in bold; highlighted classes implement public methods.)</p>
+
+<p>Clients shouldn't instantiate these classes directly; instead, aem will instantiate them as appropriate when the client calls the methods of other aem reference objects, starting with the <code>AEMApp</code>, <code>AEMCon</code> and <code>AEMIts</code> objects that form the root of all aem references.</p>
+
+<p>In fact, it isn't really necessary to remember the reference class hierarchy at all, only to know which concrete classes implement which methods. All public methods are defined by the four superclasses highlighted above:</p>
+
+<dl>
+<dt><code>AEMQuery</code></dt>
+<dd>Defines comparison and hashing methods. </dd>
+
+<dt><code>AEMObjectSpecifier</code></dt>
+<dd>Defines methods for identifying properties and all elements, insertion locations, elements by relative position. Also defines comparison and logical test methods for use in constructing its-based references.</dd>
+
+<dt><code>AEMMultipleElementsSpecifier</code></dt>
+<dd>Defines methods for identifying specific elements of a multi-element reference.</dd>
+
+<dt><code>AEMTest</code></dt>
+<dd>Defines logical test methods for use in constructing its-based references.</dd>
+</dl>
+
+
+
+<h2>Abstract base classes</h2>
+
+<h3>Basic methods</h3>
+
+<p>The <code>AEMQuery</code> class defines methods that allow aem references to be compared for equality and used as dictionary keys.</p>
+
+<pre><code>@interface AEMQuery : NSObject
+/*
+ * Base class for all reference form and test clause classes.
+ */
+
+-(unsigned)hash;
+
+-(BOOL)isEqual:(id)object;
+
+@end</code></pre>
+
+<p>(Defined in <code>base.h</code>.)</p>
+
+
+<h3>Methods for all positional specifiers</h3>
+
+<pre><code>@interface AEMObjectSpecifier : AEMSpecifier
+/* 
+ * Base class for all property and element reference forms
+ * (i.e. all reference forms except insertion location).
+ */
+
+// Insertion location specifiers:
+
+-(AEMInsertionSpecifier *)beginning;
+-(AEMInsertionSpecifier *)end;
+-(AEMInsertionSpecifier *)before;
+-(AEMInsertionSpecifier *)after;
+
+
+// Properties and elements:
+
+-(AEMPropertySpecifier     *)property:(OSType)propertyCode;
+-(AEMUserPropertySpecifier *)userProperty:(NSString *)propertyName;
+
+-(AEMAllElementsSpecifier  *)elements:(OSType)classCode;
+
+-(AEMElementByRelativePositionSpecifier *)previous:(OSType)classCode;
+-(AEMElementByRelativePositionSpecifier *)next:(OSType)classCode;
+
+
+// Comparison tests (for use on AEMIts-based references only):
+
+- (AEMGreaterThanTest     *)greaterThan:    (id)object;
+- (AEMGreaterOrEqualsTest *)greaterOrEquals:(id)object;
+- (AEMEqualsTest          *)equals:         (id)object;
+- (AEMNotEqualsTest       *)notEquals:      (id)object;
+- (AEMLessThanTest        *)lessThan:       (id)object;
+- (AEMLessOrEqualsTest    *)lessOrEquals:   (id)object;
+- (AEMBeginsWithTest      *)beginsWith:     (id)object;
+- (AEMEndsWithTest        *)endsWith:       (id)object;
+- (AEMContainsTest        *)contains:       (id)object;
+- (AEMIsInTest            *)isIn:           (id)object;
+
+@end</code></pre>
+
+<p>(Defined in <code>specifier.h</code>.)</p>
+
+
+<h3>Methods for all multi-element specifiers</h3>
+
+<pre><code>@interface AEMMultipleElementsSpecifier : AEMObjectSpecifier
+/*
+ * Base class for all multi-element reference forms.
+ */
+
+// Single element selectors:
+
+-(AEMElementByOrdinalSpecifier *)first;
+-(AEMElementByOrdinalSpecifier *)middle;
+-(AEMElementByOrdinalSpecifier *)last;
+-(AEMElementByOrdinalSpecifier *)any;
+
+- (AEMElementByIndexSpecifier *)at:(int)index;
+/*
+ * convenience shortcut for -byIndex:
+ */
+
+- (AEMElementByIndexSpecifier *)byIndex:(id)index; 
+/*
+ * index argument is normally an integer (NSNumber),
+ * although some apps may accept other types (e.g.
+ * Finder accepts an ASAlias)
+ */
+
+- (AEMElementByNameSpecifier  *)byName:(NSString *)name;
+
+- (AEMElementByIDSpecifier    *)byID:(id)id_;
+
+
+// Multiple element selectors:
+
+- (AEMElementsByRangeSpecifier *)at:(int)startIndex
+                                 to:(int)stopIndex;
+/*
+ * convenience shortcut for -byRange:to:
+ */
+
+- (AEMElementsByRangeSpecifier *)byRange:(id)startReference
+                                      to:(id)stopReference;
+/*
+ * takes two AEMApp-/AEMCon-based references; other values
+ * are expanded as needed, e.g. an NSNumber expands to a
+ * -byIndex: selector; an NSString to a -byName: selector
+ */
+
+- (AEMElementsByTestSpecifier *)byTest:(AEMTest *)testReference;
+/*
+ * testReference argument is an AEMIts-based reference
+ */
+
+@end</code></pre>
+
+<p>(Defined in <code>specifier.h</code>.)</p>
+
+
+<h3>Methods for all test clause classes</h3>
+
+<pre><code>@interface AEMTest : AEMQuery
+/*
+ * Represents a comparison/logic test.
+ */
+
+- (AEMANDTest *)AND:(id)remainingOperands; 
+/*
+ * apply a logical AND test to self and one or more other operands
+ * takes a single AEMTest instance or an NSArray of AEMTest instances
+ */
+
+- (AEMORTest  *)OR:(id)remainingOperands;
+/*
+ * apply a logical OR test to self and one or more other operands
+ * takes a single AEMTest instance or an NSArray of AEMTest instances
+ */
+
+- (AEMNOTTest *)NOT;
+/*
+ * apply a logical NOT test to self
+ */
+
+@end</code></pre>
+
+<p>(Defined in <code>specifier.h</code>.)</p>
+
+
+
+<h2>Concrete classes</h2>
+
+<h3>Insertion location reference form</h3>
+
+<pre><code>AEMInsertionSpecifier : AEMSpecifier 
+/*
+ * refers to insertion point before or after/at
+ *  start or end of element(s); e.g. [ref before]
+ */</code></pre>
+
+<h3>Property reference forms</h3>
+
+<pre><code>AEMPropertySpecifier : AEMObjectSpecifier
+/*
+ * refers to a property (whose value may be a basic type, application
+ * object or reference); e.g. [ref property: 'ctxt']
+ */
+
+
+AEMUserPropertySpecifier : AEMObjectSpecifier
+/*
+ * refers to a user-defined property (typically in an OSA applet);
+ * e.g. [ref userProperty: @"myVar"]
+ */</code></pre>
+
+
+<h3>Single element reference forms</h3>
+
+
+<pre><code>AEMElementByIndexSpecifier : AEMSingleElementSpecifierBase
+/*
+ * refers to a single element in the referenced container object(s)
+ * by index; e.g. [ref at: 3], [ref byIndex: [NSNumber numberWithInt: 3]]
+ */
+
+AEMElementByNameSpecifier : AEMSingleElementSpecifierBase
+/*
+ * refers to a single element in the referenced container object(s)
+ * by name; e.g. [ref byName: @"Documents"]
+ */
+
+
+AEMElementByIDSpecifier : AEMSingleElementSpecifierBase
+/*
+ * refers to a single element in the referenced container object(s)
+ * by unique id; e.g. [ref byID: [NSNumber numberWithInt: 3456]]
+ */
+
+
+AEMElementByOrdinalSpecifier : AEMSingleElementSpecifierBase
+/*
+ * refers to first, middle, last or any element in the referenced
+ * container object(s); e.g. [ref first]
+ */
+
+
+AEMElementByRelativePositionSpecifier : AEMSingleElementSpecifierBase
+/*
+ * refers to the previous or next element of the given class in the
+ * referenced container object(s); e.g. [ref next: 'cpar']
+ */</code></pre>
+
+
+<h3>Multiple element reference forms</h3>
+
+<pre><code>AEMElementsByRangeSpecifier : AEMMultipleElementsSpecifier
+/*
+ * refers to a range of elements in the referenced container object(s),
+ * including start and end points; e.g. [ref at: 2 to: -1], 
+ * [ref byRange: [[AEMCon elements: 'cpar'] at: 2]
+ *           to: [[AEMCon elements: 'cpar'] last]]
+ */
+
+
+AEMElementsByFilterSpecifier : AEMMultipleElementsSpecifier
+/*
+ * refers to all elements in the referenced container object(s) that
+ * fulfill a given condition; e.g. [ref byFilter:
+ *         [[AEMIts property: 'pnam'] beginsWith: @"a"]]
+ */
+
+
+AEMAllElementsSpecifier : AEMMultipleElementsSpecifier
+/*
+ * refers to all elements of the given class in the referenced container
+ * object(s); e.g. [ref elements: 'docu']
+ */</code></pre>
+
+
+<h3>Tests</h3>
+
+<p>The <code>AEMTest</code> class represents a comparison test or logical test, and defines methods for composing additional logical tests on top of these. Each kind of test clause is represented by a different subclass of the main <code>AEMTest</code> class. The details are not that important, however, so they're not listed here.</p>
+
+
+
+
+<h3>Reference Roots</h3>
+
+<pre><code>AEMApplicationRoot : AEMObjectSpecifier
+/*
+ * the AEMApp macro returns an instance of this class
+ */
+
+AEMCurrentContainerRoot : AEMObjectSpecifier
+/*
+ * the AEMCon macro returns an instance of this class
+ */
+
+AEMObjectBeingExaminedRoot : AEMObjectSpecifier
+/*
+ * the AEMIts macro returns an instance of this class
+ */</code></pre>
+
+<!-- TO DO: AEMCustomRoot -->
+
+
+<!-- TO DO: note on AEM_resolve -->
+
+
+</div>
+
+<!-- bottom navigation -->
+<div class="navbar">
+	<a href="03_packingandunpackingdata.html">Previous</a> | <a href="index.html">Up</a> | <a href="05_targettingapplications.html">Next</a>
+</div>
+
+<!--footer-->
+<p class="footer">&copy; 2008 HAS</p>
+</body>
+</html>

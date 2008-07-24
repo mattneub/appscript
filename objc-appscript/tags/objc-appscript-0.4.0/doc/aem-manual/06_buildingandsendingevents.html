@@ -1,0 +1,244 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<title>aem | 6. Building and sending events</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<style type="text/css" media="all"><!--@import url(full.css);--></style>
+
+</head>
+<body>
+
+<h1>6. Building and sending events</h1>
+
+<!-- top navigation -->
+<div class="navbar">
+	<a href="05_targettingapplications.html">Previous</a> | <a href="index.html">Up</a> | <a href="07_findapp.html">Next</a>
+</div>
+
+<!-- content -->
+<div id="content">
+
+
+
+
+<h2>Creating events</h2>
+
+<p>The <code>AEMApplication</code> class's <code>-eventWithEventClass:eventID:returnID:codecs:</code> method is used to create new Apple events targetted at the specified application.</p>
+
+<pre><code>- (id)eventWithEventClass:(AEEventClass)classCode
+                  eventID:(AEEventID)code
+                 returnID:(AEReturnID)returnID
+                   codecs:(id)codecs;</code></pre>
+
+<p>The event class, event id and return id arguments are the same as for <code>AECreateAppleEvent</code>.</p>
+
+<p>The codecs argument should be an <code>AEMCodecs</code> instance, or some other object that implements <code>-pack:</code> and <code>-unpack:</code> methods with identical signatures. This object will be used to pack the event's attributes and parameters, and to unpack its return value, if any.</p>
+
+<p>When invoked, this method will return a new <code>AEMEvent</code> instance (assuming that the client hasn't been replaced this with an alternative 'event' class).</p>
+
+<p>The following shortcuts are also provided for convenience:</p>
+
+<pre><code>- (id)eventWithEventClass:(AEEventClass)classCode
+                  eventID:(AEEventID)code
+                 returnID:(AEReturnID)returnID;
+/*
+ * Uses default AEMCodecs instance.
+ */
+
+- (id)eventWithEventClass:(AEEventClass)classCode
+                  eventID:(AEEventID)code
+                   codecs:(id)codecs;
+/*
+ * Uses kAutoGenerateReturnID.
+ */
+
+- (id)eventWithEventClass:(AEEventClass)classCode
+                  eventID:(AEEventID)code;
+/*
+ * Uses kAutoGenerateReturnID and a standard AEMCodecs instance.
+ */</code></pre>
+
+
+
+<h2>The <code>AEMEvent</code> class</h2>
+
+<p>The <code>AEMEvent</code> class represents an Apple event.</p>
+
+<pre><code>@interface AEMEvent : NSObject
+
+- (const AppleEvent *)aeDesc;
+/*
+ * Get a pointer to the AEDesc contained by this AEMEvent instance
+ */
+
+- (NSAppleEventDescriptor *)appleEventDescriptor;
+/*
+ * Get an NSAppleEventDescriptor instance containing a copy of this
+ * event.
+ */
+
+// Pack event's attributes and parameters, if any.
+
+- (AEMEvent *)setAttributePtr:(void *)dataPtr 
+						 size:(Size)dataSize
+			   descriptorType:(DescType)typeCode
+				   forKeyword:(AEKeyword)key;
+
+- (AEMEvent *)setParameterPtr:(void *)dataPtr 
+						 size:(Size)dataSize
+			   descriptorType:(DescType)typeCode
+				   forKeyword:(AEKeyword)key;
+
+- (AEMEvent *)setAttribute:(id)value forKeyword:(AEKeyword)key;
+
+- (AEMEvent *)setParameter:(id)value forKeyword:(AEKeyword)key;
+
+
+// Specify an AE type to coerce the reply descriptor to before
+// unpacking it (default = typeWildCard):
+
+- (AEMEvent *)unpackResultAsType:(DescType)type;
+
+- (AEMEvent *)unpackResultAsListOfType:(DescType)type;
+
+- (AEMEvent *)dontUnpackResult;
+
+
+// Send event:
+
+- (id)sendWithMode:(AESendMode)sendMode 
+           timeout:(long)timeoutInTicks
+             error:(NSError **)error;
+/*
+ * sendMode
+ *    Bitwise flags determining how event should be handled.
+ *    A common default is kAEWaitReply.
+ *
+ * timeoutInTicks
+ *    Number of ticks to wait for application reply before raising
+ *    timeout error. A positive integer, kDefaultTimeout or kNoTimeOut.
+ *
+ * error
+ *    On return, an NSError object that describes an Apple Event
+ *    Manager or application error if one has occurred, otherwise nil.
+ *    Pass nil if not required.
+ *
+ * Return value
+ *
+ *    The value returned by the application, or an NSNull instance if
+ *    no value was returned, or nil if an error occurred.
+ *
+ * Notes
+ *
+ *    See AESendMessage for more information on the sendMode and
+ *    timeoutInTicks arguments.
+ *
+ */
+
+
+// Convenience shortcuts:
+
+- (id)sendWithError:(NSError **)error;
+
+- (id)send;
+
+@end</code></pre>
+
+
+<p>The <code>send</code> method may be called any number of times.</p>
+
+
+<h2>Commonly used constants</h2>
+
+<p>A large number of Apple event-related constants are defined in the <code>AE</code> and <code>OpenScripting</code> frameworks; some of the more relevant ones are listed below.</p>
+
+<h3>Parameter keys</h3>
+
+<pre><code>keyDirectObject
+keyAERequestedType</code></pre>
+
+<p>(The value for a <code>keyAERequestedType</code> parameter should be an <code>AEMType</code> instance.)</p>
+
+<p>Other parameter keys are defined by individual applications.</p>
+
+
+<h3>Attribute keys</h3>
+
+<p>Most of the following attributes are already supplied by other means (e.g. keyEventClassAttr, keyEventIDAttr are supplied separately when creating an Apple event; keyTimeoutAttr when sending it) and are only of interest if unpacking AppleEvent descriptors manually. A few  may be used in <code>-setAttribute:forKeyword:</code> (<code>enumConsiderations</code>, <code>enumConsidsAndIgnores</code>, <code>keySubjectAttr</code>):</p>
+<pre><code>keyTransactionIDAttr
+keyReturnIDAttr
+keyEventClassAttr
+keyEventIDAttr
+keyAddressAttr
+keyOptionalKeywordAttr
+keyTimeoutAttr
+keyInteractLevelAttr
+keyEventSourceAttr
+keyOriginalAddressAttr
+keyAcceptTimeoutAttr
+enumConsiderations
+enumConsidsAndIgnores
+keySubjectAttr</code></pre>
+
+
+<p>The value of the <code>enumConsiderations</code> attribute should be a list containing zero or more <code>AEMEnum</code> instances with the following codes:</p> 
+
+<pre><code>kAECase
+kAEDiacritic
+kAEWhiteSpace
+kAEHyphens
+kAEExpansion
+kAEPunctuation
+kASConsiderReplies
+kASNumericStrings</code></pre>
+
+<p>See the <a href="http://developer.apple.com/documentation/Carbon/Reference/Apple_Event_Manager/index.html">Apple Event Manager</a> API reference for more info. Note that the <code>enumConsiderations</code> attribute is deprecated in favour of the <code>enumConsidsAndIgnores</code> attribute.</p>
+
+
+<p>The value of the <code>enumConsidsAndIgnores</code> attribute should be an integer composed from the sum of zero or more of the following bit masks:</p>
+
+<pre><code>kAECaseConsiderMaskkAEDiacriticConsiderMaskkAEWhiteSpaceConsiderMaskkAEHyphensConsiderMaskkAEExpansionConsiderMaskkAEPunctuationConsiderMaskkASConsiderRepliesConsiderMaskkASNumericStringsConsiderMask
+kAECaseIgnoreMaskkAEDiacriticIgnoreMaskkAEWhiteSpaceIgnoreMaskkAEHyphensIgnoreMaskkAEExpansionIgnoreMaskkAEPunctuationIgnoreMaskkASConsiderRepliesIgnoreMaskkASNumericStringsIgnoreMask</code></pre>
+
+
+<h3>Send flag constants</h3>
+
+<p>The value of the <code>send</code> method's <code>flags</code> argument should be an integer composed from the sum of zero or more of the following bit masks:</p>
+
+<pre><code>kAENoReply
+kAEQueueReply
+kAEWaitReply
+
+kAEDontReconnect
+
+kAEWantReceipt
+
+kAENeverInteract
+kAECanInteract
+kAEAlwaysInteract
+
+kAECanSwitchLayer</code></pre>
+
+<p>See the <a href="http://developer.apple.com/documentation/Carbon/Reference/Apple_Event_Manager/apple_event_manager_ref/chapter_1.4_section_6.html">Apple Event Manager</a> API reference for details.</p>
+
+
+<h3>Other constants</h3>
+
+<pre><code>kAutoGenerateReturnID</code></pre>
+
+
+
+
+</div>
+
+<!-- bottom navigation -->
+<div class="navbar">
+	<a href="05_targettingapplications.html">Previous</a> | <a href="index.html">Up</a> | <a href="07_findapp.html">Next</a>
+</div>
+
+<!--footer-->
+<p class="footer">&copy; 2008 HAS</p>
+</body>
+</html>

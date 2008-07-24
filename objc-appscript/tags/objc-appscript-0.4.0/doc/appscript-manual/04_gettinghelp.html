@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<title>appscript | 4. Getting Help</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<style type="text/css" media="all"><!--@import url(full.css);--></style>
+
+</head>
+<body>
+
+<h1>4. Getting Help</h1>
+
+<!-- top navigation -->
+<div class="navbar">
+	<a href="03_glues.html">Previous</a> | <a href="index.html">Up</a> | <a href="05_keywordconversion.html">Next</a>
+	
+</div>
+
+<!-- content -->
+<div id="content">
+
+
+
+
+<h2>ASDictionary</h2>
+
+<p>ASDictionary, available from the appscript website's <a href="http://appscript.sourceforge.net/downloads.html">Downloads page</a>, provides a convenient GUI interface for exporting application terminology resources in plain text and HTML formats.</p>
+
+<p>In addition, the <code>asdict</code> tool bundled with ASDictionary 0.9.0 and later can be used to export application dictionaries in HTML format, or browse them interactively from the command line. See ASDictionary's documentation for more information.</p>
+
+<p>To view asdict's full documentation:</p>
+
+<pre><code>asdict -h</code></pre>
+
+<p>Use asdict's <code>-s</code> option or <code>default</code> command to set the formatting style for objc-appscript.</p>
+
+<p>Examples:</p>
+
+<pre><code># Export TextEdit's dictionary to HTML:
+asdict -Hs objc TextEdit.app > TextEdit.html
+
+# Browse iCal's dictionary:
+asdict -s objc eppc://remote-mac.local/iCal
+iCal&gt; -u
+iCal&gt; -t viewCalendar
+iCal&gt; -t calendar -i calendar -r calendar
+iCal&gt; exit</code></pre>
+
+
+<!--
+<h2>Other sources of help</h2>
+
+<ul>
+<li>The <code>sample</code> directory in the objc-appscript trunk contains sample projects demonstrating some common tasks.</li>
+
+<li>Refer to any scripting documentation and example scripts supplied by the application developer.</li>
+
+<li>Look for third-party scripts that provide examples of use (though many of these scripts will be written in AppleScript rather than ObjC).</li>
+
+<li>The <a href="http://appscript.sourceforge.net">appscript website</a> has links to mailing lists and other general resources.</li>
+</ul>
+-->
+
+
+</div>
+
+<!-- bottom navigation -->
+<div class="navbar">
+	<a href="03_glues.html">Previous</a> | <a href="index.html">Up</a> | <a href="05_keywordconversion.html">Next</a>
+	
+</div>
+
+<!--footer-->
+<p class="footer">&copy; 2008 HAS</p>
+</body>
+</html> 
