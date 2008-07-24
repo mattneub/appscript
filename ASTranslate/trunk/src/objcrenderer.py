@@ -282,11 +282,11 @@ def renderCommand(apppath, addressdesc,
 		appvar = _convert(appname.lower())
 		prefix = makeprefix(appname)
 		
-		s = '// To create glue:  osaglue  -o %sGlue  -t %s  %s\n\n' % (prefix, prefix, appname)
+		s = '// To create glue:  osaglue  -o %sGlue  -p %s  %s\n\n' % (prefix, prefix, appname)
 		
 		f = _Formatter(typebycode, referencebycode, '', '')
-		s += '%sApplication *%s = [[%sApplication alloc] initWithName: %s];\n\n' % (
-				prefix, appvar, prefix, f.format(appname))
+		s += '%sApplication *%s = [%sApplication applicationWithName: %s];\n\n' % (
+				prefix, appvar, prefix, f.format(appname)) # TO DO: use bundle ID if available
 
 		commandname, paramnamebycode = referencebycode[kCommand+eventcode][1]
 		
