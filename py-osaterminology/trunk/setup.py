@@ -18,6 +18,7 @@ setup(
 			'osaterminology',
 			'osaterminology/defaultterminology',
 			'osaterminology/dom',
+			'osaterminology/makeidentifier',
 			'osaterminology/renderers',
 			'osaterminology/sax',
 			'osaterminology/tables',
