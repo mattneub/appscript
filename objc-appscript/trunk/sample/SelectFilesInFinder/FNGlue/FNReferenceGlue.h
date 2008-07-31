@@ -2,7 +2,7 @@
  * FNReferenceGlue.h
  *
  * /System/Library/CoreServices/Finder.app
- * osaglue 0.3.1
+ * osaglue 0.4.0
  *
  */
 

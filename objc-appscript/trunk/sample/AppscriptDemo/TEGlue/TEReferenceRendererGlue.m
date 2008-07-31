@@ -2,7 +2,7 @@
  * TEReferenceRendererGlue.m
  *
  * /Applications/TextEdit.app
- * osaglue 0.3.0
+ * osaglue 0.4.0
  *
  */
 
@@ -72,8 +72,8 @@
     }
 }
 
-+ (NSString *)render:(id)object {
-    return [TEReferenceRenderer render: object withPrefix: @"TE"];
+- (NSString *)prefix {
+    return @"TE";
 }
 
 @end

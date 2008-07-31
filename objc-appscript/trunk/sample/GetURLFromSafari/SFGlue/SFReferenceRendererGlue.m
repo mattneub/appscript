@@ -2,7 +2,7 @@
  * SFReferenceRendererGlue.m
  *
  * /Applications/Safari.app
- * osaglue 0.3.2
+ * osaglue 0.4.0
  *
  */
 
@@ -76,8 +76,8 @@
     }
 }
 
-+ (NSString *)render:(id)object {
-    return [SFReferenceRenderer render: object withPrefix: @"SF"];
+- (NSString *)prefix {
+    return @"SF";
 }
 
 @end

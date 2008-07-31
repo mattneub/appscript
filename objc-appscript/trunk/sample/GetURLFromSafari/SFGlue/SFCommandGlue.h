@@ -2,7 +2,7 @@
  * SFCommandGlue.h
  *
  * /Applications/Safari.app
- * osaglue 0.3.2
+ * osaglue 0.4.0
  *
  */
 
@@ -10,56 +10,60 @@
 
 
 #import "Appscript/Appscript.h"
+#import "SFReferenceRendererGlue.h"
 
 
-@interface SFActivateCommand : ASCommand
+@interface SFCommand : ASCommand
+@end
+
+@interface SFActivateCommand : SFCommand
 @end
 
 
-@interface SFCloseCommand : ASCommand
+@interface SFCloseCommand : SFCommand
 - (SFCloseCommand *)saving:(id)value;
 - (SFCloseCommand *)savingIn:(id)value;
 @end
 
 
-@interface SFCountCommand : ASCommand
+@interface SFCountCommand : SFCommand
 - (SFCountCommand *)each:(id)value;
 @end
 
 
-@interface SFDeleteCommand : ASCommand
+@interface SFDeleteCommand : SFCommand
 @end
 
 
-@interface SFDoJavaScriptCommand : ASCommand
+@interface SFDoJavaScriptCommand : SFCommand
 - (SFDoJavaScriptCommand *)in:(id)value;
 @end
 
 
-@interface SFDuplicateCommand : ASCommand
+@interface SFDuplicateCommand : SFCommand
 - (SFDuplicateCommand *)to:(id)value;
 - (SFDuplicateCommand *)withProperties:(id)value;
 @end
 
 
-@interface SFEmailContentsCommand : ASCommand
+@interface SFEmailContentsCommand : SFCommand
 - (SFEmailContentsCommand *)of:(id)value;
 @end
 
 
-@interface SFExistsCommand : ASCommand
+@interface SFExistsCommand : SFCommand
 @end
 
 
-@interface SFGetCommand : ASCommand
+@interface SFGetCommand : SFCommand
 @end
 
 
-@interface SFLaunchCommand : ASCommand
+@interface SFLaunchCommand : SFCommand
 @end
 
 
-@interface SFMakeCommand : ASCommand
+@interface SFMakeCommand : SFCommand
 - (SFMakeCommand *)at:(id)value;
 - (SFMakeCommand *)new_:(id)value;
 - (SFMakeCommand *)withData:(id)value;
@@ -67,51 +71,51 @@
 @end
 
 
-@interface SFMoveCommand : ASCommand
+@interface SFMoveCommand : SFCommand
 - (SFMoveCommand *)to:(id)value;
 @end
 
 
-@interface SFOpenCommand : ASCommand
+@interface SFOpenCommand : SFCommand
 @end
 
 
-@interface SFOpenLocationCommand : ASCommand
+@interface SFOpenLocationCommand : SFCommand
 - (SFOpenLocationCommand *)window:(id)value;
 @end
 
 
-@interface SFPrintCommand : ASCommand
+@interface SFPrintCommand : SFCommand
 - (SFPrintCommand *)printDialog:(id)value;
 - (SFPrintCommand *)withProperties:(id)value;
 @end
 
 
-@interface SFQuitCommand : ASCommand
+@interface SFQuitCommand : SFCommand
 - (SFQuitCommand *)saving:(id)value;
 @end
 
 
-@interface SFReopenCommand : ASCommand
+@interface SFReopenCommand : SFCommand
 @end
 
 
-@interface SFRunCommand : ASCommand
+@interface SFRunCommand : SFCommand
 @end
 
 
-@interface SFSaveCommand : ASCommand
+@interface SFSaveCommand : SFCommand
 - (SFSaveCommand *)as:(id)value;
 - (SFSaveCommand *)in:(id)value;
 @end
 
 
-@interface SFSetCommand : ASCommand
+@interface SFSetCommand : SFCommand
 - (SFSetCommand *)to:(id)value;
 @end
 
 
-@interface SFShowBookmarksCommand : ASCommand
+@interface SFShowBookmarksCommand : SFCommand
 @end
 
 

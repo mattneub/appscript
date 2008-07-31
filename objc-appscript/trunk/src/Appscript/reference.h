@@ -11,6 +11,11 @@
 #import "command.h"
 #import "utils.h"
 
+/**********************************************************************/
+
+#define ASInt(val) [NSNumber numberWithInt: (int)val]
+#define ASLong(val) [NSNumber numberWithLong: (long)val]
+#define ASDouble(val) [NSNumber numberWithDouble: (double)val]
 
 /**********************************************************************/
 // Reference base
@@ -75,13 +80,17 @@
 - (id)getList;
 - (id)getListWithError:(NSError **)error;
 
-// shortcut for [[[[ref get] requestedType: typeClass] returnType: descType] send]
+// shortcut for [[[[ref get] requestedType: descType] returnType: descType] send]
 - (id)getItemOfType:(DescType)type;
 - (id)getItemOfType:(DescType)type error:(NSError **)error;
 
-// shortcut for [[[[ref get] requestedType: typeClass] returnListOfType: descType] send]
+// shortcut for [[[[ref get] requestedType: descType] returnListOfType: descType] send]
 - (id)getListOfType:(DescType)type;
 - (id)getListOfType:(DescType)type error:(NSError **)error;
+
+- (int)getIntWithError:(NSError **)error;
+- (int)getLongWithError:(NSError **)error;
+- (double)getDoubleWithError:(NSError **)error;
 
 @end
 

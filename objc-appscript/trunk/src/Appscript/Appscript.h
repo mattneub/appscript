@@ -24,6 +24,7 @@
 // misc
 #import "sendthreadsafe.h"
 #import "utils.h"
+#import "objectrenderer.h"
 
 // appscript bridge
 #import "parser.h"

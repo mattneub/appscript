@@ -2,7 +2,7 @@
  * SFReferenceRendererGlue.h
  *
  * /Applications/Safari.app
- * osaglue 0.3.2
+ * osaglue 0.4.0
  *
  */
 

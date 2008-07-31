@@ -35,9 +35,11 @@
 
 
 - (void)setCachedDesc:(NSAppleEventDescriptor *)desc {
-	if (!cachedDesc)
-		[cachedDesc release];
-	cachedDesc = [desc retain];
+	@synchronized(self) {
+		if (!cachedDesc)
+			[cachedDesc release];
+		cachedDesc = [desc retain];
+	}
 }
 
 
@@ -50,8 +52,10 @@
 }
 
 - (NSAppleEventDescriptor *)packWithCodecs:(id)codecs {
-	if (!cachedDesc)
-		cachedDesc = [[self packWithCodecsNoCache: codecs] retain];
+	@synchronized(self) {
+		if (!cachedDesc)
+			cachedDesc = [[self packWithCodecsNoCache: codecs] retain];
+	}
 	return cachedDesc;
 }
 

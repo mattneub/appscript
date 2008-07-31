@@ -10,18 +10,20 @@
 #import "appdata.h"
 #import "utils.h"
 
-// TO DO: returnID support
-// TO DO: method for setting considering/ignoring attributes
+
+// used internally
+#define kASNoDirectParameter ((void *)-1)
 
 
 /**********************************************************************/
 // Command base
 
 @interface ASCommand : NSObject {
-	id AS_appData;
 	AEMEvent *AS_event;
 	AESendMode sendMode;
 	long timeout;
+	UInt32 considsAndIgnoresFlags;
+	NSError *cachedError;
 }
 
 + (id)commandWithAppData:(id)appData
@@ -42,41 +44,26 @@
 
 // set attributes
 
-// TO DO: method for setting considering/ignoring attributes
 /*
-kAECase = 'case'
-kAEDiacritic = 'diac'
-kAEWhiteSpace = 'whit'
-kAEHyphens = 'hyph'
-kAEExpansion = 'expa'
-kAEPunctuation = 'punc'
-kAEZenkakuHankaku = 'zkhk'
-kAESmallKana = 'skna'
-kAEKataHiragana = 'hika'
-kASConsiderReplies = 'rmte'
-kASNumericStrings = 'nume'
-enumConsiderations = 'cons' // obsolete, but may want to support for backwards compatibility
-
-
-kAECaseConsiderMask = 0x00000001
-kAEDiacriticConsiderMask = 0x00000002
-kAEWhiteSpaceConsiderMask = 0x00000004
-kAEHyphensConsiderMask = 0x00000008
-kAEExpansionConsiderMask = 0x00000010
-kAEPunctuationConsiderMask = 0x00000020
-kASConsiderRepliesConsiderMask = 0x00000040
-kASNumericStringsConsiderMask = 0x00000080
-kAECaseIgnoreMask = 0x00010000
-kAEDiacriticIgnoreMask = 0x00020000
-kAEWhiteSpaceIgnoreMask = 0x00040000
-kAEHyphensIgnoreMask = 0x00080000
-kAEExpansionIgnoreMask = 0x00100000
-kAEPunctuationIgnoreMask = 0x00200000
-kASConsiderRepliesIgnoreMask = 0x00400000
-kASNumericStringsIgnoreMask = 0x00800000
-enumConsidsAndIgnores = 'csig'
-*/
-
+ * Set considering/ignoring attributes.
+ *
+ * kAECaseConsiderMask = 0x00000001
+ * kAEDiacriticConsiderMask = 0x00000002
+ * kAEWhiteSpaceConsiderMask = 0x00000004
+ * kAEHyphensConsiderMask = 0x00000008
+ * kAEExpansionConsiderMask = 0x00000010
+ * kAEPunctuationConsiderMask = 0x00000020
+ * kASNumericStringsConsiderMask = 0x00000080
+ * 
+ * kAECaseIgnoreMask = 0x00010000
+ * kAEDiacriticIgnoreMask = 0x00020000
+ * kAEWhiteSpaceIgnoreMask = 0x00040000
+ * kAEHyphensIgnoreMask = 0x00080000
+ * kAEExpansionIgnoreMask = 0x00100000
+ * kAEPunctuationIgnoreMask = 0x00200000
+ * kASNumericStringsIgnoreMask = 0x00800000
+ */
+- (id)considering:(UInt32)consideringFlags_;
 
 /* Set send mode flags.
  *	kAENoReply = 0x00000001,
@@ -127,7 +114,8 @@ enumConsidsAndIgnores = 'csig'
  * Note that most applications don't support this, and those that do usually
  * only support it for 'get' events (e.g. Finder).
  */
-- (id)requestedType:(ASConstant *)type;
+- (id)requestedClass:(ASConstant *)classConstant;
+- (id)requestedType:(DescType)type;
 
 /*
  * Specify the AE type that the returned AEDesc must be coerced to before unpacking.
@@ -139,6 +127,7 @@ enumConsidsAndIgnores = 'csig'
  *
  * If the specified type is typeWildCard (the default), no coercion is performed.
  */
+- (id)returnClass:(ASConstant *)classConstant;
 - (id)returnType:(DescType)type;
 
 /*
@@ -150,6 +139,7 @@ enumConsidsAndIgnores = 'csig'
  * Similar to -returnType:, except that the returned AEDesc is first coerced to
  * to typeAEList; each list item is then coerced to the specified type.
  */
+- (id)returnListOfClass:(ASConstant *)classConstant;
 - (id)returnListOfType:(DescType)type;
 
 /*
@@ -194,6 +184,12 @@ enumConsidsAndIgnores = 'csig'
  */
 - (id)send;
 
+
+// display formatting; subclasses will override these
+
+- (NSString *)AS_commandName;
+- (NSString *)AS_parameterNameForCode:(DescType)code;
+- (NSString *)AS_formatObject:(id)obj appData:(id)appData;
 
 @end
 

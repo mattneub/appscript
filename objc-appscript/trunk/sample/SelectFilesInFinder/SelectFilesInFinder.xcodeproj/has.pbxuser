@@ -20,7 +20,7 @@
 					20,
 					311,
 					20,
-					48.16259765625,
+					48,
 					43,
 					43,
 					20,
@@ -35,8 +35,12 @@
 					PBXFileDataSource_Target_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 226856896;
-			PBXWorkspaceStateSaveDate = 226856896;
+			PBXPerProjectTemplateStateSaveDate = 238682076;
+			PBXWorkspaceStateSaveDate = 238682076;
+		};
+		perUserProjectItems = {
+			4F0FB0990E39FC10008AA167 /* PBXTextBookmark */ = 4F0FB0990E39FC10008AA167 /* PBXTextBookmark */;
+			4F0FB11C0E39FFE3008AA167 /* PBXTextBookmark */ = 4F0FB11C0E39FFE3008AA167 /* PBXTextBookmark */;
 		};
 		sourceControlManager = 4F2F4E000D858FD5004C31AD /* Source Control */;
 		userBuildSettings = {
@@ -44,11 +48,31 @@
 	};
 	08FB7796FE84155DC02AAC07 /* SelectFilesInFinder.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {759, 939}}";
+			sepNavIntBoundsRect = "{{0, 0}, {489, 896}}";
 			sepNavSelRange = "{667, 0}";
 			sepNavVisRange = "{0, 667}";
 			sepNavWindowFrame = "{{15, 0}, {818, 1028}}";
 		};
+	};
+	4F0FB0990E39FC10008AA167 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 08FB7796FE84155DC02AAC07 /* SelectFilesInFinder.m */;
+		name = "SelectFilesInFinder.m: 25";
+		rLen = 0;
+		rLoc = 667;
+		rType = 0;
+		vrLen = 667;
+		vrLoc = 0;
+	};
+	4F0FB11C0E39FFE3008AA167 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 08FB7796FE84155DC02AAC07 /* SelectFilesInFinder.m */;
+		name = "SelectFilesInFinder.m: 25";
+		rLen = 0;
+		rLoc = 667;
+		rType = 0;
+		vrLen = 667;
+		vrLoc = 0;
 	};
 	4F2F4DEB0D858FC0004C31AD /* SelectFilesInFinder */ = {
 		isa = PBXExecutable;

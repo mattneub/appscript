@@ -36,6 +36,8 @@
 		4FB2B2D60D1F17B600644367 /* terminology.h in Headers */ = {isa = PBXBuildFile; fileRef = 4FDCB2F70B6D0CD0009534FD /* terminology.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4FB2B2D70D1F17BA00644367 /* parser.h in Headers */ = {isa = PBXBuildFile; fileRef = 4FDCB2F10B6D0CD0009534FD /* parser.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4FB2B2D80D1F17BA00644367 /* parser.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FDCB2F20B6D0CD0009534FD /* parser.m */; };
+		4FC9E1190DFC7C740075A5D8 /* objectrenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4FC9E1170DFC7C740075A5D8 /* objectrenderer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4FC9E11A0DFC7C740075A5D8 /* objectrenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FC9E1180DFC7C740075A5D8 /* objectrenderer.m */; };
 		4FDCB2E00B6D0BAF009534FD /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4FDCB2DE0B6D0BAF009534FD /* Carbon.framework */; };
 		4FDCB2E10B6D0BAF009534FD /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4FDCB2DF0B6D0BAF009534FD /* CoreFoundation.framework */; };
 		4FDCB2E20B6D0BCB009534FD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0867D69BFE84028FC02AAC07 /* Foundation.framework */; };
@@ -83,6 +85,8 @@
 		4F9BFD6B0CD4CD74003BDDE0 /* event.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = event.m; sourceTree = "<group>"; };
 		4FAD77B50D2A8B4900FE780B /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
 		4FAD77B60D2A8B4900FE780B /* utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = utils.m; sourceTree = "<group>"; };
+		4FC9E1170DFC7C740075A5D8 /* objectrenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = objectrenderer.h; sourceTree = "<group>"; };
+		4FC9E1180DFC7C740075A5D8 /* objectrenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = objectrenderer.m; sourceTree = "<group>"; };
 		4FDCB2DE0B6D0BAF009534FD /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		4FDCB2DF0B6D0BAF009534FD /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
 		4FDCB2EB0B6D0CD0009534FD /* application.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = application.h; sourceTree = "<group>"; };
@@ -194,6 +198,15 @@
 			name = "Other Sources";
 			sourceTree = "<group>";
 		};
+		4F0FB0630E39FA9F008AA167 /* display formatter */ = {
+			isa = PBXGroup;
+			children = (
+				4F1E9DED0B74EDCB00D4DCBF /* referencerenderer.h */,
+				4F1E9DEE0B74EDCB00D4DCBF /* referencerenderer.m */,
+			);
+			name = "display formatter";
+			sourceTree = "<group>";
+		};
 		4F196CC70B7789220095502E /* aete parser */ = {
 			isa = PBXGroup;
 			children = (
@@ -216,8 +229,7 @@
 				4F1E9F410B75305800D4DCBF /* constant.m */,
 				4FDCB2F30B6D0CD0009534FD /* reference.h */,
 				4FDCB2F40B6D0CD0009534FD /* reference.m */,
-				4F1E9DED0B74EDCB00D4DCBF /* referencerenderer.h */,
-				4F1E9DEE0B74EDCB00D4DCBF /* referencerenderer.m */,
+				4F0FB0630E39FA9F008AA167 /* display formatter */,
 			);
 			name = base;
 			sourceTree = "<group>";
@@ -269,12 +281,22 @@
 			name = bridge;
 			sourceTree = "<group>";
 		};
+		4FC9E11B0DFC7C7D0075A5D8 /* display formatter */ = {
+			isa = PBXGroup;
+			children = (
+				4FC9E1170DFC7C740075A5D8 /* objectrenderer.h */,
+				4FC9E1180DFC7C740075A5D8 /* objectrenderer.m */,
+			);
+			name = "display formatter";
+			sourceTree = "<group>";
+		};
 		4FDCB4B40B6D5F7E009534FD /* AEM */ = {
 			isa = PBXGroup;
 			children = (
 				4F48566C0B6E8299005264DC /* application connector */,
 				4F48566A0B6E8220005264DC /* query builder */,
 				4F48566B0B6E8267005264DC /* type converter */,
+				4FC9E11B0DFC7C7D0075A5D8 /* display formatter */,
 			);
 			name = AEM;
 			sourceTree = "<group>";
@@ -325,6 +347,7 @@
 				4F4F3F380D54E0DC004F82C7 /* command.h in Headers */,
 				4F4F3FC30D550ACC004F82C7 /* bridgedata.h in Headers */,
 				4FE62D9E0D82B4C600ABCB3F /* unittype.h in Headers */,
+				4FC9E1190DFC7C740075A5D8 /* objectrenderer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -417,7 +440,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\nif command -v gen_bridge_metadata &>/dev/null\nthen\n\nmkdir -p $BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/BridgeSupport\n\ngen_bridge_metadata -f $BUILT_PRODUCTS_DIR/$PRODUCT_NAME.framework -o $BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/BridgeSupport/$PRODUCT_NAME.bridgesupport\n\nfi\n\n";
+			shellScript = "\nexit 0 # TEST\n\nif command -v gen_bridge_metadata &>/dev/null\nthen\n\nmkdir -p $BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/BridgeSupport\n\ngen_bridge_metadata -f $BUILT_PRODUCTS_DIR/$PRODUCT_NAME.framework -o $BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/BridgeSupport/$PRODUCT_NAME.bridgesupport\n\nfi\n\nexit 0 # note: gen_bridge_metadata is broken in 10.5.4, so just ignoring any errors it produces\n\n";
 		};
 		4FED70840D2E6B63003412D7 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -475,6 +498,7 @@
 				4F4F3F3A0D54E0EA004F82C7 /* command.m in Sources */,
 				4F4F3FC60D550AF0004F82C7 /* bridgedata.m in Sources */,
 				4FE62D9F0D82B4C600ABCB3F /* unittype.m in Sources */,
+				4FC9E11A0DFC7C740075A5D8 /* objectrenderer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

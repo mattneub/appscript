@@ -2,7 +2,7 @@
  * ITCommandGlue.h
  *
  * /Applications/iTunes.app
- * osaglue 0.3.2
+ * osaglue 0.4.0
  *
  */
 
@@ -10,109 +10,113 @@
 
 
 #import "Appscript/Appscript.h"
+#import "ITReferenceRendererGlue.h"
 
 
-@interface ITActivateCommand : ASCommand
+@interface ITCommand : ASCommand
+@end
+
+@interface ITActivateCommand : ITCommand
 @end
 
 
-@interface ITAddCommand : ASCommand
+@interface ITAddCommand : ITCommand
 - (ITAddCommand *)to:(id)value;
 @end
 
 
-@interface ITBackTrackCommand : ASCommand
+@interface ITBackTrackCommand : ITCommand
 @end
 
 
-@interface ITCloseCommand : ASCommand
+@interface ITCloseCommand : ITCommand
 @end
 
 
-@interface ITConvertCommand : ASCommand
+@interface ITConvertCommand : ITCommand
 @end
 
 
-@interface ITCountCommand : ASCommand
+@interface ITCountCommand : ITCommand
 - (ITCountCommand *)each:(id)value;
 @end
 
 
-@interface ITDeleteCommand : ASCommand
+@interface ITDeleteCommand : ITCommand
 @end
 
 
-@interface ITDownloadCommand : ASCommand
+@interface ITDownloadCommand : ITCommand
 @end
 
 
-@interface ITDuplicateCommand : ASCommand
+@interface ITDuplicateCommand : ITCommand
 - (ITDuplicateCommand *)to:(id)value;
 @end
 
 
-@interface ITEjectCommand : ASCommand
+@interface ITEjectCommand : ITCommand
 @end
 
 
-@interface ITExistsCommand : ASCommand
+@interface ITExistsCommand : ITCommand
 @end
 
 
-@interface ITFastForwardCommand : ASCommand
+@interface ITFastForwardCommand : ITCommand
 @end
 
 
-@interface ITGetCommand : ASCommand
+@interface ITGetCommand : ITCommand
 @end
 
 
-@interface ITLaunchCommand : ASCommand
+@interface ITLaunchCommand : ITCommand
 @end
 
 
-@interface ITMakeCommand : ASCommand
+@interface ITMakeCommand : ITCommand
 - (ITMakeCommand *)at:(id)value;
 - (ITMakeCommand *)new_:(id)value;
 - (ITMakeCommand *)withProperties:(id)value;
 @end
 
 
-@interface ITMoveCommand : ASCommand
+@interface ITMoveCommand : ITCommand
 - (ITMoveCommand *)to:(id)value;
 @end
 
 
-@interface ITNextTrackCommand : ASCommand
+@interface ITNextTrackCommand : ITCommand
 @end
 
 
-@interface ITOpenCommand : ASCommand
+@interface ITOpenCommand : ITCommand
 @end
 
 
-@interface ITOpenLocationCommand : ASCommand
+@interface ITOpenLocationCommand : ITCommand
 @end
 
 
-@interface ITPauseCommand : ASCommand
+@interface ITPauseCommand : ITCommand
 @end
 
 
-@interface ITPlayCommand : ASCommand
+@interface ITPlayCommand : ITCommand
 - (ITPlayCommand *)once:(id)value;
 @end
 
 
-@interface ITPlaypauseCommand : ASCommand
+@interface ITPlaypauseCommand : ITCommand
 @end
 
 
-@interface ITPreviousTrackCommand : ASCommand
+@interface ITPreviousTrackCommand : ITCommand
 @end
 
 
-@interface ITPrintCommand : ASCommand
+@interface ITPrintCommand : ITCommand
 - (ITPrintCommand *)kind:(id)value;
 - (ITPrintCommand *)printDialog:(id)value;
 - (ITPrintCommand *)theme:(id)value;
@@ -120,62 +124,62 @@
 @end
 
 
-@interface ITQuitCommand : ASCommand
+@interface ITQuitCommand : ITCommand
 @end
 
 
-@interface ITRefreshCommand : ASCommand
+@interface ITRefreshCommand : ITCommand
 @end
 
 
-@interface ITReopenCommand : ASCommand
+@interface ITReopenCommand : ITCommand
 @end
 
 
-@interface ITResumeCommand : ASCommand
+@interface ITResumeCommand : ITCommand
 @end
 
 
-@interface ITRevealCommand : ASCommand
+@interface ITRevealCommand : ITCommand
 @end
 
 
-@interface ITRewindCommand : ASCommand
+@interface ITRewindCommand : ITCommand
 @end
 
 
-@interface ITRunCommand : ASCommand
+@interface ITRunCommand : ITCommand
 @end
 
 
-@interface ITSearchCommand : ASCommand
+@interface ITSearchCommand : ITCommand
 - (ITSearchCommand *)for_:(id)value;
 - (ITSearchCommand *)only:(id)value;
 @end
 
 
-@interface ITSetCommand : ASCommand
+@interface ITSetCommand : ITCommand
 - (ITSetCommand *)to:(id)value;
 @end
 
 
-@interface ITStopCommand : ASCommand
+@interface ITStopCommand : ITCommand
 @end
 
 
-@interface ITSubscribeCommand : ASCommand
+@interface ITSubscribeCommand : ITCommand
 @end
 
 
-@interface ITUpdateCommand : ASCommand
+@interface ITUpdateCommand : ITCommand
 @end
 
 
-@interface ITUpdateAllPodcastsCommand : ASCommand
+@interface ITUpdateAllPodcastsCommand : ITCommand
 @end
 
 
-@interface ITUpdatePodcastCommand : ASCommand
+@interface ITUpdatePodcastCommand : ITCommand
 @end
 
 

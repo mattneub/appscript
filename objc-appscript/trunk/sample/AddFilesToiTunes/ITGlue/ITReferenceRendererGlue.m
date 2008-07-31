@@ -2,7 +2,7 @@
  * ITReferenceRendererGlue.m
  *
  * /Applications/iTunes.app
- * osaglue 0.3.2
+ * osaglue 0.4.0
  *
  */
 
@@ -102,6 +102,7 @@
         case 'lwpf': return @"printerFeatures";
         case 'pRte': return @"rating";
         case 'pRtk': return @"ratingKind";
+        case 'pRaw': return @"rawData";
         case 'lwqt': return @"requestedPrintTime";
         case 'prsz': return @"resizable";
         case 'pSRt': return @"sampleRate";
@@ -179,8 +180,8 @@
     }
 }
 
-+ (NSString *)render:(id)object {
-    return [ITReferenceRenderer render: object withPrefix: @"IT"];
+- (NSString *)prefix {
+    return @"IT";
 }
 
 @end

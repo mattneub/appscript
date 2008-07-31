@@ -9,44 +9,32 @@ except: # Python 2.3
 	from sets import Set as set
 
 try:
-	try:
-		from osaterminology.makeidentifier import getconverter
-	except ImportError: # py-appscript 0.19.0+
-		from appscript.makeidentifier import getconverter
-	from appscript import terminology
+	from osaterminology.makeidentifier import getconverter
+	from osaterminology.tables.tablebuilder import *
+	
 	from aem import Application, findapp, AEType
 	import aem
 except ImportError:
-	print >> sys.stderr, """Sorry, py-appscript 0.18.1 or later is required to use osaglue.
+	print >> sys.stderr, """Sorry, py-appscript 0.19.0+ and py-osaterminology 0.12.0+ 
+are required to use osaglue.
 Please see the following page for more information:
 
-    http://appscript.sourceforge.net/py-appscript/install.html
+    http://appscript.sourceforge.net/objc-appscript/install.html
 	
-Please install py-appscript and run this command again."""
+Please install these modules and run this command again."""
 	sys.exit()
 
 
-__version__ = '0.3.3'
+__version__ = '0.4.0'
 
 
 gLoadOSAX = ''
 
 ######################################################################
-# default tables
+# terminology tables
 ######################################################################
 
-# empty the default py-appscript type-code tables, as that info is already hardcoded in ASConstant
-terminology._typebycode = {}
-terminology._typebyname = {}
-
-# patch the existing default reference-code tables
-code, name = terminology._referencebycode['pID  ']
-terminology._referencebycode['pID  '] = (code, name + '_')
-
-for oldname, newname in [('open_location', 'openLocation'), ('print_', 'print'), ('id', 'id_')]:
-	terminology._referencebyname[newname] = terminology._referencebyname[oldname]
-	del terminology._referencebyname[oldname]
-
+terminology = TerminologyTableBuilder('objc-appscript')
 
 
 ######################################################################
@@ -54,7 +42,7 @@ for oldname, newname in [('open_location', 'openLocation'), ('print_', 'print'),
 ######################################################################
 
 prefixtag = 'PREFIX'
-interfacemethodspattern = re.compile('^(-.+?) {', re.M)
+interfacemethodspattern = re.compile('^((?:-|\+).+?) {', re.M)
 
 legalcodechars = ''
 for i in range(32, 126):
@@ -85,18 +73,17 @@ def renderConstantClass(interface, implementation):
     switch (code_) {'''
 	for code, name in typebycode:
 		code = formatcode(code)
-		print >> implementation, '''        case %s: return [self %s];''' % (code, name.name)
+		print >> implementation, '''        case %s: return [self %s];''' % (code, name)
 	print >> implementation, '''        default: return [[self superclass] constantWithCode: code_];
     }
 }
 '''
 	#######
 	prevkind = None
-	for name, code in typebyname:
-		kind = code.__class__.__name__
+	for name, (kind, code) in typebyname:
 		if prevkind != kind:
 			for t in [interface, implementation]:
-				print >> t, '\n/* %s */\n' % {'AEEnum': 'Enumerators', 'AEType': 'Types and properties'}[kind]
+				print >> t, '\n/* %s */\n' % {kEnum: 'Enumerators', kType: 'Types and properties'}[kind]
 		prevkind = kind
 		print >> interface, '+ (%s *)%s;' % (constantClass, name)
 		print >> implementation, '''+ (%s *)%s {
@@ -106,8 +93,8 @@ def renderConstantClass(interface, implementation):
     return constantObj;
 }\n''' % (constantClass, name, 
 				prefix,
-				prefix, name, isinstance(code, AEType) and 'typeType' or 'typeEnumerated', 
-						formatcode(code.code))
+				prefix, name, kind == kType and 'typeType' or 'typeEnumerated', 
+						formatcode(code))
 	print >> interface, '@end\n\n'
 	print >> implementation, '@end\n\n'
 
@@ -116,14 +103,21 @@ def renderConstantClass(interface, implementation):
 
 
 def renderCommandClasses(interface, implementation):
+	print >> interface, ('@interface %sCommand : ASCommand\n'
+			'@end\n') % prefix
+	print >> implementation, ('@implementation %sCommand\n'
+			'- (NSString *)AS_formatObject:(id)obj appData:(id)appData{\n'
+			'    return [%sReferenceRenderer formatObject: obj appData: appData];\n'
+			'}\n'
+			'@end\n') % (prefix, prefix)
 	for name, (kind, data) in referencebyname:
-		if kind != 'c':
+		if kind != kCommand:
 			continue
 		commandclass = prefix + name[0].upper() + name[1:] + 'Command'
 		code = data[0]
 		params = data[1].items()
 		params.sort()
-		print >> interface, '@interface %s : ASCommand' % commandclass
+		print >> interface, '@interface %s : %sCommand' % (commandclass, prefix)
 		print >> implementation, '@implementation %s\n' % commandclass
 		for paramname, paramcode in params:
 			print >> interface, '- (%s *)%s:(id)value;' % (commandclass, paramname)
@@ -131,6 +125,18 @@ def renderCommandClasses(interface, implementation):
 					'    [AS_event setParameter: value forKeyword: %s];\n'
 					'    return self;\n'
 					'}\n') % (commandclass, paramname, formatcode(paramcode))
+		print >> implementation, ('- (NSString *)AS_commandName {\n'
+					'    return @"%s";\n'
+					'}\n') % name
+		if params:
+			print >> implementation, ('- (NSString *)AS_parameterNameForCode:(DescType)code {\n'
+					'    switch (code) {')
+			for paramname, paramcode in params:
+				print >> implementation, ('        case %s:\n'
+					'            return @"%s";') % (formatcode(paramcode), paramname)
+			print >> implementation, ('    }\n'
+					'    return [super AS_parameterNameForCode: code];\n'
+					'}\n')
 		print >> interface, '@end\n\n'
 		print >> implementation, '@end\n\n'
 
@@ -143,15 +149,15 @@ def renderReferenceClass(interface, implementation):
 	print >> implementation, '@implementation %sReference' % prefix
 	print >> implementation, '''
 - (NSString *)description {
-	return [%sReferenceRenderer render: AS_aemReference];
+	return [%sReferenceRenderer formatObject: AS_aemReference appData: AS_appData];
 }''' % prefix
 	prevkind = None
 	for name, (kind, data) in referencebyname:
 		if kind != prevkind:
 			for t in [interface, implementation]:
-				print >> t, '\n/* %s */\n' % {'c': 'Commands', 'p': 'Properties', 'e': 'Elements'}[kind]
+				print >> t, '\n/* %s */\n' % {kCommand: 'Commands', kProperty: 'Properties', kElement: 'Elements'}[kind]
 		prevkind = kind
-		if kind == 'c':
+		if kind == kCommand:
 			commandclass = prefix + name[0].upper() + name[1:] + 'Command'
 			for directParam in ['', ':(id)directParameter']:
 				print >> interface, '- (%s *)%s;' % (commandclass, name + directParam)
@@ -167,13 +173,13 @@ def renderReferenceClass(interface, implementation):
 								commandclass,
 								formatcode(code[:4]),
 								formatcode(code[4:]),
-								directParam and 'directParameter' or 'nil')
+								directParam and 'directParameter' or 'kASNoDirectParameter')
 		else:
 			print >> interface, '- (%sReference *)%s;' % (prefix, name)
 			print >> implementation, ('- (%sReference *)%s {\n'
 					'    return [%sReference referenceWithAppData: AS_appData\n'
 					'                    aemReference: [AS_aemReference %s: %s]];\n'
-					'}\n') % (prefix, name, prefix, {'p': 'property', 'e': 'elements'}[kind], formatcode(data))
+					'}\n') % (prefix, name, prefix, {kProperty: 'property', kElement: 'elements'}[kind], formatcode(data))
 	renderSelectors(interface, implementation)
 	print >> interface, '@end\n\n'
 	print >> implementation, '@end\n\n'
@@ -384,6 +390,31 @@ _applicationclassimplementation = """
 
 // initialisers
 
++ (id)application {
+    return [[[self alloc] init] autorelease];
+}
+
++ (id)applicationWithName:(NSString *)name {
+    return [[[self alloc] initWithName: name] autorelease];
+}
+
++ (id)applicationWithBundleID:(NSString *)bundleID  {
+    return [[[self alloc] initWithBundleID: bundleID ] autorelease];
+}
+
++ (id)applicationWithURL:(NSURL *)url {
+    return [[[self alloc] initWithURL: url] autorelease];
+}
+
++ (id)applicationWithPID:(pid_t)pid {
+    return [[[self alloc] initWithPID: pid] autorelease];
+}
+
++ (id)applicationWithDescriptor:(NSAppleEventDescriptor *)desc {
+    return [[[self alloc] initWithDescriptor: desc] autorelease];
+}
+
+
 - (id)init {
     return [self initWithTargetType: kASTargetCurrent data: nil];
 }
@@ -410,7 +441,7 @@ _applicationclassimplementation = """
 
 // misc
 
-- (PREFIXReference *)AS_newReferenceWithObject:(id)object {
+- (PREFIXReference *)AS_referenceWithObject:(id)object {
     if ([object isKindOfClass: [PREFIXReference class]])
         return [[[PREFIXReference alloc] initWithAppData: AS_appData
                 aemReference: [object AS_aemReference]] autorelease];
@@ -442,7 +473,7 @@ def renderApplicationClass(interface, implementation):
 def renderReferenceRenderer(interface, implementation):
 	print >> interface, '@interface %sReferenceRenderer : ASReferenceRenderer' % prefix
 	print >> implementation, '@implementation %sReferenceRenderer' % prefix
-	for methodname, codeprefix in [('property', 'p'), ('element', 'e')]:
+	for methodname, codeprefix in [('property', kProperty), ('element', kElement)]:
 		print >> implementation, '''
 - (NSString *)%sByCode:(OSType)code {
     switch (code) {''' % methodname
@@ -454,10 +485,10 @@ def renderReferenceRenderer(interface, implementation):
     }
 }'''
 	print >> implementation, '''
-+ (NSString *)render:(id)object {
-    return [%sReferenceRenderer render: object withPrefix: @"%s"];
+- (NSString *)prefix {
+    return @"%s";
 }
-''' % (prefix, prefix)
+''' % prefix
 	print >> interface, '@end'
 	print >> implementation, '@end'
 
@@ -473,6 +504,7 @@ gluefiles = [
 
 ('CommandGlue', '''
 #import "Appscript/Appscript.h"
+#import "PREFIXReferenceRendererGlue.h"
 ''', renderCommandClasses),
 
 ('ReferenceGlue', '''
@@ -610,17 +642,19 @@ def _findosax(osaxname):
 if args:
 	apppath = findapp.byname(args[0])
 	typebycode, typebyname, referencebycode, referencebyname = \
-			terminology.tablesforapp(Application(apppath), 'objc-appscript')
+			terminology.tablesforapp(Application(apppath))
 elif osaxname:
 	if not osaxname.startswith('/'):
 		osaxname = _findosax(osaxname)
 	apppath = '[%s]' % osaxname
-	from OSATerminology import GetAppTerminology # uses Python's own OSATerminology for compatibility
-	from CarbonX.AE import AECreateDesc # tablesforaetes doesn't recognise Carbon.AE._AEDesc, so will make CarbonX version
-	aete = GetAppTerminology(osaxname)[0]
-	aete = AECreateDesc(aete.type, aete.data)
+	try:
+		aete = aem.ae.GetAppTerminology(osaxname)[0]
+	except aem.MacOSError, e:
+		if e.args[0] == -192:
+			print >> sys.stderr, "No terminology found for osax: %s" % osaxname
+			sys.exit()
 	typebycode, typebyname, referencebycode, referencebyname = \
-			terminology.tablesforaetes([aete], 'objc-appscript')
+			terminology.tablesforaetes([aete])
 	gLoadOSAX = """
     // make sure osaxen are loaded
     static int isReady = 0;
@@ -633,12 +667,12 @@ elif osaxname:
 else:
 	apppath = '<default terminology>'
 	typebycode, typebyname, referencebycode, referencebyname = \
-			terminology.tablesforaetes([], 'objc-appscript')
+			terminology.tablesforaetes([])
 
 typebyname = typebyname.items()
-typebyname.sort(lambda a, b: cmp(a[1].__class__.__name__, b[1].__class__.__name__) or cmp(a[0], b[0]))
+typebyname.sort(lambda a, b: cmp(a[1][0], b[1][0]) or cmp(a[0], b[0]))
 typebycode = typebycode.items()
-typebycode.sort(lambda a, b: cmp(a[1].name, b[1].name))
+typebycode.sort(lambda a, b: cmp(a[1], b[1]))
 referencebyname = referencebyname.items()
 referencebyname.sort(lambda a, b: cmp(a[1][0], b[1][0]) or cmp(a[0], b[0]))
 referencebycode = referencebycode.items()
@@ -667,17 +701,17 @@ def renderAEMHeader(outdir, prefix):
 
 // Type/Enum Names
 enum {""" % (filename, apppath, __version__)
-	for name, code in typebyname:
-		renderAEMConstant('k', name, code.code, header)
+	for name, (kind, code) in typebyname:
+		renderAEMConstant('k', name, code, header)
 	print >> header, "};\n"
 	print >> header, "enum {"
 	for name, (kind, data) in referencebyname:
-		if kind != 'c':
+		if kind != kCommand:
 			renderAEMConstant(kind, name, data, header)
 	print >> header, "};\n"
 	knownparams = set()
 	for name, (kind, data) in referencebyname:
-		if kind == 'c':
+		if kind == kCommand:
 			print >> header, "enum {"
 			code = data[0]
 			renderAEMConstant('ec', name, code[:4], header)

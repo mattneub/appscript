@@ -7,12 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4F0FB0F60E39FF59008AA167 /* Appscript.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F0FB0F50E39FF59008AA167 /* Appscript.framework */; };
 		4F2F4DCF0D858F4D004C31AD /* SFApplicationGlue.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F2F4DC50D858F4D004C31AD /* SFApplicationGlue.m */; };
 		4F2F4DD00D858F4D004C31AD /* SFCommandGlue.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F2F4DC70D858F4D004C31AD /* SFCommandGlue.m */; };
 		4F2F4DD10D858F4D004C31AD /* SFConstantGlue.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F2F4DC90D858F4D004C31AD /* SFConstantGlue.m */; };
 		4F2F4DD20D858F4D004C31AD /* SFReferenceGlue.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F2F4DCC0D858F4D004C31AD /* SFReferenceGlue.m */; };
 		4F2F4DD30D858F4D004C31AD /* SFReferenceRendererGlue.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F2F4DCE0D858F4D004C31AD /* SFReferenceRendererGlue.m */; };
-		4F2F4DD70D858F5B004C31AD /* Appscript.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F2F4DD60D858F5B004C31AD /* Appscript.framework */; };
 		8DD76F9A0486AA7600D96B5E /* GetURLFromSafari.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FB7796FE84155DC02AAC07 /* GetURLFromSafari.m */; settings = {ATTRIBUTES = (); }; };
 		8DD76F9C0486AA7600D96B5E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08FB779EFE84155DC02AAC07 /* Foundation.framework */; };
 		8DD76F9F0486AA7600D96B5E /* GetURLFromSafari.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = C6859EA3029092ED04C91782 /* GetURLFromSafari.1 */; };
@@ -35,6 +35,7 @@
 		08FB7796FE84155DC02AAC07 /* GetURLFromSafari.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GetURLFromSafari.m; sourceTree = "<group>"; };
 		08FB779EFE84155DC02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		32A70AAB03705E1F00C91783 /* GetURLFromSafari_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetURLFromSafari_Prefix.pch; sourceTree = "<group>"; };
+		4F0FB0F50E39FF59008AA167 /* Appscript.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Appscript.framework; path = ../../../../../Library/Frameworks/Appscript.framework; sourceTree = SOURCE_ROOT; };
 		4F2F4DC30D858F4D004C31AD /* SFAEMConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFAEMConstants.h; sourceTree = "<group>"; };
 		4F2F4DC40D858F4D004C31AD /* SFApplicationGlue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFApplicationGlue.h; sourceTree = "<group>"; };
 		4F2F4DC50D858F4D004C31AD /* SFApplicationGlue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFApplicationGlue.m; sourceTree = "<group>"; };
@@ -47,7 +48,6 @@
 		4F2F4DCC0D858F4D004C31AD /* SFReferenceGlue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFReferenceGlue.m; sourceTree = "<group>"; };
 		4F2F4DCD0D858F4D004C31AD /* SFReferenceRendererGlue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFReferenceRendererGlue.h; sourceTree = "<group>"; };
 		4F2F4DCE0D858F4D004C31AD /* SFReferenceRendererGlue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFReferenceRendererGlue.m; sourceTree = "<group>"; };
-		4F2F4DD60D858F5B004C31AD /* Appscript.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Appscript.framework; path = ../Library/Frameworks/Appscript.framework; sourceTree = SOURCE_ROOT; };
 		8DD76FA10486AA7600D96B5E /* GetURLFromSafari */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = GetURLFromSafari; sourceTree = BUILT_PRODUCTS_DIR; };
 		C6859EA3029092ED04C91782 /* GetURLFromSafari.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = GetURLFromSafari.1; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -58,7 +58,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8DD76F9C0486AA7600D96B5E /* Foundation.framework in Frameworks */,
-				4F2F4DD70D858F5B004C31AD /* Appscript.framework in Frameworks */,
+				4F0FB0F60E39FF59008AA167 /* Appscript.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -89,7 +89,7 @@
 		08FB779DFE84155DC02AAC07 /* External Frameworks and Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				4F2F4DD60D858F5B004C31AD /* Appscript.framework */,
+				4F0FB0F50E39FF59008AA167 /* Appscript.framework */,
 				08FB779EFE84155DC02AAC07 /* Foundation.framework */,
 			);
 			name = "External Frameworks and Libraries";
@@ -192,6 +192,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../Library/Frameworks\"",
+					"\"$(SRCROOT)/../../../../../Library/Frameworks\"",
 				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
@@ -212,6 +213,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../Library/Frameworks\"",
+					"\"$(SRCROOT)/../../../../../Library/Frameworks\"",
 				);
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;

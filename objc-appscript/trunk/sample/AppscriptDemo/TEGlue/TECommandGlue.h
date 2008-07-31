@@ -2,7 +2,7 @@
  * TECommandGlue.h
  *
  * /Applications/TextEdit.app
- * osaglue 0.3.0
+ * osaglue 0.4.0
  *
  */
 
@@ -10,46 +10,50 @@
 
 
 #import "Appscript/Appscript.h"
+#import "TEReferenceRendererGlue.h"
 
 
-@interface TEActivateCommand : ASCommand
+@interface TECommand : ASCommand
+@end
+
+@interface TEActivateCommand : TECommand
 @end
 
 
-@interface TECloseCommand : ASCommand
+@interface TECloseCommand : TECommand
 - (TECloseCommand *)saving:(id)value;
 - (TECloseCommand *)savingIn:(id)value;
 @end
 
 
-@interface TECountCommand : ASCommand
+@interface TECountCommand : TECommand
 - (TECountCommand *)each:(id)value;
 @end
 
 
-@interface TEDeleteCommand : ASCommand
+@interface TEDeleteCommand : TECommand
 @end
 
 
-@interface TEDuplicateCommand : ASCommand
+@interface TEDuplicateCommand : TECommand
 - (TEDuplicateCommand *)to:(id)value;
 - (TEDuplicateCommand *)withProperties:(id)value;
 @end
 
 
-@interface TEExistsCommand : ASCommand
+@interface TEExistsCommand : TECommand
 @end
 
 
-@interface TEGetCommand : ASCommand
+@interface TEGetCommand : TECommand
 @end
 
 
-@interface TELaunchCommand : ASCommand
+@interface TELaunchCommand : TECommand
 @end
 
 
-@interface TEMakeCommand : ASCommand
+@interface TEMakeCommand : TECommand
 - (TEMakeCommand *)at:(id)value;
 - (TEMakeCommand *)new_:(id)value;
 - (TEMakeCommand *)withData:(id)value;
@@ -57,46 +61,46 @@
 @end
 
 
-@interface TEMoveCommand : ASCommand
+@interface TEMoveCommand : TECommand
 - (TEMoveCommand *)to:(id)value;
 @end
 
 
-@interface TEOpenCommand : ASCommand
+@interface TEOpenCommand : TECommand
 @end
 
 
-@interface TEOpenLocationCommand : ASCommand
+@interface TEOpenLocationCommand : TECommand
 - (TEOpenLocationCommand *)window:(id)value;
 @end
 
 
-@interface TEPrintCommand : ASCommand
+@interface TEPrintCommand : TECommand
 - (TEPrintCommand *)printDialog:(id)value;
 - (TEPrintCommand *)withProperties:(id)value;
 @end
 
 
-@interface TEQuitCommand : ASCommand
+@interface TEQuitCommand : TECommand
 - (TEQuitCommand *)saving:(id)value;
 @end
 
 
-@interface TEReopenCommand : ASCommand
+@interface TEReopenCommand : TECommand
 @end
 
 
-@interface TERunCommand : ASCommand
+@interface TERunCommand : TECommand
 @end
 
 
-@interface TESaveCommand : ASCommand
+@interface TESaveCommand : TECommand
 - (TESaveCommand *)as:(id)value;
 - (TESaveCommand *)in:(id)value;
 @end
 
 
-@interface TESetCommand : ASCommand
+@interface TESetCommand : TECommand
 - (TESetCommand *)to:(id)value;
 @end
 

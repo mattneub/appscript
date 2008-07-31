@@ -2,7 +2,7 @@
  * ITReferenceGlue.h
  *
  * /Applications/iTunes.app
- * osaglue 0.3.2
+ * osaglue 0.4.0
  *
  */
 
@@ -219,6 +219,7 @@
 - (ITReference *)printerFeatures;
 - (ITReference *)rating;
 - (ITReference *)ratingKind;
+- (ITReference *)rawData;
 - (ITReference *)requestedPrintTime;
 - (ITReference *)resizable;
 - (ITReference *)sampleRate;

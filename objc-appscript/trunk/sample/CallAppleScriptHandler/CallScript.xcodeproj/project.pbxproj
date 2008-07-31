@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4FB8B7CA0C502B1700270858 /* Appscript.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4FB8B7C90C502B1700270858 /* Appscript.framework */; };
+		4F0FB0DA0E39FF01008AA167 /* Appscript.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F0FB0D90E39FF01008AA167 /* Appscript.framework */; };
 		8DD76F9A0486AA7600D96B5E /* CallScript.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FB7796FE84155DC02AAC07 /* CallScript.m */; settings = {ATTRIBUTES = (); }; };
 		8DD76F9C0486AA7600D96B5E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08FB779EFE84155DC02AAC07 /* Foundation.framework */; };
 		8DD76F9F0486AA7600D96B5E /* CallScript.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = C6859EA3029092ED04C91782 /* CallScript.1 */; };
@@ -30,7 +30,7 @@
 		08FB7796FE84155DC02AAC07 /* CallScript.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CallScript.m; sourceTree = "<group>"; };
 		08FB779EFE84155DC02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		32A70AAB03705E1F00C91783 /* CallScript_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallScript_Prefix.pch; sourceTree = "<group>"; };
-		4FB8B7C90C502B1700270858 /* Appscript.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Appscript.framework; path = ../../../../Library/Frameworks/Appscript.framework; sourceTree = SOURCE_ROOT; };
+		4F0FB0D90E39FF01008AA167 /* Appscript.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Appscript.framework; path = ../../../../../Library/Frameworks/Appscript.framework; sourceTree = SOURCE_ROOT; };
 		8DD76FA10486AA7600D96B5E /* CallScript */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CallScript; sourceTree = BUILT_PRODUCTS_DIR; };
 		C6859EA3029092ED04C91782 /* CallScript.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = CallScript.1; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -41,7 +41,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8DD76F9C0486AA7600D96B5E /* Foundation.framework in Frameworks */,
-				4FB8B7CA0C502B1700270858 /* Appscript.framework in Frameworks */,
+				4F0FB0DA0E39FF01008AA167 /* Appscript.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -71,7 +71,7 @@
 		08FB779DFE84155DC02AAC07 /* External Frameworks and Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				4FB8B7C90C502B1700270858 /* Appscript.framework */,
+				4F0FB0D90E39FF01008AA167 /* Appscript.framework */,
 				08FB779EFE84155DC02AAC07 /* Foundation.framework */,
 			);
 			name = "External Frameworks and Libraries";
@@ -152,7 +152,9 @@
 					"$(SRCROOT)/../Library/Frameworks",
 					"$(SRCROOT)/../../Library/Frameworks",
 					"$(SRCROOT)/../../../../Library/Frameworks",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
 				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../../../Library/Frameworks\"";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
@@ -177,7 +179,9 @@
 					"$(SRCROOT)/../Library/Frameworks",
 					"$(SRCROOT)/../../Library/Frameworks",
 					"$(SRCROOT)/../../../../Library/Frameworks",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
 				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/../../../../../Library/Frameworks\"";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;

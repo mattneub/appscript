@@ -2,7 +2,7 @@
  * MLReferenceGlue.m
  *
  * /Applications/Mail.app
- * osaglue 0.3.2
+ * osaglue 0.4.0
  *
  */
 
@@ -11,7 +11,7 @@
 @implementation MLReference
 
 - (NSString *)description {
-	return [MLReferenceRenderer render: AS_aemReference];
+	return [MLReferenceRenderer formatObject: AS_aemReference appData: AS_appData];
 }
 
 /* Commands */
@@ -20,7 +20,7 @@
     return [MLGetURLCommand commandWithAppData: AS_appData
                          eventClass: 'emal'
                             eventID: 'emtg'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -36,7 +36,7 @@
     return [MLActivateCommand commandWithAppData: AS_appData
                          eventClass: 'misc'
                             eventID: 'actv'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -52,7 +52,7 @@
     return [MLBounceCommand commandWithAppData: AS_appData
                          eventClass: 'emal'
                             eventID: 'bcms'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -68,7 +68,7 @@
     return [MLCheckForNewMailCommand commandWithAppData: AS_appData
                          eventClass: 'emal'
                             eventID: 'chma'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -84,7 +84,7 @@
     return [MLCloseCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'clos'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -100,7 +100,7 @@
     return [MLCountCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'cnte'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -116,7 +116,7 @@
     return [MLDeleteCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'delo'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -132,7 +132,7 @@
     return [MLDuplicateCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'clon'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -148,7 +148,7 @@
     return [MLExistsCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'doex'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -164,7 +164,7 @@
     return [MLExtractAddressFromCommand commandWithAppData: AS_appData
                          eventClass: 'emal'
                             eventID: 'eaua'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -180,7 +180,7 @@
     return [MLExtractNameFromCommand commandWithAppData: AS_appData
                          eventClass: 'emal'
                             eventID: 'eafn'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -196,7 +196,7 @@
     return [MLForwardCommand commandWithAppData: AS_appData
                          eventClass: 'emal'
                             eventID: 'fwms'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -212,7 +212,7 @@
     return [MLGetCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'getd'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -228,7 +228,7 @@
     return [MLImportMailMailboxCommand commandWithAppData: AS_appData
                          eventClass: 'emal'
                             eventID: 'immx'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -244,7 +244,7 @@
     return [MLLaunchCommand commandWithAppData: AS_appData
                          eventClass: 'ascr'
                             eventID: 'noop'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -260,7 +260,7 @@
     return [MLMailtoCommand commandWithAppData: AS_appData
                          eventClass: 'emal'
                             eventID: 'emto'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -276,7 +276,7 @@
     return [MLMakeCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'crel'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -292,7 +292,7 @@
     return [MLMoveCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'move'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -308,7 +308,7 @@
     return [MLOpenCommand commandWithAppData: AS_appData
                          eventClass: 'aevt'
                             eventID: 'odoc'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -324,7 +324,7 @@
     return [MLOpenLocationCommand commandWithAppData: AS_appData
                          eventClass: 'GURL'
                             eventID: 'GURL'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -340,7 +340,7 @@
     return [MLPerformMailActionWithMessagesCommand commandWithAppData: AS_appData
                          eventClass: 'emal'
                             eventID: 'cpma'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -356,7 +356,7 @@
     return [MLPrintCommand commandWithAppData: AS_appData
                          eventClass: 'aevt'
                             eventID: 'pdoc'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -372,7 +372,7 @@
     return [MLQuitCommand commandWithAppData: AS_appData
                          eventClass: 'aevt'
                             eventID: 'quit'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -388,7 +388,7 @@
     return [MLRedirectCommand commandWithAppData: AS_appData
                          eventClass: 'emal'
                             eventID: 'rdms'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -404,7 +404,7 @@
     return [MLReopenCommand commandWithAppData: AS_appData
                          eventClass: 'aevt'
                             eventID: 'rapp'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -420,7 +420,7 @@
     return [MLReplyCommand commandWithAppData: AS_appData
                          eventClass: 'emal'
                             eventID: 'rpms'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -436,7 +436,7 @@
     return [MLRunCommand commandWithAppData: AS_appData
                          eventClass: 'aevt'
                             eventID: 'oapp'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -452,7 +452,7 @@
     return [MLSaveCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'save'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -468,7 +468,7 @@
     return [MLSend_Command commandWithAppData: AS_appData
                          eventClass: 'emsg'
                             eventID: 'send'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -484,7 +484,7 @@
     return [MLSetCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'setd'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -500,7 +500,7 @@
     return [MLSynchronizeCommand commandWithAppData: AS_appData
                          eventClass: 'emal'
                             eventID: 'syac'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 

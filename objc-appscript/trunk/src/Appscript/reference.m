@@ -56,8 +56,6 @@
 	return AS_appData;
 }
 
-// TO DO: AS_newReference
-
 - (id)AS_aemReference {
 	return AS_aemReference;
 }
@@ -111,7 +109,7 @@
 	ASCommand *cmd = [ASCommand commandWithAppData: AS_appData
 										eventClass: kAECoreSuite
 										   eventID: kAESetData
-								   directParameter: nil
+								   directParameter: kASNoDirectParameter
 								   parentReference: self];
 	[[cmd AS_aemEvent] setParameter: data forKeyword: keyAEData];
 	return [cmd sendWithError: error];
@@ -125,7 +123,7 @@
 	return [[ASCommand commandWithAppData: AS_appData
 							   eventClass: kAECoreSuite
 								  eventID: kAEGetData
-						  directParameter: nil
+						  directParameter: kASNoDirectParameter
 						  parentReference: self] sendWithError: error];
 }
 
@@ -137,7 +135,7 @@
 	return [[[ASCommand commandWithAppData: AS_appData
 								eventClass: kAECoreSuite
 								   eventID: kAEGetData
-						   directParameter: nil
+						   directParameter: kASNoDirectParameter
 						   parentReference: self] returnList] sendWithError: error];
 }
 
@@ -149,9 +147,9 @@
 	ASCommand *cmd = [ASCommand commandWithAppData: AS_appData
 										eventClass: kAECoreSuite
 										   eventID: kAEGetData
-								   directParameter: nil
+								   directParameter: kASNoDirectParameter
 								   parentReference: self];
-	[[cmd AS_aemEvent] setParameter: [NSAppleEventDescriptor descriptorWithTypeCode:type]
+	[[cmd AS_aemEvent] setParameter: [NSAppleEventDescriptor descriptorWithTypeCode: type]
 						 forKeyword: keyAERequestedType];
 	[cmd returnType: type];
 	return [cmd sendWithError: error];
@@ -165,12 +163,55 @@
 	ASCommand *cmd = [ASCommand commandWithAppData: AS_appData
 										eventClass: kAECoreSuite
 										   eventID: kAEGetData
-								   directParameter: nil
+								   directParameter: kASNoDirectParameter
 								   parentReference: self];
-	[[cmd AS_aemEvent] setParameter: [NSAppleEventDescriptor descriptorWithTypeCode:type]
+	[[cmd AS_aemEvent] setParameter: [NSAppleEventDescriptor descriptorWithTypeCode: type]
 						 forKeyword: keyAERequestedType];
 	[cmd returnListOfType: type];
 	return [cmd sendWithError: error];
+}
+
+- (int)getIntWithError:(NSError **)error {
+	ASCommand *cmd = [ASCommand commandWithAppData: AS_appData
+										eventClass: kAECoreSuite
+										   eventID: kAEGetData
+								   directParameter: kASNoDirectParameter
+								   parentReference: self];
+	[[cmd AS_aemEvent] setParameter: [NSAppleEventDescriptor descriptorWithTypeCode: typeSInt32]
+						 forKeyword: keyAERequestedType];
+	[cmd returnType: typeSInt32];
+	return [[cmd sendWithError: error] intValue];
+}
+
+- (int)getLongWithError:(NSError **)error {
+	ASCommand *cmd = [ASCommand commandWithAppData: AS_appData
+										eventClass: kAECoreSuite
+										   eventID: kAEGetData
+								   directParameter: kASNoDirectParameter
+								   parentReference: self];
+#ifdef __LP64__
+	[[cmd AS_aemEvent] setParameter: [NSAppleEventDescriptor descriptorWithTypeCode: typeSInt64]
+						 forKeyword: keyAERequestedType];
+	[cmd returnType: typeSInt64];
+	return [[cmd sendWithError: error] longValue];
+#else
+	[[cmd AS_aemEvent] setParameter: [NSAppleEventDescriptor descriptorWithTypeCode: typeSInt32]
+						 forKeyword: keyAERequestedType];
+	[cmd returnType: typeSInt32];
+	return [[cmd sendWithError: error] intValue];
+#endif
+}
+
+- (double)getDoubleWithError:(NSError **)error {
+	ASCommand *cmd = [ASCommand commandWithAppData: AS_appData
+										eventClass: kAECoreSuite
+										   eventID: kAEGetData
+								   directParameter: kASNoDirectParameter
+								   parentReference: self];
+	[[cmd AS_aemEvent] setParameter: [NSAppleEventDescriptor descriptorWithTypeCode: typeFloat]
+						 forKeyword: keyAERequestedType];
+	[cmd returnType: typeFloat];
+	return [[cmd sendWithError: error] doubleValue];
 }
 
 @end

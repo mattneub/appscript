@@ -2,7 +2,7 @@
  * SEReferenceRendererGlue.m
  *
  * /System/Library/CoreServices/System Events.app
- * osaglue 0.3.2
+ * osaglue 0.4.0
  *
  */
 
@@ -375,8 +375,8 @@
     }
 }
 
-+ (NSString *)render:(id)object {
-    return [SEReferenceRenderer render: object withPrefix: @"SE"];
+- (NSString *)prefix {
+    return @"SE";
 }
 
 @end

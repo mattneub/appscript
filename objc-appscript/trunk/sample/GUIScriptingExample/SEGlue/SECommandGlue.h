@@ -2,7 +2,7 @@
  * SECommandGlue.h
  *
  * /System/Library/CoreServices/System Events.app
- * osaglue 0.3.2
+ * osaglue 0.4.0
  *
  */
 
@@ -10,135 +10,139 @@
 
 
 #import "Appscript/Appscript.h"
+#import "SEReferenceRendererGlue.h"
 
 
-@interface SEAbortTransaction_Command : ASCommand
+@interface SECommand : ASCommand
+@end
+
+@interface SEAbortTransaction_Command : SECommand
 @end
 
 
-@interface SEActivateCommand : ASCommand
+@interface SEActivateCommand : SECommand
 @end
 
 
-@interface SEAttachActionToCommand : ASCommand
+@interface SEAttachActionToCommand : SECommand
 - (SEAttachActionToCommand *)using:(id)value;
 @end
 
 
-@interface SEAttachedScriptsCommand : ASCommand
+@interface SEAttachedScriptsCommand : SECommand
 @end
 
 
-@interface SEBeginTransaction_Command : ASCommand
+@interface SEBeginTransaction_Command : SECommand
 @end
 
 
-@interface SECancelCommand : ASCommand
+@interface SECancelCommand : SECommand
 @end
 
 
-@interface SEClickCommand : ASCommand
+@interface SEClickCommand : SECommand
 - (SEClickCommand *)at:(id)value;
 @end
 
 
-@interface SECloseCommand : ASCommand
+@interface SECloseCommand : SECommand
 - (SECloseCommand *)saving:(id)value;
 - (SECloseCommand *)savingIn:(id)value;
 @end
 
 
-@interface SEConfirmCommand : ASCommand
+@interface SEConfirmCommand : SECommand
 @end
 
 
-@interface SEConnectCommand : ASCommand
+@interface SEConnectCommand : SECommand
 @end
 
 
-@interface SECountCommand : ASCommand
+@interface SECountCommand : SECommand
 - (SECountCommand *)each:(id)value;
 @end
 
 
-@interface SEDecrementCommand : ASCommand
+@interface SEDecrementCommand : SECommand
 @end
 
 
-@interface SEDeleteCommand : ASCommand
+@interface SEDeleteCommand : SECommand
 @end
 
 
-@interface SEDisconnectCommand : ASCommand
+@interface SEDisconnectCommand : SECommand
 @end
 
 
-@interface SEDoFolderActionCommand : ASCommand
+@interface SEDoFolderActionCommand : SECommand
 - (SEDoFolderActionCommand *)folderActionCode:(id)value;
 - (SEDoFolderActionCommand *)withItemList:(id)value;
 - (SEDoFolderActionCommand *)withWindowSize:(id)value;
 @end
 
 
-@interface SEDoScriptCommand : ASCommand
+@interface SEDoScriptCommand : SECommand
 @end
 
 
-@interface SEDuplicateCommand : ASCommand
+@interface SEDuplicateCommand : SECommand
 - (SEDuplicateCommand *)to:(id)value;
 - (SEDuplicateCommand *)withProperties:(id)value;
 @end
 
 
-@interface SEEditActionOfCommand : ASCommand
+@interface SEEditActionOfCommand : SECommand
 - (SEEditActionOfCommand *)usingActionName:(id)value;
 - (SEEditActionOfCommand *)usingActionNumber:(id)value;
 @end
 
 
-@interface SEEndTransaction_Command : ASCommand
+@interface SEEndTransaction_Command : SECommand
 @end
 
 
-@interface SEExistsCommand : ASCommand
+@interface SEExistsCommand : SECommand
 @end
 
 
-@interface SEGetCommand : ASCommand
+@interface SEGetCommand : SECommand
 @end
 
 
-@interface SEIncrementCommand : ASCommand
+@interface SEIncrementCommand : SECommand
 @end
 
 
-@interface SEKeyCodeCommand : ASCommand
+@interface SEKeyCodeCommand : SECommand
 - (SEKeyCodeCommand *)using:(id)value;
 @end
 
 
-@interface SEKeyDownCommand : ASCommand
+@interface SEKeyDownCommand : SECommand
 @end
 
 
-@interface SEKeyUpCommand : ASCommand
+@interface SEKeyUpCommand : SECommand
 @end
 
 
-@interface SEKeystrokeCommand : ASCommand
+@interface SEKeystrokeCommand : SECommand
 - (SEKeystrokeCommand *)using:(id)value;
 @end
 
 
-@interface SELaunchCommand : ASCommand
+@interface SELaunchCommand : SECommand
 @end
 
 
-@interface SELogOutCommand : ASCommand
+@interface SELogOutCommand : SECommand
 @end
 
 
-@interface SEMakeCommand : ASCommand
+@interface SEMakeCommand : SECommand
 - (SEMakeCommand *)at:(id)value;
 - (SEMakeCommand *)new_:(id)value;
 - (SEMakeCommand *)withData:(id)value;
@@ -146,77 +150,77 @@
 @end
 
 
-@interface SEMoveCommand : ASCommand
+@interface SEMoveCommand : SECommand
 - (SEMoveCommand *)to:(id)value;
 @end
 
 
-@interface SEOpenCommand : ASCommand
+@interface SEOpenCommand : SECommand
 @end
 
 
-@interface SEOpenLocationCommand : ASCommand
+@interface SEOpenLocationCommand : SECommand
 - (SEOpenLocationCommand *)window:(id)value;
 @end
 
 
-@interface SEPerformCommand : ASCommand
+@interface SEPerformCommand : SECommand
 @end
 
 
-@interface SEPickCommand : ASCommand
+@interface SEPickCommand : SECommand
 @end
 
 
-@interface SEPrintCommand : ASCommand
+@interface SEPrintCommand : SECommand
 - (SEPrintCommand *)printDialog:(id)value;
 - (SEPrintCommand *)withProperties:(id)value;
 @end
 
 
-@interface SEQuitCommand : ASCommand
+@interface SEQuitCommand : SECommand
 - (SEQuitCommand *)saving:(id)value;
 @end
 
 
-@interface SERemoveActionFromCommand : ASCommand
+@interface SERemoveActionFromCommand : SECommand
 - (SERemoveActionFromCommand *)usingActionName:(id)value;
 - (SERemoveActionFromCommand *)usingActionNumber:(id)value;
 @end
 
 
-@interface SEReopenCommand : ASCommand
+@interface SEReopenCommand : SECommand
 @end
 
 
-@interface SERestartCommand : ASCommand
+@interface SERestartCommand : SECommand
 @end
 
 
-@interface SERunCommand : ASCommand
+@interface SERunCommand : SECommand
 @end
 
 
-@interface SESaveCommand : ASCommand
+@interface SESaveCommand : SECommand
 - (SESaveCommand *)as:(id)value;
 - (SESaveCommand *)in:(id)value;
 @end
 
 
-@interface SESelectCommand : ASCommand
+@interface SESelectCommand : SECommand
 @end
 
 
-@interface SESetCommand : ASCommand
+@interface SESetCommand : SECommand
 - (SESetCommand *)to:(id)value;
 @end
 
 
-@interface SEShutDownCommand : ASCommand
+@interface SEShutDownCommand : SECommand
 @end
 
 
-@interface SESleepCommand : ASCommand
+@interface SESleepCommand : SECommand
 @end
 
 

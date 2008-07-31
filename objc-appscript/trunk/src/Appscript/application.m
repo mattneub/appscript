@@ -35,7 +35,7 @@
 	if (err) {
 		errorDescription = [NSString stringWithFormat: @"Can't find application with creator '%@', "
 														"bundle ID %@, name %@ (error %i)", 
-														AEMDescTypeToDisplayString(creator), bundleID, name, err];
+														[AEMObjectRenderer formatOSType: creator], bundleID, name, err];
 		errorInfo = [NSDictionary dictionaryWithObjectsAndKeys: 
 									errorDescription, NSLocalizedDescriptionKey,
 									[NSNumber numberWithInt: err], kAEMErrorNumberKey,
@@ -488,7 +488,7 @@ error:
 	return addressDesc;
 }
 
-- (NSAppleEventDescriptor *)desc {
+- (NSAppleEventDescriptor *)descriptor {
 	return addressDesc;
 }
 
@@ -500,14 +500,16 @@ error:
 	switch (targetType) {
 		case kAEMTargetFileURL:
 		case kAEMTargetEppcURL:
-			return [NSString stringWithFormat: @"<AEMApplication url=%@>", targetData];
+			return [NSString stringWithFormat: @"<AEMApplication url=%@>", 
+												[AEMObjectRenderer formatObject: targetData]];
 		case kAEMTargetPID:
 			[[addressDesc data] getBytes: &pid length: sizeof(pid_t)];
 			return [NSString stringWithFormat: @"<AEMApplication pid=%i>", pid];
 		case kAEMTargetCurrent:
 			return @"<AEMApplication current>";
 		default:
-			return [NSString stringWithFormat: @"<AEMApplication desc=%@>", addressDesc];
+			return [NSString stringWithFormat: @"<AEMApplication desc=%@>", 
+												[AEMObjectRenderer formatObject: addressDesc]];
 	}
 }
 
@@ -610,7 +612,8 @@ error:
 		evt = [self eventWithEventClass: kAEMiscStandards eventID: kAEBeginTransaction];
 		if (session)
 			[evt setParameter: session forKeyword: keyDirectObject];
-		transactionIDObj = [[evt unpackResultAsType: typeSInt32] sendWithError: error];
+		[evt unpackResultAsType: typeSInt32];
+		transactionIDObj = [evt sendWithError: error];
 		if (transactionIDObj)
 			transactionID = [transactionIDObj intValue];
 	} else if (error) {

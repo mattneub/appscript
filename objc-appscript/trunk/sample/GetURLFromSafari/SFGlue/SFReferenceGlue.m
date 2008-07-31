@@ -2,7 +2,7 @@
  * SFReferenceGlue.m
  *
  * /Applications/Safari.app
- * osaglue 0.3.2
+ * osaglue 0.4.0
  *
  */
 
@@ -11,7 +11,7 @@
 @implementation SFReference
 
 - (NSString *)description {
-	return [SFReferenceRenderer render: AS_aemReference];
+	return [SFReferenceRenderer formatObject: AS_aemReference appData: AS_appData];
 }
 
 /* Commands */
@@ -20,7 +20,7 @@
     return [SFActivateCommand commandWithAppData: AS_appData
                          eventClass: 'misc'
                             eventID: 'actv'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -36,7 +36,7 @@
     return [SFCloseCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'clos'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -52,7 +52,7 @@
     return [SFCountCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'cnte'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -68,7 +68,7 @@
     return [SFDeleteCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'delo'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -84,7 +84,7 @@
     return [SFDoJavaScriptCommand commandWithAppData: AS_appData
                          eventClass: 'sfri'
                             eventID: 'dojs'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -100,7 +100,7 @@
     return [SFDuplicateCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'clon'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -116,7 +116,7 @@
     return [SFEmailContentsCommand commandWithAppData: AS_appData
                          eventClass: 'sfri'
                             eventID: 'mlct'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -132,7 +132,7 @@
     return [SFExistsCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'doex'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -148,7 +148,7 @@
     return [SFGetCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'getd'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -164,7 +164,7 @@
     return [SFLaunchCommand commandWithAppData: AS_appData
                          eventClass: 'ascr'
                             eventID: 'noop'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -180,7 +180,7 @@
     return [SFMakeCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'crel'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -196,7 +196,7 @@
     return [SFMoveCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'move'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -212,7 +212,7 @@
     return [SFOpenCommand commandWithAppData: AS_appData
                          eventClass: 'aevt'
                             eventID: 'odoc'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -228,7 +228,7 @@
     return [SFOpenLocationCommand commandWithAppData: AS_appData
                          eventClass: 'GURL'
                             eventID: 'GURL'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -244,7 +244,7 @@
     return [SFPrintCommand commandWithAppData: AS_appData
                          eventClass: 'aevt'
                             eventID: 'pdoc'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -260,7 +260,7 @@
     return [SFQuitCommand commandWithAppData: AS_appData
                          eventClass: 'aevt'
                             eventID: 'quit'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -276,7 +276,7 @@
     return [SFReopenCommand commandWithAppData: AS_appData
                          eventClass: 'aevt'
                             eventID: 'rapp'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -292,7 +292,7 @@
     return [SFRunCommand commandWithAppData: AS_appData
                          eventClass: 'aevt'
                             eventID: 'oapp'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -308,7 +308,7 @@
     return [SFSaveCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'save'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -324,7 +324,7 @@
     return [SFSetCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'setd'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -340,7 +340,7 @@
     return [SFShowBookmarksCommand commandWithAppData: AS_appData
                          eventClass: 'sfri'
                             eventID: 'opbk'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 

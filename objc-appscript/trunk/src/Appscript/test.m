@@ -171,7 +171,9 @@ void disposeTestModule(void) {
 }
 
 - (NSString *)description {
-	return [NSString stringWithFormat: [self formatString], operand1, operand2];
+	return [NSString stringWithFormat: [self formatString], 
+									   [AEMObjectRenderer formatObject: operand1], 
+									   [AEMObjectRenderer formatObject: operand2]];
 }
 
 - (id)resolveWithObject:(id)object {
@@ -412,7 +414,9 @@ void disposeTestModule(void) {
 		otherOperands = [operands objectAtIndex: 1];
 	else
 		otherOperands = [operands subarrayWithRange: range];
-	result = [NSString stringWithFormat: [self formatString], operand1, otherOperands];
+	result = [NSString stringWithFormat: [self formatString], 
+										 [AEMObjectRenderer formatObject: operand1], 
+										 [AEMObjectRenderer formatObject: otherOperands]];
 	return result;
 }
 
@@ -471,7 +475,8 @@ void disposeTestModule(void) {
 @implementation AEMNOTTest
 
 - (NSString *)description {
-	return [NSString stringWithFormat: @"[%@ NOT]", [operands objectAtIndex: 0]];
+	return [NSString stringWithFormat: @"[%@ NOT]", 
+									   [AEMObjectRenderer formatObject: [operands objectAtIndex: 0]]];
 }
 
 - (NSAppleEventDescriptor *)operator {

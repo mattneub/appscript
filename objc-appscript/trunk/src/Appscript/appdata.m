@@ -39,7 +39,6 @@
 	return obj;
 }
 
-
 - (BOOL)connectWithError:(NSError **)error {
 	if (target) {
 		[target release];

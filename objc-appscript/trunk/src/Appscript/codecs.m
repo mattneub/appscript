@@ -34,6 +34,7 @@
 	AEMGetDefaultUnitTypeDefinitions(&unitTypeDefinitionByName, &unitTypeDefinitionByCode);
 	disableCache = NO;
 	disableUnicode = NO;
+	allowUInt64 = NO;
 	return self;
 }
 
@@ -53,11 +54,6 @@
 
 
 
-+ (NSString *)displayObject:(NSObject *)obj {
-	return AEMObjectToDisplayString(obj);
-}
-
-
 /**********************************************************************/
 // compatibility options
 
@@ -73,6 +69,10 @@
 - (void)packStringsAsType:(DescType)type {
 	disableUnicode = YES;
 	textType = type;
+}
+
+- (void)allowUInt64 {
+	allowUInt64 = YES;
 }
 
 /***********************************/
@@ -132,7 +132,12 @@
 					goto packAsSInt32;
 				else if (uint64 < pow(2, 63))
 					goto packAsSInt64;
-				// else pack as double for compatibility's sake
+				if (allowUInt64) {
+					result = [NSAppleEventDescriptor descriptorWithDescriptorType: 'ucom'
+																			bytes: &uint64
+																		   length: sizeof(uint64)];
+					break;
+				} // else pack as double for compatibility's sake
 			default: // f, d
 				packAsDouble:
 					float64 = [anObject doubleValue];

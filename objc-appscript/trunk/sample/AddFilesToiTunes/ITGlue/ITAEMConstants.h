@@ -2,7 +2,7 @@
  * ITAEMConstants.h
  * 
  * /Applications/iTunes.app
- * osaglue 0.3.2
+ * osaglue 0.4.0
  *
  */
 #import "Appscript/Appscript.h"
@@ -22,27 +22,36 @@ enum {
 	kITAlbumListing = 'kAlb',
 	kITAlbums = 'kSrL',
 	kITAll = 'kRpA',
+	kITApplicationResponses = 'rmte',
 	kITArtists = 'kSrR',
+	kITAsk = 'ask ',
 	kITAudioCD = 'kACD',
+	kITCase = 'case',
 	kITCdInsert = 'kCDi',
 	kITComposers = 'kSrC',
 	kITComputed = 'kRtC',
 	kITDetailed = 'lwdt',
 	kITDevice = 'kDev',
+	kITDiacriticals = 'diac',
 	kITDisplayed = 'kSrV',
+	kITExpansion = 'expa',
 	kITFastForwarding = 'kPSF',
 	kITFolder = 'kSpF',
+	kITHyphens = 'hyph',
 	kITIPod = 'kPod',
 	kITLarge = 'kVSL',
 	kITLibrary = 'kLib',
 	kITMedium = 'kVSM',
 	kITMovie = 'kVdM',
 	kITMusicVideo = 'kVdV',
+	kITNo = 'no  ',
 	kITNone = 'kSpN',
+	kITNumericStrings = 'nume',
 	kITOff = 'kRpO',
 	kITOne = 'kRp1',
 	kITPaused = 'kPSp',
 	kITPlaying = 'kPSP',
+	kITPunctuation = 'punc',
 	kITRadioTuner = 'kTun',
 	kITRewinding = 'kPSR',
 	kITSharedLibrary = 'kShd',
@@ -53,17 +62,51 @@ enum {
 	kITTrackListing = 'kTrk',
 	kITUnknown = 'kUnk',
 	kITUser = 'kRtU',
+	kITWhitespace = 'whit',
+	kITYes = 'yes ',
+	kITApril = 'apr ',
+	kITAugust = 'aug ',
+	kITDecember = 'dec ',
+	kITEPSPicture = 'EPS ',
 	kITEQ = 'pEQp',
 	kITEQEnabled = 'pEQ ',
 	kITEQPreset = 'cEQP',
 	kITEQWindow = 'cEQW',
+	kITFebruary = 'feb ',
+	kITFriday = 'fri ',
+	kITGIFPicture = 'GIFf',
+	kITJPEGPicture = 'JPEG',
+	kITJanuary = 'jan ',
+	kITJuly = 'jul ',
+	kITJune = 'jun ',
+	kITMarch = 'mar ',
+	kITMay = 'may ',
+	kITMonday = 'mon ',
+	kITNovember = 'nov ',
+	kITOctober = 'oct ',
+	kITPICTPicture = 'PICT',
+	kITRGB16Color = 'tr16',
+	kITRGB96Color = 'tr96',
+	kITRGBColor = 'cRGB',
+	kITSaturday = 'sat ',
+	kITSeptember = 'sep ',
+	kITSunday = 'sun ',
+	kITTIFFPicture = 'TIFF',
+	kITThursday = 'thu ',
+	kITTuesday = 'tue ',
 	kITURLTrack = 'cURT',
+	kITWednesday = 'wed ',
 	kITAddress = 'pURL',
 	kITAlbum = 'pAlb',
 	kITAlbumArtist = 'pAlA',
 	kITAlbumRating = 'pAlR',
 	kITAlbumRatingKind = 'pARk',
+	kITAlias = 'alis',
+	kITAnything = '****',
 	kITApplication = 'capp',
+	kITApplicationBundleID = 'bund',
+	kITApplicationSignature = 'sign',
+	kITApplicationURL = 'aprl',
 	kITArtist = 'pArt',
 	kITArtwork = 'cArt',
 	kITAudioCDPlaylist = 'cCDP',
@@ -78,23 +121,35 @@ enum {
 	kITBand7 = 'pEQ7',
 	kITBand8 = 'pEQ8',
 	kITBand9 = 'pEQ9',
+	kITBest = 'best',
 	kITBitRate = 'pBRt',
 	kITBookmark = 'pBkt',
 	kITBookmarkable = 'pBkm',
+	kITBoolean = 'bool',
+	kITBoundingRectangle = 'qdrt',
 	kITBounds = 'pbnd',
 	kITBpm = 'pBPM',
 	kITBrowserWindow = 'cBrW',
 	kITCapacity = 'capa',
 	kITCategory = 'pCat',
+	kITCentimeters = 'cmtr',
+	kITClassInfo = 'gcli',
+	kITClass_ = 'pcls',
 	kITCloseable = 'hclb',
 	kITCollapseable = 'pWSh',
 	kITCollapsed = 'wshd',
 	kITCollating = 'lwcl',
+	kITColorTable = 'clrt',
 	kITComment = 'pCmt',
 	kITCompilation = 'pAnt',
 	kITComposer = 'pCmp',
 	kITContainer = 'ctnr',
 	kITCopies = 'lwcp',
+	kITCubicCentimeters = 'ccmt',
+	kITCubicFeet = 'cfet',
+	kITCubicInches = 'cuin',
+	kITCubicMeters = 'cmet',
+	kITCubicYards = 'cyrd',
 	kITCurrentEQPreset = 'pEQP',
 	kITCurrentEncoder = 'pEnc',
 	kITCurrentPlaylist = 'pPla',
@@ -102,51 +157,101 @@ enum {
 	kITCurrentStreamURL = 'pStU',
 	kITCurrentTrack = 'pTrk',
 	kITCurrentVisual = 'pVis',
-	kITData = 'pPCT',
+	kITDashStyle = 'tdas',
+	kITData = 'rdat',
+	kITData_ = 'pPCT',
 	kITDatabaseID = 'pDID',
+	kITDate = 'ldt ',
 	kITDateAdded = 'pAdd',
+	kITDecimalStruct = 'decm',
+	kITDegreesCelsius = 'degc',
+	kITDegreesFahrenheit = 'degf',
+	kITDegreesKelvin = 'degk',
 	kITDescription_ = 'pDes',
 	kITDevicePlaylist = 'cDvP',
 	kITDeviceTrack = 'cDvT',
 	kITDiscCount = 'pDsC',
 	kITDiscNumber = 'pDsN',
+	kITDoubleInteger = 'comp',
 	kITDownloaded = 'pDlA',
 	kITDuration = 'pDur',
+	kITElementInfo = 'elin',
 	kITEnabled = 'enbl',
+	kITEncodedString = 'encs',
 	kITEncoder = 'cEnc',
 	kITEndingPage = 'lwlp',
+	kITEnumerator = 'enum',
 	kITEpisodeID = 'pEpD',
 	kITEpisodeNumber = 'pEpN',
 	kITErrorHandling = 'lweh',
+	kITEventInfo = 'evin',
+	kITExtendedFloat = 'exte',
 	kITFaxNumber = 'faxn',
+	kITFeet = 'feet',
+	kITFileRef = 'fsrf',
+	kITFileSpecification = 'fss ',
 	kITFileTrack = 'cFlT',
+	kITFileURL = 'furl',
 	kITFinish = 'pStp',
+	kITFixed = 'fixd',
 	kITFixedIndexing = 'pFix',
+	kITFixedPoint = 'fpnt',
+	kITFixedRectangle = 'frct',
+	kITFloat128bit = 'ldbl',
+	kITFloat_ = 'doub',
 	kITFolderPlaylist = 'cFoP',
 	kITFormat = 'pFmt',
 	kITFreeSpace = 'frsp',
 	kITFrontmost = 'pisf',
 	kITFullScreen = 'pFSc',
+	kITGallons = 'galn',
 	kITGapless = 'pGpl',
 	kITGenre = 'pGen',
+	kITGrams = 'gram',
+	kITGraphicText = 'cgtx',
 	kITGrouping = 'pGrp',
 	kITId_ = 'ID  ',
+	kITInches = 'inch',
 	kITIndex = 'pidx',
+	kITInteger = 'long',
+	kITInternationalText = 'itxt',
+	kITInternationalWritingCode = 'intl',
 	kITItem = 'cobj',
+	kITKernelProcessID = 'kpid',
+	kITKilograms = 'kgrm',
+	kITKilometers = 'kmtr',
 	kITKind = 'pKnd',
 	kITLibraryPlaylist = 'cLiP',
+	kITList = 'list',
+	kITLiters = 'litr',
 	kITLocation = 'pLoc',
+	kITLocationReference = 'insl',
 	kITLongDescription = 'pLds',
+	kITLongFixed = 'lfxd',
+	kITLongFixedPoint = 'lfpt',
+	kITLongFixedRectangle = 'lfrc',
+	kITLongPoint = 'lpnt',
+	kITLongRectangle = 'lrct',
 	kITLyrics = 'pLyr',
+	kITMachPort = 'port',
+	kITMachine = 'mach',
+	kITMachineLocation = 'mLoc',
+	kITMeters = 'metr',
+	kITMiles = 'mile',
 	kITMinimized = 'pMin',
+	kITMissingValue = 'msng',
 	kITModifiable = 'pMod',
 	kITModificationDate = 'asmo',
 	kITMute = 'pMut',
 	kITName = 'pnam',
+	kITNull = 'null',
+	kITOunces = 'ozs ',
 	kITPagesAcross = 'lwla',
 	kITPagesDown = 'lwld',
+	kITParameterInfo = 'pmin',
 	kITParent = 'pPlP',
 	kITPersistentID = 'pPIS',
+	kITPixelMapRecord = 'tpmm',
 	kITPlayedCount = 'pPlC',
 	kITPlayedDate = 'pPlD',
 	kITPlayerPosition = 'pPos',
@@ -154,20 +259,33 @@ enum {
 	kITPlaylist = 'cPly',
 	kITPlaylistWindow = 'cPlW',
 	kITPodcast = 'pTPc',
+	kITPoint = 'QDpt',
 	kITPosition = 'ppos',
+	kITPounds = 'lbs ',
 	kITPreamp = 'pEQA',
 	kITPrintSettings = 'pset',
 	kITPrinterFeatures = 'lwpf',
+	kITProcessSerialNumber = 'psn ',
+	kITProperty = 'prop',
+	kITPropertyInfo = 'pinf',
+	kITQuarts = 'qrts',
 	kITRadioTunerPlaylist = 'cRTP',
 	kITRating = 'pRte',
 	kITRatingKind = 'pRtk',
+	kITRawData = 'pRaw',
+	kITRecord = 'reco',
+	kITReference = 'obj ',
 	kITRequestedPrintTime = 'lwqt',
 	kITResizable = 'prsz',
+	kITRotation = 'trot',
 	kITSampleRate = 'pSRt',
+	kITScript = 'scpt',
 	kITSeasonNumber = 'pSeN',
 	kITSelection = 'sele',
 	kITShared = 'pShr',
 	kITSharedTrack = 'cShT',
+	kITShortFloat = 'sing',
+	kITShortInteger = 'shor',
 	kITShow = 'pShw',
 	kITShufflable = 'pSfa',
 	kITShuffle = 'pShf',
@@ -185,16 +303,32 @@ enum {
 	kITSoundVolume = 'pVol',
 	kITSource = 'cSrc',
 	kITSpecialKind = 'pSpK',
+	kITSquareFeet = 'sqft',
+	kITSquareKilometers = 'sqkm',
+	kITSquareMeters = 'sqrm',
+	kITSquareMiles = 'sqmi',
+	kITSquareYards = 'sqyd',
 	kITStart = 'pStr',
 	kITStartingPage = 'lwfp',
+	kITString = 'TEXT',
+	kITStyledClipboardText = 'styl',
+	kITStyledText = 'STXT',
+	kITSuiteInfo = 'suin',
 	kITTargetPrinter = 'trpr',
+	kITTextStyleInfo = 'tsty',
 	kITTime = 'pTim',
 	kITTrack = 'cTrk',
 	kITTrackCount = 'pTrC',
 	kITTrackNumber = 'pTrN',
+	kITTypeClass = 'type',
+	kITUnicodeText = 'utxt',
 	kITUnplayed = 'pUnp',
+	kITUnsignedInteger = 'magn',
 	kITUpdateTracks = 'pUTC',
 	kITUserPlaylist = 'cUsP',
+	kITUtf16Text = 'ut16',
+	kITUtf8Text = 'utf8',
+	kITVersion = 'vers',
 	kITVersion_ = 'vers',
 	kITVideoKind = 'pVdK',
 	kITView = 'pPly',
@@ -204,6 +338,8 @@ enum {
 	kITVisualsEnabled = 'pVsE',
 	kITVolumeAdjustment = 'pAdj',
 	kITWindow = 'cwin',
+	kITWritingCode = 'psct',
+	kITYards = 'yard',
 	kITYear = 'pYr ',
 	kITZoomable = 'iszm',
 	kITZoomed = 'pzum',
@@ -325,6 +461,7 @@ enum {
 	pITPrinterFeatures = 'lwpf',
 	pITRating = 'pRte',
 	pITRatingKind = 'pRtk',
+	pITRawData = 'pRaw',
 	pITRequestedPrintTime = 'lwqt',
 	pITResizable = 'prsz',
 	pITSampleRate = 'pSRt',
@@ -369,80 +506,80 @@ enum {
 
 enum {
 	ecITActivate = 'misc',
-	edITActivate = 'misc',
+	eiITActivate = 'actv',
 };
 
 enum {
 	ecITAdd = 'hook',
-	edITAdd = 'hook',
+	eiITAdd = 'Add ',
 	epITTo = 'insh',
 };
 
 enum {
 	ecITBackTrack = 'hook',
-	edITBackTrack = 'hook',
+	eiITBackTrack = 'Back',
 };
 
 enum {
 	ecITClose = 'core',
-	edITClose = 'core',
+	eiITClose = 'clos',
 };
 
 enum {
 	ecITConvert = 'hook',
-	edITConvert = 'hook',
+	eiITConvert = 'Conv',
 };
 
 enum {
 	ecITCount = 'core',
-	edITCount = 'core',
+	eiITCount = 'cnte',
 	epITEach = 'kocl',
 };
 
 enum {
 	ecITDelete = 'core',
-	edITDelete = 'core',
+	eiITDelete = 'delo',
 };
 
 enum {
 	ecITDownload = 'hook',
-	edITDownload = 'hook',
+	eiITDownload = 'Dwnl',
 };
 
 enum {
 	ecITDuplicate = 'core',
-	edITDuplicate = 'core',
+	eiITDuplicate = 'clon',
 // 	epITTo = 'insh',
 };
 
 enum {
 	ecITEject = 'hook',
-	edITEject = 'hook',
+	eiITEject = 'Ejct',
 };
 
 enum {
 	ecITExists = 'core',
-	edITExists = 'core',
+	eiITExists = 'doex',
 };
 
 enum {
 	ecITFastForward = 'hook',
-	edITFastForward = 'hook',
+	eiITFastForward = 'Fast',
 };
 
 enum {
 	ecITGet = 'core',
-	edITGet = 'core',
+	eiITGet = 'getd',
 };
 
 enum {
 	ecITLaunch = 'ascr',
-	edITLaunch = 'ascr',
+	eiITLaunch = 'noop',
 };
 
 enum {
 	ecITMake = 'core',
-	edITMake = 'core',
+	eiITMake = 'crel',
 	epITAt = 'insh',
 	epITNew_ = 'kocl',
 	epITWithProperties = 'prdt',
@@ -450,49 +587,49 @@ enum {
 
 enum {
 	ecITMove = 'core',
-	edITMove = 'core',
+	eiITMove = 'move',
 // 	epITTo = 'insh',
 };
 
 enum {
 	ecITNextTrack = 'hook',
-	edITNextTrack = 'hook',
+	eiITNextTrack = 'Next',
 };
 
 enum {
 	ecITOpen = 'aevt',
-	edITOpen = 'aevt',
+	eiITOpen = 'odoc',
 };
 
 enum {
 	ecITOpenLocation = 'GURL',
-	edITOpenLocation = 'GURL',
+	eiITOpenLocation = 'GURL',
 };
 
 enum {
 	ecITPause = 'hook',
-	edITPause = 'hook',
+	eiITPause = 'Paus',
 };
 
 enum {
 	ecITPlay = 'hook',
-	edITPlay = 'hook',
+	eiITPlay = 'Play',
 	epITOnce = 'POne',
 };
 
 enum {
 	ecITPlaypause = 'hook',
-	edITPlaypause = 'hook',
+	eiITPlaypause = 'PlPs',
 };
 
 enum {
 	ecITPreviousTrack = 'hook',
-	edITPreviousTrack = 'hook',
+	eiITPreviousTrack = 'Prev',
 };
 
 enum {
 	ecITPrint = 'aevt',
-	edITPrint = 'aevt',
+	eiITPrint = 'pdoc',
 	epITKind = 'pKnd',
 	epITPrintDialog = 'pdlg',
 	epITTheme = 'pThm',
@@ -501,74 +638,74 @@ enum {
 
 enum {
 	ecITQuit = 'aevt',
-	edITQuit = 'aevt',
+	eiITQuit = 'quit',
 };
 
 enum {
 	ecITRefresh = 'hook',
-	edITRefresh = 'hook',
+	eiITRefresh = 'Rfrs',
 };
 
 enum {
 	ecITReopen = 'aevt',
-	edITReopen = 'aevt',
+	eiITReopen = 'rapp',
 };
 
 enum {
 	ecITResume = 'hook',
-	edITResume = 'hook',
+	eiITResume = 'Resu',
 };
 
 enum {
 	ecITReveal = 'hook',
-	edITReveal = 'hook',
+	eiITReveal = 'Revl',
 };
 
 enum {
 	ecITRewind = 'hook',
-	edITRewind = 'hook',
+	eiITRewind = 'Rwnd',
 };
 
 enum {
 	ecITRun = 'aevt',
-	edITRun = 'aevt',
+	eiITRun = 'oapp',
 };
 
 enum {
 	ecITSearch = 'hook',
-	edITSearch = 'hook',
+	eiITSearch = 'Srch',
 	epITFor_ = 'pTrm',
 	epITOnly = 'pAre',
 };
 
 enum {
 	ecITSet = 'core',
-	edITSet = 'core',
+	eiITSet = 'setd',
 // 	epITTo = 'data',
 };
 
 enum {
 	ecITStop = 'hook',
-	edITStop = 'hook',
+	eiITStop = 'Stop',
 };
 
 enum {
 	ecITSubscribe = 'hook',
-	edITSubscribe = 'hook',
+	eiITSubscribe = 'pSub',
 };
 
 enum {
 	ecITUpdate = 'hook',
-	edITUpdate = 'hook',
+	eiITUpdate = 'Updt',
 };
 
 enum {
 	ecITUpdateAllPodcasts = 'hook',
-	edITUpdateAllPodcasts = 'hook',
+	eiITUpdateAllPodcasts = 'Updp',
 };
 
 enum {
 	ecITUpdatePodcast = 'hook',
-	edITUpdatePodcast = 'hook',
+	eiITUpdatePodcast = 'Upd1',
 };
 

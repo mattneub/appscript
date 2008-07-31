@@ -2,7 +2,7 @@
  * FNCommandGlue.h
  *
  * /System/Library/CoreServices/Finder.app
- * osaglue 0.3.1
+ * osaglue 0.4.0
  *
  */
 
@@ -10,72 +10,76 @@
 
 
 #import "Appscript/Appscript.h"
+#import "FNReferenceRendererGlue.h"
 
 
-@interface FNActivateCommand : ASCommand
+@interface FNCommand : ASCommand
+@end
+
+@interface FNActivateCommand : FNCommand
 @end
 
 
-@interface FNCleanUpCommand : ASCommand
+@interface FNCleanUpCommand : FNCommand
 - (FNCleanUpCommand *)by:(id)value;
 @end
 
 
-@interface FNCloseCommand : ASCommand
+@interface FNCloseCommand : FNCommand
 @end
 
 
-@interface FNCopy_Command : ASCommand
+@interface FNCopy_Command : FNCommand
 @end
 
 
-@interface FNCountCommand : ASCommand
+@interface FNCountCommand : FNCommand
 - (FNCountCommand *)each:(id)value;
 @end
 
 
-@interface FNDataSizeCommand : ASCommand
+@interface FNDataSizeCommand : FNCommand
 - (FNDataSizeCommand *)as:(id)value;
 @end
 
 
-@interface FNDeleteCommand : ASCommand
+@interface FNDeleteCommand : FNCommand
 @end
 
 
-@interface FNDuplicateCommand : ASCommand
+@interface FNDuplicateCommand : FNCommand
 - (FNDuplicateCommand *)replacing:(id)value;
 - (FNDuplicateCommand *)routingSuppressed:(id)value;
 - (FNDuplicateCommand *)to:(id)value;
 @end
 
 
-@interface FNEjectCommand : ASCommand
+@interface FNEjectCommand : FNCommand
 @end
 
 
-@interface FNEmptyCommand : ASCommand
+@interface FNEmptyCommand : FNCommand
 - (FNEmptyCommand *)security:(id)value;
 @end
 
 
-@interface FNEraseCommand : ASCommand
+@interface FNEraseCommand : FNCommand
 @end
 
 
-@interface FNExistsCommand : ASCommand
+@interface FNExistsCommand : FNCommand
 @end
 
 
-@interface FNGetCommand : ASCommand
+@interface FNGetCommand : FNCommand
 @end
 
 
-@interface FNLaunchCommand : ASCommand
+@interface FNLaunchCommand : FNCommand
 @end
 
 
-@interface FNMakeCommand : ASCommand
+@interface FNMakeCommand : FNCommand
 - (FNMakeCommand *)at:(id)value;
 - (FNMakeCommand *)new_:(id)value;
 - (FNMakeCommand *)to:(id)value;
@@ -83,7 +87,7 @@
 @end
 
 
-@interface FNMoveCommand : ASCommand
+@interface FNMoveCommand : FNCommand
 - (FNMoveCommand *)positionedAt:(id)value;
 - (FNMoveCommand *)replacing:(id)value;
 - (FNMoveCommand *)routingSuppressed:(id)value;
@@ -91,65 +95,65 @@
 @end
 
 
-@interface FNOpenCommand : ASCommand
+@interface FNOpenCommand : FNCommand
 - (FNOpenCommand *)using:(id)value;
 - (FNOpenCommand *)withProperties:(id)value;
 @end
 
 
-@interface FNOpenLocationCommand : ASCommand
+@interface FNOpenLocationCommand : FNCommand
 - (FNOpenLocationCommand *)window:(id)value;
 @end
 
 
-@interface FNPrintCommand : ASCommand
+@interface FNPrintCommand : FNCommand
 - (FNPrintCommand *)withProperties:(id)value;
 @end
 
 
-@interface FNQuitCommand : ASCommand
+@interface FNQuitCommand : FNCommand
 @end
 
 
-@interface FNReopenCommand : ASCommand
+@interface FNReopenCommand : FNCommand
 @end
 
 
-@interface FNRestartCommand : ASCommand
+@interface FNRestartCommand : FNCommand
 @end
 
 
-@interface FNRevealCommand : ASCommand
+@interface FNRevealCommand : FNCommand
 @end
 
 
-@interface FNRunCommand : ASCommand
+@interface FNRunCommand : FNCommand
 @end
 
 
-@interface FNSelectCommand : ASCommand
+@interface FNSelectCommand : FNCommand
 @end
 
 
-@interface FNSetCommand : ASCommand
+@interface FNSetCommand : FNCommand
 - (FNSetCommand *)to:(id)value;
 @end
 
 
-@interface FNShutDownCommand : ASCommand
+@interface FNShutDownCommand : FNCommand
 @end
 
 
-@interface FNSleepCommand : ASCommand
+@interface FNSleepCommand : FNCommand
 @end
 
 
-@interface FNSortCommand : ASCommand
+@interface FNSortCommand : FNCommand
 - (FNSortCommand *)by:(id)value;
 @end
 
 
-@interface FNUpdateCommand : ASCommand
+@interface FNUpdateCommand : FNCommand
 - (FNUpdateCommand *)necessity:(id)value;
 - (FNUpdateCommand *)registeringApplications:(id)value;
 @end

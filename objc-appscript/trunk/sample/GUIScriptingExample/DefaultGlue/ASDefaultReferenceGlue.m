@@ -2,7 +2,7 @@
  * ASDefaultReferenceGlue.m
  *
  * <default terminology>
- * osaglue 0.3.2
+ * osaglue 0.4.0
  *
  */
 
@@ -11,7 +11,7 @@
 @implementation ASDefaultReference
 
 - (NSString *)description {
-	return [ASDefaultReferenceRenderer render: AS_aemReference];
+	return [ASDefaultReferenceRenderer formatObject: AS_aemReference appData: AS_appData];
 }
 
 /* Commands */
@@ -20,7 +20,7 @@
     return [ASDefaultActivateCommand commandWithAppData: AS_appData
                          eventClass: 'misc'
                             eventID: 'actv'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -36,7 +36,7 @@
     return [ASDefaultGetCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'getd'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -52,7 +52,7 @@
     return [ASDefaultLaunchCommand commandWithAppData: AS_appData
                          eventClass: 'ascr'
                             eventID: 'noop'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -68,7 +68,7 @@
     return [ASDefaultOpenCommand commandWithAppData: AS_appData
                          eventClass: 'aevt'
                             eventID: 'odoc'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -84,7 +84,7 @@
     return [ASDefaultOpenLocationCommand commandWithAppData: AS_appData
                          eventClass: 'GURL'
                             eventID: 'GURL'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -100,7 +100,7 @@
     return [ASDefaultPrintCommand commandWithAppData: AS_appData
                          eventClass: 'aevt'
                             eventID: 'pdoc'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -116,7 +116,7 @@
     return [ASDefaultQuitCommand commandWithAppData: AS_appData
                          eventClass: 'aevt'
                             eventID: 'quit'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -132,7 +132,7 @@
     return [ASDefaultReopenCommand commandWithAppData: AS_appData
                          eventClass: 'aevt'
                             eventID: 'rapp'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -148,7 +148,7 @@
     return [ASDefaultRunCommand commandWithAppData: AS_appData
                          eventClass: 'aevt'
                             eventID: 'oapp'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -164,7 +164,7 @@
     return [ASDefaultSetCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'setd'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 

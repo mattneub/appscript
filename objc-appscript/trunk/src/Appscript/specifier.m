@@ -436,7 +436,7 @@ void disposeSpecifierModule(void) {
 @implementation AEMPropertySpecifier
 
 - (NSString *)description {
-	return [NSString stringWithFormat: @"[%@ property: '%@']", container, AEMDescTypeToDisplayString([key typeCodeValue])];
+	return [NSString stringWithFormat: @"[%@ property: '%@']", container, [AEMObjectRenderer formatOSType: [key typeCodeValue]]];
 }
 
 // reserved methods
@@ -460,7 +460,7 @@ void disposeSpecifierModule(void) {
 @implementation AEMUserPropertySpecifier
 
 - (NSString *)description {
-	return [NSString stringWithFormat: @"[%@ userProperty: '%@']", container, AEMObjectToDisplayString(key)];
+	return [NSString stringWithFormat: @"[%@ userProperty: '%@']", container, [AEMObjectRenderer formatObject: key]];
 }
 
 // reserved methods
@@ -504,7 +504,7 @@ void disposeSpecifierModule(void) {
 @implementation AEMElementByNameSpecifier
 
 - (NSString *)description {
-	return [NSString stringWithFormat: @"[%@ byName: %@]", container, AEMObjectToDisplayString(key)];
+	return [NSString stringWithFormat: @"[%@ byName: %@]", container, [AEMObjectRenderer formatObject: key]];
 }
 
 // reserved methods
@@ -529,7 +529,7 @@ void disposeSpecifierModule(void) {
 @implementation AEMElementByIndexSpecifier
 
 - (NSString *)description {
-	return [NSString stringWithFormat: @"[%@ byIndex: %@]", container, AEMObjectToDisplayString(key)];
+	return [NSString stringWithFormat: @"[%@ byIndex: %@]", container, [AEMObjectRenderer formatObject: key]];
 }
 
 // reserved methods
@@ -554,7 +554,7 @@ void disposeSpecifierModule(void) {
 @implementation AEMElementByIDSpecifier
 
 - (NSString *)description {
-	return [NSString stringWithFormat: @"[%@ byID: %@]", container, AEMObjectToDisplayString(key)];
+	return [NSString stringWithFormat: @"[%@ byID: %@]", container, [AEMObjectRenderer formatObject: key]];
 }
 
 // reserved methods
@@ -633,10 +633,10 @@ void disposeSpecifierModule(void) {
 	switch ([key enumCodeValue]) {
 		case kAEPrevious:
 			return [NSString stringWithFormat: @"[%@ previous: '%@']", container,
-					AEMDescTypeToDisplayString(wantCode)];
+					[AEMObjectRenderer formatOSType: wantCode]];
 		case kAENext:
 			return [NSString stringWithFormat: @"[%@ next: '%@']", container,
-					AEMDescTypeToDisplayString(wantCode)];
+					[AEMObjectRenderer formatOSType: wantCode]];
 		default:
 			return nil;
 	}
@@ -810,8 +810,8 @@ void disposeSpecifierModule(void) {
 - (NSString *)description {
 	return [NSString stringWithFormat: @"[%@ byRange: %@ to: %@]",
 									   container,
-									   AEMObjectToDisplayString(startReference),
-									   AEMObjectToDisplayString(stopReference)];
+									   [AEMObjectRenderer formatObject: startReference],
+									   [AEMObjectRenderer formatObject: stopReference]];
 }
 
 // reserved methods
@@ -952,7 +952,7 @@ void disposeSpecifierModule(void) {
 
 - (NSString *)description {
 	return [NSString stringWithFormat: @"[%@ elements: '%@']", container, 
-			AEMDescTypeToDisplayString(wantCode)];
+			[AEMObjectRenderer formatOSType: wantCode]];
 }
 
 - (NSAppleEventDescriptor *)packWithCodecsNoCache:(id)codecs {
@@ -1105,7 +1105,7 @@ void disposeSpecifierModule(void) {
 }
 
 - (NSString *)description {
-	return [NSString stringWithFormat: @"AEMRoot(%@)", AEMObjectToDisplayString(rootObject)];
+	return [NSString stringWithFormat: @"AEMRoot(%@)", [AEMObjectRenderer formatObject: rootObject]];
 }
 
 - (id)resolveWithObject:(id)object {

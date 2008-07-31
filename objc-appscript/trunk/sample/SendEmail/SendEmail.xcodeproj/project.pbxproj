@@ -7,12 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4F0FB1270E39FFFA008AA167 /* Appscript.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F0FB1260E39FFFA008AA167 /* Appscript.framework */; };
 		4F687BED0D8C147200B7D436 /* MLApplicationGlue.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F687BE30D8C147200B7D436 /* MLApplicationGlue.m */; };
 		4F687BEE0D8C147200B7D436 /* MLCommandGlue.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F687BE50D8C147200B7D436 /* MLCommandGlue.m */; };
 		4F687BEF0D8C147200B7D436 /* MLConstantGlue.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F687BE70D8C147200B7D436 /* MLConstantGlue.m */; };
 		4F687BF00D8C147200B7D436 /* MLReferenceGlue.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F687BEA0D8C147200B7D436 /* MLReferenceGlue.m */; };
 		4F687BF10D8C147200B7D436 /* MLReferenceRendererGlue.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F687BEC0D8C147200B7D436 /* MLReferenceRendererGlue.m */; };
-		4F687BF60D8C170C00B7D436 /* Appscript.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F687BF50D8C170C00B7D436 /* Appscript.framework */; };
 		8DD76F9A0486AA7600D96B5E /* SendEmail.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FB7796FE84155DC02AAC07 /* SendEmail.m */; settings = {ATTRIBUTES = (); }; };
 		8DD76F9C0486AA7600D96B5E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08FB779EFE84155DC02AAC07 /* Foundation.framework */; };
 		8DD76F9F0486AA7600D96B5E /* SendEmail.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = C6859EA3029092ED04C91782 /* SendEmail.1 */; };
@@ -35,6 +35,7 @@
 		08FB7796FE84155DC02AAC07 /* SendEmail.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SendEmail.m; sourceTree = "<group>"; };
 		08FB779EFE84155DC02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		32A70AAB03705E1F00C91783 /* SendEmail_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SendEmail_Prefix.pch; sourceTree = "<group>"; };
+		4F0FB1260E39FFFA008AA167 /* Appscript.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Appscript.framework; path = ../../../../../Library/Frameworks/Appscript.framework; sourceTree = SOURCE_ROOT; };
 		4F687BE10D8C147200B7D436 /* MLAEMConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLAEMConstants.h; sourceTree = "<group>"; };
 		4F687BE20D8C147200B7D436 /* MLApplicationGlue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLApplicationGlue.h; sourceTree = "<group>"; };
 		4F687BE30D8C147200B7D436 /* MLApplicationGlue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLApplicationGlue.m; sourceTree = "<group>"; };
@@ -47,7 +48,6 @@
 		4F687BEA0D8C147200B7D436 /* MLReferenceGlue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLReferenceGlue.m; sourceTree = "<group>"; };
 		4F687BEB0D8C147200B7D436 /* MLReferenceRendererGlue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLReferenceRendererGlue.h; sourceTree = "<group>"; };
 		4F687BEC0D8C147200B7D436 /* MLReferenceRendererGlue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLReferenceRendererGlue.m; sourceTree = "<group>"; };
-		4F687BF50D8C170C00B7D436 /* Appscript.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Appscript.framework; path = ../Library/Frameworks/Appscript.framework; sourceTree = SOURCE_ROOT; };
 		8DD76FA10486AA7600D96B5E /* SendEmail */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = SendEmail; sourceTree = BUILT_PRODUCTS_DIR; };
 		C6859EA3029092ED04C91782 /* SendEmail.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = SendEmail.1; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -58,7 +58,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8DD76F9C0486AA7600D96B5E /* Foundation.framework in Frameworks */,
-				4F687BF60D8C170C00B7D436 /* Appscript.framework in Frameworks */,
+				4F0FB1270E39FFFA008AA167 /* Appscript.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -89,7 +89,7 @@
 		08FB779DFE84155DC02AAC07 /* External Frameworks and Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				4F687BF50D8C170C00B7D436 /* Appscript.framework */,
+				4F0FB1260E39FFFA008AA167 /* Appscript.framework */,
 				08FB779EFE84155DC02AAC07 /* Foundation.framework */,
 			);
 			name = "External Frameworks and Libraries";
@@ -192,6 +192,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../Library/Frameworks\"",
+					"\"$(SRCROOT)/../../../../../Library/Frameworks\"",
 				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
@@ -212,6 +213,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../Library/Frameworks\"",
+					"\"$(SRCROOT)/../../../../../Library/Frameworks\"",
 				);
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;

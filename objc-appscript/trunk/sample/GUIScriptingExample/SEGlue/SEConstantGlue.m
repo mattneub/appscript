@@ -2,7 +2,7 @@
  * SEConstantGlue.m
  *
  * /System/Library/CoreServices/System Events.app
- * osaglue 0.3.2
+ * osaglue 0.4.0
  *
  */
 
@@ -14,10 +14,14 @@
     switch (code_) {
         case 'dfph': return [self ApplePhotoFormat];
         case 'dfas': return [self AppleShareFormat];
+        case 'apr ': return [self April];
+        case 'aug ': return [self August];
         case 'dhao': return [self CDAndDVDPreferencesObject];
         case 'clsc': return [self Classic];
         case 'fldc': return [self ClassicDomain];
         case 'domc': return [self ClassicDomainObject];
+        case 'dec ': return [self December];
+        case 'EPS ': return [self EPSPicture];
         case 'F1ky': return [self F1];
         case 'F10k': return [self F10];
         case 'F11k': return [self F11];
@@ -31,25 +35,48 @@
         case 'F7ky': return [self F7];
         case 'F8ky': return [self F8];
         case 'F9ky': return [self F9];
+        case 'feb ': return [self February];
         case 'fasf': return [self FolderActionScriptsFolder];
+        case 'fri ': return [self Friday];
+        case 'GIFf': return [self GIFPicture];
         case 'dfhs': return [self HighSierraFormat];
         case 'df96': return [self ISO9660Format];
+        case 'JPEG': return [self JPEGPicture];
+        case 'jan ': return [self January];
+        case 'jul ': return [self July];
+        case 'jun ': return [self June];
         case 'maca': return [self MACAddress];
         case 'dfms': return [self MSDOSFormat];
         case 'dfh+': return [self MacOSExtendedFormat];
         case 'dfhf': return [self MacOSFormat];
+        case 'mar ': return [self March];
+        case 'may ': return [self May];
+        case 'mon ': return [self Monday];
         case 'dfnf': return [self NFSFormat];
+        case 'nov ': return [self November];
+        case 'oct ': return [self October];
+        case 'PICT': return [self PICTPicture];
         case 'posx': return [self POSIXPath];
         case 'dfpr': return [self ProDOSFormat];
         case 'dfqt': return [self QuickTakeFormat];
         case 'qtfd': return [self QuickTimeData];
         case 'qtff': return [self QuickTimeFile];
+        case 'tr16': return [self RGB16Color];
+        case 'tr96': return [self RGB96Color];
+        case 'cRGB': return [self RGBColor];
+        case 'sat ': return [self Saturday];
+        case 'sep ': return [self September];
+        case 'sun ': return [self Sunday];
+        case 'TIFF': return [self TIFFPicture];
+        case 'thu ': return [self Thursday];
+        case 'tue ': return [self Tuesday];
         case 'dfud': return [self UDFFormat];
         case 'dfuf': return [self UFSFormat];
         case 'uiel': return [self UIElement];
         case 'uien': return [self UIElementsEnabled];
         case 'url ': return [self URL];
         case 'dfwd': return [self WebDAVFormat];
+        case 'wed ': return [self Wednesday];
         case 'xmla': return [self XMLAttribute];
         case 'xmld': return [self XMLData];
         case 'xmle': return [self XMLElement];
@@ -65,14 +92,19 @@
         case 'epaw': return [self allWindowsShortcut];
         case 'dani': return [self animate];
         case 'anno': return [self annotation];
+        case '****': return [self anything];
         case 'appe': return [self appearance];
         case 'aprp': return [self appearancePreferences];
         case 'apro': return [self appearancePreferencesObject];
         case 'amnu': return [self appleMenuFolder];
         case 'capp': return [self application];
+        case 'bund': return [self applicationBundleID];
         case 'appf': return [self applicationFile];
         case 'pcap': return [self applicationProcess];
+        case 'rmte': return [self applicationResponses];
+        case 'sign': return [self applicationSignature];
         case 'asup': return [self applicationSupportFolder];
+        case 'aprl': return [self applicationURL];
         case 'appw': return [self applicationWindows];
         case 'eppw': return [self applicationWindowsShortcut];
         case 'apps': return [self applicationsFolder];
@@ -98,12 +130,15 @@
         case 'auto': return [self automatic];
         case 'aulg': return [self automaticLogin];
         case 'bkgo': return [self backgroundOnly];
+        case 'best': return [self best];
         case 'dhbc': return [self blankCD];
         case 'dhbd': return [self blankDVD];
         case 'blue': return [self blue];
+        case 'bool': return [self boolean];
         case 'bott': return [self bottom];
         case 'epbl': return [self bottomLeftScreenCorner];
         case 'epbr': return [self bottomRightScreenCorner];
+        case 'qdrt': return [self boundingRectangle];
         case 'pbnd': return [self bounds];
         case 'broW': return [self browser];
         case 'bnid': return [self bundleIdentifier];
@@ -111,13 +146,17 @@
         case 'busy': return [self busyStatus];
         case 'butT': return [self button];
         case 'capa': return [self capacity];
+        case 'case': return [self case];
+        case 'cmtr': return [self centimeters];
         case 'cinT': return [self changeInterval];
         case 'cha ': return [self character];
         case 'chbx': return [self checkbox];
+        case 'gcli': return [self classInfo];
         case 'pcls': return [self class_];
         case 'hclb': return [self closeable];
         case 'lwcl': return [self collating];
         case 'colr': return [self color];
+        case 'clrt': return [self colorTable];
         case 'colW': return [self colorWell];
         case 'ccol': return [self column];
         case 'comB': return [self comboBox];
@@ -137,6 +176,11 @@
         case 'ascd': return [self creationDate];
         case 'mdcr': return [self creationTime];
         case 'fcrt': return [self creatorType];
+        case 'ccmt': return [self cubicCentimeters];
+        case 'cfet': return [self cubicFeet];
+        case 'cuin': return [self cubicInches];
+        case 'cmet': return [self cubicMeters];
+        case 'cyrd': return [self cubicYards];
         case 'cust': return [self current];
         case 'cnfg': return [self currentConfiguration];
         case 'curd': return [self currentDesktop];
@@ -144,18 +188,26 @@
         case 'curu': return [self currentUser];
         case 'dhca': return [self customApplication];
         case 'dhcs': return [self customScript];
+        case 'tdas': return [self dashStyle];
         case 'dash': return [self dashboard];
         case 'epdb': return [self dashboardShortcut];
+        case 'rdat': return [self data];
         case 'tdfr': return [self dataFormat];
         case 'ddra': return [self dataRate];
         case 'dsiz': return [self dataSize];
+        case 'ldt ': return [self date];
+        case 'decm': return [self decimalStruct];
         case 'asda': return [self defaultApplication];
+        case 'degc': return [self degreesCelsius];
+        case 'degf': return [self degreesFahrenheit];
+        case 'degk': return [self degreesKelvin];
         case 'desc': return [self description_];
         case 'dafi': return [self deskAccessoryFile];
         case 'pcda': return [self deskAccessoryProcess];
         case 'dskp': return [self desktop];
         case 'dtp$': return [self desktopPicturesFolder];
         case 'lwdt': return [self detailed];
+        case 'diac': return [self diacriticals];
         case 'pdim': return [self dimensions];
         case 'disc': return [self disableScreenSaver];
         case 'cdis': return [self disk];
@@ -169,25 +221,40 @@
         case 'docs': return [self documentsFolder];
         case 'doma': return [self domain];
         case 'mndc': return [self doubleClickMinimizes];
+        case 'comp': return [self doubleInteger];
         case 'doub': return [self double_];
         case 'down': return [self downloadsFolder];
         case 'draA': return [self drawer];
         case 'dupl': return [self duplex];
         case 'durn': return [self duration];
         case 'isej': return [self ejectable];
+        case 'elin': return [self elementInfo];
         case 'enaB': return [self enabled];
+        case 'encs': return [self encodedString];
         case 'lwlp': return [self endingPage];
         case 'ects': return [self entireContents];
+        case 'enum': return [self enumerator];
         case 'lweh': return [self errorHandling];
+        case 'evin': return [self eventInfo];
+        case 'expa': return [self expansion];
         case 'epas': return [self exposePreferences];
         case 'epao': return [self exposePreferencesObject];
+        case 'exte': return [self extendedFloat];
         case 'extz': return [self extensionsFolder];
         case 'favs': return [self favoritesFolder];
         case 'faxn': return [self faxNumber];
+        case 'feet': return [self feet];
         case 'file': return [self file];
         case 'atfn': return [self fileName];
         case 'cpkg': return [self filePackage];
+        case 'fsrf': return [self fileRef];
+        case 'fss ': return [self fileSpecification];
         case 'asty': return [self fileType];
+        case 'furl': return [self fileURL];
+        case 'fixd': return [self fixed];
+        case 'fpnt': return [self fixedPoint];
+        case 'frct': return [self fixedRectangle];
+        case 'ldbl': return [self float128bit];
         case 'isfl': return [self floating];
         case 'focu': return [self focused];
         case 'cfol': return [self folder];
@@ -203,8 +270,11 @@
         case 'anot': return [self fullText];
         case 'epsk': return [self functionKey];
         case 'epsy': return [self functionKeyModifiers];
+        case 'galn': return [self gallons];
         case 'geni': return [self genie];
         case 'gold': return [self gold];
+        case 'gram': return [self grams];
+        case 'cgtx': return [self graphicText];
         case 'grft': return [self graphite];
         case 'gren': return [self green];
         case 'sgrp': return [self group];
@@ -218,21 +288,29 @@
         case 'home': return [self homeDirectory];
         case 'cusr': return [self homeFolder];
         case 'href': return [self href];
+        case 'hyph': return [self hyphens];
         case 'ID  ': return [self id_];
         case 'igpr': return [self ignorePrivileges];
         case 'dhig': return [self ignore_];
         case 'imaA': return [self image];
+        case 'inch': return [self inches];
         case 'incr': return [self incrementor];
         case 'pidx': return [self index];
         case 'dhat': return [self insertionAction];
         case 'dhip': return [self insertionPreference];
+        case 'long': return [self integer];
         case 'intf': return [self interface];
+        case 'itxt': return [self internationalText];
+        case 'intl': return [self internationalWritingCode];
         case 'cobj': return [self item];
         case 'fget': return [self itemsAdded];
         case 'flos': return [self itemsRemoved];
         case 'tohr': return [self jumpToHere];
         case 'nxpg': return [self jumpToNextPage];
+        case 'kpid': return [self kernelProcessID];
         case 'spky': return [self keyModifiers];
+        case 'kgrm': return [self kilograms];
+        case 'kmtr': return [self kilometers];
         case 'kind': return [self kind];
         case 'laun': return [self launcherItemsFolder];
         case 'left': return [self left];
@@ -243,15 +321,25 @@
         case 'dlib': return [self libraryFolder];
         case 'lite': return [self light];
         case 'list': return [self list];
+        case 'litr': return [self liters];
         case 'fldl': return [self localDomain];
         case 'doml': return [self localDomainObject];
         case 'isrv': return [self localVolume];
         case 'loca': return [self location];
         case 'dplo': return [self location];
+        case 'insl': return [self locationReference];
         case 'aclk': return [self logOutWhenInactive];
         case 'acto': return [self logOutWhenInactiveInterval];
         case 'logi': return [self loginItem];
+        case 'lfxd': return [self longFixed];
+        case 'lfpt': return [self longFixedPoint];
+        case 'lfrc': return [self longFixedRectangle];
+        case 'lpnt': return [self longPoint];
+        case 'lrct': return [self longRectangle];
         case 'loop': return [self looping];
+        case 'port': return [self machPort];
+        case 'mach': return [self machine];
+        case 'mLoc': return [self machineLocation];
         case 'dmag': return [self magnification];
         case 'dmsz': return [self magnificationSize];
         case 'maxV': return [self maximumValue];
@@ -261,10 +349,13 @@
         case 'mbri': return [self menuBarItem];
         case 'menB': return [self menuButton];
         case 'menI': return [self menuItem];
+        case 'metr': return [self meters];
+        case 'mile': return [self miles];
         case 'ismn': return [self miniaturizable];
         case 'pmnd': return [self miniaturized];
         case 'deff': return [self minimizeEffect];
         case 'minW': return [self minimumValue];
+        case 'msng': return [self missingValue];
         case 'pmod': return [self modal];
         case 'asmo': return [self modificationDate];
         case 'mdtm': return [self modificationTime];
@@ -288,18 +379,22 @@
         case 'no  ': return [self no];
         case 'none': return [self none];
         case 'norm': return [self normal];
+        case 'null': return [self null];
         case 'spnm': return [self numbersKeyModifiers];
+        case 'nume': return [self numericStrings];
         case 'dhap': return [self openApplication];
         case 'optm': return [self option];
         case 'eOpt': return [self option];
         case 'Kopt': return [self optionDown];
         case 'orng': return [self orange];
         case 'orie': return [self orientation];
+        case 'ozs ': return [self ounces];
         case 'outl': return [self outline];
         case 'pkgf': return [self packageFolder];
         case 'lwla': return [self pagesAcross];
         case 'lwld': return [self pagesDown];
         case 'cpar': return [self paragraph];
+        case 'pmin': return [self parameterInfo];
         case 'pusd': return [self partitionSpaceUsed];
         case 'ppth': return [self path];
         case 'phys': return [self physicalSize];
@@ -308,8 +403,11 @@
         case 'picp': return [self picturePath];
         case 'chnG': return [self pictureRotation];
         case 'pdoc': return [self picturesFolder];
+        case 'tpmm': return [self pixelMapRecord];
+        case 'QDpt': return [self point];
         case 'popB': return [self popUpButton];
         case 'posn': return [self position];
+        case 'lbs ': return [self pounds];
         case 'pref': return [self preferencesFolder];
         case 'prfr': return [self preferredRate];
         case 'prfv': return [self preferredVolume];
@@ -319,13 +417,18 @@
         case 'pvwt': return [self previewTime];
         case 'pset': return [self printSettings];
         case 'prcs': return [self process];
+        case 'psn ': return [self processSerialNumber];
         case 'ver2': return [self productVersion];
         case 'proI': return [self progressIndicator];
         case 'pALL': return [self properties];
+        case 'prop': return [self property];
+        case 'pinf': return [self propertyInfo];
         case 'plif': return [self propertyListFile];
         case 'plii': return [self propertyListItem];
         case 'pubb': return [self publicFolder];
+        case 'punc': return [self punctuation];
         case 'prpl': return [self purple];
+        case 'qrts': return [self quarts];
         case 'qdel': return [self quitDelay];
         case 'radB': return [self radioButton];
         case 'rgrp': return [self radioGroup];
@@ -333,7 +436,9 @@
         case 'rapl': return [self recentApplicationsLimit];
         case 'rdcl': return [self recentDocumentsLimit];
         case 'rsvl': return [self recentServersLimit];
+        case 'reco': return [self record];
         case 'red ': return [self red];
+        case 'obj ': return [self reference];
         case 'reli': return [self relevanceIndicator];
         case 'lwqt': return [self requestedPrintTime];
         case 'pwul': return [self requirePasswordToUnlock];
@@ -344,6 +449,7 @@
         case 'Ropt': return [self rightOption];
         case 'Rsht': return [self rightShift];
         case 'role': return [self role];
+        case 'trot': return [self rotation];
         case 'crow': return [self row];
         case 'dhrs': return [self runAScript];
         case 'scal': return [self scale];
@@ -370,6 +476,8 @@
         case 'shtm': return [self shift];
         case 'eSft': return [self shift];
         case 'Ksft': return [self shiftDown];
+        case 'sing': return [self shortFloat];
+        case 'shor': return [self shortInteger];
         case 'cfbn': return [self shortName];
         case 'assv': return [self shortVersion];
         case 'epst': return [self shortcut];
@@ -394,6 +502,11 @@
         case 'sped': return [self speed];
         case 'splr': return [self splitter];
         case 'splg': return [self splitterGroup];
+        case 'sqft': return [self squareFeet];
+        case 'sqkm': return [self squareKilometers];
+        case 'sqrm': return [self squareMeters];
+        case 'sqmi': return [self squareMiles];
+        case 'sqyd': return [self squareYards];
         case 'lwst': return [self standard];
         case 'stnd': return [self standard];
         case 'star': return [self startScreenSaver];
@@ -405,8 +518,12 @@
         case 'sttx': return [self staticText];
         case 'pspd': return [self stationery];
         case 'isss': return [self storedStream];
+        case 'TEXT': return [self string];
         case 'strg': return [self strong];
+        case 'styl': return [self styledClipboardText];
+        case 'STXT': return [self styledText];
         case 'sbrl': return [self subrole];
+        case 'suin': return [self suiteInfo];
         case 'flds': return [self systemDomain];
         case 'doms': return [self systemDomainObject];
         case 'macs': return [self systemFolder];
@@ -417,6 +534,7 @@
         case 'ctxt': return [self text];
         case 'txta': return [self textArea];
         case 'txtf': return [self textField];
+        case 'tsty': return [self textStyleInfo];
         case 'tmsc': return [self timeScale];
         case 'titl': return [self title];
         case 'ptit': return [self titled];
@@ -432,11 +550,15 @@
         case 'ptyp': return [self type];
         case 'type': return [self typeClass];
         case 'utid': return [self typeIdentifier];
+        case 'utxt': return [self unicodeText];
         case 'idux': return [self unixId];
         case 'df$$': return [self unknownFormat];
+        case 'magn': return [self unsignedInteger];
         case 'uacc': return [self user];
         case 'fldu': return [self userDomain];
         case 'domu': return [self userDomainObject];
+        case 'ut16': return [self utf16Text];
+        case 'utf8': return [self utf8Text];
         case 'uti$': return [self utilitiesFolder];
         case 'valL': return [self value];
         case 'vali': return [self valueIndicator];
@@ -446,12 +568,15 @@
         case 'pvis': return [self visible];
         case 'visu': return [self visualCharacteristic];
         case 'volu': return [self volume];
+        case 'whit': return [self whitespace];
         case 'cwin': return [self window];
         case 'fclo': return [self windowClosed];
         case 'fsiz': return [self windowMoved];
         case 'fopn': return [self windowOpened];
         case 'cwor': return [self word];
         case 'flow': return [self workflowsFolder];
+        case 'psct': return [self writingCode];
+        case 'yard': return [self yards];
         case 'yes ': return [self yes];
         case 'zone': return [self zone];
         case 'iszm': return [self zoomable];
@@ -652,6 +777,13 @@
     return constantObj;
 }
 
++ (SEConstant *)applicationResponses {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"applicationResponses" type: typeEnumerated code: 'rmte'];
+    return constantObj;
+}
+
 + (SEConstant *)applicationWindows {
     static SEConstant *constantObj;
     if (!constantObj)
@@ -698,6 +830,13 @@
     static SEConstant *constantObj;
     if (!constantObj)
         constantObj = [SEConstant constantWithName: @"bottom" type: typeEnumerated code: 'bott'];
+    return constantObj;
+}
+
++ (SEConstant *)case {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"case" type: typeEnumerated code: 'case'];
     return constantObj;
 }
 
@@ -750,6 +889,13 @@
     return constantObj;
 }
 
++ (SEConstant *)diacriticals {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"diacriticals" type: typeEnumerated code: 'diac'];
+    return constantObj;
+}
+
 + (SEConstant *)disableScreenSaver {
     static SEConstant *constantObj;
     if (!constantObj)
@@ -761,6 +907,13 @@
     static SEConstant *constantObj;
     if (!constantObj)
         constantObj = [SEConstant constantWithName: @"double_" type: typeEnumerated code: 'doub'];
+    return constantObj;
+}
+
++ (SEConstant *)expansion {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"expansion" type: typeEnumerated code: 'expa'];
     return constantObj;
 }
 
@@ -796,6 +949,13 @@
     static SEConstant *constantObj;
     if (!constantObj)
         constantObj = [SEConstant constantWithName: @"half" type: typeEnumerated code: 'half'];
+    return constantObj;
+}
+
++ (SEConstant *)hyphens {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"hyphens" type: typeEnumerated code: 'hyph'];
     return constantObj;
 }
 
@@ -904,6 +1064,13 @@
     return constantObj;
 }
 
++ (SEConstant *)numericStrings {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"numericStrings" type: typeEnumerated code: 'nume'];
+    return constantObj;
+}
+
 + (SEConstant *)openApplication {
     static SEConstant *constantObj;
     if (!constantObj)
@@ -929,6 +1096,13 @@
     static SEConstant *constantObj;
     if (!constantObj)
         constantObj = [SEConstant constantWithName: @"orange" type: typeEnumerated code: 'orng'];
+    return constantObj;
+}
+
++ (SEConstant *)punctuation {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"punctuation" type: typeEnumerated code: 'punc'];
     return constantObj;
 }
 
@@ -1107,6 +1281,13 @@
     return constantObj;
 }
 
++ (SEConstant *)whitespace {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"whitespace" type: typeEnumerated code: 'whit'];
+    return constantObj;
+}
+
 + (SEConstant *)windowClosed {
     static SEConstant *constantObj;
     if (!constantObj)
@@ -1137,6 +1318,20 @@
 
 
 /* Types and properties */
+
++ (SEConstant *)April {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"April" type: typeType code: 'apr '];
+    return constantObj;
+}
+
++ (SEConstant *)August {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"August" type: typeType code: 'aug '];
+    return constantObj;
+}
 
 + (SEConstant *)CDAndDVDPreferences {
     static SEConstant *constantObj;
@@ -1173,6 +1368,27 @@
     return constantObj;
 }
 
++ (SEConstant *)December {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"December" type: typeType code: 'dec '];
+    return constantObj;
+}
+
++ (SEConstant *)EPSPicture {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"EPSPicture" type: typeType code: 'EPS '];
+    return constantObj;
+}
+
++ (SEConstant *)February {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"February" type: typeType code: 'feb '];
+    return constantObj;
+}
+
 + (SEConstant *)FolderActionScriptsFolder {
     static SEConstant *constantObj;
     if (!constantObj)
@@ -1180,10 +1396,94 @@
     return constantObj;
 }
 
++ (SEConstant *)Friday {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"Friday" type: typeType code: 'fri '];
+    return constantObj;
+}
+
++ (SEConstant *)GIFPicture {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"GIFPicture" type: typeType code: 'GIFf'];
+    return constantObj;
+}
+
++ (SEConstant *)JPEGPicture {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"JPEGPicture" type: typeType code: 'JPEG'];
+    return constantObj;
+}
+
++ (SEConstant *)January {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"January" type: typeType code: 'jan '];
+    return constantObj;
+}
+
++ (SEConstant *)July {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"July" type: typeType code: 'jul '];
+    return constantObj;
+}
+
++ (SEConstant *)June {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"June" type: typeType code: 'jun '];
+    return constantObj;
+}
+
 + (SEConstant *)MACAddress {
     static SEConstant *constantObj;
     if (!constantObj)
         constantObj = [SEConstant constantWithName: @"MACAddress" type: typeType code: 'maca'];
+    return constantObj;
+}
+
++ (SEConstant *)March {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"March" type: typeType code: 'mar '];
+    return constantObj;
+}
+
++ (SEConstant *)May {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"May" type: typeType code: 'may '];
+    return constantObj;
+}
+
++ (SEConstant *)Monday {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"Monday" type: typeType code: 'mon '];
+    return constantObj;
+}
+
++ (SEConstant *)November {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"November" type: typeType code: 'nov '];
+    return constantObj;
+}
+
++ (SEConstant *)October {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"October" type: typeType code: 'oct '];
+    return constantObj;
+}
+
++ (SEConstant *)PICTPicture {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"PICTPicture" type: typeType code: 'PICT'];
     return constantObj;
 }
 
@@ -1208,6 +1508,69 @@
     return constantObj;
 }
 
++ (SEConstant *)RGB16Color {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"RGB16Color" type: typeType code: 'tr16'];
+    return constantObj;
+}
+
++ (SEConstant *)RGB96Color {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"RGB96Color" type: typeType code: 'tr96'];
+    return constantObj;
+}
+
++ (SEConstant *)RGBColor {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"RGBColor" type: typeType code: 'cRGB'];
+    return constantObj;
+}
+
++ (SEConstant *)Saturday {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"Saturday" type: typeType code: 'sat '];
+    return constantObj;
+}
+
++ (SEConstant *)September {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"September" type: typeType code: 'sep '];
+    return constantObj;
+}
+
++ (SEConstant *)Sunday {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"Sunday" type: typeType code: 'sun '];
+    return constantObj;
+}
+
++ (SEConstant *)TIFFPicture {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"TIFFPicture" type: typeType code: 'TIFF'];
+    return constantObj;
+}
+
++ (SEConstant *)Thursday {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"Thursday" type: typeType code: 'thu '];
+    return constantObj;
+}
+
++ (SEConstant *)Tuesday {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"Tuesday" type: typeType code: 'tue '];
+    return constantObj;
+}
+
 + (SEConstant *)UIElement {
     static SEConstant *constantObj;
     if (!constantObj)
@@ -1226,6 +1589,13 @@
     static SEConstant *constantObj;
     if (!constantObj)
         constantObj = [SEConstant constantWithName: @"URL" type: typeType code: 'url '];
+    return constantObj;
+}
+
++ (SEConstant *)Wednesday {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"Wednesday" type: typeType code: 'wed '];
     return constantObj;
 }
 
@@ -1327,6 +1697,13 @@
     return constantObj;
 }
 
++ (SEConstant *)anything {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"anything" type: typeType code: '****'];
+    return constantObj;
+}
+
 + (SEConstant *)appearance {
     static SEConstant *constantObj;
     if (!constantObj)
@@ -1369,6 +1746,13 @@
     return constantObj;
 }
 
++ (SEConstant *)applicationBundleID {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"applicationBundleID" type: typeType code: 'bund'];
+    return constantObj;
+}
+
 + (SEConstant *)applicationFile {
     static SEConstant *constantObj;
     if (!constantObj)
@@ -1383,10 +1767,24 @@
     return constantObj;
 }
 
++ (SEConstant *)applicationSignature {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"applicationSignature" type: typeType code: 'sign'];
+    return constantObj;
+}
+
 + (SEConstant *)applicationSupportFolder {
     static SEConstant *constantObj;
     if (!constantObj)
         constantObj = [SEConstant constantWithName: @"applicationSupportFolder" type: typeType code: 'asup'];
+    return constantObj;
+}
+
++ (SEConstant *)applicationURL {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"applicationURL" type: typeType code: 'aprl'];
     return constantObj;
 }
 
@@ -1523,6 +1921,13 @@
     return constantObj;
 }
 
++ (SEConstant *)best {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"best" type: typeType code: 'best'];
+    return constantObj;
+}
+
 + (SEConstant *)blankCD {
     static SEConstant *constantObj;
     if (!constantObj)
@@ -1537,6 +1942,13 @@
     return constantObj;
 }
 
++ (SEConstant *)boolean {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"boolean" type: typeType code: 'bool'];
+    return constantObj;
+}
+
 + (SEConstant *)bottomLeftScreenCorner {
     static SEConstant *constantObj;
     if (!constantObj)
@@ -1548,6 +1960,13 @@
     static SEConstant *constantObj;
     if (!constantObj)
         constantObj = [SEConstant constantWithName: @"bottomRightScreenCorner" type: typeType code: 'epbr'];
+    return constantObj;
+}
+
++ (SEConstant *)boundingRectangle {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"boundingRectangle" type: typeType code: 'qdrt'];
     return constantObj;
 }
 
@@ -1600,6 +2019,13 @@
     return constantObj;
 }
 
++ (SEConstant *)centimeters {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"centimeters" type: typeType code: 'cmtr'];
+    return constantObj;
+}
+
 + (SEConstant *)changeInterval {
     static SEConstant *constantObj;
     if (!constantObj)
@@ -1618,6 +2044,13 @@
     static SEConstant *constantObj;
     if (!constantObj)
         constantObj = [SEConstant constantWithName: @"checkbox" type: typeType code: 'chbx'];
+    return constantObj;
+}
+
++ (SEConstant *)classInfo {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"classInfo" type: typeType code: 'gcli'];
     return constantObj;
 }
 
@@ -1646,6 +2079,13 @@
     static SEConstant *constantObj;
     if (!constantObj)
         constantObj = [SEConstant constantWithName: @"color" type: typeType code: 'colr'];
+    return constantObj;
+}
+
++ (SEConstant *)colorTable {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"colorTable" type: typeType code: 'clrt'];
     return constantObj;
 }
 
@@ -1740,6 +2180,41 @@
     return constantObj;
 }
 
++ (SEConstant *)cubicCentimeters {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"cubicCentimeters" type: typeType code: 'ccmt'];
+    return constantObj;
+}
+
++ (SEConstant *)cubicFeet {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"cubicFeet" type: typeType code: 'cfet'];
+    return constantObj;
+}
+
++ (SEConstant *)cubicInches {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"cubicInches" type: typeType code: 'cuin'];
+    return constantObj;
+}
+
++ (SEConstant *)cubicMeters {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"cubicMeters" type: typeType code: 'cmet'];
+    return constantObj;
+}
+
++ (SEConstant *)cubicYards {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"cubicYards" type: typeType code: 'cyrd'];
+    return constantObj;
+}
+
 + (SEConstant *)currentConfiguration {
     static SEConstant *constantObj;
     if (!constantObj)
@@ -1782,10 +2257,24 @@
     return constantObj;
 }
 
++ (SEConstant *)dashStyle {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"dashStyle" type: typeType code: 'tdas'];
+    return constantObj;
+}
+
 + (SEConstant *)dashboardShortcut {
     static SEConstant *constantObj;
     if (!constantObj)
         constantObj = [SEConstant constantWithName: @"dashboardShortcut" type: typeType code: 'epdb'];
+    return constantObj;
+}
+
++ (SEConstant *)data {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"data" type: typeType code: 'rdat'];
     return constantObj;
 }
 
@@ -1810,10 +2299,45 @@
     return constantObj;
 }
 
++ (SEConstant *)date {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"date" type: typeType code: 'ldt '];
+    return constantObj;
+}
+
++ (SEConstant *)decimalStruct {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"decimalStruct" type: typeType code: 'decm'];
+    return constantObj;
+}
+
 + (SEConstant *)defaultApplication {
     static SEConstant *constantObj;
     if (!constantObj)
         constantObj = [SEConstant constantWithName: @"defaultApplication" type: typeType code: 'asda'];
+    return constantObj;
+}
+
++ (SEConstant *)degreesCelsius {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"degreesCelsius" type: typeType code: 'degc'];
+    return constantObj;
+}
+
++ (SEConstant *)degreesFahrenheit {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"degreesFahrenheit" type: typeType code: 'degf'];
+    return constantObj;
+}
+
++ (SEConstant *)degreesKelvin {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"degreesKelvin" type: typeType code: 'degk'];
     return constantObj;
 }
 
@@ -1943,6 +2467,13 @@
     return constantObj;
 }
 
++ (SEConstant *)doubleInteger {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"doubleInteger" type: typeType code: 'comp'];
+    return constantObj;
+}
+
 + (SEConstant *)downloadsFolder {
     static SEConstant *constantObj;
     if (!constantObj)
@@ -1978,10 +2509,24 @@
     return constantObj;
 }
 
++ (SEConstant *)elementInfo {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"elementInfo" type: typeType code: 'elin'];
+    return constantObj;
+}
+
 + (SEConstant *)enabled {
     static SEConstant *constantObj;
     if (!constantObj)
         constantObj = [SEConstant constantWithName: @"enabled" type: typeType code: 'enaB'];
+    return constantObj;
+}
+
++ (SEConstant *)encodedString {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"encodedString" type: typeType code: 'encs'];
     return constantObj;
 }
 
@@ -1999,10 +2544,24 @@
     return constantObj;
 }
 
++ (SEConstant *)enumerator {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"enumerator" type: typeType code: 'enum'];
+    return constantObj;
+}
+
 + (SEConstant *)errorHandling {
     static SEConstant *constantObj;
     if (!constantObj)
         constantObj = [SEConstant constantWithName: @"errorHandling" type: typeType code: 'lweh'];
+    return constantObj;
+}
+
++ (SEConstant *)eventInfo {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"eventInfo" type: typeType code: 'evin'];
     return constantObj;
 }
 
@@ -2017,6 +2576,13 @@
     static SEConstant *constantObj;
     if (!constantObj)
         constantObj = [SEConstant constantWithName: @"exposePreferencesObject" type: typeType code: 'epao'];
+    return constantObj;
+}
+
++ (SEConstant *)extendedFloat {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"extendedFloat" type: typeType code: 'exte'];
     return constantObj;
 }
 
@@ -2041,6 +2607,13 @@
     return constantObj;
 }
 
++ (SEConstant *)feet {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"feet" type: typeType code: 'feet'];
+    return constantObj;
+}
+
 + (SEConstant *)file {
     static SEConstant *constantObj;
     if (!constantObj)
@@ -2062,10 +2635,66 @@
     return constantObj;
 }
 
++ (SEConstant *)fileRef {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"fileRef" type: typeType code: 'fsrf'];
+    return constantObj;
+}
+
++ (SEConstant *)fileSpecification {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"fileSpecification" type: typeType code: 'fss '];
+    return constantObj;
+}
+
 + (SEConstant *)fileType {
     static SEConstant *constantObj;
     if (!constantObj)
         constantObj = [SEConstant constantWithName: @"fileType" type: typeType code: 'asty'];
+    return constantObj;
+}
+
++ (SEConstant *)fileURL {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"fileURL" type: typeType code: 'furl'];
+    return constantObj;
+}
+
++ (SEConstant *)fixed {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"fixed" type: typeType code: 'fixd'];
+    return constantObj;
+}
+
++ (SEConstant *)fixedPoint {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"fixedPoint" type: typeType code: 'fpnt'];
+    return constantObj;
+}
+
++ (SEConstant *)fixedRectangle {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"fixedRectangle" type: typeType code: 'frct'];
+    return constantObj;
+}
+
++ (SEConstant *)float128bit {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"float128bit" type: typeType code: 'ldbl'];
+    return constantObj;
+}
+
++ (SEConstant *)float_ {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"float_" type: typeType code: 'doub'];
     return constantObj;
 }
 
@@ -2181,6 +2810,27 @@
     return constantObj;
 }
 
++ (SEConstant *)gallons {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"gallons" type: typeType code: 'galn'];
+    return constantObj;
+}
+
++ (SEConstant *)grams {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"grams" type: typeType code: 'gram'];
+    return constantObj;
+}
+
++ (SEConstant *)graphicText {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"graphicText" type: typeType code: 'cgtx'];
+    return constantObj;
+}
+
 + (SEConstant *)group {
     static SEConstant *constantObj;
     if (!constantObj)
@@ -2272,6 +2922,13 @@
     return constantObj;
 }
 
++ (SEConstant *)inches {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"inches" type: typeType code: 'inch'];
+    return constantObj;
+}
+
 + (SEConstant *)incrementor {
     static SEConstant *constantObj;
     if (!constantObj)
@@ -2300,10 +2957,31 @@
     return constantObj;
 }
 
++ (SEConstant *)integer {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"integer" type: typeType code: 'long'];
+    return constantObj;
+}
+
 + (SEConstant *)interface {
     static SEConstant *constantObj;
     if (!constantObj)
         constantObj = [SEConstant constantWithName: @"interface" type: typeType code: 'intf'];
+    return constantObj;
+}
+
++ (SEConstant *)internationalText {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"internationalText" type: typeType code: 'itxt'];
+    return constantObj;
+}
+
++ (SEConstant *)internationalWritingCode {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"internationalWritingCode" type: typeType code: 'intl'];
     return constantObj;
 }
 
@@ -2314,10 +2992,31 @@
     return constantObj;
 }
 
++ (SEConstant *)kernelProcessID {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"kernelProcessID" type: typeType code: 'kpid'];
+    return constantObj;
+}
+
 + (SEConstant *)keyModifiers {
     static SEConstant *constantObj;
     if (!constantObj)
         constantObj = [SEConstant constantWithName: @"keyModifiers" type: typeType code: 'spky'];
+    return constantObj;
+}
+
++ (SEConstant *)kilograms {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"kilograms" type: typeType code: 'kgrm'];
+    return constantObj;
+}
+
++ (SEConstant *)kilometers {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"kilometers" type: typeType code: 'kmtr'];
     return constantObj;
 }
 
@@ -2349,6 +3048,13 @@
     return constantObj;
 }
 
++ (SEConstant *)liters {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"liters" type: typeType code: 'litr'];
+    return constantObj;
+}
+
 + (SEConstant *)localDomain {
     static SEConstant *constantObj;
     if (!constantObj)
@@ -2377,6 +3083,13 @@
     return constantObj;
 }
 
++ (SEConstant *)locationReference {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"locationReference" type: typeType code: 'insl'];
+    return constantObj;
+}
+
 + (SEConstant *)logOutWhenInactive {
     static SEConstant *constantObj;
     if (!constantObj)
@@ -2398,10 +3111,66 @@
     return constantObj;
 }
 
++ (SEConstant *)longFixed {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"longFixed" type: typeType code: 'lfxd'];
+    return constantObj;
+}
+
++ (SEConstant *)longFixedPoint {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"longFixedPoint" type: typeType code: 'lfpt'];
+    return constantObj;
+}
+
++ (SEConstant *)longFixedRectangle {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"longFixedRectangle" type: typeType code: 'lfrc'];
+    return constantObj;
+}
+
++ (SEConstant *)longPoint {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"longPoint" type: typeType code: 'lpnt'];
+    return constantObj;
+}
+
++ (SEConstant *)longRectangle {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"longRectangle" type: typeType code: 'lrct'];
+    return constantObj;
+}
+
 + (SEConstant *)looping {
     static SEConstant *constantObj;
     if (!constantObj)
         constantObj = [SEConstant constantWithName: @"looping" type: typeType code: 'loop'];
+    return constantObj;
+}
+
++ (SEConstant *)machPort {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"machPort" type: typeType code: 'port'];
+    return constantObj;
+}
+
++ (SEConstant *)machine {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"machine" type: typeType code: 'mach'];
+    return constantObj;
+}
+
++ (SEConstant *)machineLocation {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"machineLocation" type: typeType code: 'mLoc'];
     return constantObj;
 }
 
@@ -2461,6 +3230,20 @@
     return constantObj;
 }
 
++ (SEConstant *)meters {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"meters" type: typeType code: 'metr'];
+    return constantObj;
+}
+
++ (SEConstant *)miles {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"miles" type: typeType code: 'mile'];
+    return constantObj;
+}
+
 + (SEConstant *)miniaturizable {
     static SEConstant *constantObj;
     if (!constantObj)
@@ -2486,6 +3269,13 @@
     static SEConstant *constantObj;
     if (!constantObj)
         constantObj = [SEConstant constantWithName: @"minimumValue" type: typeType code: 'minW'];
+    return constantObj;
+}
+
++ (SEConstant *)missingValue {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"missingValue" type: typeType code: 'msng'];
     return constantObj;
 }
 
@@ -2629,6 +3419,13 @@
     return constantObj;
 }
 
++ (SEConstant *)null {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"null" type: typeType code: 'null'];
+    return constantObj;
+}
+
 + (SEConstant *)numbersKeyModifiers {
     static SEConstant *constantObj;
     if (!constantObj)
@@ -2640,6 +3437,13 @@
     static SEConstant *constantObj;
     if (!constantObj)
         constantObj = [SEConstant constantWithName: @"orientation" type: typeType code: 'orie'];
+    return constantObj;
+}
+
++ (SEConstant *)ounces {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"ounces" type: typeType code: 'ozs '];
     return constantObj;
 }
 
@@ -2675,6 +3479,13 @@
     static SEConstant *constantObj;
     if (!constantObj)
         constantObj = [SEConstant constantWithName: @"paragraph" type: typeType code: 'cpar'];
+    return constantObj;
+}
+
++ (SEConstant *)parameterInfo {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"parameterInfo" type: typeType code: 'pmin'];
     return constantObj;
 }
 
@@ -2734,6 +3545,20 @@
     return constantObj;
 }
 
++ (SEConstant *)pixelMapRecord {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"pixelMapRecord" type: typeType code: 'tpmm'];
+    return constantObj;
+}
+
++ (SEConstant *)point {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"point" type: typeType code: 'QDpt'];
+    return constantObj;
+}
+
 + (SEConstant *)popUpButton {
     static SEConstant *constantObj;
     if (!constantObj)
@@ -2745,6 +3570,13 @@
     static SEConstant *constantObj;
     if (!constantObj)
         constantObj = [SEConstant constantWithName: @"position" type: typeType code: 'posn'];
+    return constantObj;
+}
+
++ (SEConstant *)pounds {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"pounds" type: typeType code: 'lbs '];
     return constantObj;
 }
 
@@ -2811,6 +3643,13 @@
     return constantObj;
 }
 
++ (SEConstant *)processSerialNumber {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"processSerialNumber" type: typeType code: 'psn '];
+    return constantObj;
+}
+
 + (SEConstant *)productVersion {
     static SEConstant *constantObj;
     if (!constantObj)
@@ -2832,6 +3671,20 @@
     return constantObj;
 }
 
++ (SEConstant *)property {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"property" type: typeType code: 'prop'];
+    return constantObj;
+}
+
++ (SEConstant *)propertyInfo {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"propertyInfo" type: typeType code: 'pinf'];
+    return constantObj;
+}
+
 + (SEConstant *)propertyListFile {
     static SEConstant *constantObj;
     if (!constantObj)
@@ -2850,6 +3703,13 @@
     static SEConstant *constantObj;
     if (!constantObj)
         constantObj = [SEConstant constantWithName: @"publicFolder" type: typeType code: 'pubb'];
+    return constantObj;
+}
+
++ (SEConstant *)quarts {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"quarts" type: typeType code: 'qrts'];
     return constantObj;
 }
 
@@ -2902,6 +3762,20 @@
     return constantObj;
 }
 
++ (SEConstant *)record {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"record" type: typeType code: 'reco'];
+    return constantObj;
+}
+
++ (SEConstant *)reference {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"reference" type: typeType code: 'obj '];
+    return constantObj;
+}
+
 + (SEConstant *)relevanceIndicator {
     static SEConstant *constantObj;
     if (!constantObj)
@@ -2941,6 +3815,13 @@
     static SEConstant *constantObj;
     if (!constantObj)
         constantObj = [SEConstant constantWithName: @"role" type: typeType code: 'role'];
+    return constantObj;
+}
+
++ (SEConstant *)rotation {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"rotation" type: typeType code: 'trot'];
     return constantObj;
 }
 
@@ -3074,6 +3955,20 @@
     static SEConstant *constantObj;
     if (!constantObj)
         constantObj = [SEConstant constantWithName: @"sheet" type: typeType code: 'sheE'];
+    return constantObj;
+}
+
++ (SEConstant *)shortFloat {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"shortFloat" type: typeType code: 'sing'];
+    return constantObj;
+}
+
++ (SEConstant *)shortInteger {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"shortInteger" type: typeType code: 'shor'];
     return constantObj;
 }
 
@@ -3217,6 +4112,41 @@
     return constantObj;
 }
 
++ (SEConstant *)squareFeet {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"squareFeet" type: typeType code: 'sqft'];
+    return constantObj;
+}
+
++ (SEConstant *)squareKilometers {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"squareKilometers" type: typeType code: 'sqkm'];
+    return constantObj;
+}
+
++ (SEConstant *)squareMeters {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"squareMeters" type: typeType code: 'sqrm'];
+    return constantObj;
+}
+
++ (SEConstant *)squareMiles {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"squareMiles" type: typeType code: 'sqmi'];
+    return constantObj;
+}
+
++ (SEConstant *)squareYards {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"squareYards" type: typeType code: 'sqyd'];
+    return constantObj;
+}
+
 + (SEConstant *)startTime {
     static SEConstant *constantObj;
     if (!constantObj)
@@ -3273,10 +4203,38 @@
     return constantObj;
 }
 
++ (SEConstant *)string {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"string" type: typeType code: 'TEXT'];
+    return constantObj;
+}
+
++ (SEConstant *)styledClipboardText {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"styledClipboardText" type: typeType code: 'styl'];
+    return constantObj;
+}
+
++ (SEConstant *)styledText {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"styledText" type: typeType code: 'STXT'];
+    return constantObj;
+}
+
 + (SEConstant *)subrole {
     static SEConstant *constantObj;
     if (!constantObj)
         constantObj = [SEConstant constantWithName: @"subrole" type: typeType code: 'sbrl'];
+    return constantObj;
+}
+
++ (SEConstant *)suiteInfo {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"suiteInfo" type: typeType code: 'suin'];
     return constantObj;
 }
 
@@ -3347,6 +4305,13 @@
     static SEConstant *constantObj;
     if (!constantObj)
         constantObj = [SEConstant constantWithName: @"textField" type: typeType code: 'txtf'];
+    return constantObj;
+}
+
++ (SEConstant *)textStyleInfo {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"textStyleInfo" type: typeType code: 'tsty'];
     return constantObj;
 }
 
@@ -3434,10 +4399,24 @@
     return constantObj;
 }
 
++ (SEConstant *)unicodeText {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"unicodeText" type: typeType code: 'utxt'];
+    return constantObj;
+}
+
 + (SEConstant *)unixId {
     static SEConstant *constantObj;
     if (!constantObj)
         constantObj = [SEConstant constantWithName: @"unixId" type: typeType code: 'idux'];
+    return constantObj;
+}
+
++ (SEConstant *)unsignedInteger {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"unsignedInteger" type: typeType code: 'magn'];
     return constantObj;
 }
 
@@ -3462,6 +4441,20 @@
     return constantObj;
 }
 
++ (SEConstant *)utf16Text {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"utf16Text" type: typeType code: 'ut16'];
+    return constantObj;
+}
+
++ (SEConstant *)utf8Text {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"utf8Text" type: typeType code: 'utf8'];
+    return constantObj;
+}
+
 + (SEConstant *)utilitiesFolder {
     static SEConstant *constantObj;
     if (!constantObj)
@@ -3480,6 +4473,13 @@
     static SEConstant *constantObj;
     if (!constantObj)
         constantObj = [SEConstant constantWithName: @"valueIndicator" type: typeType code: 'vali'];
+    return constantObj;
+}
+
++ (SEConstant *)version {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"version" type: typeType code: 'vers'];
     return constantObj;
 }
 
@@ -3543,6 +4543,20 @@
     static SEConstant *constantObj;
     if (!constantObj)
         constantObj = [SEConstant constantWithName: @"workflowsFolder" type: typeType code: 'flow'];
+    return constantObj;
+}
+
++ (SEConstant *)writingCode {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"writingCode" type: typeType code: 'psct'];
+    return constantObj;
+}
+
++ (SEConstant *)yards {
+    static SEConstant *constantObj;
+    if (!constantObj)
+        constantObj = [SEConstant constantWithName: @"yards" type: typeType code: 'yard'];
     return constantObj;
 }
 

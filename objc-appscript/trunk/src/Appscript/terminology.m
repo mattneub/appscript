@@ -51,8 +51,8 @@
 
 - (NSString *)description {
 	return [NSString stringWithFormat: @"<ASCommandDef \"%@\" '%@'/'%@' %@>", 
-			[self name], AEMDescTypeToDisplayString(eventClass), 
-			AEMDescTypeToDisplayString(eventID), parameters];
+			[self name], [AEMObjectRenderer formatOSType: eventClass], 
+			[AEMObjectRenderer formatOSType: eventID], parameters];
 }
 
 - (void)addParameterWithName:(NSString *)name_ code:(OSType)code_ {

@@ -2,7 +2,7 @@
  * TEReferenceGlue.h
  *
  * /Applications/TextEdit.app
- * osaglue 0.3.0
+ * osaglue 0.4.0
  *
  */
 

@@ -8,6 +8,7 @@
 #import "base.h"
 #import "test.h"
 #import "utils.h"
+#import "objectrenderer.h"
 
 
 /**********************************************************************/

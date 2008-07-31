@@ -7,6 +7,7 @@
 
 #import "parser.h"
 #import "utils.h"
+#import "objectrenderer.h"
 
 
 /**********************************************************************/

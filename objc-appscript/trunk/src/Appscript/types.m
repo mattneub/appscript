@@ -18,14 +18,18 @@ static ASBoolean *falseValue;
 @implementation ASBoolean
 
 + (id)True {
-	if (!trueValue)
-		trueValue = [[ASBoolean alloc] initWithBool: YES];
+	@synchronized(self) {
+		if (!trueValue)
+			trueValue = [[ASBoolean alloc] initWithBool: YES];
+	}
 	return trueValue;
 }
 
 + (id)False {
-	if (!falseValue)
-		falseValue = [[ASBoolean	alloc] initWithBool: NO];
+	@synchronized(self) {
+		if (!falseValue)
+			falseValue = [[ASBoolean alloc] initWithBool: NO];
+	}
 	return falseValue;
 }
 
@@ -52,7 +56,7 @@ static ASBoolean *falseValue;
 	return cachedDesc;
 }
 
-- (NSAppleEventDescriptor *)desc {
+- (NSAppleEventDescriptor *)descriptor {
 	return cachedDesc;
 }
 
@@ -82,6 +86,7 @@ static ASBoolean *falseValue;
 	return [path autorelease];
 }
 
+
 - (id)initWithPath:(NSString *)path {
 	return [self initWithFileURL: [NSURL fileURLWithPath: path]];
 }
@@ -108,6 +113,21 @@ static ASBoolean *falseValue;
 	return self;
 }
 
+- (void)dealloc {
+	[desc release];
+	[super dealloc];
+}
+
+- (unsigned)hash {
+	return [desc hash];
+}
+
+- (BOOL)isEqual:(id)anObject {
+	if (anObject == self) return YES;
+	if (!anObject || ![anObject isKindOfClass: [self class]]) return NO;	
+	return [[desc data] isEqualToData: [[anObject descriptor] data]];
+}
+
 - (NSString *)path {
 	return [[self url] path];
 }
@@ -128,7 +148,7 @@ static ASBoolean *falseValue;
 	return desc;
 }
 
-- (NSAppleEventDescriptor *)desc {
+- (NSAppleEventDescriptor *)descriptor {
 	return desc;
 }
 
@@ -153,12 +173,32 @@ static ASBoolean *falseValue;
 	return [[[ASAlias alloc] initWithDescriptor: desc_] autorelease];
 }
 
++ (id)aliasWithAliasHandle:(AliasHandle)alias {
+	NSAppleEventDescriptor *desc;
+	id obj;
+	
+	desc = [[NSAppleEventDescriptor alloc] initWithDescriptorType: typeAlias
+															bytes: *alias
+														   length: GetAliasSize(alias)];
+	obj = [self aliasWithDescriptor: desc];
+	[desc release];
+	return obj;
+}
+
 - (NSString *)description {
-	return [NSString stringWithFormat: @"[ASAlias aliasWithPath: %@]", AEMObjectToDisplayString([self path])];
+	return [NSString stringWithFormat: @"[ASAlias aliasWithPath: %@]", [AEMObjectRenderer formatObject: [self path]]];
 }
 
 - (DescType)descriptorType {
 	return typeAlias;
+}
+
+- (AliasHandle)aliasHandle {
+	const AEDesc *aeDesc = [desc aeDesc];
+	Size size = AEGetDescDataSize(aeDesc);
+	AliasHandle alias = (AliasHandle)NewHandle(size);
+	AEGetDescData(aeDesc, *alias, size);
+	return alias;
 }
 
 @end
@@ -178,12 +218,32 @@ static ASBoolean *falseValue;
 	return [[[ASFileRef alloc] initWithDescriptor: desc_] autorelease];
 }
 
++ (id)fileRefWithFSRef:(FSRef)fsRef {
+	NSAppleEventDescriptor *desc;
+	id obj;
+	
+	desc = [[NSAppleEventDescriptor alloc] initWithDescriptorType: typeFSRef
+															bytes: &fsRef
+														   length: sizeof(fsRef)];
+	obj = [self fileRefWithDescriptor: desc];
+	[desc release];
+	return obj;
+}
+
 - (NSString *)description {
-	return [NSString stringWithFormat: @"[ASFileRef fileRefWithPath: %@]", AEMObjectToDisplayString([self path])];
+	return [NSString stringWithFormat: @"[ASFileRef fileRefWithPath: %@]", [AEMObjectRenderer formatObject: [self path]]];
 }
 
 - (DescType)descriptorType {
 	return typeFSRef;
+}
+
+- (FSRef)fsRef {
+	FSRef fsRef;
+	const AEDesc *aeDesc = [desc aeDesc];
+	Size size = AEGetDescDataSize(aeDesc);
+	AEGetDescData(aeDesc, &fsRef, size);
+	return fsRef;
 }
 
 @end
@@ -204,7 +264,7 @@ static ASBoolean *falseValue;
 }
 
 - (NSString *)description {
-	return [NSString stringWithFormat: @"[ASFileSpec fileSpecWithPath: %@]", AEMObjectToDisplayString([self path])];
+	return [NSString stringWithFormat: @"[ASFileSpec fileSpecWithPath: %@]", [AEMObjectRenderer formatObject: [self path]]];
 }
 
 - (DescType)descriptorType {
@@ -269,14 +329,16 @@ static ASBoolean *falseValue;
 }
 
 - (NSAppleEventDescriptor *)packWithCodecs:(id)codecs {
-	if (!cachedDesc)
-		cachedDesc = [[NSAppleEventDescriptor alloc] initWithDescriptorType: type
-																	  bytes: &code
-																	 length: sizeof(code)];
+	@synchronized(self) {
+		if (!cachedDesc)
+			cachedDesc = [[NSAppleEventDescriptor alloc] initWithDescriptorType: type
+																		  bytes: &code
+																		 length: sizeof(code)];
+		}
 	return cachedDesc;
 }
 
-- (NSAppleEventDescriptor *)desc {
+- (NSAppleEventDescriptor *)descriptor {
 	return [self packWithCodecs: nil];
 }
 
@@ -301,7 +363,7 @@ static ASBoolean *falseValue;
 }
 
 - (NSString *)description {
-	return [NSString stringWithFormat: @"[AEMType typeWithCode: '%@']", AEMDescTypeToDisplayString([self code])];
+	return [NSString stringWithFormat: @"[AEMType typeWithCode: '%@']", [AEMObjectRenderer formatOSType: [self code]]];
 }
 
 @end
@@ -318,7 +380,7 @@ static ASBoolean *falseValue;
 }
 
 - (NSString *)description {
-	return [NSString stringWithFormat: @"[AEMEnum enumWithCode: '%@']", AEMDescTypeToDisplayString([self code])];
+	return [NSString stringWithFormat: @"[AEMEnum enumWithCode: '%@']", [AEMObjectRenderer formatOSType: [self code]]];
 }
 
 @end
@@ -335,7 +397,7 @@ static ASBoolean *falseValue;
 }
 
 - (NSString *)description {
-	return [NSString stringWithFormat: @"[AEMProperty propertyWithCode: '%@']", AEMDescTypeToDisplayString([self code])];
+	return [NSString stringWithFormat: @"[AEMProperty propertyWithCode: '%@']", [AEMObjectRenderer formatOSType: [self code]]];
 }
 
 @end
@@ -352,7 +414,7 @@ static ASBoolean *falseValue;
 }
 
 - (NSString *)description {
-	return [NSString stringWithFormat: @"[AEMKeyword keywordWithCode: '%@']", AEMDescTypeToDisplayString([self code])];
+	return [NSString stringWithFormat: @"[AEMKeyword keywordWithCode: '%@']", [AEMObjectRenderer formatOSType: [self code]]];
 }
 
 @end
@@ -391,7 +453,7 @@ static ASBoolean *falseValue;
 
 - (NSString *)description {
 	return [NSString stringWithFormat: @"[ASUnits unitsWithNumber: %@ type: %@]", 
-			AEMObjectToDisplayString(value), AEMObjectToDisplayString(units)];
+			[AEMObjectRenderer formatObject: value], [AEMObjectRenderer formatObject: units]];
 }
 
 - (unsigned)hash {

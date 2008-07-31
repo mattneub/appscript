@@ -2,7 +2,7 @@
  * MLCommandGlue.h
  *
  * /Applications/Mail.app
- * osaglue 0.3.2
+ * osaglue 0.4.0
  *
  */
 
@@ -10,80 +10,84 @@
 
 
 #import "Appscript/Appscript.h"
+#import "MLReferenceRendererGlue.h"
 
 
-@interface MLGetURLCommand : ASCommand
+@interface MLCommand : ASCommand
+@end
+
+@interface MLGetURLCommand : MLCommand
 @end
 
 
-@interface MLActivateCommand : ASCommand
+@interface MLActivateCommand : MLCommand
 @end
 
 
-@interface MLBounceCommand : ASCommand
+@interface MLBounceCommand : MLCommand
 @end
 
 
-@interface MLCheckForNewMailCommand : ASCommand
+@interface MLCheckForNewMailCommand : MLCommand
 - (MLCheckForNewMailCommand *)for_:(id)value;
 @end
 
 
-@interface MLCloseCommand : ASCommand
+@interface MLCloseCommand : MLCommand
 - (MLCloseCommand *)saving:(id)value;
 - (MLCloseCommand *)savingIn:(id)value;
 @end
 
 
-@interface MLCountCommand : ASCommand
+@interface MLCountCommand : MLCommand
 - (MLCountCommand *)each:(id)value;
 @end
 
 
-@interface MLDeleteCommand : ASCommand
+@interface MLDeleteCommand : MLCommand
 @end
 
 
-@interface MLDuplicateCommand : ASCommand
+@interface MLDuplicateCommand : MLCommand
 - (MLDuplicateCommand *)to:(id)value;
 @end
 
 
-@interface MLExistsCommand : ASCommand
+@interface MLExistsCommand : MLCommand
 @end
 
 
-@interface MLExtractAddressFromCommand : ASCommand
+@interface MLExtractAddressFromCommand : MLCommand
 @end
 
 
-@interface MLExtractNameFromCommand : ASCommand
+@interface MLExtractNameFromCommand : MLCommand
 @end
 
 
-@interface MLForwardCommand : ASCommand
+@interface MLForwardCommand : MLCommand
 - (MLForwardCommand *)openingWindow:(id)value;
 @end
 
 
-@interface MLGetCommand : ASCommand
+@interface MLGetCommand : MLCommand
 @end
 
 
-@interface MLImportMailMailboxCommand : ASCommand
+@interface MLImportMailMailboxCommand : MLCommand
 - (MLImportMailMailboxCommand *)at:(id)value;
 @end
 
 
-@interface MLLaunchCommand : ASCommand
+@interface MLLaunchCommand : MLCommand
 @end
 
 
-@interface MLMailtoCommand : ASCommand
+@interface MLMailtoCommand : MLCommand
 @end
 
 
-@interface MLMakeCommand : ASCommand
+@interface MLMakeCommand : MLCommand
 - (MLMakeCommand *)at:(id)value;
 - (MLMakeCommand *)new_:(id)value;
 - (MLMakeCommand *)withData:(id)value;
@@ -91,72 +95,72 @@
 @end
 
 
-@interface MLMoveCommand : ASCommand
+@interface MLMoveCommand : MLCommand
 - (MLMoveCommand *)to:(id)value;
 @end
 
 
-@interface MLOpenCommand : ASCommand
+@interface MLOpenCommand : MLCommand
 @end
 
 
-@interface MLOpenLocationCommand : ASCommand
+@interface MLOpenLocationCommand : MLCommand
 - (MLOpenLocationCommand *)window:(id)value;
 @end
 
 
-@interface MLPerformMailActionWithMessagesCommand : ASCommand
+@interface MLPerformMailActionWithMessagesCommand : MLCommand
 - (MLPerformMailActionWithMessagesCommand *)forRule:(id)value;
 - (MLPerformMailActionWithMessagesCommand *)inMailboxes:(id)value;
 @end
 
 
-@interface MLPrintCommand : ASCommand
+@interface MLPrintCommand : MLCommand
 - (MLPrintCommand *)printDialog:(id)value;
 - (MLPrintCommand *)withProperties:(id)value;
 @end
 
 
-@interface MLQuitCommand : ASCommand
+@interface MLQuitCommand : MLCommand
 - (MLQuitCommand *)saving:(id)value;
 @end
 
 
-@interface MLRedirectCommand : ASCommand
+@interface MLRedirectCommand : MLCommand
 - (MLRedirectCommand *)openingWindow:(id)value;
 @end
 
 
-@interface MLReopenCommand : ASCommand
+@interface MLReopenCommand : MLCommand
 @end
 
 
-@interface MLReplyCommand : ASCommand
+@interface MLReplyCommand : MLCommand
 - (MLReplyCommand *)openingWindow:(id)value;
 - (MLReplyCommand *)replyToAll:(id)value;
 @end
 
 
-@interface MLRunCommand : ASCommand
+@interface MLRunCommand : MLCommand
 @end
 
 
-@interface MLSaveCommand : ASCommand
+@interface MLSaveCommand : MLCommand
 - (MLSaveCommand *)as:(id)value;
 - (MLSaveCommand *)in:(id)value;
 @end
 
 
-@interface MLSend_Command : ASCommand
+@interface MLSend_Command : MLCommand
 @end
 
 
-@interface MLSetCommand : ASCommand
+@interface MLSetCommand : MLCommand
 - (MLSetCommand *)to:(id)value;
 @end
 
 
-@interface MLSynchronizeCommand : ASCommand
+@interface MLSynchronizeCommand : MLCommand
 - (MLSynchronizeCommand *)with:(id)value;
 @end
 

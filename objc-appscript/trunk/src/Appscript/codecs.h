@@ -26,15 +26,12 @@ enum {
 
 @interface AEMCodecs : NSObject <NSCopying, AEMCodecsProtocol> {
 	id applicationRootDescriptor;
-	BOOL disableCache, disableUnicode;
+	BOOL disableCache, disableUnicode, allowUInt64;
 	DescType textType;
 	NSMutableDictionary *unitTypeDefinitionByName, *unitTypeDefinitionByCode;
 }
 
 + (id)defaultCodecs;
-
-
-+ (NSString *)displayObject:(NSObject *)obj;
 
 
 /**********************************************************************/
@@ -65,6 +62,13 @@ enum {
  * its -packStringsAsType: method, specifying the type you want used instead.
  */
 - (void)packStringsAsType:(DescType)type;
+
+/*
+ * For compatibility's sake, appscript packs integers between 2^62 and 2^63-1 as
+ * doubles, with some potential loss of precision. Mac OS X 10.5 adds typeUInt64; 
+ * to use this, call -allowUInt64.
+ */
+- (void)allowUInt64;
 
 
 /**********************************************************************/

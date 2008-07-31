@@ -2,7 +2,7 @@
  * TEReferenceGlue.m
  *
  * /Applications/TextEdit.app
- * osaglue 0.3.0
+ * osaglue 0.4.0
  *
  */
 
@@ -11,7 +11,7 @@
 @implementation TEReference
 
 - (NSString *)description {
-	return [TEReferenceRenderer render: AS_aemReference];
+	return [TEReferenceRenderer formatObject: AS_aemReference appData: AS_appData];
 }
 
 /* Commands */
@@ -20,7 +20,7 @@
     return [TEActivateCommand commandWithAppData: AS_appData
                          eventClass: 'misc'
                             eventID: 'actv'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -36,7 +36,7 @@
     return [TECloseCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'clos'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -52,7 +52,7 @@
     return [TECountCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'cnte'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -68,7 +68,7 @@
     return [TEDeleteCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'delo'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -84,7 +84,7 @@
     return [TEDuplicateCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'clon'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -100,7 +100,7 @@
     return [TEExistsCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'doex'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -116,7 +116,7 @@
     return [TEGetCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'getd'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -132,7 +132,7 @@
     return [TELaunchCommand commandWithAppData: AS_appData
                          eventClass: 'ascr'
                             eventID: 'noop'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -148,7 +148,7 @@
     return [TEMakeCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'crel'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -164,7 +164,7 @@
     return [TEMoveCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'move'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -180,7 +180,7 @@
     return [TEOpenCommand commandWithAppData: AS_appData
                          eventClass: 'aevt'
                             eventID: 'odoc'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -196,7 +196,7 @@
     return [TEOpenLocationCommand commandWithAppData: AS_appData
                          eventClass: 'GURL'
                             eventID: 'GURL'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -212,7 +212,7 @@
     return [TEPrintCommand commandWithAppData: AS_appData
                          eventClass: 'aevt'
                             eventID: 'pdoc'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -228,7 +228,7 @@
     return [TEQuitCommand commandWithAppData: AS_appData
                          eventClass: 'aevt'
                             eventID: 'quit'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -244,7 +244,7 @@
     return [TEReopenCommand commandWithAppData: AS_appData
                          eventClass: 'aevt'
                             eventID: 'rapp'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -260,7 +260,7 @@
     return [TERunCommand commandWithAppData: AS_appData
                          eventClass: 'aevt'
                             eventID: 'oapp'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -276,7 +276,7 @@
     return [TESaveCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'save'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -292,7 +292,7 @@
     return [TESetCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'setd'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 

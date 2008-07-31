@@ -270,13 +270,13 @@
 							<array>
 								<string>08FB7794FE84155DC02AAC07</string>
 								<string>08FB7795FE84155DC02AAC07</string>
+								<string>08FB779DFE84155DC02AAC07</string>
 								<string>1C37FABC05509CD000000102</string>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>4</integer>
-									<integer>1</integer>
+									<integer>6</integer>
 									<integer>0</integer>
 								</array>
 							</array>
@@ -381,9 +381,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>4F1993B80DA52FB60081702B</string>
+				<string>4F0FB0AA0E39FEC2008AA167</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>4F1993B90DA52FB60081702B</string>
+				<string>4F0FB0AB0E39FEC2008AA167</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -517,7 +517,7 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>/Users/has/appscript/objc-appscript/sample/AddFilesToiTunes/AddFilesToiTunes.xcodeproj</string>
+		<string>/Users/has/Dev/appscript/objc-appscript/sample/AddFilesToiTunes/AddFilesToiTunes.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
 	<string>489 464 690 397 0 0 1680 1028 </string>

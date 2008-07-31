@@ -9,9 +9,6 @@
 #import <Carbon/Carbon.h>
 
 
-NSString *AEMDescTypeToDisplayString(OSType code);
-NSString *AEMObjectToDisplayString(NSObject *obj);
-
 #define AEMIsDescriptorEqualToObject(desc, obj) ( \
 		[obj isKindOfClass: [NSAppleEventDescriptor class]] \
 		&& ([desc descriptorType] == [obj descriptorType]) \

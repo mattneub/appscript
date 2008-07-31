@@ -2,7 +2,7 @@
  * MLApplicationGlue.m
  *
  * /Applications/Mail.app
- * osaglue 0.3.2
+ * osaglue 0.4.0
  *
  */
 
@@ -23,10 +23,36 @@
                                                targetData: targetData_];
     self = [super initWithAppData: appData aemReference: AEMApp];
     if (!self) return self;
+    
     return self;
 }
 
 // initialisers
+
++ (id)application {
+    return [[[self alloc] init] autorelease];
+}
+
++ (id)applicationWithName:(NSString *)name {
+    return [[[self alloc] initWithName: name] autorelease];
+}
+
++ (id)applicationWithBundleID:(NSString *)bundleID  {
+    return [[[self alloc] initWithBundleID: bundleID ] autorelease];
+}
+
++ (id)applicationWithURL:(NSURL *)url {
+    return [[[self alloc] initWithURL: url] autorelease];
+}
+
++ (id)applicationWithPID:(pid_t)pid {
+    return [[[self alloc] initWithPID: pid] autorelease];
+}
+
++ (id)applicationWithDescriptor:(NSAppleEventDescriptor *)desc {
+    return [[[self alloc] initWithDescriptor: desc] autorelease];
+}
+
 
 - (id)init {
     return [self initWithTargetType: kASTargetCurrent data: nil];
@@ -54,20 +80,19 @@
 
 // misc
 
-- (MLReference *)AS_newReferenceWithObject:(id)object {
-	if ([object isKindOfClass: [MLReference class]])
-		return [[[MLReference alloc] initWithAppData: AS_appData
-				aemReference: [object AS_aemReference]] autorelease];
-	else if ([object isKindOfClass: [AEMQuery class]])
-		return [[[MLReference alloc] initWithAppData: AS_appData
-				aemReference: object] autorelease];
-	else if (!object)
-		return [[[MLReference alloc] initWithAppData: AS_appData
-				aemReference: AEMApp] autorelease];
-	else
-		return [[[MLReference alloc] initWithAppData: AS_appData
-				aemReference: AEMRoot(object)] autorelease];
+- (MLReference *)AS_referenceWithObject:(id)object {
+    if ([object isKindOfClass: [MLReference class]])
+        return [[[MLReference alloc] initWithAppData: AS_appData
+                aemReference: [object AS_aemReference]] autorelease];
+    else if ([object isKindOfClass: [AEMQuery class]])
+        return [[[MLReference alloc] initWithAppData: AS_appData
+                aemReference: object] autorelease];
+    else if (!object)
+        return [[[MLReference alloc] initWithAppData: AS_appData
+                aemReference: AEMApp] autorelease];
+    else
+        return [[[MLReference alloc] initWithAppData: AS_appData
+                aemReference: AEMRoot(object)] autorelease];
 }
-
 @end
 

@@ -9,13 +9,14 @@
 #import "sendthreadsafe.h"
 #import "event.h"
 #import "utils.h"
+#import "objectrenderer.h"
 
 
 /**********************************************************************/
 // typedefs
 
 typedef enum {
-	kAEMTargetCurrent,
+	kAEMTargetCurrent = 1,
 	kAEMTargetFileURL,
 	kAEMTargetEppcURL,
 	kAEMTargetPID,

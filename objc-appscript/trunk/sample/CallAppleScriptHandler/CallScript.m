@@ -42,7 +42,7 @@ int main (int argc, const char * argv[]) {
 			@"end joinText"];
 
 	// Get an NSAppleEventDescriptor from AEMEvent
-	NSAppleEventDescriptor *evtDesc = [evt appleEventDescriptor];
+	NSAppleEventDescriptor *evtDesc = [evt descriptor];
 
 	// Send event to AppleScript
 	NSDictionary *error = nil;

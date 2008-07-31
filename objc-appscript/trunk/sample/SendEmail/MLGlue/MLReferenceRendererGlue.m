@@ -2,7 +2,7 @@
  * MLReferenceRendererGlue.m
  *
  * /Applications/Mail.app
- * osaglue 0.3.2
+ * osaglue 0.4.0
  *
  */
 
@@ -220,8 +220,8 @@
     }
 }
 
-+ (NSString *)render:(id)object {
-    return [MLReferenceRenderer render: object withPrefix: @"ML"];
+- (NSString *)prefix {
+    return @"ML";
 }
 
 @end

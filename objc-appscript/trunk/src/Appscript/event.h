@@ -8,6 +8,7 @@
 #import "codecs.h"
 #import "sendthreadsafe.h"
 #import "utils.h"
+#import "objectrenderer.h"
 
 
 /**********************************************************************/
@@ -76,6 +77,11 @@ typedef OSStatus(*AEMSendProcPtr)(const AppleEvent *event,
 		   sendProc:(AEMSendProcPtr)sendProc_;
 
 /*
+ * Get codecs object used by this AEMEvent instance
+ */
+ - (id)codecs;
+
+/*
  * Get a pointer to the AEDesc contained by this AEMEvent instance
  */
 - (const AppleEvent *)aeDesc;
@@ -83,30 +89,32 @@ typedef OSStatus(*AEMSendProcPtr)(const AppleEvent *event,
 /*
  * Get an NSAppleEventDescriptor instance containing a copy of this event
  */
-- (NSAppleEventDescriptor *)appleEventDescriptor;
+- (NSAppleEventDescriptor *)descriptor;
 
 // Pack event's attributes and parameters, if any.
 
-- (AEMEvent *)setAttribute:(id)value forKeyword:(AEKeyword)key;
+- (void)setAttribute:(id)value forKeyword:(AEKeyword)key;
 
-- (AEMEvent *)setParameter:(id)value forKeyword:(AEKeyword)key;
+- (void)setParameter:(id)value forKeyword:(AEKeyword)key;
 
-// Get/remove event's attributes and parameters.
+// Get event's attributes and parameters.
 
-- (id)attributeForKeyword:(AEKeyword)key;
+- (id)attributeForKeyword:(AEKeyword)key type:(DescType)type error:(NSError **)error;
 
-- (id)parameterForKeyword:(AEKeyword)key;
+- (id)attributeForKeyword:(AEKeyword)key; // shortcut for above
 
-- (AEMEvent *)removeParameterForKeyword:(AEKeyword)key;
+- (id)parameterForKeyword:(AEKeyword)key type:(DescType)type error:(NSError **)error;
+
+- (id)parameterForKeyword:(AEKeyword)key; // shortcut for above
 
 // Specify an AE type to coerce the reply descriptor to before unpacking it.
 // (Default = unpack as typeWildCard)
 
-- (AEMEvent *)unpackResultAsType:(DescType)type;
+- (void)unpackResultAsType:(DescType)type;
 
-- (AEMEvent *)unpackResultAsListOfType:(DescType)type;
+- (void)unpackResultAsListOfType:(DescType)type;
 
-- (AEMEvent *)dontUnpackResult;
+- (void)dontUnpackResult;
 
 /*
  * Send event.

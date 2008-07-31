@@ -231,8 +231,6 @@
 			<key>Layout</key>
 			<array>
 				<dict>
-					<key>BecomeActive</key>
-					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -270,13 +268,14 @@
 							<array>
 								<string>08FB7794FE84155DC02AAC07</string>
 								<string>08FB7795FE84155DC02AAC07</string>
+								<string>4F2F4DEF0D858FD5004C31AD</string>
+								<string>08FB779DFE84155DC02AAC07</string>
 								<string>1C37FABC05509CD000000102</string>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>4</integer>
-									<integer>1</integer>
+									<integer>17</integer>
 									<integer>0</integer>
 								</array>
 							</array>
@@ -311,12 +310,14 @@
 					<key>Dock</key>
 					<array>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>MyNewFile14.java</string>
+								<string>SelectFilesInFinder.m</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -324,7 +325,15 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>MyNewFile14.java</string>
+										<string>SelectFilesInFinder.m</string>
+										<key>_historyCapacity</key>
+										<integer>0</integer>
+										<key>bookmark</key>
+										<string>4F0FB11C0E39FFE3008AA167</string>
+										<key>history</key>
+										<array>
+											<string>4F0FB0990E39FC10008AA167</string>
+										</array>
 									</dict>
 									<key>SplitCount</key>
 									<string>1</string>
@@ -335,14 +344,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {550, 0}}</string>
+								<string>{{0, 0}, {550, 913}}</string>
 								<key>RubberWindowFrame</key>
 								<string>127 69 758 959 0 0 1680 1028 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>0pt</string>
+							<string>913pt</string>
 						</dict>
 						<dict>
 							<key>ContentConfiguration</key>
@@ -355,14 +364,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 5}, {550, 913}}</string>
+								<string>{{0, 918}, {550, 0}}</string>
 								<key>RubberWindowFrame</key>
 								<string>127 69 758 959 0 0 1680 1028 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
 							<key>Proportion</key>
-							<string>913pt</string>
+							<string>0pt</string>
 						</dict>
 					</array>
 					<key>Proportion</key>
@@ -381,9 +390,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>4F2F4E070D85910F004C31AD</string>
+				<string>4F0FB11D0E39FFE3008AA167</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>4F2F4E080D85910F004C31AD</string>
+				<string>4F0FB11E0E39FFE3008AA167</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -517,11 +526,7 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>1C78EAAD065D492600B07095</string>
-		<string>1CD10A99069EF8BA00B06720</string>
-		<string>4F2F4E0A0D85910F004C31AD</string>
-		<string>4F2F4E130D85910F004C31AD</string>
-		<string>/Users/has/SelectFilesInFinder/SelectFilesInFinder.xcodeproj</string>
+		<string>/Users/has/Dev/appscript/objc-appscript/sample/SelectFilesInFinder/SelectFilesInFinder.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
 	<string>127 69 758 959 0 0 1680 1028 </string>
@@ -552,16 +557,18 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {500, 218}}</string>
+								<string>{{0, 0}, {1000, 74}}</string>
 								<key>RubberWindowFrame</key>
-								<string>36 505 500 500 0 0 1680 1028 </string>
+								<string>36 245 1000 760 0 0 1680 1028 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>218pt</string>
+							<string>74pt</string>
 						</dict>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -576,18 +583,18 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 223}, {500, 236}}</string>
+								<string>{{0, 79}, {1000, 640}}</string>
 								<key>RubberWindowFrame</key>
-								<string>36 505 500 500 0 0 1680 1028 </string>
+								<string>36 245 1000 760 0 0 1680 1028 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXBuildResultsModule</string>
 							<key>Proportion</key>
-							<string>236pt</string>
+							<string>640pt</string>
 						</dict>
 					</array>
 					<key>Proportion</key>
-					<string>459pt</string>
+					<string>719pt</string>
 				</dict>
 			</array>
 			<key>Name</key>
@@ -601,14 +608,14 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>4F2F4E0A0D85910F004C31AD</string>
-				<string>4F2F4E0B0D85910F004C31AD</string>
+				<string>4F0FB0730E39FB40008AA167</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
 			<key>ToolbarConfiguration</key>
 			<string>xcode.toolbar.config.buildV3</string>
 			<key>WindowString</key>
-			<string>36 505 500 500 0 0 1680 1028 </string>
+			<string>36 245 1000 760 0 0 1680 1028 </string>
 			<key>WindowToolGUID</key>
 			<string>4F2F4E0A0D85910F004C31AD</string>
 			<key>WindowToolIsVisible</key>
@@ -643,8 +650,8 @@
 										<string>yes</string>
 										<key>sizes</key>
 										<array>
-											<string>{{0, 0}, {316, 185}}</string>
-											<string>{{316, 0}, {378, 185}}</string>
+											<string>{{0, 0}, {316, 194}}</string>
+											<string>{{316, 0}, {378, 194}}</string>
 										</array>
 									</dict>
 									<key>VerticalSplitView</key>
@@ -659,8 +666,8 @@
 										<string>yes</string>
 										<key>sizes</key>
 										<array>
-											<string>{{0, 0}, {694, 185}}</string>
-											<string>{{0, 185}, {694, 196}}</string>
+											<string>{{0, 0}, {694, 194}}</string>
+											<string>{{0, 194}, {694, 187}}</string>
 										</array>
 									</dict>
 								</dict>
@@ -693,7 +700,7 @@
 										<real>148</real>
 									</array>
 									<key>Frame</key>
-									<string>{{316, 0}, {378, 185}}</string>
+									<string>{{316, 0}, {378, 194}}</string>
 									<key>RubberWindowFrame</key>
 									<string>36 583 694 422 0 0 1680 1028 </string>
 								</dict>
@@ -721,13 +728,13 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1CD10A99069EF8BA00B06720</string>
-				<string>4F2F4E0C0D85910F004C31AD</string>
+				<string>4F0FB09A0E39FC10008AA167</string>
 				<string>1C162984064C10D400B95A72</string>
-				<string>4F2F4E0D0D85910F004C31AD</string>
-				<string>4F2F4E0E0D85910F004C31AD</string>
-				<string>4F2F4E0F0D85910F004C31AD</string>
-				<string>4F2F4E100D85910F004C31AD</string>
-				<string>4F2F4E110D85910F004C31AD</string>
+				<string>4F0FB09B0E39FC10008AA167</string>
+				<string>4F0FB09C0E39FC10008AA167</string>
+				<string>4F0FB09D0E39FC10008AA167</string>
+				<string>4F0FB09E0E39FC10008AA167</string>
+				<string>4F0FB09F0E39FC10008AA167</string>
 			</array>
 			<key>ToolbarConfiguration</key>
 			<string>xcode.toolbar.config.debugV3</string>
@@ -889,7 +896,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C78EAAD065D492600B07095</string>
-				<string>4F2F4E120D85910F004C31AD</string>
+				<string>4F0FB0A00E39FC10008AA167</string>
 				<string>1C78EAAC065D492600B07095</string>
 			</array>
 			<key>ToolbarConfiguration</key>

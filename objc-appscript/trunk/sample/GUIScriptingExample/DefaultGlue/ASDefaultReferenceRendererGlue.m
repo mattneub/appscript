@@ -2,7 +2,7 @@
  * ASDefaultReferenceRendererGlue.m
  *
  * <default terminology>
- * osaglue 0.3.2
+ * osaglue 0.4.0
  *
  */
 
@@ -26,8 +26,8 @@
     }
 }
 
-+ (NSString *)render:(id)object {
-    return [ASDefaultReferenceRenderer render: object withPrefix: @"ASDefault"];
+- (NSString *)prefix {
+    return @"ASDefault";
 }
 
 @end

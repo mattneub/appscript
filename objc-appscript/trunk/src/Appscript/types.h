@@ -6,6 +6,7 @@
 //
 
 #import "utils.h"
+#import "objectrenderer.h"
 
 /**********************************************************************/
 // not defined in __LP64__
@@ -40,7 +41,7 @@ enum { typeFSS = 'fss ' };
 
 - (BOOL)boolValue;
 
-- (NSAppleEventDescriptor *)desc;
+- (NSAppleEventDescriptor *)descriptor;
 
 @end
 
@@ -67,7 +68,7 @@ enum { typeFSS = 'fss ' };
 
 - (NSURL *)url;
 
-- (NSAppleEventDescriptor *)desc;
+- (NSAppleEventDescriptor *)descriptor;
 
 - (DescType)descriptorType;
 
@@ -85,6 +86,10 @@ enum { typeFSS = 'fss ' };
 
 + (id)aliasWithDescriptor:(NSAppleEventDescriptor *)desc_;
 
++ (id)aliasWithAliasHandle:(AliasHandle)alias;
+
+- (AliasHandle)aliasHandle;
+
 @end
 
 
@@ -95,6 +100,10 @@ enum { typeFSS = 'fss ' };
 + (id)fileRefWithFileURL:(NSURL *)url;
 
 + (id)fileRefWithDescriptor:(NSAppleEventDescriptor *)desc_;
+
++ (id)fileRefWithFSRef:(FSRef)fsRef;
+
+- (FSRef)fsRef;
 
 @end
 
@@ -144,7 +153,7 @@ enum { typeFSS = 'fss ' };
 
 - (OSType)code;
 
-- (NSAppleEventDescriptor *)desc;
+- (NSAppleEventDescriptor *)descriptor;
 
 @end
 

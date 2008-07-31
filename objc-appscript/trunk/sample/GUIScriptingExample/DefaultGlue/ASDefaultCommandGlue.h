@@ -2,7 +2,7 @@
  * ASDefaultCommandGlue.h
  *
  * <default terminology>
- * osaglue 0.3.2
+ * osaglue 0.4.0
  *
  */
 
@@ -10,47 +10,51 @@
 
 
 #import "Appscript/Appscript.h"
+#import "ASDefaultReferenceRendererGlue.h"
 
 
-@interface ASDefaultActivateCommand : ASCommand
+@interface ASDefaultCommand : ASCommand
+@end
+
+@interface ASDefaultActivateCommand : ASDefaultCommand
 @end
 
 
-@interface ASDefaultGetCommand : ASCommand
+@interface ASDefaultGetCommand : ASDefaultCommand
 @end
 
 
-@interface ASDefaultLaunchCommand : ASCommand
+@interface ASDefaultLaunchCommand : ASDefaultCommand
 @end
 
 
-@interface ASDefaultOpenCommand : ASCommand
+@interface ASDefaultOpenCommand : ASDefaultCommand
 @end
 
 
-@interface ASDefaultOpenLocationCommand : ASCommand
+@interface ASDefaultOpenLocationCommand : ASDefaultCommand
 - (ASDefaultOpenLocationCommand *)window:(id)value;
 @end
 
 
-@interface ASDefaultPrintCommand : ASCommand
+@interface ASDefaultPrintCommand : ASDefaultCommand
 @end
 
 
-@interface ASDefaultQuitCommand : ASCommand
+@interface ASDefaultQuitCommand : ASDefaultCommand
 - (ASDefaultQuitCommand *)saving:(id)value;
 @end
 
 
-@interface ASDefaultReopenCommand : ASCommand
+@interface ASDefaultReopenCommand : ASDefaultCommand
 @end
 
 
-@interface ASDefaultRunCommand : ASCommand
+@interface ASDefaultRunCommand : ASDefaultCommand
 @end
 
 
-@interface ASDefaultSetCommand : ASCommand
+@interface ASDefaultSetCommand : ASDefaultCommand
 - (ASDefaultSetCommand *)to:(id)value;
 @end
 

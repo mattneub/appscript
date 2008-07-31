@@ -2,7 +2,7 @@
  * ITReferenceGlue.m
  *
  * /Applications/iTunes.app
- * osaglue 0.3.2
+ * osaglue 0.4.0
  *
  */
 
@@ -11,7 +11,7 @@
 @implementation ITReference
 
 - (NSString *)description {
-	return [ITReferenceRenderer render: AS_aemReference];
+	return [ITReferenceRenderer formatObject: AS_aemReference appData: AS_appData];
 }
 
 /* Commands */
@@ -20,7 +20,7 @@
     return [ITActivateCommand commandWithAppData: AS_appData
                          eventClass: 'misc'
                             eventID: 'actv'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -36,7 +36,7 @@
     return [ITAddCommand commandWithAppData: AS_appData
                          eventClass: 'hook'
                             eventID: 'Add '
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -52,7 +52,7 @@
     return [ITBackTrackCommand commandWithAppData: AS_appData
                          eventClass: 'hook'
                             eventID: 'Back'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -68,7 +68,7 @@
     return [ITCloseCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'clos'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -84,7 +84,7 @@
     return [ITConvertCommand commandWithAppData: AS_appData
                          eventClass: 'hook'
                             eventID: 'Conv'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -100,7 +100,7 @@
     return [ITCountCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'cnte'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -116,7 +116,7 @@
     return [ITDeleteCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'delo'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -132,7 +132,7 @@
     return [ITDownloadCommand commandWithAppData: AS_appData
                          eventClass: 'hook'
                             eventID: 'Dwnl'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -148,7 +148,7 @@
     return [ITDuplicateCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'clon'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -164,7 +164,7 @@
     return [ITEjectCommand commandWithAppData: AS_appData
                          eventClass: 'hook'
                             eventID: 'Ejct'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -180,7 +180,7 @@
     return [ITExistsCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'doex'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -196,7 +196,7 @@
     return [ITFastForwardCommand commandWithAppData: AS_appData
                          eventClass: 'hook'
                             eventID: 'Fast'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -212,7 +212,7 @@
     return [ITGetCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'getd'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -228,7 +228,7 @@
     return [ITLaunchCommand commandWithAppData: AS_appData
                          eventClass: 'ascr'
                             eventID: 'noop'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -244,7 +244,7 @@
     return [ITMakeCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'crel'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -260,7 +260,7 @@
     return [ITMoveCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'move'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -276,7 +276,7 @@
     return [ITNextTrackCommand commandWithAppData: AS_appData
                          eventClass: 'hook'
                             eventID: 'Next'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -292,7 +292,7 @@
     return [ITOpenCommand commandWithAppData: AS_appData
                          eventClass: 'aevt'
                             eventID: 'odoc'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -308,7 +308,7 @@
     return [ITOpenLocationCommand commandWithAppData: AS_appData
                          eventClass: 'GURL'
                             eventID: 'GURL'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -324,7 +324,7 @@
     return [ITPauseCommand commandWithAppData: AS_appData
                          eventClass: 'hook'
                             eventID: 'Paus'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -340,7 +340,7 @@
     return [ITPlayCommand commandWithAppData: AS_appData
                          eventClass: 'hook'
                             eventID: 'Play'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -356,7 +356,7 @@
     return [ITPlaypauseCommand commandWithAppData: AS_appData
                          eventClass: 'hook'
                             eventID: 'PlPs'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -372,7 +372,7 @@
     return [ITPreviousTrackCommand commandWithAppData: AS_appData
                          eventClass: 'hook'
                             eventID: 'Prev'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -388,7 +388,7 @@
     return [ITPrintCommand commandWithAppData: AS_appData
                          eventClass: 'aevt'
                             eventID: 'pdoc'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -404,7 +404,7 @@
     return [ITQuitCommand commandWithAppData: AS_appData
                          eventClass: 'aevt'
                             eventID: 'quit'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -420,7 +420,7 @@
     return [ITRefreshCommand commandWithAppData: AS_appData
                          eventClass: 'hook'
                             eventID: 'Rfrs'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -436,7 +436,7 @@
     return [ITReopenCommand commandWithAppData: AS_appData
                          eventClass: 'aevt'
                             eventID: 'rapp'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -452,7 +452,7 @@
     return [ITResumeCommand commandWithAppData: AS_appData
                          eventClass: 'hook'
                             eventID: 'Resu'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -468,7 +468,7 @@
     return [ITRevealCommand commandWithAppData: AS_appData
                          eventClass: 'hook'
                             eventID: 'Revl'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -484,7 +484,7 @@
     return [ITRewindCommand commandWithAppData: AS_appData
                          eventClass: 'hook'
                             eventID: 'Rwnd'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -500,7 +500,7 @@
     return [ITRunCommand commandWithAppData: AS_appData
                          eventClass: 'aevt'
                             eventID: 'oapp'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -516,7 +516,7 @@
     return [ITSearchCommand commandWithAppData: AS_appData
                          eventClass: 'hook'
                             eventID: 'Srch'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -532,7 +532,7 @@
     return [ITSetCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'setd'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -548,7 +548,7 @@
     return [ITStopCommand commandWithAppData: AS_appData
                          eventClass: 'hook'
                             eventID: 'Stop'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -564,7 +564,7 @@
     return [ITSubscribeCommand commandWithAppData: AS_appData
                          eventClass: 'hook'
                             eventID: 'pSub'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -580,7 +580,7 @@
     return [ITUpdateCommand commandWithAppData: AS_appData
                          eventClass: 'hook'
                             eventID: 'Updt'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -596,7 +596,7 @@
     return [ITUpdateAllPodcastsCommand commandWithAppData: AS_appData
                          eventClass: 'hook'
                             eventID: 'Updp'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -612,7 +612,7 @@
     return [ITUpdatePodcastCommand commandWithAppData: AS_appData
                          eventClass: 'hook'
                             eventID: 'Upd1'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -1203,6 +1203,11 @@
 - (ITReference *)ratingKind {
     return [ITReference referenceWithAppData: AS_appData
                     aemReference: [AS_aemReference property: 'pRtk']];
+}
+
+- (ITReference *)rawData {
+    return [ITReference referenceWithAppData: AS_appData
+                    aemReference: [AS_aemReference property: 'pRaw']];
 }
 
 - (ITReference *)requestedPrintTime {

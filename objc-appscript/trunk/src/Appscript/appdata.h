@@ -16,7 +16,7 @@
 // typedefs
 
 typedef enum {
-	kASTargetCurrent,
+	kASTargetCurrent = 1,
 	kASTargetName,
 	kASTargetBundleID,
 	kASTargetURL,

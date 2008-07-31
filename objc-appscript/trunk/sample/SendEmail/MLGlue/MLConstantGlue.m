@@ -2,7 +2,7 @@
  * MLConstantGlue.m
  *
  * /Applications/Mail.app
- * osaglue 0.3.2
+ * osaglue 0.4.0
  *
  */
 
@@ -12,14 +12,42 @@
 
 + (id)constantWithCode:(OSType)code_ {
     switch (code_) {
+        case 'apr ': return [self April];
+        case 'aug ': return [self August];
+        case 'dec ': return [self December];
+        case 'EPS ': return [self EPSPicture];
+        case 'feb ': return [self February];
+        case 'fri ': return [self Friday];
+        case 'GIFf': return [self GIFPicture];
+        case 'JPEG': return [self JPEGPicture];
+        case 'jan ': return [self January];
+        case 'jul ': return [self July];
+        case 'jun ': return [self June];
         case 'attp': return [self MIMEType];
         case 'etit': return [self Mac];
         case 'itac': return [self MacAccount];
+        case 'mar ': return [self March];
+        case 'may ': return [self May];
+        case 'mon ': return [self Monday];
+        case 'nov ': return [self November];
+        case 'oct ': return [self October];
+        case 'PICT': return [self PICTPicture];
+        case 'tr16': return [self RGB16Color];
+        case 'tr96': return [self RGB96Color];
+        case 'cRGB': return [self RGBColor];
+        case 'sat ': return [self Saturday];
+        case 'sep ': return [self September];
+        case 'sun ': return [self Sunday];
+        case 'TIFF': return [self TIFFPicture];
+        case 'thu ': return [self Thursday];
+        case 'tue ': return [self Tuesday];
+        case 'wed ': return [self Wednesday];
         case 'tacc': return [self account];
         case 'mact': return [self account];
         case 'path': return [self accountDirectory];
         case 'atyp': return [self accountType];
         case 'radd': return [self address];
+        case 'alis': return [self alias];
         case 'hdal': return [self all];
         case 'racm': return [self allConditionsMustBeMet];
         case 'alhe': return [self allHeaders];
@@ -28,8 +56,13 @@
         case 'abcm': return [self alwaysBccMyself];
         case 'accm': return [self alwaysCcMyself];
         case 'tanr': return [self anyRecipient];
+        case '****': return [self anything];
         case 'aapo': return [self apop];
         case 'capp': return [self application];
+        case 'bund': return [self applicationBundleID];
+        case 'rmte': return [self applicationResponses];
+        case 'sign': return [self applicationSignature];
+        case 'aprl': return [self applicationURL];
         case 'apve': return [self applicationVersion];
         case 'ask ': return [self ask];
         case 'atts': return [self attachment];
@@ -41,46 +74,68 @@
         case 'lsba': return [self base];
         case 'brcp': return [self bccRecipient];
         case 'rqbw': return [self beginsWithValue];
+        case 'best': return [self best];
         case 'bmws': return [self bigMessageWarningSize];
         case 'ccbl': return [self blue];
+        case 'bool': return [self boolean];
+        case 'qdrt': return [self boundingRectangle];
         case 'pbnd': return [self bounds];
         case 'ecba': return [self buddyAvailabilityColumn];
+        case 'case': return [self case];
         case 'tccc': return [self ccHeader];
         case 'crcp': return [self ccRecipient];
+        case 'cmtr': return [self centimeters];
         case 'cha ': return [self character];
         case 'chsp': return [self checkSpellingWhileTyping];
         case 'cswc': return [self chooseSignatureWhenComposing];
+        case 'gcli': return [self classInfo];
         case 'pcls': return [self class_];
         case 'hclb': return [self closeable];
         case 'lwcl': return [self collating];
         case 'colr': return [self color];
         case 'rcme': return [self colorMessage];
         case 'mcct': return [self colorQuotedText];
+        case 'clrt': return [self colorTable];
         case 'cwcm': return [self compactMailboxesWhenClosing];
         case 'mbxc': return [self container];
         case 'ctnt': return [self content];
         case 'lwcp': return [self copies];
         case 'rcmb': return [self copyMessage];
+        case 'ccmt': return [self cubicCentimeters];
+        case 'cfet': return [self cubicFeet];
+        case 'cuin': return [self cubicInches];
+        case 'cmet': return [self cubicMeters];
+        case 'cyrd': return [self cubicYards];
         case 'hdcu': return [self custom];
+        case 'tdas': return [self dashStyle];
+        case 'rdat': return [self data];
+        case 'ldt ': return [self date];
         case 'rdrc': return [self dateReceived];
         case 'ecdr': return [self dateReceivedColumn];
         case 'drcv': return [self dateSent];
         case 'ecds': return [self dateSentColumn];
+        case 'decm': return [self decimalStruct];
         case 'demf': return [self defaultMessageFormat];
         case 'hdde': return [self default_];
+        case 'degc': return [self degreesCelsius];
+        case 'degf': return [self degreesFahrenheit];
+        case 'degk': return [self degreesKelvin];
         case 'dmdi': return [self delayedMessageDeletionInterval];
         case 'dmos': return [self deleteMailOnServer];
         case 'rdme': return [self deleteMessage];
         case 'dmwm': return [self deleteMessagesWhenMovedFromInbox];
         case 'isdl': return [self deletedStatus];
         case 'lwdt': return [self detailed];
+        case 'diac': return [self diacriticals];
         case 'x9no': return [self doNotKeepCopiesOfAnyMessages];
         case 'docu': return [self document];
         case 'rqco': return [self doesContainValue];
         case 'rqdn': return [self doesNotContainValue];
+        case 'comp': return [self doubleInteger];
         case 'dhta': return [self downloadHtmlAttachments];
         case 'atdn': return [self downloaded];
         case 'drmb': return [self draftsMailbox];
+        case 'elin': return [self elementInfo];
         case 'emad': return [self emailAddresses];
         case 'ejmf': return [self emptyJunkMessagesFrequency];
         case 'ejmo': return [self emptyJunkMessagesOnQuit];
@@ -89,20 +144,34 @@
         case 'etrf': return [self emptyTrashFrequency];
         case 'etoq': return [self emptyTrashOnQuit];
         case 'isac': return [self enabled];
+        case 'encs': return [self encodedString];
         case 'lwlp': return [self endingPage];
         case 'rqew': return [self endsWithValue];
+        case 'enum': return [self enumerator];
         case 'rqie': return [self equalToValue];
         case 'lweh': return [self errorHandling];
+        case 'evin': return [self eventInfo];
         case 'exga': return [self expandGroupAddresses];
+        case 'expa': return [self expansion];
         case 'rexp': return [self expression];
+        case 'exte': return [self extendedFloat];
         case 'faxn': return [self faxNumber];
+        case 'feet': return [self feet];
         case 'affq': return [self fetchInterval];
         case 'saft': return [self fetchesAutomatically];
         case 'atfn': return [self fileName];
+        case 'fsrf': return [self fileRef];
+        case 'fss ': return [self fileSpecification];
+        case 'furl': return [self fileURL];
+        case 'fixd': return [self fixed];
+        case 'fpnt': return [self fixedPoint];
+        case 'frct': return [self fixedRectangle];
         case 'mptf': return [self fixedWidthFont];
         case 'ptfs': return [self fixedWidthFontSize];
         case 'isfl': return [self flaggedStatus];
         case 'ecfl': return [self flagsColumn];
+        case 'ldbl': return [self float128bit];
+        case 'doub': return [self float_];
         case 'font': return [self font];
         case 'rfad': return [self forwardMessage];
         case 'rfte': return [self forwardText];
@@ -111,6 +180,9 @@
         case 'tfro': return [self fromHeader];
         case 'pisf': return [self frontmost];
         case 'flln': return [self fullName];
+        case 'galn': return [self gallons];
+        case 'gram': return [self grams];
+        case 'cgtx': return [self graphicText];
         case 'ccgy': return [self gray];
         case 'rqgt': return [self greaterThanValue];
         case 'ccgr': return [self green];
@@ -121,22 +193,40 @@
         case 'shht': return [self highlightSelectedThread];
         case 'htuc': return [self highlightTextUsingColor];
         case 'ldsa': return [self hostName];
+        case 'hyph': return [self hyphens];
         case 'ID  ': return [self id_];
         case 'etim': return [self imap];
         case 'iact': return [self imapAccount];
         case 'inmb': return [self inbox];
+        case 'inch': return [self inches];
         case 'iaoo': return [self includeAllOriginalMessageText];
         case 'iwgm': return [self includeWhenGettingNewMail];
         case 'pidx': return [self index];
+        case 'long': return [self integer];
+        case 'itxt': return [self internationalText];
+        case 'intl': return [self internationalWritingCode];
         case 'cobj': return [self item];
         case 'isjk': return [self junkMailStatus];
         case 'jkmb': return [self junkMailbox];
         case 'axk5': return [self kerberos5];
+        case 'kpid': return [self kernelProcessID];
+        case 'kgrm': return [self kilograms];
+        case 'kmtr': return [self kilometers];
         case 'ldse': return [self ldapServer];
         case 'rqlt': return [self lessThanValue];
         case 'loqc': return [self levelOneQuotingColor];
         case 'lhqc': return [self levelThreeQuotingColor];
         case 'lwqc': return [self levelTwoQuotingColor];
+        case 'list': return [self list];
+        case 'litr': return [self liters];
+        case 'insl': return [self locationReference];
+        case 'lfxd': return [self longFixed];
+        case 'lfpt': return [self longFixedPoint];
+        case 'lfrc': return [self longFixedRectangle];
+        case 'lpnt': return [self longPoint];
+        case 'lrct': return [self longRectangle];
+        case 'mach': return [self machine];
+        case 'mLoc': return [self machineLocation];
         case 'attc': return [self mailAttachment];
         case 'mbxp': return [self mailbox];
         case 'ecmb': return [self mailboxColumn];
@@ -159,8 +249,11 @@
         case 'msze': return [self messageSize];
         case 'ecms': return [self messageStatusColumn];
         case 'mvwr': return [self messageViewer];
+        case 'metr': return [self meters];
+        case 'mile': return [self miles];
         case 'ismn': return [self miniaturizable];
         case 'pmnd': return [self miniaturized];
+        case 'msng': return [self missingValue];
         case 'pmod': return [self modal];
         case 'imod': return [self modified];
         case 'smdm': return [self moveDeletedMessagesToTrash];
@@ -169,49 +262,65 @@
         case 'mnms': return [self newMailSound];
         case 'no  ': return [self no];
         case 'hdnn': return [self noHeaders];
-        case 'ccno': return [self none];
         case 'rqno': return [self none];
+        case 'ccno': return [self none];
         case 'axnt': return [self ntlm];
+        case 'null': return [self null];
         case 'ecnm': return [self numberColumn];
+        case 'nume': return [self numericStrings];
         case 'lsol': return [self oneLevel];
         case 'x9wr': return [self onlyMessagesIHaveRead];
         case 'ccor': return [self orange];
         case 'ccot': return [self other];
+        case 'ozs ': return [self ounces];
         case 'oumb': return [self outbox];
         case 'bcke': return [self outgoingMessage];
         case 'lwla': return [self pagesAcross];
         case 'lwld': return [self pagesDown];
         case 'cpar': return [self paragraph];
+        case 'pmin': return [self parameterInfo];
         case 'axct': return [self password];
         case 'macp': return [self password];
         case 'ppth': return [self path];
+        case 'tpmm': return [self pixelMapRecord];
         case 'dmpt': return [self plainText];
         case 'rpso': return [self playSound];
+        case 'QDpt': return [self point];
         case 'etpo': return [self pop];
         case 'pact': return [self popAccount];
         case 'port': return [self port];
+        case 'lbs ': return [self pounds];
         case 'mvpv': return [self previewPaneIsVisible];
         case 'ueml': return [self primaryEmail];
         case 'pset': return [self printSettings];
+        case 'psn ': return [self processSerialNumber];
         case 'pALL': return [self properties];
+        case 'prop': return [self property];
+        case 'pinf': return [self propertyInfo];
+        case 'punc': return [self punctuation];
         case 'ccpu': return [self purple];
         case 'rqua': return [self qualifier];
+        case 'qrts': return [self quarts];
         case 'inom': return [self quoteOriginalMessage];
         case 'isrd': return [self readStatus];
         case 'rcpt': return [self recipient];
+        case 'reco': return [self record];
         case 'ccre': return [self red];
         case 'rrad': return [self redirectMessage];
+        case 'obj ': return [self reference];
         case 'rrte': return [self replyText];
         case 'rpto': return [self replyTo];
         case 'lwqt': return [self requestedPrintTime];
         case 'prsz': return [self resizable];
         case 'dmrt': return [self richText];
+        case 'trot': return [self rotation];
         case 'rule': return [self rule];
         case 'rucr': return [self ruleCondition];
         case 'rtyp': return [self ruleType];
         case 'rras': return [self runScript];
         case 'risf': return [self sameReplyFormat];
         case 'ldsc': return [self scope];
+        case 'scpt': return [self script];
         case 'ldsb': return [self searchBase];
         case 'msbx': return [self selectedMailboxes];
         case 'smgs': return [self selectedMessages];
@@ -224,6 +333,8 @@
         case 'tsig': return [self senderIsNotMemberOfGroup];
         case 'stmb': return [self sentMailbox];
         case 'host': return [self serverName];
+        case 'sing': return [self shortFloat];
+        case 'shor': return [self shortInteger];
         case 'rscm': return [self shouldCopyMessage];
         case 'rstm': return [self shouldMoveMessage];
         case 'poms': return [self shouldPlayOtherMailSounds];
@@ -236,6 +347,11 @@
         case 'mvsc': return [self sortColumn];
         case 'mvsr': return [self sortedAscending];
         case 'raso': return [self source];
+        case 'sqft': return [self squareFeet];
+        case 'sqkm': return [self squareKilometers];
+        case 'sqrm': return [self squareMeters];
+        case 'sqmi': return [self squareMiles];
+        case 'sqyd': return [self squareYards];
         case 'lwst': return [self standard];
         case 'lwfp': return [self startingPage];
         case 'rser': return [self stopEvaluatingRules];
@@ -243,23 +359,33 @@
         case 'sdos': return [self storeDraftsOnServer];
         case 'sjos': return [self storeJunkMailOnServer];
         case 'ssos': return [self storeSentMessagesOnServer];
+        case 'TEXT': return [self string];
+        case 'styl': return [self styledClipboardText];
+        case 'STXT': return [self styledText];
         case 'subj': return [self subject];
         case 'ecsu': return [self subjectColumn];
         case 'tsub': return [self subjectHeader];
         case 'lsst': return [self subtree];
+        case 'suin': return [self suiteInfo];
         case 'trpr': return [self targetPrinter];
         case 'ctxt': return [self text];
+        case 'tsty': return [self textStyleInfo];
         case 'ptit': return [self titled];
         case 'ecto': return [self toColumn];
         case 'ttoo': return [self toHeader];
         case 'ttoc': return [self toOrCcHeader];
         case 'trcp': return [self toRecipient];
         case 'trmb': return [self trashMailbox];
+        case 'type': return [self typeClass];
+        case 'utxt': return [self unicodeText];
         case 'mbuc': return [self unreadCount];
+        case 'magn': return [self unsignedInteger];
         case 'usla': return [self useAddressCompletion];
         case 'ufwf': return [self useFixedWidthFont];
         case 'unme': return [self userName];
         case 'usss': return [self usesSsl];
+        case 'ut16': return [self utf16Text];
+        case 'utf8': return [self utf8Text];
         case 'vers': return [self version_];
         case 'pvis': return [self visible];
         case 'mvvc': return [self visibleColumns];
@@ -267,8 +393,11 @@
         case 'isfw': return [self wasForwarded];
         case 'isrc': return [self wasRedirected];
         case 'isrp': return [self wasRepliedTo];
+        case 'whit': return [self whitespace];
         case 'cwin': return [self window];
         case 'cwor': return [self word];
+        case 'psct': return [self writingCode];
+        case 'yard': return [self yards];
         case 'ccye': return [self yellow];
         case 'yes ': return [self yes];
         case 'iszm': return [self zoomable];
@@ -322,6 +451,13 @@
     return constantObj;
 }
 
++ (MLConstant *)applicationResponses {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"applicationResponses" type: typeEnumerated code: 'rmte'];
+    return constantObj;
+}
+
 + (MLConstant *)ask {
     static MLConstant *constantObj;
     if (!constantObj)
@@ -361,6 +497,13 @@
     static MLConstant *constantObj;
     if (!constantObj)
         constantObj = [MLConstant constantWithName: @"buddyAvailabilityColumn" type: typeEnumerated code: 'ecba'];
+    return constantObj;
+}
+
++ (MLConstant *)case {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"case" type: typeEnumerated code: 'case'];
     return constantObj;
 }
 
@@ -406,6 +549,13 @@
     return constantObj;
 }
 
++ (MLConstant *)diacriticals {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"diacriticals" type: typeEnumerated code: 'diac'];
+    return constantObj;
+}
+
 + (MLConstant *)doNotKeepCopiesOfAnyMessages {
     static MLConstant *constantObj;
     if (!constantObj)
@@ -438,6 +588,13 @@
     static MLConstant *constantObj;
     if (!constantObj)
         constantObj = [MLConstant constantWithName: @"equalToValue" type: typeEnumerated code: 'rqie'];
+    return constantObj;
+}
+
++ (MLConstant *)expansion {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"expansion" type: typeEnumerated code: 'expa'];
     return constantObj;
 }
 
@@ -487,6 +644,13 @@
     static MLConstant *constantObj;
     if (!constantObj)
         constantObj = [MLConstant constantWithName: @"headerKey" type: typeEnumerated code: 'thdk'];
+    return constantObj;
+}
+
++ (MLConstant *)hyphens {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"hyphens" type: typeEnumerated code: 'hyph'];
     return constantObj;
 }
 
@@ -595,6 +759,13 @@
     return constantObj;
 }
 
++ (MLConstant *)numericStrings {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"numericStrings" type: typeEnumerated code: 'nume'];
+    return constantObj;
+}
+
 + (MLConstant *)oneLevel {
     static MLConstant *constantObj;
     if (!constantObj)
@@ -641,6 +812,13 @@
     static MLConstant *constantObj;
     if (!constantObj)
         constantObj = [MLConstant constantWithName: @"pop" type: typeEnumerated code: 'etpo'];
+    return constantObj;
+}
+
++ (MLConstant *)punctuation {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"punctuation" type: typeEnumerated code: 'punc'];
     return constantObj;
 }
 
@@ -756,6 +934,13 @@
     return constantObj;
 }
 
++ (MLConstant *)whitespace {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"whitespace" type: typeEnumerated code: 'whit'];
+    return constantObj;
+}
+
 + (MLConstant *)yellow {
     static MLConstant *constantObj;
     if (!constantObj)
@@ -773,6 +958,83 @@
 
 /* Types and properties */
 
++ (MLConstant *)April {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"April" type: typeType code: 'apr '];
+    return constantObj;
+}
+
++ (MLConstant *)August {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"August" type: typeType code: 'aug '];
+    return constantObj;
+}
+
++ (MLConstant *)December {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"December" type: typeType code: 'dec '];
+    return constantObj;
+}
+
++ (MLConstant *)EPSPicture {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"EPSPicture" type: typeType code: 'EPS '];
+    return constantObj;
+}
+
++ (MLConstant *)February {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"February" type: typeType code: 'feb '];
+    return constantObj;
+}
+
++ (MLConstant *)Friday {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"Friday" type: typeType code: 'fri '];
+    return constantObj;
+}
+
++ (MLConstant *)GIFPicture {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"GIFPicture" type: typeType code: 'GIFf'];
+    return constantObj;
+}
+
++ (MLConstant *)JPEGPicture {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"JPEGPicture" type: typeType code: 'JPEG'];
+    return constantObj;
+}
+
++ (MLConstant *)January {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"January" type: typeType code: 'jan '];
+    return constantObj;
+}
+
++ (MLConstant *)July {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"July" type: typeType code: 'jul '];
+    return constantObj;
+}
+
++ (MLConstant *)June {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"June" type: typeType code: 'jun '];
+    return constantObj;
+}
+
 + (MLConstant *)MIMEType {
     static MLConstant *constantObj;
     if (!constantObj)
@@ -784,6 +1046,118 @@
     static MLConstant *constantObj;
     if (!constantObj)
         constantObj = [MLConstant constantWithName: @"MacAccount" type: typeType code: 'itac'];
+    return constantObj;
+}
+
++ (MLConstant *)March {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"March" type: typeType code: 'mar '];
+    return constantObj;
+}
+
++ (MLConstant *)May {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"May" type: typeType code: 'may '];
+    return constantObj;
+}
+
++ (MLConstant *)Monday {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"Monday" type: typeType code: 'mon '];
+    return constantObj;
+}
+
++ (MLConstant *)November {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"November" type: typeType code: 'nov '];
+    return constantObj;
+}
+
++ (MLConstant *)October {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"October" type: typeType code: 'oct '];
+    return constantObj;
+}
+
++ (MLConstant *)PICTPicture {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"PICTPicture" type: typeType code: 'PICT'];
+    return constantObj;
+}
+
++ (MLConstant *)RGB16Color {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"RGB16Color" type: typeType code: 'tr16'];
+    return constantObj;
+}
+
++ (MLConstant *)RGB96Color {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"RGB96Color" type: typeType code: 'tr96'];
+    return constantObj;
+}
+
++ (MLConstant *)RGBColor {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"RGBColor" type: typeType code: 'cRGB'];
+    return constantObj;
+}
+
++ (MLConstant *)Saturday {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"Saturday" type: typeType code: 'sat '];
+    return constantObj;
+}
+
++ (MLConstant *)September {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"September" type: typeType code: 'sep '];
+    return constantObj;
+}
+
++ (MLConstant *)Sunday {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"Sunday" type: typeType code: 'sun '];
+    return constantObj;
+}
+
++ (MLConstant *)TIFFPicture {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"TIFFPicture" type: typeType code: 'TIFF'];
+    return constantObj;
+}
+
++ (MLConstant *)Thursday {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"Thursday" type: typeType code: 'thu '];
+    return constantObj;
+}
+
++ (MLConstant *)Tuesday {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"Tuesday" type: typeType code: 'tue '];
+    return constantObj;
+}
+
++ (MLConstant *)Wednesday {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"Wednesday" type: typeType code: 'wed '];
     return constantObj;
 }
 
@@ -815,6 +1189,13 @@
     return constantObj;
 }
 
++ (MLConstant *)alias {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"alias" type: typeType code: 'alis'];
+    return constantObj;
+}
+
 + (MLConstant *)allConditionsMustBeMet {
     static MLConstant *constantObj;
     if (!constantObj)
@@ -843,10 +1224,38 @@
     return constantObj;
 }
 
++ (MLConstant *)anything {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"anything" type: typeType code: '****'];
+    return constantObj;
+}
+
 + (MLConstant *)application {
     static MLConstant *constantObj;
     if (!constantObj)
         constantObj = [MLConstant constantWithName: @"application" type: typeType code: 'capp'];
+    return constantObj;
+}
+
++ (MLConstant *)applicationBundleID {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"applicationBundleID" type: typeType code: 'bund'];
+    return constantObj;
+}
+
++ (MLConstant *)applicationSignature {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"applicationSignature" type: typeType code: 'sign'];
+    return constantObj;
+}
+
++ (MLConstant *)applicationURL {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"applicationURL" type: typeType code: 'aprl'];
     return constantObj;
 }
 
@@ -899,10 +1308,31 @@
     return constantObj;
 }
 
++ (MLConstant *)best {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"best" type: typeType code: 'best'];
+    return constantObj;
+}
+
 + (MLConstant *)bigMessageWarningSize {
     static MLConstant *constantObj;
     if (!constantObj)
         constantObj = [MLConstant constantWithName: @"bigMessageWarningSize" type: typeType code: 'bmws'];
+    return constantObj;
+}
+
++ (MLConstant *)boolean {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"boolean" type: typeType code: 'bool'];
+    return constantObj;
+}
+
++ (MLConstant *)boundingRectangle {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"boundingRectangle" type: typeType code: 'qdrt'];
     return constantObj;
 }
 
@@ -917,6 +1347,13 @@
     static MLConstant *constantObj;
     if (!constantObj)
         constantObj = [MLConstant constantWithName: @"ccRecipient" type: typeType code: 'crcp'];
+    return constantObj;
+}
+
++ (MLConstant *)centimeters {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"centimeters" type: typeType code: 'cmtr'];
     return constantObj;
 }
 
@@ -938,6 +1375,13 @@
     static MLConstant *constantObj;
     if (!constantObj)
         constantObj = [MLConstant constantWithName: @"chooseSignatureWhenComposing" type: typeType code: 'cswc'];
+    return constantObj;
+}
+
++ (MLConstant *)classInfo {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"classInfo" type: typeType code: 'gcli'];
     return constantObj;
 }
 
@@ -983,6 +1427,13 @@
     return constantObj;
 }
 
++ (MLConstant *)colorTable {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"colorTable" type: typeType code: 'clrt'];
+    return constantObj;
+}
+
 + (MLConstant *)compactMailboxesWhenClosing {
     static MLConstant *constantObj;
     if (!constantObj)
@@ -1018,6 +1469,62 @@
     return constantObj;
 }
 
++ (MLConstant *)cubicCentimeters {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"cubicCentimeters" type: typeType code: 'ccmt'];
+    return constantObj;
+}
+
++ (MLConstant *)cubicFeet {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"cubicFeet" type: typeType code: 'cfet'];
+    return constantObj;
+}
+
++ (MLConstant *)cubicInches {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"cubicInches" type: typeType code: 'cuin'];
+    return constantObj;
+}
+
++ (MLConstant *)cubicMeters {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"cubicMeters" type: typeType code: 'cmet'];
+    return constantObj;
+}
+
++ (MLConstant *)cubicYards {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"cubicYards" type: typeType code: 'cyrd'];
+    return constantObj;
+}
+
++ (MLConstant *)dashStyle {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"dashStyle" type: typeType code: 'tdas'];
+    return constantObj;
+}
+
++ (MLConstant *)data {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"data" type: typeType code: 'rdat'];
+    return constantObj;
+}
+
++ (MLConstant *)date {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"date" type: typeType code: 'ldt '];
+    return constantObj;
+}
+
 + (MLConstant *)dateReceived {
     static MLConstant *constantObj;
     if (!constantObj)
@@ -1032,10 +1539,38 @@
     return constantObj;
 }
 
++ (MLConstant *)decimalStruct {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"decimalStruct" type: typeType code: 'decm'];
+    return constantObj;
+}
+
 + (MLConstant *)defaultMessageFormat {
     static MLConstant *constantObj;
     if (!constantObj)
         constantObj = [MLConstant constantWithName: @"defaultMessageFormat" type: typeType code: 'demf'];
+    return constantObj;
+}
+
++ (MLConstant *)degreesCelsius {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"degreesCelsius" type: typeType code: 'degc'];
+    return constantObj;
+}
+
++ (MLConstant *)degreesFahrenheit {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"degreesFahrenheit" type: typeType code: 'degf'];
+    return constantObj;
+}
+
++ (MLConstant *)degreesKelvin {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"degreesKelvin" type: typeType code: 'degk'];
     return constantObj;
 }
 
@@ -1088,6 +1623,13 @@
     return constantObj;
 }
 
++ (MLConstant *)doubleInteger {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"doubleInteger" type: typeType code: 'comp'];
+    return constantObj;
+}
+
 + (MLConstant *)downloadHtmlAttachments {
     static MLConstant *constantObj;
     if (!constantObj)
@@ -1106,6 +1648,13 @@
     static MLConstant *constantObj;
     if (!constantObj)
         constantObj = [MLConstant constantWithName: @"draftsMailbox" type: typeType code: 'drmb'];
+    return constantObj;
+}
+
++ (MLConstant *)elementInfo {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"elementInfo" type: typeType code: 'elin'];
     return constantObj;
 }
 
@@ -1165,6 +1714,13 @@
     return constantObj;
 }
 
++ (MLConstant *)encodedString {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"encodedString" type: typeType code: 'encs'];
+    return constantObj;
+}
+
 + (MLConstant *)endingPage {
     static MLConstant *constantObj;
     if (!constantObj)
@@ -1172,10 +1728,24 @@
     return constantObj;
 }
 
++ (MLConstant *)enumerator {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"enumerator" type: typeType code: 'enum'];
+    return constantObj;
+}
+
 + (MLConstant *)errorHandling {
     static MLConstant *constantObj;
     if (!constantObj)
         constantObj = [MLConstant constantWithName: @"errorHandling" type: typeType code: 'lweh'];
+    return constantObj;
+}
+
++ (MLConstant *)eventInfo {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"eventInfo" type: typeType code: 'evin'];
     return constantObj;
 }
 
@@ -1193,10 +1763,24 @@
     return constantObj;
 }
 
++ (MLConstant *)extendedFloat {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"extendedFloat" type: typeType code: 'exte'];
+    return constantObj;
+}
+
 + (MLConstant *)faxNumber {
     static MLConstant *constantObj;
     if (!constantObj)
         constantObj = [MLConstant constantWithName: @"faxNumber" type: typeType code: 'faxn'];
+    return constantObj;
+}
+
++ (MLConstant *)feet {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"feet" type: typeType code: 'feet'];
     return constantObj;
 }
 
@@ -1221,6 +1805,48 @@
     return constantObj;
 }
 
++ (MLConstant *)fileRef {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"fileRef" type: typeType code: 'fsrf'];
+    return constantObj;
+}
+
++ (MLConstant *)fileSpecification {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"fileSpecification" type: typeType code: 'fss '];
+    return constantObj;
+}
+
++ (MLConstant *)fileURL {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"fileURL" type: typeType code: 'furl'];
+    return constantObj;
+}
+
++ (MLConstant *)fixed {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"fixed" type: typeType code: 'fixd'];
+    return constantObj;
+}
+
++ (MLConstant *)fixedPoint {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"fixedPoint" type: typeType code: 'fpnt'];
+    return constantObj;
+}
+
++ (MLConstant *)fixedRectangle {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"fixedRectangle" type: typeType code: 'frct'];
+    return constantObj;
+}
+
 + (MLConstant *)fixedWidthFont {
     static MLConstant *constantObj;
     if (!constantObj)
@@ -1239,6 +1865,20 @@
     static MLConstant *constantObj;
     if (!constantObj)
         constantObj = [MLConstant constantWithName: @"flaggedStatus" type: typeType code: 'isfl'];
+    return constantObj;
+}
+
++ (MLConstant *)float128bit {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"float128bit" type: typeType code: 'ldbl'];
+    return constantObj;
+}
+
++ (MLConstant *)float_ {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"float_" type: typeType code: 'doub'];
     return constantObj;
 }
 
@@ -1288,6 +1928,27 @@
     static MLConstant *constantObj;
     if (!constantObj)
         constantObj = [MLConstant constantWithName: @"fullName" type: typeType code: 'flln'];
+    return constantObj;
+}
+
++ (MLConstant *)gallons {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"gallons" type: typeType code: 'galn'];
+    return constantObj;
+}
+
++ (MLConstant *)grams {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"grams" type: typeType code: 'gram'];
+    return constantObj;
+}
+
++ (MLConstant *)graphicText {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"graphicText" type: typeType code: 'cgtx'];
     return constantObj;
 }
 
@@ -1347,6 +2008,13 @@
     return constantObj;
 }
 
++ (MLConstant *)inches {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"inches" type: typeType code: 'inch'];
+    return constantObj;
+}
+
 + (MLConstant *)includeAllOriginalMessageText {
     static MLConstant *constantObj;
     if (!constantObj)
@@ -1368,6 +2036,27 @@
     return constantObj;
 }
 
++ (MLConstant *)integer {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"integer" type: typeType code: 'long'];
+    return constantObj;
+}
+
++ (MLConstant *)internationalText {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"internationalText" type: typeType code: 'itxt'];
+    return constantObj;
+}
+
++ (MLConstant *)internationalWritingCode {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"internationalWritingCode" type: typeType code: 'intl'];
+    return constantObj;
+}
+
 + (MLConstant *)item {
     static MLConstant *constantObj;
     if (!constantObj)
@@ -1386,6 +2075,27 @@
     static MLConstant *constantObj;
     if (!constantObj)
         constantObj = [MLConstant constantWithName: @"junkMailbox" type: typeType code: 'jkmb'];
+    return constantObj;
+}
+
++ (MLConstant *)kernelProcessID {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"kernelProcessID" type: typeType code: 'kpid'];
+    return constantObj;
+}
+
++ (MLConstant *)kilograms {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"kilograms" type: typeType code: 'kgrm'];
+    return constantObj;
+}
+
++ (MLConstant *)kilometers {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"kilometers" type: typeType code: 'kmtr'];
     return constantObj;
 }
 
@@ -1414,6 +2124,83 @@
     static MLConstant *constantObj;
     if (!constantObj)
         constantObj = [MLConstant constantWithName: @"levelTwoQuotingColor" type: typeType code: 'lwqc'];
+    return constantObj;
+}
+
++ (MLConstant *)list {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"list" type: typeType code: 'list'];
+    return constantObj;
+}
+
++ (MLConstant *)liters {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"liters" type: typeType code: 'litr'];
+    return constantObj;
+}
+
++ (MLConstant *)locationReference {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"locationReference" type: typeType code: 'insl'];
+    return constantObj;
+}
+
++ (MLConstant *)longFixed {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"longFixed" type: typeType code: 'lfxd'];
+    return constantObj;
+}
+
++ (MLConstant *)longFixedPoint {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"longFixedPoint" type: typeType code: 'lfpt'];
+    return constantObj;
+}
+
++ (MLConstant *)longFixedRectangle {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"longFixedRectangle" type: typeType code: 'lfrc'];
+    return constantObj;
+}
+
++ (MLConstant *)longPoint {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"longPoint" type: typeType code: 'lpnt'];
+    return constantObj;
+}
+
++ (MLConstant *)longRectangle {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"longRectangle" type: typeType code: 'lrct'];
+    return constantObj;
+}
+
++ (MLConstant *)machPort {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"machPort" type: typeType code: 'port'];
+    return constantObj;
+}
+
++ (MLConstant *)machine {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"machine" type: typeType code: 'mach'];
+    return constantObj;
+}
+
++ (MLConstant *)machineLocation {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"machineLocation" type: typeType code: 'mLoc'];
     return constantObj;
 }
 
@@ -1522,6 +2309,20 @@
     return constantObj;
 }
 
++ (MLConstant *)meters {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"meters" type: typeType code: 'metr'];
+    return constantObj;
+}
+
++ (MLConstant *)miles {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"miles" type: typeType code: 'mile'];
+    return constantObj;
+}
+
 + (MLConstant *)miniaturizable {
     static MLConstant *constantObj;
     if (!constantObj)
@@ -1533,6 +2334,13 @@
     static MLConstant *constantObj;
     if (!constantObj)
         constantObj = [MLConstant constantWithName: @"miniaturized" type: typeType code: 'pmnd'];
+    return constantObj;
+}
+
++ (MLConstant *)missingValue {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"missingValue" type: typeType code: 'msng'];
     return constantObj;
 }
 
@@ -1578,6 +2386,20 @@
     return constantObj;
 }
 
++ (MLConstant *)null {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"null" type: typeType code: 'null'];
+    return constantObj;
+}
+
++ (MLConstant *)ounces {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"ounces" type: typeType code: 'ozs '];
+    return constantObj;
+}
+
 + (MLConstant *)outbox {
     static MLConstant *constantObj;
     if (!constantObj)
@@ -1613,6 +2435,13 @@
     return constantObj;
 }
 
++ (MLConstant *)parameterInfo {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"parameterInfo" type: typeType code: 'pmin'];
+    return constantObj;
+}
+
 + (MLConstant *)path {
     static MLConstant *constantObj;
     if (!constantObj)
@@ -1620,10 +2449,24 @@
     return constantObj;
 }
 
++ (MLConstant *)pixelMapRecord {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"pixelMapRecord" type: typeType code: 'tpmm'];
+    return constantObj;
+}
+
 + (MLConstant *)playSound {
     static MLConstant *constantObj;
     if (!constantObj)
         constantObj = [MLConstant constantWithName: @"playSound" type: typeType code: 'rpso'];
+    return constantObj;
+}
+
++ (MLConstant *)point {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"point" type: typeType code: 'QDpt'];
     return constantObj;
 }
 
@@ -1638,6 +2481,13 @@
     static MLConstant *constantObj;
     if (!constantObj)
         constantObj = [MLConstant constantWithName: @"port" type: typeType code: 'port'];
+    return constantObj;
+}
+
++ (MLConstant *)pounds {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"pounds" type: typeType code: 'lbs '];
     return constantObj;
 }
 
@@ -1662,6 +2512,13 @@
     return constantObj;
 }
 
++ (MLConstant *)processSerialNumber {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"processSerialNumber" type: typeType code: 'psn '];
+    return constantObj;
+}
+
 + (MLConstant *)properties {
     static MLConstant *constantObj;
     if (!constantObj)
@@ -1669,10 +2526,31 @@
     return constantObj;
 }
 
++ (MLConstant *)property {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"property" type: typeType code: 'prop'];
+    return constantObj;
+}
+
++ (MLConstant *)propertyInfo {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"propertyInfo" type: typeType code: 'pinf'];
+    return constantObj;
+}
+
 + (MLConstant *)qualifier {
     static MLConstant *constantObj;
     if (!constantObj)
         constantObj = [MLConstant constantWithName: @"qualifier" type: typeType code: 'rqua'];
+    return constantObj;
+}
+
++ (MLConstant *)quarts {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"quarts" type: typeType code: 'qrts'];
     return constantObj;
 }
 
@@ -1697,10 +2575,24 @@
     return constantObj;
 }
 
++ (MLConstant *)record {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"record" type: typeType code: 'reco'];
+    return constantObj;
+}
+
 + (MLConstant *)redirectMessage {
     static MLConstant *constantObj;
     if (!constantObj)
         constantObj = [MLConstant constantWithName: @"redirectMessage" type: typeType code: 'rrad'];
+    return constantObj;
+}
+
++ (MLConstant *)reference {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"reference" type: typeType code: 'obj '];
     return constantObj;
 }
 
@@ -1729,6 +2621,13 @@
     static MLConstant *constantObj;
     if (!constantObj)
         constantObj = [MLConstant constantWithName: @"resizable" type: typeType code: 'prsz'];
+    return constantObj;
+}
+
++ (MLConstant *)rotation {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"rotation" type: typeType code: 'trot'];
     return constantObj;
 }
 
@@ -1771,6 +2670,13 @@
     static MLConstant *constantObj;
     if (!constantObj)
         constantObj = [MLConstant constantWithName: @"scope" type: typeType code: 'ldsc'];
+    return constantObj;
+}
+
++ (MLConstant *)script {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"script" type: typeType code: 'scpt'];
     return constantObj;
 }
 
@@ -1827,6 +2733,20 @@
     static MLConstant *constantObj;
     if (!constantObj)
         constantObj = [MLConstant constantWithName: @"serverName" type: typeType code: 'host'];
+    return constantObj;
+}
+
++ (MLConstant *)shortFloat {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"shortFloat" type: typeType code: 'sing'];
+    return constantObj;
+}
+
++ (MLConstant *)shortInteger {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"shortInteger" type: typeType code: 'shor'];
     return constantObj;
 }
 
@@ -1900,6 +2820,41 @@
     return constantObj;
 }
 
++ (MLConstant *)squareFeet {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"squareFeet" type: typeType code: 'sqft'];
+    return constantObj;
+}
+
++ (MLConstant *)squareKilometers {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"squareKilometers" type: typeType code: 'sqkm'];
+    return constantObj;
+}
+
++ (MLConstant *)squareMeters {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"squareMeters" type: typeType code: 'sqrm'];
+    return constantObj;
+}
+
++ (MLConstant *)squareMiles {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"squareMiles" type: typeType code: 'sqmi'];
+    return constantObj;
+}
+
++ (MLConstant *)squareYards {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"squareYards" type: typeType code: 'sqyd'];
+    return constantObj;
+}
+
 + (MLConstant *)startingPage {
     static MLConstant *constantObj;
     if (!constantObj)
@@ -1942,10 +2897,38 @@
     return constantObj;
 }
 
++ (MLConstant *)string {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"string" type: typeType code: 'TEXT'];
+    return constantObj;
+}
+
++ (MLConstant *)styledClipboardText {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"styledClipboardText" type: typeType code: 'styl'];
+    return constantObj;
+}
+
++ (MLConstant *)styledText {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"styledText" type: typeType code: 'STXT'];
+    return constantObj;
+}
+
 + (MLConstant *)subject {
     static MLConstant *constantObj;
     if (!constantObj)
         constantObj = [MLConstant constantWithName: @"subject" type: typeType code: 'subj'];
+    return constantObj;
+}
+
++ (MLConstant *)suiteInfo {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"suiteInfo" type: typeType code: 'suin'];
     return constantObj;
 }
 
@@ -1960,6 +2943,13 @@
     static MLConstant *constantObj;
     if (!constantObj)
         constantObj = [MLConstant constantWithName: @"text" type: typeType code: 'ctxt'];
+    return constantObj;
+}
+
++ (MLConstant *)textStyleInfo {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"textStyleInfo" type: typeType code: 'tsty'];
     return constantObj;
 }
 
@@ -1984,10 +2974,31 @@
     return constantObj;
 }
 
++ (MLConstant *)typeClass {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"typeClass" type: typeType code: 'type'];
+    return constantObj;
+}
+
++ (MLConstant *)unicodeText {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"unicodeText" type: typeType code: 'utxt'];
+    return constantObj;
+}
+
 + (MLConstant *)unreadCount {
     static MLConstant *constantObj;
     if (!constantObj)
         constantObj = [MLConstant constantWithName: @"unreadCount" type: typeType code: 'mbuc'];
+    return constantObj;
+}
+
++ (MLConstant *)unsignedInteger {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"unsignedInteger" type: typeType code: 'magn'];
     return constantObj;
 }
 
@@ -2016,6 +3027,27 @@
     static MLConstant *constantObj;
     if (!constantObj)
         constantObj = [MLConstant constantWithName: @"usesSsl" type: typeType code: 'usss'];
+    return constantObj;
+}
+
++ (MLConstant *)utf16Text {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"utf16Text" type: typeType code: 'ut16'];
+    return constantObj;
+}
+
++ (MLConstant *)utf8Text {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"utf8Text" type: typeType code: 'utf8'];
+    return constantObj;
+}
+
++ (MLConstant *)version {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"version" type: typeType code: 'vers'];
     return constantObj;
 }
 
@@ -2079,6 +3111,20 @@
     static MLConstant *constantObj;
     if (!constantObj)
         constantObj = [MLConstant constantWithName: @"word" type: typeType code: 'cwor'];
+    return constantObj;
+}
+
++ (MLConstant *)writingCode {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"writingCode" type: typeType code: 'psct'];
+    return constantObj;
+}
+
++ (MLConstant *)yards {
+    static MLConstant *constantObj;
+    if (!constantObj)
+        constantObj = [MLConstant constantWithName: @"yards" type: typeType code: 'yard'];
     return constantObj;
 }
 

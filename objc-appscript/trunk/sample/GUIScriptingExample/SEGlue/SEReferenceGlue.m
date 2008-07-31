@@ -2,7 +2,7 @@
  * SEReferenceGlue.m
  *
  * /System/Library/CoreServices/System Events.app
- * osaglue 0.3.2
+ * osaglue 0.4.0
  *
  */
 
@@ -11,7 +11,7 @@
 @implementation SEReference
 
 - (NSString *)description {
-	return [SEReferenceRenderer render: AS_aemReference];
+	return [SEReferenceRenderer formatObject: AS_aemReference appData: AS_appData];
 }
 
 /* Commands */
@@ -20,7 +20,7 @@
     return [SEAbortTransaction_Command commandWithAppData: AS_appData
                          eventClass: 'misc'
                             eventID: 'ttrm'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -36,7 +36,7 @@
     return [SEActivateCommand commandWithAppData: AS_appData
                          eventClass: 'misc'
                             eventID: 'actv'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -52,7 +52,7 @@
     return [SEAttachActionToCommand commandWithAppData: AS_appData
                          eventClass: 'faco'
                             eventID: 'atfa'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -68,7 +68,7 @@
     return [SEAttachedScriptsCommand commandWithAppData: AS_appData
                          eventClass: 'faco'
                             eventID: 'lact'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -84,7 +84,7 @@
     return [SEBeginTransaction_Command commandWithAppData: AS_appData
                          eventClass: 'misc'
                             eventID: 'begi'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -100,7 +100,7 @@
     return [SECancelCommand commandWithAppData: AS_appData
                          eventClass: 'prcs'
                             eventID: 'cncl'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -116,7 +116,7 @@
     return [SEClickCommand commandWithAppData: AS_appData
                          eventClass: 'prcs'
                             eventID: 'clic'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -132,7 +132,7 @@
     return [SECloseCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'clos'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -148,7 +148,7 @@
     return [SEConfirmCommand commandWithAppData: AS_appData
                          eventClass: 'prcs'
                             eventID: 'cnfm'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -164,7 +164,7 @@
     return [SEConnectCommand commandWithAppData: AS_appData
                          eventClass: 'netz'
                             eventID: 'conn'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -180,7 +180,7 @@
     return [SECountCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'cnte'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -196,7 +196,7 @@
     return [SEDecrementCommand commandWithAppData: AS_appData
                          eventClass: 'prcs'
                             eventID: 'decr'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -212,7 +212,7 @@
     return [SEDeleteCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'delo'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -228,7 +228,7 @@
     return [SEDisconnectCommand commandWithAppData: AS_appData
                          eventClass: 'netz'
                             eventID: 'dcon'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -244,7 +244,7 @@
     return [SEDoFolderActionCommand commandWithAppData: AS_appData
                          eventClass: 'faco'
                             eventID: 'fola'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -260,7 +260,7 @@
     return [SEDoScriptCommand commandWithAppData: AS_appData
                          eventClass: 'misc'
                             eventID: 'dosc'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -276,7 +276,7 @@
     return [SEDuplicateCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'clon'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -292,7 +292,7 @@
     return [SEEditActionOfCommand commandWithAppData: AS_appData
                          eventClass: 'faco'
                             eventID: 'edfa'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -308,7 +308,7 @@
     return [SEEndTransaction_Command commandWithAppData: AS_appData
                          eventClass: 'misc'
                             eventID: 'endt'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -324,7 +324,7 @@
     return [SEExistsCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'doex'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -340,7 +340,7 @@
     return [SEGetCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'getd'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -356,7 +356,7 @@
     return [SEIncrementCommand commandWithAppData: AS_appData
                          eventClass: 'prcs'
                             eventID: 'incE'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -372,7 +372,7 @@
     return [SEKeyCodeCommand commandWithAppData: AS_appData
                          eventClass: 'prcs'
                             eventID: 'kcod'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -388,7 +388,7 @@
     return [SEKeyDownCommand commandWithAppData: AS_appData
                          eventClass: 'prcs'
                             eventID: 'keyF'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -404,7 +404,7 @@
     return [SEKeyUpCommand commandWithAppData: AS_appData
                          eventClass: 'prcs'
                             eventID: 'keyU'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -420,7 +420,7 @@
     return [SEKeystrokeCommand commandWithAppData: AS_appData
                          eventClass: 'prcs'
                             eventID: 'kprs'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -436,7 +436,7 @@
     return [SELaunchCommand commandWithAppData: AS_appData
                          eventClass: 'ascr'
                             eventID: 'noop'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -452,7 +452,7 @@
     return [SELogOutCommand commandWithAppData: AS_appData
                          eventClass: 'fndr'
                             eventID: 'logo'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -468,7 +468,7 @@
     return [SEMakeCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'crel'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -484,7 +484,7 @@
     return [SEMoveCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'move'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -500,7 +500,7 @@
     return [SEOpenCommand commandWithAppData: AS_appData
                          eventClass: 'aevt'
                             eventID: 'odoc'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -516,7 +516,7 @@
     return [SEOpenLocationCommand commandWithAppData: AS_appData
                          eventClass: 'GURL'
                             eventID: 'GURL'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -532,7 +532,7 @@
     return [SEPerformCommand commandWithAppData: AS_appData
                          eventClass: 'prcs'
                             eventID: 'perf'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -548,7 +548,7 @@
     return [SEPickCommand commandWithAppData: AS_appData
                          eventClass: 'prcs'
                             eventID: 'pick'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -564,7 +564,7 @@
     return [SEPrintCommand commandWithAppData: AS_appData
                          eventClass: 'aevt'
                             eventID: 'pdoc'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -580,7 +580,7 @@
     return [SEQuitCommand commandWithAppData: AS_appData
                          eventClass: 'aevt'
                             eventID: 'quit'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -596,7 +596,7 @@
     return [SERemoveActionFromCommand commandWithAppData: AS_appData
                          eventClass: 'faco'
                             eventID: 'rmfa'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -612,7 +612,7 @@
     return [SEReopenCommand commandWithAppData: AS_appData
                          eventClass: 'aevt'
                             eventID: 'rapp'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -628,7 +628,7 @@
     return [SERestartCommand commandWithAppData: AS_appData
                          eventClass: 'fndr'
                             eventID: 'rest'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -644,7 +644,7 @@
     return [SERunCommand commandWithAppData: AS_appData
                          eventClass: 'aevt'
                             eventID: 'oapp'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -660,7 +660,7 @@
     return [SESaveCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'save'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -676,7 +676,7 @@
     return [SESelectCommand commandWithAppData: AS_appData
                          eventClass: 'misc'
                             eventID: 'slct'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -692,7 +692,7 @@
     return [SESetCommand commandWithAppData: AS_appData
                          eventClass: 'core'
                             eventID: 'setd'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -708,7 +708,7 @@
     return [SEShutDownCommand commandWithAppData: AS_appData
                          eventClass: 'fndr'
                             eventID: 'shut'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 
@@ -724,7 +724,7 @@
     return [SESleepCommand commandWithAppData: AS_appData
                          eventClass: 'fndr'
                             eventID: 'slep'
-                    directParameter: nil
+                    directParameter: kASNoDirectParameter
                     parentReference: self];
 }
 

@@ -2,7 +2,7 @@
  * TEApplicationGlue.m
  *
  * /Applications/TextEdit.app
- * osaglue 0.3.0
+ * osaglue 0.4.0
  *
  */
 
@@ -23,10 +23,36 @@
                                                targetData: targetData_];
     self = [super initWithAppData: appData aemReference: AEMApp];
     if (!self) return self;
+    
     return self;
 }
 
 // initialisers
+
++ (id)application {
+    return [[[self alloc] init] autorelease];
+}
+
++ (id)applicationWithName:(NSString *)name {
+    return [[[self alloc] initWithName: name] autorelease];
+}
+
++ (id)applicationWithBundleID:(NSString *)bundleID  {
+    return [[[self alloc] initWithBundleID: bundleID ] autorelease];
+}
+
++ (id)applicationWithURL:(NSURL *)url {
+    return [[[self alloc] initWithURL: url] autorelease];
+}
+
++ (id)applicationWithPID:(pid_t)pid {
+    return [[[self alloc] initWithPID: pid] autorelease];
+}
+
++ (id)applicationWithDescriptor:(NSAppleEventDescriptor *)desc {
+    return [[[self alloc] initWithDescriptor: desc] autorelease];
+}
+
 
 - (id)init {
     return [self initWithTargetType: kASTargetCurrent data: nil];
@@ -52,5 +78,21 @@
     return [self initWithTargetType: kASTargetDescriptor data: desc];
 }
 
+// misc
+
+- (TEReference *)AS_referenceWithObject:(id)object {
+    if ([object isKindOfClass: [TEReference class]])
+        return [[[TEReference alloc] initWithAppData: AS_appData
+                aemReference: [object AS_aemReference]] autorelease];
+    else if ([object isKindOfClass: [AEMQuery class]])
+        return [[[TEReference alloc] initWithAppData: AS_appData
+                aemReference: object] autorelease];
+    else if (!object)
+        return [[[TEReference alloc] initWithAppData: AS_appData
+                aemReference: AEMApp] autorelease];
+    else
+        return [[[TEReference alloc] initWithAppData: AS_appData
+                aemReference: AEMRoot(object)] autorelease];
+}
 @end
 

@@ -70,7 +70,7 @@ int main (int argc, const char * argv[]) {
 	[[msg send_] sendWithError: &error];
 
 finish:
-	if (error) NSLog(@"An error occurred:\n%@", error);
+	if (error) NSLog(@"An error occurred:\n%@\n\n%@", error, [error userInfo]);
 	[mail release];
     [pool drain];
     return 0;

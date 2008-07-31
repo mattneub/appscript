@@ -111,6 +111,12 @@ static ASEventAttributeDescription attributeKeys[] = {
 	return (NSString *)result;
 }
 
+// Access codecs object
+
+- (id)codecs {
+	return codecs;
+}
+
 // Access underlying AEDesc
 
 - (const AppleEvent *)aeDesc {
@@ -118,7 +124,7 @@ static ASEventAttributeDescription attributeKeys[] = {
 }
 
 
-- (NSAppleEventDescriptor *)appleEventDescriptor { // TO DO: consistent names (desc vs appleEventDescriptor)
+- (NSAppleEventDescriptor *)descriptor {
 	AppleEvent eventCopy;
 	
 	AEDuplicateDesc(event, &eventCopy);
@@ -127,62 +133,83 @@ static ASEventAttributeDescription attributeKeys[] = {
 
 // Pack event's attributes and parameters, if any.
 
-- (AEMEvent *)setAttribute:(id)value forKeyword:(AEKeyword)key {
+- (void)setAttribute:(id)value forKeyword:(AEKeyword)key {
+	if (!value) [NSException raise: @"AEMEventError"
+							format: @"Error packing attribute '%@': value cannot be nil.",
+									[AEMObjectRenderer formatOSType: key]];
 	OSErr err = AEPutAttributeDesc(event, key, [[codecs pack: value] aeDesc]);
-	return err ? nil : self;
+	if (err) [NSException raise: @"AEMEventError"
+						 format: @"Error %i packing attribute '%@' value: %@", 
+								 err, [AEMObjectRenderer formatOSType: key],value];
 }
 
-- (AEMEvent *)setParameter:(id)value forKeyword:(AEKeyword)key {
+- (void)setParameter:(id)value forKeyword:(AEKeyword)key {
+	if (!value) [NSException raise: @"AEMEventError"
+							format: @"Parameters may not be nil."];
 	OSErr err = AEPutParamDesc(event, key, [[codecs pack: value] aeDesc]);
-	return err ? nil : self;
+	if (err) [NSException raise: @"AEMEventError"
+						 format: @"Error %i packing parameter '%@' value: %@", 
+								 err, [AEMObjectRenderer formatOSType: key],value];
 }
 
 // Get attributes and parameters:
 
-- (id)attributeForKeyword:(AEKeyword)key {
+- (id)attributeForKeyword:(AEKeyword)key type:(DescType)type error:(NSError **)error {
 	AEDesc aeDesc;
 	NSAppleEventDescriptor *desc;
 	
-	OSErr err = AEGetAttributeDesc(event, key, typeWildCard, &aeDesc);
-	if (!err) return nil;
+	if (error)
+		*error = nil;
+	OSErr err = AEGetAttributeDesc(event, key, type, &aeDesc);
+	if (err) {
+		if (error)
+			*error = [NSError errorWithDomain: kAEMErrorDomain code: err userInfo: nil];
+		return nil;
+	}
+	desc = [[[NSAppleEventDescriptor alloc] initWithAEDescNoCopy: &aeDesc] autorelease];
+	return [codecs unpack: desc];
+}
+
+- (id)attributeForKeyword:(AEKeyword)key {
+	return [self attributeForKeyword: key type: typeWildCard error: nil];
+}
+
+- (id)parameterForKeyword:(AEKeyword)key type:(DescType)type error:(NSError **)error  {
+	AEDesc aeDesc;
+	NSAppleEventDescriptor *desc;
+	
+	if (error)
+		*error = nil;
+	OSErr err = AEGetParamDesc(event, key, typeWildCard, &aeDesc);
+	if (err) {
+		if (error)
+			*error = [NSError errorWithDomain: kAEMErrorDomain code: err userInfo: nil];
+		return nil;
+	}
 	desc = [[[NSAppleEventDescriptor alloc] initWithAEDescNoCopy: &aeDesc] autorelease];
 	return [codecs unpack: desc];
 }
 
 - (id)parameterForKeyword:(AEKeyword)key {
-	AEDesc aeDesc;
-	NSAppleEventDescriptor *desc;
-	
-	OSErr err = AEGetAttributeDesc(event, key, typeWildCard, &aeDesc);
-	if (!err) return nil;
-	desc = [[[NSAppleEventDescriptor alloc] initWithAEDescNoCopy: &aeDesc] autorelease];
-	return [codecs unpack: desc];
-}
-
-- (AEMEvent *)removeParameterForKeyword:(AEKeyword)key {
-	OSErr err = AEDeleteParam(event, key);
-	return err ? nil : self;
+	return [self parameterForKeyword: key type: typeWildCard error: nil];
 }
 
 //
 
-- (AEMEvent *)unpackResultAsType:(DescType)type {
+- (void)unpackResultAsType:(DescType)type {
 	resultType = type;
 	isResultList = NO;
 	shouldUnpackResult = YES;
-	return self;
 }
 
-- (AEMEvent *)unpackResultAsListOfType:(DescType)type {
+- (void)unpackResultAsListOfType:(DescType)type {
 	resultType = type;
 	isResultList = YES;
 	shouldUnpackResult = YES;
-	return self;
 }
 
-- (AEMEvent *)dontUnpackResult {
+- (void)dontUnpackResult {
 	shouldUnpackResult = NO;
-	return self;
 }
 
 /*
@@ -210,7 +237,7 @@ static ASEventAttributeDescription attributeKeys[] = {
 	if (error)
 		*error = nil;
 	// send event
-	errorNumber = sendProc(event, &replyDesc, sendMode, timeoutInTicks);
+	errorNumber = sendProc(event, &replyDesc, sendMode, timeoutInTicks);	
 	if (errorNumber) {
 		// ignore 'invalid connection' errors caused by application quitting normally after being sent a quit event
 		if (errorNumber == connectionInvalid) {
@@ -224,8 +251,7 @@ static ASEventAttributeDescription attributeKeys[] = {
 			err = AEGetDescData(&idDesc, &idCode, sizeof(idCode));
 			AEDisposeDesc(&idDesc);
 			if (err) return nil;
-			if (classCode == kCoreEventClass && idCode == kAEQuitApplication)
-				return [NSNull null];
+			if (classCode == kCoreEventClass && idCode == kAEQuitApplication) goto noResult;
 		}
 		// for any other Apple Event Manager errors, generate an NSError if one is requested, then return nil
 		if (error) {
@@ -240,7 +266,7 @@ static ASEventAttributeDescription attributeKeys[] = {
 		return nil;
 	}
 	// extract reply data, if any
-	if (replyDesc.descriptorType == typeNull) return [NSNull null]; // application didn't return anything
+	if (replyDesc.descriptorType == typeNull) goto noResult; // application didn't return anything
 	// wrap AEDesc as NSAppleEventDescriptor for convenience // TO DO: might be easier to use C API and wrap AEDescs later
 	replyData = [[NSAppleEventDescriptor alloc] initWithAEDescNoCopy: &replyDesc];
 	/*
@@ -283,7 +309,7 @@ static ASEventAttributeDescription attributeKeys[] = {
 	 */
 	result = [replyData paramDescriptorForKeyword: keyAEResult];
 	[replyData release];
-	if (!result) return [NSNull null];
+	if (!result) goto noResult;
 	/*
 	 * If client invoked -dontUnpackResult, return the descriptor as-is
 	 */
@@ -310,7 +336,7 @@ static ASEventAttributeDescription attributeKeys[] = {
 					if (!item) { // a coercion error occurred
 						if (error) {
 							errorDescription = [NSString stringWithFormat: 
-									@"Couldn't coerce item %i of result list to type '%@': %@", i, AEMDescTypeToDisplayString(resultType), result];
+									@"Couldn't coerce item %i of result list to type '%@': %@", i, [AEMObjectRenderer formatOSType: resultType], result];
 							errorInfo = [NSDictionary dictionaryWithObjectsAndKeys:
 									[NSAppleEventDescriptor descriptorWithTypeCode: resultType],	kAEMErrorExpectedTypeKey,
 									originalItem,													kAEMErrorOffendingObjectKey,
@@ -333,7 +359,7 @@ static ASEventAttributeDescription attributeKeys[] = {
 		result = [result coerceToDescriptorType: resultType];
 		if (!result) { // a coercion error occurred
 			if (error) {
-				errorDescription = [NSString stringWithFormat: @"Couldn't coerce result to type '%@': %@", AEMDescTypeToDisplayString(resultType), result];
+				errorDescription = [NSString stringWithFormat: @"Couldn't coerce result to type '%@': %@", [AEMObjectRenderer formatOSType: resultType], result];
 				errorInfo = [NSDictionary dictionaryWithObjectsAndKeys:
 						[NSAppleEventDescriptor descriptorWithTypeCode: resultType],	kAEMErrorExpectedTypeKey,
 						originalResult,													kAEMErrorOffendingObjectKey,
@@ -347,6 +373,11 @@ static ASEventAttributeDescription attributeKeys[] = {
 		}
 	}
 	return [codecs unpack: result];
+noResult:
+	if (isResultList)
+		return [NSArray array];
+	else
+		return [NSNull null];
 }
 
 - (id)sendWithError:(NSError **)error {

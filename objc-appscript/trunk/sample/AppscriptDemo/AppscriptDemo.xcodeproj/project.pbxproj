@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4F25FA7A0B6E340E0050D532 /* Appscript.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F25FA790B6E340E0050D532 /* Appscript.framework */; };
+		4F0FB0C40E39FED9008AA167 /* Appscript.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F0FB0C30E39FED9008AA167 /* Appscript.framework */; };
 		4F5CA55E0B760D310013C44E /* aemexample.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F5CA55D0B760D310013C44E /* aemexample.m */; };
 		4F5CA5650B760DC20013C44E /* appscriptexample.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F5CA5640B760DC20013C44E /* appscriptexample.m */; };
 		4FC342C90CEF441300E485D4 /* TEApplicationGlue.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FC342BF0CEF441300E485D4 /* TEApplicationGlue.m */; };
@@ -37,7 +37,7 @@
 		08FB7796FE84155DC02AAC07 /* AppscriptDemo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppscriptDemo.m; sourceTree = "<group>"; };
 		08FB779EFE84155DC02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		32A70AAB03705E1F00C91783 /* AppscriptDemo_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppscriptDemo_Prefix.pch; sourceTree = "<group>"; };
-		4F25FA790B6E340E0050D532 /* Appscript.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Appscript.framework; path = /Users/has/Library/Frameworks/Appscript.framework; sourceTree = "<absolute>"; };
+		4F0FB0C30E39FED9008AA167 /* Appscript.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Appscript.framework; path = ../../../../../Library/Frameworks/Appscript.framework; sourceTree = SOURCE_ROOT; };
 		4F5CA55D0B760D310013C44E /* aemexample.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = aemexample.m; sourceTree = "<group>"; };
 		4F5CA5640B760DC20013C44E /* appscriptexample.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = appscriptexample.m; sourceTree = "<group>"; };
 		4F7791740CD8BC4E00125605 /* aemexample.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aemexample.h; sourceTree = "<group>"; };
@@ -63,7 +63,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8DD76F9C0486AA7600D96B5E /* Foundation.framework in Frameworks */,
-				4F25FA7A0B6E340E0050D532 /* Appscript.framework in Frameworks */,
+				4F0FB0C40E39FED9008AA167 /* Appscript.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -98,7 +98,7 @@
 		08FB779DFE84155DC02AAC07 /* External Frameworks and Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				4F25FA790B6E340E0050D532 /* Appscript.framework */,
+				4F0FB0C30E39FED9008AA167 /* Appscript.framework */,
 				08FB779EFE84155DC02AAC07 /* Foundation.framework */,
 			);
 			name = "External Frameworks and Libraries";
