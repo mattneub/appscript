@@ -151,7 +151,7 @@ enumerations = [
 		]),
 		# constants used in commands' 'ignore' argument (note: most apps currently ignore these):
 		('cons', [
-			('case', 'case'),
+			('case_', 'case'),
 			('diacriticals', 'diac'),
 			('expansion', 'expa'),
 			('punctuation', 'punc'),
