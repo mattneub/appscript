@@ -30,7 +30,7 @@
 + (MLConstant *)beginsWithValue;
 + (MLConstant *)blue;
 + (MLConstant *)buddyAvailabilityColumn;
-+ (MLConstant *)case;
++ (MLConstant *)case_;
 + (MLConstant *)ccHeader;
 + (MLConstant *)custom;
 + (MLConstant *)dateReceivedColumn;

@@ -54,7 +54,7 @@
         case 'bool': return [self boolean];
         case 'qdrt': return [self boundingRectangle];
         case 'pbnd': return [self bounds];
-        case 'case': return [self case];
+        case 'case': return [self case_];
         case 'cmtr': return [self centimeters];
         case 'cha ': return [self character];
         case 'gcli': return [self classInfo];
@@ -217,10 +217,10 @@
     return constantObj;
 }
 
-+ (SFConstant *)case {
++ (SFConstant *)case_ {
     static SFConstant *constantObj;
     if (!constantObj)
-        constantObj = [SFConstant constantWithName: @"case" type: typeEnumerated code: 'case'];
+        constantObj = [SFConstant constantWithName: @"case_" type: typeEnumerated code: 'case'];
     return constantObj;
 }
 

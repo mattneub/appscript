@@ -49,7 +49,7 @@
         case 'best': return [self best];
         case 'bool': return [self boolean];
         case 'qdrt': return [self boundingRectangle];
-        case 'case': return [self case];
+        case 'case': return [self case_];
         case 'cmtr': return [self centimeters];
         case 'gcli': return [self classInfo];
         case 'pcls': return [self class_];
@@ -169,10 +169,10 @@
     return constantObj;
 }
 
-+ (ASDefaultConstant *)case {
++ (ASDefaultConstant *)case_ {
     static ASDefaultConstant *constantObj;
     if (!constantObj)
-        constantObj = [ASDefaultConstant constantWithName: @"case" type: typeEnumerated code: 'case'];
+        constantObj = [ASDefaultConstant constantWithName: @"case_" type: typeEnumerated code: 'case'];
     return constantObj;
 }
 

@@ -11,7 +11,7 @@
 enum {
 	kTEApplicationResponses = 'rmte',
 	kTEAsk = 'ask ',
-	kTECase = 'case',
+	kTECase_ = 'case',
 	kTEDetailed = 'lwdt',
 	kTEDiacriticals = 'diac',
 	kTEExpansion = 'expa',

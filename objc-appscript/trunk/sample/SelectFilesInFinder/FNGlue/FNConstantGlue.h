@@ -58,7 +58,7 @@
 + (FNConstant *)ask;
 + (FNConstant *)audioFormat;
 + (FNConstant *)bottom;
-+ (FNConstant *)case;
++ (FNConstant *)case_;
 + (FNConstant *)columnView;
 + (FNConstant *)comment;
 + (FNConstant *)commentColumn;

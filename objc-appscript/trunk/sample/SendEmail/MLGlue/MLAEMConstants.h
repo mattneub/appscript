@@ -22,7 +22,7 @@ enum {
 	kMLBeginsWithValue = 'rqbw',
 	kMLBlue = 'ccbl',
 	kMLBuddyAvailabilityColumn = 'ecba',
-	kMLCase = 'case',
+	kMLCase_ = 'case',
 	kMLCcHeader = 'tccc',
 	kMLCustom = 'hdcu',
 	kMLDateReceivedColumn = 'ecdr',

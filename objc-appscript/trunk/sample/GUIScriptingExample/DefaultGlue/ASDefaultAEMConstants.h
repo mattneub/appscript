@@ -11,7 +11,7 @@
 enum {
 	kASDefaultApplicationResponses = 'rmte',
 	kASDefaultAsk = 'ask ',
-	kASDefaultCase = 'case',
+	kASDefaultCase_ = 'case',
 	kASDefaultDiacriticals = 'diac',
 	kASDefaultExpansion = 'expa',
 	kASDefaultHyphens = 'hyph',

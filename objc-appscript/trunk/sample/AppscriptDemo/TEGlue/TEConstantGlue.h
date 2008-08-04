@@ -19,7 +19,7 @@
 
 + (TEConstant *)applicationResponses;
 + (TEConstant *)ask;
-+ (TEConstant *)case;
++ (TEConstant *)case_;
 + (TEConstant *)detailed;
 + (TEConstant *)diacriticals;
 + (TEConstant *)expansion;

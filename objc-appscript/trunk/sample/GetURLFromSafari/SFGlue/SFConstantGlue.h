@@ -19,7 +19,7 @@
 
 + (SFConstant *)applicationResponses;
 + (SFConstant *)ask;
-+ (SFConstant *)case;
++ (SFConstant *)case_;
 + (SFConstant *)detailed;
 + (SFConstant *)diacriticals;
 + (SFConstant *)expansion;

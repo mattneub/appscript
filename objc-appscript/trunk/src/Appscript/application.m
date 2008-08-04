@@ -38,9 +38,9 @@
 														[AEMObjectRenderer formatOSType: creator], bundleID, name, err];
 		errorInfo = [NSDictionary dictionaryWithObjectsAndKeys: 
 									errorDescription, NSLocalizedDescriptionKey,
-									[NSNumber numberWithInt: err], kAEMErrorNumberKey,
+									[NSNumber numberWithInt: err], kASErrorNumberKey,
 									nil];
-		*error = [NSError errorWithDomain: kAEMErrorDomain code: err userInfo: errorInfo];
+		*error = [NSError errorWithDomain: kASErrorDomain code: err userInfo: errorInfo];
 		return nil;
 	}
 	return (NSURL *)outAppURL;
@@ -92,9 +92,9 @@ error:
 	errorDescription = [NSString stringWithFormat: @"Can't find process ID for application %@ (error %i)", fileURL, err];
 	errorInfo = [NSDictionary dictionaryWithObjectsAndKeys: 
 			errorDescription, NSLocalizedDescriptionKey,
-			[NSNumber numberWithInt: err], kAEMErrorNumberKey,
+			[NSNumber numberWithInt: err], kASErrorNumberKey,
 			nil];
-	*error = [NSError errorWithDomain: kAEMErrorDomain code: err userInfo: errorInfo];
+	*error = [NSError errorWithDomain: kASErrorDomain code: err userInfo: errorInfo];
 	return 0;
 }
 
@@ -218,9 +218,9 @@ error:
 	errorDescription = [NSString stringWithFormat: @"Can't launch application %@ (error %i)", fileURL, err];
 	errorInfo = [NSDictionary dictionaryWithObjectsAndKeys: 
 			errorDescription, NSLocalizedDescriptionKey,
-			[NSNumber numberWithInt: err], kAEMErrorNumberKey,
+			[NSNumber numberWithInt: err], kASErrorNumberKey,
 			nil];
-	*error = [NSError errorWithDomain: kAEMErrorDomain code: err userInfo: errorInfo];
+	*error = [NSError errorWithDomain: kASErrorDomain code: err userInfo: errorInfo];
 	if (paraData) DisposePtr((Ptr)paraData);
 	return 0;
 }
@@ -612,16 +612,16 @@ error:
 		evt = [self eventWithEventClass: kAEMiscStandards eventID: kAEBeginTransaction];
 		if (session)
 			[evt setParameter: session forKeyword: keyDirectObject];
-		[evt unpackResultAsType: typeSInt32];
+		[evt setUnpackFormat: kAEMUnpackAsItem type: typeSInt32];
 		transactionIDObj = [evt sendWithError: error];
 		if (transactionIDObj)
 			transactionID = [transactionIDObj intValue];
 	} else if (error) {
 		errorInfo = [NSDictionary dictionaryWithObjectsAndKeys: 
 									@"Transaction is already active.", NSLocalizedDescriptionKey,
-									[NSNumber numberWithInt: errAEInTransaction], kAEMErrorNumberKey,
+									[NSNumber numberWithInt: errAEInTransaction], kASErrorNumberKey,
 									nil];
-		*error = [NSError errorWithDomain: kAEMErrorDomain code: errAEInTransaction userInfo: errorInfo];
+		*error = [NSError errorWithDomain: kASErrorDomain code: errAEInTransaction userInfo: errorInfo];
 	}
 	return (transactionIDObj != nil);
 }
@@ -639,9 +639,9 @@ error:
 	} else if (error) {
 		errorInfo = [NSDictionary dictionaryWithObjectsAndKeys: 
 									@"Transaction isn't active.", NSLocalizedDescriptionKey,
-									[NSNumber numberWithInt: errAENoSuchTransaction], kAEMErrorNumberKey,
+									[NSNumber numberWithInt: errAENoSuchTransaction], kASErrorNumberKey,
 									nil];
-		*error = [NSError errorWithDomain: kAEMErrorDomain code: errAENoSuchTransaction userInfo: errorInfo];
+		*error = [NSError errorWithDomain: kASErrorDomain code: errAENoSuchTransaction userInfo: errorInfo];
 	}
 	return (result != nil);
 }
@@ -659,9 +659,9 @@ error:
 	} else if (error) {
 		errorInfo = [NSDictionary dictionaryWithObjectsAndKeys: 
 									@"Transaction isn't active.", NSLocalizedDescriptionKey,
-									[NSNumber numberWithInt: errAENoSuchTransaction], kAEMErrorNumberKey,
+									[NSNumber numberWithInt: errAENoSuchTransaction], kASErrorNumberKey,
 									nil];
-		*error = [NSError errorWithDomain: kAEMErrorDomain code: errAENoSuchTransaction userInfo: errorInfo];
+		*error = [NSError errorWithDomain: kASErrorDomain code: errAENoSuchTransaction userInfo: errorInfo];
 	}
 	return (result != nil);
 }

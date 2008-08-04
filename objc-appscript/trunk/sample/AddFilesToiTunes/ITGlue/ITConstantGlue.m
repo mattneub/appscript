@@ -97,7 +97,7 @@
         case 'pBPM': return [self bpm];
         case 'cBrW': return [self browserWindow];
         case 'capa': return [self capacity];
-        case 'case': return [self case];
+        case 'case': return [self case_];
         case 'pCat': return [self category];
         case 'kCDi': return [self cdInsert];
         case 'cmtr': return [self centimeters];
@@ -473,10 +473,10 @@
     return constantObj;
 }
 
-+ (ITConstant *)case {
++ (ITConstant *)case_ {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"case" type: typeEnumerated code: 'case'];
+        constantObj = [ITConstant constantWithName: @"case_" type: typeEnumerated code: 'case'];
     return constantObj;
 }
 

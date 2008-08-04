@@ -14,23 +14,30 @@
 /**********************************************************************/
 // NSError constants
 
-NSString *kAEMErrorDomain; // @"net.sourceforge.appscript.objc-appscript.ErrorDomain"; domain name for NSErrors returned by appscript
+NSString *kASErrorDomain; // @"net.sourceforge.appscript.objc-appscript.ErrorDomain"; domain name for NSErrors returned by appscript
 
 /*
  * -sendWithError: will return an NSError containing error code, localized description, and a userInfo dictionary
- * containing kAEMErrorNumberKey (this has the same value as -[NSError code]) and zero or more other keys:
+ * containing kASErrorNumberKey (this has the same value as -[NSError code]) and zero or more other keys:
  */
 
-NSString *kAEMErrorNumberKey;			// @"ErrorNumber"; error number returned by Apple Event Manager or application
-NSString *kAEMErrorStringKey;			// @"ErrorString"; error string returned by application, if given
-NSString *kAEMErrorBriefMessageKey;		// @"ErrorBriefMessage"; brief error string returned by application, if given
-NSString *kAEMErrorExpectedTypeKey;		// @"ErrorExpectedType"; AE type responsible for a coercion error (-1700), if given
-NSString *kAEMErrorOffendingObjectKey;	// @"ErrorOffendingObject"; value or object specifer responsible for error, if given
-NSString *kAEMErrorFailedEvent;			// @"ErrorFailedEvent"; the AEMEvent object that returned the error
+NSString *kASErrorNumberKey;			// @"ErrorNumber"; error number returned by Apple Event Manager or application
+NSString *kASErrorStringKey;			// @"ErrorString"; error string returned by application, if given
+NSString *kASErrorBriefMessageKey;		// @"ErrorBriefMessage"; brief error string returned by application, if given
+NSString *kASErrorExpectedTypeKey;		// @"ErrorExpectedType"; AE type responsible for a coercion error (-1700), if given
+NSString *kASErrorOffendingObjectKey;	// @"ErrorOffendingObject"; value or object specifer responsible for error, if given
+NSString *kASErrorFailedEvent;			// @"ErrorFailedEvent"; the AEMEvent object that returned the error
 
 
 /**********************************************************************/
 // typedefs
+
+typedef enum {
+	kAEMDontUnpack,
+	kAEMUnpackAsItem,
+	kAEMUnpackAsList
+} AEMUnpackFormat;
+
 
 typedef OSErr(*AEMCreateProcPtr)(AEEventClass theAEEventClass,
 							     AEEventID theAEEventID,
@@ -64,7 +71,7 @@ typedef OSStatus(*AEMSendProcPtr)(const AppleEvent *event,
 	AEMSendProcPtr sendProc;
 	// type to coerce returned value to before unpacking it
 	DescType resultType;
-	BOOL isResultList, shouldUnpackResult;
+	AEMUnpackFormat resultFormat;
 }
 
 /*
@@ -110,11 +117,9 @@ typedef OSStatus(*AEMSendProcPtr)(const AppleEvent *event,
 // Specify an AE type to coerce the reply descriptor to before unpacking it.
 // (Default = unpack as typeWildCard)
 
-- (void)unpackResultAsType:(DescType)type;
+- (void)setUnpackFormat:(AEMUnpackFormat)format_ type:(DescType)type_;
 
-- (void)unpackResultAsListOfType:(DescType)type;
-
-- (void)dontUnpackResult;
+- (void)getUnpackFormat:(AEMUnpackFormat *)format_ type:(DescType *)type_;
 
 /*
  * Send event.

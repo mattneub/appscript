@@ -11,7 +11,7 @@
 enum {
 	kSFApplicationResponses = 'rmte',
 	kSFAsk = 'ask ',
-	kSFCase = 'case',
+	kSFCase_ = 'case',
 	kSFDetailed = 'lwdt',
 	kSFDiacriticals = 'diac',
 	kSFExpansion = 'expa',

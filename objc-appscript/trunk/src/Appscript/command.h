@@ -23,7 +23,7 @@
 	AESendMode sendMode;
 	long timeout;
 	UInt32 considsAndIgnoresFlags;
-	NSError *cachedError;
+	NSError *targetError;
 }
 
 + (id)commandWithAppData:(id)appData

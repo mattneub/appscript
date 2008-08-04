@@ -146,7 +146,7 @@
         case 'busy': return [self busyStatus];
         case 'butT': return [self button];
         case 'capa': return [self capacity];
-        case 'case': return [self case];
+        case 'case': return [self case_];
         case 'cmtr': return [self centimeters];
         case 'cinT': return [self changeInterval];
         case 'cha ': return [self character];
@@ -290,8 +290,8 @@
         case 'href': return [self href];
         case 'hyph': return [self hyphens];
         case 'ID  ': return [self id_];
+        case 'dhig': return [self ignore];
         case 'igpr': return [self ignorePrivileges];
-        case 'dhig': return [self ignore_];
         case 'imaA': return [self image];
         case 'inch': return [self inches];
         case 'incr': return [self incrementor];
@@ -833,10 +833,10 @@
     return constantObj;
 }
 
-+ (SEConstant *)case {
++ (SEConstant *)case_ {
     static SEConstant *constantObj;
     if (!constantObj)
-        constantObj = [SEConstant constantWithName: @"case" type: typeEnumerated code: 'case'];
+        constantObj = [SEConstant constantWithName: @"case_" type: typeEnumerated code: 'case'];
     return constantObj;
 }
 
@@ -959,10 +959,10 @@
     return constantObj;
 }
 
-+ (SEConstant *)ignore_ {
++ (SEConstant *)ignore {
     static SEConstant *constantObj;
     if (!constantObj)
-        constantObj = [SEConstant constantWithName: @"ignore_" type: typeEnumerated code: 'dhig'];
+        constantObj = [SEConstant constantWithName: @"ignore" type: typeEnumerated code: 'dhig'];
     return constantObj;
 }
 

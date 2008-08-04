@@ -37,7 +37,7 @@ static NSAppleEventDescriptor *defaultIgnore;
 	timeout = kAEDefaultTimeout;
 	considsAndIgnoresFlags = kAECaseIgnoreMask;
 	// if -targetWithError: fails, store NSError and return it when -sendWithError: is invoked
-	id target = [appData targetWithError: &cachedError];
+	id target = [appData targetWithError: &targetError];
 	if (target) {
 		AS_event = [[target eventWithEventClass: classCode eventID: code codecs: appData] retain];
 		// set event's direct parameter and/or subject attribute
@@ -51,13 +51,13 @@ static NSAppleEventDescriptor *defaultIgnore;
 		else
 			[AS_event setAttribute: parentReference forKeyword: keySubjectAttr];
 	} else
-		[cachedError retain];
+		[targetError retain];
 	return self;
 }
 
 - (void)dealloc {
 	[AS_event release];
-	[cachedError release];
+	[targetError release];
 	[super dealloc];
 }
 
@@ -111,12 +111,12 @@ static NSAppleEventDescriptor *defaultIgnore;
 }
 
 - (id)returnType:(DescType)type {
-	[AS_event unpackResultAsType: type];
+	[AS_event setUnpackFormat: kAEMUnpackAsItem type: type];
 	return self;
 }
 
 - (id)returnList {
-	[AS_event unpackResultAsListOfType: typeWildCard];
+	[AS_event setUnpackFormat: kAEMUnpackAsList type: typeWildCard];
 	return self;
 }
 
@@ -125,22 +125,31 @@ static NSAppleEventDescriptor *defaultIgnore;
 }
 
 - (id)returnListOfType:(DescType)type {
-	[AS_event unpackResultAsListOfType: type];
+	[AS_event setUnpackFormat: kAEMUnpackAsList type: type];
 	return self;
 }
 
 - (id)returnDescriptor {
-	[AS_event dontUnpackResult];
+	[AS_event setUnpackFormat: kAEMDontUnpack type: typeWildCard];
 	return self;
 }
 
 - (id)sendWithError:(NSError **)error {
 	NSAppleEventDescriptor *considerAndIgnoreDesc, *ignoreListDesc;
+	NSMutableDictionary *userInfo;
+	id result;
+	NSError *eventError = nil;
 	// TO DO: if error occurs, return new NSError containing original NSError and description of this command
 	// along with any other error info suitably formatted
-
-	if (cachedError) {
-		*error = cachedError;
+	
+	if (error)
+		*error = nil;
+	if (targetError && error) {
+		userInfo = [NSMutableDictionary dictionaryWithDictionary: [targetError userInfo]];
+		[userInfo setObject: self forKey: kASErrorFailedEvent];
+		*error = [NSError errorWithDomain: [targetError domain]
+									 code: [targetError code]
+								 userInfo: userInfo];
 		return nil;
 	}
 	// pack considering/ignoring attributes
@@ -182,7 +191,15 @@ static NSAppleEventDescriptor *defaultIgnore;
 		[AS_event setAttribute: ignoreListDesc forKeyword: enumConsiderations];
 	}
 	// send event
-	return [AS_event sendWithMode: sendMode timeout: timeout error: error];
+	result = [AS_event sendWithMode: sendMode timeout: timeout error: &eventError];
+	if (eventError && error) {
+		userInfo = [NSMutableDictionary dictionaryWithDictionary: [eventError userInfo]];
+		[userInfo setObject: self forKey: kASErrorFailedEvent];
+		*error = [NSError errorWithDomain: [eventError domain]
+									 code: [eventError code]
+								 userInfo: userInfo];
+	}
+	return result;
 }
 
 - (id)send {
@@ -192,7 +209,9 @@ static NSAppleEventDescriptor *defaultIgnore;
 // display formatting
 
 - (NSString *)AS_commandName {
-	return [NSString stringWithFormat: @"<%@>", self];
+	return [NSString stringWithFormat: @"<%@%@>", 
+			[AEMObjectRenderer formatOSType: [[AS_event attributeForKeyword: keyEventClassAttr] code]],
+			[AEMObjectRenderer formatOSType: [[AS_event attributeForKeyword: keyEventIDAttr] code]]];
 }
 
 - (NSString *)AS_parameterNameForCode:(DescType)code {
@@ -203,6 +222,8 @@ static NSAppleEventDescriptor *defaultIgnore;
 	return [NSString stringWithFormat: @"<%@>", obj];
 }
 
+// TO DO: improve formatting for getItem..., getList..., setItem..., getInt..., etc.
+
 - (NSString *)description {
 	NSAppleEventDescriptor *desc;
 	NSString *result;
@@ -210,7 +231,10 @@ static NSAppleEventDescriptor *defaultIgnore;
 	id value;
 	int i;
 	NSString *indent = @" ";
+	AEMUnpackFormat format;
+	DescType type;
 	
+	// format command target and direct parameter, if any
 	id subjectAttr = [AS_event attributeForKeyword: keySubjectAttr];
 	id directParam = [AS_event parameterForKeyword: keyDirectObject];
 	if (subjectAttr && ![subjectAttr isEqual: [NSNull null]]) {
@@ -231,7 +255,7 @@ static NSAppleEventDescriptor *defaultIgnore;
 		result = [NSString stringWithFormat: @"[%@\n        %@]", 
 											[self AS_formatObject: AEMApp appData: [AS_event codecs]], 
 											[self AS_commandName]];
-	
+	// format keyword parameters
 	desc = [AS_event descriptor];	
 	for (i = 1; i <= [desc numberOfItems]; i++) {
 		code = [desc keywordForDescriptorAtIndex: i];
@@ -250,10 +274,35 @@ static NSAppleEventDescriptor *defaultIgnore;
 		}
 		indent = @"\n                ";
 	}
+	// format attributes
+	if (timeout != kAEDefaultTimeout)
+		result = [NSString stringWithFormat: @"[%@ timeout: %i]", result, timeout / 60];
+	if (sendMode != (kAEWaitReply | kAECanSwitchLayer)) {
+		if (sendMode & ~(kAEWaitReply | kAEQueueReply | kAENoReply) == kAECanSwitchLayer) {
+			if (sendMode & kAENoReply)
+				result = [NSString stringWithFormat: @"[%@ ignoreReply]", result];
+			if (sendMode & kAEQueueReply)
+				result = [NSString stringWithFormat: @"[%@ queueReply]", result];
+		} else
+			result = [NSString stringWithFormat: @"[%@ sendMode: %#08x]", result, sendMode];
+	}
+	if (considsAndIgnoresFlags != kAECaseIgnoreMask)
+		result = [NSString stringWithFormat: @"[%@ considering: %#08x]", result, considsAndIgnoresFlags];
+	// format unpacking options
+	[AS_event getUnpackFormat: &format type: &type];
+	if (format == kAEMUnpackAsItem && type != typeWildCard)
+			result = [NSString stringWithFormat: @"[%@ returnType: '%@']", 
+												 result, [AEMObjectRenderer formatOSType: type]];
+	if (format == kAEMUnpackAsList) {
+			if (type == typeWildCard)
+				result = [NSString stringWithFormat: @"[%@ returnList]", result];
+			else
+				result = [NSString stringWithFormat: @"[%@ returnListOfType: '%@']", 
+													 result, [AEMObjectRenderer formatOSType: type]];
+	} else if (format == kAEMDontUnpack)
+			result = [NSString stringWithFormat: @"[%@ returnDescriptor]", result];
 	
-	// TO DO: format attributes
 	return result;
 }
 
 @end
-

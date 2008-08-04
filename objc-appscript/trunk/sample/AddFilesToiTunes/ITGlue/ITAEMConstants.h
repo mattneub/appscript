@@ -26,7 +26,7 @@ enum {
 	kITArtists = 'kSrR',
 	kITAsk = 'ask ',
 	kITAudioCD = 'kACD',
-	kITCase = 'case',
+	kITCase_ = 'case',
 	kITCdInsert = 'kCDi',
 	kITComposers = 'kSrC',
 	kITComputed = 'kRtC',

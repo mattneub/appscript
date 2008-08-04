@@ -81,7 +81,7 @@
         case 'qdrt': return [self boundingRectangle];
         case 'pbnd': return [self bounds];
         case 'ecba': return [self buddyAvailabilityColumn];
-        case 'case': return [self case];
+        case 'case': return [self case_];
         case 'tccc': return [self ccHeader];
         case 'crcp': return [self ccRecipient];
         case 'cmtr': return [self centimeters];
@@ -500,10 +500,10 @@
     return constantObj;
 }
 
-+ (MLConstant *)case {
++ (MLConstant *)case_ {
     static MLConstant *constantObj;
     if (!constantObj)
-        constantObj = [MLConstant constantWithName: @"case" type: typeEnumerated code: 'case'];
+        constantObj = [MLConstant constantWithName: @"case_" type: typeEnumerated code: 'case'];
     return constantObj;
 }
 

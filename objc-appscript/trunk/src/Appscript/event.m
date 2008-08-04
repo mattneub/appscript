@@ -11,14 +11,14 @@
 /**********************************************************************/
 // NSError userInfo constants
 
-NSString *kAEMErrorDomain				= @"net.sourceforge.appscript.objc-appscript.ErrorDomain";
+NSString *kASErrorDomain				= @"net.sourceforge.appscript.objc-appscript.ErrorDomain";
 
-NSString *kAEMErrorNumberKey			= @"ErrorNumber";
-NSString *kAEMErrorStringKey			= @"ErrorString";
-NSString *kAEMErrorBriefMessageKey		= @"ErrorBriefMessage";
-NSString *kAEMErrorExpectedTypeKey		= @"ErrorExpectedType";
-NSString *kAEMErrorOffendingObjectKey	= @"ErrorOffendingObject";
-NSString *kAEMErrorFailedEvent			= @"ErrorFailedEvent";
+NSString *kASErrorNumberKey				= @"ErrorNumber";
+NSString *kASErrorStringKey				= @"ErrorString";
+NSString *kASErrorBriefMessageKey		= @"ErrorBriefMessage";
+NSString *kASErrorExpectedTypeKey		= @"ErrorExpectedType";
+NSString *kASErrorOffendingObjectKey	= @"ErrorOffendingObject";
+NSString *kASErrorFailedEvent			= @"ErrorFailedEvent";
 
 
 /**********************************************************************/
@@ -67,9 +67,8 @@ static ASEventAttributeDescription attributeKeys[] = {
 	[codecs_ retain];
 	codecs = codecs_;
 	sendProc = sendProc_;
+	resultFormat = kAEMUnpackAsItem;
 	resultType = typeWildCard;
-	isResultList = NO;
-	shouldUnpackResult = YES;
 	return self;
 }
 
@@ -163,7 +162,7 @@ static ASEventAttributeDescription attributeKeys[] = {
 	OSErr err = AEGetAttributeDesc(event, key, type, &aeDesc);
 	if (err) {
 		if (error)
-			*error = [NSError errorWithDomain: kAEMErrorDomain code: err userInfo: nil];
+			*error = [NSError errorWithDomain: kASErrorDomain code: err userInfo: nil];
 		return nil;
 	}
 	desc = [[[NSAppleEventDescriptor alloc] initWithAEDescNoCopy: &aeDesc] autorelease];
@@ -183,7 +182,7 @@ static ASEventAttributeDescription attributeKeys[] = {
 	OSErr err = AEGetParamDesc(event, key, typeWildCard, &aeDesc);
 	if (err) {
 		if (error)
-			*error = [NSError errorWithDomain: kAEMErrorDomain code: err userInfo: nil];
+			*error = [NSError errorWithDomain: kASErrorDomain code: err userInfo: nil];
 		return nil;
 	}
 	desc = [[[NSAppleEventDescriptor alloc] initWithAEDescNoCopy: &aeDesc] autorelease];
@@ -196,21 +195,16 @@ static ASEventAttributeDescription attributeKeys[] = {
 
 //
 
-- (void)unpackResultAsType:(DescType)type {
-	resultType = type;
-	isResultList = NO;
-	shouldUnpackResult = YES;
+- (void)setUnpackFormat:(AEMUnpackFormat)format_ type:(DescType)type_ {
+	resultFormat = format_;
+	resultType = type_;
 }
 
-- (void)unpackResultAsListOfType:(DescType)type {
-	resultType = type;
-	isResultList = YES;
-	shouldUnpackResult = YES;
+- (void)getUnpackFormat:(AEMUnpackFormat *)format_ type:(DescType *)type_ {
+	*format_ = resultFormat;
+	*type_ = resultType;
 }
 
-- (void)dontUnpackResult {
-	shouldUnpackResult = NO;
-}
 
 /*
  * Send event.
@@ -220,8 +214,8 @@ static ASEventAttributeDescription attributeKeys[] = {
  * (Note: a single event can be sent multiple times if desired.)
  *
  * (Note: if an Apple Event Manager/application error occurs, these methods will return nil.
- * Clients should test for this, then use the -errorNumber and -errorString methods to
- * retrieve the error description.
+ * Clients should test for this, and use the error argument to retrieve additional error information
+ * if needed.
  */
 
 - (id)sendWithMode:(AESendMode)sendMode timeout:(long)timeoutInTicks error:(NSError **)error {
@@ -258,10 +252,10 @@ static ASEventAttributeDescription attributeKeys[] = {
 			errorDescription = [NSString stringWithFormat: @"Apple Event Manager error %i", errorNumber];
 			errorInfo = [NSDictionary dictionaryWithObjectsAndKeys: 
 					errorDescription,						NSLocalizedDescriptionKey,
-					[NSNumber numberWithInt: errorNumber],	kAEMErrorNumberKey,
-					self,									kAEMErrorFailedEvent,
+					[NSNumber numberWithInt: errorNumber],	kASErrorNumberKey,
+					self,									kASErrorFailedEvent,
 					nil];
-			*error = [NSError errorWithDomain: kAEMErrorDomain code: errorNumber userInfo: errorInfo];
+			*error = [NSError errorWithDomain: kASErrorDomain code: errorNumber userInfo: errorInfo];
 		}
 		return nil;
 	}
@@ -288,18 +282,18 @@ static ASEventAttributeDescription attributeKeys[] = {
 				errorDescription = [NSString stringWithFormat: @"Application error %i", errorNumber];
 			errorInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys: 
 					errorDescription,						NSLocalizedDescriptionKey,
-					[NSNumber numberWithInt: errorNumber],	kAEMErrorNumberKey,
-					self,									kAEMErrorFailedEvent,
+					[NSNumber numberWithInt: errorNumber],	kASErrorNumberKey,
+					self,									kASErrorFailedEvent,
 					nil];
 			if (errorString)
-				[errorInfo setValue: errorString forKey: kAEMErrorStringKey];
+				[errorInfo setValue: errorString forKey: kASErrorStringKey];
 			if (errorMessage = [replyData paramDescriptorForKeyword: kOSAErrorBriefMessage])
-				[errorInfo setValue: [errorMessage stringValue] forKey: kAEMErrorBriefMessageKey];
+				[errorInfo setValue: [errorMessage stringValue] forKey: kASErrorBriefMessageKey];
 			if (errorObject = [replyData paramDescriptorForKeyword: kOSAErrorOffendingObject])
-				[errorInfo setValue: [codecs unpack: errorObject] forKey: kAEMErrorOffendingObjectKey];
+				[errorInfo setValue: [codecs unpack: errorObject] forKey: kASErrorOffendingObjectKey];
 			if (errorType = [replyData paramDescriptorForKeyword: kOSAErrorExpectedType])
-				[errorInfo setValue: [codecs unpack: errorType] forKey: kAEMErrorExpectedTypeKey];
-			*error = [NSError errorWithDomain: kAEMErrorDomain code: errorNumber userInfo: errorInfo];
+				[errorInfo setValue: [codecs unpack: errorType] forKey: kASErrorExpectedTypeKey];
+			*error = [NSError errorWithDomain: kASErrorDomain code: errorNumber userInfo: errorInfo];
 		}
 		[replyData release];
 		return nil;
@@ -311,18 +305,16 @@ static ASEventAttributeDescription attributeKeys[] = {
 	[replyData release];
 	if (!result) goto noResult;
 	/*
-	 * If client invoked -dontUnpackResult, return the descriptor as-is
+	 * If client invoked -setUnpackFormat:type: with kAEMDontUnpack format, return the descriptor as-is
 	 */
-	if (!shouldUnpackResult) return result;
+	if (resultFormat == kAEMDontUnpack) return result;
 	/*
-	 * Unpack result, performing any coercions specified via -unpackResultAs[ListOf]Type: before unpacking the descriptor
+	 * Unpack result, performing any coercions specified via -setUnpackFormat:type: before unpacking the descriptor
 	 */
-	if (isResultList) {
+	if (resultFormat == kAEMUnpackAsList) {
 		if ([result descriptorType] != typeAEList) 
 			result = [result coerceToDescriptorType: typeAEList];
-		if (resultType == typeWildCard)
-			result = [codecs unpack: result];
-		else {
+		if (resultType != typeWildCard) {
 			NSMutableArray *resultList;
 			NSAppleEventDescriptor *item;
 			int i, length;
@@ -335,16 +327,16 @@ static ASEventAttributeDescription attributeKeys[] = {
 					item = [item coerceToDescriptorType: resultType];
 					if (!item) { // a coercion error occurred
 						if (error) {
-							errorDescription = [NSString stringWithFormat: 
-									@"Couldn't coerce item %i of result list to type '%@': %@", i, [AEMObjectRenderer formatOSType: resultType], result];
+							errorDescription = [NSString stringWithFormat: @"Couldn't coerce item %i of returned list to type '%@': %@", 
+																			i, [AEMObjectRenderer formatOSType: resultType], result];
 							errorInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-									[NSAppleEventDescriptor descriptorWithTypeCode: resultType],	kAEMErrorExpectedTypeKey,
-									originalItem,													kAEMErrorOffendingObjectKey,
+									[NSAppleEventDescriptor descriptorWithTypeCode: resultType],	kASErrorExpectedTypeKey,
+									originalItem,													kASErrorOffendingObjectKey,
 									errorDescription,												NSLocalizedDescriptionKey, 
-									[NSNumber numberWithInt: errorNumber],							kAEMErrorNumberKey, 
-									self,															kAEMErrorFailedEvent,
+									[NSNumber numberWithInt: errorNumber],							kASErrorNumberKey, 
+									self,															kASErrorFailedEvent,
 									nil];
-							*error = [NSError errorWithDomain: kAEMErrorDomain code: errAECoercionFail userInfo: errorInfo];
+							*error = [NSError errorWithDomain: kASErrorDomain code: errAECoercionFail userInfo: errorInfo];
 						}
 						return nil;
 					}
@@ -353,28 +345,28 @@ static ASEventAttributeDescription attributeKeys[] = {
 			}
 			return resultList;
 		}
-	}
-	if (resultType != typeWildCard && [result descriptorType] != resultType) {
+	} else if (resultType != typeWildCard && [result descriptorType] != resultType) {
 		NSAppleEventDescriptor *originalResult = result;
 		result = [result coerceToDescriptorType: resultType];
 		if (!result) { // a coercion error occurred
 			if (error) {
-				errorDescription = [NSString stringWithFormat: @"Couldn't coerce result to type '%@': %@", [AEMObjectRenderer formatOSType: resultType], result];
+				errorDescription = [NSString stringWithFormat: @"Couldn't coerce returned item to type '%@': %@", 
+																[AEMObjectRenderer formatOSType: resultType], originalResult];
 				errorInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-						[NSAppleEventDescriptor descriptorWithTypeCode: resultType],	kAEMErrorExpectedTypeKey,
-						originalResult,													kAEMErrorOffendingObjectKey,
+						[NSAppleEventDescriptor descriptorWithTypeCode: resultType],	kASErrorExpectedTypeKey,
+						originalResult,													kASErrorOffendingObjectKey,
 						errorDescription,												NSLocalizedDescriptionKey, 
-						[NSNumber numberWithInt: errorNumber],							kAEMErrorNumberKey, 
-						self,															kAEMErrorFailedEvent,
+						[NSNumber numberWithInt: errorNumber],							kASErrorNumberKey, 
+						self,															kASErrorFailedEvent,
 						nil];
-				*error = [NSError errorWithDomain: kAEMErrorDomain code: errAECoercionFail userInfo: errorInfo];
+				*error = [NSError errorWithDomain: kASErrorDomain code: errAECoercionFail userInfo: errorInfo];
 			}
 			return nil;
 		}
 	}
 	return [codecs unpack: result];
 noResult:
-	if (isResultList)
+	if (resultFormat == kAEMUnpackAsList)
 		return [NSArray array];
 	else
 		return [NSNull null];

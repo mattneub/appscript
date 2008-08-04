@@ -52,7 +52,7 @@
 + (SEConstant *)automatic;
 + (SEConstant *)blue;
 + (SEConstant *)bottom;
-+ (SEConstant *)case;
++ (SEConstant *)case_;
 + (SEConstant *)command;
 + (SEConstant *)commandDown;
 + (SEConstant *)control;
@@ -70,7 +70,7 @@
 + (SEConstant *)green;
 + (SEConstant *)half;
 + (SEConstant *)hyphens;
-+ (SEConstant *)ignore_;
++ (SEConstant *)ignore;
 + (SEConstant *)itemsAdded;
 + (SEConstant *)itemsRemoved;
 + (SEConstant *)jumpToHere;

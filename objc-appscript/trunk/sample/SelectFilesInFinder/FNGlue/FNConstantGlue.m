@@ -105,7 +105,7 @@
         case 'pbnd': return [self bounds];
         case 'sfsz': return [self calculatesFolderSizes];
         case 'capa': return [self capacity];
-        case 'case': return [self case];
+        case 'case': return [self case_];
         case 'cmtr': return [self centimeters];
         case 'gcli': return [self classInfo];
         case 'pcls': return [self class_];
@@ -656,10 +656,10 @@
     return constantObj;
 }
 
-+ (FNConstant *)case {
++ (FNConstant *)case_ {
     static FNConstant *constantObj;
     if (!constantObj)
-        constantObj = [FNConstant constantWithName: @"case" type: typeEnumerated code: 'case'];
+        constantObj = [FNConstant constantWithName: @"case_" type: typeEnumerated code: 'case'];
     return constantObj;
 }
 

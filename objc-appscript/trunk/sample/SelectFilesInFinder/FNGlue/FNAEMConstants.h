@@ -50,7 +50,7 @@ enum {
 	kFNAsk = 'ask ',
 	kFNAudioFormat = 'dfau',
 	kFNBottom = 'lbot',
-	kFNCase = 'case',
+	kFNCase_ = 'case',
 	kFNColumnView = 'clvw',
 	kFNComment = 'comt',
 	kFNCommentColumn = 'elsC',

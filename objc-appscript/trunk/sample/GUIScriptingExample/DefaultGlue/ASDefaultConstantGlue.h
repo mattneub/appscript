@@ -19,7 +19,7 @@
 
 + (ASDefaultConstant *)applicationResponses;
 + (ASDefaultConstant *)ask;
-+ (ASDefaultConstant *)case;
++ (ASDefaultConstant *)case_;
 + (ASDefaultConstant *)diacriticals;
 + (ASDefaultConstant *)expansion;
 + (ASDefaultConstant *)hyphens;

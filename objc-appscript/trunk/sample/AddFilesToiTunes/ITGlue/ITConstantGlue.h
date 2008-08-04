@@ -34,7 +34,7 @@
 + (ITConstant *)artists;
 + (ITConstant *)ask;
 + (ITConstant *)audioCD;
-+ (ITConstant *)case;
++ (ITConstant *)case_;
 + (ITConstant *)cdInsert;
 + (ITConstant *)composers;
 + (ITConstant *)computed;
