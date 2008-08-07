@@ -1,0 +1,393 @@
+// !$*UTF8*$!
+{
+	089C165DFE840E0CC02AAC07 /* English */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {586, 632}}";
+			sepNavSelRange = "{100, 0}";
+			sepNavVisRange = "{0, 100}";
+		};
+	};
+	29B97313FDCFA39411CA2CEA /* Project object */ = {
+		activeArchitecture = i386;
+		activeBuildConfigurationName = Release;
+		activeExecutable = 4F0FAFB90E34B29F008AA167 /* iTunesController */;
+		activeTarget = 8D1107260486CEB800E47090 /* iTunesController */;
+		addToTargets = (
+			8D1107260486CEB800E47090 /* iTunesController */,
+		);
+		codeSenseManager = 4F0FAFC60E34B2AA008AA167 /* Code sense */;
+		executables = (
+			4F0FAFB90E34B29F008AA167 /* iTunesController */,
+		);
+		perUserDictionary = {
+			PBXConfiguration.PBXFileTableDataSource3.PBXFileTableDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					408,
+					20,
+					48,
+					43,
+					43,
+					20,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+					PBXFileDataSource_Target_ColumnID,
+				);
+			};
+			PBXConfiguration.PBXTargetDataSource.PBXTargetDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					368,
+					60,
+					20,
+					48,
+					43,
+					43,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXTargetDataSource_PrimaryAttribute,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+				);
+			};
+			PBXPerProjectTemplateStateSaveDate = 239802262;
+			PBXWorkspaceStateSaveDate = 239802262;
+		};
+		perUserProjectItems = {
+			4F0FAFE80E351993008AA167 /* PBXTextBookmark */ = 4F0FAFE80E351993008AA167 /* PBXTextBookmark */;
+			4F0FAFE90E351993008AA167 /* PBXTextBookmark */ = 4F0FAFE90E351993008AA167 /* PBXTextBookmark */;
+			4F18824A0E48EB6B00FBC3C0 /* PBXTextBookmark */ = 4F18824A0E48EB6B00FBC3C0 /* PBXTextBookmark */;
+			4F18824C0E48EB6B00FBC3C0 /* PBXTextBookmark */ = 4F18824C0E48EB6B00FBC3C0 /* PBXTextBookmark */;
+			4F1882740E48FA4500FBC3C0 /* PBXTextBookmark */ = 4F1882740E48FA4500FBC3C0 /* PBXTextBookmark */;
+			4F1882750E48FA4500FBC3C0 /* PBXTextBookmark */ = 4F1882750E48FA4500FBC3C0 /* PBXTextBookmark */;
+			4F1882770E48FA4500FBC3C0 /* PBXTextBookmark */ = 4F1882770E48FA4500FBC3C0 /* PBXTextBookmark */;
+			4F1882780E48FA4500FBC3C0 /* PBXTextBookmark */ = 4F1882780E48FA4500FBC3C0 /* PBXTextBookmark */;
+			4F18827F0E48FA4500FBC3C0 /* PBXTextBookmark */ = 4F18827F0E48FA4500FBC3C0 /* PBXTextBookmark */;
+			4F1882800E48FA4500FBC3C0 /* PBXTextBookmark */ = 4F1882800E48FA4500FBC3C0 /* PBXTextBookmark */;
+			4F1882920E48FC4400FBC3C0 /* PBXTextBookmark */ = 4F1882920E48FC4400FBC3C0 /* PBXTextBookmark */;
+			4F1882E90E4B179300FBC3C0 /* PBXTextBookmark */ = 4F1882E90E4B179300FBC3C0 /* PBXTextBookmark */;
+			4F1883130E4B17DF00FBC3C0 /* PBXTextBookmark */ = 4F1883130E4B17DF00FBC3C0 /* PBXTextBookmark */;
+			4F1883140E4B17DF00FBC3C0 /* PBXTextBookmark */ = 4F1883140E4B17DF00FBC3C0 /* PBXTextBookmark */;
+			4F1883150E4B17DF00FBC3C0 /* PBXTextBookmark */ = 4F1883150E4B17DF00FBC3C0 /* PBXTextBookmark */;
+			4F1883160E4B17DF00FBC3C0 /* PBXTextBookmark */ = 4F1883160E4B17DF00FBC3C0 /* PBXTextBookmark */;
+			4F1883170E4B17DF00FBC3C0 /* PBXTextBookmark */ = 4F1883170E4B17DF00FBC3C0 /* PBXTextBookmark */;
+			4F1883180E4B17DF00FBC3C0 /* PBXTextBookmark */ = 4F1883180E4B17DF00FBC3C0 /* PBXTextBookmark */;
+			4F1883190E4B17DF00FBC3C0 /* PBXTextBookmark */ = 4F1883190E4B17DF00FBC3C0 /* PBXTextBookmark */;
+		};
+		sourceControlManager = 4F0FAFC50E34B2AA008AA167 /* Source Control */;
+		userBuildSettings = {
+		};
+	};
+	29B97316FDCFA39411CA2CEA /* main.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {766, 939}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 270}";
+			sepNavWindowFrame = "{{309, 0}, {825, 1028}}";
+		};
+	};
+	32CA4F630368D1EE00C91783 /* iTunesController_Prefix.pch */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {586, 632}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 165}";
+		};
+	};
+	4F0FAFB90E34B29F008AA167 /* iTunesController */ = {
+		isa = PBXExecutable;
+		activeArgIndices = (
+		);
+		argumentStrings = (
+		);
+		autoAttachOnCrash = 1;
+		breakpointsEnabled = 0;
+		configStateDict = {
+		};
+		customDataFormattersEnabled = 1;
+		debuggerPlugin = GDBDebugging;
+		disassemblyDisplayState = 0;
+		dylibVariantSuffix = "";
+		enableDebugStr = 1;
+		environmentEntries = (
+		);
+		executableSystemSymbolLevel = 0;
+		executableUserSymbolLevel = 0;
+		libgmallocEnabled = 0;
+		name = iTunesController;
+		savedGlobals = {
+		};
+		sourceDirectories = (
+		);
+	};
+	4F0FAFC50E34B2AA008AA167 /* Source Control */ = {
+		isa = PBXSourceControlManager;
+		fallbackIsa = XCSourceControlManager;
+		isSCMEnabled = 0;
+		scmConfiguration = {
+		};
+	};
+	4F0FAFC60E34B2AA008AA167 /* Code sense */ = {
+		isa = PBXCodeSenseManager;
+		indexTemplatePath = "";
+	};
+	4F0FAFDA0E34B2EA008AA167 /* ItunesController.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {586, 632}}";
+			sepNavSelRange = "{579, 0}";
+			sepNavVisRange = "{0, 699}";
+			sepNavWindowFrame = "{{15, -5}, {825, 1028}}";
+		};
+	};
+	4F0FAFDB0E34B2EA008AA167 /* ItunesController.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {586, 1568}}";
+			sepNavSelRange = "{2457, 32}";
+			sepNavVisRange = "{1006, 1487}";
+		};
+	};
+	4F0FAFE80E351993008AA167 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 4F0FAFDB0E34B2EA008AA167 /* ItunesController.m */;
+		name = "AppController.m: 31";
+		rLen = 0;
+		rLoc = 2455;
+		rType = 0;
+		vrLen = 502;
+		vrLoc = 0;
+	};
+	4F0FAFE90E351993008AA167 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 4F0FAFDA0E34B2EA008AA167 /* ItunesController.h */;
+		name = "AppController.h: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 341;
+		vrLoc = 0;
+	};
+	4F18821D0E48E7B600FBC3C0 /* TrackInfo.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {586, 910}}";
+			sepNavSelRange = "{408, 0}";
+			sepNavVisRange = "{0, 408}";
+		};
+	};
+	4F18821E0E48E7B600FBC3C0 /* TrackInfo.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {609, 546}}";
+			sepNavSelRange = "{565, 0}";
+			sepNavVisRange = "{0, 592}";
+		};
+	};
+	4F18824A0E48EB6B00FBC3C0 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 4F18821D0E48E7B600FBC3C0 /* TrackInfo.h */;
+		name = "TrackInfo.h: 16";
+		rLen = 150;
+		rLoc = 251;
+		rType = 0;
+		vrLen = 408;
+		vrLoc = 0;
+	};
+	4F18824C0E48EB6B00FBC3C0 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 4F18821E0E48E7B600FBC3C0 /* TrackInfo.m */;
+		name = "TrackInfo.m: 21";
+		rLen = 0;
+		rLoc = 436;
+		rType = 0;
+		vrLen = 582;
+		vrLoc = 0;
+	};
+	4F1882680E48EEB600FBC3C0 /* PlaylistInfo.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {586, 910}}";
+			sepNavSelRange = "{290, 118}";
+			sepNavVisRange = "{0, 415}";
+		};
+	};
+	4F1882690E48EEB600FBC3C0 /* PlaylistInfo.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {586, 910}}";
+			sepNavSelRange = "{157, 25}";
+			sepNavVisRange = "{0, 581}";
+		};
+	};
+	4F1882740E48FA4500FBC3C0 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 4F18821E0E48E7B600FBC3C0 /* TrackInfo.m */;
+		name = "TrackInfo.m: 15";
+		rLen = 233;
+		rLoc = 296;
+		rType = 0;
+		vrLen = 656;
+		vrLoc = 0;
+	};
+	4F1882750E48FA4500FBC3C0 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 4F1882690E48EEB600FBC3C0 /* PlaylistInfo.m */;
+		name = "PlaylistInfo.m: 9";
+		rLen = 25;
+		rLoc = 157;
+		rType = 0;
+		vrLen = 581;
+		vrLoc = 0;
+	};
+	4F1882770E48FA4500FBC3C0 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 4F18821D0E48E7B600FBC3C0 /* TrackInfo.h */;
+		name = "TrackInfo.h: 23";
+		rLen = 0;
+		rLoc = 408;
+		rType = 0;
+		vrLen = 408;
+		vrLoc = 0;
+	};
+	4F1882780E48FA4500FBC3C0 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 4F1882680E48EEB600FBC3C0 /* PlaylistInfo.h */;
+		name = "PlaylistInfo.h: 17";
+		rLen = 118;
+		rLoc = 290;
+		rType = 0;
+		vrLen = 415;
+		vrLoc = 0;
+	};
+	4F18827F0E48FA4500FBC3C0 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 4F1882680E48EEB600FBC3C0 /* PlaylistInfo.h */;
+		name = "PlaylistInfo.h: 17";
+		rLen = 118;
+		rLoc = 290;
+		rType = 0;
+		vrLen = 415;
+		vrLoc = 0;
+	};
+	4F1882800E48FA4500FBC3C0 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 4F1882690E48EEB600FBC3C0 /* PlaylistInfo.m */;
+		name = "PlaylistInfo.m: 16";
+		rLen = 0;
+		rLoc = 488;
+		rType = 0;
+		vrLen = 357;
+		vrLoc = 0;
+	};
+	4F1882920E48FC4400FBC3C0 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 4F0FAFDA0E34B2EA008AA167 /* ItunesController.h */;
+		name = "ItunesController.h: 27";
+		rLen = 0;
+		rLoc = 579;
+		rType = 0;
+		vrLen = 699;
+		vrLoc = 0;
+	};
+	4F1882E90E4B179300FBC3C0 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 4F0FAFDB0E34B2EA008AA167 /* ItunesController.m */;
+		name = "ItunesController.m: 108";
+		rLen = 32;
+		rLoc = 2457;
+		rType = 0;
+		vrLen = 1487;
+		vrLoc = 1006;
+	};
+	4F1883130E4B17DF00FBC3C0 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 32CA4F630368D1EE00C91783 /* iTunesController_Prefix.pch */;
+		name = "iTunesController_Prefix.pch: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 165;
+		vrLoc = 0;
+	};
+	4F1883140E4B17DF00FBC3C0 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 8D1107310486CEB800E47090 /* Info.plist */;
+		name = "Info.plist: 7";
+		rLen = 0;
+		rLoc = 265;
+		rType = 0;
+		vrLen = 845;
+		vrLoc = 0;
+	};
+	4F1883150E4B17DF00FBC3C0 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 089C165DFE840E0CC02AAC07 /* English */;
+		name = "InfoPlist.strings: 3";
+		rLen = 0;
+		rLoc = 100;
+		rType = 0;
+		vrLen = 100;
+		vrLoc = 0;
+	};
+	4F1883160E4B17DF00FBC3C0 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 32CA4F630368D1EE00C91783 /* iTunesController_Prefix.pch */;
+		name = "iTunesController_Prefix.pch: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 165;
+		vrLoc = 0;
+	};
+	4F1883170E4B17DF00FBC3C0 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 8D1107310486CEB800E47090 /* Info.plist */;
+		name = "Info.plist: 7";
+		rLen = 0;
+		rLoc = 265;
+		rType = 0;
+		vrLen = 845;
+		vrLoc = 0;
+	};
+	4F1883180E4B17DF00FBC3C0 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 089C165DFE840E0CC02AAC07 /* English */;
+		name = "InfoPlist.strings: 3";
+		rLen = 0;
+		rLoc = 100;
+		rType = 0;
+		vrLen = 100;
+		vrLoc = 0;
+	};
+	4F1883190E4B17DF00FBC3C0 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 4F0FAFDA0E34B2EA008AA167 /* ItunesController.h */;
+		name = "ItunesController.h: 27";
+		rLen = 0;
+		rLoc = 579;
+		rType = 0;
+		vrLen = 699;
+		vrLoc = 0;
+	};
+	8D1107260486CEB800E47090 /* iTunesController */ = {
+		activeExec = 0;
+		executables = (
+			4F0FAFB90E34B29F008AA167 /* iTunesController */,
+		);
+	};
+	8D1107310486CEB800E47090 /* Info.plist */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {586, 632}}";
+			sepNavSelRange = "{265, 0}";
+			sepNavVisRange = "{0, 845}";
+		};
+	};
+}
