@@ -33,6 +33,7 @@ typedef enum {
 	ASTargetType targetType;
 	id targetData;
 	AEMApplication *target;
+	ASRelaunchMode relaunchMode;
 }
 
 - (id)initWithApplicationClass:(Class)appClass
@@ -51,6 +52,11 @@ typedef enum {
 // launch the target application without sending it the usual 'run' event;
 // equivalent to 'launch' command in AppleScript.
 - (BOOL)launchApplicationWithError:(NSError **)error;
+
+// determines if an application specified by path should be relaunched if
+// its AEAddressDesc is no longer valid (i.e. application has quit/restarted)
+- (void)setRelaunchMode:(ASRelaunchMode)relaunchMode_;
+- (ASRelaunchMode)relaunchMode;
 
 @end
 

@@ -22,6 +22,7 @@
 	targetType = type;
 	targetData = [data retain];
 	target = nil;
+	[self setRelaunchMode: kASRelaunchSpecial];
 	return self;
 }
 
@@ -137,6 +138,14 @@
 		}
 	}
 	return NO;
+}
+
+- (void)setRelaunchMode:(ASRelaunchMode)relaunchMode_ {
+	relaunchMode = relaunchMode_;
+}
+
+- (ASRelaunchMode)relaunchMode {
+	return relaunchMode;
 }
 
 @end

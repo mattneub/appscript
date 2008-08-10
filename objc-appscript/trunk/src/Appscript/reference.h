@@ -22,8 +22,8 @@
 
 
 @interface ASReference : NSObject {
-	id AS_appData;
-	id AS_aemReference;
+	id AS_appData; // TO DO: more specific type
+	id AS_aemReference; // TO DO: more specific type
 }
 
 + (id)referenceWithAppData:(id)appData aemReference:(id)aemReference;
@@ -35,6 +35,9 @@
 - (id)AS_appData;
 
 - (id)AS_aemReference;
+
+- (void)AS_setRelaunchMode:(ASRelaunchMode)relaunchMode_;
+- (ASRelaunchMode)AS_relaunchMode;
 
 // is target application running?
 - (BOOL)isRunning;

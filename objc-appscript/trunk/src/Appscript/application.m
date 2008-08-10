@@ -439,7 +439,7 @@ error:
 
 - (void)dealloc {
 	if (transactionID != kAnyTransactionID)
-		[self endTransactionWithError: nil];
+		[self endTransactionWithError: nil]; // TO DO: delete
 	[targetData release];
 	[addressDesc release];
 	[defaultCodecs release];
@@ -448,7 +448,7 @@ error:
 
 - (void)finalize {
 	if (transactionID != kAnyTransactionID)
-		[self endTransactionWithError: nil];
+		[self endTransactionWithError: nil]; // TO DO: delete
 	[super finalize];
 }
 

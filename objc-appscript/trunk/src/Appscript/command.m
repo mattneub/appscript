@@ -38,20 +38,33 @@ static NSAppleEventDescriptor *defaultIgnore;
 	considsAndIgnoresFlags = kAECaseIgnoreMask;
 	// if -targetWithError: fails, store NSError and return it when -sendWithError: is invoked
 	id target = [appData targetWithError: &targetError];
-	if (target) {
-		AS_event = [[target eventWithEventClass: classCode eventID: code codecs: appData] retain];
-		// set event's direct parameter and/or subject attribute
-		// note: AEMEvent/AEMCodecs instance will raise exception if this fails
-		if (directParameter != kASNoDirectParameter)
-			[AS_event setParameter: directParameter forKeyword: keyDirectObject];
-		if ([parentReference AS_aemReference] == AEMApp) 
-			[AS_event setAttribute: [NSNull null] forKeyword: keySubjectAttr];
-		else if (directParameter == kASNoDirectParameter)
-			[AS_event setParameter: parentReference forKeyword: keyDirectObject];
-		else
-			[AS_event setAttribute: parentReference forKeyword: keySubjectAttr];
-	} else
-		[targetError retain];
+	if (!target) goto fail;
+	// if an application specified by path has quit/restart, its AEAddressDesc is no longer valid;
+	// this code will automatically restart it (or not) according to client-specified auto-relaunch policy
+	ASRelaunchMode relaunchPolicy = [appData relaunchMode];
+	if (relaunchPolicy != kASRelaunchNever & [target targetType] == kAEMTargetFileURL
+			& ![AEMApplication processExistsForPID: [[target descriptor] int32Value]]) {
+		// TO DO: what, if any, other events should be allowed to relaunch app when kASRelaunchSpecial is used?
+		if (relaunchPolicy == kASRelaunchAlways || classCode == kCoreEventClass && code == kAEOpenApplication) {
+			BOOL success = [target reconnectWithError: &targetError];
+			if (!success) goto fail;
+		}
+	}
+	// create new AEMEvent instance
+	AS_event = [[target eventWithEventClass: classCode eventID: code codecs: appData] retain];
+	// set event's direct parameter and/or subject attribute
+	// note: AEMEvent/AEMCodecs instance will raise exception if this fails
+	if (directParameter != kASNoDirectParameter)
+		[AS_event setParameter: directParameter forKeyword: keyDirectObject];
+	if ([parentReference AS_aemReference] == AEMApp) 
+		[AS_event setAttribute: [NSNull null] forKeyword: keySubjectAttr];
+	else if (directParameter == kASNoDirectParameter)
+		[AS_event setParameter: parentReference forKeyword: keyDirectObject];
+	else
+		[AS_event setAttribute: parentReference forKeyword: keySubjectAttr];
+	return self;
+fail:
+	[targetError retain];
 	return self;
 }
 
@@ -219,7 +232,7 @@ static NSAppleEventDescriptor *defaultIgnore;
 }
 
 - (NSString *)AS_formatObject:(id)obj appData:(id)appData {
-	return [NSString stringWithFormat: @"<%@>", obj];
+	return [AEMObjectRenderer formatObject: obj];
 }
 
 // TO DO: improve formatting for getItem..., getList..., setItem..., getInt..., etc.
@@ -304,5 +317,22 @@ static NSAppleEventDescriptor *defaultIgnore;
 	
 	return result;
 }
+
+@end
+
+
+/**********************************************************************/
+
+
+@implementation ASGetSetItemCommand
+
+- (NSString *)AS_commandName {
+    return ([[AS_event attributeForKeyword: keyEventIDAttr] code] == kAEGetData) ? @"get" : @"set";
+}
+
+- (NSString *)AS_parameterNameForCode:(DescType)code {
+    return (code == keyAEData) ? @"to" : [super AS_parameterNameForCode: code];
+}
+
 
 @end

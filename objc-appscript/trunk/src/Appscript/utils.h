@@ -39,3 +39,11 @@
 
 @end
 
+
+/**********************************************************************/
+
+typedef enum {
+	kASRelaunchNever,
+	kASRelaunchSpecial,
+	kASRelaunchAlways
+} ASRelaunchMode;
