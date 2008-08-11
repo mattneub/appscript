@@ -2,14 +2,6 @@ TO DO
 
 ======= appscript =======
 
-- -[ASCommand description] should provide appscript-style representation of command
-
-Note: best way to do this might be to have codecs unpack event (TO DO) and then call -description on result; that way, appscript API can provide its own formatting without needing to create another error? Or would it be best just to wrap original AEM error in a new one?
-
-
-- include an appscript-style representation of Apple event in localizedDescription string of NSErrors returned by -[ASEvent sendWithError:], and/or include original event object in userInfo dictionary?
-
-
 ======= osaglue =======
 
 - integrate into ASDictionary
@@ -51,8 +43,6 @@ Note: best way to do this might be to have codecs unpack event (TO DO) and then 
 	/Users/has/AppscriptDemo/TEGlue/TEReferenceGlue.h:55: warning: also found '-(TERunCommand *)run'
 
 
-- NSErrors should include human-readable default error description; could use GetMacOSStatusCommentString if on 10.4 or later (see Debugging.h), otherwise will need to supply a lookup table for common Carbon error codes, c.f. rb-appscript. Probably also a good idea to include a lookup table for pre-Leopard Cocoa Scripting error strings, c.f. rb-appscript.
-
 - add 'strict' options for class and command generation to osaglue? e.g. -k option would create individual classes according to application dictionary; -c option would enforce type checking/coercion in command parameters and result. This would allow users to take advantage of ObjC static typing for applications whose dictionaries are sufficiently accurate to avoid compatibility problems.
 
 - add dynamic class generation option?
@@ -68,4 +58,6 @@ Note: best way to do this might be to have codecs unpack event (TO DO) and then 
 - returnID support in high-level appscript API?; note: returnID is an argument to AECreateAppleEvent(), so the appscript layer would then need to avoid instantiating AEMEvent when a command is first called, allowing clients an opportunity to invoke -returnID: before adding attributes and parameters (including direct parameter and subject attribute).
 
 - define formal protocol or abstract base class for AEMEvent class, as clients can install their own choice of event class in AEMApplication if they wish
+
+- include a lookup table for pre-Leopard Cocoa Scripting error strings, c.f. rb-appscript
 

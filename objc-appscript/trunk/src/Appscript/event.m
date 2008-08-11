@@ -249,7 +249,8 @@ static ASEventAttributeDescription attributeKeys[] = {
 		}
 		// for any other Apple Event Manager errors, generate an NSError if one is requested, then return nil
 		if (error) {
-			errorDescription = [NSString stringWithFormat: @"Apple Event Manager error %i", errorNumber];
+			errorDescription = [NSString stringWithFormat: @"Apple Event Manager error: %@ (%i)", 
+															ASDescriptionForError(errorNumber), errorNumber];
 			errorInfo = [NSDictionary dictionaryWithObjectsAndKeys: 
 					errorDescription,						NSLocalizedDescriptionKey,
 					[NSNumber numberWithInt: errorNumber],	kASErrorNumberKey,
@@ -279,7 +280,8 @@ static ASEventAttributeDescription attributeKeys[] = {
 			if (errorString)
 				errorDescription = [NSString stringWithFormat: @"Application error: %@ (%i)", errorString, errorNumber];
 			else
-				errorDescription = [NSString stringWithFormat: @"Application error %i", errorNumber];
+				errorDescription = [NSString stringWithFormat: @"Application error: %@ (%i)", 
+																ASDescriptionForError(errorNumber), errorNumber];
 			errorInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys: 
 					errorDescription,						NSLocalizedDescriptionKey,
 					[NSNumber numberWithInt: errorNumber],	kASErrorNumberKey,

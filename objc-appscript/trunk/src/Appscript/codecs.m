@@ -96,7 +96,7 @@
 			/*
 			 * note: for better compatibility with less well-designed applications that don't like
 			 * less common integer types (typeSInt64, typeUInt32, etc.), try to use typeSInt32
-			 * and typeFloat (double) whenever possible
+			 * and typeIEEE64BitFloatingPoint (double) whenever possible
 			 */
 			case 'b':
 			case 'c':

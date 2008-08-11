@@ -54,12 +54,6 @@ typedef OSStatus(*AEMSendProcPtr)(const AppleEvent *event,
 
 
 /**********************************************************************/
-// Forward declarations
-
-@class AEMEvent;
-
-
-/**********************************************************************/
 // Event class
 /*
  * Note: clients shouldn't instantiate AEMEvent directly; instead use AEMApplication -eventWith... methods.

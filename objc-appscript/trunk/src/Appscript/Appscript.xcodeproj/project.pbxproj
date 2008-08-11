@@ -575,12 +575,14 @@
 			};
 			name = Release;
 		};
-		4F27FF700DF82C2100B681D4 /* GCRelease */ = {
+		4F27FF700DF82C2100B681D4 /* GC64Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = (
 					i386,
 					ppc,
+					ppc64,
+					x86_64,
 				);
 				DEPLOYMENT_LOCATION = NO;
 				GCC_ENABLE_OBJC_GC = YES;
@@ -590,9 +592,9 @@
 				PREBINDING = NO;
 				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
 			};
-			name = GCRelease;
+			name = GC64Release;
 		};
-		4F27FF710DF82C2100B681D4 /* GCRelease */ = {
+		4F27FF710DF82C2100B681D4 /* GC64Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -607,9 +609,9 @@
 				PRODUCT_NAME = Appscript;
 				WRAPPER_EXTENSION = framework;
 			};
-			name = GCRelease;
+			name = GC64Release;
 		};
-		4F27FF720DF82C2100B681D4 /* GCRelease */ = {
+		4F27FF720DF82C2100B681D4 /* GC64Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
@@ -633,7 +635,7 @@
 				WRAPPER_EXTENSION = octest;
 				ZERO_LINK = NO;
 			};
-			name = GCRelease;
+			name = GC64Release;
 		};
 		4FED70880D2E6B64003412D7 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -695,7 +697,7 @@
 			buildConfigurations = (
 				1DEB91AE08733DA50010E9CD /* Debug */,
 				1DEB91AF08733DA50010E9CD /* Release */,
-				4F27FF710DF82C2100B681D4 /* GCRelease */,
+				4F27FF710DF82C2100B681D4 /* GC64Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -705,7 +707,7 @@
 			buildConfigurations = (
 				1DEB91B208733DA50010E9CD /* Debug */,
 				1DEB91B308733DA50010E9CD /* Release */,
-				4F27FF700DF82C2100B681D4 /* GCRelease */,
+				4F27FF700DF82C2100B681D4 /* GC64Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -715,7 +717,7 @@
 			buildConfigurations = (
 				4FED70880D2E6B64003412D7 /* Debug */,
 				4FED70890D2E6B64003412D7 /* Release */,
-				4F27FF720DF82C2100B681D4 /* GCRelease */,
+				4F27FF720DF82C2100B681D4 /* GC64Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

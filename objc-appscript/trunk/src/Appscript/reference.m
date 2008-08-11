@@ -41,7 +41,7 @@
 			&& [AS_aemReference isEqual: [object AS_aemReference]]); 
 }
 
-- (unsigned)hash {
+- (unsigned long)hash {
 	return ([[AS_appData target] hash] + [AS_aemReference hash]);
 }
 
@@ -217,9 +217,9 @@
 															   eventID: kAEGetData
 													   directParameter: kASNoDirectParameter
 													   parentReference: self];
-	[[cmd AS_aemEvent] setParameter: [NSAppleEventDescriptor descriptorWithTypeCode: typeFloat]
+	[[cmd AS_aemEvent] setParameter: [NSAppleEventDescriptor descriptorWithTypeCode: typeIEEE64BitFloatingPoint]
 						 forKeyword: keyAERequestedType];
-	[cmd returnType: typeFloat];
+	[cmd returnType: typeIEEE64BitFloatingPoint];
 	return [[cmd sendWithError: error] doubleValue];
 }
 

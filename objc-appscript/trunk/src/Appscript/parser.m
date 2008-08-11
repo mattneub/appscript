@@ -52,7 +52,7 @@
 	[name_ retain];
 	name = name_;
 	code = code_;
-	hash = [name hash] + (unsigned)code;
+	hash = [name hash] + (unsigned long)code;
 	return self;
 }
 
@@ -64,14 +64,14 @@
 	return code;
 }
 
-- (unsigned)hash {
+- (unsigned long)hash {
 	return hash;
 }
 
 - (BOOL)isEqual:(id)anObject {
 	if (anObject == self) return YES;
 	if (!anObject || ![anObject isKindOfClass: [self class]]) return NO;
-	return [[self name] isEqual: [anObject name]] && [self code] == [anObject code];
+	return [[self name] isEqual: [anObject name]] && [self code] == [(ASParserDef *)anObject code];
 }
 
 - (NSString *)description {
@@ -95,7 +95,7 @@
 	if (!self) return self;
 	classCode = classCode_;
 	parameters = [[NSMutableSet alloc] init];
-	hash = (unsigned)classCode + (unsigned)code;
+	hash = (unsigned long)classCode + (unsigned long)code;
 	return self;
 }
 
@@ -120,7 +120,7 @@
 	return (NSSet *)parameters;
 }
 
-- (unsigned)hash {
+- (unsigned long)hash {
 	return hash;
 }
 

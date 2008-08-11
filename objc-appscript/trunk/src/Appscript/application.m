@@ -33,9 +33,9 @@
 								   NULL,
 								   &outAppURL);
 	if (err) {
-		errorDescription = [NSString stringWithFormat: @"Can't find application with creator '%@', "
-														"bundle ID %@, name %@ (error %i)", 
-														[AEMObjectRenderer formatOSType: creator], bundleID, name, err];
+		errorDescription = [NSString stringWithFormat: @"Can't find application (creator='%@', bundle ID=%@, name=%@): %@ (%i)", 
+														[AEMObjectRenderer formatOSType: creator], bundleID, name, 
+														ASDescriptionForError(err), err];
 		errorInfo = [NSDictionary dictionaryWithObjectsAndKeys: 
 									errorDescription, NSLocalizedDescriptionKey,
 									[NSNumber numberWithInt: err], kASErrorNumberKey,
@@ -88,8 +88,8 @@
 	if (err) goto error;
 	return pid;
 error:
-	// TO DO: better error message
-	errorDescription = [NSString stringWithFormat: @"Can't find process ID for application %@ (error %i)", fileURL, err];
+	errorDescription = [NSString stringWithFormat: @"Can't find process ID for application %@: %@ (%i)", 
+													fileURL, ASDescriptionForError(err), err];
 	errorInfo = [NSDictionary dictionaryWithObjectsAndKeys: 
 			errorDescription, NSLocalizedDescriptionKey,
 			[NSNumber numberWithInt: err], kASErrorNumberKey,
@@ -215,7 +215,8 @@ error:
 	if (paraData) DisposePtr((Ptr)paraData);
 	return pid;
 error:
-	errorDescription = [NSString stringWithFormat: @"Can't launch application %@ (error %i)", fileURL, err];
+	errorDescription = [NSString stringWithFormat: @"Can't launch application %@: %@ (%i)", 
+													fileURL, ASDescriptionForError(err), err];
 	errorInfo = [NSDictionary dictionaryWithObjectsAndKeys: 
 			errorDescription, NSLocalizedDescriptionKey,
 			[NSNumber numberWithInt: err], kASErrorNumberKey,
@@ -438,18 +439,10 @@ error:
 // dealloc
 
 - (void)dealloc {
-	if (transactionID != kAnyTransactionID)
-		[self endTransactionWithError: nil]; // TO DO: delete
 	[targetData release];
 	[addressDesc release];
 	[defaultCodecs release];
 	[super dealloc];
-}
-
-- (void)finalize {
-	if (transactionID != kAnyTransactionID)
-		[self endTransactionWithError: nil]; // TO DO: delete
-	[super finalize];
 }
 
 
@@ -477,7 +470,7 @@ error:
 	return targetData;
 }
 
-- (unsigned)hash {
+- (unsigned long)hash {
 	return [[self description] hash];
 }
 

@@ -47,3 +47,8 @@ typedef enum {
 	kASRelaunchSpecial,
 	kASRelaunchAlways
 } ASRelaunchMode;
+
+
+/**********************************************************************/
+
+NSString *ASDescriptionForError(OSStatus err);

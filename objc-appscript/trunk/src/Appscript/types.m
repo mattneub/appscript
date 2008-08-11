@@ -118,7 +118,7 @@ static ASBoolean *falseValue;
 	[super dealloc];
 }
 
-- (unsigned)hash {
+- (unsigned long)hash {
 	return [desc hash];
 }
 
@@ -312,14 +312,14 @@ static ASBoolean *falseValue;
 	[super dealloc];
 }
 
-- (unsigned)hash {
-	return (unsigned)[self code];
+- (unsigned long)hash {
+	return (unsigned long)[self code];
 }
 
 - (BOOL)isEqual:(id)anObject {
 	if (anObject == self) return YES;
 	if (!anObject || ![anObject isKindOfClass: [self class]]) return NO;
-	return [self code] == [anObject code];
+	return [self code] == [(AEMTypeBase *)anObject code];
 }
 
 - (OSType)code {
@@ -456,8 +456,8 @@ static ASBoolean *falseValue;
 			[AEMObjectRenderer formatObject: value], [AEMObjectRenderer formatObject: units]];
 }
 
-- (unsigned)hash {
-	return (unsigned)([value hash] + [units hash]);
+- (unsigned long)hash {
+	return (unsigned long)([value hash] + [units hash]);
 }
 
 - (BOOL)isEqual:(id)anObject {
