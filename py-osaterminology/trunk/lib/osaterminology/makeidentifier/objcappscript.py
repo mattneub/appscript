@@ -158,6 +158,9 @@ kObjCAppscriptMethods = [
 	"getListWithError",
 	"getItemOfType",
 	"getListOfType",
+	"getIntWithError",
+	"getLongWithError",
+	"getDoubleWithError",
 	
 	# used by osaglue-generated XXApplication classes
 	"initWithName",
@@ -180,23 +183,24 @@ kObjCAppscriptMethods = [
 	"constantWithCode",
 	
 	# used by ASCommand
+	"considering",
 	"sendMode",
-	"waitReply",
+	"waitForReply",
 	"ignoreReply",
 	"queueReply",
 	"timeout",
 	"requestedClass",
-	"returnClass",
-	"returnListOfClass",
 	"requestedType",
+	"returnClass",
 	"returnType",
+	"returnList",
+	"returnListOfClass",
 	"returnListOfType",
 	"returnDescriptor",
-	"send",
 	"sendWithError",
+	"send",
 	
 	# currently unused
-	"considering",
 	"ignoring",
 	"returnID",
 	"help",

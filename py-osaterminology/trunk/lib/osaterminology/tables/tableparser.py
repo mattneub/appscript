@@ -30,7 +30,7 @@ class TerminologyTableReceiver(Receiver):
 		self.classes = []
 		self.enumerators = []
 		# use sets to record previously found definitions, and avoid adding duplicates to lists
-		# (i.e. 'name+code not in <set>' is quicker than using 'name+code not in <list>')
+		# (i.e. '(name, code) not in <set>' is quicker than using '(name, code) not in <list>')
 		self._foundproperties = set()
 		self._foundelements = set()
 		self._foundclasses = set()
@@ -59,27 +59,27 @@ class TerminologyTableReceiver(Receiver):
 		self.isplural = True
 			
 	def add_property(self, code, name, description, datatype, islist, isenum, ismutable):
-		if name+code not in self._foundproperties:
+		if (name, code) not in self._foundproperties:
 			self.properties.append((self.convert(name), code))
-			self._foundproperties.add(name+code)
+			self._foundproperties.add((name, code))
 	
 	def end_class(self):
 		name, code = self.classname, self.classcode
 		if self.isplural:
-			if name+code not in self._foundelements:
+			if (name, code) not in self._foundelements:
 				self.elements.append((name, code))
-				self._foundelements.add(name+code)
+				self._foundelements.add((name, code))
 				self._foundelementcodes.add(code)
 		else:
-			if name+code not in self._foundclasses:
+			if (name, code) not in self._foundclasses:
 				self.classes.append((name, code))
-				self._foundclasses.add(name+code)
+				self._foundclasses.add((name, code))
 				self._foundclasscodes.add(code)
 		
 	def add_enumerator(self, code, name, description):
-		if name+code not in self._foundenumerators:
+		if (name, code) not in self._foundenumerators:
 			self.enumerators.append((self.convert(name), code))
-			self._foundenumerators.add(name+code)
+			self._foundenumerators.add((name, code))
 
 	def result(self):
 		# singular names are normally used in the classes table and plural names in the elements table. However, if an aete defines a singular name but not a plural name then the missing plural name is substituted with the singular name; and vice-versa if there's no singular equivalent for a plural name.
