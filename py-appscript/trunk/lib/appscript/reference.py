@@ -105,10 +105,10 @@ class AppData(aem.Codecs):
 	def packDict(self, val):
 		# Pack dictionary whose keys are strings (e.g. 'foo'), Keywords (e.g. k.name) or AETypes (e.g. AEType('pnam').
 		record = AECreateList('', True)
-		if val.has_key(self.kClassKeyword) or val.has_key(self.kClassType):
+		if self.kClassKeyword in val or self.kClassType in val:
 			# if hash contains a 'class' property containing a class name, coerce the AEDesc to that class
 			newval = val.copy()
-			if newval.has_key(self.kClassKeyword):
+			if self.kClassKeyword in newval:
 				value = newval.pop(self.kClassKeyword)
 			else:
 				value = newval.pop(self.kClassType)
@@ -123,7 +123,7 @@ class AppData(aem.Codecs):
 				try:
 					keyCode = self.typebyname[key.AS_name].code
 				except KeyError:
-					raise KeyError, "Unknown Keyword: k.%s" % key.AS_name
+					raise KeyError("Unknown Keyword: k.%s" % key.AS_name)
 				record.AEPutParamDesc(keyCode, self.pack(value))
 			elif isinstance(key, aem.AETypeBase): # AEType/AEProp (AEType is normally used in practice)
 				record.AEPutParamDesc(key.code, self.pack(value))
@@ -146,7 +146,7 @@ class AppData(aem.Codecs):
 				lst = self.unpack(value)
 				for i in range(0, len(lst), 2):
 					dct[lst[i]] = lst[i+1]
-			elif self.typebycode.has_key(key):
+			elif key in self.typebycode:
 				dct[self.typebycode[key]] = self.unpack(value)
 			else:
 				dct[aem.AEType(key)] = self.unpack(value)
@@ -242,7 +242,7 @@ class AppData(aem.Codecs):
 			try:
 				data = self.typebyname[data.AS_name]
 			except KeyError:
-				raise KeyError, "Unknown Keyword: k.%s" % data.AS_name
+				raise KeyError("Unknown Keyword: k.%s" % data.AS_name)
 		return aem.Codecs.pack(self, data)
 		
 	# Help system
@@ -366,7 +366,7 @@ class Command(_Base):
 	def __call__(self, *args, **kargs):
 		keywordArgs = kargs.copy()
 		if len(args) > 1:
-			raise TypeError, "Command received more than one direct parameter %r." % (args,)
+			raise TypeError("Command received more than one direct parameter %r." % (args,))
 		# get user-specified timeout, if any
 		timeout = int(keywordArgs.pop('timeout', 60)) # appscript's default is 60 sec
 		if timeout <= 0:
@@ -388,7 +388,7 @@ class Command(_Base):
 				csig += option in ignoreOptions and ignoreMask or considerMask
 			atts['csig'] = _packUInt32(csig)
 		# optionally have application supply return value as specified type
-		if keywordArgs.has_key('resulttype'):
+		if 'resulttype' in keywordArgs:
 			params['rtyp'] = keywordArgs.pop('resulttype')
 		# add direct parameter, if any
 		if args:
@@ -398,15 +398,15 @@ class Command(_Base):
 			for name, value in keywordArgs.items():
 				params[self._labelledArgTerms[name]] = value
 		except KeyError:
-			raise TypeError, 'Unknown keyword argument %r.' % name
+			raise TypeError('Unknown keyword argument %r.' % name)
 		# apply special cases for certain commands (make, set, any command that takes target object specifier as its direct parameter); appscript provides these as a convenience to users, making its syntax more concise, OO-like and nicer to use
 		if self.AS_aemreference is not aem.app:
 			if self._code == 'coresetd':
 				# Special case: if ref.set(...) contains no 'to' argument, use direct argument for 'to' parameter and target reference for direct parameter
-				if  params.has_key('----') and not params.has_key('data'):
+				if '----' in params and 'data' not in params:
 					params['data'] = params['----']
 					params['----'] = self.AS_aemreference
-				elif not params.has_key('----'):
+				elif '----' not in params:
 					params['----'] = self.AS_aemreference
 				else:
 					atts['subj'] = self.AS_aemreference
@@ -417,11 +417,11 @@ class Command(_Base):
 				# One option is to follow the AppleScript approach and force users to always supply subject attributes as target references and 'at' parameters as 'at' parameters, but the syntax for the latter is clumsy and not backwards-compatible with a lot of existing appscript code (since earlier versions allowed the 'at' parameter to be given as the target reference). So for now we split the difference when deciding what to do with a target reference: if it's an insertion location then pack it as the 'at' parameter (where possible), otherwise pack it as the subject attribute (and if the application doesn't like that then it's up to the client to pack it as an 'at' parameter themselves).
 				#
 				# if ref.make(...) contains no 'at' argument and target is an insertion reference, use target reference for 'at' parameter...
-				if isinstance(self.AS_aemreference, InsertionSpecifier) and not params.has_key('insh'):
+				if isinstance(self.AS_aemreference, InsertionSpecifier) and 'insh' not in params:
 					params['insh'] = self.AS_aemreference
 				else: # ...otherwise pack the target reference as the subject attribute
 					atts['subj'] = self.AS_aemreference
-			elif params.has_key('----'):
+			elif '----' in params:
 				# if user has already supplied a direct parameter, pack that reference as the subject attribute
 				atts['subj'] = self.AS_aemreference
 			else:
@@ -500,7 +500,7 @@ class Reference(_Base):
 		return val
 	
 	def __iter__(self): # dummy-proof
-		raise RuntimeError, "Can't iterate an application reference; use ref.get() to return a list of references first."
+		raise RuntimeError("Can't iterate an application reference; use ref.get() to return a list of references first.")
 	
 	def __repr__(self): # references display as themselves
 		val = renderreference(self.AS_appdata, self.AS_aemreference)
@@ -529,7 +529,7 @@ class Reference(_Base):
 		try:
 			selectorType, code = self.AS_appdata.referencebyname[name]
 		except KeyError:
-			raise AttributeError, "Unknown property, element or command: %r" % name
+			raise AttributeError("Unknown property, element or command: %r" % name)
 		if selectorType == kProperty:
 			return Reference(self.AS_appdata, self.AS_aemreference.property(code))
 		elif selectorType == kElement:
@@ -548,7 +548,7 @@ class Reference(_Base):
 			else:
 				testclause = selector
 			if not isinstance(testclause, Test):
-				raise TypeError, 'Not an its-based test: %r' % selector
+				raise TypeError('Not an its-based test: %r' % selector)
 			return Reference(self.AS_appdata, self.AS_aemreference.byfilter(testclause))
 		elif isinstance(selector, slice): # by-range
 			return Reference(self.AS_appdata, self.AS_aemreference.byrange(
@@ -570,18 +570,18 @@ class Reference(_Base):
 		try:
 			aemtype = self.AS_appdata.typebyname[klass.AS_name]
 		except AttributeError: # can't get klass.AS_name
-			raise TypeError, "Not a keyword: %r" % name
+			raise TypeError("Not a keyword: %r" % name)
 		except KeyError: # can't get typebyname[<name>]
-			raise ValueError, "Unknown class: %r" % name
+			raise ValueError("Unknown class: %r" % name)
 		return Reference(self.AS_appdata, self.AS_aemreference.previous(aemtype.code))
 	
 	def next(self, klass):
 		try:
 			aemtype = self.AS_appdata.typebyname[klass.AS_name]
 		except AttributeError: # can't get klass.AS_name
-			raise TypeError, "Not a keyword: %r" % name
+			raise TypeError("Not a keyword: %r" % name)
 		except KeyError: # can't get typebyname[<name>]
-			raise ValueError, "Unknown class: %r" % name
+			raise ValueError("Unknown class: %r" % name)
 		return Reference(self.AS_appdata, self.AS_aemreference.next(aemtype.code))
 	
 	def ID(self, id):
@@ -663,7 +663,7 @@ class Application(Reference):
 				terms : module | bool -- if a module, get terminology from it; if True, get terminology from target application; if False, use built-in terminology only
     		"""
 		if len([i for i in [name, id, creator, pid, url, aemapp] if i]) > 1:
-			raise TypeError, 'app() received more than one of the following arguments: name, id, creator, pid, url, aemapp'
+			raise TypeError('app() received more than one of the following arguments: name, id, creator, pid, url, aemapp')
 		if name:
 			constructor, identifier = 'path', aem.findapp.byname(name)
 		elif id:

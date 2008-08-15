@@ -446,7 +446,7 @@ class ElementsByFilter(_MultipleElements):
 	
 	def __init__(self, wantcode, container, key):
 		if not isinstance(key, Test):
-			raise TypeError, 'Not a test specifier: %r' % key
+			raise TypeError('Not a test specifier: %r' % key)
 		_MultipleElements.__init__(self, wantcode, container.AEM_trueSelf(), key)
 	
 	def __repr__(self):

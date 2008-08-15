@@ -80,7 +80,7 @@ class Event(object):
 				# note: while Apple docs say that both keyErrorNumber and keyErrorString should be
 				# tested for when determining if an error has occurred, AppleScript tests for keyErrorNumber
 				# only, so do the same here for compatibility
-				if eventResult.has_key(kae.keyErrorNumber): # an application-level error occurred
+				if kae.keyErrorNumber in eventResult: # an application-level error occurred
 					# note: uses standard codecs to unpack error info to ensure consistent conversion
 					eNum = _defaultCodecs.unpack(eventResult[kae.keyErrorNumber])
 					if eNum != 0: # Stupid Finder returns non-error error number and message for successful move/duplicate command, so just ignore it
@@ -88,7 +88,7 @@ class Event(object):
 						if eMsg:
 							eMsg = _defaultCodecs.unpack(eMsg)
 						raise CommandError(eNum, eMsg, replyEvent)
-				if eventResult.has_key(kae.keyAEResult): # application has returned a value
+				if kae.keyAEResult in eventResult: # application has returned a value
 					# note: unpack result with [optionally] user-specified codecs, allowing clients to customise unpacking (e.g. appscript)
 					return self._codecs.unpack(eventResult[kae.keyAEResult])
 

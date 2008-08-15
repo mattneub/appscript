@@ -3,7 +3,7 @@
 (C) 2004-2008 HAS
 """
 
-from os.path import exists, expanduser
+from os.path import exists
 
 from ae import FindApplicationForInfo, MacOSError
 
@@ -18,7 +18,7 @@ def _findApp(name=None, id=None, creator='????'):
 		return FindApplicationForInfo(creator, id, name)
 	except MacOSError, err:
 		if err[0] == -10814:
-			raise ApplicationNotFoundError, name or id or creator
+			raise ApplicationNotFoundError(name or id or creator)
 		else:
 			raise
 
@@ -55,7 +55,7 @@ def byname(name):
 	if not exists(name) and not name.lower().endswith('.app') and exists(name + '.app'):
 		name += '.app'
 	if not exists(name):
-		raise ApplicationNotFoundError, name
+		raise ApplicationNotFoundError(name)
 	return name
 
 		
@@ -75,21 +75,8 @@ def bycreator(creator):
 		bycreator('ttxt')
 	"""
 	if len(creator) != 4 or creator == '????':
-		raise ApplicationNotFoundError, creator
+		raise ApplicationNotFoundError(creator)
 	return _findApp(creator=creator)
 
 
-######################################################################
-# TEST
-######################################################################
-
-if __name__ == '__main__':
-	
-	print `byname('textedit.app')`
-	print `byname('/Applications/TextEdit.app')`
-	print `byname('textedit')`
-	print `byid('com.apple.textedit')`
-	print `bycreator('ttxt')`
-	# print `byname('~/foo.app')`
-	# print `byname(u'\u0192\u0192.app')`
 

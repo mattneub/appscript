@@ -3,7 +3,7 @@
 (C) 2005-2008 HAS
 """
 
-import struct, types, datetime, time
+import struct, datetime, time
 from codecs import BOM_UTF16_LE
 
 import kae
@@ -114,14 +114,14 @@ class UnitTypeCodecs:
 			try:
 				code, packer = self._typebyname[val.type]
 			except KeyError:
-				raise TypeError, 'Unknown unit type: %r' % val
+				raise TypeError('Unknown unit type: %r' % val)
 			else:
 				return True, packer(val, code)
 		else:
 			return False, val
 	
 	def unpack(self, desc):
-		if self._typebycode.has_key(desc.type):
+		if desc.type in self._typebycode:
 			name, unpacker = self._typebycode[desc.type]
 			return True, unpacker(desc, name)
 		else:
@@ -182,18 +182,18 @@ class Codecs:
 		# Clients may add/remove/replace encoder and decoder items:
 		self.encoders = {
 				AEDesc: self.packDesc,
-				types.NoneType: self.packNone,
-				types.BooleanType: self.packBool,
-				types.IntType: self.packInt,
-				types.LongType: self.packLong,
-				types.FloatType: self.packFloat,
+				type(None): self.packNone,
+				bool: self.packBool,
+				int: self.packInt,
+				long: self.packLong,
+				float: self.packFloat,
 				
-				types.StringType: self.packStr,
-				types.UnicodeType: self.packUnicodeText, 
+				str: self.packStr,
+				unicode: self.packUnicodeText, 
 				
-				types.ListType: self.packList,
-				types.TupleType: self.packList,
-				types.DictionaryType: self.packDict,
+				list: self.packList,
+				tuple: self.packList,
+				dict: self.packDict,
 				datetime.date: self.packDate,
 				datetime.datetime: self.packDatetime,
 				datetime.time: self.packTime,
@@ -275,7 +275,7 @@ class Codecs:
 	
 	def packunknown(self, data):
 		"""Clients may override this to provide additional packers."""
-		raise TypeError, "Can't pack data into an AEDesc (unsupported type): %r" % data
+		raise TypeError("Can't pack data into an AEDesc (unsupported type): %r" % data)
 	
 	def unpackunknown(self, desc):
 		"""Clients may override this to provide additional unpackers."""
@@ -577,7 +577,7 @@ class Codecs:
 				ref = self.app
 			else:
 				ref = self.customroot(ref)
-		# print want, keyForm, key, ref # DEBUG
+		# print(want, keyForm, key, ref) # DEBUG
 		if keyForm == kae.formPropertyID: # property specifier
 			return ref.property(key.code)
 		elif keyForm == 'usrp': # user-defined property specifier
@@ -588,7 +588,7 @@ class Codecs:
 			elif key.code == kae.kAENext:
 				return ref.next(want)
 			else:
-				raise ValueError, "Bad relative position selector: %r" % want
+				raise ValueError("Bad relative position selector: %r" % want)
 		else: # other element(s) specifier
 			ref = ref.elements(want)
 			if keyForm == kae.formName:

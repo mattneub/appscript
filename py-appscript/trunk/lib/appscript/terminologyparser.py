@@ -56,13 +56,13 @@ class Parser:
 			s : str
 			Result : str
 		"""
-		if not self._keywordCache.has_key(s):
+		if s not in self._keywordCache:
 			legal = self._legalChars
 			res = ''
 			for c in s:
 				if c in legal:
 					res += c
-				elif self._specialConversions.has_key(c):
+				elif c in self._specialConversions:
 					res += self._specialConversions[c]
 				else:
 					if res == '':
@@ -113,7 +113,7 @@ class Parser:
 		# - If their names and codes are the same, only the last definition is used; other definitions are ignored and will not compile.
 		# - If their names are the same but their codes are different, only the first definition is used; other definitions are ignored and will not compile.
 		# - If a dictionary-defined command has the same name but different code to a built-in definition, escape its name so it doesn't conflict with the default built-in definition.
-		if not self.commands.has_key(name) or self.commands[name][1] == code:
+		if name not in self.commands or self.commands[name][1] == code:
 			self.commands[name] =(name, code, currentCommandArgs)
 		# add labelled parameters
 		for _ in range(self.integer()):
@@ -213,7 +213,7 @@ class Parser:
 			self.elements.append((self._spareClassNames[code], code))
 		for code in missingClasses:
 			self.classes.append((self._spareClassNames[code], code))
-		return (self.classes, self.enumerators, self.properties, self.elements, self.commands.values())
+		return (self.classes, self.enumerators, self.properties, self.elements, list(self.commands.values()))
 
 
 class LittleEndianParser(Parser):

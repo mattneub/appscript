@@ -39,7 +39,7 @@ for domaincode in ['flds', 'fldl', 'fldu']:
 		for name, path in zip(names, paths):
 			if name.lower().endswith('.osax'): # remove name extension, if any
 				name = name[:-5]
-			if not _osaxcache.has_key(name.lower()):
+			if name.lower() not in _osaxcache:
 				scriptingadditions.append(name)
 				_osaxcache[name.lower()] = [path, None]
 scriptingadditions.sort()

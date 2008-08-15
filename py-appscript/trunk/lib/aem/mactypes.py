@@ -30,7 +30,7 @@ __all__ = ['Alias', 'File', 'Units']
 class _NoPath: pass
 
 def _ro(*args):
-	raise AttributeError, 'Property is read-only.'
+	raise AttributeError('Property is read-only.')
 
 
 class _Base:

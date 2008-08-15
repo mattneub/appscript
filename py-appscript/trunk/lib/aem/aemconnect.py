@@ -38,7 +38,7 @@ def _launchApplication(path, event):
 		return ae.LaunchApplication(path, event,
 				_launchContinue + _launchNoFileFlags + _launchDontSwitch)
 	except ae.MacOSError, err:
-		raise CantLaunchApplicationError, err[0]
+		raise CantLaunchApplicationError(err[0])
 
 
 ######################################################################
