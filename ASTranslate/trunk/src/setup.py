@@ -23,7 +23,7 @@ from distutils.core import setup, Extension
 import py2app
 from plistlib import Plist
 
-version = '0.4.1'
+version = '0.4.2'
 
 
 setup(

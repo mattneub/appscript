@@ -1,7 +1,8 @@
-2008-07-?? -- 0.4.2
+2008-08-14 -- 0.4.2
 
 - fixed glue command in objc-appscript output (prefix arg should be -p, not -t)
-- objc-appscript renderer now shows application objects created via +application... class methods
+- objc-appscript renderer now shows application objects created via autoreleased +application... class methods (this is merely a stylistic change; developers should use whichever constructor is most appropriate in their own code)
+- fixed bug where dictionaries containing non-ASCII four-char-codes would cause unexpected errors
 
 2008-07-17 -- 0.4.1
 
