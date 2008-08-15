@@ -7,7 +7,7 @@ except ImportError:
 
 setup(
 		name = "osaterminology",
-		version = "0.12.1",
+		version = "0.13.0",
 		description = "Parse and render aete/sdef resources.",
 		author = "HAS",
 		author_email='',

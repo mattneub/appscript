@@ -1,6 +1,8 @@
-2008-??-?? -- 0.??.?
+2008-08-14 -- 0.13.0
 
-- restructured makeidentifier
+- restructured makeidentifier module as sub-package to make it easier to maintain (note: users must manually delete any older non-egg osaterminology installations from site-packages/aeosa before installing this version)
+- updated reserved keywords for objc-appscript
+- fixed bug in tables.tablebuilder (would raise encoding error if four-char-codes contained non-ASCII chars)
 
 2008-07-17 -- 0.12.1
 - added 'id_' property definition to objc-appscript default terminology
