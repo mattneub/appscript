@@ -1,0 +1,48 @@
+2008-08-14 -- 0.4.2
+
+- fixed glue command in objc-appscript output (prefix arg should be -p, not -t)
+- objc-appscript renderer now shows application objects created via autoreleased +application... class methods (this is merely a stylistic change; developers should use whichever constructor is most appropriate in their own code)
+- fixed bug where dictionaries containing non-ASCII four-char-codes would cause unexpected errors
+
+2008-07-17 -- 0.4.1
+
+- fixed bug in script error reporting
+- fixed missing prefixes in objc-appscript renderer
+- changed prefix style
+
+
+2008-07-13 -- 0.4.0
+
+- added objc-appscript support
+- removed external Ruby/rb-appscript dependency
+- sending events to applications is now optional
+- 'make' commands' 'at' parameters now appear as-is rather than use appscript's special-case format which has changed since ASTranslate was written
+- general formatting improvements
+
+
+2007-12-10 -- 0.3.1
+
+- fixed a bug where commands wouldn't translate if a parameter's AE code was also used by a class/property/enumerator in the same application dictionary [MM]
+
+
+2007-06-25 -- 0.3.0
+
+- added rb-appscript support
+- subject ('subj') attributes now display correctly
+
+
+2006-08-17 -- 0.2.0
+
+- updated for appscript 0.16.1
+
+- fixed 'make' command rendering bug
+
+
+2006-01-05 -- 0.1.1
+
+- now renders complex filter references correctly
+
+
+2005-12-07 -- 0.1.0
+
+- first release
