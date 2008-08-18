@@ -64,6 +64,7 @@ kObjCKeywords = [
 	"NO",
 	"true",
 	"false",
+	"inline",
 ]
 
 kObjCNSObjectMethods = [
