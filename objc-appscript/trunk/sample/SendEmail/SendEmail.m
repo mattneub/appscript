@@ -8,7 +8,7 @@ int main (int argc, const char * argv[]) {
 	/*
 	 * The data to insert. Hardcoded here for demonstration purposes; modify to suit.
 	 */
-	NSString *emailAddress = @"has.temp3@virgin.net";
+	NSString *emailAddress = @"john.smith@example.org";
 	NSString *subjectText = @"Hello!";
 	NSString *contentText = @"My favourite photo:\n\n";
 	NSString *attachmentPath = @"/Library/Desktop Pictures/Nature/Clown Fish.jpg";
