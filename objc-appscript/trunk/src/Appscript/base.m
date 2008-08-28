@@ -97,7 +97,7 @@
 	return self;
 }
 
-- (id)byName:(NSString *)name {
+- (id)byName:(id)name {
 	return self;
 }
 

@@ -223,8 +223,8 @@ fail:
 
 - (NSString *)AS_commandName {
 	return [NSString stringWithFormat: @"<%@%@>", 
-			[AEMObjectRenderer formatOSType: [[AS_event attributeForKeyword: keyEventClassAttr] code]],
-			[AEMObjectRenderer formatOSType: [[AS_event attributeForKeyword: keyEventIDAttr] code]]];
+			[AEMObjectRenderer formatOSType: [[AS_event attributeForKeyword: keyEventClassAttr] fourCharCode]],
+			[AEMObjectRenderer formatOSType: [[AS_event attributeForKeyword: keyEventIDAttr] fourCharCode]]];
 }
 
 - (NSString *)AS_parameterNameForCode:(DescType)code {
@@ -235,7 +235,6 @@ fail:
 	return [AEMObjectRenderer formatObject: obj];
 }
 
-// TO DO: improve formatting for getItem..., getList..., setItem..., getInt..., etc.
 
 - (NSString *)description {
 	NSAppleEventDescriptor *desc;
@@ -324,10 +323,13 @@ fail:
 /**********************************************************************/
 
 
+/*
+ * improves formatting for getItem.../getList.../setItem...
+ */
 @implementation ASGetSetItemCommand
 
 - (NSString *)AS_commandName {
-    return ([[AS_event attributeForKeyword: keyEventIDAttr] code] == kAEGetData) ? @"get" : @"set";
+    return ([[AS_event attributeForKeyword: keyEventIDAttr] fourCharCode] == kAEGetData) ? @"get" : @"set";
 }
 
 - (NSString *)AS_parameterNameForCode:(DescType)code {

@@ -60,7 +60,7 @@
 	return name;
 }
 
-- (OSType)code {
+- (OSType)fourCharCode {
 	return code;
 }
 
@@ -71,7 +71,7 @@
 - (BOOL)isEqual:(id)anObject {
 	if (anObject == self) return YES;
 	if (!anObject || ![anObject isKindOfClass: [self class]]) return NO;
-	return [[self name] isEqual: [anObject name]] && [self code] == [(ASParserDef *)anObject code];
+	return [[self name] isEqual: [anObject name]] && [self fourCharCode] == [(ASParserDef *)anObject fourCharCode];
 }
 
 - (NSString *)description {

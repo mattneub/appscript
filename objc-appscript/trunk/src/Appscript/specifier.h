@@ -223,7 +223,7 @@ void disposeSpecifierModule(void);
  
 - (AEMElementByIndexSpecifier	*)at:(int)index;
 - (AEMElementByIndexSpecifier	*)byIndex:(id)index; // normally NSNumber, but may occasionally be other types
-- (AEMElementByNameSpecifier	*)byName:(NSString *)name;
+- (AEMElementByNameSpecifier	*)byName:(id)name;
 - (AEMElementByIDSpecifier		*)byID:(id)id_;
 
 // by-range selector

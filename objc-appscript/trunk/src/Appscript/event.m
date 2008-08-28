@@ -11,14 +11,14 @@
 /**********************************************************************/
 // NSError userInfo constants
 
-NSString *kASErrorDomain				= @"net.sourceforge.appscript.objc-appscript.ErrorDomain";
+NSString *const kASErrorDomain				= @"net.sourceforge.appscript.objc-appscript.ErrorDomain";
 
-NSString *kASErrorNumberKey				= @"ErrorNumber";
-NSString *kASErrorStringKey				= @"ErrorString";
-NSString *kASErrorBriefMessageKey		= @"ErrorBriefMessage";
-NSString *kASErrorExpectedTypeKey		= @"ErrorExpectedType";
-NSString *kASErrorOffendingObjectKey	= @"ErrorOffendingObject";
-NSString *kASErrorFailedEvent			= @"ErrorFailedEvent";
+NSString *const kASErrorNumberKey			= @"ErrorNumber";
+NSString *const kASErrorStringKey			= @"ErrorString";
+NSString *const kASErrorBriefMessageKey		= @"ErrorBriefMessage";
+NSString *const kASErrorExpectedTypeKey		= @"ErrorExpectedType";
+NSString *const kASErrorOffendingObjectKey	= @"ErrorOffendingObject";
+NSString *const kASErrorFailedEvent			= @"ErrorFailedEvent";
 
 
 /**********************************************************************/

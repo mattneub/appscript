@@ -49,7 +49,7 @@
 - (id)any;
 
 - (id)byIndex:(id)index;
-- (id)byName:(NSString *)name;
+- (id)byName:(id)name;
 - (id)byID:(id)id_;
 
 - (id)previous:(OSType)class_;

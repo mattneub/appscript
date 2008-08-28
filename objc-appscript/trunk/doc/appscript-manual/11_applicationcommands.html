@@ -22,11 +22,6 @@
 <div id="content">
 
 
-<p class="hilitebox">Note: the appscript command API is currently unfinished and may change in future. Return IDs are not yet supported, and the send mode API may be added to or replaced.</p>
-
-<p class="hilitebox">Note: error reporting for appscript commands has been revised (see <code>-sendWithError:</code>) and the previous <code>-errorNumber</code>, <code>-errorString</code> and <code>-raise</code> methods removed. Existing code should be updated to use the new API as necessary.</p>
-
-
 <h2>Using commands</h2>
 
 <p>Sending application commands in objc-appscript involves the following steps:</p>
@@ -64,7 +59,18 @@
     [<strong>withProperties</strong> <em>record</em>] -- Properties to be set in the new duplicated object(s).</pre>
 
 
-<!-- TO DO: specifying considering/ignoring flags -->
+<h3>Specifying considering/ignoring flags</h3>
+
+<p>Application commands may include flags that that instruct the application to consider or ignore case, diacriticals, etc. when comparing strings (e.g. when resolving equality tests in a by-test specifier). By default, appscript specifies that case should be ignored and all other attributes considered; other options may be specified via the <code>-considering:</code> method:<p>
+
+<pre><code>- (id)considering:(UInt32)flags;</code></pre>
+
+<p>The <code>flags</code> argument should be composed from zero or more of the following bit masks:</p>
+
+<pre><code>kAECaseConsiderMaskkAEDiacriticConsiderMaskkAEWhiteSpaceConsiderMaskkAEHyphensConsiderMaskkAEExpansionConsiderMaskkAEPunctuationConsiderMaskkASConsiderRepliesConsiderMaskkASNumericStringsConsiderMask
+kAECaseIgnoreMaskkAEDiacriticIgnoreMaskkAEWhiteSpaceIgnoreMaskkAEHyphensIgnoreMaskkAEExpansionIgnoreMaskkAEPunctuationIgnoreMaskkASConsiderRepliesIgnoreMaskkASNumericStringsIgnoreMask</code></pre>
+
+<p>(Note that, in practice, most applications don't respect considering/ignoring flags.)</p>
 
 <h3>Specifying send mode flags</h3>
 
@@ -111,10 +117,8 @@
 
 <p>The Apple Event Manager defines two constants that may also be used here:</p>
 
-<pre><code>enum {
-   kAEDefaultTimeout = -1,
-   kNoTimeOut        = -2
-};</code></pre>
+<pre><code>kAEDefaultTimeout
+kNoTimeOut</code></pre>
 
 <p>See the Apple Event Manager documentation for more information.</p>
 
@@ -122,11 +126,13 @@
 
 <h3>Specifying the reply value's desired type</h3>
 
-<p>Where supported by the target application's event handler, the sender can use a command object's <code>-requestedType:</code> method to specify the desired type for the reply value:</p>
+<p>Where supported by the target application's event handler, the sender can use a command object's <code>-requestedClass:</code>/<code>-requestedType:</code> method to specify the desired type for the reply value:</p>
 
-<pre><code>- (id)requestedType:(ASConstant *)type;</code></pre>
+<pre><code>- (id)requestedClass:(ASConstant *)classConstant;
+- (id)requestedType:(DescType)type;</code></pre>
 
-<p>The target application will attempt to coerce the reply value to this type before returning it. The argument is usually a standard AE type, e.g. <code>[ASConstant alias]</code>, though may occasionally be an application-defined type.</p>
+
+<p>The target application will attempt to coerce the reply value to this type before returning it. The argument for <code>-requestedClass:</code> is usually a standard AE type, e.g. <code>[ASConstant alias]</code>, though may occasionally be an application-defined type. The <code>-requestedType:</code> method takes a descriptor type, e.g. <code>typeAlias</code> as argument.</p>
 
 <p>Note that most applications don't support this option, and those that do usually only support it for <code>get</code> events (e.g. Finder).</p>
 
@@ -135,17 +141,19 @@
 
 <p>Command objects provide the following methods to control how <code>-sendWithError:</code> unpacks the returned result descriptor:</p>
 
-<pre><code>- (id)returnType:(DescType)type;
+<pre><code>- (id)returnClass:(ASConstant *)classConstant;
+- (id)returnType:(DescType)type;
 
 - (id)returnList;
 
+- (id)returnListOfClass:(ASConstant *)classConstant;
 - (id)returnListOfType:(DescType)type;
 
 - (id)returnDescriptor;</code></pre>
 
-<p>The <code>-returnType:</code> method can be used to specify the AE type that the result descriptor returned by the application must be coerced to before unpacking. The default is <code>typeWildCard</code>.</p>
+<p>The <code>-returnClass:</code>/<code>-returnType:</code> method can be used to specify the AE type that the result descriptor returned by the application must be coerced to before unpacking. The default is <code>[ASConstant anything]</code>/<code>typeWildCard</code>.</p>
 
-<p>The <code>-returnListOfType:</code> method is similar, except that the returned result descriptor is first coerced to to <code>typeAEList</code>; each list item is then coerced to the specified type.<p>
+<p>The <code>-returnListOfClass:</code>/<code>-returnListOfType:</code> method is similar, except that the returned result descriptor is first coerced to to a list descriptor (<code>typeAEList</code>); each list item is then coerced to the specified type.<p>
 
 <p>The <code>-returnList</code> method provides a convenient shortcut for <code>[cmd returnType: typeAEList]</code>.</p>
 
@@ -207,7 +215,7 @@
 
 
 // tell application &quot;Finder&quot; to get items of home as alias list
-[[[[[finder home] items] get] requestedType: [TEConstant alias]] send]</code></pre>
+[[[[[finder home] items] get] requestedClass: [TEConstant alias]] send]</code></pre>
 
 <pre><code>// tell application "TextEdit" to make new document with properties {text:"Hi!"}
 
@@ -253,23 +261,24 @@ else
 
 <dl>
 <dt>domain</dt>
-<dd>The NSError domain string is <code>@"AEMErrorDomain"</code>.</dd>
+<dd>The NSError domain is <code>kASErrorDomain</code>.</dd>
 
 <dt>code</dt>
-<dd>This is the Carbon <code>OSStatus</code> error code returned by the Apple Event Manager, the target application, or objc-appscript itself. This value is also available as an <code>NSNumber</code> under the <code>@""</code> the <code>userInfo</code> dictionary.</dd>
+<dd>This is the Carbon <code>OSStatus</code> error code returned by the Apple Event Manager, the target application, or objc-appscript itself. This value is also available as an <code>NSNumber</code> under the <code>kASErrorNumberKey</code> key in the <code>userInfo</code> dictionary.</dd>
 
  <dt>localizedDescription</dt>
 <dd>This is a human-readable description of the error generated by objc-appscript.</dd>
 
 <dt>userInfo</dt>
-<dd>The <code>userInfo</code> dictionary contains an <code>@"ErrorNumber"</code> key and zero or more additional keys:
+<dd>The <code>userInfo</code> dictionary contains an <code>kASErrorNumberKey</code> key and zero or more additional keys:
 
 	<ul>
-		<li><code>@"ErrorNumber"</code> -- the Carbon error code</code></li>
-		<li><code>@"ErrorString"</code> -- error string returned by application, if given</li>
-		<li><code>@"ErrorBriefMessage"</code> -- brief error string returned by application, if given</li>
-		<li><code>@"ErrorExpectedType"</code> -- AE type responsible for a coercion error (-1700), if given</li>
-		<li><code>@"ErrorOffendingObject"</code> -- value or object specifer responsible for error, if given</li>
+		<li><code>kASErrorNumberKey</code> -- the Carbon error code</code></li>
+		<li><code>kASErrorStringKey</code> -- error string returned by application, if given</li>
+		<li><code>kASErrorBriefMessageKey</code> -- brief error string returned by application, if given</li>
+		<li><code>kASErrorExpectedTypeKey</code> -- AE type responsible for a coercion error (-1700), if given</li>
+		<li><code>kASErrorOffendingObjectKey</code> -- value or object specifer responsible for error, if given</li>
+		<li><code>kASErrorFailedEvent</code> -- the <code>ASCommand</code> instance for the failed command</li>
 	</ul>
 </dd>
 </dl>
@@ -299,6 +308,41 @@ else
 
 
 </ol>
+
+
+<p>The following macros are provided for converting C int/long/double primitives to <code>NSNumber</code> instances for use in command parameters:</p>
+
+<pre><code>#define ASInt(val) [NSNumber numberWithInt: (int)val]
+#define ASLong(val) [NSNumber numberWithLong: (long)val]
+#define ASDouble(val) [NSNumber numberWithDouble: (double)val]</code></pre>
+
+
+<p>The following methods are provided as convenient shortcuts for creating and sending <code>get</code> and <code>set</code> commands:</p>
+
+<pre><code>// shortcut for [[[ref set] to: value] send]
+- (id)setItem:(id)data;
+- (id)setItem:(id)data error:(NSError **)error;
+
+// shortcut for [[ref get] send]
+- (id)getItem; 
+- (id)getItemWithError:(NSError **)error;
+
+// shortcut for [[[ref get] returnList] send]
+- (id)getList;
+- (id)getListWithError:(NSError **)error;
+
+// shortcut for [[[[ref get] requestedType: descType] returnType: descType] send]
+- (id)getItemOfType:(DescType)type;
+- (id)getItemOfType:(DescType)type error:(NSError **)error;
+
+// shortcut for [[[[ref get] requestedType: descType] returnListOfType: descType] send]
+- (id)getListOfType:(DescType)type;
+- (id)getListOfType:(DescType)type error:(NSError **)error;
+
+// shortcuts for getting numerical property values as C primitives
+- (int)getIntWithError:(NSError **)error;
+- (long)getLongWithError:(NSError **)error;
+- (double)getDoubleWithError:(NSError **)error;</code></pre>
 
 
 </div>

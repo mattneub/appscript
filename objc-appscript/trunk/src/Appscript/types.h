@@ -151,7 +151,9 @@ enum { typeFSS = 'fss ' };
 
 - (id)initWithCode:(OSType)code_; // stub method; subclasses will override this to provide concrete implementations 
 
-- (OSType)code;
+- (OSType)code DEPRECATED_ATTRIBUTE; // TO DO: deprecated; delete
+
+- (OSType)fourCharCode;
 
 - (NSAppleEventDescriptor *)descriptor;
 

@@ -599,22 +599,24 @@ error:
 	id transactionIDObj = nil;
 	NSDictionary *errorInfo;
 	
-	if (error)
-		*error = nil;
-	if (transactionID == kAnyTransactionID) {
-		evt = [self eventWithEventClass: kAEMiscStandards eventID: kAEBeginTransaction];
-		if (session)
-			[evt setParameter: session forKeyword: keyDirectObject];
-		[evt setUnpackFormat: kAEMUnpackAsItem type: typeSInt32];
-		transactionIDObj = [evt sendWithError: error];
-		if (transactionIDObj)
-			transactionID = [transactionIDObj intValue];
-	} else if (error) {
-		errorInfo = [NSDictionary dictionaryWithObjectsAndKeys: 
-									@"Transaction is already active.", NSLocalizedDescriptionKey,
-									[NSNumber numberWithInt: errAEInTransaction], kASErrorNumberKey,
-									nil];
-		*error = [NSError errorWithDomain: kASErrorDomain code: errAEInTransaction userInfo: errorInfo];
+	@synchronized(self) {
+		if (error)
+			*error = nil;
+		if (transactionID == kAnyTransactionID) {
+			evt = [self eventWithEventClass: kAEMiscStandards eventID: kAEBeginTransaction];
+			if (session)
+				[evt setParameter: session forKeyword: keyDirectObject];
+			[evt setUnpackFormat: kAEMUnpackAsItem type: typeSInt32];
+			transactionIDObj = [evt sendWithError: error];
+			if (transactionIDObj)
+				transactionID = [transactionIDObj intValue];
+		} else if (error) {
+			errorInfo = [NSDictionary dictionaryWithObjectsAndKeys: 
+										@"Transaction is already active.", NSLocalizedDescriptionKey,
+										[NSNumber numberWithInt: errAEInTransaction], kASErrorNumberKey,
+										nil];
+			*error = [NSError errorWithDomain: kASErrorDomain code: errAEInTransaction userInfo: errorInfo];
+		}
 	}
 	return (transactionIDObj != nil);
 }
@@ -624,17 +626,19 @@ error:
 	id result = nil;
 	NSDictionary *errorInfo;
 
-	if (error)
-		*error = nil;
-	if (transactionID != kAnyTransactionID) {
-		evt = [self eventWithEventClass: kAEMiscStandards eventID: kAEEndTransaction];
-		result = [evt sendWithError: error];
-	} else if (error) {
-		errorInfo = [NSDictionary dictionaryWithObjectsAndKeys: 
-									@"Transaction isn't active.", NSLocalizedDescriptionKey,
-									[NSNumber numberWithInt: errAENoSuchTransaction], kASErrorNumberKey,
-									nil];
-		*error = [NSError errorWithDomain: kASErrorDomain code: errAENoSuchTransaction userInfo: errorInfo];
+	@synchronized(self) {
+		if (error)
+			*error = nil;
+		if (transactionID != kAnyTransactionID) {
+			evt = [self eventWithEventClass: kAEMiscStandards eventID: kAEEndTransaction];
+			result = [evt sendWithError: error];
+		} else if (error) {
+			errorInfo = [NSDictionary dictionaryWithObjectsAndKeys: 
+										@"Transaction isn't active.", NSLocalizedDescriptionKey,
+										[NSNumber numberWithInt: errAENoSuchTransaction], kASErrorNumberKey,
+										nil];
+			*error = [NSError errorWithDomain: kASErrorDomain code: errAENoSuchTransaction userInfo: errorInfo];
+		}
 	}
 	return (result != nil);
 }
@@ -643,18 +647,20 @@ error:
 	AEMEvent *evt;
 	id result = nil;
 	NSDictionary *errorInfo;
-
-	if (error)
-		*error = nil;
-	if (transactionID != kAnyTransactionID) {
-		evt = [self eventWithEventClass: kAEMiscStandards eventID: kAETransactionTerminated];
-		result = [evt sendWithError: error];
-	} else if (error) {
-		errorInfo = [NSDictionary dictionaryWithObjectsAndKeys: 
-									@"Transaction isn't active.", NSLocalizedDescriptionKey,
-									[NSNumber numberWithInt: errAENoSuchTransaction], kASErrorNumberKey,
-									nil];
-		*error = [NSError errorWithDomain: kASErrorDomain code: errAENoSuchTransaction userInfo: errorInfo];
+	
+	@synchronized(self) {
+		if (error)
+			*error = nil;
+		if (transactionID != kAnyTransactionID) {
+			evt = [self eventWithEventClass: kAEMiscStandards eventID: kAETransactionTerminated];
+			result = [evt sendWithError: error];
+		} else if (error) {
+			errorInfo = [NSDictionary dictionaryWithObjectsAndKeys: 
+										@"Transaction isn't active.", NSLocalizedDescriptionKey,
+										[NSNumber numberWithInt: errAENoSuchTransaction], kASErrorNumberKey,
+										nil];
+			*error = [NSError errorWithDomain: kASErrorDomain code: errAENoSuchTransaction userInfo: errorInfo];
+		}
 	}
 	return (result != nil);
 }

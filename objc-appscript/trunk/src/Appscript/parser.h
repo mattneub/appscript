@@ -20,7 +20,7 @@
 
 - (id)initWithName:(NSString*)name_ code:(OSType)code_;
 - (NSString *)name;
-- (OSType)code;
+- (OSType)fourCharCode;
 
 @end
 

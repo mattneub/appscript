@@ -91,8 +91,18 @@
 - (id)getListOfType:(DescType)type;
 - (id)getListOfType:(DescType)type error:(NSError **)error;
 
+/*
+ * shortcuts for getting numerical property values as C primitives
+ */
+
+// shortcut for [[[[[ref get] requestedType: typeSInt32] returnType: typeSInt32] send] intValue]
 - (int)getIntWithError:(NSError **)error;
-- (int)getLongWithError:(NSError **)error;
+
+// shortcut for [[[[[ref get] requestedType: typeSInt32] returnType: typeSInt32] send] intValue] in 32-bit builds,
+//          and [[[[[ref get] requestedType: typeSInt64] returnType: typeSInt64] send] longValue] in 64-bit builds
+- (long)getLongWithError:(NSError **)error;
+
+// shortcut for [[[[[ref get] requestedType: typeIEEE64BitFloatingPoint] returnType: typeIEEE64BitFloatingPoint] send] doubleValue]
 - (double)getDoubleWithError:(NSError **)error;
 
 @end

@@ -192,7 +192,7 @@
 	return [[cmd sendWithError: error] intValue];
 }
 
-- (int)getLongWithError:(NSError **)error {
+- (long)getLongWithError:(NSError **)error {
 	ASGetSetItemCommand *cmd = [ASGetSetItemCommand commandWithAppData: AS_appData
 															eventClass: kAECoreSuite
 															   eventID: kAEGetData

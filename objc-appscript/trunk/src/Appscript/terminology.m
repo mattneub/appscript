@@ -195,7 +195,7 @@
 			[keywordCache setObject: convertedName forKey: name];
 		}
 		name = convertedName;
-		code = [parserDef code];
+		code = [parserDef fourCharCode];
 		// escape definitions that semi-overlap built-in definitions
 		desc = [defaultTypeByName objectForKey: name];
 		if (desc && [desc typeCodeValue] != code)
@@ -214,7 +214,7 @@
 			[keywordCache setObject: convertedName forKey: name];
 		}
 		name = convertedName;
-		code = [parserDef code];
+		code = [parserDef fourCharCode];
 		// escape definitions that semi-overlap built-in definitions
 		desc = [defaultTypeByName objectForKey: name];
 		if (desc && [desc typeCodeValue] != code)
@@ -249,7 +249,7 @@
 			[keywordCache setObject: convertedName forKey: name];
 		}
 		name = convertedName;
-		codeObj = [[NSNumber alloc] initWithUnsignedInt: [parserDef code]];
+		codeObj = [[NSNumber alloc] initWithUnsignedInt: [parserDef fourCharCode]];
 		[codeTable setObject: name forKey: codeObj];
 		[codeObj release];
 		// add a definition to the byName table
@@ -262,7 +262,7 @@
 			[keywordCache setObject: convertedName forKey: name];
 		}
 		name = convertedName;
-		codeObj = [[NSNumber alloc] initWithUnsignedInt: [parserDef code]];
+		codeObj = [[NSNumber alloc] initWithUnsignedInt: [parserDef fourCharCode]];
 		[nameTable setObject: codeObj forKey: name];
 		[codeObj release];
 	}
@@ -313,7 +313,7 @@
 				[keywordCache setObject: convertedName forKey: parameterName];
 			}
 			parameterName = convertedName;
-			[commandDef addParameterWithName: parameterName code: [parameterDef code]];
+			[commandDef addParameterWithName: parameterName code: [parameterDef fourCharCode]];
 		}
 		[commandByName setObject: commandDef forKey: name];
 		[commandDef release];

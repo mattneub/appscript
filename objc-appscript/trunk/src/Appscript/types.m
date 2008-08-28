@@ -313,16 +313,20 @@ static ASBoolean *falseValue;
 }
 
 - (unsigned long)hash {
-	return (unsigned long)[self code];
+	return (unsigned long)[self fourCharCode];
 }
 
 - (BOOL)isEqual:(id)anObject {
 	if (anObject == self) return YES;
 	if (!anObject || ![anObject isKindOfClass: [self class]]) return NO;
-	return [self code] == [(AEMTypeBase *)anObject code];
+	return [self fourCharCode] == [(AEMTypeBase *)anObject fourCharCode];
 }
 
-- (OSType)code {
+- (OSType)code { // TO DO: deprecated; delete
+	return [self fourCharCode];
+}
+
+- (OSType)fourCharCode {
 	if (!code)
 		code = [cachedDesc typeCodeValue]; // (-typeCodeValue works for descriptors of typeType, typeEnumerated, typeProperty, typeKeyword)
 	return code;
@@ -363,7 +367,7 @@ static ASBoolean *falseValue;
 }
 
 - (NSString *)description {
-	return [NSString stringWithFormat: @"[AEMType typeWithCode: '%@']", [AEMObjectRenderer formatOSType: [self code]]];
+	return [NSString stringWithFormat: @"[AEMType typeWithCode: '%@']", [AEMObjectRenderer formatOSType: [self fourCharCode]]];
 }
 
 @end
@@ -380,7 +384,7 @@ static ASBoolean *falseValue;
 }
 
 - (NSString *)description {
-	return [NSString stringWithFormat: @"[AEMEnum enumWithCode: '%@']", [AEMObjectRenderer formatOSType: [self code]]];
+	return [NSString stringWithFormat: @"[AEMEnum enumWithCode: '%@']", [AEMObjectRenderer formatOSType: [self fourCharCode]]];
 }
 
 @end
@@ -397,7 +401,7 @@ static ASBoolean *falseValue;
 }
 
 - (NSString *)description {
-	return [NSString stringWithFormat: @"[AEMProperty propertyWithCode: '%@']", [AEMObjectRenderer formatOSType: [self code]]];
+	return [NSString stringWithFormat: @"[AEMProperty propertyWithCode: '%@']", [AEMObjectRenderer formatOSType: [self fourCharCode]]];
 }
 
 @end
@@ -414,7 +418,7 @@ static ASBoolean *falseValue;
 }
 
 - (NSString *)description {
-	return [NSString stringWithFormat: @"[AEMKeyword keywordWithCode: '%@']", [AEMObjectRenderer formatOSType: [self code]]];
+	return [NSString stringWithFormat: @"[AEMKeyword keywordWithCode: '%@']", [AEMObjectRenderer formatOSType: [self fourCharCode]]];
 }
 
 @end

@@ -222,7 +222,7 @@ _selectorimplementation = """
                                  aemReference: [AS_aemReference byIndex: index]];
 }
 
-- (PREFIXReference *)byName:(NSString *)name {
+- (PREFIXReference *)byName:(id)name {
     return [PREFIXReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference byName: name]];
 }

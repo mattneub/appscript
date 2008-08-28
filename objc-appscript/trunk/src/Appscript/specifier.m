@@ -728,7 +728,7 @@ void disposeSpecifierModule(void) {
 									  wantCode: wantCode] autorelease];
 }
 
-- (AEMElementByNameSpecifier *)byName:(NSString *)name {
+- (AEMElementByNameSpecifier *)byName:(id)name {
 	return [[[AEMElementByNameSpecifier alloc]
 							initWithContainer: self
 										  key: name

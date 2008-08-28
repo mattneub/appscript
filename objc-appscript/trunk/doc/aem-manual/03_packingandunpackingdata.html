@@ -138,6 +138,10 @@ TO DO: customisation options: subclassing and extending pack/unpack, overriding 
 
 + (id)aliasWithFileURL:(NSURL *)url;
 
++ (id)aliasWithAliasHandle:(AliasHandle)alias;
+
+- (AliasHandle)aliasHandle; // returns a Carbon AliasHandle
+
 @end
 
 
@@ -146,6 +150,10 @@ TO DO: customisation options: subclassing and extending pack/unpack, overriding 
 + (id)fileRefWithPath:(NSString *)path;
 
 + (id)fileRefWithFileURL:(NSURL *)url;
+
++ (id)fileRefWithFSRef:(FSRef)fsRef;
+
+- (FSRef)fsRef; // returns a Carbon FSRef
 
 @end
 

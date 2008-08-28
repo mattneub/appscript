@@ -14,7 +14,7 @@
 
 <!-- top navigation -->
 <div class="navbar">
-	<a href="05_targettingapplications.html">Previous</a> | <a href="index.html">Up</a> | <a href="07_findapp.html">Next</a>
+	<a href="05_targettingapplications.html">Previous</a> | <a href="index.html">Up</a> | <a href="07_examples.html">Next</a>
 </div>
 
 <!-- content -->
@@ -32,7 +32,7 @@
                  returnID:(AEReturnID)returnID
                    codecs:(id)codecs;</code></pre>
 
-<p>The event class, event id and return id arguments are the same as for <code>AECreateAppleEvent</code>.</p>
+<p>The event class, event ID and return ID arguments are the same as for <code>AECreateAppleEvent</code>.</p>
 
 <p>The codecs argument should be an <code>AEMCodecs</code> instance, or some other object that implements <code>-pack:</code> and <code>-unpack:</code> methods with identical signatures. This object will be used to pack the event's attributes and parameters, and to unpack its return value, if any.</p>
 
@@ -68,16 +68,21 @@
 
 <pre><code>@interface AEMEvent : NSObject
 
-- (const AppleEvent *)aeDesc;
+/*
+ * Get codecs object used by this AEMEvent instance
+ */
+ - (id)codecs;
+
 /*
  * Get a pointer to the AEDesc contained by this AEMEvent instance
  */
+- (const AppleEvent *)aeDesc;
 
-- (NSAppleEventDescriptor *)appleEventDescriptor;
 /*
  * Get an NSAppleEventDescriptor instance containing a copy of this
  * event.
  */
+- (NSAppleEventDescriptor *)descriptor;
 
 // Pack event's attributes and parameters, if any.
 
@@ -96,21 +101,29 @@
 - (AEMEvent *)setParameter:(id)value forKeyword:(AEKeyword)key;
 
 
-// Specify an AE type to coerce the reply descriptor to before
-// unpacking it (default = typeWildCard):
+// Get event's attributes and parameters.
 
-- (AEMEvent *)unpackResultAsType:(DescType)type;
+- (id)attributeForKeyword:(AEKeyword)key type:(DescType)type error:(NSError **)error;
 
-- (AEMEvent *)unpackResultAsListOfType:(DescType)type;
+- (id)attributeForKeyword:(AEKeyword)key; // shortcut for above
 
-- (AEMEvent *)dontUnpackResult;
+- (id)parameterForKeyword:(AEKeyword)key type:(DescType)type error:(NSError **)error;
+
+- (id)parameterForKeyword:(AEKeyword)key; // shortcut for above
 
 
-// Send event:
+/*
+ * Specify how the the reply descriptor should be unpacked.
+ * (Default = kAEMUnpackAsItem of typeWildCard)
+ */
 
-- (id)sendWithMode:(AESendMode)sendMode 
-           timeout:(long)timeoutInTicks
-             error:(NSError **)error;
+- (void)setUnpackFormat:(AEMUnpackFormat)format_ type:(DescType)type_;
+
+- (void)getUnpackFormat:(AEMUnpackFormat *)format_ type:(DescType *)type_;
+
+
+// Send event.
+
 /*
  * sendMode
  *    Bitwise flags determining how event should be handled.
@@ -136,6 +149,9 @@
  *    timeoutInTicks arguments.
  *
  */
+- (id)sendWithMode:(AESendMode)sendMode 
+           timeout:(long)timeoutInTicks
+             error:(NSError **)error;
 
 
 // Convenience shortcuts:
@@ -197,7 +213,7 @@ kASNumericStrings</code></pre>
 <p>See the <a href="http://developer.apple.com/documentation/Carbon/Reference/Apple_Event_Manager/index.html">Apple Event Manager</a> API reference for more info. Note that the <code>enumConsiderations</code> attribute is deprecated in favour of the <code>enumConsidsAndIgnores</code> attribute.</p>
 
 
-<p>The value of the <code>enumConsidsAndIgnores</code> attribute should be an integer composed from the sum of zero or more of the following bit masks:</p>
+<p>The value of the <code>enumConsidsAndIgnores</code> attribute should be composed from zero or more of the following bit masks:</p>
 
 <pre><code>kAECaseConsiderMaskkAEDiacriticConsiderMaskkAEWhiteSpaceConsiderMaskkAEHyphensConsiderMaskkAEExpansionConsiderMaskkAEPunctuationConsiderMaskkASConsiderRepliesConsiderMaskkASNumericStringsConsiderMask
 kAECaseIgnoreMaskkAEDiacriticIgnoreMaskkAEWhiteSpaceIgnoreMaskkAEHyphensIgnoreMaskkAEExpansionIgnoreMaskkAEPunctuationIgnoreMaskkASConsiderRepliesIgnoreMaskkASNumericStringsIgnoreMask</code></pre>
@@ -235,7 +251,7 @@ kAECanSwitchLayer</code></pre>
 
 <!-- bottom navigation -->
 <div class="navbar">
-	<a href="05_targettingapplications.html">Previous</a> | <a href="index.html">Up</a> | <a href="07_findapp.html">Next</a>
+	<a href="05_targettingapplications.html">Previous</a> | <a href="index.html">Up</a> | <a href="07_examples.html">Next</a>
 </div>
 
 <!--footer-->

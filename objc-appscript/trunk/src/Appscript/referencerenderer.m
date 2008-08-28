@@ -147,7 +147,7 @@
     return self;
 }
 
-- (ASReferenceRenderer *)byName:(NSString *)name {
+- (ASReferenceRenderer *)byName:(id)name {
 	[result insertString: @"[" atIndex: 0];
 	[result appendFormat: @" byName: %@]", [self format: name]];
     return self;

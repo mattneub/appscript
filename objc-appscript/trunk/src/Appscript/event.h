@@ -14,19 +14,19 @@
 /**********************************************************************/
 // NSError constants
 
-NSString *kASErrorDomain; // @"net.sourceforge.appscript.objc-appscript.ErrorDomain"; domain name for NSErrors returned by appscript
+extern NSString *const kASErrorDomain; // @"net.sourceforge.appscript.objc-appscript.ErrorDomain"; domain name for NSErrors returned by appscript
 
 /*
  * -sendWithError: will return an NSError containing error code, localized description, and a userInfo dictionary
  * containing kASErrorNumberKey (this has the same value as -[NSError code]) and zero or more other keys:
  */
 
-NSString *kASErrorNumberKey;			// @"ErrorNumber"; error number returned by Apple Event Manager or application
-NSString *kASErrorStringKey;			// @"ErrorString"; error string returned by application, if given
-NSString *kASErrorBriefMessageKey;		// @"ErrorBriefMessage"; brief error string returned by application, if given
-NSString *kASErrorExpectedTypeKey;		// @"ErrorExpectedType"; AE type responsible for a coercion error (-1700), if given
-NSString *kASErrorOffendingObjectKey;	// @"ErrorOffendingObject"; value or object specifer responsible for error, if given
-NSString *kASErrorFailedEvent;			// @"ErrorFailedEvent"; the AEMEvent object that returned the error
+extern NSString *const kASErrorNumberKey;			// @"ErrorNumber"; error number returned by Apple Event Manager or application
+extern NSString *const kASErrorStringKey;			// @"ErrorString"; error string returned by application, if given
+extern NSString *const kASErrorBriefMessageKey;		// @"ErrorBriefMessage"; brief error string returned by application, if given
+extern NSString *const kASErrorExpectedTypeKey;		// @"ErrorExpectedType"; AE type responsible for a coercion error (-1700), if given
+extern NSString *const kASErrorOffendingObjectKey;	// @"ErrorOffendingObject"; value or object specifer responsible for error, if given
+extern NSString *const kASErrorFailedEvent;			// @"ErrorFailedEvent"; the AEMEvent object that returned the error
 
 
 /**********************************************************************/
@@ -108,8 +108,10 @@ typedef OSStatus(*AEMSendProcPtr)(const AppleEvent *event,
 
 - (id)parameterForKeyword:(AEKeyword)key; // shortcut for above
 
-// Specify an AE type to coerce the reply descriptor to before unpacking it.
-// (Default = unpack as typeWildCard)
+/*
+ * Specify how the the reply descriptor should be unpacked.
+ * (Default = kAEMUnpackAsItem of typeWildCard)
+ */
 
 - (void)setUnpackFormat:(AEMUnpackFormat)format_ type:(DescType)type_;
 
