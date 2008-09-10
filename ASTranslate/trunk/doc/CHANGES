@@ -1,3 +1,7 @@
+2008-09-05 -- 0.4.3
+
+- fixed bug in Python render when rendering dicts
+
 2008-08-14 -- 0.4.2
 
 - fixed glue command in objc-appscript output (prefix arg should be -p, not -t)

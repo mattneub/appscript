@@ -30,7 +30,7 @@ def renderobject(obj):
 	if isinstance(obj, list):
 		return '[%s]' % ', '.join([renderobject(o) for o in obj])
 	elif isinstance(obj, dict):
-		return '{%s}' % ', '.join([(renderobject(k), renderobject(v)) for k, v in obj.items()])
+		return '{%s}' % ', '.join(['%s: %s' % (renderobject(k), renderobject(v)) for k, v in obj.items()])
 	elif isinstance(obj, appscript.Reference):
 		return referencerenderer.renderreference(obj.AS_appdata, obj.AS_aemreference, True)
 	else:
