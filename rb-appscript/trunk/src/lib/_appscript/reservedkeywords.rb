@@ -7,7 +7,7 @@
 # Copyright (C) 2006-2008 HAS. Released under MIT License.
 #
 
-# This list is mirrored in ch.6 of the appscript manual and in py-appscript's osaterminology.makeidentifier module
+# This list is mirrored in ch.6 of the appscript manual and in py-osaterminology's makeidentifier module
 
 ReservedKeywords = [
 	"==",

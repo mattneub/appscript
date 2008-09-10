@@ -4,6 +4,8 @@
 
 - added #dont_cache_unpacked_specifiers, #pack_strings_as_type compatibility options to AEM::Codecs
 
+- added default definitions for 'item' type, 'items' elements, 'properties' property as Apple have removed the 'item' class definition from skeleton.sdef (the default terminology for Cocoa apps)
+
 
 2008-02-18 -- 0.5.1
 

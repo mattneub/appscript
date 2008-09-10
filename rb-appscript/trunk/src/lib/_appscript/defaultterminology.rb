@@ -131,6 +131,8 @@ module DefaultTerminology
 		'evin' => :event_info,
 		'pmin' => :parameter_info,
 		
+		'cobj' => :item,
+		
 		# unit types
 		
 		'cmtr' => :centimeters,
@@ -205,6 +207,8 @@ module DefaultTerminology
 	# ReferenceByName table is used to convert appscript-style references and commands to their aem equivalents
 	
 	ReferenceByCode = {
+		'ecobj' => 'items',
+		'ppALL' => 'properties_',
 		'ppcls' => 'class_',
 		'pID  ' => 'id_',
 	}
