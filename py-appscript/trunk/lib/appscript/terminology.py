@@ -63,6 +63,10 @@ for name, code in defaultterminology.properties:
 	_referencebycode[kProperty + code] = (kProperty, name)
 	_referencebyname[name] = (kProperty, code)
 
+for name, code in defaultterminology.elements:
+	_referencebycode[kElement + code] = (kElement, name)
+	_referencebyname[name] = (kElement, code)
+
 for name, code, params in defaultterminology.commands:
 	_referencebyname[name] = _defaultcommands[name] = (kCommand, (code, dict(params)))
 

@@ -42,6 +42,8 @@ Users should update any existing code that refers to these modules as needed.
 	import appscript
 	isinstance(obj, appscript.Reference)
 
+- added default definitions for 'item' type, 'items' elements, 'properties' property as Apple have removed the 'item' class definition from skeleton.sdef (the default terminology for Cocoa apps)
+
 
 2007-12-19 -- 0.18.0
 
