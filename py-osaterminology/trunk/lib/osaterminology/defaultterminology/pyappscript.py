@@ -104,6 +104,8 @@ types = [
 		('event_info', 'evin'),
 		('parameter_info', 'pmin'),
 		
+		('item', 'cobj'), # Apple have removed the 'item' class definition from skeleton.sdef
+		
 		# unit types
 		
 		('centimeters', 'cmtr'),
@@ -172,8 +174,14 @@ pseudotypes = [ # non-concrete types that are only used for documentation purpos
 
 
 properties = [
-		('class_', 'pcls'), # used as a key in AERecord structures that have a custom class; also some apps (e.g. Jaguar Finder) may omit it from their dictionaries despite using it
+		('class_', 'pcls'), # used as a key in AERecord structures that have a custom class; also, Apple have removed the 'item' class definition from skeleton.sdef
+		('properties', 'pALL'), # Apple have removed the 'item' class definition from skeleton.sdef
 		('id', 'ID  '), # some apps (e.g. iTunes) may omit 'id' property from terminology despite using it
+]
+
+
+elements = [
+		('items', 'cobj'), # Apple have removed the 'item' class definition from skeleton.sdef
 ]
 
 

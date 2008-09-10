@@ -104,6 +104,8 @@ types = [
 		('event_info', 'evin'),
 		('parameter_info', 'pmin'),
 		
+		('item', 'cobj'),
+		
 		# unit types
 		
 		('centimeters', 'cmtr'),
@@ -173,7 +175,13 @@ pseudotypes = [ # non-concrete types that are only used for documentation purpos
 
 properties = [
 		('class_', 'pcls'), # used as a key in AERecord structures that have a custom class; also some apps (e.g. Jaguar Finder) may omit it from their dictionaries despite using it
+		('properties_', 'pALL'),
 		('id_', 'ID  '), # some apps (e.g. iTunes) may omit 'id' property from terminology despite using it
+]
+
+
+elements = [
+		('items', 'cobj'),
 ]
 
 

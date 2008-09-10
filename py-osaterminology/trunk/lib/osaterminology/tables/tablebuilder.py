@@ -43,6 +43,9 @@ class TerminologyTableBuilder:
 		for name, code in defaultterminology.properties:
 			self._referencebycode[kProperty + code] = (kProperty, name)
 			self._referencebyname[name] = (kProperty, code)
+		for name, code in defaultterminology.elements:
+			self._referencebycode[kElement + code] = (kElement, name)
+			self._referencebyname[name] = (kElement, code)
 		for name, code, params in defaultterminology.commands:
 			self._referencebyname[name] = self._defaultcommands[name] = (kCommand, (code, dict(params)))
 			self._referencebycode[kCommand + code] = (kCommand, (name, dict([(v, k) for k, v in params])))

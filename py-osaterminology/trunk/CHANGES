@@ -1,3 +1,7 @@
+2008-09-?? -- 0.13.?
+
+- added default definitions for 'item' type, 'items' elements, 'properties' property as Apple have removed the 'item' class definition from skeleton.sdef (the default terminology for Cocoa apps)
+
 2008-08-14 -- 0.13.0
 
 - restructured makeidentifier module as sub-package to make it easier to maintain (note: users must manually delete any older non-egg osaterminology installations from site-packages/aeosa before installing this version)
