@@ -32,6 +32,8 @@
 	if (!self) return self;
 	applicationRootDescriptor = [[NSAppleEventDescriptor nullDescriptor] retain];
 	AEMGetDefaultUnitTypeDefinitions(&unitTypeDefinitionByName, &unitTypeDefinitionByCode);
+	[unitTypeDefinitionByName retain];
+	[unitTypeDefinitionByCode retain];
 	disableCache = NO;
 	disableUnicode = NO;
 	allowUInt64 = NO;
@@ -40,6 +42,8 @@
 
 
 - (void)dealloc {
+	[unitTypeDefinitionByName release];
+	[unitTypeDefinitionByCode release];
 	[applicationRootDescriptor release];
 	[super dealloc];
 }
