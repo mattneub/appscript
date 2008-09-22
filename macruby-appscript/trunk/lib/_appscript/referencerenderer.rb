@@ -10,7 +10,7 @@ class MRAReferenceRenderer < AEMResolver
 	private_class_method :new
 	attr_reader :result
 	
-	def initWithAppData_(app_data)
+	def initWithAppData(app_data)
 		init
 		@_app_data = app_data
 		@result = ""
@@ -34,15 +34,15 @@ class MRAReferenceRenderer < AEMResolver
 	##
 	
 	def property(code)
-		name = @_app_data.property_by_code.objectForKey_(code)
-		name = @_app_data.element_by_code.objectForKey_(code) if not name
+		name = @_app_data.property_by_code.objectForKey(code)
+		name = @_app_data.element_by_code.objectForKey(code) if not name
 		@result += ".#{name}"
 		return self
 	end
 	
 	def elements(code)
-		name = @_app_data.element_by_code.objectForKey_(code)
-		name = @_app_data.property_by_code.objectForKey_(code) if not name
+		name = @_app_data.element_by_code.objectForKey(code)
+		name = @_app_data.property_by_code.objectForKey(code) if not name
 		@result += ".#{name}"
 		return self
 	end
@@ -235,9 +235,9 @@ class MRAReferenceRenderer < AEMResolver
 	# public
 	
 	def MRAReferenceRenderer.render(app_data, aem_reference)
-		f = self.alloc.initWithAppData_(app_data)
+		f = self.alloc.initWithAppData(app_data)
 		begin
-			aem_reference.resolveWithObject_(f)
+			aem_reference.resolveWithObject(f)
 			return f.result
 		rescue
 			return "#{new(app_data).app.result}.AS_new_reference(#{_format(aem_reference)})"

@@ -1,80 +1,13 @@
-#!/usr/bin/ruby
+#!/usr/local/bin/macruby
+
+framework 'Appscript'
 
 module Appscript
 
-	framework 'Appscript'
 	require "_appscript/terminology"
 	require "_appscript/safeobject"
 	require "_appscript/referencerenderer"
 	require "kae"
-	
-	
-	######################################################################
-	# KEYWORD
-	######################################################################
-	
-	# RubyCocoa doesn't play well with Symbol objects, so use 'k' namespace instead
-	
-	class Keyword < NSObject # needs to support NSCopying protocol to be used as NSDictionary keys
-		
-		attr_reader :AS_name, :AS_aem_object
-		
-		def initWithName_aemObject_(name, obj)
-			init
-			@AS_name = name
-			@AS_aem_object = obj
-			return self
-		end
-		
-		def copyWithZone(zone)
-			return self.retain
-		end
-		
-		def AS_pack_self(app_data)
-			if @AS_aem_object 
-				return @AS_aem_object.desc
-			else
-				return app_data.type_by_name.fetch(@AS_name) do |n| 
-					raise IndexError, "Keyword #{n.is_a?(NSObject) ? n : n.inspect} not found."
-				end
-			end
-		end
-		
-		def ==(v)
-			return (self.class == v.class and @AS_name == v.AS_name)
-		end
-		
-		alias_method :eql?, :== 
-		
-		def hash
-			return @AS_name.hash
-		end
-		
-		def description
-			return "k.#{@AS_name}"
-		end
-		
-		alias_method :to_s, :description
-		alias_method :inspect, :description
-	end
-
-	
-	class KeywordNamespace < MRASafeObject
-		
-		def method_missing(name)
-			return Keyword.alloc.initWithName_aemObject_(name, nil)
-		end
-	end
-	
-	KN = KeywordNamespace.new
-	
-	def Appscript.k
-		return Appscript::KN
-	end
-	
-	def k
-		return Appscript::KN
-	end
 	
 	
 	######################################################################
@@ -102,24 +35,23 @@ module Appscript
 		DefaultTerms = MRATerminology.build_default_terms
 		KeywordConverter = MRATerminology::KeywordConverter.new
 			
-		def initWithApplicationClass_constructor_identifier_terms_(aem_application_class, constructor, identifier, terms)
+		def initWithApplicationClass(aem_application_class, constructor:constructor, identifier:identifier, terms:terms)
 			if terms == true
-				terms = Appscript::ASBoolean.True
+				terms = ASBoolean.True
 			elsif terms == false
-				terms = Appscript::ASBoolean.False
+				terms = ASBoolean.False
 			end
-			initWithApplicationClass_targetType_targetData_terminology_defaultTerms_keywordConverter_(
-					aem_application_class, 
-					constructor, 
-					identifier,
-					terms, 
-					DefaultTerms, 
-					KeywordConverter)
+			initWithApplicationClass(aem_application_class, 
+							targetType:constructor, 
+							targetData:identifier,
+							terminology:terms, 
+							defaultTerms:DefaultTerms, 
+							keywordConverter:KeywordConverter)
 			return self
 		end
 		
 		def connect
-			@target, error = self.targetWithError_()
+			@target, error = self.targetWithError(nil)
 			raise RuntimeError, error.to_s if not @target
 			@type_by_name = {}
 			self.terminology.typeByNameTable.each do |name, code|
@@ -177,8 +109,8 @@ module Appscript
 		
 		#######
 		
-		TrueDesc = Appscript::ASBoolean.True.desc
-		FalseDesc = Appscript::ASBoolean.False.desc
+		TrueDesc = ASBoolean.True.descriptor
+		FalseDesc = ASBoolean.False.descriptor
 		
 		def pack(data) 
 			case data
@@ -186,8 +118,8 @@ module Appscript
 					data = data.AS_resolve(self).AS_aem_reference
 				when Reference
 					data = data.AS_aem_reference
-				when Keyword
-					data = data.AS_pack_self(self)
+				when Symbol
+					data = self.type_by_name.fetch(data) { raise IndexError, "Unknown keyword: #{data.inspect}" }
 				when true
 					return TrueDesc
 				when false
@@ -198,18 +130,17 @@ module Appscript
 		
 		##
 		
-		ClassType = Appscript::AEMType.typeWithCode_(KAE::PClass)
-		ClassKeyword = Appscript.k.class_
+		ClassType = AEMType.typeWithCode(KAE::PClass)
 		
 		def packDictionary(val)
 			record = NSAppleEventDescriptor.recordDescriptor
-			desired_type_obj = val.objectForKey_(ClassKeyword)
-			desired_type_obj = val.objectForKey_(ClassType) if desired_type_obj == nil
+			desired_type_obj = val.objectForKey(:class_)
+			desired_type_obj = val.objectForKey(:class_) if desired_type_obj == nil
 			if desired_type_obj
 				case desired_type_obj
-					when Appscript::Keyword
-						desired_type = desired_type_obj.AS_pack_self(self).typeCodeValue
-					when Appscript::AEMType
+					when Symbol
+						desired_type = self.pack(desired_type_obj).typeCodeValue
+					when AEMType
 						desired_type = desired_type_obj.code
 					when NSAppleEventDescriptor
 						desired_type = desired_type_obj.typeCodeValue
@@ -217,28 +148,28 @@ module Appscript
 						desired_type = nil
 				end
 				if desired_type != nil
-					new_val = NSMutableDictionary.dictionaryWithDictionary_(val)
-					new_val.removeObjectForKey_(desired_type_obj)
+					new_val = NSMutableDictionary.dictionaryWithDictionary(val)
+					new_val.removeObjectForKey(desired_type_obj)
 					record = record.coerce(desired_type)
 					val = new_val
 				end	
 			end
 			usrf = nil
 			val.each do | key, value |
-				if key.is_a?(Appscript::Keyword)
-					key_type = @type_by_name.fetch(key.AS_name) do |k|
+				if key.is_a?(Symbol)
+					key_type = @type_by_name.fetch(key) do |k|
 						raise IndexError, "Unknown keyword: #{k.is_a?(NSObject) ? k : k.inspect}"
 					end
-					record.setDescriptor_forKeyword_(pack_(value), key_type.typeCodeValue)
-				elsif key.is_a?(Appscript::AEMType)
-					record.setDescriptor_forKeyword_(pack(value), key.code)
+					record.setDescriptor(pack(value), forKeyword:key_type.typeCodeValue)
+				elsif key.is_a?(AEMType)
+					record.setDescriptor(pack(value), forKeyword:key.code)
 				else
 					usrf = NSAppleEventDescriptor.listDescriptor if usrf == nil
-					usrf.insertDescriptor_atIndex_(pack(key), 0)
-					usrf.insertDescriptor_atIndex_(pack(value), 0)
+					usrf.insertDescriptor(pack(key), atIndex:0)
+					usrf.insertDescriptor(pack(value), atIndex:0)
 				end
 			end
-			record.setDescriptor_forKeyword_(usrf, KAE::KeyASUserRecordFields) if usrf
+			record.setDescriptor(usrf, forKeyword:KAE::KeyASUserRecordFields) if usrf
 			return record
 		end
 		
@@ -257,36 +188,26 @@ module Appscript
 		
 		def unpackType(desc)
 			aem_object = super_unpackType(desc)
-			name = @type_by_code[aem_object.code]
-			return name ? Keyword.alloc.initWithName_aemObject_(name, aem_object) : aem_object
+			return @type_by_code.fetch(aem_object.code, aem_object)
 		end
 		
 		def unpackEnum(desc)
 			aem_object = super_unpackEnum(desc)
-			name = @type_by_code[aem_object.code]
-			return name ? Keyword.alloc.initWithName_aemObject_(name, aem_object) : aem_object
+			return @type_by_code.fetch(aem_object.code, aem_object)
 		end
 		
 		def unpackProperty(desc)
 			aem_object = super_unpackProperty(desc)
-			name = @type_by_code[aem_object.code]
-			return name ? Keyword.alloc.initWithName_aemObject_(name, aem_object) : aem_object
+			return @type_by_code.fetch(aem_object.code, aem_object)
 		end
 		
 		def unpackKeyword(desc)
 			aem_object = super_unpackKeyword(desc)
-			name = @type_by_code[aem_object.code]
-			return name ? Keyword.alloc.initWithName_aemObject_(name, aem_object) : aem_object
+			return @type_by_code.fetch(aem_object.code, aem_object)
 		end
 		
 		def unpackAERecordKey(key)
-			aem_object = Appscript::AEMType.typeWithCode_(key)
-			name = @type_by_code[key]
-			if name
-				return Keyword.alloc.initWithName_aemObject_(name, aem_object)
-			else
-				return aem_object
-			end
+			return @type_by_code.fetch(key) { |k| AEMType.typeWithCode(k) }
 		end
 		
 		def unpackObjectSpecifier(desc)
@@ -299,7 +220,7 @@ module Appscript
 				
 		def unpackContainsCompDescriptorWithOperand1_operand2(op1, op2)
 			if op1.is_a?(Appscript::Reference) \
-					and op1.AS_aem_reference.root == Appscript::AEMIts
+					and op1.AS_aem_reference.root == AEMIts
 				return op1.contains(op2)
 			else
 				return super_unpackContainsCompDescriptorWithOperand1_operand2(op1, op2)
@@ -319,7 +240,7 @@ module Appscript
 				when KAE::TypeProcessSerialNumber
 					Appscript.app.by_pid(self.unpackProcessSerialNumber(desc))
 				when KAE::TypeMachPort
-					Appscript.app.by_aem_app(Appscript::AEMApplication.alloc.initWithDescriptor(desc))
+					Appscript.app.by_aem_app(AEMApplication.alloc.initWithDescriptor(desc))
 			else
 				super_unpackUnknown(desc)
 			end
@@ -338,7 +259,7 @@ module Appscript
 	# GENERIC REFERENCE
 	######################################################################
 	
-	AEMApp = Appscript::AEMApplicationRoot.applicationRoot
+	AEMApp = AEMApplicationRoot.applicationRoot
 	AEMCon = AEMCurrentContainerRoot.currentContainerRoot
 	AEMIts = AEMObjectBeingExaminedRoot.objectBeingExaminedRoot
 	
@@ -391,9 +312,9 @@ module Appscript
 		
 		def AS_resolve(app_data)
 			ref = Reference.new(app_data, {
-					'app' => Appscript::AEMApp, 
-					'con' => Appscript::AEMCon, 
-					'its' => Appscript::AEMIts,
+					'app' => AEMApp, 
+					'con' => AEMCon, 
+					'its' => AEMIts,
 					}[@_call[0]])
 			@_call[1, @_call.length].each do |name, args|
 				ref = ref.send(name, *args)
@@ -423,34 +344,33 @@ module Appscript
 		#######
 		
 		def help(flags='-t')
-			return @AS_app_data.helpForFlags_reference_(flags, self) # TO DO
+			return @AS_app_data.helpForFlags(flags, reference:self) # TO DO
 		end
 		
 		# 'csig' attribute flags (see ASRegistry.h; note: there's no option for 'numeric strings' in 10.4)
 		
 		def Reference._pack_uint32(n) # used to pack csig attributes
-			return Appscript::AEMCodecs.defaultCodecs.pack(n).coerceToDescriptorType_(KAE::TypeUInt32)
+			return AEMCodecs.defaultCodecs.pack(n).coerceToDescriptorType(KAE::TypeUInt32)
 		end
 
 		IgnoreEnums = [
-			[Appscript.k.case, KAE::KAECaseConsiderMask, KAE::KAECaseIgnoreMask],
-			[Appscript.k.diacriticals, KAE::KAEDiacriticConsiderMask, KAE::KAEDiacriticIgnoreMask],
-			[Appscript.k.whitespace, KAE::KAEWhiteSpaceConsiderMask, KAE::KAEWhiteSpaceIgnoreMask],
-			[Appscript.k.hyphens, KAE::KAEHyphensConsiderMask, KAE::KAEHyphensIgnoreMask],
-			[Appscript.k.expansion, KAE::KAEExpansionConsiderMask, KAE::KAEExpansionIgnoreMask],
-			[Appscript.k.punctuation, KAE::KAEPunctuationConsiderMask, KAE::KAEPunctuationIgnoreMask],
+			[:case, KAE::KAECaseConsiderMask, KAE::KAECaseIgnoreMask],
+			[:diacriticals, KAE::KAEDiacriticConsiderMask, KAE::KAEDiacriticIgnoreMask],
+			[:whitespace, KAE::KAEWhiteSpaceConsiderMask, KAE::KAEWhiteSpaceIgnoreMask],
+			[:hyphens, KAE::KAEHyphensConsiderMask, KAE::KAEHyphensIgnoreMask],
+			[:expansion, KAE::KAEExpansionConsiderMask, KAE::KAEExpansionIgnoreMask],
+			[:punctuation, KAE::KAEPunctuationConsiderMask, KAE::KAEPunctuationIgnoreMask],
 		]
 		
 		# default cons, csig attributes
 		
-		DefaultConsiderations =  Appscript::AEMCodecs.defaultCodecs \
-				.pack([Appscript::AEMEnum.enumWithCode_(KAE::KAECase)])
+		DefaultConsiderations =  AEMCodecs.defaultCodecs.pack([AEMEnum.enumWithCode(KAE::KAECase)])
 		DefaultConsidersAndIgnores = Reference._pack_uint32(KAE::KAECaseIgnoreMask)
 		
 		##
 		
 		def _send_command(args, name, definition)
-			target, error = @AS_app_data.targetWithError_()
+			target, error = @AS_app_data.targetWithError(nil) # TO DO
 			raise RuntimeError, error.to_s if error
 			eventClass, eventID = definition.eventClass, definition.eventID
 			subject_attr = NSAppleEventDescriptor.nullDescriptor
@@ -500,7 +420,7 @@ module Appscript
 			# optionally specify return value type
 			result_type = keyword_args.delete(:result_type) { Appscript::NOVALUE }
 			# special cases
-			if @AS_aem_reference != Appscript::AEMApplicationRoot
+			if @AS_aem_reference != AEMApplicationRoot
 				if eventClass == KAE::KAECoreSuite and eventID == KAE::KAESetData
 					if direct_param != Appscript::NOVALUE and not keyword_args.has_key?(KAE::KeyAEData)
 						keyword_args[KAE::KeyAEData] = direct_param
@@ -511,7 +431,7 @@ module Appscript
 						direct_param = @AS_aem_reference
 					end
 				elsif eventClass == KAE::KAECoreSuite and eventID == KAE::KAECreateElement
-					if @AS_aem_reference.is_a?(Appscript::AEMInsertionSpecifier) \
+					if @AS_aem_reference.is_a?(AEMInsertionSpecifier) \
 							and not keyword_args.has_key?(KAE::KeyAEInsertHere)
 						keyword_args[KAE::KeyAEInsertHere] = @AS_aem_reference
 					else
@@ -524,25 +444,25 @@ module Appscript
 				end
 			end
 			# pack event
-			event = target.eventWithEventClass_eventID_codecs_(eventClass, eventID, @AS_app_data)
-			event.setAttribute_forKeyword_(enum_considerations, KAE::EnumConsiderations)
-			event.setAttribute_forKeyword_(enum_consids_and_ignores, KAE::EnumConsidsAndIgnores)
-			event.setAttribute_forKeyword_(subject_attr, KAE::KeySubjectAttr)
-			event.setParameter_forKeyword_(direct_param, KAE::KeyDirectObject) if direct_param != Appscript::NOVALUE
-			event.setParameter_forKeyword_(result_type, KAE::KeyAERequestedType) if result_type != Appscript::NOVALUE
+			event = target.eventWithEventClass(eventClass, eventID:eventID, codecs:@AS_app_data)
+			event.setAttribute(enum_considerations, forKeyword:KAE::EnumConsiderations)
+			event.setAttribute(enum_consids_and_ignores, forKeyword:KAE::EnumConsidsAndIgnores)
+			event.setAttribute(subject_attr, forKeyword:KAE::KeySubjectAttr)
+			event.setParameter(direct_param, forKeyword:KAE::KeyDirectObject) if direct_param != Appscript::NOVALUE
+			event.setParameter(result_type, forKeyword:KAE::KeyAERequestedType) if result_type != Appscript::NOVALUE
 			# extract labelled parameters, if any
 			keyword_args.each do |param_name, param_value|
-				param_code = definition.parameterForName_(param_name)
+				param_code = definition.parameterForName(param_name)
 				raise ArgumentError, "Unknown keyword parameter: #{param_name}" if param_code == nil
-				event.setParameter_forKeyword_(param_value, param_code)
+				event.setParameter(param_value, forKeyword:param_code)
 			end
 			# build and send the Apple event, returning its result, if any
-			result, error = event.sendWithMode_timeout_error_(send_flags, timeout)
+			result, error = event.sendWithMode(send_flags, timeout:timeout, error:nil) # TO DO
 			return result if not error
 			# relaunch/reconnect/resend/raise exception as needed
 			# 'launch' events always return 'not handled' errors; just ignore these
 			return if error.code == -1708 and eventClass == KAE::KASAppleScriptSuite and eventID == KAE::KASLaunchEvent
-			if [-600, -609].include?(error.code) and target.targetType == Appscript::KAEMTargetFileURL
+			if [-600, -609].include?(error.code) and target.targetType == KAEMTargetFileURL
 				#
 				# Event was sent to a local app for which we no longer have a valid address
 				# (i.e. the application has quit since this AEM::Application object was made).
@@ -555,30 +475,30 @@ module Appscript
 				#   application is relaunched, the process id updated and the event resent;
 				#   if not, the error is rethrown.
 				#
-				p Appscript::AEMApplication.processExistsForFileURL_(target.targetData)
+				p AEMApplication.processExistsForFileURL(target.targetData) # test; TO DO: delete
 				# TO DO: next call should yield bool, but is int so block never executes as 'not 0' -> false (global check, fix)
-				if not Appscript::AEMApplication.processExistsForFileURL_(target.targetData)
+				if not AEMApplication.processExistsForFileURL(target.targetData)
 					if eventClass == KAE::KASAppleScriptSuite and eventID == KAE::KASLaunchEvent
-						pid, error = Appscript::AEMApplication.launchApplication_error_(target.targetData)
+						pid, error = AEMApplication.launchApplication(target.targetData, error:nil) # TO DO
 						raise RuntimeError, error.to_s if error # TO DO: error class
 					elsif eventClass != KAE::KCoreEventClass or eventID != KAE::KAEOpenApplication
 						raise Appscript::CommandError.new(self, name, args, error)
 					end
 				end
 				# update AEMApplication object's AEAddressDesc
-				success, error = target.reconnectWithError_()
+				success, error = target.reconnectWithError(nil) # TO DO
 				raise RuntimeError, error.to_s if error # TO DO: error class
 				# re-send command
-				event = target.eventWithEventClass_eventID_codecs_(eventClass, eventID, @AS_app_data)
-				event.setAttribute_forKeyword_(enum_considerations, KAE::EnumConsiderations)
-				event.setAttribute_forKeyword_(enum_consids_and_ignores, KAE::EnumConsidsAndIgnores)
-				event.setAttribute_forKeyword_(subject_attr, KAE::KeySubjectAttr)
-				event.setParameter_forKeyword_(direct_param, KAE::KeyDirectObject) if direct_param != Appscript::NOVALUE
+				event = target.eventWithEventClass(eventClass, eventID:eventID, codecs:@AS_app_data)
+				event.setAttribute(enum_considerations, forKeyword:KAE::EnumConsiderations)
+				event.setAttribute(enum_consids_and_ignores, forKeyword:KAE::EnumConsidsAndIgnores)
+				event.setAttribute(subject_attr, forKeyword:KAE::KeySubjectAttr)
+				event.setParameter(direct_param, forKeyword:KAE::KeyDirectObject) if direct_param != Appscript::NOVALUE
 				keyword_args.each do |param_name, param_value|
-					event.setParameter_forKeyword_(param_value, definition.parameterForName_(param_name))
+					event.setParameter(param_value, forKeyword:definition.parameterForName(param_name))
 				end
-				event.setParameter_forKeyword_(result_type, KAE::KeyAERequestedType) if result_type != Appscript::NOVALUE
-				result, error = event.sendWithMode_timeout_error_(send_flags, timeout)
+				event.setParameter(result_type, forKeyword:KAE::KeyAERequestedType) if result_type != Appscript::NOVALUE
+				result, error = event.sendWithMode(send_flags, timeout:timeout, error:nil) # TO DO
 				return result if not error
 			end
 			raise Appscript::CommandError.new(self, name, args, error)
@@ -595,8 +515,8 @@ module Appscript
 		
 		def ==(val)
 			return (self.class == val.class \
-					and @AS_app_data.target.isEqual_(val.AS_app_data.target) \
-					and @AS_aem_reference.isEqual_(val.AS_aem_reference))
+					and @AS_app_data.target.isEqual(val.AS_app_data.target) \
+					and @AS_aem_reference.isEqual(val.AS_aem_reference))
 		end
 		
 		alias_method :eql?, :== 
@@ -658,15 +578,15 @@ module Appscript
 
 		def [](selector, end_range_selector=nil)
 			if end_range_selector != nil
-				new_ref = @AS_aem_reference.byRange_to_(selector, end_range_selector)
+				new_ref = @AS_aem_reference.byRange(selector, to:end_range_selector)
 			else
 				case selector
 					when String
-						 new_ref = @AS_aem_reference.byName_(selector)
+						 new_ref = @AS_aem_reference.byName(selector)
 					when Appscript::GenericReference
 						new_ref = @AS_aem_reference.byTest(
 								selector.AS_resolve(@AS_app_data).AS_aem_reference)
-					when Appscript::Reference, Appscript::AEMTest
+					when Appscript::Reference, AEMTest
 						new_ref = @AS_aem_reference.byTest(selector)
 				else
 					new_ref = @AS_aem_reference.byIndex(selector)
@@ -708,59 +628,59 @@ module Appscript
 		end
 		
 		def previous(klass)
-			return Appscript::Reference.new(@AS_app_data, @AS_aem_reference.previous_(
+			return Appscript::Reference.new(@AS_app_data, @AS_aem_reference.previous(
 					@AS_app_data.type_by_name.fetch(klass).typeCodeValue))
 		end
 		
 		def next(klass)
-			return Appscript::Reference.new(@AS_app_data, @AS_aem_reference.next_(
+			return Appscript::Reference.new(@AS_app_data, @AS_aem_reference.next(
 					@AS_app_data.type_by_name.fetch(klass).typeCodeValue))
 		end
 		
 		def ID(id)
-			return Appscript::Reference.new(@AS_app_data, @AS_aem_reference.byID_(id))
+			return Appscript::Reference.new(@AS_app_data, @AS_aem_reference.byID(id))
 		end
 		
 		# Following methods will be called by its-based generic references
 		
 		def gt(operand)
-			return Appscript::Reference.new(@AS_app_data, @AS_aem_reference.greaterThan_(operand))
+			return Appscript::Reference.new(@AS_app_data, @AS_aem_reference.greaterThan(operand))
 		end
 		
 		def ge(operand)
-			return Appscript::Reference.new(@AS_app_data, @AS_aem_reference.greaterOrEquals_(operand))
+			return Appscript::Reference.new(@AS_app_data, @AS_aem_reference.greaterOrEquals(operand))
 		end
 		
 		def eq(operand) # avoid colliding with comparison operators, which are normally used to compare two references
-			return Appscript::Reference.new(@AS_app_data, @AS_aem_reference.equals_(operand))
+			return Appscript::Reference.new(@AS_app_data, @AS_aem_reference.equals(operand))
 		end
 		
 		def ne(operand)
-			return Appscript::Reference.new(@AS_app_data, @AS_aem_reference.notEquals_(operand))
+			return Appscript::Reference.new(@AS_app_data, @AS_aem_reference.notEquals(operand))
 		end
 		
 		def lt(operand)
-			return Appscript::Reference.new(@AS_app_data, @AS_aem_reference.lessThan_(operand))
+			return Appscript::Reference.new(@AS_app_data, @AS_aem_reference.lessThan(operand))
 		end
 		
 		def le(operand)
-			return Appscript::Reference.new(@AS_app_data, @AS_aem_reference.lessOrEquals_(operand))
+			return Appscript::Reference.new(@AS_app_data, @AS_aem_reference.lessOrEquals(operand))
 		end
 		
 		def begins_with(operand)
-			return Appscript::Reference.new(@AS_app_data, @AS_aem_reference.beginsWith_(operand))
+			return Appscript::Reference.new(@AS_app_data, @AS_aem_reference.beginsWith(operand))
 		end
 		
 		def ends_with(operand)
-			return Appscript::Reference.new(@AS_app_data, @AS_aem_reference.endsWith_(operand))
+			return Appscript::Reference.new(@AS_app_data, @AS_aem_reference.endsWith(operand))
 		end
 		
 		def contains(operand)
-			return Appscript::Reference.new(@AS_app_data, @AS_aem_reference.contains_(operand))
+			return Appscript::Reference.new(@AS_app_data, @AS_aem_reference.contains(operand))
 		end
 		
 		def is_in(operand)
-			return Appscript::Reference.new(@AS_app_data, @AS_aem_reference.isIn_(operand))
+			return Appscript::Reference.new(@AS_app_data, @AS_aem_reference.isIn(operand))
 		end
 		
 		def does_not_begin_with(operand)
@@ -802,22 +722,22 @@ module Appscript
 		private_class_method :new
 			
 		def _aem_application_class # hook
-			return Appscript::AEMApplication
+			return AEMApplication
 		end
 		
 		def initialize(constructor, identifier, terms)
-			super(AppData.alloc.initWithApplicationClass_constructor_identifier_terms_(
-					_aem_application_class, constructor, identifier, terms), AEMApp)
+			super(AppData.alloc.initWithApplicationClass(_aem_application_class, 
+					constructor:constructor, identifier:identifier, terms:terms), AEMApp)
 		end
 		
 		# constructors
 		
 		def Application.by_name(name, terms=true)
-			return new(Appscript::KASTargetName, name, terms)
+			return new(KASTargetName, name, terms)
 		end
 		
 		def Application.by_id(id, terms=true)
-			return new(Appscript::KASTargetBundleID, id, terms)
+			return new(KASTargetBundleID, id, terms)
 		end
 		
 		def Application.by_creator(creator, terms=true)
@@ -825,13 +745,13 @@ module Appscript
 		end
 		
 		def Application.by_pid(pid, terms=true)
-			return new(Appscript::KASTargetPID, pid, terms)
+			return new(KASTargetPID, pid, terms)
 		end
 		
 		def Application.by_url(url, terms=true)
-			url = NSURL.URLWithString_(url) if not url.is_a?(NSURL)
+			url = NSURL.URLWithString(url) if not url.is_a?(NSURL)
 			raise TypeError, "Bad URL: #{url}" if url == nil
-			return new(Appscript::KASTargetURL, url, terms)
+			return new(KASTargetURL, url, terms)
 		end
 		
 		def Application.by_aem_app(aem_app, terms=true)
@@ -839,7 +759,7 @@ module Appscript
 		end
 		
 		def Application.current(terms=true)
-			return new(Appscript::KASTargetCurrent, nil, terms)
+			return new(KASTargetCurrent, nil, terms)
 		end
 		
 		#
@@ -847,18 +767,18 @@ module Appscript
 		def AS_new_reference(ref)
 			if ref.is_a?(Appscript::GenericReference)
 				return ref.AS_resolve(@AS_app_data)
-			elsif ref.is_a?(Appscript::AEMQuery)
+			elsif ref.is_a?(AEMQuery)
 				return Appscript::Reference.new(@AS_app_data, ref)
 			elsif ref == nil
-				return  Appscript::Reference.new(@AS_app_data, Appscript::AEMApp)
+				return  Appscript::Reference.new(@AS_app_data, AEMApp)
 			else
 				return Appscript::Reference.new(@AS_app_data, 
-						Appscript::AEMCustomRoot.customRootWithObject_(ref))
+						AEMCustomRoot.customRootWithObject(ref))
 			end
 		end
 		
 		def begin_transaction(session=nil)
-			@AS_app_data.target.beginTransaction_(session)
+			@AS_app_data.target.beginTransaction(session)
 		end
 		
 		def abort_transaction
@@ -870,22 +790,22 @@ module Appscript
 		end
 		
 		def _launch_app(url)
-			pid, error = Appscript::AEMApplication.launchApplication_error_(url)
+			pid, error = AEMApplication.launchApplication(url, error:nil) # TO DO
 			raise RuntimeError, error.to_s if error # TO DO: error class
-			success, error = @AS_app_data.target.reconnectWithError_()
+			success, error = @AS_app_data.target.reconnectWithError(nil)
 			raise RuntimeError, error.to_s if error # TO DO: error class
 		end
 		
 		def launch
-			if @AS_app_data.targetType == Appscript::KASTargetName
-				url, error = Appscript::AEMApplication.findApplicationForName_error_(@AS_app_data.targetData)
+			if @AS_app_data.targetType == KASTargetName
+				url, error = AEMApplication.findApplicationForName(@AS_app_data.targetData, error:nil) # TO DO
 				raise RuntimeError, error.to_s if error # TO DO: error class
 				_launch_app(url)
-			elsif @AS_app_data.targetType == Appscript::KASTargetURL and @AS_app_data.targetData.isFileURL
+			elsif @AS_app_data.targetType == KASTargetURL and @AS_app_data.targetData.isFileURL
 				_launch_app(@AS_app_data.targetData)
 			else
-				event = target.eventWithEventClass_eventID_(KAE::KASAppleScriptSuite, KAE::KASLaunchEvent)
-				result, error = event.sendWithError_()
+				event = target.eventWithEventClass(KAE::KASAppleScriptSuite, eventID:KAE::KASLaunchEvent)
+				result, error = event.sendWithError(nil) #ÊTO DO
 				raise RuntimeError, error.to_s if error.code != -1708 # TO DO: error class
 			end
 		end

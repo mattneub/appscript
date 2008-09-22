@@ -72,11 +72,12 @@ module MRATerminology
 				res.addParameter(ASParserDef.alloc.initWithName(pname.to_s, code: pcode.unpack('N')[0]))
 			end
 		end
-		
-		terms = MRATerminology.alloc.init
+#		p classes.collect { |o| o.fourCharCode }
+		terms = ASTerminology.alloc.init
 		terms.addClasses(classes, enumerators: enumerators, 
 				properties: properties, elements: elements, 
 				commands: commands)
+#		p terms.typeByCodeTable.allKeys
 		return terms
 	end
 
