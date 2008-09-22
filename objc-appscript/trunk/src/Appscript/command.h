@@ -168,7 +168,7 @@
  *
  *    A single event can be sent more than once if desired.
  */
-- (id)sendWithError:(NSError **)error;
+- (id)sendWithError:(out NSError **)error;
 
 /*
  * Send the event with minimal error reporting.

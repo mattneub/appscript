@@ -18,7 +18,7 @@
 + (NSURL *)findApplicationForCreator:(OSType)creator
 							bundleID:(NSString *)bundleID
 								name:(NSString *)name
-							   error:(NSError **)error {
+							   error:(out NSError **)error {
 	OSErr err;
 	CFURLRef outAppURL;
 	NSString *errorDescription;
@@ -46,7 +46,7 @@
 	return (NSURL *)outAppURL;
 }
 
-+ (NSURL *)findApplicationForName:(NSString *)name error:(NSError **)error {
++ (NSURL *)findApplicationForName:(NSString *)name error:(out NSError **)error {
 	NSURL *url;
 	NSError *err;
 	
@@ -64,7 +64,7 @@
 	return url;
 }
 
-+ (pid_t)findProcessIDForApplication:(NSURL *)fileURL error:(NSError **)error {
++ (pid_t)findProcessIDForApplication:(NSURL *)fileURL error:(out NSError **)error {
 	OSStatus err;
 	FSRef desired, found;
 	ProcessSerialNumber psn = {0, kNoProcess};
@@ -158,7 +158,7 @@ error:
 + (pid_t)launchApplication:(NSURL *)fileURL
 					 event:(NSAppleEventDescriptor *)firstEvent
 					 flags:(LaunchFlags)launchFlags
-					 error:(NSError **)error {
+					 error:(out NSError **)error {
 	OSStatus err;
 	FSRef fsRef;
 #ifndef __LP64__
@@ -227,7 +227,7 @@ error:
 }
 
 
-+ (pid_t)launchApplication:(NSURL *)appFileURL error:(NSError **)error {
++ (pid_t)launchApplication:(NSURL *)appFileURL error:(out NSError **)error {
 	NSAppleEventDescriptor *evt;
 	
 	evt = [NSAppleEventDescriptor appleEventWithEventClass: 'ascr'
@@ -241,7 +241,7 @@ error:
 							 error: error];
 }
 
-+ (pid_t)runApplication:(NSURL *)appFileURL error:(NSError **)error {
++ (pid_t)runApplication:(NSURL *)appFileURL error:(out NSError **)error {
 	NSAppleEventDescriptor *evt;
 	
 	evt = [NSAppleEventDescriptor appleEventWithEventClass: 'aevt'
@@ -255,7 +255,7 @@ error:
 							 error: error];
 }
 
-+ (pid_t)openDocuments:(id)documentFiles inApplication:(NSURL *)appFileURL error:(NSError **)error {
++ (pid_t)openDocuments:(id)documentFiles inApplication:(NSURL *)appFileURL error:(out NSError **)error {
 	NSAppleEventDescriptor *evt;
 	
 	evt = [NSAppleEventDescriptor appleEventWithEventClass: 'ascr'
@@ -272,7 +272,7 @@ error:
 
 // make AEAddressDescs
 
-+ (NSAppleEventDescriptor*)addressDescForLocalApplication:(NSURL *)fileURL error:(NSError **)error {
++ (NSAppleEventDescriptor*)addressDescForLocalApplication:(NSURL *)fileURL error:(out NSError **)error {
 	NSError *tempError = nil;
 	pid_t pid;
 	NSError *err;
@@ -330,7 +330,7 @@ error:
 /*******/
 
 // clients shouldn't call this initializer directly; use one of the methods below
-- (id)initWithTargetType:(AEMTargetType)targetType_ data:(id)targetData_ error:(NSError **)error {
+- (id)initWithTargetType:(AEMTargetType)targetType_ data:(id)targetData_ error:(out NSError **)error {
 	if (!targetData_) return nil;
 	self = [super init];
 	if (!self) return self;
@@ -372,7 +372,7 @@ error:
 	return [self initWithTargetType: kAEMTargetCurrent data: [NSNull null] error: &error];
 }
 
-- (id)initWithName:(NSString *)name error:(NSError **)error {
+- (id)initWithName:(NSString *)name error:(out NSError **)error {
 	NSURL *url;
 	NSError *err;
 	
@@ -383,7 +383,7 @@ error:
 	return [self initWithTargetType: kAEMTargetFileURL data: url error: error];
 }
 
-- (id)initWithBundleID:(NSString *)bundleID error:(NSError **)error {
+- (id)initWithBundleID:(NSString *)bundleID error:(out NSError **)error {
 	NSURL *url;
 	NSError *err;
 	
@@ -397,7 +397,7 @@ error:
 	return [self initWithTargetType: kAEMTargetFileURL data: url error: error];
 }
 
-- (id)initWithURL:(NSURL *)url error:(NSError **)error {
+- (id)initWithURL:(NSURL *)url error:(out NSError **)error {
 	NSError *err;
 	
 	if (!error) error = &err;
@@ -571,7 +571,7 @@ error:
 	return [self reconnectWithError: nil];
 }
 
-- (BOOL)reconnectWithError:(NSError **)error {
+- (BOOL)reconnectWithError:(out NSError **)error {
 	NSAppleEventDescriptor *newAddress;
 	
 	if (error)
@@ -590,11 +590,11 @@ error:
 
 // transaction support
 
-- (BOOL)beginTransactionWithError:(NSError **)error {
+- (BOOL)beginTransactionWithError:(out NSError **)error {
 	return [self beginTransactionWithSession: nil error: error];
 }
 
-- (BOOL)beginTransactionWithSession:(id)session error:(NSError **)error {
+- (BOOL)beginTransactionWithSession:(id)session error:(out NSError **)error {
 	AEMEvent *evt;
 	id transactionIDObj = nil;
 	NSDictionary *errorInfo;
@@ -621,7 +621,7 @@ error:
 	return (transactionIDObj != nil);
 }
 
-- (BOOL)endTransactionWithError:(NSError **)error {
+- (BOOL)endTransactionWithError:(out NSError **)error {
 	AEMEvent *evt;
 	id result = nil;
 	NSDictionary *errorInfo;
@@ -643,7 +643,7 @@ error:
 	return (result != nil);
 }
 
-- (BOOL)abortTransactionWithError:(NSError **)error {
+- (BOOL)abortTransactionWithError:(out NSError **)error {
 	AEMEvent *evt;
 	id result = nil;
 	NSDictionary *errorInfo;

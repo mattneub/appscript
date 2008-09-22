@@ -147,7 +147,7 @@ fail:
 	return self;
 }
 
-- (id)sendWithError:(NSError **)error {
+- (id)sendWithError:(out NSError **)error {
 	NSAppleEventDescriptor *considerAndIgnoreDesc, *ignoreListDesc;
 	NSMutableDictionary *userInfo;
 	id result;

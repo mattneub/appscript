@@ -100,11 +100,11 @@ typedef OSStatus(*AEMSendProcPtr)(const AppleEvent *event,
 
 // Get event's attributes and parameters.
 
-- (id)attributeForKeyword:(AEKeyword)key type:(DescType)type error:(NSError **)error;
+- (id)attributeForKeyword:(AEKeyword)key type:(DescType)type error:(out NSError **)error;
 
 - (id)attributeForKeyword:(AEKeyword)key; // shortcut for above
 
-- (id)parameterForKeyword:(AEKeyword)key type:(DescType)type error:(NSError **)error;
+- (id)parameterForKeyword:(AEKeyword)key type:(DescType)type error:(out NSError **)error;
 
 - (id)parameterForKeyword:(AEKeyword)key; // shortcut for above
 
@@ -143,11 +143,11 @@ typedef OSStatus(*AEMSendProcPtr)(const AppleEvent *event,
  *
  */
 
-- (id)sendWithMode:(AESendMode)sendMode timeout:(long)timeoutInTicks error:(NSError **)error;
+- (id)sendWithMode:(AESendMode)sendMode timeout:(long)timeoutInTicks error:(out NSError **)error;
 
 // shortcuts for -sendWithMode:timeout:error:
 
-- (id)sendWithError:(NSError **)error;
+- (id)sendWithError:(out NSError **)error;
 
 - (id)send;
 

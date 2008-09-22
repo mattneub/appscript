@@ -321,7 +321,7 @@
 	}
 	// add either singular (class) or plural (element) name definition
 	classDef = [[ASParserDef alloc] initWithName: className code: classCode];
-	code = [[NSNumber alloc] initWithLong: classCode];
+	code = [[NSNumber alloc] initWithUnsignedInt: classCode];
 	if (isPlural) {
 		if (![elements containsObject: classDef]) {
 			[elements addObject: classDef];

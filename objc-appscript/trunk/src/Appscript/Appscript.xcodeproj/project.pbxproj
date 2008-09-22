@@ -440,7 +440,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\nexit 0 # TEST\n\nif command -v gen_bridge_metadata &>/dev/null\nthen\n\nmkdir -p $BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/BridgeSupport\n\ngen_bridge_metadata -f $BUILT_PRODUCTS_DIR/$PRODUCT_NAME.framework -o $BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/BridgeSupport/$PRODUCT_NAME.bridgesupport\n\nfi\n\nexit 0 # note: gen_bridge_metadata is broken in 10.5.4, so just ignoring any errors it produces\n\n";
+			shellScript = "\nif command -v gen_bridge_metadata &>/dev/null\nthen\n\nmkdir -p $BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/BridgeSupport\n\ngen_bridge_metadata -f $BUILT_PRODUCTS_DIR/$PRODUCT_NAME.framework -o $BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/BridgeSupport/$PRODUCT_NAME.bridgesupport\n\nfi\n\nexit 0 # note: gen_bridge_metadata is broken in 10.5.4, so just ignoring any errors it produces\n\n";
 		};
 		4FED70840D2E6B63003412D7 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;

@@ -41,7 +41,7 @@
 	return obj;
 }
 
-- (id)aetesWithError:(NSError **)error {
+- (id)aetesWithError:(out NSError **)error {
 	AEMApplication *targetApp;
 	AEMEvent *event;
 	
@@ -52,7 +52,7 @@
 	return [event sendWithError: error];
 }
 
-- (BOOL)connectWithError:(NSError **)error {
+- (BOOL)connectWithError:(out NSError **)error {
 	ASTerminology *tmp;
 	ASAETEParser *parser;
 	id aetes;

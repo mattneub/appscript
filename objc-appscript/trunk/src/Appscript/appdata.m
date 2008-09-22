@@ -40,7 +40,7 @@
 	return obj;
 }
 
-- (BOOL)connectWithError:(NSError **)error {
+- (BOOL)connectWithError:(out NSError **)error {
 	if (target) {
 		[target release];
 		target = nil;
@@ -67,7 +67,7 @@
 	return target != nil;
 }
 
-- (id)targetWithError:(NSError **)error { // returns AEMApplication instance or equivalent
+- (id)targetWithError:(out NSError **)error { // returns AEMApplication instance or equivalent
 	if (!target && ![self connectWithError: error]) return nil;
 	return target;
 }
@@ -103,7 +103,7 @@
 	return result;
 }
 
-- (BOOL)launchApplicationWithError:(NSError **)error {
+- (BOOL)launchApplicationWithError:(out NSError **)error {
 	NSURL *fileURL = nil;
 	AEMApplication *app;
 	NSError *err;

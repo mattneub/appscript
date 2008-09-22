@@ -153,7 +153,7 @@ static ASEventAttributeDescription attributeKeys[] = {
 
 // Get attributes and parameters:
 
-- (id)attributeForKeyword:(AEKeyword)key type:(DescType)type error:(NSError **)error {
+- (id)attributeForKeyword:(AEKeyword)key type:(DescType)type error:(out NSError **)error {
 	AEDesc aeDesc;
 	NSAppleEventDescriptor *desc;
 	
@@ -173,7 +173,7 @@ static ASEventAttributeDescription attributeKeys[] = {
 	return [self attributeForKeyword: key type: typeWildCard error: nil];
 }
 
-- (id)parameterForKeyword:(AEKeyword)key type:(DescType)type error:(NSError **)error  {
+- (id)parameterForKeyword:(AEKeyword)key type:(DescType)type error:(out NSError **)error  {
 	AEDesc aeDesc;
 	NSAppleEventDescriptor *desc;
 	
@@ -218,7 +218,7 @@ static ASEventAttributeDescription attributeKeys[] = {
  * if needed.
  */
 
-- (id)sendWithMode:(AESendMode)sendMode timeout:(long)timeoutInTicks error:(NSError **)error {
+- (id)sendWithMode:(AESendMode)sendMode timeout:(long)timeoutInTicks error:(out NSError **)error {
 	OSErr err, errorNumber;
 	NSString *errorString, *errorDescription;
 	NSDictionary *errorInfo;
@@ -374,7 +374,7 @@ noResult:
 		return [NSNull null];
 }
 
-- (id)sendWithError:(NSError **)error {
+- (id)sendWithError:(out NSError **)error {
 	return [self sendWithMode: kAEWaitReply timeout: kAEDefaultTimeout error: error];
 }
 

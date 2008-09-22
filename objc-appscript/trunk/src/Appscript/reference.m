@@ -77,7 +77,7 @@
 	return [self launchApplicationWithError: nil];
 }
 
-- (BOOL)launchApplicationWithError:(NSError **)error {
+- (BOOL)launchApplicationWithError:(out NSError **)error {
 	return [AS_appData launchApplicationWithError: error];
 }
 
@@ -85,25 +85,25 @@
 	return [[AS_appData targetWithError: nil] reconnect];
 }
 
-- (BOOL)reconnectApplicationWithError:(NSError **)error {
+- (BOOL)reconnectApplicationWithError:(out NSError **)error {
 	return [[AS_appData targetWithError: error] reconnectWithError: error];
 }
 
 // transaction support
 
-- (BOOL)beginTransactionWithError:(NSError **)error {
+- (BOOL)beginTransactionWithError:(out NSError **)error {
 	 return [[AS_appData target] beginTransactionWithError: error];
 }
 
-- (BOOL)beginTransactionWithSession:(id)session error:(NSError **)error {
+- (BOOL)beginTransactionWithSession:(id)session error:(out NSError **)error {
 	 return [[AS_appData target] beginTransactionWithSession: session error: error];
 }
 
-- (BOOL)endTransactionWithError:(NSError **)error {
+- (BOOL)endTransactionWithError:(out NSError **)error {
 	 return [[AS_appData target] endTransactionWithError: error];
 }
 
-- (BOOL)abortTransactionWithError:(NSError **)error {
+- (BOOL)abortTransactionWithError:(out NSError **)error {
 	 return [[AS_appData target] abortTransactionWithError: error];
 }
 
@@ -114,7 +114,7 @@
 	return [self setItem: data error: nil];
 }
 
-- (id)setItem:(id)data error:(NSError **)error {
+- (id)setItem:(id)data error:(out NSError **)error {
 	ASGetSetItemCommand *cmd = [ASGetSetItemCommand commandWithAppData: AS_appData
 															eventClass: kAECoreSuite
 															   eventID: kAESetData
@@ -128,7 +128,7 @@
 	return [self getItemWithError: nil];
 }
 
-- (id)getItemWithError:(NSError **)error {
+- (id)getItemWithError:(out NSError **)error {
 	return [[ASGetSetItemCommand commandWithAppData: AS_appData
 									     eventClass: kAECoreSuite
 										    eventID: kAEGetData
@@ -140,7 +140,7 @@
 	return [self getListWithError: nil];
 }
 
-- (id)getListWithError:(NSError **)error {
+- (id)getListWithError:(out NSError **)error {
 	return [[[ASGetSetItemCommand commandWithAppData: AS_appData
 										  eventClass: kAECoreSuite
 										     eventID: kAEGetData
@@ -152,7 +152,7 @@
 	return [self getItemOfType: type error: nil];
 }
 
-- (id)getItemOfType:(DescType)type error:(NSError **)error {
+- (id)getItemOfType:(DescType)type error:(out NSError **)error {
 	ASGetSetItemCommand *cmd = [ASGetSetItemCommand commandWithAppData: AS_appData
 															eventClass: kAECoreSuite
 															   eventID: kAEGetData
@@ -168,7 +168,7 @@
 	return [self getListOfType: type error: nil];
 }
 
-- (id)getListOfType:(DescType)type error:(NSError **)error {
+- (id)getListOfType:(DescType)type error:(out NSError **)error {
 	ASGetSetItemCommand *cmd = [ASGetSetItemCommand commandWithAppData: AS_appData
 															eventClass: kAECoreSuite
 															   eventID: kAEGetData
@@ -180,7 +180,7 @@
 	return [cmd sendWithError: error];
 }
 
-- (int)getIntWithError:(NSError **)error {
+- (int)getIntWithError:(out NSError **)error {
 	ASGetSetItemCommand *cmd = [ASGetSetItemCommand commandWithAppData: AS_appData
 															eventClass: kAECoreSuite
 															   eventID: kAEGetData
@@ -192,7 +192,7 @@
 	return [[cmd sendWithError: error] intValue];
 }
 
-- (long)getLongWithError:(NSError **)error {
+- (long)getLongWithError:(out NSError **)error {
 	ASGetSetItemCommand *cmd = [ASGetSetItemCommand commandWithAppData: AS_appData
 															eventClass: kAECoreSuite
 															   eventID: kAEGetData
@@ -211,7 +211,7 @@
 #endif
 }
 
-- (double)getDoubleWithError:(NSError **)error {
+- (double)getDoubleWithError:(out NSError **)error {
 	ASGetSetItemCommand *cmd = [ASGetSetItemCommand commandWithAppData: AS_appData
 															eventClass: kAECoreSuite
 															   eventID: kAEGetData

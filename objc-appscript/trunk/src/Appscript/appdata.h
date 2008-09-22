@@ -41,17 +41,17 @@ typedef enum {
 					targetData:(id)data;
 
 // creates AEMApplication instance for target application; used internally
-- (BOOL)connectWithError:(NSError **)error;
+- (BOOL)connectWithError:(out NSError **)error;
 
 // returns AEMApplication instance for target application
-- (id)targetWithError:(NSError **)error;
+- (id)targetWithError:(out NSError **)error;
 
 // is target application running?
 - (BOOL)isRunning;
 
 // launch the target application without sending it the usual 'run' event;
 // equivalent to 'launch' command in AppleScript.
-- (BOOL)launchApplicationWithError:(NSError **)error;
+- (BOOL)launchApplicationWithError:(out NSError **)error;
 
 // determines if an application specified by path should be relaunched if
 // its AEAddressDesc is no longer valid (i.e. application has quit/restarted)

@@ -47,15 +47,15 @@ typedef enum {
 + (NSURL *)findApplicationForCreator:(OSType)creator		// use kLSUnknownCreator if none
 							bundleID:(NSString *)bundleID	// use nil if none
 								name:(NSString *)name		// use nil if none
-							   error:(NSError **)error;
+							   error:(out NSError **)error;
 
 // Find application by file name. Full path is also acceptable; .app suffix is optional.
 
-+ (NSURL *)findApplicationForName:(NSString *)name error:(NSError **)error;
++ (NSURL *)findApplicationForName:(NSString *)name error:(out NSError **)error;
 
 // Get Unix process ID of first process launched from specified application
 
-+ (pid_t)findProcessIDForApplication:(NSURL *)fileURL error:(NSError **)error;
++ (pid_t)findProcessIDForApplication:(NSURL *)fileURL error:(out NSError **)error;
 
 
 // Check if specified application is running
@@ -92,15 +92,15 @@ typedef enum {
 + (pid_t)launchApplication:(NSURL *)fileURL
 					 event:(NSAppleEventDescriptor *)firstEvent
 					 flags:(LaunchFlags)launchFlags
-					 error:(NSError **)error;
+					 error:(out NSError **)error;
 
 // convenience shortcuts for the above
 
-+ (pid_t)launchApplication:(NSURL *)appFileURL error:(NSError **)error;
++ (pid_t)launchApplication:(NSURL *)appFileURL error:(out NSError **)error;
 
-+ (pid_t)runApplication:(NSURL *)appFileURL error:(NSError **)error;
++ (pid_t)runApplication:(NSURL *)appFileURL error:(out NSError **)error;
 
-+ (pid_t)openDocuments:(id)files inApplication:(NSURL *)appFileURL error:(NSError **)error;
++ (pid_t)openDocuments:(id)files inApplication:(NSURL *)appFileURL error:(out NSError **)error;
 
 /*
  * make AEAddressDescs
@@ -108,7 +108,7 @@ typedef enum {
  * Note: addressDescForLocalApplication:error: will start application if not already running
  */
 
-+ (NSAppleEventDescriptor *)addressDescForLocalApplication:(NSURL *)fileURL error:(NSError **)error;
++ (NSAppleEventDescriptor *)addressDescForLocalApplication:(NSURL *)fileURL error:(out NSError **)error;
 
 + (NSAppleEventDescriptor *)addressDescForLocalProcess:(pid_t)pid;
 
@@ -121,7 +121,7 @@ typedef enum {
 
 // designated initialiser; clients shouldn't call this directly but use one of the following methods
 
-- (id)initWithTargetType:(AEMTargetType)targetType_ data:(id)targetData_ error:(NSError **)error;
+- (id)initWithTargetType:(AEMTargetType)targetType_ data:(id)targetData_ error:(out NSError **)error;
 
 
 /*
@@ -131,11 +131,11 @@ typedef enum {
  * error information may be returned via the error argument.
  */
 
-- (id)initWithName:(NSString *)name error:(NSError **)error;
+- (id)initWithName:(NSString *)name error:(out NSError **)error;
 
-- (id)initWithBundleID:(NSString *)bundleID error:(NSError **)error;
+- (id)initWithBundleID:(NSString *)bundleID error:(out NSError **)error;
 
-- (id)initWithURL:(NSURL *)url error:(NSError **)error;
+- (id)initWithURL:(NSURL *)url error:(out NSError **)error;
 
 - (id)initWithPID:(pid_t)pid;
 
@@ -190,18 +190,18 @@ typedef enum {
 
 - (BOOL)reconnect;
 
-- (BOOL)reconnectWithError:(NSError **)error;
+- (BOOL)reconnectWithError:(out NSError **)error;
 
 
 // transaction support
 
-- (BOOL)beginTransactionWithError:(NSError **)error;
+- (BOOL)beginTransactionWithError:(out NSError **)error;
 
-- (BOOL)beginTransactionWithSession:(id)session error:(NSError **)error;
+- (BOOL)beginTransactionWithSession:(id)session error:(out NSError **)error;
 
-- (BOOL)endTransactionWithError:(NSError **)error;
+- (BOOL)endTransactionWithError:(out NSError **)error;
 
-- (BOOL)abortTransactionWithError:(NSError **)error;
+- (BOOL)abortTransactionWithError:(out NSError **)error;
 
 
 
