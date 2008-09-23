@@ -266,7 +266,8 @@
 }
 
 - (void)parseClass {
-	NSString *className, *propertyName, *code;
+	NSString *className, *propertyName;
+	AEMType *code;
 	OSType classCode, propertyCode;
 	ASParserDef *classDef, *propertyDef;
 	BOOL isPlural = NO;
@@ -321,7 +322,7 @@
 	}
 	// add either singular (class) or plural (element) name definition
 	classDef = [[ASParserDef alloc] initWithName: className code: classCode];
-	code = [[NSNumber alloc] initWithUnsignedInt: classCode];
+	code = [AEMType typeWithCode: classCode];
 	if (isPlural) {
 		if (![elements containsObject: classDef]) {
 			[elements addObject: classDef];
@@ -334,7 +335,6 @@
 		}
 	}
 	[classAndElementDefsByCode setObject: classDef forKey: code];
-	[code release];
 	[classDef release];
 	[className release];
 }

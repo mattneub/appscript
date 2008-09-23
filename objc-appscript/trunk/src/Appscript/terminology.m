@@ -56,9 +56,7 @@
 }
 
 - (void)addParameterWithName:(NSString *)name_ code:(OSType)code_ {
-	NSNumber *codeObj = [[NSNumber alloc] initWithUnsignedInt: code_];
-	[parameters setObject: codeObj forKey: name_];
-	[codeObj release];
+	[parameters setObject: [AEMType typeWithCode: code_] forKey: name_];
 }
 
 - (NSString *)name {
@@ -74,7 +72,7 @@
 }
 
 - (OSType)parameterForName:(NSString *)name_ {
-	return [[parameters objectForKey: name_] unsignedIntValue];
+	return [[parameters objectForKey: name_] fourCharCode];
 }
 
 - (NSString *)parameterForCode:(OSType)code_ {
@@ -149,7 +147,7 @@
 	[self addCommandTableDefinitions: commands];
 	// special case: if property table contains a 'text' definition, move it to element table
 	// (AppleScript always packs 'text of...' as an all-elements specifier, not a property specifier)
-	NSNumber *codeObj = [propertyByName objectForKey: @"text"];
+	AEMType *codeObj = [propertyByName objectForKey: @"text"];
 	if (codeObj) {
 		[elementByName setObject: codeObj forKey: @"text"];
 		[propertyByName removeObjectForKey: @"text"];
@@ -177,7 +175,7 @@
 	ASParserDef *parserDef;
 	NSString *name, *convertedName;
 	OSType code;
-	NSNumber *codeObj;
+	AEMType *codeObj;
 	NSAppleEventDescriptor *desc;
 	NSDictionary *defaultTypeByName;
 	unsigned len, i;
@@ -201,7 +199,7 @@
 		if (desc && [desc typeCodeValue] != code)
 			name = [converter escape: name];
 		// add item
-		codeObj = [[NSNumber alloc] initWithUnsignedInt: code]; // OSType is UInt32
+		codeObj = [AEMType typeWithCode: code]; // OSType is UInt32
 		[typeByCode setObject: name forKey: codeObj];
 		[codeObj release];
 		// add a definition to typeByCode table
@@ -234,7 +232,7 @@
 						   codeTable:(NSMutableDictionary *)codeTable {
 	ASParserDef *parserDef;
 	NSString *name, *convertedName;
-	NSNumber *codeObj;
+	AEMType *codeObj;
 	unsigned len, i;
 	
 	len = [definitions count];
@@ -249,7 +247,7 @@
 			[keywordCache setObject: convertedName forKey: name];
 		}
 		name = convertedName;
-		codeObj = [[NSNumber alloc] initWithUnsignedInt: [parserDef fourCharCode]];
+		codeObj = [AEMType typeWithCode: [parserDef fourCharCode]];
 		[codeTable setObject: name forKey: codeObj];
 		[codeObj release];
 		// add a definition to the byName table
@@ -262,7 +260,7 @@
 			[keywordCache setObject: convertedName forKey: name];
 		}
 		name = convertedName;
-		codeObj = [[NSNumber alloc] initWithUnsignedInt: [parserDef fourCharCode]];
+		codeObj = [AEMType typeWithCode: [parserDef fourCharCode]];
 		[nameTable setObject: codeObj forKey: name];
 		[codeObj release];
 	}
