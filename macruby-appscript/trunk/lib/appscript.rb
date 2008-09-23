@@ -1,8 +1,9 @@
-#!/usr/local/bin/macruby
-
-framework 'Appscript'
+# Copyright (C) 2008 HAS. 
+# Released under MIT License.
 
 module Appscript
+
+	framework 'Appscript'
 
 	require "_appscript/terminology"
 	require "_appscript/safeobject"
@@ -51,7 +52,8 @@ module Appscript
 		end
 		
 		def connect
-			@target, error = self.targetWithError(nil)
+			error = nil
+			@target = self.targetWithError(error) # TO DO
 			raise RuntimeError, error.to_s if not @target
 			@type_by_name = {}
 			self.terminology.typeByNameTable.each do |name, code|
@@ -59,8 +61,7 @@ module Appscript
 			end
 			@type_by_code = {}
 			self.terminology.typeByCodeTable.each do |code, name|
-				# note: using NSNumbers as Hash keys doesn't work so well, so cast them first
-				@type_by_code[code.to_i] = name.to_s.intern
+				@type_by_code[code] = name.to_s.intern
 			end
 			@reference_by_name = {}
 			self.terminology.elementByNameTable.each do |name, code|
@@ -125,7 +126,7 @@ module Appscript
 				when false
 					return FalseDesc
 			end
-			return super_pack(data)
+			return super(data)
 		end
 		
 		##
@@ -141,7 +142,7 @@ module Appscript
 					when Symbol
 						desired_type = self.pack(desired_type_obj).typeCodeValue
 					when AEMType
-						desired_type = desired_type_obj.code
+						desired_type = desired_type_obj.fourCharCode
 					when NSAppleEventDescriptor
 						desired_type = desired_type_obj.typeCodeValue
 					else
@@ -162,7 +163,7 @@ module Appscript
 					end
 					record.setDescriptor(pack(value), forKeyword:key_type.typeCodeValue)
 				elsif key.is_a?(AEMType)
-					record.setDescriptor(pack(value), forKeyword:key.code)
+					record.setDescriptor(pack(value), forKeyword:key.fourCharCode)
 				else
 					usrf = NSAppleEventDescriptor.listDescriptor if usrf == nil
 					usrf.insertDescriptor(pack(key), atIndex:0)
@@ -182,28 +183,28 @@ module Appscript
 				when KAE::TypeBoolean
 					return desc.booleanValue
 			else
-				return super_unpack(desc)
+				return super(desc)
 			end
 		end
 		
 		def unpackType(desc)
-			aem_object = super_unpackType(desc)
-			return @type_by_code.fetch(aem_object.code, aem_object)
+			aem_object = super(desc)
+			return @type_by_code.fetch(AEMType.typeWithCode(aem_object.fourCharCode), aem_object)
 		end
 		
 		def unpackEnum(desc)
-			aem_object = super_unpackEnum(desc)
-			return @type_by_code.fetch(aem_object.code, aem_object)
+			aem_object = super(desc)
+			return @type_by_code.fetch(AEMType.typeWithCode(aem_object.fourCharCode), aem_object)
 		end
 		
 		def unpackProperty(desc)
-			aem_object = super_unpackProperty(desc)
-			return @type_by_code.fetch(aem_object.code, aem_object)
+			aem_object = super(desc)
+			return @type_by_code.fetch(AEMType.typeWithCode(aem_object.fourCharCode), aem_object)
 		end
 		
 		def unpackKeyword(desc)
-			aem_object = super_unpackKeyword(desc)
-			return @type_by_code.fetch(aem_object.code, aem_object)
+			aem_object = super(desc)
+			return @type_by_code.fetch(AEMType.typeWithCode(aem_object.fourCharCode), aem_object)
 		end
 		
 		def unpackAERecordKey(key)
@@ -211,19 +212,18 @@ module Appscript
 		end
 		
 		def unpackObjectSpecifier(desc)
-			return Appscript::Reference.new(self, super_unpack(desc))
+			return Appscript::Reference.new(self, super(desc))
 		end
 		
 		def unpackInsertionLoc(desc)
-			return Appscript::Reference.new(self, super_unpack(desc))
+			return Appscript::Reference.new(self, super(desc))
 		end
 				
-		def unpackContainsCompDescriptorWithOperand1_operand2(op1, op2)
-			if op1.is_a?(Appscript::Reference) \
-					and op1.AS_aem_reference.root == AEMIts
+		def unpackContainsCompDescriptorWithOperand1(op1, operand2:op2)
+			if op1.is_a?(Appscript::Reference) and op1.AS_aem_reference.root == AEMIts
 				return op1.contains(op2)
 			else
-				return super_unpackContainsCompDescriptorWithOperand1_operand2(op1, op2)
+				return super(op1, op2)
 			end
 		end
 		
@@ -242,7 +242,7 @@ module Appscript
 				when KAE::TypeMachPort
 					Appscript.app.by_aem_app(AEMApplication.alloc.initWithDescriptor(desc))
 			else
-				super_unpackUnknown(desc)
+				super(desc)
 			end
 		end
 	end
@@ -370,7 +370,8 @@ module Appscript
 		##
 		
 		def _send_command(args, name, definition)
-			target, error = @AS_app_data.targetWithError(nil) # TO DO
+			error = nil
+			target = @AS_app_data.targetWithError(error) # TO DO
 			raise RuntimeError, error.to_s if error
 			eventClass, eventID = definition.eventClass, definition.eventID
 			subject_attr = NSAppleEventDescriptor.nullDescriptor
@@ -457,7 +458,8 @@ module Appscript
 				event.setParameter(param_value, forKeyword:param_code)
 			end
 			# build and send the Apple event, returning its result, if any
-			result, error = event.sendWithMode(send_flags, timeout:timeout, error:nil) # TO DO
+			error = nil
+			result = event.sendWithMode(send_flags, timeout:timeout, error:error) # TO DO
 			return result if not error
 			# relaunch/reconnect/resend/raise exception as needed
 			# 'launch' events always return 'not handled' errors; just ignore these
@@ -479,14 +481,16 @@ module Appscript
 				# TO DO: next call should yield bool, but is int so block never executes as 'not 0' -> false (global check, fix)
 				if not AEMApplication.processExistsForFileURL(target.targetData)
 					if eventClass == KAE::KASAppleScriptSuite and eventID == KAE::KASLaunchEvent
-						pid, error = AEMApplication.launchApplication(target.targetData, error:nil) # TO DO
+						error = nil
+						pid = AEMApplication.launchApplication(target.targetData, error:error) # TO DO
 						raise RuntimeError, error.to_s if error # TO DO: error class
 					elsif eventClass != KAE::KCoreEventClass or eventID != KAE::KAEOpenApplication
 						raise Appscript::CommandError.new(self, name, args, error)
 					end
 				end
 				# update AEMApplication object's AEAddressDesc
-				success, error = target.reconnectWithError(nil) # TO DO
+				error = nil
+				success = target.reconnectWithError(error) # TO DO
 				raise RuntimeError, error.to_s if error # TO DO: error class
 				# re-send command
 				event = target.eventWithEventClass(eventClass, eventID:eventID, codecs:@AS_app_data)
@@ -498,7 +502,8 @@ module Appscript
 					event.setParameter(param_value, forKeyword:definition.parameterForName(param_name))
 				end
 				event.setParameter(result_type, forKeyword:KAE::KeyAERequestedType) if result_type != Appscript::NOVALUE
-				result, error = event.sendWithMode(send_flags, timeout:timeout, error:nil) # TO DO
+				error = nil
+				result = event.sendWithMode(send_flags, timeout:timeout, error:error) # TO DO
 				return result if not error
 			end
 			raise Appscript::CommandError.new(self, name, args, error)
@@ -555,9 +560,9 @@ module Appscript
 			selector_type, code = @AS_app_data.reference_by_name[name]
 			case selector_type # check if name is a property/element/command name, and if it is handle accordingly
 				when :property
-					return Reference.new(@AS_app_data, @AS_aem_reference.property(code))
+					return Reference.new(@AS_app_data, @AS_aem_reference.property(code.fourCharCode))
 				when :element
-					return Reference.new(@AS_app_data, @AS_aem_reference.elements(code))
+					return Reference.new(@AS_app_data, @AS_aem_reference.elements(code.fourCharCode))
 				when :command
 					return _send_command(args, name, code)
 			else 
@@ -790,22 +795,26 @@ module Appscript
 		end
 		
 		def _launch_app(url)
-			pid, error = AEMApplication.launchApplication(url, error:nil) # TO DO
+			error = nil
+			pid = AEMApplication.launchApplication(url, error:error) # TO DO
 			raise RuntimeError, error.to_s if error # TO DO: error class
-			success, error = @AS_app_data.target.reconnectWithError(nil)
+			error = nil
+			success = @AS_app_data.target.reconnectWithError(error) # TO DO
 			raise RuntimeError, error.to_s if error # TO DO: error class
 		end
 		
 		def launch
 			if @AS_app_data.targetType == KASTargetName
-				url, error = AEMApplication.findApplicationForName(@AS_app_data.targetData, error:nil) # TO DO
+				error = nil
+				url = AEMApplication.findApplicationForName(@AS_app_data.targetData, error:error) # TO DO
 				raise RuntimeError, error.to_s if error # TO DO: error class
 				_launch_app(url)
 			elsif @AS_app_data.targetType == KASTargetURL and @AS_app_data.targetData.isFileURL
 				_launch_app(@AS_app_data.targetData)
 			else
 				event = target.eventWithEventClass(KAE::KASAppleScriptSuite, eventID:KAE::KASLaunchEvent)
-				result, error = event.sendWithError(nil) #ÊTO DO
+				error = nil
+				result = event.sendWithError(error) # TO DO
 				raise RuntimeError, error.to_s if error.code != -1708 # TO DO: error class
 			end
 		end

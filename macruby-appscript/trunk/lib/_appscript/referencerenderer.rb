@@ -34,15 +34,19 @@ class MRAReferenceRenderer < AEMResolver
 	##
 	
 	def property(code)
+		code = AEMType.typeWithCode(code)
 		name = @_app_data.property_by_code.objectForKey(code)
 		name = @_app_data.element_by_code.objectForKey(code) if not name
+		name = "<#{code}>" if not name
 		@result += ".#{name}"
 		return self
 	end
 	
 	def elements(code)
+		code = AEMType.typeWithCode(code)
 		name = @_app_data.element_by_code.objectForKey(code)
 		name = @_app_data.property_by_code.objectForKey(code) if not name
+		name = "<#{code}>" if not name
 		@result += ".#{name}"
 		return self
 	end
