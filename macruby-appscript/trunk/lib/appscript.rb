@@ -460,6 +460,7 @@ module Appscript
 			# build and send the Apple event, returning its result, if any
 			error = nil
 			result = event.sendWithMode(send_flags, timeout:timeout, error:error) # TO DO
+#			p [result, result.description, result.class]
 			return result if not error
 			# relaunch/reconnect/resend/raise exception as needed
 			# 'launch' events always return 'not handled' errors; just ignore these
@@ -477,7 +478,7 @@ module Appscript
 				#   application is relaunched, the process id updated and the event resent;
 				#   if not, the error is rethrown.
 				#
-				p AEMApplication.processExistsForFileURL(target.targetData) # test; TO DO: delete
+#				p AEMApplication.processExistsForFileURL(target.targetData) # test; TO DO: delete
 				# TO DO: next call should yield bool, but is int so block never executes as 'not 0' -> false (global check, fix)
 				if not AEMApplication.processExistsForFileURL(target.targetData)
 					if eventClass == KAE::KASAppleScriptSuite and eventID == KAE::KASLaunchEvent
@@ -566,6 +567,14 @@ module Appscript
 				when :command
 					return _send_command(args, name, code)
 			else 
+				# MacRuby munges unhandled messages of form ref.name(arg1, key1:arg2, ...) into
+				# ref.method_missing(:'name:key1:', [arg1, arg2]), so check for this form as well
+				name, *argnames = name.to_s.split(':', -1).collect { |s| s.intern }
+				argnames.pop
+				if argnames.size == args.size - 1
+					selector_type, code = @AS_app_data.reference_by_name[name]
+					return _send_command([args.shift, Hash[argnames.zip(args)]], name, code) if selector_type == :command
+				end
 				# see if it's a method that has been added to Object class [presumably] at runtime, but excluded
 				# by MRASafeObject to avoid potential conflicts with property/element/command names
 				begin
