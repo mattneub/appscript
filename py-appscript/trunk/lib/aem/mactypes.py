@@ -12,7 +12,9 @@ Both classes provide a variety of constructors and read-only properties for gett
 
 """
 
-from ae import AECreateDesc, ConvertPathToURL, ConvertURLToPath
+from os.path import abspath
+
+from ae import AECreateDesc, ConvertPathToURL, ConvertURLToPath, MacOSError
 import kae
 
 kCFURLPOSIXPathStyle = 0
@@ -58,7 +60,15 @@ class Alias(_Base):
 		if path is _NoPath:
 			self._desc = None
 		else:
-			self._desc = AECreateDesc(kae.typeFileURL, ConvertPathToURL(path, kCFURLPOSIXPathStyle)).AECoerceDesc(kae.typeAlias)
+			urldesc = AECreateDesc(kae.typeFileURL, 
+					ConvertPathToURL(abspath(path), kCFURLPOSIXPathStyle))
+			try:
+				self._desc = urldesc.AECoerceDesc(kae.typeAlias)
+			except MacOSError, err:
+				if err[0] == -1700:
+					raise ValueError("Can't make mactypes.Alias as file doesn't exist: %r" % path)
+				else:
+					raise
 		
 	def makewithhfspath(klass, path):
 		return klass.makewithurl(ConvertPathToURL(path, kCFURLHFSPathStyle))
@@ -112,8 +122,8 @@ class File(_Base):
 		if path is not _NoPath:
 			if not isinstance(path, unicode):
 				path = unicode(path)
-			self._path = path
-			self._url = ConvertPathToURL(path, kCFURLPOSIXPathStyle)
+			self._path = abspath(path)
+			self._url = ConvertPathToURL(self._path, kCFURLPOSIXPathStyle)
 			self._desc = AECreateDesc(kae.typeFileURL, self._url)
 	
 	def makewithhfspath(klass, path):

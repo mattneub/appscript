@@ -30,9 +30,17 @@ class Keyword:
 	name = property(lambda self:self.AS_name)
 
 
-class _KeywordShim:
-	# used to fake an infinitely large namespace
-	def __getattr__(self, name): return Keyword(name)
+class _KeywordShim(object):
+	""" Infinite namespace 'containing' all possible class/property/enumerator/type names. """
+	
+	def __getattr__(self, name): 
+		if name.startswith('__') and name.endswith('__'):
+			return object.__getattr__(self, name)
+		else:
+			return Keyword(name)
+	
+	def __repr__(self):
+		return 'k'	
 
 
 k = _KeywordShim()

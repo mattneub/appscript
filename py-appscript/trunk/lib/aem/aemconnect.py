@@ -115,6 +115,8 @@ def processexistsforurl(url):
 	"""Does an application process specified by the given eppc:// URL exist?
 		Note: this will send a 'launch' Apple event to the target application.
 	"""
+	if ':' not in url: # workaround: process will crash if no colon in URL (OS bug)
+		raise ValueError("Invalid url: %r" % url)
 	return processexistsfordesc(ae.AECreateDesc(kae.typeApplicationURL, url))
 
 def processexistsfordesc(desc):
@@ -168,5 +170,7 @@ def remoteapp(url):
 		url : string -- URL for remote application, e.g. 'eppc://user:password@0.0.0.1/TextEdit'
 		Result : AEAddressDesc
 	"""
+	if ':' not in url: # workaround: process will crash if no colon in URL (OS bug)
+		raise ValueError("Invalid url: %r" % url)
 	return ae.AECreateDesc(kae.typeApplicationURL, url)
 

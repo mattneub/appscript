@@ -127,7 +127,7 @@ class TC_appscriptCommands(unittest.TestCase):
 			self.f.items[10000].get()
 		except appscript.CommandError, e:
 			self.assertEqual(-1728, int(e))
-			self.assertEqual("CommandError: Can't get reference. (-1728)\n\tFailed command: app(u'/System/Library/CoreServices/Finder.app').items[10000].get()", str(e))
+			self.assertEqual("CommandError:\n\t\tOSERROR: -1728\n\t\tMESSAGE: Can't get reference.\n\t\tOFFENDING OBJECT: app(u'/System/Library/CoreServices/Finder.app').items[10000]\n\t\tCOMMAND: app(u'/System/Library/CoreServices/Finder.app').items[10000].get()", str(e))
 			self.assertEqual(aem.CommandError, e.realerror.__class__)
 
 

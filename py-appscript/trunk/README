@@ -8,21 +8,31 @@ Building appscript from source requires the gcc compiler (supplied with Apple's 
 
 Appscript requires MacPython 2.3 or later and Mac OS X 10.3 or later.
 
+Python 3.0 support is planned for a future release.
+
 
 ======================================================================
 NOTES
 
-- Appscript 0.19.0 is a significant restructuring of the appscript 0.18.x package that removes several supplementary packages (aemreceive, osaterminology, CarbonX.OSA, osascript) to different projects and consolidates the rest. The public appscript, aem and osax APIs are unaffected by these changes, so existing code that deals only with these APIs should require no changes. The mactypes module's Alias and File classes no longer provide supplementary methods for working with Python's Carbon.Alias and Carbon.File types, so any existing code that uses these methods will need to be updated accordingly. See the CHANGES file for more details.
+- Appscript 0.19.0 is a significant restructuring of the appscript 0.18.x package that removes several non-core packages (aemreceive, osaterminology, CarbonX.OSA, osascript) to separate projects and consolidates the remainder. The public appscript, aem and osax APIs are unaffected by these changes, so existing code that deals only with these APIs should require no changes. The mactypes module's Alias and File classes no longer provide methods for working with Python's Carbon.Alias and Carbon.File types, so any existing code that uses these methods will need to be updated accordingly. See the CHANGES file for more details.
 
 - The following modules now provide full 64-bit support: aem, appscript, mactypes. The osax module currently provides partial 64-bit support; see doc/osax-manual for details.
 
 - Note that the CarbonX package is deprecated and will be removed completely in the next release. Client code that refers to CarbonX.AE and/or CarbonX.kAE should be updated to use aem.ae and/or aem.kae instead.
 
-- Python 3.0 support is planned for a future release.
+- Developer tools for exporting application dictionaries (ASDictionary) and converting application commands from AppleScript to appscript syntax (ASTranslate) are available separately:
+
+	http://appscript.sourceforge.net/tools.html
 
 - ASDictionary 0.9.0 or later is now required to use appscript's built-in help() method. If ASDictionary isn't installed, interactive help won't be available but appscript will continue to operate as normal.
 
 - Appscript 0.19.0 is beta 1. Please report any problems you have either with the appscript bridge itself or with scripting individual applications.
+
+
+======================================================================
+AUTHOR
+
+- HAS -- hhas -at- users - sourceforge - net <http://rb-appscript.rubyforge.org> <http://appscript.sourceforge.net>
 
 
 ======================================================================

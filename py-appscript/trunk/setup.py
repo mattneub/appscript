@@ -8,7 +8,7 @@ except ImportError:
 setup(
 		name = "appscript",
 		version = "0.19.0",
-		description = "appscript and related modules",
+		description = "Modules for controlling scriptable Mac OS X applications and scripting additions from Python.",
 		author = "HAS",
 		author_email='',
 		url='http://appscript.sourceforge.net',

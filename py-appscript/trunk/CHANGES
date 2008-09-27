@@ -1,19 +1,26 @@
-2008-03-?? -- 0.19.0
+2008-09-27 -- 0.19.0
 
 - The following packages/modules have been removed from the appscript distribution:
-	- aemreceive (moved to py-aeserver project)
-	- CarbonX.OSA, CarbonX.kOSA, osascript (added to py-osascript project)
-	- osaterminology (moved to ASDictionary project)
-	- appscript.tools.aemcodegen (moved to ASTranslate project)
-	- appscript.tools.dump (dump function added to appscript.terminology)
+
+	- aemreceive -- now a separate project
+	- CarbonX.OSA, CarbonX.kOSA, osascript -- now a separate project
+	- osaterminology -- now a separate project
+	- appscript.tools.aemcodegen -- removed
+	- appscript.tools.dump -- merged into appscript.terminology module
 
 Users should update any existing code that refers to these modules as needed.
 
-- The CarbonX package is deprecated and will be removed in a future release. The original CarbonX.AE, CarbonX.kAE modules have been replaced by aliases to aem.ae, aem.kae. Users should update any existing code that refers to these modules as needed.
+The aemreceive, osascript and osaterminology packages can be obtained separately from the appscript website/svn repository.
+
+- The CarbonX package is deprecated and will be removed in a future release. The original CarbonX.AE and CarbonX.kAE modules have been aliased to aem.ae and aem.kae, which provide most of the same functionality. Users should update any existing code that refers to these modules as needed.
+
+- All remaining modules now support 64-bit Python, except for osax which currently provides limited 64-bit support only (i.e. a scripting addition's terminology cannot be obtained dynamically; use appscript.terminology.dump() under 32-bit Python to export a scripting addition's terminology as a static glue module and use that as the 'terms' argument to osax.ScriptingAddition.__init__)
 
 - The aem package's internal structure has been simplified and some modules renamed. The base class for all specifier and test objects is now named 'Query' and is exported by aem's public API for typechecking use only.
 
-- Added aem.ae which consolidates all Carbon/CoreFoundation bindings into a single C extension. Eliminated dependency on Python's Mac-specific 32-bit APIs. Removed AEDesc methods not used by aem/appscript/aemreceive. Expanded exported C API and renamed from aeAPI to aetoolbox.
+- Added aem.ae which consolidates all Carbon/CoreFoundation bindings into a single C extension and eliminates all dependencies on Python's own 'Carbon' extensions (which are absent in 64-bit builds of Python 2.x and removed altogether in Python 3.x). Removed AEDesc methods not used by aem/appscript/aemreceive. Expanded exported C API and renamed from aeAPI to aetoolbox. 
+
+- processexistsforurl, remoteapp in aemconnect now raise error if URL string doesn't contain a colon (process will crash otherwise due to an OS bug)
 
 - aem.ae raises aem.ae.MacOSError exceptions. Users should update any existing code that refers to the MacOS.Error type as needed.
 
@@ -23,28 +30,39 @@ Users should update any existing code that refers to these modules as needed.
 
 - aem exports ae, kae modules as part of its public API.
 
-- For convenience, aem and appscript modules re-export mactypes module as part of their public APIs.
-
-- Removed the following Carbon.File-dependent methods from mactypes.Alias, mactypes.File: makewithfsalias, makewithfsref, makewithfsspec, fsalias, fsref, fsspec. Added makewithhfspath, hfspath methods. Renamed makewithaedesc, aedesc methods to makewithdesc, desc. Users should update any existing code that refers to these methods as needed.
-
 - removed aem.Application.isrunning; use aem.Application.processexistsforpath instead
 
 - aem by-range selectors now accept non-reference values (these will be expanded to con-based references when packed)
 
-- fixed bug in appscript.Reference.AS_newreference
-
 - Removed AND, OR methods and NOT property from aemreference._PositionSpecifier as these shortcuts are no longer supported
+- deprecated public number and message attributes in aem.CommandError; these will be made private in a future release. Clients should update any existing code to use errornumber/errormessage properties instead.
+
+- For convenience, aem and appscript modules re-export mactypes module as part of their public APIs.
+
+- added errornumber, errormessage, offendingobject, expectedtype, partialresult properties to aem.CommandError, appscript.CommandError
+
+- aem.CommandError, appscript.CommandError now include any additional error info provided by applications (i.e. offending object, expected type, partial result) in error messages
+
+- fixed bug in appscript.Reference.AS_newreference
 
 - help system now encodes text to UTF8 before writing it to stderr
 
-- added Command, Reference, Application, Keyword, GenericReference, GenericApp classes to appscript's top-level namespace for occasional typechecking purposes only. Note that these are not added to the parent namespace when 'from appscript import *' is used, so must be referred to as follows [e.g.]:
-
-	import appscript
-	isinstance(obj, appscript.Reference)
+- added Command, Reference, Application, Keyword, GenericReference, GenericApp classes to appscript's top-level namespace for occasional typechecking purposes only. Note: to avoid excessive namespace pollution, these classes are not added to the parent namespace when 'from appscript import *' is used, so must always be referred to as attributes of the appscript module, e.g. appscript.Reference
 
 - added default definitions for 'item' type, 'items' elements, 'properties' property as Apple have removed the 'item' class definition from skeleton.sdef (the default terminology for Cocoa apps)
+
+- in KeywordShim, added __repr__; __getattr__ now delegates any magic method calls to object superclass, e.g. 'import appscript; print appscript.k' now prints 'k' instead of erroring
+
+- improved error reporting in Reference.__getitem__ when a malformed generic reference containing a command expands to a non-reference value. e.g. its.name.get() would previously expand the the value of the object's 'name' property, typically a string, resulting in a cryptic AttributeError; this now raises a descriptive ValueError.
+
+- Removed the following Carbon.File-dependent methods from mactypes.Alias, mactypes.File: makewithfsalias, makewithfsref, makewithfsspec, fsalias, fsref, fsspec. Added makewithhfspath, hfspath methods. Renamed makewithaedesc, aedesc methods to makewithdesc, desc. Users should update any existing code that refers to these methods as needed.
+
+- mactypes.Alias.__init__, mactypes.File.__init__ now normalise paths, e.g. this allows relative paths to be used
+
+- Alias constructor now raises ValueError instead of MacOS.Error(-1700) if file not found; clients should update any existing code as needed.
+
 
 
 2007-12-19 -- 0.18.0
 
-See doc/*-manual/CHANGES-OLD for older changes.
+See separate doc/*-manual/CHANGES-OLD files for older changes.

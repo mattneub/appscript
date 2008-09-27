@@ -87,7 +87,7 @@ class Event(object):
 						eMsg = eventResult.get(kae.keyErrorString)
 						if eMsg:
 							eMsg = _defaultCodecs.unpack(eMsg)
-						raise CommandError(eNum, eMsg, replyEvent)
+						raise CommandError(eNum, eMsg, eventResult)
 				if kae.keyAEResult in eventResult: # application has returned a value
 					# note: unpack result with [optionally] user-specified codecs, allowing clients to customise unpacking (e.g. appscript)
 					return self._codecs.unpack(eventResult[kae.keyAEResult])
@@ -100,10 +100,28 @@ class Event(object):
 class CommandError(MacOSError):
 	"""Represents an error message returned by application/Apple Event Manager.
 	
-		Attributes:
-			number : int -- MacOS error number
-			message : str | None -- application error message, if any
-			raw : AppleEvent | None -- raw reply event, in case alternate/additional processing of error info is required, or None if error occurred while outgoing event was being sent
+		Properties:
+			
+			# basic error info:
+			
+			errornumber : int -- MacOS error number
+			errormessage : str -- application-supplied/generic error description
+			
+			# extended error info provided by some applications:
+			
+			offendingobject : anything | None
+			expectedtype : anything | None
+			partialresult : anything | None
+		
+		Notes:
+		
+			- the public 'number' and 'message' attributes are deprecated and will
+				be private in a future release; clients should use errornumber,
+				errormessage properties instead
+			
+			- the 'raw' attribute contains either a dict containing the reply event's 
+				raw parameters, or None if the error occurred while sending the 
+				outgoing event; third-parties should avoid using this directly
 	"""
 	
 	_carbonerrors = { # Following error descriptions are mostly cribbed from AppleScript Language Guide.
@@ -222,6 +240,8 @@ class CommandError(MacOSError):
 	
 	def __init__(self, number, message, raw):
 		MacOSError.__init__(self, number)
+		# TO DO: make number, message attributes private 
+		# (clients should use errornumber, errormessage instead)
 		self.number, self.message, self.raw = number, message, raw
 	
 	def __repr__(self):
@@ -231,6 +251,13 @@ class CommandError(MacOSError):
 		return self.number
 	
 	def __str__(self):
+		return "CommandError: %s (%i)" % (self.errormessage, self.number)
+	
+	# basic error info (an error number is always given by AEM/application;
+	# message is either supplied by application or generated here)	
+	errornumber = property(lambda self: self.number)
+	
+	def errormessage(self):
 		message = self.message
 		if self.number > 0:
 			for name, description in self._cocoaerrors:
@@ -239,5 +266,20 @@ class CommandError(MacOSError):
 					break
 		elif not message:
 			message = self._carbonerrors.get(self.number, 'OS error')
-		return "CommandError: %s (%i)" % (message, self.number)
+		return message
+	errormessage = property(errormessage)
+	
+	# extended error info (some apps may return additional error info, though most don't)
+
+	def _errorinfo(self, key):
+		if self.raw:
+			desc = self.raw.get(key)
+			if desc:
+				return _defaultCodecs.unpack(desc)
+		return None
+	
+	offendingobject = property(lambda self: self._errorinfo(kae.kOSAErrorOffendingObject))
+	expectedtype = property(lambda self: self._errorinfo(kae.kOSAErrorExpectedType))
+	partialresult = property(lambda self: self._errorinfo(kae.kOSAErrorPartialResult))
+
 

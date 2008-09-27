@@ -22,7 +22,7 @@
 <div id="content">
 <h2>What is mactypes?</h2>
 
-<p>The mactypes module provides user-friendly wrappers for OS X Alias and FSRef/FSSpec/FileURL objects, commonly used by scriptable applications to identify filesystem objects and locations, and for unit type values used by some applications to represent lengths, etc.</p>
+<p>The mactypes module provides user-friendly wrappers for Alias and FSRef/FSSpec/FileURL objects, commonly used by scriptable applications to identify filesystem objects and locations, and for unit type values used by some applications to represent lengths, etc.</p>
 
 <p class="hilitebox">Note that most scriptable applications do not use or understand POSIX paths, and while the Apple Event Manager does provide some built-in coercions for converting between path strings and alias/file objects, these work with HFS paths only. Therefore, when specifying files and folders to scriptable applications, use <code>mactypes.Alias</code> and <code>mactypes.File</code> objects - not path strings - unless otherwise indicated.</p>
 
@@ -88,8 +88,9 @@ Alias('/some/non/existent/location')
 
 <h3>Notes</h3>
 
-<p>Note that comparing an <code>Alias</code> object against a <code>File</code> object always returns false, even if both point to the same location.</p>
+<p>When creating an <code>Alias</code> instance, POSIX paths may be either relative or absolute and are automatically normalised using <code>os.path.abspath</code>. Paths to non-existent filesystem locations will result in a <code>ValueError</code> being raised.</p>
 
+<p>Note that comparing an <code>Alias</code> object against a <code>File</code> object always returns false, even if both point to the same location.</p>
 
 
 <h2><code>mactypes.File</code></h2>
@@ -123,7 +124,7 @@ Alias('/some/non/existent/location')
 
         url : string -- file URL
 
-        file : macfile.File -- a new path-based File object
+        file : macfile.File -- a new File object
 
         alias : macfile.Alias
 
@@ -152,22 +153,34 @@ app('TextEdit').documents[1].save(in_=f)
 
 <h3>Notes</h3>
 
-<p>Unlike the <code>Alias</code> class which represents <code>typeAlias</code> values only, the <code>File</code> class provides a uniform wrapper for several file-related types that may be returned by applications: <code>typeFSS</code>, <code>typeFSRef</code> and <code>typeFileURL</code>. When passing <code>File</code> values to applications, you should not normally need to worry about which value type a <code>File</code> object contains as well-designed applications will ask the Apple Event Manager to coerce the given value to the desired type as necessary.</p>
+<p>When creating a <code>File</code> instance, POSIX paths may be either relative or absolute and are automatically normalised using <code>os.path.abspath</code>.</p>
 
-<p>When dealing with less well-behaved applications, however, you may need to pass it an <code>FSRef</code> or <code>FSSpec</code> value yourself. In this case you should use the <code>File</code> object's <code>fsref</code> or <code>fsspec</code> property to obtain the appropriate <code>Carbon.File</code> object. For example, if an older Carbon application refuses to accept a FileURL identifying a non-existing file location, you may need to provide a FSSpec instead:</p>
+<p>When comparing <code>File</code> objects for equality, <code>File.__eq__</code> will perform a case-sensitive comparison of their file paths. Client that need to perform (for example) case-insensitive comparisons should obtain path strings from each <code>File</code> object, then normalise and compare those values as necessary</p>
 
-<pre><code>from appscript import *
-from mactypes import *
+<p>Unlike the <code>Alias</code> class which represents <code>typeAlias</code> values only, the <code>File</code> class provides a uniform wrapper for several file-related types that may be returned by applications:</p>
 
-f = File('/Users/foo/new file')
+<ul>
+<li>AEDescs of <code>typeFileURL</code> can represent both existing and non-existing locations, although may not be recognised by some older Carbon-based applications.</li>
 
-app('older app').documents[1].save(in_=f.fsspec)</code></pre>
+<li>AEDescs of <code>typeFSRef</code> can represent existing filesystem locations only.</li>
+
+<li>AEDescs of <code>typeFSS</code> (FSSpecs) can represent non-existing items in existing locations. However, they are deprecated on Mac OS X and not fully supported on 64-bit due to lack of proper Unicode and long filename support, and are retained for backwards compatibility with older applications only.</li>
+</ul>
+
 
 <p>When used in an application command, a <code>File</code> object returned by appscript will always pack into the same <code>typeFSRef</code>, <code>typeFileURL</code> or <code>typeFSS</code> AEDesc it was created from. A <code>File</code> object created using the default constructor or the <code>Alias.file</code> or <code>File.file</code> methods will always pack into an AEDesc of <code>typeFileURL</code>.</p>
 
-<p>When comparing <code>File</code> objects, <code>File.__eq__</code> will use OS routines to test for equality if both items exist, otherwise it will perform a case-sensitive comparison of file paths.</p>
 
-<p>Note that AEDescs of <code>typeFSRef</code> can represent existing filesystem locations only. AEDescs of <code>typeFileURL</code> can represent both existing and non-existing locations. AEDescs of <code>typeFSS</code> (FSSpecs) are deprecated on Mac OS X and not fully supported on 64-bit due to lack of proper Unicode and long filename support, and are retained for backwards compatibility with older applications only.</p>
+<p>When passing <code>File</code> values to applications, you should not normally need to worry about which value type a <code>File</code> object contains as well-designed applications will ask the Apple Event Manager to coerce the given value to the desired type as necessary. If dealing with a not-so-well-designed application that only accepts an AEDesc of a specific type (<code>typeFSRef</code>, <code>typeFSS</code> or <code>typeFileURL</code>), first obtain an AEDesc via the <code>File</code> object's <code>desc</code> method, then coerce it to the desired type before using it in an application command. For example:
+
+<pre><code>from appscript import *
+from aem import kae
+
+fileurl = mactypes.File('/Users/foo/new file')
+fssdesc = fileurl.desc.AECoerceDesc(kae.typeFSS)
+
+app('older app').documents[1].save(in_=fssdesc)</code></pre>
+
 
 
 <h2><code>mactypes.Units</code></h2>

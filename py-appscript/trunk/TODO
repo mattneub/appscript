@@ -22,10 +22,7 @@ TO DO
 - find a way to avoid GUI process starting when running from python2.4/python2.5; calling Process Manager functions (GetNextEvent, GetProcessBundleLocation, LaunchApplication) seems to trigger this. e.g. Might be BSD APIs that could be used instead.
 
 
-- in CommandError, extract and report any kOSA... error parameters, if present
-
-
-- ae.AEGetEventHandler, ae.AEGetCoercionHandler functions will crash when getting C-based callbacks
+- ae.AEGetEventHandler, ae.AEGetCoercionHandler functions will crash when getting C-based callbacks (to fix this, would need to check if function is GenericEventHandler/GenericCoercionHandler, and if not, wrap and return the function pointer as [e.g.] a Python CObject)
 
 
 ----------------------------------------------------------------------
@@ -48,7 +45,7 @@ print its == its.eq(True)
 - How should terminology module handle malformed aetes? Ignore them? Raise proper error (except for zero-length aetes, which AS seems to ignore)?
 
 
-- Introspection support. Users should be able to examine both references' structure and obtain terminology for the referenced properties and elements.
+- Introspection support? (Do clients really need ability to examine references' structure? What about getting lists of supported property, element, type, enum and command names, as in rb-appscript?)
 
 
 - More tests.
@@ -65,7 +62,7 @@ print its == its.eq(True)
 
 ============================ mactypes ============================
 
-- make comparisons more robust; make hashes smarter (if possible)
+- make comparisons more robust? make hashes smarter (if possible)? (note: if clients need to perform more sophisticated, e.g. case-insensitive, comparisons, particularly for File objects, they should probably do this themselves)
 
 
 ============================ osax ============================
