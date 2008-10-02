@@ -9,6 +9,8 @@ This will build and open a binary installer for the appscript packages, document
 
 aeserver requires MacPython 2.3 or later and Mac OS X 10.3 or later.
 
+Python 3.0 is currently not supported.
+
 
 ======================================================================
 DEPENDENCIES
@@ -19,7 +21,9 @@ DEPENDENCIES
 ======================================================================
 NOTES
 
-- sfba module is 32-bit only due to dependency on Python's Carbon.CarbonEvt extension
+- The aeserver project currently contains a single package, aemreceive, that provides mid-level support for handling Apple events.
+
+- aemreceive should now provide full 64-bit support with the exception of the optional aemreceive.sfba module (used to implement scriptable faceless background applications, typically used as AppleScript extensions), which is 32-bit only due to its use of Python's 32-bit Carbon.CarbonEvt extension to provide a main event loop.
 
 
 ======================================================================
