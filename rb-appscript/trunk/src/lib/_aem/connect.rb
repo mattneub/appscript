@@ -124,6 +124,7 @@ module Connect
 	def Connect.process_exists_for_url?(url)
 		# Does an application process specified by the given eppc:// URL exist?
 		# Note: this will send a 'launch' Apple event to the target application.
+		raise ArgumentError, "Invalid url: #{url}" if not url.include?(':') # workaround: process will crash if no colon in URL (OS bug)
 		return process_exists_for_desc?(AE::AEDesc.new(KAE::TypeApplicationURL, url))
 	end
 	
@@ -177,6 +178,7 @@ module Connect
 		# Make an AEAddressDesc identifying a running application on another machine.
 		#	url : string -- URL for remote application, e.g. 'eppc://user:password@0.0.0.1/TextEdit'
 		#	Result : AEAddressDesc
+		raise ArgumentError, "Invalid url: #{url}" if not url.include?(':') # workaround: process will crash if no colon in URL (OS bug)
 		return AE::AEDesc.new(KAE::TypeApplicationURL, url)
 	end
 end

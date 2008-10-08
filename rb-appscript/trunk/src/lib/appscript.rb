@@ -641,8 +641,10 @@ module Appscript
 			selector_type, code = @AS_app_data.reference_by_name[name]
 			case selector_type # check if name is a property/element/command name, and if it is handle accordingly
 				when :property
+					raise ArgumentError, "wrong number of arguments for '#{name}' property (1 for 0)" if args != []
 					return Reference.new(@AS_app_data, @AS_aem_reference.property(code))
 				when :element
+					raise ArgumentError, "wrong number of arguments for '#{name}' elements (1 for 0)" if args != []
 					return Reference.new(@AS_app_data, @AS_aem_reference.elements(code))
 				when :command
 					return _send_command(args, name, code[0], code[1])
@@ -698,7 +700,12 @@ module Appscript
 					when Appscript::GenericReference, Appscript::Reference, AEMReference::Test
 						case selector
 							when Appscript::GenericReference
-								test_clause = selector.AS_resolve(@AS_app_data).AS_aem_reference
+								test_clause = selector.AS_resolve(@AS_app_data)
+								begin
+									test_clause = test_clause.AS_aem_reference
+								rescue NoMethodError
+									raise ArgumentError, "Not a valid its-based test: #{selector}"
+								end
 							when Appscript::Reference
 								test_clause = selector.AS_aem_reference
 						else

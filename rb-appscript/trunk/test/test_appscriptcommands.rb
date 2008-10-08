@@ -130,7 +130,7 @@ class TC_AppscriptCommands < Test::Unit::TestCase
 			@f.items[10000].get
 		rescue Appscript::CommandError => e
 			assert_equal(-1728, e.to_i)
-			assert_equal("CommandError\n\t\tOSERROR: -1728\n\t\tMESSAGE: Can't get reference.\n\t\tCOMMAND: app(\"/System/Library/CoreServices/Finder.app\").items[10000].get()\n", e.to_s)
+			assert_equal("CommandError\n\t\tOSERROR: -1728\n\t\tMESSAGE: Can't get reference.\n\t\tOFFENDING OBJECT: app(\"/System/Library/CoreServices/Finder.app\").items[10000]\n\t\tCOMMAND: app(\"/System/Library/CoreServices/Finder.app\").items[10000].get()\n", e.to_s)
 			assert_instance_of(AEM::CommandError, e.real_error)
 		end
 	end

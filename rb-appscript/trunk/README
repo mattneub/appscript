@@ -27,6 +27,10 @@ Please note that the version of Ruby included with Mac OS X 10.4 (Tiger) is miss
 ======================================================================
 NOTES
 
+- Developer tools for exporting application dictionaries (ASDictionary) and converting application commands from AppleScript to appscript syntax (ASTranslate) are available separately:
+
+	http://appscript.sourceforge.net/tools.html
+
 - This is a beta release. Please file bug reports if you encounter any problems.
 
 - rb-appscript 0.5.1 contains bug and compatibility fixes; see the CHANGES file and documentation for details.

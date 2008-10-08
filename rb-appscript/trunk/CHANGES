@@ -6,6 +6,14 @@
 
 - added default definitions for 'item' type, 'items' elements, 'properties' property as Apple have removed the 'item' class definition from skeleton.sdef (the default terminology for Cocoa apps)
 
+- property and elements methods now raise ArgumentError if passed arguments; previously, malformed elements selectors, e.g. app('TextEdit').documents(1).text, would be silently ignored, resulting in unexpected behaviour
+
+- Codecs#unpack now tries to coerce descriptors of typeVersion to unicode text (works on 10.4+) c.f. AppleScript (note: itunes.version.get returns the wrong version number otherwise; this appears to be an iTunes bug, but is masked by current AppleScript behaviour)
+
+- #process_exists_for_url?, #remote_app in connect.rb now raise error if URL string doesn't contain a colon (process will crash otherwise due to an OS bug)
+
+- improved error reporting in Reference#[] when a malformed generic reference containing a command expands to a non-reference value. e.g. its.name.get() would previously expand the the value of the object's 'name' property, typically a string, resulting in a cryptic NoMethodError; this now raises a descriptive ArgumentError.
+
 
 2008-02-18 -- 0.5.1
 

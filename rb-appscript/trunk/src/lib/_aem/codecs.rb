@@ -393,10 +393,13 @@ class Codecs
 			when KAE::TypeRGBColor then desc.data.unpack('SSS')
 				
 			when KAE::TypeVersion
-				vers, lo = desc.data.unpack('CC')
-				subvers, patch = lo.divmod(16)
-				"#{vers}.#{subvers}.#{patch}"
-				
+				begin
+					unpack(desc.coerce(KAE::TypeUnicodeText)) # supported in 10.4+
+				rescue
+					vers, lo = desc.data.unpack('CC')
+					subvers, patch = lo.divmod(16)
+					"#{vers}.#{subvers}.#{patch}"
+				end	
 			when KAE::TypeBoolean then desc.data != "\000"
 			
 			when KAE::TypeUInt16 then desc.data.unpack('S')[0] # 10.5+
