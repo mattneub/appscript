@@ -424,7 +424,7 @@ module Appscript
 			if @AS_aem_reference != AEMApplicationRoot
 				if eventClass == KAE::KAECoreSuite and eventID == KAE::KAESetData
 					if direct_param != Appscript::NOVALUE and not keyword_args.has_key?(KAE::KeyAEData)
-						keyword_args[KAE::KeyAEData] = direct_param
+						keyword_args[:to] = direct_param
 						direct_param = @AS_aem_reference
 					elsif direct_param != Appscript::NOVALUE
 						subject_attr = @AS_aem_reference
@@ -433,8 +433,8 @@ module Appscript
 					end
 				elsif eventClass == KAE::KAECoreSuite and eventID == KAE::KAECreateElement
 					if @AS_aem_reference.is_a?(AEMInsertionSpecifier) \
-							and not keyword_args.has_key?(KAE::KeyAEInsertHere)
-						keyword_args[KAE::KeyAEInsertHere] = @AS_aem_reference
+							and not keyword_args.has_key?(:at)
+						keyword_args[:at] = @AS_aem_reference
 					else
 						subject_attr = @AS_aem_reference
 					end
@@ -454,7 +454,7 @@ module Appscript
 			# extract labelled parameters, if any
 			keyword_args.each do |param_name, param_value|
 				param_code = definition.parameterForName(param_name)
-				raise ArgumentError, "Unknown keyword parameter: #{param_name}" if param_code == nil
+				raise ArgumentError, "Unknown keyword parameter: #{param_name}" if param_code == nil # TO DO: param_code is 0, not nil, on error
 				event.setParameter(param_value, forKeyword:param_code)
 			end
 			# build and send the Apple event, returning its result, if any
