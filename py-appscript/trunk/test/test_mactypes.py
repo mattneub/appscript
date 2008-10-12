@@ -18,11 +18,15 @@ class TC_MacTypes(unittest.TestCase):
 	def test_alias(self):
 		# make alias
 		self.f = mactypes.Alias(self.path1)
+				
+		path1 = self.path1
+		if not path1.startswith('/private/'):
+			path1 = '/private' + path1 # KLUDGE: allow for altered temp path
 		
-		self.assertEqual("mactypes.Alias(u%r)" % self.path1,  repr(self.f))
+		self.assertEqual("mactypes.Alias(u%r)" % path1,  repr(self.f))
 		
 		#print "alias path 1: %s" % f.path # e.g. /private/tmp/py-mactypes-test.VLrUW7
-		self.assertEqual(self.path1, self.f.path)
+		self.assertEqual(path1, self.f.path)
 		
 		# get desc
 		#print `f.desc.type, f.desc.data` # alis, [binary data]
@@ -30,7 +34,7 @@ class TC_MacTypes(unittest.TestCase):
 
 		
 		# check alias keeps track of moved file
-		os.rename(self.path1, self.path2)
+		os.rename(path1, self.path2)
 		# print "alias path 2: %r" % f.path # /private/tmp/moved-py-mactypes-test.VLrUW7
 		self.assertEqual(self.path2, self.f.path)
 

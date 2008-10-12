@@ -18,7 +18,7 @@ NOTES
 
 - The following modules now provide full 64-bit support: aem, appscript, mactypes. The osax module currently provides partial 64-bit support; see doc/osax-manual for details.
 
-- Note that the CarbonX package is deprecated and will be removed completely in the next release. Client code that refers to CarbonX.AE and/or CarbonX.kAE should be updated to use aem.ae and/or aem.kae instead.
+- Note that the CarbonX package is deprecated and will be removed completely in the next release; client code that refers to CarbonX.AE and/or CarbonX.kAE should be updated to use aem.ae and/or aem.kae instead. The 'number' and 'message' attributes in aem.CommandError are also deprecated and will be removed in the next release; clients should use errornumber and errormessage attributes instead.
 
 - Developer tools for exporting application dictionaries (ASDictionary) and converting application commands from AppleScript to appscript syntax (ASTranslate) are available separately:
 
@@ -32,11 +32,11 @@ NOTES
 ======================================================================
 AUTHOR
 
-- HAS -- hhas -at- users - sourceforge - net <http://rb-appscript.rubyforge.org> <http://appscript.sourceforge.net>
+- HAS -- hhas -at- users - sourceforge - net <http://appscript.sourceforge.net>
 
 
 ======================================================================
 COPYRIGHT
 
-(C) 2003 - 2008 HAS <hhas -at- users - sourceforge - net> <http://appscript.sourceforge.net>
+(C) 2003 - 2008 HAS <http://appscript.sourceforge.net>
 

@@ -1,4 +1,4 @@
-2008-09-27 -- 0.19.0
+2008-10-12 -- 0.19.0
 
 - The following packages/modules have been removed from the appscript distribution:
 
@@ -39,6 +39,8 @@ The aemreceive, osascript and osaterminology packages can be obtained separately
 
 - For convenience, aem and appscript modules re-export mactypes module as part of their public APIs.
 
+- added compatibility fix to aem.Codecs packUnicodeText, unpackUnicodeText due to change in behaviour of unicode(data, 'utf16') in Python 2.6
+
 - added errornumber, errormessage, offendingobject, expectedtype, partialresult properties to aem.CommandError, appscript.CommandError
 
 - aem.CommandError, appscript.CommandError now include any additional error info provided by applications (i.e. offending object, expected type, partial result) in error messages
@@ -57,7 +59,7 @@ The aemreceive, osascript and osaterminology packages can be obtained separately
 
 - Removed the following Carbon.File-dependent methods from mactypes.Alias, mactypes.File: makewithfsalias, makewithfsref, makewithfsspec, fsalias, fsref, fsspec. Added makewithhfspath, hfspath methods. Renamed makewithaedesc, aedesc methods to makewithdesc, desc. Users should update any existing code that refers to these methods as needed.
 
-- mactypes.Alias.__init__, mactypes.File.__init__ now normalise paths, e.g. this allows relative paths to be used
+- mactypes.Alias.__init__, mactypes.File.__init__ now use os.path.abspath to normalise path parameter; this allows relative as well as absolute paths to be used as arguments
 
 - Alias constructor now raises ValueError instead of MacOS.Error(-1700) if file not found; clients should update any existing code as needed.
 

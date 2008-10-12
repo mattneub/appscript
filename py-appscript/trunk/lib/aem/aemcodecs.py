@@ -4,7 +4,7 @@
 """
 
 import struct, datetime, time
-from codecs import BOM_UTF16_LE
+from codecs import BOM_UTF16_LE, BOM_UTF16_BE
 
 import kae
 from ae import AEDesc, AECreateDesc, AECreateList
@@ -19,8 +19,10 @@ import aemreference, mactypes
 
 if struct.pack("h", 1) == '\x00\x01': # host is big-endian
 	fourcharcode = lambda code: code
+	nativeutf16encoding = 'UTF-16BE'
 else: # host is small-endian
 	fourcharcode = lambda code: code[::-1]
+	nativeutf16encoding = 'UTF-16LE'
 
 
 class _Ordinal:
@@ -359,7 +361,10 @@ class Codecs:
 		# handle BOMs correctly; note: while typeUnicodeText is not recommended as of OS 10.4, it's still
 		# being used rather than typeUTF8Text or typeUTF16ExternalRepresentation to provide compatibility
 		#with not-so-well-designed applications that may have problems with these newer types.
-		return AECreateDesc(kae.typeUnicodeText, val.encode('utf16')[2:])
+		data = val.encode(nativeutf16encoding)
+		if data.startswith(BOM_UTF16_LE) or data.startswith(BOM_UTF16_BE):
+			data = data[2:]
+		return AECreateDesc(kae.typeUnicodeText, data)
 	
 	def packStr(self, val):
 		return AECreateDesc(kae.typeChar, val)
@@ -489,7 +494,13 @@ class Codecs:
 	
 	def unpackUnicodeText(self, desc):
 		# typeUnicodeText = native endian UTF16 with optional BOM
-		return unicode(desc.data, 'utf16')
+		data = desc.data
+		if data.startswith(BOM_UTF16_BE):
+			return unicode(data, 'UTF-16BE')
+		elif data.startswith(BOM_UTF16_LE):
+			return unicode(data, 'UTF-16LE')
+		else:
+			return unicode(data, nativeutf16encoding)
 	
 	def unpackUTF16ExternalRepresentation(self, desc): 
 		# type UTF16ExternalRepresentation = big-endian UTF16 with optional byte-order-mark 

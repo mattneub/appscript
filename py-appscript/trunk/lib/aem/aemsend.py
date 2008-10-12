@@ -99,19 +99,6 @@ class Event(object):
 
 class CommandError(MacOSError):
 	"""Represents an error message returned by application/Apple Event Manager.
-	
-		Properties:
-			
-			# basic error info:
-			
-			errornumber : int -- MacOS error number
-			errormessage : str -- application-supplied/generic error description
-			
-			# extended error info provided by some applications:
-			
-			offendingobject : anything | None
-			expectedtype : anything | None
-			partialresult : anything | None
 		
 		Notes:
 		
@@ -121,7 +108,8 @@ class CommandError(MacOSError):
 			
 			- the 'raw' attribute contains either a dict containing the reply event's 
 				raw parameters, or None if the error occurred while sending the 
-				outgoing event; third-parties should avoid using this directly
+				outgoing event; used by appscript.CommandError; third-parties 
+				should avoid using it directly
 	"""
 	
 	_carbonerrors = { # Following error descriptions are mostly cribbed from AppleScript Language Guide.
@@ -240,46 +228,55 @@ class CommandError(MacOSError):
 	
 	def __init__(self, number, message, raw):
 		MacOSError.__init__(self, number)
-		# TO DO: make number, message attributes private 
-		# (clients should use errornumber, errormessage instead)
-		self.number, self.message, self.raw = number, message, raw
+		self._number, self._message, self._raw = number, message, raw
+	
+	# TO DO: remove deprecated 'number' and 'message' properties
+	# (clients should use errornumber, errormessage instead)
+	number = property(lambda self: self._number)
+	message = property(lambda self: self._message)
+	
+	raw = property(lambda self: self._raw, 
+			doc="dict -- raw error data (note: clients should not need to use this directly)")
 	
 	def __repr__(self):
-		return "aem.CommandError(%r, %r, %r)" % (self.number, self.message, self.raw)
+		return "aem.CommandError(%r, %r, %r)" % (self._number, self._message, self._raw)
 		
 	def __int__(self):
-		return self.number
+		return self._number
 	
 	def __str__(self):
-		return "CommandError: %s (%i)" % (self.errormessage, self.number)
+		return "CommandError: %s (%i)" % (self.errormessage, self.errornumber)
 	
 	# basic error info (an error number is always given by AEM/application;
 	# message is either supplied by application or generated here)	
-	errornumber = property(lambda self: self.number)
+	errornumber = property(lambda self: self._number, doc="int -- Mac OS error number")
 	
 	def errormessage(self):
-		message = self.message
-		if self.number > 0:
+		message = self._message
+		if self._number > 0:
 			for name, description in self._cocoaerrors:
 				if message.startswith(name):
 					message = '%s (%s)' % (message, description)
 					break
 		elif not message:
-			message = self._carbonerrors.get(self.number, 'OS error')
+			message = self._carbonerrors.get(self._number, 'OS error')
 		return message
-	errormessage = property(errormessage)
+	errormessage = property(errormessage, 
+			doc="str -- application-supplied/generic error description")
 	
 	# extended error info (some apps may return additional error info, though most don't)
 
 	def _errorinfo(self, key):
-		if self.raw:
-			desc = self.raw.get(key)
+		if self._raw:
+			desc = self._raw.get(key)
 			if desc:
 				return _defaultCodecs.unpack(desc)
 		return None
 	
-	offendingobject = property(lambda self: self._errorinfo(kae.kOSAErrorOffendingObject))
-	expectedtype = property(lambda self: self._errorinfo(kae.kOSAErrorExpectedType))
-	partialresult = property(lambda self: self._errorinfo(kae.kOSAErrorPartialResult))
-
+	offendingobject = property(lambda self: self._errorinfo(kae.kOSAErrorOffendingObject),
+			doc="anything | None -- object that caused the error, if given by application")
+	expectedtype = property(lambda self: self._errorinfo(kae.kOSAErrorExpectedType),
+			doc="anything | None -- object that caused a coercion error, if given by application")
+	partialresult = property(lambda self: self._errorinfo(kae.kOSAErrorPartialResult),
+			doc="anything | None -- part of return value constructed before error occured, if given by application")
 
