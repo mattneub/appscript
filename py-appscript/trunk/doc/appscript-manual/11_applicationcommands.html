@@ -20,9 +20,11 @@
 
 <!-- content -->
 <div id="content">
+
+<h2>Command syntax</h2>
+
 <p>For convenience, appscript makes application commands available as methods on every reference. (Note: due to the limitations of aete-based terminology, the user must determine for themselves which commands can operate on a particular reference. Some applications document this information separately.)</p>
 
-<p>Syntax:</p>
 <pre><code>reference.command_name(*arg, **args, waitreply=True,
          timeout=60, resulttype=None, ignore=None)
     *arg : anything -- direct arg, if any
@@ -35,9 +37,12 @@
                                        when evaluating references [1]
     Result : anything -- value returned by application, if any</code></pre>
 
-<p>[1] Introduced in OS 10.4. Note that most applications currently ignore this setting and use default behaviour (ignore case). The Keyword list should contain zero or more of the following enumerators: <code>k.case</code>, <code>k.diacriticals</code>, <code>k.expansion</code>, <code>k.hyphens</code>, <code>k.punctuation</code>, <code>k.whitespace</code>.</p>
 
-<p>Examples:</p>
+<!-- TO DO: expand descriptions of above args -->
+
+<p>[1] The Keyword list should contain zero or more of the following enumerators: <code>k.case</code>, <code>k.diacriticals</code>, <code>k.expansion</code>, <code>k.hyphens</code>, <code>k.punctuation</code>, <code>k.whitespace</code>. Note that most applications currently ignore this setting and use default behaviour (ignore case).</p>
+
+<h2>Examples</h2>
 
 <pre><code># tell application &quot;TextEdit&quot; to activate
 app('TextEdit').activate()
@@ -120,6 +125,32 @@ app('Finder').home.items.get(resulttype=k.alias)</code></pre>
 <pre><code>reference.get()</code></pre>
 </li>
 </ol>
+
+
+<h2>Command errors</h2>
+
+
+<p>The <code>appscript.CommandError</code> exception describes an error raised by the target application or Apple Event Manager when sending a command.</p>
+
+<pre><code>CommandError(Exception)
+
+    Properties (read-only):
+        errornumber : int -- Mac OS error number
+        errormessage : str -- application-supplied/generic error description
+        offendingobject : anything | None -- object that caused the error, 
+                                             if given by application
+        expectedtype : anything | None -- object that caused a coercion error, 
+                                          if given by application
+        partialresult : anything | None -- part of return value constructed 
+                                           before error occurred, if given 
+                                           by application
+
+    Methods:
+    
+        __int__() -- Mac OS error number
+
+        __str__() -- formatted description of error</code></pre>
+
 
 
 <h2>Note to AppleScript users</h2>

@@ -41,6 +41,8 @@ The aemreceive, osascript and osaterminology packages can be obtained separately
 
 - added compatibility fix to aem.Codecs packUnicodeText, unpackUnicodeText due to change in behaviour of unicode(data, 'utf16') in Python 2.6
 
+- renamed aem.Event._createAppleEvent, aem.Event._sendAppleEvent hook methods to _createappleevent, _sendappleevent
+
 - added errornumber, errormessage, offendingobject, expectedtype, partialresult properties to aem.CommandError, appscript.CommandError
 
 - aem.CommandError, appscript.CommandError now include any additional error info provided by applications (i.e. offending object, expected type, partial result) in error messages

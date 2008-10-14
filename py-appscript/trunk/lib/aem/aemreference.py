@@ -571,6 +571,9 @@ class DeferredSpecifier(Query):
 	def __eq__(self, v):
 		return self._realRef() == v
 	
+	def __hash__(self):
+		return hash(self._realRef())
+	
 	def AEM_root(self):
 		return self._realRef().AEM_root()
 	

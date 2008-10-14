@@ -38,7 +38,7 @@ class Event(object):
 		"""
 		self._eventCode = event
 		self._codecs = codecs
-		self.AEM_event = self._createAppleEvent(event[:4], event[4:], address, returnid, transaction)
+		self.AEM_event = self._createappleevent(event[:4], event[4:], address, returnid, transaction)
 		for key, value in atts.items():
 			self.AEM_event.AEPutAttributeDesc(key, codecs.pack(value))
 		for key, value in params.items():
@@ -46,9 +46,9 @@ class Event(object):
 	
 	# Hooks
 	
-	_createAppleEvent = AECreateAppleEvent
+	_createappleevent = AECreateAppleEvent
 	
-	def _sendAppleEvent(self, flags, timeout):
+	def _sendappleevent(self, flags, timeout):
 		"""Hook method; may be overridden to modify event sending."""
 		return self.AEM_event.AESendMessage(flags, timeout)
 	
@@ -69,10 +69,10 @@ class Event(object):
 				[ aem.k.CanSwitchLayer ]
 		"""
 		try:
-			replyEvent = self._sendAppleEvent(flags, timeout)
+			replyEvent = self._sendappleevent(flags, timeout)
 		except MacOSError, err: # an OS-level error occurred
 			if not (self._eventCode == 'aevtquit' and err[0] == -609): # Ignore invalid connection error (-609) when quitting
-				raise CommandError(err[0], '', None)
+				raise CommandError(err[0])
 		else: # decode application's reply, if any
 			if replyEvent.type != kae.typeNull:
 				eventResult = dict([replyEvent.AEGetNthDesc(i + 1, kae.typeWildCard) 
@@ -107,8 +107,8 @@ class CommandError(MacOSError):
 				errormessage properties instead
 			
 			- the 'raw' attribute contains either a dict containing the reply event's 
-				raw parameters, or None if the error occurred while sending the 
-				outgoing event; used by appscript.CommandError; third-parties 
+				raw parameters, or an empty dict if the error occurred while sending 
+				the outgoing event; used by appscript.CommandError; third-parties 
 				should avoid using it directly
 	"""
 	
@@ -226,7 +226,7 @@ class CommandError(MacOSError):
 		('NSOperationNotSupportedForKeySpecifierError', 'Attempt made to perform an unsupported operation on some key.'),
 	)
 	
-	def __init__(self, number, message, raw):
+	def __init__(self, number, message='', raw=None):
 		MacOSError.__init__(self, number)
 		self._number, self._message, self._raw = number, message, raw
 	
@@ -235,8 +235,8 @@ class CommandError(MacOSError):
 	number = property(lambda self: self._number)
 	message = property(lambda self: self._message)
 	
-	raw = property(lambda self: self._raw, 
-			doc="dict -- raw error data (note: clients should not need to use this directly)")
+	raw = property(lambda self: self._raw or {}, 
+			doc="dict -- raw error data from reply event, if any (note: clients should not need to use this directly)")
 	
 	def __repr__(self):
 		return "aem.CommandError(%r, %r, %r)" % (self._number, self._message, self._raw)
@@ -278,5 +278,5 @@ class CommandError(MacOSError):
 	expectedtype = property(lambda self: self._errorinfo(kae.kOSAErrorExpectedType),
 			doc="anything | None -- object that caused a coercion error, if given by application")
 	partialresult = property(lambda self: self._errorinfo(kae.kOSAErrorPartialResult),
-			doc="anything | None -- part of return value constructed before error occured, if given by application")
+			doc="anything | None -- part of return value constructed before error occurred, if given by application")
 

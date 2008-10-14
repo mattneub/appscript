@@ -816,6 +816,6 @@ class CommandError(Exception):
 	expectedtype = property(lambda self: self._errorinfo(kae.kOSAErrorExpectedType),
 			doc="anything | None -- object that caused a coercion error, if given by application")
 	partialresult = property(lambda self: self._errorinfo(kae.kOSAErrorPartialResult),
-			doc="anything | None -- part of return value constructed before error occured, if given by application")
+			doc="anything | None -- part of return value constructed before error occurred, if given by application")
 
 

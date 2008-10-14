@@ -30,7 +30,7 @@
 <pre><code> Application -- the target application
         ...
 
-        event(event, params={}, atts={}, returnid=k.AutoGenerateReturnID,
+        event(event, params={}, atts={}, returnid=kae.kAEAutoGenerateReturnID,
                 codecs=None) -- construct an Apple event
             event : str -- 8-letter code indicating event's class and id,
                     e.g. 'coregetd'
@@ -55,24 +55,23 @@
 <pre><code>Event
 
     Methods:
-        _createAppleEvent(eventclass, eventid, address, returnid, transaction)
+        _createappleevent(eventclass, eventid, address, returnid, transaction)
                 -- Event subclasses may override this to modify AppleEvent
                 descriptor creation; must return an AppleEvent descriptor [1]
 
-        _sendAppleEvent(flags, timeout) -- Event subclasses may override this
+        _sendappleevent(flags, timeout) -- Event subclasses may override this
             to modify event sending; must return an AppleEvent descriptor [1]
 
-        send(timeout=k.DefaultTimeout, flags=k.WaitReply) -- send event
-            timeout : int | k.DefaultTimeout | k.NoTimeout -- number of ticks
+        send(timeout=kae.kAEDefaultTimeout, flags=kae.kAEWaitReply) -- send event
+            timeout : int | kae.kAEDefaultTimeout | kae.kAENoTimeout -- no. of ticks
                     to wait for application reply before raising timeout error
-            flags : int -- bitwise flags determining how event should be
-                    handled [5]
+            flags : int -- bitwise flags determining how event should be handled [5]
             Result : anything -- value returned by application, if any</code></pre>
 
 
 <p>The <code>send</code> method may be called any number of times.</p>
 
-<p>The <code>Event</code> class exposes two overrideable hooks, <code>_createAppleEvent</code> and <code>_sendAppleEvent</code>, allowing AppleEvent creation and/or sending to be modified by an aem client. The client-defined Event subclass should be stored in the <code>_Event</code> attribute of a client-defined Application subclass. The client should then instantiate their own Application subclass instead of aem's standard <code>Application</code> class to use the modified behaviour.</p>
+<p>The <code>Event</code> class exposes two overrideable hooks, <code>_createappleevent</code> and <code>_sendappleevent</code>, allowing Apple event creation and/or dispatch to be modified by an aem client. The client-defined Event subclass should be stored in the <code>_Event</code> attribute of a client-defined Application subclass. The client should then instantiate their own Application subclass instead of aem's standard <code>Application</code> class to use the modified behaviour.</p>
 
 
 <h2>Constants</h2>
@@ -91,7 +90,7 @@ keyAERequestedType</code></pre>
 
 <h3>Attribute keys</h3>
 
-<p>Most of the following attributes are already supplied by other means (e.g. keyEventClassAttr, keyEventIDAttr are supplied separately when creating an Apple event; keyTimeoutAttr when sending it) and are only of interest if unpacking AppleEvent descriptors manually. A few  may be used when passing an attributes dict to <code>Application.event</code> (<code>enumConsiderations</code>, <code>enumConsidsAndIgnores</code>, <code>keySubjectAttr</code>):</p>
+<p>Most of the following attributes are already supplied by other means (e.g. <code>keyEventClassAttr</code>, <code>keyEventIDAttr</code> are supplied separately when creating an Apple event; <code>keyTimeoutAttr</code> when sending it) and are only of interest if unpacking AppleEvent descriptors manually. A few  may be used when passing an attributes dict to <code>Application.event</code> (<code>enumConsiderations</code>, <code>enumConsidsAndIgnores</code>, <code>keySubjectAttr</code>):</p>
 <pre><code>keyTransactionIDAttr
 keyReturnIDAttr
 keyEventClassAttr
@@ -154,18 +153,40 @@ kAECanSwitchLayer</code></pre>
 <pre><code>kAutoGenerateReturnID</code></pre>
 
 
-<h2>The <code>CommandError</code> class</h2>
+<h2>Exception classes</h2>
 
-<p>The <code>CommandError</code> class is raised by <code>Event.send</code> and represents an error raised by the target application or Apple Event Manager when sending an event.</p>
+<h3><code>aem.CommandError</code></h3>
 
-<pre><code>CommandError(MacOSError)
+<p>The <code>aem.CommandError</code> exception is raised by <code>Event.send</code> and represents an error raised by the target application or Apple Event Manager when sending an event.</p>
+
+<pre><code>CommandError(aem.ae.MacOSError)
+
+    Properties (read-only):
+        errornumber : int -- Mac OS error number
+        errormessage : str -- application-supplied/generic error description
+        offendingobject : anything | None -- object that caused the error, 
+                                             if given by application
+        expectedtype : anything | None -- object that caused a coercion error, 
+                                          if given by application
+        partialresult : anything | None -- part of return value constructed 
+                                           before error occurred, if given 
+                                           by application
+
+    Methods:
+    
+        __int__() -- Mac OS error number
+
+        __str__() -- formatted description of error</code></pre>
+
+
+<h3><code>aem.ae.MacOSError</code></h3>
+
+<p>The <code>aem.ae.MacOSError</code> exception is raised by the low-level <code>aem.ae</code> extension and represents an error raised by the Apple Event Manager. The <code>aem</code> API usually traps these low-level errors and throws more descriptive errors in their place (e.g. <code>aem.CommandError</code>).</p>
+
+<pre><code>MacOSError(Exception)
 
     Attributes:
-        number : int -- error number
-        message : str | None -- error message, if any</code></pre>
-
-<!-- TO DO: MacOSError notes -->
-
+        args : list -- contains a single integer, the Mac OS error number</code></pre>
 
 </div>
 

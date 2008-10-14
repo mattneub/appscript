@@ -40,6 +40,9 @@ class GenericReference(object):
 	def __le__(self, i):
 		return GenericReference(self._call + [('AS__le__', i, ' <= %r')])
 	
+	def __hash__(self):
+		return hash(self._call)
+		
 	def __repr__(self):
 		s = self._call[0]
 		for method, args, repstr in self._call[1:]:
