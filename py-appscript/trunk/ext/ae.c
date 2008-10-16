@@ -399,10 +399,12 @@ static PyObject *AEDesc_AESendMessage(AEDescObject *_self, PyObject *_args) // t
 						  &sendMode,
 						  &timeOutInTicks))
 		return NULL;
+	Py_BEGIN_ALLOW_THREADS
 	_err = AE_SendMessageThreadSafe(&_self->ob_itself,
 									&reply,
 									sendMode,
 									timeOutInTicks);
+	Py_END_ALLOW_THREADS
 	if (_err != noErr) return AE_MacOSError(_err);
 	_res = Py_BuildValue("O&",
 						 AE_AEDesc_New, &reply);
