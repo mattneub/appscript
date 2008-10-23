@@ -1,36 +1,78 @@
-{
-    IBClasses = (
-        {
-            ACTIONS = {clear = id; export = id; showLog = id; }; 
-            CLASS = ASDictionary; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                filenameTableView = id; 
-                itemName = id; 
-                logDrawer = id; 
-                logPanel = id; 
-                logTextView = id; 
-                mainWindow = id; 
-                progressBar = id; 
-                progressPanel = id; 
-                selectedFilesController = id; 
-            }; 
-            SUPERCLASS = NSObject; 
-        }, 
-        {
-            ACTIONS = {
-                "" = id; 
-                chooseFromApplicationList = id; 
-                chooseFromFileBrowser = id; 
-                chooseInstalledAdditions = id; 
-                chooseRunningApplications = id; 
-                export = id; 
-                stopProcessing = id; 
-            }; 
-            CLASS = FirstResponder; 
-            LANGUAGE = ObjC; 
-            SUPERCLASS = NSObject; 
-        }
-    ); 
-    IBVersion = 1; 
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IBClasses</key>
+	<array>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key></key>
+				<string>id</string>
+				<key>chooseFromApplicationList</key>
+				<string>id</string>
+				<key>chooseFromFileBrowser</key>
+				<string>id</string>
+				<key>chooseInstalledAdditions</key>
+				<string>id</string>
+				<key>chooseRunningApplications</key>
+				<string>id</string>
+				<key>export</key>
+				<string>id</string>
+				<key>stopProcessing</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>FirstResponder</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>clear</key>
+				<string>id</string>
+				<key>export</key>
+				<string>id</string>
+				<key>exportObjCGlue</key>
+				<string>id</string>
+				<key>showLog</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>ASDictionary</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>filenameTableView</key>
+				<string>id</string>
+				<key>itemName</key>
+				<string>id</string>
+				<key>logDrawer</key>
+				<string>id</string>
+				<key>logPanel</key>
+				<string>id</string>
+				<key>logTextView</key>
+				<string>id</string>
+				<key>mainWindow</key>
+				<string>id</string>
+				<key>objcPrefixColumn</key>
+				<string>id</string>
+				<key>progressBar</key>
+				<string>id</string>
+				<key>progressPanel</key>
+				<string>id</string>
+				<key>selectedFilesController</key>
+				<string>id</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+	</array>
+	<key>IBVersion</key>
+	<string>1</string>
+</dict>
+</plist>

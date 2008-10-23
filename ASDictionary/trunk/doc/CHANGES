@@ -1,7 +1,10 @@
 CHANGES
 
+2008-10-22 -- 0.11.0
+- added objc-appscript glue export option
+
 2008-07-12 -- 0.10.0
-- elimintated external Ruby/rb-appscript dependency; now uses a Python-based renderer to display Ruby-style help info
+- eliminated external Ruby/rb-appscript dependency; now uses a Python-based renderer to display Ruby-style help info
 - closing Preferences window no longer quits application
 
 2007-12-20 -- 0.9.0

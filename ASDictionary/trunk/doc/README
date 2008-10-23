@@ -3,7 +3,7 @@ ASDictionary
 ----------------------------------------------------------------------
 ABOUT
 
-ASDictionary exports scriptable Mac applications' dictionaries in plain text or HTML format. Requires Mac OS 10.3.9 or later. 
+ASDictionary exports scriptable Mac applications' dictionaries in plain text or HTML format. It can also be used to generate application 'glues' for use with objc-appscript. Requires Mac OS 10.3.9 or later. 
 
 
 ----------------------------------------------------------------------
@@ -19,6 +19,8 @@ To install the asdict command line tool (this is optional), cd to the ASDictiona
 ----------------------------------------------------------------------
 USAGE
 
+------- To export application dictionaries -------
+
 1. Use the 'Dictionary' menu to select one or more scriptable applications or scripting additions, or drag-and-drop one or more application and/or scripting addition files onto ASDictionary's application icon or Export window.
 
 2. Select one or more file formats: plain text, single-file HTML and/or frame-based HTML. If an HTML format is chosen, check the 'Compact classes' option to combine duplicate classes into one. (For example, TextEdit defines a 'document' class in its Standard Suite, and again in its TextEdit Suite.) Check the 'Show invisibles' option to include hidden classes and commands in HTML output.
@@ -26,6 +28,17 @@ USAGE
 3. Select one or more terminology styles.
 
 4. Click 'Export', and select a destination folder for the generated files.
+
+
+------- To generate objc-appscript glues -------
+
+1. Use the 'Dictionary' menu to select one or more scriptable applications or scripting additions, or drag-and-drop one or more application and/or scripting addition files onto ASDictionary's application icon or Export window.
+
+2. Select the objc-appscript glue format.
+
+3. The ObjC class name prefix for each glue is shown in the Prefix column. The default prefix is the application's name converted to a C-style identifier with the first character always uppercase (e.g. Address Book becomes AddressBook, iCal becomes ICal), but this can be changed by clicking on it and typing a prefix of your choice (e.g. ADBK instead of AddressBook, IC instead of ICal). Take care not to use a prefix that may cause the glue's class names to collide with existing Cocoa classes (e.g. 'NS' is a particularly common prefix and best avoided) otherwise the glue may not compile.
+
+4. Click 'Export', and select a destination folder for the generated glue. Each glue folder's name will consist of its class name prefix followed by 'Glue' (e.g. AddressBookGlue, ICGlue).
 
 
 ----------------------------------------------------------------------

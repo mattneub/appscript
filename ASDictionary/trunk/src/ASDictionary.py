@@ -1,10 +1,10 @@
 """ASDictionary
 
-(C) 2007 HAS
+(C) 2007-2008 HAS
 """
 
 __name__ = 'ASDictionary'
-__version__ = '0.10.0'
+__version__ = '0.11.0'
 
 import objc
 from Foundation import NSUserDefaultsDidChangeNotification
@@ -14,7 +14,7 @@ from PyObjCTools import NibClassBuilder, AppHelper
 
 import osax, appscript
 
-
+import osaglue
 
 import os, os.path
 
@@ -94,11 +94,11 @@ def _makeDestinationFolder(outFolder, styleSubfolderName, formatSubfolderName, f
 	return os.path.join(destFolder, fileName)
 
 
-def _export(items, styles, plainText, singleHTML, frameHTML, options, outFolder, exportToSubfolders, progress):
+def _export(items, styles, plainText, singleHTML, frameHTML, objcGlue, options, outFolder, exportToSubfolders, progress):
 	styleInfo = [(style, kStyleToSuffix[style]) for style in styles]
 	# process each item
 	for i, item in enumerate(items):
-		name, path = item['name'], item['path']
+		objcPrefix, name, path, isOSAX = item['objcPrefix'], item['name'], item['path'], item['isOSAX']
 		progress.nextitem(name, path)
 		try:
 			try:
@@ -146,6 +146,15 @@ def _export(items, styles, plainText, singleHTML, frameHTML, options, outFolder,
 								exportToSubfolders and 'frame-html', name + suffix)
 						progress.nextoutput(u'%s' % outputPath)
 						htmldoc2.renderdictionary(terms, outputPath, style, options)
+			if objcGlue:
+				outputPath = _makeDestinationFolder(outFolder, 'objc-appscript', 
+							'%s%sGlue' % (exportToSubfolders and 'glues/' or '', objcPrefix), '')
+				renderer = osaglue.GlueRenderer(outputPath, objcPrefix)
+				if isOSAX:
+					renderer.renderosaxaetes(path, aetes)
+				else:
+					renderer.renderappaetes(path, aetes)
+				progress.nextoutput(u'%s' % outputPath)
 		except Exception, err:
 			from traceback import print_exc
 			from StringIO import StringIO
@@ -163,6 +172,7 @@ def _export(items, styles, plainText, singleHTML, frameHTML, options, outFolder,
 kPlainText = 'PTex'
 kSingleHTML = 'SHTM'
 kFrameHTML = 'FHTM'
+kObjCGlue = 'OCGl'
 kASStyle = 'AScr'
 kPyStyle = 'PyAp'
 kRbStyle = 'RbAp'
@@ -222,6 +232,7 @@ def exportdictionaries(sources, outfolder,
 	plaintext = AEEnum(kPlainText) in fileformats
 	singlehtml = AEEnum(kSingleHTML) in fileformats
 	framehtml = AEEnum(kFrameHTML) in fileformats
+	objcglue = AEEnum(kObjCGlue) in fileformats
 	styles = [kAECodeToStyle[o.code] for o in styles]
 	options = []
 	if compactclasses:
@@ -229,13 +240,13 @@ def exportdictionaries(sources, outfolder,
 	if showinvisibles:
 		options.append('full')
 	progressobj = AEProgress(len(items), len(styles), len(fileformats), None)
-	return _export(items, styles, plaintext, singlehtml, framehtml, options, outfolder, usesubfolders, progressobj)
+	return _export(items, styles, plaintext, singlehtml, framehtml, objcglue, options, outfolder, usesubfolders, progressobj)
 
 installeventhandler(exportdictionaries,
 		'ASDiExpD',
 		('----', 'sources', ArgListOf(kAE.typeAlias)),
 		('ToFo', 'outfolder', kAE.typeAlias),
-		('Form', 'fileformats', ArgListOf(ArgEnum(kPlainText, kSingleHTML, kFrameHTML))),
+		('Form', 'fileformats', ArgListOf(ArgEnum(kPlainText, kSingleHTML, kFrameHTML, kObjCGlue))),
 		('Styl', 'styles', ArgListOf(ArgEnum(kASStyle, kPyStyle, kRbStyle, kObjCStyle))),
 		('ClaC', 'compactclasses', kAE.typeBoolean),
 		('SInv', 'showinvisibles', kAE.typeBoolean),
@@ -323,11 +334,12 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 	# itemName
 	# logDrawer
 	# logTextView
+	# objcPrefixColumn
 	
 	def init(self):
 		self = super(ASDictionary, self).init()
 		if self is None: return
-		self._selectedFiles = [] # {'name': u'...', 'path': u'...'}
+		self._selectedFiles = [] # {'obcPrefix': u'...', 'name': u'...', 'path': u'...'}
 		self._canExport = False
 		self._htmlOptionsEnabled = False
 		self._itemName = u''
@@ -360,9 +372,18 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 	
 	def _updateLocks(self):
 		self.setHtmlOptionsEnabled_(userDefaults.boolForKey_(u'singleHTML') or userDefaults.boolForKey_(u'frameHTML'))
-		self.setCanExport_(bool(self.selectedFiles()) 
-				and (self.htmlOptionsEnabled() or userDefaults.boolForKey_(u'plainText'))
-				and bool([1 for name in [u'applescriptStyle', u'pythonStyle', u'rubyStyle', u'objcStyle'] if userDefaults.boolForKey_(name)]))
+		hasSelectedFiles = bool(self.selectedFiles())
+		willExportDict = self.htmlOptionsEnabled() or userDefaults.boolForKey_(u'plainText')
+		willExportGlue = userDefaults.boolForKey_(u'objcGlue')
+		hasSelectedStyles = bool([name for name 
+				in [u'applescriptStyle', u'pythonStyle', u'rubyStyle', u'objcStyle'] 
+				if userDefaults.boolForKey_(name)])
+		self.setCanExport_(hasSelectedFiles and 
+				((willExportDict and hasSelectedStyles) or willExportGlue))
+		try:
+			self.objcPrefixColumn.setHidden_(not willExportGlue) # 10.5+
+		except:
+			pass
 	
 	def notifyPreferencesChanged_(self, sender):
 		self._updateLocks()
@@ -452,8 +473,9 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 	#######
 	# 'Dictionary' menu methods
 	
-	def _addPathToSelectedFiles(self, path):
-		item = {'name': namefrompath(path), 'path': path}
+	def _addPathToSelectedFiles(self, path, isosax=False):
+		name = namefrompath(path)
+		item = {'objcPrefix': osaglue.prefixfromname(name), 'name': name, 'path': path, 'isOSAX': isosax}
 		if item not in self.selectedFiles():
 			self.insertObject_inSelectedFilesAtIndex_(item, self.countOfSelectedFiles())
 		self._updateLocks()
@@ -470,7 +492,7 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 			else:
 				raise
 		for alias in selection:
-			self._addPathToSelectedFiles(alias.path)
+			self._addPathToSelectedFiles(alias.path, alias.path.lower().endswith('.osax'))
 	
 	def chooseFromApplicationList_(self, sender):
 		try:
@@ -506,7 +528,7 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 		if selection == False:
 			return
 		for name in selection:
-			self._addPathToSelectedFiles(osaxPathForName(name))
+			self._addPathToSelectedFiles(osaxPathForName(name), True)
 	
 	
 	#######
@@ -533,8 +555,8 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 			options.append('collapse')
 		if userDefaults.boolForKey_(u'showInvisibles'):
 			options.append('full')
-		plainText, singleHTML, frameHTML = [userDefaults.boolForKey_(name) 
-				for name in [u'plainText', u'singleHTML', u'frameHTML']]
+		plainText, singleHTML, frameHTML, objcGlue = [userDefaults.boolForKey_(name) 
+				for name in [u'plainText', u'singleHTML', u'frameHTML', u'objcGlue']]
 		styles = [style for key, style in [
 				(u'applescriptStyle', 'applescript'),
 				(u'pythonStyle', 'py-appscript'),
@@ -545,7 +567,7 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 		selection = self.selectedFiles()[:]
 		selection.sort(lambda a,b:cmp(a['name'].lower(), b['name'].lower()))
 		progressObj = GUIProgress(len(selection), len(styles), len([i for i in [plainText, singleHTML, frameHTML] if i]), self)
-		_export(selection, styles, plainText, singleHTML, frameHTML, options, outFolder, exportToSubfolders, progressObj)
+		_export(selection, styles, plainText, singleHTML, frameHTML, objcGlue, options, outFolder, exportToSubfolders, progressObj)
 	
 	
 	def stopProcessing_(self, sender): # cancel button on progress panel
@@ -564,7 +586,7 @@ class GUIProgress:
 
 	def __init__(self, itemcount, stylecount, formatcount, appcontroller):
 		self._appcontroller = appcontroller
-		self._subincrement = 1.0 / (stylecount * formatcount)
+		self._subincrement = 1.0 / max(1, (stylecount * formatcount))
 		self._maincount = 0
 		self._faileditems = []
 		# create progress panel
