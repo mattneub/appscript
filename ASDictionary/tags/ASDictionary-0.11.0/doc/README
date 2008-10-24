@@ -1,0 +1,90 @@
+ASDictionary
+
+----------------------------------------------------------------------
+ABOUT
+
+ASDictionary exports scriptable Mac applications' dictionaries in plain text or HTML format. It can also be used to generate application 'glues' for use with objc-appscript. Requires Mac OS 10.3.9 or later. 
+
+
+----------------------------------------------------------------------
+INSTALLATION
+
+To install ASDictionary, simply open the ASDictionary-0.10.0.dmg and drag the ASDictionary application to your Applications folder.
+
+To install the asdict command line tool (this is optional), cd to the ASDictionary-0.10.0/bin folder in Terminal and run:
+
+	sudo cp asdict /usr/local/bin && chmod 755 /usr/local/bin/asdict
+
+
+----------------------------------------------------------------------
+USAGE
+
+------- To export application dictionaries -------
+
+1. Use the 'Dictionary' menu to select one or more scriptable applications or scripting additions, or drag-and-drop one or more application and/or scripting addition files onto ASDictionary's application icon or Export window.
+
+2. Select one or more file formats: plain text, single-file HTML and/or frame-based HTML. If an HTML format is chosen, check the 'Compact classes' option to combine duplicate classes into one. (For example, TextEdit defines a 'document' class in its Standard Suite, and again in its TextEdit Suite.) Check the 'Show invisibles' option to include hidden classes and commands in HTML output.
+
+3. Select one or more terminology styles.
+
+4. Click 'Export', and select a destination folder for the generated files.
+
+
+------- To generate objc-appscript glues -------
+
+1. Use the 'Dictionary' menu to select one or more scriptable applications or scripting additions, or drag-and-drop one or more application and/or scripting addition files onto ASDictionary's application icon or Export window.
+
+2. Select the objc-appscript glue format.
+
+3. The ObjC class name prefix for each glue is shown in the Prefix column. The default prefix is the application's name converted to a C-style identifier with the first character always uppercase (e.g. Address Book becomes AddressBook, iCal becomes ICal), but this can be changed by clicking on it and typing a prefix of your choice (e.g. ADBK instead of AddressBook, IC instead of ICal). Take care not to use a prefix that may cause the glue's class names to collide with existing Cocoa classes (e.g. 'NS' is a particularly common prefix and best avoided) otherwise the glue may not compile.
+
+4. Click 'Export', and select a destination folder for the generated glue. Each glue folder's name will consist of its class name prefix followed by 'Glue' (e.g. AddressBookGlue, ICGlue).
+
+
+----------------------------------------------------------------------
+COMMAND LINE TOOLS
+
+The asdict command line tool can be used to:
+- export application dictionaries as plain text and HTML files
+- view individual suite, class and command definitions
+- display inheritance and containment trees.
+
+Like ASDictionary, asdict supports AppleScript- and appscript-style terminology and can operate in both interactive and non-interactive modes. 
+
+To view the full documentation for asdict, run:
+
+	/usr/local/bin/asdict -h
+
+
+----------------------------------------------------------------------
+NOTES
+
+- Caution: ASDictionary will overwrite any existing files when exporting dictionaries.
+
+- Exporting larger dictionaries may take several seconds; GUI responsiveness may be limited during this time. HTML export options take longer due to the additional processing involved.
+
+- While ASDictionary is fairly tolerant of weird and buggy application dictionaries, HTML generation may fail on a few especially strange ones. Should this happen, please submit a bug report.
+
+- Many thanks to the following for comments, suggestions and bug reports: Philip Aker, Emmanuel Levy, Tim Mansour, Jake Pietrykowski, Courtney Schwartz
+
+
+----------------------------
+Appscript Support
+
+The appscript bridges for Python and Ruby depend on ASDictionary to support their built-in help systems. You can specify text wrapping options for help system output in ASDictionary's Preferences window. 
+
+
+----------------------------------------------------------------------
+DONATIONS
+
+ASDictionary is free to use; however, any donations will be gratefully received and will help to support future development. You can donate to the appscript project (which ASDictionary belongs to) via its project page at sourceforge.net:
+
+	http://sourceforge.net/projects/appscript
+
+Many thanks to all those who have already contributed.
+
+
+----------------------------------------------------------------------
+CONTACT
+
+- HAS -- <hhas -at- users - sourceforge - net> <http://appscript.sourceforge.net>

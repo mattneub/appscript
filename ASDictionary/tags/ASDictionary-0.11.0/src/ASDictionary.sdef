@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dictionary SYSTEM "file://localhost/System/Library/DTDs/sdef.dtd">
+
+<dictionary title="ASDictionary Terminology">
+
+	<suite name="Required Suite" code="????" description="">
+		<commands>
+
+			<command name="run" code="aevtoapp" description="Run the application."/>
+
+			<command name="open" code="aevtodoc" description="Open one or more application and/or scripting addition files.">
+
+				<direct-parameter description="The application and/or scripting addition source files to be opened.">
+					<type type="file" list="yes"/>
+				</direct-parameter>
+			</command>
+
+			<command name="quit" code="aevtquit" description="Quit the application."/>
+
+		</commands>
+	</suite>
+
+
+	<suite name="ASDictionary Suite" code="????" description="Export application and scripting addition dictionaries.">
+
+			<enumeration name="file formats" code="EFor">
+				<enumerator name="plain text" code="PTex" description=""/>
+				<enumerator name="single file HTML" code="SHTM" description=""/>
+				<enumerator name="frame based HTML" code="FHTM" description=""/>
+			</enumeration>
+
+			<enumeration name="styles" code="ESty">
+				<enumerator name="AppleScript" code="AScr" description=""/>
+				<enumerator name="Python appscript" code="PyAp" description=""/>
+				<enumerator name="Ruby appscript" code="RbAp" description=""/>
+				<enumerator name="ObjC appscript" code="OCAp" description=""/>
+			</enumeration>
+
+
+
+  			<class name="export status" code="ExpR" plural="" description="A record containing the result of a single export operation.">
+				<property name="success" code="Succ" type="boolean" description="Was the dictionary successfully exported?"/>
+				<property name="source" code="Sour" type="file" description="The application or scripting addition source file."/>
+				<property name="destination" code="Dest" type="file" description="The exported dictionary file/folder if the export succeeded, or 'missing value' if it failed."/>
+				<property name="error message" code="ErrS" type="text" description="An error description if the export failed, or 'missing value' if it succeeded."/>
+			</class>
+
+
+
+			<command name="export" code="ASDiExpD" description="Export application and/or scripting addition dictionaries as plain text and/or HTML files.">
+
+				<direct-parameter description="The application and/or scripting addition source files to be read.">
+					<type type="file" list="yes"/>
+				</direct-parameter>
+
+				<parameter name="to" code="ToFo" type="file" description="The folder to export to."/>
+
+				<parameter name="using file formats" code="Form" description="The output format(s) to use." optional="yes">
+					<type type="file formats" list="yes"/>
+				</parameter>
+
+				<parameter name="using styles" code="Styl" description="The terminology style(s) to use." optional="yes">
+					<type type="styles" list="yes"/>
+				</parameter>
+
+				<parameter name="compacting classes" code="ClaC" type="boolean" description="If two or more classes share the same name, should they be combined into one?" optional="yes"/>
+				<parameter name="showing hidden items" code="SInv" type="boolean" description="Should hidden suites, commands, classes, etc. be shown?" optional="yes"/>
+				<parameter name="exporting to subfolders" code="SubF" type="boolean" description="Should the exported dictionaries be grouped into subfolders according to style and file format?" optional="yes"/>
+
+				<result description="A list of records describing the outcome of each export operation.">
+					<type type="export status" list="yes"/>
+				</result>
+
+			</command>
+
+	</suite>
+
+</dictionary>
