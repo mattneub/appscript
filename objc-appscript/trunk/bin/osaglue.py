@@ -53,6 +53,10 @@ def _formatcode(code):
 	else:
 		return "'%s'" % code
 
+# uppercase first character of identifier
+
+def _capname(s):
+	return s and s[0].upper() + s[1:] or '_'
 
 # locate a scripting addition by name
 
@@ -202,7 +206,7 @@ class ClassBuilder:
 		# render each command class
 		for name, (kind, data) in self.referencebyname:
 			if kind == kCommand:
-				classname = '<PREFIX>' + name[0].upper() + name[1:] + 'Command'
+				classname = '<PREFIX>' + _capname(name) + 'Command'
 				code = data[0]
 				params = data[1].items()
 				params.sort()
@@ -254,7 +258,7 @@ class ClassBuilder:
 				src.comment({kCommand: 'Commands', kProperty: 'Properties', kElement: 'Elements'}[kind])
 			prevkind = kind
 			if kind == kCommand:
-				classname = '<PREFIX>' + name[0].upper() + name[1:] + 'Command'
+				classname = '<PREFIX>' + _capname(name) + 'Command'
 				for directParam in ['', ':(id)directParameter']:
 					src.newmethod('- (%s *)%s%s' % (classname, name, directParam))
 					code = data[0]
@@ -429,8 +433,7 @@ class ClassBuilder:
 	##
 	
 	def _renderaemconstant(self, type, name, code, src):
-		src.writeh('    %s<PREFIX>%s = %s,' % (type, 
-				name[0].upper() + name[1:], _formatcode(code)))
+		src.writeh('    %s<PREFIX>%s = %s,' % (type, _capname(name), _formatcode(code)))
 	
 	def render_aemheader(self, src):
 		src.newglue('AEMConstants', False)
@@ -456,8 +459,7 @@ class ClassBuilder:
 				params.sort()
 				for name, code in params:
 					if name in knownparams:
-						src.writeh('//  %s<PREFIX>%s = %s,' % ('ep', 
-								name[0].upper() + name[1:], _formatcode(code)))
+						src.writeh('//  %s<PREFIX>%s = %s,' % ('ep', _capname(name), _formatcode(code)))
 					else:
 						knownparams.add(name)
 						self._renderaemconstant('ep', name, code, src)

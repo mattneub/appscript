@@ -184,11 +184,11 @@
 [reference notEquals: value]
 [reference greaterThan: value]
 [reference greaterOrEquals: value]
-[reference startsWith: value]
+[reference beginsWith: value]
 [reference endsWith: value]
 [reference contains: value]
 [reference isIn: value]
-[reference doesNotStartWith: value]
+[reference doesNotBeginWith: value]
 [reference doesNotEndWith: value]
 [reference doesNotContain: value]
 [reference isNotIn: value]
@@ -197,7 +197,7 @@
 <p>Examples:</p>
 <pre><code>[TEIts equals: @""]
 [[FNIts size] greaterThan: [NSNumber numberWithInt: 1024]]
-[[[TEIts words] first] startsWith: @"A"]
+[[[TEIts words] first] beginsWith: @"A"]
 [[[TEIts characters] first] equals: [[TEIts characters] last]]</code></pre>
 
 <p>Note that Boolean comparison tests can be written as either <code>[reference equals: AEMTrue]</code> or just <code>reference</code>, e.g. <code>[[folderRef files] byTest: [FNIts locked]]</code></p></li>
@@ -213,11 +213,13 @@
 <pre><code>[[TEIts equals: @""] NOT]
 
 [[[FNIts size] greaterThan: [NSNumber numberWithInt: 1024]] AND:
-        [[FNIts size] lessThan: [NSNumber numberWithInt: 10240]]<!--TO DO
+        [[FNIts size] lessThan: [NSNumber numberWithInt: 10240]]
 
-its.words[1].starts_with('A').or(
-    its.words[2].contains('ce'),
-    its.words[1].eq('Foo'))--></code></pre></li>
+[[[[TEIts words] at: 1] beginsWith: @"A"] OR:
+        [NSArray arrayWithObjects:
+                [[[TEIts words] at: 2] contains: @"ce"],
+                [[[TEIts words] at: 1] equals: @"foo"],
+                nil]]</code></pre></li>
 </ul>
 
 
@@ -227,7 +229,7 @@ its.words[1].starts_with('A').or(
 <p>Insertion locations can be specified at the beginning or end of all elements, or before or after a specified element or element range.</p>
 
 <p>Syntax:</p>
-<pre><code>[elements start]
+<pre><code>[elements beginning]
 [elements end]
 [element before]
 [element after]</code></pre>
