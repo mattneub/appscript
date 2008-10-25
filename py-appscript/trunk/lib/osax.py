@@ -71,7 +71,7 @@ class ScriptingAddition(reference.Application):
 			except KeyError:
 				raise KeyError, "Scripting addition not found: %r" % self._osaxname
 			if not terms:
-				terms = _osaxcache[osaxname][1] = terminology.tablesforaetes(aem.ae.GetAppTerminology(osaxpath))
+				terms = _osaxcache[osaxname][1] = terminology.tablesforaetes(aem.ae.getappterminology(osaxpath))
 		reference.Application.__init__(self, name, id, creator, pid, url, aemapp, terms)
 		try:
 			self.AS_appdata.target.event('ascrgdut').send(300) # make sure target application has loaded event handlers for all installed OSAXen

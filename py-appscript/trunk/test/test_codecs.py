@@ -2,7 +2,6 @@
 
 import unittest, struct, datetime
 import aem, mactypes
-from CarbonX import AE, kAE
 
 isSmallEndian = struct.pack('H', 1) == "\001\000"
 
@@ -28,36 +27,36 @@ class TC_Codecs(unittest.TestCase):
 	
 	def test_none(self):
 		d = self.c.pack(None)
-		self.assertEqual(kAE.typeNull, d.type)
+		self.assertEqual(aem.kae.typeNull, d.type)
 		self.assertEqual('', d.data)
 		self.assertEqual(None, self.c.unpack(d))
 	
 	def test_bool(self):
-		self.assertEqual(True, self.c.unpack(AE.AECreateDesc(kAE.typeBoolean, "\xfe")))
-		self.assertEqual(True, self.c.unpack(AE.AECreateDesc(kAE.typeTrue, '')))
-		self.assertEqual(False, self.c.unpack(AE.AECreateDesc(kAE.typeFalse, '')))
+		self.assertEqual(True, self.c.unpack(aem.ae.createdesc(aem.kae.typeBoolean, "\xfe")))
+		self.assertEqual(True, self.c.unpack(aem.ae.createdesc(aem.kae.typeTrue, '')))
+		self.assertEqual(False, self.c.unpack(aem.ae.createdesc(aem.kae.typeFalse, '')))
 	
 	def test_num(self):
 		for val, data, type, expected in [ # (mostly testing at threshold points where Codecs switches types when packing integers)
-				[0, "\x00\x00\x00\x00", kAE.typeInteger, None],
-				[2, "\x00\x00\x00\x02", kAE.typeInteger, None],
-				[-9, "\xff\xff\xff\xf7", kAE.typeInteger, None],
-				[2**31-1, "\x7f\xff\xff\xff", kAE.typeInteger, None],
-				[-2**31, "\x80\x00\x00\x00", kAE.typeInteger, None],
-				[2**31, "\x00\x00\x00\x00\x80\x00\x00\x00", kAE.typeSInt64, None],
-				[2**32-1, "\x00\x00\x00\x00\xff\xff\xff\xff", kAE.typeSInt64, None],
-				[2**32, "\x00\x00\x00\x01\x00\x00\x00\x00", kAE.typeSInt64, None], 
-				[-2**32, "\xff\xff\xff\xff\x00\x00\x00\x00", kAE.typeSInt64, None],
-				[2**63-1, "\x7f\xff\xff\xff\xff\xff\xff\xff", kAE.typeSInt64, None], 
-				[-2**63, "\x80\x00\x00\x00\x00\x00\x00\x00", kAE.typeSInt64, None],
-				[-2**63+1, "\x80\x00\x00\x00\x00\x00\x00\x01", kAE.typeSInt64, None],
-				[2**63, "C\xe0\x00\x00\x00\x00\x00\x00", kAE.typeFloat, None],
-				[-2**63-1, "\xc3\xe0\x00\x00\x00\x00\x00\x00", kAE.typeFloat, float(-2**63-1)],
-				[0.1, "?\xb9\x99\x99\x99\x99\x99\x9a", kAE.typeFloat, None],
-				[-0.9e-9, "\xbe\x0e\xec{\xd5\x12\xb5r", kAE.typeFloat, None],
-				[2**300, "R\xb0\x00\x00\x00\x00\x00\x00", kAE.typeFloat, None],
+				[0, "\x00\x00\x00\x00", aem.kae.typeInteger, None],
+				[2, "\x00\x00\x00\x02", aem.kae.typeInteger, None],
+				[-9, "\xff\xff\xff\xf7", aem.kae.typeInteger, None],
+				[2**31-1, "\x7f\xff\xff\xff", aem.kae.typeInteger, None],
+				[-2**31, "\x80\x00\x00\x00", aem.kae.typeInteger, None],
+				[2**31, "\x00\x00\x00\x00\x80\x00\x00\x00", aem.kae.typeSInt64, None],
+				[2**32-1, "\x00\x00\x00\x00\xff\xff\xff\xff", aem.kae.typeSInt64, None],
+				[2**32, "\x00\x00\x00\x01\x00\x00\x00\x00", aem.kae.typeSInt64, None], 
+				[-2**32, "\xff\xff\xff\xff\x00\x00\x00\x00", aem.kae.typeSInt64, None],
+				[2**63-1, "\x7f\xff\xff\xff\xff\xff\xff\xff", aem.kae.typeSInt64, None], 
+				[-2**63, "\x80\x00\x00\x00\x00\x00\x00\x00", aem.kae.typeSInt64, None],
+				[-2**63+1, "\x80\x00\x00\x00\x00\x00\x00\x01", aem.kae.typeSInt64, None],
+				[2**63, "C\xe0\x00\x00\x00\x00\x00\x00", aem.kae.typeFloat, None],
+				[-2**63-1, "\xc3\xe0\x00\x00\x00\x00\x00\x00", aem.kae.typeFloat, float(-2**63-1)],
+				[0.1, "?\xb9\x99\x99\x99\x99\x99\x9a", aem.kae.typeFloat, None],
+				[-0.9e-9, "\xbe\x0e\xec{\xd5\x12\xb5r", aem.kae.typeFloat, None],
+				[2**300, "R\xb0\x00\x00\x00\x00\x00\x00", aem.kae.typeFloat, None],
 				]:
-			if type == kAE.typeInteger:
+			if type == aem.kae.typeInteger:
 				val = int(val)
 			data = num(data)
 			d = self.c.pack(val)
@@ -79,7 +78,7 @@ class TC_Codecs(unittest.TestCase):
 			]:
 			data = ut16(data)
 			d = self.c.pack(val)
-			self.assertEqual(kAE.typeUnicodeText, d.type)
+			self.assertEqual(aem.kae.typeUnicodeText, d.type)
 			self.assertEqual(data, d.data)
 			self.assertEqual(val, self.c.unpack(d))
 	
@@ -91,9 +90,9 @@ class TC_Codecs(unittest.TestCase):
 				]:
 			data = num(data)
 			d = self.c.pack(t)
-			self.assertEqual(kAE.typeLongDateTime, d.type)
+			self.assertEqual(aem.kae.typeLongDateTime, d.type)
 			self.assertEqual(data, d.data)
-			self.assertEqual(t, self.c.unpack(AE.AECreateDesc(kAE.typeLongDateTime, data)))
+			self.assertEqual(t, self.c.unpack(aem.ae.createdesc(aem.kae.typeLongDateTime, data)))
 	
 	def test_file(self):
 		path = '/Applications/TextEdit.app'
@@ -133,7 +132,7 @@ class TC_Codecs(unittest.TestCase):
 		self.assertEqual(3.3, val.value)
 		d = self.c.pack(val)
 		self.assertEqual('inch', d.type)
-		self.assertEqual(3.3, self.c.unpack(d.AECoerceDesc(kAE.typeFloat)))
+		self.assertEqual(3.3, self.c.unpack(d.coerce(aem.kae.typeFloat)))
 		val2 = self.c.unpack(d)
 		self.assertEqual(val, val2)
 		self.assertEqual('inches', val2.type)

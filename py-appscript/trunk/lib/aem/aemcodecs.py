@@ -7,7 +7,7 @@ import struct, datetime, time
 from codecs import BOM_UTF16_LE, BOM_UTF16_BE
 
 import kae
-from ae import AEDesc, AECreateDesc, AECreateList
+from ae import AEDesc, createdesc, createlist
 
 from typewrappers import AEType, AEEnum, AEProp, AEKey
 import aemreference, mactypes
@@ -81,7 +81,7 @@ class UnitTypeCodecs:
 	##
 	
 	def _defaultpacker(self, units, code): 
-		return AECreateDesc(code, struct.pack('d', units.value))
+		return createdesc(code, struct.pack('d', units.value))
 	
 	def _defaultunpacker(self, desc, name):
 		return mactypes.Units(struct.unpack('d', desc.data)[0], name)
@@ -141,13 +141,13 @@ class Codecs:
 	
 	# Constants
 	
-	kNullDesc = AECreateDesc(kae.typeNull, '')
+	kNullDesc = createdesc(kae.typeNull, '')
 	kMacEpoch = datetime.datetime(1904, 1, 1) # used in packing datetime objects as AEDesc typeLongDateTime
 	kMacEpochT = time.mktime(kMacEpoch.timetuple())
 	kShortMacEpoch = kMacEpoch.date() # used in packing date objects as AEDesc typeLongDateTime
 
-	kTrueDesc = AECreateDesc(kae.typeTrue, '')
-	kFalseDesc = AECreateDesc(kae.typeFalse, '')
+	kTrueDesc = createdesc(kae.typeTrue, '')
+	kFalseDesc = createdesc(kae.typeFalse, '')
 	
 	#######
 	# tables to map AE codes to aem method names
@@ -281,9 +281,9 @@ class Codecs:
 	
 	def unpackunknown(self, desc):
 		"""Clients may override this to provide additional unpackers."""
-		if desc.AECheckIsRecord():
-			rec = desc.AECoerceDesc('reco')
-			rec.AEPutParamDesc('pcls', self.pack(AEType(desc.type)))
+		if desc.isrecord():
+			rec = desc.coerce('reco')
+			rec.putparam('pcls', self.pack(AEType(desc.type)))
 			decoder = self.decoders.get('reco')
 			if decoder:
 				return decoder(rec)
@@ -297,7 +297,7 @@ class Codecs:
 	def pack(self, data):
 		"""Pack Python data.
 			data : anything -- a Python value
-			Result : CarbonX.AE.AEDesc -- an Apple event descriptor, or error if no encoder exists for this type of data
+			Result : aem.ae.AEDesc -- an Apple event descriptor, or error if no encoder exists for this type of data
 		"""
 		if isinstance(data, aemreference.Query):
 			return data.AEM_packself(self)
@@ -316,7 +316,7 @@ class Codecs:
 	
 	def unpack(self, desc):
 		"""Unpack an Apple event descriptor.
-			desc : CarbonX.AE.AEDesc -- an Apple event descriptor
+			desc : aem.ae.AEDesc -- an Apple event descriptor
 			Result : anything -- a Python value, or the AEDesc object if no decoder is found
 		"""
 		decoder = self.decoders.get(desc.type)
@@ -343,16 +343,16 @@ class Codecs:
 	
 	def packlong(self, val):
 		if (-2**31) <= val < (2**31): # pack as typeSInt32 if possible (non-lossy)
-			return AECreateDesc(kae.typeSInt32, struct.pack('i', val))
+			return createdesc(kae.typeSInt32, struct.pack('i', val))
 		elif (-2**63) <= val < (2**63): # else pack as typeSInt64 if possible (non-lossy)
-			return AECreateDesc(kae.typeSInt64, struct.pack('q', val))
+			return createdesc(kae.typeSInt64, struct.pack('q', val))
 		else: # else pack as typeFloat (lossy)
 			return self.pack(float(val))
 	
 	packint = packlong # note: Python int = C long, so may need to pack as typeSInt64 on 64-bit
 	
 	def packfloat(self, val):
-		return AECreateDesc(kae.typeFloat, struct.pack('d', val))
+		return createdesc(kae.typeFloat, struct.pack('d', val))
 	
 	##
 	
@@ -364,29 +364,29 @@ class Codecs:
 		data = val.encode(nativeutf16encoding)
 		if data.startswith(BOM_UTF16_LE) or data.startswith(BOM_UTF16_BE):
 			data = data[2:]
-		return AECreateDesc(kae.typeUnicodeText, data)
+		return createdesc(kae.typeUnicodeText, data)
 	
 	def packstr(self, val):
-		return AECreateDesc(kae.typeChar, val)
+		return createdesc(kae.typeChar, val)
 	
 	##
 	
 	def packdate(self, val):
 		delta = val - self.kShortMacEpoch
 		sec = delta.days * 3600 * 24 + delta.seconds
-		return AECreateDesc(kae.typeLongDateTime, struct.pack('q', sec))
+		return createdesc(kae.typeLongDateTime, struct.pack('q', sec))
 	
 	def packdatetime(self, val):
 		delta = val - self.kMacEpoch
 		sec = delta.days * 3600 * 24 + delta.seconds
-		return AECreateDesc(kae.typeLongDateTime, struct.pack('q', sec))
+		return createdesc(kae.typeLongDateTime, struct.pack('q', sec))
 	
 	def packtime(self, val):
 		return self.packdatetime(datetime.datetime.combine(datetime.date.today(), val))
 	
 	def packstructtime(self, val):
 		sec = int(time.mktime(val) - self.kMacEpochT)
-		return AECreateDesc(kae.typeLongDateTime, struct.pack('q', sec))
+		return createdesc(kae.typeLongDateTime, struct.pack('q', sec))
 	
 	def packalias(self, val):
 		return val.desc
@@ -395,45 +395,45 @@ class Codecs:
 	##
 	
 	def packlist(self, val):
-		lst = AECreateList('', False)
+		lst = createlist(False)
 		for item in val:
-			lst.AEPutDesc(0, self.pack(item))
+			lst.setitem(0, self.pack(item))
 		return lst
 	
 	def packdict(self, val):
-		record = AECreateList('', True)
+		record = createlist(True)
 		usrf = None
 		for key, value in val.items():
 			if isinstance(key, (AEType, AEProp)):
 				if key.code == 'pcls': # AS packs records that contain a 'class' property by coercing the packed record to that type at the end
 					try:
-						record = record.AECoerceDesc(value.code)
+						record = record.coerce(value.code)
 					except:
-						record.AEPutParamDesc(key.code, self.pack(value))
+						record.setparam(key.code, self.pack(value))
 				else:
-					record.AEPutParamDesc(key.code, self.pack(value))
+					record.setparam(key.code, self.pack(value))
 			else:
 				if not usrf:
-					usrf = AECreateList('', False)
-				usrf.AEPutDesc(0, self.pack(key))
-				usrf.AEPutDesc(0, self.pack(value))
+					usrf = createlist(False)
+				usrf.setitem(0, self.pack(key))
+				usrf.setitem(0, self.pack(value))
 		if usrf:
-			record.AEPutParamDesc('usrf', usrf)
+			record.setparam('usrf', usrf)
 		return record
 	
 	##
 	
 	def packtype(self, val):
-		return AECreateDesc(kae.typeType, fourcharcode(val.code))
+		return createdesc(kae.typeType, fourcharcode(val.code))
 	
 	def packenum(self, val): 
-		return AECreateDesc(kae.typeEnumeration, fourcharcode(val.code))
+		return createdesc(kae.typeEnumeration, fourcharcode(val.code))
 	
 	def packprop(self, val): 
-		return AECreateDesc(kae.typeProperty, fourcharcode(val.code))
+		return createdesc(kae.typeProperty, fourcharcode(val.code))
 	
 	def packkey(self, val): 
-		return AECreateDesc(kae.typeKeyword, fourcharcode(val.code))
+		return createdesc(kae.typeKeyword, fourcharcode(val.code))
 
 	
 	###################################
@@ -476,7 +476,7 @@ class Codecs:
 		return struct.unpack('d', desc.data)[0]
 	
 	def unpackfloat128(self, desc):
-		return struct.unpack('d', desc.AECoerceDesc(kae.typeIEEE64BitFloatingPoint).data)[0]
+		return struct.unpack('d', desc.coerce(kae.typeIEEE64BitFloatingPoint).data)[0]
 
 	##
 	
@@ -484,13 +484,13 @@ class Codecs:
 		return desc.data
 	
 	def unpackintltext(self, desc):
-		return self.unpackunicodetext(desc.AECoerceDesc(kae.typeUnicodeText))
+		return self.unpackunicodetext(desc.coerce(kae.typeUnicodeText))
 	
 	def unpackutf8text(self, desc):
 		return unicode(desc.data, 'utf8')
 	
 	def unpackstyledtext(self, desc):
-		return self.unpackunicodetext(desc.AECoerceDesc(kae.typeUnicodeText))
+		return self.unpackunicodetext(desc.coerce(kae.typeUnicodeText))
 	
 	def unpackunicodetext(self, desc):
 		# typeUnicodeText = native endian UTF16 with optional BOM
@@ -529,7 +529,7 @@ class Codecs:
 	def unpackversion(self, desc):
 		# Cocoa apps use unicode strings for version numbers, so return as string for consistency
 		try:
-			return self.unpack(desc.AECoerceDesc(kae.typeUnicodeText)) # supported in 10.4+
+			return self.unpack(desc.coerce(kae.typeUnicodeText)) # supported in 10.4+
 		except:
 			return '%i.%i.%i' % ((ord(desc.data[0]),) + divmod(ord(desc.data[1]), 16)) # note: always big-endian
 	
@@ -546,13 +546,13 @@ class Codecs:
 	
 	def unpackaelist(self, desc):
 		# Unpack list and its values.
-		return [self.unpack(desc.AEGetNthDesc(i + 1, kae.typeWildCard)[1]) for i in range(desc.AECountItems())]
+		return [self.unpack(desc.getitem(i + 1, kae.typeWildCard)[1]) for i in range(desc.count())]
 	
 	def unpackaerecord(self, desc):
 		# Unpack record to dict, converting keys from 4-letter codes to AEType instances and unpacking values.
 		dct = {}
-		for i in range(desc.AECountItems()):
-			key, value = desc.AEGetNthDesc(i + 1, kae.typeWildCard)
+		for i in range(desc.count()):
+			key, value = desc.getitem(i + 1, kae.typeWildCard)
 			if key == 'usrf':
 				lst = self.unpackaelist(value)
 				for i in range(0, len(lst), 2):
@@ -579,10 +579,10 @@ class Codecs:
 	
 	def fullyunpackobjectspecifier(self, desc):
 		# This function performs a full recursive unpacking of object specifiers, reconstructing an 'app'/'con'/'its' based aem reference from the ground up.
-		want = self.unpack(desc.AEGetParamDesc(kae.keyAEDesiredClass, kae.typeType)).code # 4-letter code indicating element class
-		keyform = self.unpack(desc.AEGetParamDesc(kae.keyAEKeyForm, kae.typeEnumeration)).code # 4-letter code indicating Specifier type
-		key = self.unpack(desc.AEGetParamDesc(kae.keyAEKeyData, kae.typeWildCard)) # value indicating which object(s) to select
-		ref = self.unpack(desc.AEGetParamDesc(kae.keyAEContainer, kae.typeWildCard)) # recursively unpack container structure
+		want = self.unpack(desc.getparam(kae.keyAEDesiredClass, kae.typeType)).code # 4-letter code indicating element class
+		keyform = self.unpack(desc.getparam(kae.keyAEKeyForm, kae.typeEnumeration)).code # 4-letter code indicating Specifier type
+		key = self.unpack(desc.getparam(kae.keyAEKeyData, kae.typeWildCard)) # value indicating which object(s) to select
+		ref = self.unpack(desc.getparam(kae.keyAEContainer, kae.typeWildCard)) # recursively unpack container structure
 		if not isinstance(ref, aemreference.Query):
 			if ref is None:
 				ref = self.app
@@ -625,11 +625,11 @@ class Codecs:
 		# This function performance-optimises the unpacking of some object specifiers by only doing a shallow unpack where only the topmost descriptor is unpacked.
 		# The container AEDesc is retained as-is, allowing a full recursive unpack to be performed later on only if needed (e.g. if the __repr__ method is called).
 		# For simplicity, only the commonly encountered forms are optimised this way; forms that are rarely returned by applications (e.g. typeRange) are always fully unpacked.
-		keyform = self.unpack(desc.AEGetParamDesc(kae.keyAEKeyForm, kae.typeEnumeration)).code
+		keyform = self.unpack(desc.getparam(kae.keyAEKeyForm, kae.typeEnumeration)).code
 		if keyform in [kae.formPropertyID, kae.formAbsolutePosition, kae.formName, kae.formUniqueID]:
-			want = self.unpack(desc.AEGetParamDesc(kae.keyAEDesiredClass, kae.typeType)).code # 4-letter code indicating element class
-			key = self.unpack(desc.AEGetParamDesc(kae.keyAEKeyData, kae.typeWildCard)) # value indicating which object(s) to select
-			container = aemreference.DeferredSpecifier(desc.AEGetParamDesc(kae.keyAEContainer, kae.typeWildCard), self)
+			want = self.unpack(desc.getparam(kae.keyAEDesiredClass, kae.typeType)).code # 4-letter code indicating element class
+			key = self.unpack(desc.getparam(kae.keyAEKeyData, kae.typeWildCard)) # value indicating which object(s) to select
+			container = aemreference.DeferredSpecifier(desc.getparam(kae.keyAEContainer, kae.typeWildCard), self)
 			if keyform == kae.formPropertyID:
 				ref = aemreference.Property(want, container, key.code)
 			elif keyform == kae.formAbsolutePosition:
@@ -652,14 +652,14 @@ class Codecs:
 	
 	
 	def unpackinsertionloc(self, desc):
-		return getattr(self.fullyunpackobjectspecifier(desc.AEGetParamDesc(kae.keyAEObject, kae.typeWildCard)), 
-				self.kInsertionLocSelectors[desc.AEGetParamDesc(kae.keyAEPosition, kae.typeEnumeration).data])
+		return getattr(self.fullyunpackobjectspecifier(desc.getparam(kae.keyAEObject, kae.typeWildCard)), 
+				self.kInsertionLocSelectors[desc.getparam(kae.keyAEPosition, kae.typeEnumeration).data])
 	
 	
 	def unpackcompdescriptor(self, desc):
-		operator = self.kTypeCompDescriptorOperators[desc.AEGetParamDesc(kae.keyAECompOperator, kae.typeEnumeration).data]
-		op1 = self.unpack(desc.AEGetParamDesc(kae.keyAEObject1, kae.typeWildCard))
-		op2 = self.unpack(desc.AEGetParamDesc(kae.keyAEObject2, kae.typeWildCard))
+		operator = self.kTypeCompDescriptorOperators[desc.getparam(kae.keyAECompOperator, kae.typeEnumeration).data]
+		op1 = self.unpack(desc.getparam(kae.keyAEObject1, kae.typeWildCard))
+		op2 = self.unpack(desc.getparam(kae.keyAEObject2, kae.typeWildCard))
 		if operator == 'contains':
 			if isinstance(op1, aemreference.Query) and op1.AEM_root() == aemreference.its:
 				return op1.contains(op2)
@@ -669,13 +669,13 @@ class Codecs:
 	
 	
 	def unpacklogicaldescriptor(self, desc):
-		operator = self.kTypeLogicalDescriptorOperators[desc.AEGetParamDesc(kae.keyAELogicalOperator, kae.typeEnumeration).data]
-		operands = self.unpack(desc.AEGetParamDesc(kae.keyAELogicalTerms, kae.typeAEList))
+		operator = self.kTypeLogicalDescriptorOperators[desc.getparam(kae.keyAELogicalOperator, kae.typeEnumeration).data]
+		operands = self.unpack(desc.getparam(kae.keyAELogicalTerms, kae.typeAEList))
 		return operator == 'NOT' and operands[0].NOT or getattr(operands[0], operator)(*operands[1:])
 	
 	def unpackrangedescriptor(self, desc):
-		return _Range([self.unpack(desc.AEGetParamDesc(kae.keyAERangeStart, kae.typeWildCard)), 
-				self.unpack(desc.AEGetParamDesc(kae.keyAERangeStop, kae.typeWildCard))])
+		return _Range([self.unpack(desc.getparam(kae.keyAERangeStart, kae.typeWildCard)), 
+				self.unpack(desc.getparam(kae.keyAERangeStop, kae.typeWildCard))])
 	
 	
 	def unpackabsoluteordinal(self, desc):

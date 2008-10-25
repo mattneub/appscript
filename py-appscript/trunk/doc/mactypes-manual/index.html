@@ -177,7 +177,7 @@ app('TextEdit').documents[1].save(in_=f)
 from aem import kae
 
 fileurl = mactypes.File('/Users/foo/new file')
-fssdesc = fileurl.desc.AECoerceDesc(kae.typeFSS)
+fssdesc = fileurl.desc.coerce(kae.typeFSS)
 
 app('older app').documents[1].save(in_=fssdesc)</code></pre>
 

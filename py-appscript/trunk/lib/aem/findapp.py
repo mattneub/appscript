@@ -5,7 +5,7 @@
 
 from os.path import exists
 
-from ae import FindApplicationForInfo, MacOSError
+from ae import findapplicationforinfo, MacOSError
 
 __all__ = ['byname', 'byid', 'bycreator']
 
@@ -15,7 +15,7 @@ __all__ = ['byname', 'byid', 'bycreator']
 
 def _findapp(name=None, id=None, creator='????'):
 	try:
-		return FindApplicationForInfo(creator, id, name)
+		return findapplicationforinfo(creator, id, name)
 	except MacOSError, err:
 		if err[0] == -10814:
 			raise ApplicationNotFoundError(name or id or creator)

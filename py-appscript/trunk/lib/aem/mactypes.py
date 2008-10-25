@@ -14,7 +14,7 @@ Both classes provide a variety of constructors and read-only properties for gett
 
 from os.path import abspath
 
-from ae import AECreateDesc, ConvertPathToURL, ConvertURLToPath, MacOSError
+from ae import createdesc, convertpathtourl, converturltopath, MacOSError
 import kae
 
 kCFURLPOSIXPathStyle = 0
@@ -60,10 +60,10 @@ class Alias(_Base):
 		if path is _kNoPath:
 			self._desc = None
 		else:
-			urldesc = AECreateDesc(kae.typeFileURL, 
-					ConvertPathToURL(abspath(path), kCFURLPOSIXPathStyle))
+			urldesc = createdesc(kae.typeFileURL, 
+					convertpathtourl(abspath(path), kCFURLPOSIXPathStyle))
 			try:
-				self._desc = urldesc.AECoerceDesc(kae.typeAlias)
+				self._desc = urldesc.coerce(kae.typeAlias)
 			except MacOSError, err:
 				if err[0] == -1700:
 					raise ValueError("Can't make mactypes.Alias as file doesn't exist: %r" % path)
@@ -71,21 +71,21 @@ class Alias(_Base):
 					raise
 		
 	def makewithhfspath(klass, path):
-		return klass.makewithurl(ConvertPathToURL(path, kCFURLHFSPathStyle))
+		return klass.makewithurl(convertpathtourl(path, kCFURLHFSPathStyle))
 	makewithhfspath = classmethod(makewithhfspath)
 	
 	def makewithurl(klass, url):
 		"""Make File object from file URL."""
 		obj = klass(_kNoPath)
-		obj._desc = AECreateDesc(kae.typeFileURL, url).AECoerceDesc(kae.typeAlias)
+		obj._desc = createdesc(kae.typeFileURL, url).coerce(kae.typeAlias)
 		return obj
 	makewithurl = classmethod(makewithurl)
 	
 	def makewithdesc(klass, desc):
-		"""Make Alias object from CarbonX.AE.AEDesc of typeAlias (typeFSS/typeFSRef/typeFileURL are also allowed).
+		"""Make Alias object from aem.ae.AEDesc of typeAlias (typeFSS/typeFSRef/typeFileURL are also allowed).
 		"""
 		if desc.type != kae.typeAlias:
-			desc = desc.AECoerceDesc(kae.typeAlias)
+			desc = desc.coerce(kae.typeAlias)
 		obj = klass(_kNoPath)
 		obj._desc = desc
 		return obj
@@ -98,17 +98,17 @@ class Alias(_Base):
 	
 	# Properties
 	
-	path = property(lambda self: ConvertURLToPath(self.url, kCFURLPOSIXPathStyle), _ro, doc="Get as POSIX path.")
+	path = property(lambda self: converturltopath(self.url, kCFURLPOSIXPathStyle), _ro, doc="Get as POSIX path.")
 	
-	hfspath = property(lambda self: ConvertURLToPath(self.url, kCFURLHFSPathStyle), _ro, doc="Get as HFS path.")
+	hfspath = property(lambda self: converturltopath(self.url, kCFURLHFSPathStyle), _ro, doc="Get as HFS path.")
 	
-	url = property(lambda self: self._desc.AECoerceDesc(kae.typeFileURL).data, _ro, doc="Get as file URL.")
+	url = property(lambda self: self._desc.coerce(kae.typeFileURL).data, _ro, doc="Get as file URL.")
 	
 	file = property(lambda self: File.makewithdesc(self._desc), _ro, doc="Get as mactypes.File.")
 	
 	alias = property(lambda self: self, _ro, doc="Get as mactypes.Alias (i.e. itself).")
 	
-	desc = property(lambda self: self._desc, _ro, doc="Get as CarbonX.AE.AEDesc.")
+	desc = property(lambda self: self._desc, _ro, doc="Get as aem.ae.AEDesc.")
 
 
 
@@ -123,24 +123,24 @@ class File(_Base):
 			if not isinstance(path, unicode):
 				path = unicode(path)
 			self._path = abspath(path)
-			self._url = ConvertPathToURL(self._path, kCFURLPOSIXPathStyle)
-			self._desc = AECreateDesc(kae.typeFileURL, self._url)
+			self._url = convertpathtourl(self._path, kCFURLPOSIXPathStyle)
+			self._desc = createdesc(kae.typeFileURL, self._url)
 	
 	def makewithhfspath(klass, path):
-		return klass.makewithurl(ConvertPathToURL(path, kCFURLHFSPathStyle))
+		return klass.makewithurl(convertpathtourl(path, kCFURLHFSPathStyle))
 	makewithhfspath = classmethod(makewithhfspath)
 	
 	def makewithurl(klass, url):
 		"""Make File object from file URL."""
 		obj = klass(_kNoPath)
-		obj._desc = AECreateDesc(kae.typeFileURL, url)
+		obj._desc = createdesc(kae.typeFileURL, url)
 		obj._url = url
-		obj._path = ConvertURLToPath(url, kCFURLPOSIXPathStyle)
+		obj._path = converturltopath(url, kCFURLPOSIXPathStyle)
 		return obj
 	makewithurl = classmethod(makewithurl)
 		
 	def makewithdesc(klass, desc):
-		"""Make File object from CarbonX.AE.AEDesc of typeFSS/typeFSRef/typeFileURL.
+		"""Make File object from aem.ae.AEDesc of typeFSS/typeFSRef/typeFileURL.
 			Note: behaviour for other descriptor types is undefined: typeAlias will cause problems, others will probably fail.
 		"""
 		obj = klass(_kNoPath)
@@ -149,7 +149,7 @@ class File(_Base):
 		if desc.type in [kae.typeFSS, kae.typeFSRef, kae.typeFileURL]:
 			obj._desc = desc
 		else:
-			obj._desc = desc.AECoerceDesc(kae.typeFileURL)
+			obj._desc = desc.coerce(kae.typeFileURL)
 		return obj
 	makewithdesc = classmethod(makewithdesc)
 	
@@ -162,18 +162,18 @@ class File(_Base):
 	
 	def path(self):
 		if self._path is None:
-			self._path = ConvertURLToPath(self.url, kCFURLPOSIXPathStyle)
+			self._path = converturltopath(self.url, kCFURLPOSIXPathStyle)
 		return self._path
 	path = property(path, _ro, doc="Get as POSIX path.")
 	
-	hfspath = property(lambda self: ConvertURLToPath(self.url, kCFURLHFSPathStyle), _ro, doc="Get as HFS path.")
+	hfspath = property(lambda self: converturltopath(self.url, kCFURLHFSPathStyle), _ro, doc="Get as HFS path.")
 	
 	def url(self):
 		if self._url is None:
 			if self._desc.type == kae.typeFileURL:
 				self._url = self._desc.data
 			else:
-				self._url = self._desc.AECoerceDesc(kae.typeFileURL).data
+				self._url = self._desc.coerce(kae.typeFileURL).data
 		return self._url
 	url = property(url, _ro, doc="Get as file URL.")
 	
@@ -183,9 +183,9 @@ class File(_Base):
 	
 	def desc(self):
 		if self._desc is None:
-			self._desc = AECreateDesc(kae.typeFileURL, self.url)
+			self._desc = createdesc(kae.typeFileURL, self.url)
 		return self._desc
-	desc = property(desc, _ro, doc="Get as CarbonX.AE.AEDesc.")
+	desc = property(desc, _ro, doc="Get as aem.ae.AEDesc.")
 
 
 

@@ -9,7 +9,7 @@ from time import sleep
 
 import aem, mactypes
 from aem import kae
-from aem.ae import AECreateList, AECreateDesc, MacOSError
+from aem.ae import createlist, createdesc, MacOSError
 from aem.aemreference import InsertionSpecifier, Test
 
 from genericreference import GenericReference
@@ -102,7 +102,7 @@ class AppData(aem.Codecs):
 	
 	def packdict(self, val):
 		# Pack dictionary whose keys are strings (e.g. 'foo'), Keywords (e.g. k.name) or AETypes (e.g. AEType('pnam').
-		record = AECreateList('', True)
+		record = createlist(True)
 		if self.kClassKeyword in val or self.kClassType in val:
 			# if hash contains a 'class' property containing a class name, coerce the AEDesc to that class
 			newval = val.copy()
@@ -113,7 +113,7 @@ class AppData(aem.Codecs):
 			if isinstance(value, Keyword): # get the corresponding AEType (assuming there is one)
 				value = self.typebyname.get(value.name, value)
 			if isinstance(value, aem.AEType): # coerce the record to the desired type
-				record = record.AECoerceDesc(value.code)
+				record = record.coerce(value.code)
 				val = newval
 		usrf = None
 		for key, value in val.items():
@@ -122,24 +122,24 @@ class AppData(aem.Codecs):
 					keyCode = self.typebyname[key.AS_name].code
 				except KeyError:
 					raise KeyError("Unknown Keyword: k.%s" % key.AS_name)
-				record.AEPutParamDesc(keyCode, self.pack(value))
+				record.setparam(keyCode, self.pack(value))
 			elif isinstance(key, aem.AETypeBase): # AEType/AEProp (AEType is normally used in practice)
-				record.AEPutParamDesc(key.code, self.pack(value))
+				record.setparam(key.code, self.pack(value))
 			else: # user-defined key (normally a string)
 				if not usrf:
-					usrf = AECreateList('', False)
-				usrf.AEPutDesc(0, self.pack(key))
-				usrf.AEPutDesc(0, self.pack(value))
+					usrf = createlist(False)
+				usrf.setitem(0, self.pack(key))
+				usrf.setitem(0, self.pack(value))
 		if usrf:
-			record.AEPutParamDesc('usrf', usrf)
+			record.setparam('usrf', usrf)
 		return record
 	
 	
 	def unpackaerecord(self, desc):
 		# Unpack typeAERecord,  converting record keys to Keyword objects (not AETypes) where possible.
 		dct = {}
-		for i in range(desc.AECountItems()):
-			key, value = desc.AEGetNthDesc(i + 1, kae.typeWildCard)
+		for i in range(desc.count()):
+			key, value = desc.getitem(i + 1, kae.typeWildCard)
 			if key == 'usrf':
 				lst = self.unpack(value)
 				for i in range(0, len(lst), 2):
@@ -165,7 +165,7 @@ class AppData(aem.Codecs):
 	
 	def unpackcompdescriptor(self, desc):
 		# need to do some typechecking when unpacking 'contains' comparisons, so have to override the low-level unpacker
-		rec = self.unpack(desc.AECoerceDesc(kae.typeAERecord))
+		rec = self.unpack(desc.coerce(kae.typeAERecord))
 		operator = self.kAppscriptTypeCompDescriptorOperators[rec[self.keyAECompOperator].code]
 		op1 = rec[self.keyAEObject1]
 		op2 = rec[self.keyAEObject2]
@@ -326,7 +326,7 @@ class AppData(aem.Codecs):
 # Considering/ignoring constants
 
 def _packuint32(n): # used to pack csig attributes
-	return AECreateDesc(kae.typeUInt32, struct.pack('L', n))
+	return createdesc(kae.typeUInt32, struct.pack('L', n))
 
 # 'csig' attribute flags (see ASRegistry.h; note: there's no option for 'numeric strings' in 10.4)
 

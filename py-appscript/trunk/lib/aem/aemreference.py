@@ -16,31 +16,31 @@ import ae, kae
 if struct.pack("h", 1) == '\x00\x01': # host is big-endian
 
 	def packtype(code):
-		return ae.AECreateDesc(kae.typeType, code)
+		return ae.createdesc(kae.typeType, code)
 	
 	def packabsoluteordinal(code): 
-		return ae.AECreateDesc(kae.typeAbsoluteOrdinal, code)
+		return ae.createdesc(kae.typeAbsoluteOrdinal, code)
 	
 	def packenum(code):
-		return ae.AECreateDesc(kae.typeEnumeration, code)
+		return ae.createdesc(kae.typeEnumeration, code)
 
 else: # host is small-endian
 
 	def packtype(code):
-		return ae.AECreateDesc(kae.typeType, code[::-1])
+		return ae.createdesc(kae.typeType, code[::-1])
 	
 	def packabsoluteordinal(code): 
-		return ae.AECreateDesc(kae.typeAbsoluteOrdinal, code[::-1])
+		return ae.createdesc(kae.typeAbsoluteOrdinal, code[::-1])
 	
 	def packenum(code):
-		return ae.AECreateDesc(kae.typeEnumeration, code[::-1])
+		return ae.createdesc(kae.typeEnumeration, code[::-1])
 
 
 def packlistas(type, lst):
-	desc = ae.AECreateList('', True)
+	desc = ae.createlist(True)
 	for key, value in lst:
-		desc.AEPutParamDesc(key, value)
-	return desc.AECoerceDesc(type)
+		desc.setparam(key, value)
+	return desc.coerce(type)
 
 
 ###################################
@@ -280,7 +280,7 @@ class UserProperty(_PositionSpecifier):
 	_kKeyForm = packenum('usrp')
 	
 	def _packkey(self, codecs):
-		return codecs.pack(self._key).AECoerceDesc(kae.typeChar)
+		return codecs.pack(self._key).coerce(kae.typeChar)
 	
 	def AEM_resolve(self, obj):
 		return self._container.AEM_resolve(obj).userproperty(self._key)
@@ -753,7 +753,7 @@ class ApplicationRoot(ReferenceRoot):
 		Reference base; represents an application's application object. Used to construct full references.
 	"""
 	_kName = 'app'
-	_kType = ae.AECreateDesc(kae.typeNull, '')
+	_kType = ae.createdesc(kae.typeNull, '')
 
 
 class CurrentContainer(ReferenceRoot):
@@ -761,7 +761,7 @@ class CurrentContainer(ReferenceRoot):
 		Reference base; represents elements' container object. Used to construct by-range references.
 	"""
 	_kName = 'con'
-	_kType = ae.AECreateDesc(kae.typeCurrentContainer, '')
+	_kType = ae.createdesc(kae.typeCurrentContainer, '')
 
 
 class ObjectBeingExamined(ReferenceRoot):
@@ -769,7 +769,7 @@ class ObjectBeingExamined(ReferenceRoot):
 		Reference base; represents an element to be tested. Used to construct by-filter references.
 	"""
 	_kName = 'its'
-	_kType = ae.AECreateDesc(kae.typeObjectBeingExamined, '')
+	_kType = ae.createdesc(kae.typeObjectBeingExamined, '')
 
 
 class CustomRoot(ReferenceRoot):

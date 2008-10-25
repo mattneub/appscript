@@ -197,7 +197,7 @@ def dump(apppath, modulepath):
 	from sys import argv
 	
 	apppath = findapp.byname(apppath)
-	tables = buildtablesforaetes(ae.GetAppTerminology(apppath))
+	tables = buildtablesforaetes(ae.getappterminology(apppath))
 	atts = zip(('classes', 'enums', 'properties', 'elements', 'commands'), tables)
 	f = open(modulepath, 'w')
 	f.write('version = 1.1\n')

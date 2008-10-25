@@ -3,7 +3,7 @@
 (C) 2005-2008 HAS
 """
 
-from ae import AECreateAppleEvent, AECreateDesc, MacOSError
+from ae import createappleevent, MacOSError
 import kae
 
 from aemcodecs import Codecs
@@ -40,15 +40,15 @@ class Event(object):
 		self._codecs = codecs
 		self.AEM_event = self._createappleevent(event[:4], event[4:], address, returnid, transaction)
 		for key, value in atts.items():
-			self.AEM_event.AEPutAttributeDesc(key, codecs.pack(value))
+			self.AEM_event.setattr(key, codecs.pack(value))
 		for key, value in params.items():
-			self.AEM_event.AEPutParamDesc(key, codecs.pack(value))
+			self.AEM_event.setparam(key, codecs.pack(value))
 	
 	# Hooks
 	
-	_createappleevent = AECreateAppleEvent
+	_createappleevent = createappleevent
 	
-	_sendappleevent = staticmethod(lambda evt, flags, timeout: evt.AESendMessage(flags, timeout))
+	_sendappleevent = staticmethod(lambda evt, flags, timeout: evt.send(flags, timeout))
 
 	
 	# Public
@@ -74,8 +74,8 @@ class Event(object):
 				raise CommandError(err[0])
 		else: # decode application's reply, if any
 			if replyevent.type != kae.typeNull:
-				eventresult = dict([replyevent.AEGetNthDesc(i + 1, kae.typeWildCard) 
-						for i in range(replyevent.AECountItems())])
+				eventresult = dict([replyevent.getitem(i + 1, kae.typeWildCard) 
+						for i in range(replyevent.count())])
 				# note: while Apple docs say that both keyErrorNumber and keyErrorString should be
 				# tested for when determining if an error has occurred, AppleScript tests for keyErrorNumber
 				# only, so do the same here for compatibility

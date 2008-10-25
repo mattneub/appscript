@@ -23,7 +23,7 @@ _kLaunchDontSwitch = 0x0200
 _kNoProcess = 0
 _kCurrentProcess = 2
 
-_nulladdressdesc = ae.AECreateDesc(kae.typeProcessSerialNumber, struct.pack('LL', 0, _kNoProcess)) # ae.AECreateAppleEvent complains if you pass None as address, so we give it one to throw away
+_nulladdressdesc = ae.createdesc(kae.typeProcessSerialNumber, struct.pack('LL', 0, _kNoProcess)) # ae.createappleevent complains if you pass None as address, so we give it one to throw away
 
 _launchevent = Event(_nulladdressdesc, 'ascrnoop').AEM_event
 _runevent = Event(_nulladdressdesc, 'aevtoapp').AEM_event
@@ -32,7 +32,7 @@ _runevent = Event(_nulladdressdesc, 'aevtoapp').AEM_event
 
 def _launchapplication(path, event):
 	try:
-		return ae.LaunchApplication(path, event,
+		return ae.launchapplication(path, event,
 				_kLaunchContinue + _kLaunchNoFileFlags + _kLaunchDontSwitch)
 	except ae.MacOSError, err:
 		raise CantLaunchApplicationError(err[0])
@@ -81,8 +81,8 @@ class CantLaunchApplicationError(Exception):
 def launchapp(path):
 	"""Send a 'launch' event to an application. If application is not already running, it will be launched in background first."""
 	try:
-		# If app is already running, calling LaunchApplication will send a 'reopen' event, so need to check for this first:
-		pid = ae.PIDForApplicationPath(path)
+		# If app is already running, calling ae.launchapplication will send a 'reopen' event, so need to check for this first:
+		pid = ae.pidforapplicationpath(path)
 	except ae.MacOSError, err:
 		if err[0] == -600: # Application isn't running, so launch it and send it a 'launch' event:
 			sleep(1)
@@ -90,8 +90,8 @@ def launchapp(path):
 		else:
 			raise
 	else: # App is already running, so send it a 'launch' event:
-		ae.AECreateAppleEvent('ascr', 'noop', localappbypid(pid), kae.kAutoGenerateReturnID, 
-				kae.kAnyTransactionID).AESendMessage(kae.kAEWaitReply, kae.kAEDefaultTimeout)
+		ae.createappleevent('ascr', 'noop', localappbypid(pid), kae.kAutoGenerateReturnID, 
+				kae.kAnyTransactionID).send(kae.kAEWaitReply, kae.kAEDefaultTimeout)
 
 ##
 
@@ -100,7 +100,7 @@ def processexistsforpath(path):
 		Note: if path is invalid, a MacOSError is raised.
 	"""
 	try:
-		ae.PIDForApplicationPath(path)
+		ae.pidforapplicationpath(path)
 		return True
 	except ae.MacOSError, err:
 		if err[0] == -600: 
@@ -110,7 +110,7 @@ def processexistsforpath(path):
 
 def processexistsforpid(pid):
 	"""Is there a local application process with the given unix process id?"""
-	return ae.IsValidPID(pid)
+	return ae.isvalidpid(pid)
 
 def processexistsforurl(url):
 	"""Does an application process specified by the given eppc:// URL exist?
@@ -118,7 +118,7 @@ def processexistsforurl(url):
 	"""
 	if ':' not in url: # workaround: process will crash if no colon in URL (OS bug)
 		raise ValueError("Invalid url: %r" % url)
-	return processexistsfordesc(ae.AECreateDesc(kae.typeApplicationURL, url))
+	return processexistsfordesc(ae.createdesc(kae.typeApplicationURL, url))
 
 def processexistsfordesc(desc):
 	"""Does an application process specified by the given AEAddressDesc exist?
@@ -128,7 +128,7 @@ def processexistsfordesc(desc):
 	try:
 		# This will usually raise error -1708 if process is running, and various errors
 		# if the process doesn't exist/can't be reached. If app is running but busy,
-		# AESendMessage may return a timeout error (this should be -1712, but
+		# AESendMessage() may return a timeout error (this should be -1712, but
 		# -609 is often returned instead for some reason).
 		Event(desc, 'ascrnoop').send()
 	except ae.MacOSError, err:
@@ -138,7 +138,7 @@ def processexistsfordesc(desc):
 
 #######
 
-currentapp = ae.AECreateDesc(kae.typeProcessSerialNumber, struct.pack('LL', 0, _kCurrentProcess))
+currentapp = ae.createdesc(kae.typeProcessSerialNumber, struct.pack('LL', 0, _kCurrentProcess))
 
 
 def localapp(path):
@@ -148,7 +148,7 @@ def localapp(path):
 	"""
 	# Always create AEAddressDesc by process serial number; that way there's no confusion if multiple versions of the same app are running
 	try:
-		pid = ae.PIDForApplicationPath(path)
+		pid = ae.pidforapplicationpath(path)
 	except ae.MacOSError, err:
 		if err[0] == -600: # Application isn't running, so launch it in background and send it a standard 'run' event.
 			sleep(1)
@@ -163,7 +163,7 @@ def localappbypid(pid):
 		pid : integer -- Unix process id
 		Result : AEAddressDesc
 	"""
-	return ae.AECreateDesc(kae.typeKernelProcessID, struct.pack('i', pid))
+	return ae.createdesc(kae.typeKernelProcessID, struct.pack('i', pid))
 
 
 def remoteapp(url):
@@ -173,5 +173,5 @@ def remoteapp(url):
 	"""
 	if ':' not in url: # workaround: process will crash if no colon in URL (OS bug)
 		raise ValueError("Invalid url: %r" % url)
-	return ae.AECreateDesc(kae.typeApplicationURL, url)
+	return ae.createdesc(kae.typeApplicationURL, url)
 

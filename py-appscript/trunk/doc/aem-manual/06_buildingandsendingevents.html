@@ -35,9 +35,9 @@
             event : str -- 8-letter code indicating event's class and id,
                     e.g. 'coregetd'
             params : dict -- a dict of form {AE_code:anything,...} containing
-                    zero or more event parameters (message arguments) [2]
+                    zero or more event parameters (message arguments)
             atts : dict -- a dict of form {AE_code:anything,...} containing
-                    zero or more event attributes (event info) [3]
+                    zero or more event attributes (event info)
             returnid : int  -- reply event's ID
             codecs : Codecs | None -- custom codecs to use when packing/
                     unpacking this event; if None, codecs supplied in
@@ -56,16 +56,16 @@
 
     Methods:
         _createappleevent(eventclass, eventid, address, returnid, transaction)
-                -- Event subclasses may override this to modify AppleEvent
-                descriptor creation; must return an AppleEvent descriptor [1]
+                -- static method; Event subclasses may override this to modify
+                AppleEvent descriptor creation; must return an AppleEvent descriptor
 
-        _sendappleevent(flags, timeout) -- Event subclasses may override this
-            to modify event sending; must return an AppleEvent descriptor [1]
+        _sendappleevent(event, flags, timeout) -- static method; Event subclasses may
+            override this to modify event sending; must return an AppleEvent descriptor
 
         send(timeout=kae.kAEDefaultTimeout, flags=kae.kAEWaitReply) -- send event
             timeout : int | kae.kAEDefaultTimeout | kae.kAENoTimeout -- no. of ticks
                     to wait for application reply before raising timeout error
-            flags : int -- bitwise flags determining how event should be handled [5]
+            flags : int -- bitwise flags determining how event should be handled
             Result : anything -- value returned by application, if any</code></pre>
 
 
@@ -161,7 +161,7 @@ kAECanSwitchLayer</code></pre>
 
 <pre><code>CommandError(aem.ae.MacOSError)
 
-    Properties (read-only):
+    Properties:
         errornumber : int -- Mac OS error number
         errormessage : str -- application-supplied/generic error description
         offendingobject : anything | None -- object that caused the error, 

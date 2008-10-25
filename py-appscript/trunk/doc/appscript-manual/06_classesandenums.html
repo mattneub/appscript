@@ -82,15 +82,9 @@ k.ask</code></pre>
 
 <h3>Filesystem references</h3>
 
-<p>The <code>typeAlias</code> AE type represents a filesystem object, and will continue to point to that object even if it's renamed or moved to another location on the same disk. The <code>typeFSRef</code> and <code>typeFileURL</code> types represent a filesystem location. Both can represent existing locations; the <code>typeFileURL</code> type can also be used to specify locations that don't already exist.</p>
+<p>The <code>typeAlias</code> AE type corresponds to the Carbon <code>Alias</code> type and represents a filesystem object. Appscript unpacks this type as a <code>mactypes.Alias</code> object. The <code>typeFSRef</code>, <code>typeFSS</code> and <code>typeFileURL</code> types correspond to Carbon <code>FSRef</code>, Carbon <code>FSSpec</code> and CoreFoundation <code>CFURL</code> types, and are used to represent a filesystem location. Appscript unpacks these AE types as <code>mactypes.File</code> objects. See the <a href="../mactypes-manual/index.html">mactypes manual</a> for more information.</p>
 
-<p>The <code>typeAlias</code> AE type corresponds to the <code>Carbon.File.Alias</code> Python type. Appscript unpacks this type as a <code>mactypes.Alias</code> object for ease of use.</p>
-
-<p>The <code>typeFSRef</code> AE type corresponds to the <code>Carbon.File.FSRef</code> Python type, while the <code>typeFSS</code> AE type corresponds to <code>Carbon.File.FSSpec</code>. Appscript unpacks these AE types as <code>mactypes.File</code> objects for ease of use.</p>
-
-<p>While FSSpecs are supported they are deprecated by Apple and not recommended for use where other types can be used instead. and then unpacking it as a <code>mactypes.File</code> object. Note that <code>Carbon.File.FSSpec</code> objects can't properly refer to non-existent filesystem locations due to limitations in the <code>Carbon.File</code> extension as well as the limitations of the FSSpec structure itself.</p>
-
-<p>While appscript unpacks all filesystem-related AE types as either <code>mactypes.Alias</code> or <code>mactypes.File</code>, don't forget that when asking an application to coerce a return value into a file type you must specify the exact file type (<code>k.alias</code>, <code>k.file_url</code>, <code>k.file_ref</code>, or <code>k.file_specification</code>) in the <code>get</code> command. e.g. To get a <code>mactypes.Alias</code> object for the current user's home folder, you would usually use:</p>
+<p>While appscript unpacks all filesystem-related AE types as either <code>mactypes.Alias</code> or <code>mactypes.File</code>, don't forget that when asking an application to coerce a return value into a file type you must specify the exact file type (<code>k.alias</code>, <code>k.file_url</code>, <code>k.file_ref</code>, or <code>k.file_specification</code>) in the <code>get</code> command. For example, to get a <code>mactypes.Alias</code> object for the current user's home folder, you would usually use:</p>
 
 <pre><code>app('Finder').home.get(resulttype=k.alias)</code></pre>
 
@@ -111,7 +105,7 @@ k.ask</code></pre>
 
 <h3>Unit types</h3>
 
-<p>Unit type values are represented by instances of the <code>mactypes.Units</code> class, e.g. <code>mactypes.Units(3.0, 'inches')</code>. See the <a href="../mactypes/index.html">mactypes manual</a> for more information.</p>
+<p>Unit type values are represented by instances of the <code>mactypes.Units</code> class, e.g. <code>mactypes.Units(3.0,&nbsp;'inches')</code>. See the <a href="../mactypes-manual/index.html">mactypes manual</a> for more information.</p>
 
 
 <h3>Miscellaneous types</h3>
