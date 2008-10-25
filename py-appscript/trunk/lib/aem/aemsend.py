@@ -14,7 +14,7 @@ __all__ = ['CommandError', 'Event']
 # PRIVATE
 ######################################################################
 
-_defaultCodecs = Codecs() # used to unpack application errors and, optionally, return values
+_defaultcodecs = Codecs() # used to unpack application errors and, optionally, return values
 
 
 ######################################################################
@@ -26,7 +26,7 @@ class Event(object):
 	"""Represents an Apple event (serialised message)."""
 	
 	def __init__(self, address, event, params={}, atts={}, transaction= kae.kAnyTransactionID, 
-			returnid= kae.kAutoGenerateReturnID, codecs=_defaultCodecs):
+			returnid= kae.kAutoGenerateReturnID, codecs=_defaultcodecs):
 		"""Called by aem.send.__init__.Application.event(); users shouldn't instantiate this class themselves.
 			address : AEAddressDesc -- the target application
 			event : str -- 8-letter code indicating event's class and id, e.g. 'coregetd'
@@ -36,7 +36,7 @@ class Event(object):
 			returnid : int  -- reply event's ID (default = kAutoGenerateReturnID)
 			codecs : Codecs -- user can provide custom parameter & result encoder/decoder (default = standard codecs); supplied by Application class
 		"""
-		self._eventCode = event
+		self._eventcode = event
 		self._codecs = codecs
 		self.AEM_event = self._createappleevent(event[:4], event[4:], address, returnid, transaction)
 		for key, value in atts.items():
@@ -48,9 +48,8 @@ class Event(object):
 	
 	_createappleevent = AECreateAppleEvent
 	
-	def _sendappleevent(self, flags, timeout):
-		"""Hook method; may be overridden to modify event sending."""
-		return self.AEM_event.AESendMessage(flags, timeout)
+	_sendappleevent = staticmethod(lambda evt, flags, timeout: evt.AESendMessage(flags, timeout))
+
 	
 	# Public
 	
@@ -69,28 +68,28 @@ class Event(object):
 				[ aem.k.CanSwitchLayer ]
 		"""
 		try:
-			replyEvent = self._sendappleevent(flags, timeout)
+			replyevent = self._sendappleevent(self.AEM_event, flags, timeout)
 		except MacOSError, err: # an OS-level error occurred
-			if not (self._eventCode == 'aevtquit' and err[0] == -609): # Ignore invalid connection error (-609) when quitting
+			if not (self._eventcode == 'aevtquit' and err[0] == -609): # Ignore invalid connection error (-609) when quitting
 				raise CommandError(err[0])
 		else: # decode application's reply, if any
-			if replyEvent.type != kae.typeNull:
-				eventResult = dict([replyEvent.AEGetNthDesc(i + 1, kae.typeWildCard) 
-						for i in range(replyEvent.AECountItems())])
+			if replyevent.type != kae.typeNull:
+				eventresult = dict([replyevent.AEGetNthDesc(i + 1, kae.typeWildCard) 
+						for i in range(replyevent.AECountItems())])
 				# note: while Apple docs say that both keyErrorNumber and keyErrorString should be
 				# tested for when determining if an error has occurred, AppleScript tests for keyErrorNumber
 				# only, so do the same here for compatibility
-				if kae.keyErrorNumber in eventResult: # an application-level error occurred
+				if kae.keyErrorNumber in eventresult: # an application-level error occurred
 					# note: uses standard codecs to unpack error info to ensure consistent conversion
-					eNum = _defaultCodecs.unpack(eventResult[kae.keyErrorNumber])
+					eNum = _defaultcodecs.unpack(eventresult[kae.keyErrorNumber])
 					if eNum != 0: # Stupid Finder returns non-error error number and message for successful move/duplicate command, so just ignore it
-						eMsg = eventResult.get(kae.keyErrorString)
+						eMsg = eventresult.get(kae.keyErrorString)
 						if eMsg:
-							eMsg = _defaultCodecs.unpack(eMsg)
-						raise CommandError(eNum, eMsg, eventResult)
-				if kae.keyAEResult in eventResult: # application has returned a value
+							eMsg = _defaultcodecs.unpack(eMsg)
+						raise CommandError(eNum, eMsg, eventresult)
+				if kae.keyAEResult in eventresult: # application has returned a value
 					# note: unpack result with [optionally] user-specified codecs, allowing clients to customise unpacking (e.g. appscript)
-					return self._codecs.unpack(eventResult[kae.keyAEResult])
+					return self._codecs.unpack(eventresult[kae.keyAEResult])
 
 
 
@@ -270,7 +269,7 @@ class CommandError(MacOSError):
 		if self._raw:
 			desc = self._raw.get(key)
 			if desc:
-				return _defaultCodecs.unpack(desc)
+				return _defaultcodecs.unpack(desc)
 		return None
 	
 	offendingobject = property(lambda self: self._errorinfo(kae.kOSAErrorOffendingObject),

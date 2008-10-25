@@ -15,28 +15,28 @@ import ae, kae
 
 if struct.pack("h", 1) == '\x00\x01': # host is big-endian
 
-	def packType(code):
+	def packtype(code):
 		return ae.AECreateDesc(kae.typeType, code)
 	
-	def packAbsoluteOrdinal(code): 
+	def packabsoluteordinal(code): 
 		return ae.AECreateDesc(kae.typeAbsoluteOrdinal, code)
 	
-	def packEnum(code):
+	def packenum(code):
 		return ae.AECreateDesc(kae.typeEnumeration, code)
 
 else: # host is small-endian
 
-	def packType(code):
+	def packtype(code):
 		return ae.AECreateDesc(kae.typeType, code[::-1])
 	
-	def packAbsoluteOrdinal(code): 
+	def packabsoluteordinal(code): 
 		return ae.AECreateDesc(kae.typeAbsoluteOrdinal, code[::-1])
 	
-	def packEnum(code):
+	def packenum(code):
 		return ae.AECreateDesc(kae.typeEnumeration, code[::-1])
 
 
-def packListAs(type, lst):
+def packlistas(type, lst):
 	desc = ae.AECreateList('', True)
 	for key, value in lst:
 		desc.AEPutParamDesc(key, value)
@@ -105,7 +105,7 @@ class Specifier(Query):
 		# references; filter specifiers require an item (its-based) reference.
 		return self._container.AEM_root()
 	
-	def AEM_trueSelf(self):
+	def AEM_trueself(self):
 		# Called by specifier classes when creating a reference to sub-element(s) of the current reference.
 		# - An AllElements specifier (which contains 'want', 'form', 'seld' and 'from' values) will return an UnkeyedElements object (which contains 'want' and 'from' data only). The new specifier object  (ElementByIndex, ElementsByRange, etc.) wraps itself around this stub and supply its own choice of 'form' and 'seld' values.
 		# - All other specifiers simply return themselves. 
@@ -113,10 +113,10 @@ class Specifier(Query):
 		#This sleight-of-hand allows foo.elements('bar ') to produce a legal reference to all elements, so users don't need to write foo.elements('bar ').all to achieve the same goal. This isn't a huge deal for aem, but makes a significant difference to the usability of user-friendly wrappers like appscript.
 		return self
 	
-	def AEM_packSelf(self, codecs):
+	def AEM_packself(self, codecs):
 		# Pack this Specifier; called by codecs.
-		desc = self._packSelf(codecs)
-		self.AEM_packSelf = lambda codecs: desc # once packed, reuse this AEDesc for efficiency
+		desc = self._packself(codecs)
+		self.AEM_packself = lambda codecs: desc # once packed, reuse this AEDesc for efficiency
 		return desc
 
 
@@ -135,9 +135,9 @@ class InsertionSpecifier(Specifier):
 	def __repr__(self):
 		return '%r.%s' % (self._container, self._keyname)
 	
-	def _packSelf(self, codecs):
-		return packListAs(kae.typeInsertionLoc, [
-				(kae.keyAEObject, self._container.AEM_packSelf(codecs)), 
+	def _packself(self, codecs):
+		return packlistas(kae.typeInsertionLoc, [
+				(kae.keyAEObject, self._container.AEM_packself(codecs)), 
 				(kae.keyAEPosition, self._key),
 				])
 	
@@ -155,26 +155,26 @@ class _PositionSpecifier(Specifier):
 	Note that comparison and logic 'operator' methods are implemented on this class - these are only for use in constructing its-based references and shouldn't be used on app- and con-based references. Aem doesn't enforce this rule itself so as to minimise runtime overhead (the target application will raise an error if the user does something foolish).
 	"""
 	
-	_kBeginning = packEnum(kae.kAEBeginning)
-	_kEnd = packEnum(kae.kAEEnd)
-	_kBefore = packEnum(kae.kAEBefore)
-	_kAfter = packEnum(kae.kAEAfter)
-	_kPrevious = packEnum(kae.kAEPrevious)
-	_kNext = packEnum(kae.kAENext)
+	_kBeginning = packenum(kae.kAEBeginning)
+	_kEnd = packenum(kae.kAEEnd)
+	_kBefore = packenum(kae.kAEBefore)
+	_kAfter = packenum(kae.kAEAfter)
+	_kPrevious = packenum(kae.kAEPrevious)
+	_kNext = packenum(kae.kAENext)
 	
 	def __init__(self, wantcode, container, key):
 		self.AEM_want = wantcode
 		Specifier.__init__(self, container, key)
 	
 	def __repr__(self):
-		return '%r.%s(%r)' % (self._container, self._by, self._key)
+		return '%r.%s(%r)' % (self._container, self._kBy, self._key)
 	
-	def _packSelf(self, codecs):
-		return packListAs(kae.typeObjectSpecifier, [
-				(kae.keyAEDesiredClass, packType(self.AEM_want)),
-				(kae.keyAEKeyForm, self._keyForm),
-				(kae.keyAEKeyData, self._packKey(codecs)),
-				(kae.keyAEContainer, self._container.AEM_packSelf(codecs)),
+	def _packself(self, codecs):
+		return packlistas(kae.typeObjectSpecifier, [
+				(kae.keyAEDesiredClass, packtype(self.AEM_want)),
+				(kae.keyAEKeyForm, self._kKeyForm),
+				(kae.keyAEKeyData, self._packkey(codecs)),
+				(kae.keyAEContainer, self._container.AEM_packself(codecs)),
 				])
 	
 	# Comparison tests; these should only be used on its-based references:
@@ -259,11 +259,11 @@ class Property(_PositionSpecifier):
 	"""Form: ref.property(code)
 		A reference to an application-defined property, where code is the code identifying the property.
 	"""
-	_by = 'property'
-	_keyForm = packEnum(kae.formPropertyID)
+	_kBy = 'property'
+	_kKeyForm = packenum(kae.formPropertyID)
 	
-	def _packKey(self, codecs):
-		return packType(self._key)
+	def _packkey(self, codecs):
+		return packtype(self._key)
 	
 	def AEM_resolve(self, obj):
 		return self._container.AEM_resolve(obj).property(self._key)
@@ -276,10 +276,10 @@ class UserProperty(_PositionSpecifier):
 		Scriptable applications shouldn't use this reference form, but OSA script applets can.
 		Note that OSA languages may have additional rules regarding case sensitivity/conversion.
 	"""
-	_by = 'userproperty'
-	_keyForm = packEnum('usrp')
+	_kBy = 'userproperty'
+	_kKeyForm = packenum('usrp')
 	
-	def _packKey(self, codecs):
+	def _packkey(self, codecs):
 		return codecs.pack(self._key).AECoerceDesc(kae.typeChar)
 	
 	def AEM_resolve(self, obj):
@@ -297,14 +297,14 @@ class _SingleElement(_PositionSpecifier):
 	"""Base class for all single element specifiers."""
 	
 	def __init__(self, wantcode, container, key):
-		# Notes: when byindex, byname, byid, first, middle, last or any is called on an AllElements object, we want to 'strip' the AllElements object away and use the underlying UnkeyedElements object as our 'container' instead. AEM_trueSelf returns the UnkeyedElements object when called on an AllElements object; in all other cases it returns the same object it was called on.
-		_PositionSpecifier.__init__(self, wantcode, container.AEM_trueSelf(), key)
+		# Notes: when byindex, byname, byid, first, middle, last or any is called on an AllElements object, we want to 'strip' the AllElements object away and use the underlying UnkeyedElements object as our 'container' instead. AEM_trueself returns the UnkeyedElements object when called on an AllElements object; in all other cases it returns the same object it was called on.
+		_PositionSpecifier.__init__(self, wantcode, container.AEM_trueself(), key)
 	
-	def _packKey(self, codecs):
+	def _packkey(self, codecs):
 		return codecs.pack(self._key)
 	
 	def AEM_resolve(self, obj):
-		return getattr(self._container.AEM_resolve(obj), self._by)(self._key)
+		return getattr(self._container.AEM_resolve(obj), self._kBy)(self._key)
 
 
 #######
@@ -313,24 +313,24 @@ class ElementByName(_SingleElement):
 	"""Form: elementsref.byname(text)
 		A reference to a single element by its name, where text is string or unicode.
 	"""
-	_by = 'byname'
-	_keyForm = packEnum(kae.formName)
+	_kBy = 'byname'
+	_kKeyForm = packenum(kae.formName)
 
 
 class ElementByIndex(_SingleElement):
 	"""Form: elementsref.byindex(i)
 		A reference to a single element by its index, where i is a non-zero whole number.
 	"""
-	_by = 'byindex'
-	_keyForm = packEnum(kae.formAbsolutePosition)
+	_kBy = 'byindex'
+	_kKeyForm = packenum(kae.formAbsolutePosition)
 
 
 class ElementByID(_SingleElement):
 	"""Form: elementsref.byid(anything)
 		A reference to a single element by its id.
 	"""
-	_by = 'byid'
-	_keyForm = packEnum(kae.formUniqueID)
+	_kBy = 'byid'
+	_kKeyForm = packenum(kae.formUniqueID)
 
 ##
 
@@ -338,7 +338,7 @@ class ElementByOrdinal(_SingleElement):
 	"""Form: elementsref.first/middle/last/any
 		A reference to first/middle/last/any element.
 	"""
-	_keyForm = packEnum(kae.formAbsolutePosition)
+	_kKeyForm = packenum(kae.formAbsolutePosition)
 	
 	def __init__(self, wantcode, container, key, keyname):
 		self._keyname = keyname
@@ -356,7 +356,7 @@ class ElementByRelativePosition(_SingleElement):
 		A relative reference to previous/next element, where code
 		is the class code of element to get.
 	"""
-	_keyForm = packEnum(kae.formRelativePosition)
+	_kKeyForm = packenum(kae.formRelativePosition)
 	
 	def __init__(self, wantcode, container, key, keyname):
 		# Note: this method overrides _SingleElement.__init__() since we want to keep any AllElements container references as-is, not sub-select them.
@@ -376,10 +376,10 @@ class ElementByRelativePosition(_SingleElement):
 class _MultipleElements(_PositionSpecifier):
 	"""Base class for all multiple element specifiers."""
 	
-	_kFirst = packAbsoluteOrdinal(kae.kAEFirst)
-	_kMiddle = packAbsoluteOrdinal(kae.kAEMiddle)
-	_kLast = packAbsoluteOrdinal(kae.kAELast)
-	_kAny = packAbsoluteOrdinal(kae.kAEAny)
+	_kFirst = packabsoluteordinal(kae.kAEFirst)
+	_kMiddle = packabsoluteordinal(kae.kAEMiddle)
+	_kLast = packabsoluteordinal(kae.kAELast)
+	_kAny = packabsoluteordinal(kae.kAEAny)
 	
 	first = property(lambda self: ElementByOrdinal(self.AEM_want, self, self._kFirst, 'first'), doc="first --> element")
 	middle = property(lambda self: ElementByOrdinal(self.AEM_want, self, self._kMiddle, 'middle'), doc="middle --> element")
@@ -414,15 +414,15 @@ class ElementsByRange(_MultipleElements):
 		A reference to a range of elements, where start and stop are relative references 
 		to the first and last elements in range (see also 'con').
 	"""
-	_keyForm = packEnum(kae.formRange)
+	_kKeyForm = packenum(kae.formRange)
 	
 	def __init__(self, wantcode, container, key):
-		_MultipleElements.__init__(self, wantcode, container.AEM_trueSelf(), key)
+		_MultipleElements.__init__(self, wantcode, container.AEM_trueself(), key)
 	
 	def __repr__(self):
 		return '%r.byrange(%r, %r)' % ((self._container,) + self._key)
 
-	def _packKey(self, codecs):
+	def _packkey(self, codecs):
 		rangeselectors = []
 		for key, selector in [(kae.keyAERangeStart, self._key[0]), (kae.keyAERangeStop, self._key[1])]:
 			if isinstance(selector, Specifier):
@@ -431,7 +431,7 @@ class ElementsByRange(_MultipleElements):
 				rangeselectors.append([key, codecs.pack(con.elements(self.AEM_want).byname(selector))])
 			else:
 				rangeselectors.append([key, codecs.pack(con.elements(self.AEM_want).byindex(selector))])
-		return packListAs(kae.typeRangeDescriptor, rangeselectors)
+		return packlistas(kae.typeRangeDescriptor, rangeselectors)
 	
 	def AEM_resolve(self, obj):
 		return self._container.AEM_resolve(obj).byrange(*self._key)
@@ -442,17 +442,17 @@ class ElementsByFilter(_MultipleElements):
 		A reference to all elements that match a condition, where expr 
 		is a relative reference to the object being tested (see also 'its').
 	"""
-	_keyForm = packEnum(kae.formTest)
+	_kKeyForm = packenum(kae.formTest)
 	
 	def __init__(self, wantcode, container, key):
 		if not isinstance(key, Test):
 			raise TypeError('Not a test specifier: %r' % key)
-		_MultipleElements.__init__(self, wantcode, container.AEM_trueSelf(), key)
+		_MultipleElements.__init__(self, wantcode, container.AEM_trueself(), key)
 	
 	def __repr__(self):
 		return '%r.byfilter(%r)' % (self._container, self._key)
 
-	def _packKey(self, codecs):
+	def _packkey(self, codecs):
 		return codecs.pack(self._key)
 	
 	def AEM_resolve(self, obj):
@@ -463,8 +463,8 @@ class AllElements(_MultipleElements):
 	"""Form: ref.elements(code)
 		A reference to all elements of container, where code is elements' class code.
 	"""
-	_keyForm = packEnum(kae.formAbsolutePosition)
-	_kAll = packAbsoluteOrdinal(kae.kAEAll)
+	_kKeyForm = packenum(kae.formAbsolutePosition)
+	_kAll = packabsoluteordinal(kae.kAEAll)
 	
 	def __init__(self, wantcode, container):
 		# An AllElements object is a wrapper around an UnkeyedElements object; when selecting one or more of these elements, the AllElements wrapper is skipped and the UnkeyedElements object is used as the 'container' for the new specifier.
@@ -473,10 +473,10 @@ class AllElements(_MultipleElements):
 	def __repr__(self):
 		return repr(self._container)
 	
-	def _packKey(self, codecs):
+	def _packkey(self, codecs):
 		return self._kAll
 	
-	def AEM_trueSelf(self): # override default implementation to return the UnkeyedElements object stored inside of this AllElements instance
+	def AEM_trueself(self): # override default implementation to return the UnkeyedElements object stored inside of this AllElements instance
 		return self._container
 	
 	def AEM_resolve(self, obj):
@@ -530,8 +530,8 @@ class UnkeyedElements(Specifier):
 	def __repr__(self):
 		return '%r.elements(%r)' % (self._container, self.AEM_want)
 	
-	def AEM_packSelf(self, codecs):
-		return self._container.AEM_packSelf(codecs) # forward to container specifier
+	def AEM_packself(self, codecs):
+		return self._container.AEM_packself(codecs) # forward to container specifier
 	
 	def AEM_resolve(self, obj):
 		return self._container.AEM_resolve(obj).elements(self.AEM_want)
@@ -552,33 +552,33 @@ class DeferredSpecifier(Query):
 		self._desc = desc
 		self._codecs = codecs
 	
-	def _realRef(self):
+	def _realref(self):
 		ref = self._codecs.unpack(self._desc) or self._codecs.app
 		if not isinstance(ref, Query):
 			if ref is None:
 				ref = self._codecs.app
 			else:
 				ref = customroot(ref)
-		self._realRef = lambda:ref
+		self._realref = lambda:ref
 		return ref
 	
-	def AEM_trueSelf(self):
+	def AEM_trueself(self):
 		return self
 		
 	def __repr__(self):
-		return repr(self._realRef())
+		return repr(self._realref())
 	
 	def __eq__(self, v):
-		return self._realRef() == v
+		return self._realref() == v
 	
 	def __hash__(self):
-		return hash(self._realRef())
+		return hash(self._realref())
 	
 	def AEM_root(self):
-		return self._realRef().AEM_root()
+		return self._realref().AEM_root()
 	
 	def AEM_resolve(self, obj):
-		return self._realRef().AEM_resolve(obj)
+		return self._realref().AEM_resolve(obj)
 		
 
 ######################################################################
@@ -618,8 +618,8 @@ class _ComparisonTest(Test):
 	def AEM_resolve(self, obj):
 		return getattr(self._operand1.AEM_resolve(obj), self._name)(self._operand2)
 
-	def AEM_packSelf(self, codecs):
-		return packListAs(kae.typeCompDescriptor, [
+	def AEM_packself(self, codecs):
+		return packlistas(kae.typeCompDescriptor, [
 				(kae.keyAEObject1, codecs.pack(self._operand1)), 
 				(kae.keyAECompOperator, self._operator), 
 				(kae.keyAEObject2, codecs.pack(self._operand2))
@@ -629,48 +629,48 @@ class _ComparisonTest(Test):
 
 class GreaterThan(_ComparisonTest):
 	_name = 'gt'
-	_operator = packEnum(kae.kAEGreaterThan)
+	_operator = packenum(kae.kAEGreaterThan)
 
 class GreaterOrEquals(_ComparisonTest):
 	_name = 'ge'
-	_operator = packEnum(kae.kAEGreaterThanEquals)
+	_operator = packenum(kae.kAEGreaterThanEquals)
 
 class Equals(_ComparisonTest):
 	_name = 'eq'
-	_operator = packEnum(kae.kAEEquals)
+	_operator = packenum(kae.kAEEquals)
 
 class NotEquals(Equals):
 	_name = 'ne'
-	_operatorNOT = packEnum(kae.kAENOT)
+	_operatorNOT = packenum(kae.kAENOT)
 	
-	def AEM_packSelf(self, codecs):
-		return self._operand1.eq(self._operand2).NOT.AEM_packSelf(codecs)
+	def AEM_packself(self, codecs):
+		return self._operand1.eq(self._operand2).NOT.AEM_packself(codecs)
 
 class LessThan(_ComparisonTest):
 	_name = 'lt'
-	_operator = packEnum(kae.kAELessThan)
+	_operator = packenum(kae.kAELessThan)
 
 class LessOrEquals(_ComparisonTest):
 	_name = 'le'
-	_operator = packEnum(kae.kAELessThanEquals)
+	_operator = packenum(kae.kAELessThanEquals)
 
 class BeginsWith(_ComparisonTest):
 	_name = 'beginswith'
-	_operator = packEnum(kae.kAEBeginsWith)
+	_operator = packenum(kae.kAEBeginsWith)
 
 class EndsWith(_ComparisonTest):
 	_name = 'endswith'
-	_operator = packEnum(kae.kAEEndsWith)
+	_operator = packenum(kae.kAEEndsWith)
 
 class Contains(_ComparisonTest):
 	_name = 'contains'
-	_operator = packEnum(kae.kAEContains)
+	_operator = packenum(kae.kAEContains)
 
 class IsIn(Contains):
 	_name = 'isin'
 
-	def AEM_packSelf(self, codecs):
-		return packListAs(kae.typeCompDescriptor, [
+	def AEM_packself(self, codecs):
+		return packlistas(kae.typeCompDescriptor, [
 				(kae.keyAEObject1, codecs.pack(self._operand2)), 
 				(kae.keyAECompOperator, self._operator), 
 				(kae.keyAEObject2, codecs.pack(self._operand1))
@@ -691,8 +691,8 @@ class _LogicalTest(Test):
 	def AEM_resolve(self, obj):
 		return getattr(self._operands[0].AEM_resolve(obj), self._name)(*self._operands[1:])
 	
-	def AEM_packSelf(self, codecs):
-		return packListAs(kae.typeLogicalDescriptor, [
+	def AEM_packself(self, codecs):
+		return packlistas(kae.typeLogicalDescriptor, [
 				(kae.keyAELogicalOperator, self._operator), 
 				(kae.keyAELogicalTerms, codecs.pack(self._operands)),
 				])
@@ -700,17 +700,17 @@ class _LogicalTest(Test):
 ##
 
 class AND(_LogicalTest):
-	_operator = packEnum(kae.kAEAND)
+	_operator = packenum(kae.kAEAND)
 	_name = 'AND'
 
 
 class OR(_LogicalTest):
-	_operator = packEnum(kae.kAEOR)
+	_operator = packenum(kae.kAEOR)
 	_name = 'OR'
 
 
 class NOT(_LogicalTest):
-	_operator = packEnum(kae.kAENOT)
+	_operator = packenum(kae.kAENOT)
 	_name = 'NOT'
 		
 	def __repr__(self):
@@ -735,7 +735,7 @@ class ReferenceRoot(_PositionSpecifier):
 	def __repr__(self):
 		return self._kName
 	
-	def _packSelf(self, codecs):
+	def _packself(self, codecs):
 		return self._kType
 	
 	def AEM_root(self):
@@ -784,7 +784,7 @@ class CustomRoot(ReferenceRoot):
 	def __repr__(self):
 		return 'customroot(%r)' % self._rootObj
 	
-	def _packSelf(self, codecs):
+	def _packself(self, codecs):
 		return codecs.pack(self._rootObj)
 	
 	def AEM_resolve(self, obj):

@@ -56,9 +56,9 @@ class GenericReference(object):
 				s += repstr % args
 		return s
 	
-	def AS_resolve(self, Reference, appData):
+	def AS_resolve(self, Reference, appdata):
 		# (Note: reference.Reference class is passed as argument simply to avoid circular import between that module and this)
-		ref = Reference(appData, {'app':aem.app, 'con':aem.con, 'its':aem.its}[self._call[0]])
+		ref = Reference(appdata, {'app':aem.app, 'con':aem.con, 'its':aem.its}[self._call[0]])
 		for method, args, repstr in self._call[1:]:
 			if method == '__getattr__':
 				ref = getattr(ref, args)
@@ -73,11 +73,4 @@ class GenericReference(object):
 con = GenericReference(['con'])
 its = GenericReference(['its'])
 # 'app' is defined in reference module
-
-######################################################################
-# TEST
-######################################################################
-
-if __name__ == '__main__':
-	print (con.documents[1].text.paragraphs[1:3].text.foo(1) == 'foo').OR(1)
 

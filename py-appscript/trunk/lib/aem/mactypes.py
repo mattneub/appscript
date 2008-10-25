@@ -29,7 +29,7 @@ __all__ = ['Alias', 'File', 'Units']
 ######################################################################
 # Constants
 
-class _NoPath: pass
+class _kNoPath: pass
 
 def _ro(*args):
 	raise AttributeError('Property is read-only.')
@@ -57,7 +57,7 @@ class Alias(_Base):
 	
 	def __init__(self, path):
 		"""Make Alias object from POSIX path."""
-		if path is _NoPath:
+		if path is _kNoPath:
 			self._desc = None
 		else:
 			urldesc = AECreateDesc(kae.typeFileURL, 
@@ -76,7 +76,7 @@ class Alias(_Base):
 	
 	def makewithurl(klass, url):
 		"""Make File object from file URL."""
-		obj = klass(_NoPath)
+		obj = klass(_kNoPath)
 		obj._desc = AECreateDesc(kae.typeFileURL, url).AECoerceDesc(kae.typeAlias)
 		return obj
 	makewithurl = classmethod(makewithurl)
@@ -86,7 +86,7 @@ class Alias(_Base):
 		"""
 		if desc.type != kae.typeAlias:
 			desc = desc.AECoerceDesc(kae.typeAlias)
-		obj = klass(_NoPath)
+		obj = klass(_kNoPath)
 		obj._desc = desc
 		return obj
 	makewithdesc = classmethod(makewithdesc)
@@ -119,7 +119,7 @@ class File(_Base):
 	
 	def __init__(self, path):
 		"""Make File object from POSIX path."""
-		if path is not _NoPath:
+		if path is not _kNoPath:
 			if not isinstance(path, unicode):
 				path = unicode(path)
 			self._path = abspath(path)
@@ -132,7 +132,7 @@ class File(_Base):
 	
 	def makewithurl(klass, url):
 		"""Make File object from file URL."""
-		obj = klass(_NoPath)
+		obj = klass(_kNoPath)
 		obj._desc = AECreateDesc(kae.typeFileURL, url)
 		obj._url = url
 		obj._path = ConvertURLToPath(url, kCFURLPOSIXPathStyle)
@@ -143,7 +143,7 @@ class File(_Base):
 		"""Make File object from CarbonX.AE.AEDesc of typeFSS/typeFSRef/typeFileURL.
 			Note: behaviour for other descriptor types is undefined: typeAlias will cause problems, others will probably fail.
 		"""
-		obj = klass(_NoPath)
+		obj = klass(_kNoPath)
 		obj._path = None
 		obj._url = None
 		if desc.type in [kae.typeFSS, kae.typeFSRef, kae.typeFileURL]:

@@ -28,7 +28,7 @@ kCommand = 'c'
 ######################################################################
 # Cache
 
-_terminologyCache = {} # cache parsed terminology
+_terminologycache = {} # cache parsed terminology
 
 ######################################################################
 # Default terminology tables for converting between human-readable identifiers and Apple event codes; used by all apps.
@@ -74,7 +74,7 @@ for name, code, params in defaultterminology.commands:
 ######################################################################
 # Translation table parsers
 
-def _makeTypeTable(classes, enums, properties):
+def _maketypetable(classes, enums, properties):
 	# Used for constructing k.keywords
 	# Each argument is of format [[name, code], ...]
 	typebycode = _typebycode.copy()
@@ -95,7 +95,7 @@ def _makeTypeTable(classes, enums, properties):
 	return typebycode, typebyname
 
 
-def _makeReferenceTable(properties, elements, commands):
+def _makereferencetable(properties, elements, commands):
 	# Used for constructing references and commands
 	# First two parameters are of format [[name, code], ...]
 	# Last parameter is of format [name, code, direct arg type, [[arg code, arg name], ...]]
@@ -123,7 +123,7 @@ def _makeReferenceTable(properties, elements, commands):
 ######################################################################
 
 
-defaulttables = _makeTypeTable([], [], []) + _makeReferenceTable([], [], []) # (typebycode, typebyname, referencebycode, referencebyname)
+defaulttables = _maketypetable([], [], []) + _makereferencetable([], [], []) # (typebycode, typebyname, referencebycode, referencebyname)
 
 
 def aetesforapp(aemapp):
@@ -145,15 +145,15 @@ def tablesforaetes(aetes):
 		Result : tuple of dict -- (typebycode, typebyname, referencebycode, referencebyname)
 	"""
 	classes, enums, properties, elements, commands = buildtablesforaetes(aetes)
-	return _makeTypeTable(classes, enums, properties) + _makeReferenceTable(properties, elements, commands)
+	return _maketypetable(classes, enums, properties) + _makereferencetable(properties, elements, commands)
 
 
 def tablesformodule(terms):
 	"""Build terminology tables from a dumped terminology module.
 		Result : tuple of dict -- (typebycode, typebyname, referencebycode, referencebyname)
 	"""
-	return _makeTypeTable(terms.classes, terms.enums, terms.properties) \
-			+ _makeReferenceTable(terms.properties, terms.elements, terms.commands)
+	return _maketypetable(terms.classes, terms.enums, terms.properties) \
+			+ _makereferencetable(terms.properties, terms.elements, terms.commands)
 
 
 def tablesforapp(aemapp):
@@ -161,9 +161,9 @@ def tablesforapp(aemapp):
 		aemapp : aem.Application
 		Result : tuple of dict -- (typebycode, typebyname, referencebycode, referencebyname)
 	"""
-	if aemapp.AEM_identity not in _terminologyCache:
-		_terminologyCache[aemapp.AEM_identity] = tablesforaetes(aetesforapp(aemapp))
-	return _terminologyCache[aemapp.AEM_identity]
+	if aemapp.AEM_identity not in _terminologycache:
+		_terminologycache[aemapp.AEM_identity] = tablesforaetes(aetesforapp(aemapp))
+	return _terminologycache[aemapp.AEM_identity]
 
 
 ######################################################################

@@ -8,7 +8,6 @@ from time import sleep
 import ae, kae
 
 from aemsend import Event
-from aemcodecs import Codecs
 
 __all__ = ['launchapp', 'processexistsforpath', 'processexistsforpid', 'processexistsforurl', 
 		'processexistsfordesc', 'currentapp', 'localapp', 'remoteapp', 'CantLaunchApplicationError']
@@ -17,26 +16,24 @@ __all__ = ['launchapp', 'processexistsforpath', 'processexistsforpid', 'processe
 # PRIVATE
 ######################################################################
 
-_launchContinue = 0x4000
-_launchNoFileFlags = 0x0800
-_launchDontSwitch = 0x0200
+_kLaunchContinue = 0x4000
+_kLaunchNoFileFlags = 0x0800
+_kLaunchDontSwitch = 0x0200
 
 _kNoProcess = 0
 _kCurrentProcess = 2
 
-_defaultCodecs = Codecs()
+_nulladdressdesc = ae.AECreateDesc(kae.typeProcessSerialNumber, struct.pack('LL', 0, _kNoProcess)) # ae.AECreateAppleEvent complains if you pass None as address, so we give it one to throw away
 
-_nullAddressDesc = ae.AECreateDesc(kae.typeProcessSerialNumber, struct.pack('LL', 0, _kNoProcess)) # ae.AECreateAppleEvent complains if you pass None as address, so we give it one to throw away
-
-_launchEvent = Event(_nullAddressDesc, 'ascrnoop').AEM_event
-_runEvent = Event(_nullAddressDesc, 'aevtoapp').AEM_event
+_launchevent = Event(_nulladdressdesc, 'ascrnoop').AEM_event
+_runevent = Event(_nulladdressdesc, 'aevtoapp').AEM_event
 
 #######
 
-def _launchApplication(path, event):
+def _launchapplication(path, event):
 	try:
 		return ae.LaunchApplication(path, event,
-				_launchContinue + _launchNoFileFlags + _launchDontSwitch)
+				_kLaunchContinue + _kLaunchNoFileFlags + _kLaunchDontSwitch)
 	except ae.MacOSError, err:
 		raise CantLaunchApplicationError(err[0])
 
@@ -66,15 +63,19 @@ class CantLaunchApplicationError(Exception):
 		-10829: "The application to be launched cannot run simultaneously in two different user sessions.",
 	}
 
-	def __init__(self, errorNumber):
-		self.number = errorNumber
-		Exception.__init__(self, errorNumber)
-				
+	def __init__(self, errornumber):
+		self._number = errornumber
+		Exception.__init__(self, errornumber)
+	
+	number = property(lambda self: self._number) # deprecated; TO DO: remove
+	
+	errornumber = property(lambda self: self._number, doc="int -- Mac OS error number")
+	
 	def __int__(self):
-		return self.number
+		return self._number
 	
 	def __str__(self):
-		return "CantLaunchApplicationError: %s (%i)" % (self._lserrors.get(self.number, 'OS error'), self.number)
+		return "CantLaunchApplicationError: %s (%i)" % (self._lserrors.get(self._number, 'OS error'), self._number)
 
 
 def launchapp(path):
@@ -85,7 +86,7 @@ def launchapp(path):
 	except ae.MacOSError, err:
 		if err[0] == -600: # Application isn't running, so launch it and send it a 'launch' event:
 			sleep(1)
-			_launchApplication(path, _launchEvent)
+			_launchapplication(path, _launchevent)
 		else:
 			raise
 	else: # App is already running, so send it a 'launch' event:
@@ -131,7 +132,7 @@ def processexistsfordesc(desc):
 		# -609 is often returned instead for some reason).
 		Event(desc, 'ascrnoop').send()
 	except ae.MacOSError, err:
-		return err[0] not in [-600, -905]
+		return err[0] not in [-600, -905] # -600 = no process; -905 = no network access
 	return True
 
 
@@ -151,7 +152,7 @@ def localapp(path):
 	except ae.MacOSError, err:
 		if err[0] == -600: # Application isn't running, so launch it in background and send it a standard 'run' event.
 			sleep(1)
-			pid = _launchApplication(path, _runEvent)
+			pid = _launchapplication(path, _runevent)
 		else:
 			raise
 	return localappbypid(pid)

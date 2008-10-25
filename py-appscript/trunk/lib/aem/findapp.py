@@ -13,7 +13,7 @@ __all__ = ['byname', 'byid', 'bycreator']
 # PRIVATE
 ######################################################################
 
-def _findApp(name=None, id=None, creator='????'):
+def _findapp(name=None, id=None, creator='????'):
 	try:
 		return FindApplicationForInfo(creator, id, name)
 	except MacOSError, err:
@@ -47,11 +47,11 @@ def byname(name):
 	"""
 	if not name.startswith('/'): # application name only, not its full path
 		try:
-			name = _findApp(name)
+			name = _findapp(name)
 		except ApplicationNotFoundError:
 			if name.lower().endswith('.app'):
 				raise
-			name = _findApp(name + '.app')
+			name = _findapp(name + '.app')
 	if not exists(name) and not name.lower().endswith('.app') and exists(name + '.app'):
 		name += '.app'
 	if not exists(name):
@@ -65,7 +65,7 @@ def byid(id):
 	Examples:
 		byid('com.apple.textedit')
 	"""
-	return _findApp(id=id)
+	return _findapp(id=id)
 
 
 def bycreator(creator):
@@ -76,7 +76,7 @@ def bycreator(creator):
 	"""
 	if len(creator) != 4 or creator == '????':
 		raise ApplicationNotFoundError(creator)
-	return _findApp(creator=creator)
+	return _findapp(creator=creator)
 
 
 

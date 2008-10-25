@@ -10,36 +10,36 @@ from aem import Query
 ######################################################################
 
 class _Formatter:
-	def __init__(self, appData, nested=False):
-		self._appData = appData
+	def __init__(self, appdata, nested=False):
+		self._appdata = appdata
 		if nested:
 			self.root = 'app'
-		elif self._appData.constructor == 'current':
+		elif self._appdata.constructor == 'current':
 			self.root = 'app()'
-		elif self._appData.constructor == 'path':
-			self.root = 'app(%r)' % self._appData.identifier
+		elif self._appdata.constructor == 'path':
+			self.root = 'app(%r)' % self._appdata.identifier
 		else:
-			self.root = 'app(%s=%r)' % (self._appData.constructor, self._appData.identifier)
+			self.root = 'app(%s=%r)' % (self._appdata.constructor, self._appdata.identifier)
 		self.result = ''
 	
 	def _format(self, val):
 		if isinstance(val, Query):
-			return renderreference(self._appData, val, True)
+			return renderreference(self._appdata, val, True)
 		else:
 			return repr(val)
 	
 	def property(self, code):
 		try:
-			self.result += '.' + self._appData.referencebycode[kProperty+code][1]
+			self.result += '.' + self._appdata.referencebycode[kProperty+code][1]
 		except KeyError:
-			self.result += '.' + self._appData.referencebycode[kElement+code][1]
+			self.result += '.' + self._appdata.referencebycode[kElement+code][1]
 		return self
 
 	def elements(self, code):
 		try:
-			self.result += '.' + self._appData.referencebycode[kElement+code][1]
+			self.result += '.' + self._appdata.referencebycode[kElement+code][1]
 		except KeyError:
-			self.result += '.' + self._appData.referencebycode[kProperty+code][1]
+			self.result += '.' + self._appdata.referencebycode[kProperty+code][1]
 		return self
 	
 	def byname(self, sel):
@@ -61,11 +61,11 @@ class _Formatter:
 		return self
 	
 	def previous(self, sel):
-		self.result += '.previous(%r)' % self._appData.typebycode[sel]
+		self.result += '.previous(%r)' % self._appdata.typebycode[sel]
 		return self
 	
 	def next(self, sel):
-		self.result += '.next(%r)' % self._appData.typebycode[sel]
+		self.result += '.next(%r)' % self._appdata.typebycode[sel]
 		return self
 	
 	def __getattr__(self, name):

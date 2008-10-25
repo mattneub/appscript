@@ -24,7 +24,7 @@ from keywordwrapper import Keyword
 ######################################################################
 # Codecs
 
-_lowLevelCodecs = aem.Codecs()
+_lowlevelcodecs = aem.Codecs()
 
 
 ###################################
@@ -65,9 +65,9 @@ class AppData(aem.Codecs):
 	#######
 	# initialiser
 	
-	def __init__(self, aemApplicationClass, constructor, identifier, terms):
+	def __init__(self, aemapplicationclass, constructor, identifier, terms):
 		"""
-			aemApplicationClass : class -- aem.Application or equivalent
+			aemapplicationclass : class -- aem.Application or equivalent
 			constructor : str -- indicates how to construct the aem.Application instance ('path', 'pid', 'url', 'aemapp', 'current')
 			identifier : any -- value identifying the target application (its type is dependent on constructor parameter)
 			terms : bool | module | tuple
@@ -75,26 +75,24 @@ class AppData(aem.Codecs):
 		# initialise codecs
 		aem.Codecs.__init__(self)
 		self.decoders.update({
-				kae.typeType: self.unpackTypeOrEnum,
-				kae.typeEnumerated: self.unpackTypeOrEnum,
-				kae.typeProperty: self.unpackTypeOrEnum,
-				kae.typeAERecord: self.unpackAERecord,
-				kae.typeObjectSpecifier: self.unpackReference,
-				kae.typeInsertionLoc: self.unpackReference,
-				kae.typeCompDescriptor: self.unpackCompDescriptor,
+				kae.typeType: self.unpackkeyword,
+				kae.typeEnumerated: self.unpackkeyword,
+				kae.typeProperty: self.unpackkeyword,
+				kae.typeObjectSpecifier: self.unpackreference,
+				kae.typeInsertionLoc: self.unpackreference,
 				# AEAddressDesc types
-				kae.typeApplicationBundleID: self.unpackApplicationByID,
-				kae.typeApplicationURL: self.unpackApplicationByURL,
-				kae.typeApplSignature: self.unpackApplicationBySignature,
-				kae.typeKernelProcessID: self.unpackApplicationByPID,
-				kae.typeMachPort: self.unpackApplicationByDesc,
-				kae.typeProcessSerialNumber: self.unpackApplicationByDesc,
+				kae.typeApplicationBundleID: self.unpackapplicationbyid,
+				kae.typeApplicationURL: self.unpackapplicationbyurl,
+				kae.typeApplSignature: self.unpackapplicationbysignature,
+				kae.typeKernelProcessID: self.unpackapplicationbypid,
+				kae.typeMachPort: self.unpackapplicationbydesc,
+				kae.typeProcessSerialNumber: self.unpackapplicationbydesc,
 		})
 		# store parameters for later use
-		self._aemApplicationClass = aemApplicationClass
+		self._aemapplicationclass = aemapplicationclass
 		self.constructor, self.identifier = constructor, identifier
 		self._terms = terms
-		self._helpAgent = None
+		self._helpagent = None
 	
 	
 	#######
@@ -102,7 +100,7 @@ class AppData(aem.Codecs):
 	# Terminology-aware pack/unpack functions.
 	# These replace the default aem pack/unpack functions, which don't understand appscript Keyword and Reference objects.
 	
-	def packDict(self, val):
+	def packdict(self, val):
 		# Pack dictionary whose keys are strings (e.g. 'foo'), Keywords (e.g. k.name) or AETypes (e.g. AEType('pnam').
 		record = AECreateList('', True)
 		if self.kClassKeyword in val or self.kClassType in val:
@@ -137,7 +135,7 @@ class AppData(aem.Codecs):
 		return record
 	
 	
-	def unpackAERecord(self, desc):
+	def unpackaerecord(self, desc):
 		# Unpack typeAERecord,  converting record keys to Keyword objects (not AETypes) where possible.
 		dct = {}
 		for i in range(desc.AECountItems()):
@@ -154,18 +152,18 @@ class AppData(aem.Codecs):
 
 	##
 	
-	def unpackTypeOrEnum(self, desc):
+	def unpackkeyword(self, desc):
 		# Unpack typeType, typeEnum, typeProperty; replaces default aem decoders to convert types, enums, etc.
 		# to Keyword objects instead of AETypes, AEEnums, etc.
-		aemValue = _lowLevelCodecs.unpack(desc)
+		aemValue = _lowlevelcodecs.unpack(desc)
 		return self.typebycode.get(aemValue.code, aemValue)
 	
 	
-	def unpackReference(self, desc):
-		return Reference(self, _lowLevelCodecs.unpack(desc))
+	def unpackreference(self, desc):
+		return Reference(self, _lowlevelcodecs.unpack(desc))
 	
 	
-	def unpackCompDescriptor(self, desc): # TO DO: is this needed?
+	def unpackcompdescriptor(self, desc):
 		# need to do some typechecking when unpacking 'contains' comparisons, so have to override the low-level unpacker
 		rec = self.unpack(desc.AECoerceDesc(kae.typeAERecord))
 		operator = self.kAppscriptTypeCompDescriptorOperators[rec[self.keyAECompOperator].code]
@@ -177,28 +175,28 @@ class AppData(aem.Codecs):
 			elif isinstance(op2, Reference) and op2.AS_aemreference.AEM_root() == aem.its:
 				return op2.isin(op1)
 			else:
-				return _lowLevelCodecs.unpack(desc)
+				return _lowlevelcodecs.unpack(desc)
 		else:
 			return getattr(op1, operator)(op2)
 	
 	##
 	
-	def unpackApplicationByID(self, desc):
+	def unpackapplicationbyid(self, desc):
 		return app(id=desc.data)
 	
-	def unpackApplicationByURL(self, desc):
+	def unpackapplicationbyurl(self, desc):
 		if desc.data.startswith('file'): # workaround for converting AEAddressDescs containing file:// URLs to application paths, since AEAddressDescs containing file URLs don't seem to work correctly
 			return app(mactypes.File.makewithurl(desc.data).path)
 		else: # presumably contains an eppc:// URL
 			return app(url=desc.data)
 	
-	def unpackApplicationBySignature(self, desc):
+	def unpackapplicationbysignature(self, desc):
 		return app(creator=struct.pack('>L', struct.unpack('L', desc.data)[0]))
 	
-	def unpackApplicationByPID(self, desc):
+	def unpackapplicationbypid(self, desc):
 		return app(pid=struct.unpack('L', desc.data)[0])
 	
-	def unpackApplicationByDesc(self, desc):
+	def unpackapplicationbydesc(self, desc):
 		return app(aemapp=aem.Application(desc=desc))
 
 	#######
@@ -214,9 +212,9 @@ class AppData(aem.Codecs):
 		if self.constructor == 'aemapp':
 			self.target = self.identifier
 		elif self.constructor == 'current':
-			self.target = self._aemApplicationClass()
+			self.target = self._aemapplicationclass()
 		else:
-			self.target = self._aemApplicationClass(**{self.constructor: self.identifier})
+			self.target = self._aemapplicationclass(**{self.constructor: self.identifier})
 		# initialise translation tables
 		if self._terms == True: # obtain terminology from application
 			self._terms = terminology.tablesforapp(self.target)
@@ -252,11 +250,11 @@ class AppData(aem.Codecs):
 			s= s.encode('utf8')
 		print >> sys.stderr, s
 	
-	def _initHelpAgent(self):
+	def _inithelpagent(self):
 		try:
 			apppath = aem.findapp.byid(self.kHelpAgentBundleID)
 			asdictionaryisrunning = aem.Application.processexistsforpath(apppath)
-			self._helpAgent = aem.Application(apppath)
+			self._helpagent = aem.Application(apppath)
 			if not asdictionaryisrunning:
 				# tell System Events hide ASDictionary after it's launched (kludgy, but does the job)
 				aem.Application(aem.findapp.byid('com.apple.systemevents')).event('coresetd', {
@@ -266,7 +264,7 @@ class AppData(aem.Codecs):
 				# to handle incoming events before custom event handlers have been installed)
 				for _ in range(25):
 					try:
-						self._helpAgent.event('AppSHelp', {
+						self._helpagent.event('AppSHelp', {
 								'Cons': self.constructor,
 								'Iden': self.identifier,
 								'Styl': 'py-appscript',
@@ -286,20 +284,20 @@ class AppData(aem.Codecs):
 			self._write("No help available: can't launch ASDictionary application.")
 		return False
 	
-	def _displayHelp(self, flags, ref):
+	def _displayhelp(self, flags, ref):
 		if isinstance(ref, Command):
-			commandName = ref.AS_name
+			commandname = ref.AS_name
 			ref = ref.AS_aemreference
 		else:
-			commandName = ''
+			commandname = ''
 		try:
-			self._write(self._helpAgent.event('AppSHelp', {
+			self._write(self._helpagent.event('AppSHelp', {
 					'Cons': self.constructor,
 					'Iden': self.identifier,
 					'Styl': 'py-appscript',
 					'Flag': flags,
 					'aRef': self.pack(ref),
-					'CNam': commandName
+					'CNam': commandname
 					}).send())
 			return None
 		except aem.CommandError, e:
@@ -307,14 +305,14 @@ class AppData(aem.Codecs):
 	
 	def help(self, flags, ref):
 		try:
-			if not self._helpAgent: # initialise help system upon first use
-				if not self._initHelpAgent():
+			if not self._helpagent: # initialise help system upon first use
+				if not self._inithelpagent():
 					return ref # if ASDictionary is unavailable then do nothing
-			e = self._displayHelp(flags, ref)
+			e = self._displayhelp(flags, ref)
 			if e and e.errornumber in [-600, -609]: # ASDictionary is no longer running, so reconnect
-				if not self._initHelpAgent():
+				if not self._inithelpagent():
 					return ref # if ASDictionary is unavailable then do nothing
-				e = self._displayHelp(flags, ref)
+				e = self._displayhelp(flags, ref)
 			if e:
 				self._write("No help available: ASDictionary raised an error: %s" % e)
 		except Exception, err:
@@ -327,12 +325,12 @@ class AppData(aem.Codecs):
 ######################################################################
 # Considering/ignoring constants
 
-def _packUInt32(n): # used to pack csig attributes
+def _packuint32(n): # used to pack csig attributes
 	return AECreateDesc(kae.typeUInt32, struct.pack('L', n))
 
 # 'csig' attribute flags (see ASRegistry.h; note: there's no option for 'numeric strings' in 10.4)
 
-_ignoreEnums = [
+_ignoreenums = [
 	(Keyword('case'), kae.kAECaseConsiderMask, kae.kAECaseIgnoreMask),
 	(Keyword('diacriticals'), kae.kAEDiacriticConsiderMask, kae.kAEDiacriticIgnoreMask),
 	(Keyword('whitespace'), kae.kAEWhiteSpaceConsiderMask, kae.kAEWhiteSpaceIgnoreMask),
@@ -343,8 +341,8 @@ _ignoreEnums = [
 
 # default cons, csig attributes
 
-_defaultConsiderations =  _lowLevelCodecs.pack([aem.AEEnum(kae.kAECase)])
-_defaultConsidsAndIgnores = _packUInt32(kae.kAECaseIgnoreMask)
+_defaultconsiderations =  _lowlevelcodecs.pack([aem.AEEnum(kae.kAECase)])
+_defaultconsidsandignores = _packuint32(kae.kAECaseIgnoreMask)
 
 
 ######################################################################
@@ -372,45 +370,45 @@ class Command(_Base):
 	def __init__(self, appdata, aemreference, repr, name, info):
 		_Base.__init__(self, appdata)
 		self.AS_aemreference, self._repr, self.AS_name = aemreference, repr, name
-		self._code, self._labelledArgTerms = info
+		self._code, self._labelledargterms = info
 	
 	def __repr__(self):
 		return self._repr() + '.' + self.AS_name
 	
 	def __call__(self, *args, **kargs):
-		keywordArgs = kargs.copy()
+		keywordargs = kargs.copy()
 		if len(args) > 1:
 			raise TypeError("Command received more than one direct parameter %r." % (args,))
 		# get user-specified timeout, if any
-		timeout = int(keywordArgs.pop('timeout', 60)) # appscript's default is 60 sec
+		timeout = int(keywordargs.pop('timeout', 60)) # appscript's default is 60 sec
 		if timeout <= 0:
 			timeout = kae.kNoTimeOut
 		else:
 			timeout *= 60 # convert to ticks
 		# ignore application's reply?
-		sendFlags = keywordArgs.pop('waitreply', True) and kae.kAEWaitReply or kae.kAENoReply
+		sendflags = keywordargs.pop('waitreply', True) and kae.kAEWaitReply or kae.kAENoReply
 		atts, params = {'subj':None}, {}
 		# add considering/ignoring attributes (note: most apps currently ignore these)
-		ignoreOptions = keywordArgs.pop('ignore', None)
-		if ignoreOptions is None:
-			atts['cons'] = _defaultConsiderations # 'csig' obsoletes 'cons', but latter is retained for compatibility
-			atts['csig'] = _defaultConsidsAndIgnores
+		ignoreoptions = keywordargs.pop('ignore', None)
+		if ignoreoptions is None:
+			atts['cons'] = _defaultconsiderations # 'csig' obsoletes 'cons', but latter is retained for compatibility
+			atts['csig'] = _defaultconsidsandignores
 		else:
-			atts['cons'] = ignoreOptions
+			atts['cons'] = ignoreoptions
 			csig = 0
-			for option, considerMask, ignoreMask in _ignoreEnums:
-				csig += option in ignoreOptions and ignoreMask or considerMask
-			atts['csig'] = _packUInt32(csig)
+			for option, considermask, ignoremask in _ignoreenums:
+				csig += option in ignoreoptions and ignoremask or considermask
+			atts['csig'] = _packuint32(csig)
 		# optionally have application supply return value as specified type
-		if 'resulttype' in keywordArgs:
-			params['rtyp'] = keywordArgs.pop('resulttype')
+		if 'resulttype' in keywordargs:
+			params['rtyp'] = keywordargs.pop('resulttype')
 		# add direct parameter, if any
 		if args:
 			params['----'] = args[0]
 		# extract Apple event's labelled parameters, if any
 		try:
-			for name, value in keywordArgs.items():
-				params[self._labelledArgTerms[name]] = value
+			for name, value in keywordargs.items():
+				params[self._labelledargterms[name]] = value
 		except KeyError:
 			raise TypeError('Unknown keyword argument %r.' % name)
 		# apply special cases for certain commands (make, set, any command that takes target object specifier as its direct parameter); appscript provides these as a convenience to users, making its syntax more concise, OO-like and nicer to use
@@ -443,7 +441,7 @@ class Command(_Base):
 				params['----'] = self.AS_aemreference
 		# build and send the Apple event, returning its result, if any
 		try:
-			return self.AS_appdata.target.event(self._code, params, atts, codecs=self.AS_appdata).send(timeout, sendFlags)
+			return self.AS_appdata.target.event(self._code, params, atts, codecs=self.AS_appdata).send(timeout, sendflags)
 		except aem.CommandError, e:
 			if e.errornumber == -1708 and self._code == 'ascrnoop':
 				return # 'launch' events always return 'not handled' errors; just ignore these
@@ -470,12 +468,12 @@ class Command(_Base):
 				# re-send command
 				try:
 					return self.AS_appdata.target.event(self._code, params, atts, 
-							codecs=self.AS_appdata).send(timeout, sendFlags)
+							codecs=self.AS_appdata).send(timeout, sendflags)
 				except aem.CommandError, e:
 					raise CommandError(self, (args, kargs), e, self.AS_appdata)
 			raise CommandError(self, (args, kargs), e, self.AS_appdata)
 	
-	def AS_formatCommand(self, args):
+	def AS_formatcommand(self, args):
 		return '%r(%s)' % (self, ', '.join(['%r' % (v,) for v in args[0]] + ['%s=%r' % (k, v) for (k, v) in args[1].items()]))
 		
 
@@ -488,9 +486,9 @@ class Reference(_Base):
 		_Base.__init__(self, appdata)
 		self.AS_aemreference = aemreference # an aem app-/con-/its-based reference
 	
-	def _resolveRangeBoundary(self, selector, valueIfNone): # used by __getitem__() below
+	def _resolverangeboundary(self, selector, valueifnone): # used by __getitem__() below
 		if selector is None: # e.g. documents[2:]
-			selector = valueIfNone 
+			selector = valueifnone 
 		if isinstance(selector, GenericReference):
 			return selector.AS_resolve(Reference, self.AS_appdata).AS_aemreference
 		elif isinstance(selector, Reference):
@@ -541,12 +539,12 @@ class Reference(_Base):
 	
 	def __getattr__(self, name):
 		try:
-			selectorType, code = self.AS_appdata.referencebyname[name]
+			selectortype, code = self.AS_appdata.referencebyname[name]
 		except KeyError:
 			raise AttributeError("Unknown property, element or command: %r" % name)
-		if selectorType == kProperty:
+		if selectortype == kProperty:
 			return Reference(self.AS_appdata, self.AS_aemreference.property(code))
-		elif selectorType == kElement:
+		elif selectortype == kElement:
 			return Reference(self.AS_appdata, self.AS_aemreference.elements(code))
 		else: # kCommand (note: 'code' variable here actually contains a (code, args) struct)
 			return Command(self.AS_appdata, self.AS_aemreference, self.__repr__, name, code)
@@ -570,8 +568,8 @@ class Reference(_Base):
 			return Reference(self.AS_appdata, self.AS_aemreference.byfilter(testclause))
 		elif isinstance(selector, slice): # by-range
 			return Reference(self.AS_appdata, self.AS_aemreference.byrange(
-					self._resolveRangeBoundary(selector.start, 1),
-					self._resolveRangeBoundary(selector.stop, -1)))
+					self._resolverangeboundary(selector.start, 1),
+					self._resolverangeboundary(selector.stop, -1)))
 		else: # by-index
 			return Reference(self.AS_appdata, self.AS_aemreference.byindex(selector))
 	
@@ -791,7 +789,7 @@ class CommandError(Exception):
 					err += "\n\t\t%s: %r" % (label, self._codecs.unpack(self.realerror.raw[key]))
 		else:
 			err = self.realerror
-		return "%s\n\t\tCOMMAND: %s" % (err, self.command.AS_formatCommand(self.parameters))
+		return "%s\n\t\tCOMMAND: %s" % (err, self.command.AS_formatcommand(self.parameters))
 	
 	# basic error info (an error number is always given by AEM/application;
 	# message is either supplied by application or generated by aem.CommandError)

@@ -51,7 +51,7 @@ print its == its.eq(True)
 - More tests.
 
 
-- See also TO DOs in reference.py, terminology.py
+- See also TO DOs in terminology.py
 
 
 - Allow multiple instances of same application to be launched and/or controlled. (Currently clients can launch new instances themselves, then create Application objects using their PIDs.)
