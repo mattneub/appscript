@@ -14,7 +14,7 @@ Both classes provide a variety of constructors and read-only properties for gett
 
 from os.path import abspath
 
-from ae import createdesc, convertpathtourl, converturltopath, MacOSError
+from ae import newdesc, convertpathtourl, converturltopath, MacOSError
 import kae
 
 kCFURLPOSIXPathStyle = 0
@@ -60,7 +60,7 @@ class Alias(_Base):
 		if path is _kNoPath:
 			self._desc = None
 		else:
-			urldesc = createdesc(kae.typeFileURL, 
+			urldesc = newdesc(kae.typeFileURL, 
 					convertpathtourl(abspath(path), kCFURLPOSIXPathStyle))
 			try:
 				self._desc = urldesc.coerce(kae.typeAlias)
@@ -77,7 +77,7 @@ class Alias(_Base):
 	def makewithurl(klass, url):
 		"""Make File object from file URL."""
 		obj = klass(_kNoPath)
-		obj._desc = createdesc(kae.typeFileURL, url).coerce(kae.typeAlias)
+		obj._desc = newdesc(kae.typeFileURL, url).coerce(kae.typeAlias)
 		return obj
 	makewithurl = classmethod(makewithurl)
 	
@@ -124,7 +124,7 @@ class File(_Base):
 				path = unicode(path)
 			self._path = abspath(path)
 			self._url = convertpathtourl(self._path, kCFURLPOSIXPathStyle)
-			self._desc = createdesc(kae.typeFileURL, self._url)
+			self._desc = newdesc(kae.typeFileURL, self._url)
 	
 	def makewithhfspath(klass, path):
 		return klass.makewithurl(convertpathtourl(path, kCFURLHFSPathStyle))
@@ -133,7 +133,7 @@ class File(_Base):
 	def makewithurl(klass, url):
 		"""Make File object from file URL."""
 		obj = klass(_kNoPath)
-		obj._desc = createdesc(kae.typeFileURL, url)
+		obj._desc = newdesc(kae.typeFileURL, url)
 		obj._url = url
 		obj._path = converturltopath(url, kCFURLPOSIXPathStyle)
 		return obj
@@ -183,7 +183,7 @@ class File(_Base):
 	
 	def desc(self):
 		if self._desc is None:
-			self._desc = createdesc(kae.typeFileURL, self.url)
+			self._desc = newdesc(kae.typeFileURL, self.url)
 		return self._desc
 	desc = property(desc, _ro, doc="Get as aem.ae.AEDesc.")
 

@@ -23,7 +23,7 @@ _kLaunchDontSwitch = 0x0200
 _kNoProcess = 0
 _kCurrentProcess = 2
 
-_nulladdressdesc = ae.createdesc(kae.typeProcessSerialNumber, struct.pack('LL', 0, _kNoProcess)) # ae.createappleevent complains if you pass None as address, so we give it one to throw away
+_nulladdressdesc = ae.newdesc(kae.typeProcessSerialNumber, struct.pack('LL', 0, _kNoProcess)) # ae.newappleevent complains if you pass None as address, so we give it one to throw away
 
 _launchevent = Event(_nulladdressdesc, 'ascrnoop').AEM_event
 _runevent = Event(_nulladdressdesc, 'aevtoapp').AEM_event
@@ -90,7 +90,7 @@ def launchapp(path):
 		else:
 			raise
 	else: # App is already running, so send it a 'launch' event:
-		ae.createappleevent('ascr', 'noop', localappbypid(pid), kae.kAutoGenerateReturnID, 
+		ae.newappleevent('ascr', 'noop', localappbypid(pid), kae.kAutoGenerateReturnID, 
 				kae.kAnyTransactionID).send(kae.kAEWaitReply, kae.kAEDefaultTimeout)
 
 ##
@@ -118,7 +118,7 @@ def processexistsforurl(url):
 	"""
 	if ':' not in url: # workaround: process will crash if no colon in URL (OS bug)
 		raise ValueError("Invalid url: %r" % url)
-	return processexistsfordesc(ae.createdesc(kae.typeApplicationURL, url))
+	return processexistsfordesc(ae.newdesc(kae.typeApplicationURL, url))
 
 def processexistsfordesc(desc):
 	"""Does an application process specified by the given AEAddressDesc exist?
@@ -138,7 +138,7 @@ def processexistsfordesc(desc):
 
 #######
 
-currentapp = ae.createdesc(kae.typeProcessSerialNumber, struct.pack('LL', 0, _kCurrentProcess))
+currentapp = ae.newdesc(kae.typeProcessSerialNumber, struct.pack('LL', 0, _kCurrentProcess))
 
 
 def localapp(path):
@@ -163,7 +163,7 @@ def localappbypid(pid):
 		pid : integer -- Unix process id
 		Result : AEAddressDesc
 	"""
-	return ae.createdesc(kae.typeKernelProcessID, struct.pack('i', pid))
+	return ae.newdesc(kae.typeKernelProcessID, struct.pack('i', pid))
 
 
 def remoteapp(url):
@@ -173,5 +173,5 @@ def remoteapp(url):
 	"""
 	if ':' not in url: # workaround: process will crash if no colon in URL (OS bug)
 		raise ValueError("Invalid url: %r" % url)
-	return ae.createdesc(kae.typeApplicationURL, url)
+	return ae.newdesc(kae.typeApplicationURL, url)
 

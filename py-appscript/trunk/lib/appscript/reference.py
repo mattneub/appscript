@@ -9,7 +9,7 @@ from time import sleep
 
 import aem, mactypes
 from aem import kae
-from aem.ae import createlist, createdesc, MacOSError
+from aem.ae import newlist, newrecord, newdesc, MacOSError
 from aem.aemreference import InsertionSpecifier, Test
 
 from genericreference import GenericReference
@@ -102,7 +102,7 @@ class AppData(aem.Codecs):
 	
 	def packdict(self, val):
 		# Pack dictionary whose keys are strings (e.g. 'foo'), Keywords (e.g. k.name) or AETypes (e.g. AEType('pnam').
-		record = createlist(True)
+		record = newrecord()
 		if self.kClassKeyword in val or self.kClassType in val:
 			# if hash contains a 'class' property containing a class name, coerce the AEDesc to that class
 			newval = val.copy()
@@ -127,7 +127,7 @@ class AppData(aem.Codecs):
 				record.setparam(key.code, self.pack(value))
 			else: # user-defined key (normally a string)
 				if not usrf:
-					usrf = createlist(False)
+					usrf = newlist()
 				usrf.setitem(0, self.pack(key))
 				usrf.setitem(0, self.pack(value))
 		if usrf:
@@ -326,7 +326,7 @@ class AppData(aem.Codecs):
 # Considering/ignoring constants
 
 def _packuint32(n): # used to pack csig attributes
-	return createdesc(kae.typeUInt32, struct.pack('L', n))
+	return newdesc(kae.typeUInt32, struct.pack('L', n))
 
 # 'csig' attribute flags (see ASRegistry.h; note: there's no option for 'numeric strings' in 10.4)
 
@@ -480,7 +480,12 @@ class Command(_Base):
 ######################################################################
 
 class Reference(_Base):
-	# A general-purpose class used to construct all real appscript references. It's a simple wrapper around an aem reference that provides syntactic sugar and terminology->AE code conversion. Calling a reference-building method returns a new Reference object containing the new reference, except where it would create a structurally invalid reference (e.g. ref.items[1]['foo']), in which case the aem reference will raise an AttributeError.
+	# A general-purpose class used to construct all real appscript references. 
+	# It's a simple wrapper around an aem reference that provides syntactic sugar 
+	# and terminology->AE code conversion. Calling a reference-building method 
+	# returns a new Reference object containing the new reference, except where 
+	# it would create a structurally invalid reference (e.g. ref.items[1]['foo']), in which 
+	# case the aem reference will raise an AttributeError.
 	
 	def __init__(self, appdata, aemreference):
 		_Base.__init__(self, appdata)
@@ -496,7 +501,9 @@ class Reference(_Base):
 		else:
 			return selector
 	
-	# Full references are hashable and comparable for equality. (Generic references aren't, however, as __eq__() is overridden for other purposes, but the user shouldn't be troubled by this given how generic refs are normally used.)
+	# Full references are hashable and comparable for equality. (Generic references aren't, 
+	# however, as __eq__() is overridden for other purposes, but the user shouldn't be 
+	# troubled by this given how generic refs are normally used.)
 	
 	def __eq__(self, val):
 		return self.__class__ == val.__class__ and \
@@ -660,12 +667,21 @@ class Reference(_Base):
 
 
 ######################################################################
-# The Application class is not directly instantiated by the user; instead, they call the GenericApp instance and this returns the real Application instance. This allows users to write generic app-based references, e.g. app.documents.end, as well as real ones, e.g. app('TextEdit').documents.end
+# The Application class is not directly instantiated by the user; instead, they call 
+# the GenericApp instance and this returns the real Application instance. This allows 
+# users to write generic app-based references, e.g. app.documents.end, as well as 
+# real ones, e.g. app('TextEdit').documents.end
 
 class Application(Reference):
 	"""Creates objects for communicating with scriptable applications."""
 	
-	_Application = aem.Application # overridable hook; appscript.Application subclasses can modify creating and/or sending Apple events by using custom aem.Application and aem.Event classes # Note: subclassing this class is now a bit trickier due to introduction of generic 'app'; clients need to import this class directly, subclass it, and then create their own GenericApp instance to use in place of the standard version.
+	# overridable hook; appscript.Application subclasses can modify creating
+	# and/or sending Apple events by using custom aem.Application and
+	# aem.Event classes # Note: subclassing this class is now a bit trickier 
+	# due to introduction of generic 'app'; clients need to import this class 
+	# directly, subclass it, and then create their own GenericApp instance to 
+	# use in place of the standard version.
+	_Application = aem.Application
 	
 	def __init__(self, name=None, id=None, creator=None, pid=None, url=None, aemapp=None, terms=True):
 		"""
@@ -723,7 +739,11 @@ class Application(Reference):
 		self.AS_appdata.target.endtransaction()
 	
 	def launch(self):
-		"""Launch a non-running application in the background and send it a 'launch' event. Note: this will only launch non-running apps that are specified by name/path/bundle id/creator type. Apps specified by other means will be still sent a launch event if already running, but an error will occur if they're not."""
+		"""Launch a non-running application in the background and send it a 'launch' event. 
+			Note: this will only launch non-running apps that are specified by name/path/
+			bundle id/creator type. Apps specified by other means will be still sent a 
+			launch event if already running, but an error will occur if they're not.
+		"""
 		if self.AS_appdata.constructor == 'path':
 			aem.Application.launch(self.AS_appdata.identifier)
 			self.AS_appdata.target.reconnect() # make sure aem.Application object's AEAddressDesc is up to date

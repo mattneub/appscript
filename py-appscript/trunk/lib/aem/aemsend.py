@@ -3,7 +3,7 @@
 (C) 2005-2008 HAS
 """
 
-from ae import createappleevent, MacOSError
+from ae import newappleevent, MacOSError
 import kae
 
 from aemcodecs import Codecs
@@ -14,8 +14,16 @@ __all__ = ['CommandError', 'Event']
 # PRIVATE
 ######################################################################
 
-_defaultcodecs = Codecs() # used to unpack application errors and, optionally, return values
+_defaultcodecs = Codecs()
 
+def sendappleevent(evt, flags, timeout):
+	""" Default function for sending Apple events.
+		evt : aem.ae.AEDesc -- the AppleEvent to send
+		flags : int -- send mode flags
+		timeout : int -- timeout delay
+		Result : aem.ae.AEDesc -- the reply AppleEvent
+	"""
+	return evt.send(flags, timeout)
 
 ######################################################################
 # PUBLIC
@@ -25,9 +33,10 @@ _defaultcodecs = Codecs() # used to unpack application errors and, optionally, r
 class Event(object):
 	"""Represents an Apple event (serialised message)."""
 	
-	def __init__(self, address, event, params={}, atts={}, transaction= kae.kAnyTransactionID, 
-			returnid= kae.kAutoGenerateReturnID, codecs=_defaultcodecs):
-		"""Called by aem.send.__init__.Application.event(); users shouldn't instantiate this class themselves.
+	def __init__(self, address, event, params={}, atts={},
+			transaction=kae.kAnyTransactionID, returnid= kae.kAutoGenerateReturnID, 
+			codecs=_defaultcodecs, createproc=newappleevent, sendproc=sendappleevent):
+		"""Called by aem.Application.event(); users shouldn't instantiate this class themselves.
 			address : AEAddressDesc -- the target application
 			event : str -- 8-letter code indicating event's class and id, e.g. 'coregetd'
 			params : dict -- a dict of form {AE_code:anything,...} containing zero or more event parameters (message arguments)
@@ -35,27 +44,24 @@ class Event(object):
 			transaction : int -- transaction number (default = kAnyTransactionID)
 			returnid : int  -- reply event's ID (default = kAutoGenerateReturnID)
 			codecs : Codecs -- user can provide custom parameter & result encoder/decoder (default = standard codecs); supplied by Application class
+			createproc : function -- function to create a new AppleEvent descriptor
+			sendproc : function -- function to send an AppleEvent descriptor
 		"""
 		self._eventcode = event
 		self._codecs = codecs
-		self.AEM_event = self._createappleevent(event[:4], event[4:], address, returnid, transaction)
+		self._sendproc = sendproc
+		self.AEM_event = createproc(event[:4], event[4:], address, returnid, transaction)
 		for key, value in atts.items():
 			self.AEM_event.setattr(key, codecs.pack(value))
 		for key, value in params.items():
 			self.AEM_event.setparam(key, codecs.pack(value))
 	
-	# Hooks
-	
-	_createappleevent = createappleevent
-	
-	_sendappleevent = staticmethod(lambda evt, flags, timeout: evt.send(flags, timeout))
-
-	
 	# Public
 	
 	def send(self, timeout= kae.kAEDefaultTimeout, flags= kae.kAECanSwitchLayer + kae.kAEWaitReply):
 		"""Send this Apple event (may be called any number of times).
-			timeout : int | aem.k.DefaultTimeout | aem.k.NoTimeout -- number of ticks to wait for target process to reply before raising timeout error (default=DefaultTimeout)
+			timeout : int | aem.k.DefaultTimeout | aem.k.NoTimeout -- number of ticks to wait for target process
+					to reply before raising timeout error (default=DefaultTimeout)
 			flags : int -- bitwise flags [1] indicating how target process should handle event (default=WaitReply)
 			Result : anything -- value returned by application, if any
 			
@@ -68,7 +74,7 @@ class Event(object):
 				[ aem.k.CanSwitchLayer ]
 		"""
 		try:
-			replyevent = self._sendappleevent(self.AEM_event, flags, timeout)
+			replyevent = self._sendproc(self.AEM_event, flags, timeout)
 		except MacOSError, err: # an OS-level error occurred
 			if not (self._eventcode == 'aevtquit' and err[0] == -609): # Ignore invalid connection error (-609) when quitting
 				raise CommandError(err[0])
@@ -81,12 +87,12 @@ class Event(object):
 				# only, so do the same here for compatibility
 				if kae.keyErrorNumber in eventresult: # an application-level error occurred
 					# note: uses standard codecs to unpack error info to ensure consistent conversion
-					eNum = _defaultcodecs.unpack(eventresult[kae.keyErrorNumber])
-					if eNum != 0: # Stupid Finder returns non-error error number and message for successful move/duplicate command, so just ignore it
-						eMsg = eventresult.get(kae.keyErrorString)
-						if eMsg:
-							eMsg = _defaultcodecs.unpack(eMsg)
-						raise CommandError(eNum, eMsg, eventresult)
+					errornum = _defaultcodecs.unpack(eventresult[kae.keyErrorNumber])
+					if errornum != 0: # Stupid Finder returns non-error error number and message for successful move/duplicate command, so just ignore it
+						errormsg = eventresult.get(kae.keyErrorString)
+						if errormsg:
+							errormsg = _defaultcodecs.unpack(errormsg)
+						raise CommandError(errornum, errormsg, eventresult)
 				if kae.keyAEResult in eventresult: # application has returned a value
 					# note: unpack result with [optionally] user-specified codecs, allowing clients to customise unpacking (e.g. appscript)
 					return self._codecs.unpack(eventresult[kae.keyAEResult])

@@ -7,7 +7,7 @@ import struct, datetime, time
 from codecs import BOM_UTF16_LE, BOM_UTF16_BE
 
 import kae
-from ae import AEDesc, createdesc, createlist
+from ae import AEDesc, newdesc, newlist, newrecord
 
 from typewrappers import AEType, AEEnum, AEProp, AEKey
 import aemreference, mactypes
@@ -81,7 +81,7 @@ class UnitTypeCodecs:
 	##
 	
 	def _defaultpacker(self, units, code): 
-		return createdesc(code, struct.pack('d', units.value))
+		return newdesc(code, struct.pack('d', units.value))
 	
 	def _defaultunpacker(self, desc, name):
 		return mactypes.Units(struct.unpack('d', desc.data)[0], name)
@@ -141,13 +141,13 @@ class Codecs:
 	
 	# Constants
 	
-	kNullDesc = createdesc(kae.typeNull, '')
+	kNullDesc = newdesc(kae.typeNull, '')
 	kMacEpoch = datetime.datetime(1904, 1, 1) # used in packing datetime objects as AEDesc typeLongDateTime
 	kMacEpochT = time.mktime(kMacEpoch.timetuple())
 	kShortMacEpoch = kMacEpoch.date() # used in packing date objects as AEDesc typeLongDateTime
 
-	kTrueDesc = createdesc(kae.typeTrue, '')
-	kFalseDesc = createdesc(kae.typeFalse, '')
+	kTrueDesc = newdesc(kae.typeTrue, '')
+	kFalseDesc = newdesc(kae.typeFalse, '')
 	
 	#######
 	# tables to map AE codes to aem method names
@@ -343,16 +343,16 @@ class Codecs:
 	
 	def packlong(self, val):
 		if (-2**31) <= val < (2**31): # pack as typeSInt32 if possible (non-lossy)
-			return createdesc(kae.typeSInt32, struct.pack('i', val))
+			return newdesc(kae.typeSInt32, struct.pack('i', val))
 		elif (-2**63) <= val < (2**63): # else pack as typeSInt64 if possible (non-lossy)
-			return createdesc(kae.typeSInt64, struct.pack('q', val))
+			return newdesc(kae.typeSInt64, struct.pack('q', val))
 		else: # else pack as typeFloat (lossy)
 			return self.pack(float(val))
 	
 	packint = packlong # note: Python int = C long, so may need to pack as typeSInt64 on 64-bit
 	
 	def packfloat(self, val):
-		return createdesc(kae.typeFloat, struct.pack('d', val))
+		return newdesc(kae.typeFloat, struct.pack('d', val))
 	
 	##
 	
@@ -364,29 +364,29 @@ class Codecs:
 		data = val.encode(nativeutf16encoding)
 		if data.startswith(BOM_UTF16_LE) or data.startswith(BOM_UTF16_BE):
 			data = data[2:]
-		return createdesc(kae.typeUnicodeText, data)
+		return newdesc(kae.typeUnicodeText, data)
 	
 	def packstr(self, val):
-		return createdesc(kae.typeChar, val)
+		return newdesc(kae.typeChar, val)
 	
 	##
 	
 	def packdate(self, val):
 		delta = val - self.kShortMacEpoch
 		sec = delta.days * 3600 * 24 + delta.seconds
-		return createdesc(kae.typeLongDateTime, struct.pack('q', sec))
+		return newdesc(kae.typeLongDateTime, struct.pack('q', sec))
 	
 	def packdatetime(self, val):
 		delta = val - self.kMacEpoch
 		sec = delta.days * 3600 * 24 + delta.seconds
-		return createdesc(kae.typeLongDateTime, struct.pack('q', sec))
+		return newdesc(kae.typeLongDateTime, struct.pack('q', sec))
 	
 	def packtime(self, val):
 		return self.packdatetime(datetime.datetime.combine(datetime.date.today(), val))
 	
 	def packstructtime(self, val):
 		sec = int(time.mktime(val) - self.kMacEpochT)
-		return createdesc(kae.typeLongDateTime, struct.pack('q', sec))
+		return newdesc(kae.typeLongDateTime, struct.pack('q', sec))
 	
 	def packalias(self, val):
 		return val.desc
@@ -395,13 +395,13 @@ class Codecs:
 	##
 	
 	def packlist(self, val):
-		lst = createlist(False)
+		lst = newlist()
 		for item in val:
 			lst.setitem(0, self.pack(item))
 		return lst
 	
 	def packdict(self, val):
-		record = createlist(True)
+		record = newrecord()
 		usrf = None
 		for key, value in val.items():
 			if isinstance(key, (AEType, AEProp)):
@@ -414,7 +414,7 @@ class Codecs:
 					record.setparam(key.code, self.pack(value))
 			else:
 				if not usrf:
-					usrf = createlist(False)
+					usrf = newlist()
 				usrf.setitem(0, self.pack(key))
 				usrf.setitem(0, self.pack(value))
 		if usrf:
@@ -424,16 +424,16 @@ class Codecs:
 	##
 	
 	def packtype(self, val):
-		return createdesc(kae.typeType, fourcharcode(val.code))
+		return newdesc(kae.typeType, fourcharcode(val.code))
 	
 	def packenum(self, val): 
-		return createdesc(kae.typeEnumeration, fourcharcode(val.code))
+		return newdesc(kae.typeEnumeration, fourcharcode(val.code))
 	
 	def packprop(self, val): 
-		return createdesc(kae.typeProperty, fourcharcode(val.code))
+		return newdesc(kae.typeProperty, fourcharcode(val.code))
 	
 	def packkey(self, val): 
-		return createdesc(kae.typeKeyword, fourcharcode(val.code))
+		return newdesc(kae.typeKeyword, fourcharcode(val.code))
 
 	
 	###################################

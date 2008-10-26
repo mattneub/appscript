@@ -5,7 +5,7 @@
 
 import ae, kae, findapp, mactypes, aemconnect
 from aemconnect import CantLaunchApplicationError
-from aemsend import Event, CommandError
+from aemsend import Event, CommandError, newappleevent, sendappleevent
 from aemcodecs import Codecs
 from aemreference import app, con, its, customroot, Query
 from typewrappers import AETypeBase, AEType, AEEnum, AEProp, AEKey
@@ -36,9 +36,19 @@ _defaultCodecs = Codecs()
 class Application(Query):
 	"""Target application for Apple events."""
 	
-	_Event = Event # Application subclasses can override this attribute (normally with a subclass of the standard aem.send.Event class) to have the event() method return a different class instance; simpler than overriding the event() method
+	# aem.Application subclasses can override these attributes to modify the creation
+	# and sending of AppleEvent descriptors
+	_createproc = staticmethod(newappleevent)
+	_sendproc = staticmethod(sendappleevent)
+	
+	# aem.Application subclasses can override this attribute (typically with a subclass 
+	# of the standard aemsend.Event class) to have the event() method return a different
+	# class instance; simpler than overriding the event() method
+	_Event = Event
 
-	_transaction = _kAnyTransactionID = kae.kAnyTransactionID # (we need to keep a local copy of this constant to avoid upsetting Application.__del__() at cleanup time, otherwise it may be disposed of before __del__() has a chance to use it)
+	# need to keep a local copy of this constant to avoid upsetting Application.__del__() 
+	# at cleanup time, otherwise it may be disposed of before __del__() can use it
+	_transaction = _kAnyTransactionID = kae.kAnyTransactionID
 	
 	def __init__(self, path=None, pid=None, url=None, desc=None, codecs= _defaultCodecs):
 		"""
@@ -50,7 +60,9 @@ class Application(Query):
 			
 			Notes: 
 				- If no path, pid, url or aedesc is given, target will be 'current application'.
-				- If path is given, application will be launched automatically; if pid, url or desc is given, user is responsible for ensuring application is running before sending it any events.
+				- If path is given, application will be launched automatically; if pid, url or 
+					desc is given, user is responsible for ensuring application is running 
+					before sending it any events.
 		"""
 		self._codecs = codecs
 		self._path = path
@@ -107,7 +119,10 @@ class Application(Query):
 		return self._address
 	
 	def __del__(self):
-		if self._transaction != self._kAnyTransactionID: # If user forgot to close a transaction before throwing away the Application object that opened it, try to close it for them. Otherwise application will be left in mid-transaction, preventing anyone else from using it.
+		# If user forgot to close a transaction before throwing away the Application object 
+		# that opened it, try to close it for them. Otherwise application will be left in 
+		# mid-transaction, preventing anyone else from using it.
+		if self._transaction != self._kAnyTransactionID:
 			self.endtransaction()
 	
 	#######
@@ -127,9 +142,14 @@ class Application(Query):
 	addressdesc = property(lambda self: self._address)
 	
 	def reconnect(self):
-		"""If application has quit since this Application object was created, its AEAddressDesc is no longer valid so this Application object will not work even when application is restarted. reconnect() will update this Application object's AEAddressDesc so it's valid again.
+		"""If application has quit since this Application object was created, its 
+			AEAddressDesc is no longer valid so this Application object 
+			will not work even when application is restarted. reconnect() will 
+			update this Application object's AEAddressDesc so it's valid again.
 		
-		Note: this only works for Application objects specified by path, not by URL or AEDesc. Also, any Event objects created prior to calling reconnect() will still be invalid.
+			Note: this only works for Application objects specified by path, not 
+			by URL or AEDesc. Also, any Event objects created prior to calling 
+			reconnect() will still be invalid.
 		"""
 		if self._path:
 			self._address = aemconnect.localapp(self._path)
@@ -139,12 +159,16 @@ class Application(Query):
 	def event(self, event, params={}, atts={}, returnid=kae.kAutoGenerateReturnID, codecs=None):
 		"""Construct an Apple event.
 			event  : str -- 8-letter code indicating event's class, e.g. 'coregetd'
-			params : dict -- a dict of form {AE_code:anything,...} containing zero or more event parameters (message arguments)
-			atts : dict -- a dict of form {AE_code:anything,...} containing zero or more event attributes (event info)
+			params : dict -- a dict of form {AE_code:anything,...} containing zero or more 
+					event parameters (message arguments)
+			atts : dict -- a dict of form {AE_code:anything,...} containing zero or more 
+					event attributes (event info)
 			returnid : int  -- reply event's ID (default = kAutoGenerateReturnID)
-			codecs : Codecs | None -- custom codecs to use when packing/unpacking this event; if None, codecs supplied in Application constructor are used
+			codecs : Codecs | None -- custom codecs to use when packing/unpacking this
+					event; if None, codecs supplied in Application constructor are used
 		"""
-		return self._Event(self._address, event, params, atts, self._transaction, returnid, codecs or self._codecs)
+		return self._Event(self._address, event, params, atts, self._transaction, returnid, 
+				codecs or self._codecs, self._createproc, self._sendproc)
 	
 	def begintransaction(self, session=None):
 		"""Begin a transaction."""

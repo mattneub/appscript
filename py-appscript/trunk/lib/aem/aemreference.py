@@ -16,28 +16,28 @@ import ae, kae
 if struct.pack("h", 1) == '\x00\x01': # host is big-endian
 
 	def packtype(code):
-		return ae.createdesc(kae.typeType, code)
+		return ae.newdesc(kae.typeType, code)
 	
 	def packabsoluteordinal(code): 
-		return ae.createdesc(kae.typeAbsoluteOrdinal, code)
+		return ae.newdesc(kae.typeAbsoluteOrdinal, code)
 	
 	def packenum(code):
-		return ae.createdesc(kae.typeEnumeration, code)
+		return ae.newdesc(kae.typeEnumeration, code)
 
 else: # host is small-endian
 
 	def packtype(code):
-		return ae.createdesc(kae.typeType, code[::-1])
+		return ae.newdesc(kae.typeType, code[::-1])
 	
 	def packabsoluteordinal(code): 
-		return ae.createdesc(kae.typeAbsoluteOrdinal, code[::-1])
+		return ae.newdesc(kae.typeAbsoluteOrdinal, code[::-1])
 	
 	def packenum(code):
-		return ae.createdesc(kae.typeEnumeration, code[::-1])
+		return ae.newdesc(kae.typeEnumeration, code[::-1])
 
 
 def packlistas(type, lst):
-	desc = ae.createlist(True)
+	desc = ae.newrecord()
 	for key, value in lst:
 		desc.setparam(key, value)
 	return desc.coerce(type)
@@ -753,7 +753,7 @@ class ApplicationRoot(ReferenceRoot):
 		Reference base; represents an application's application object. Used to construct full references.
 	"""
 	_kName = 'app'
-	_kType = ae.createdesc(kae.typeNull, '')
+	_kType = ae.newdesc(kae.typeNull, '')
 
 
 class CurrentContainer(ReferenceRoot):
@@ -761,7 +761,7 @@ class CurrentContainer(ReferenceRoot):
 		Reference base; represents elements' container object. Used to construct by-range references.
 	"""
 	_kName = 'con'
-	_kType = ae.createdesc(kae.typeCurrentContainer, '')
+	_kType = ae.newdesc(kae.typeCurrentContainer, '')
 
 
 class ObjectBeingExamined(ReferenceRoot):
@@ -769,7 +769,7 @@ class ObjectBeingExamined(ReferenceRoot):
 		Reference base; represents an element to be tested. Used to construct by-filter references.
 	"""
 	_kName = 'its'
-	_kType = ae.createdesc(kae.typeObjectBeingExamined, '')
+	_kType = ae.newdesc(kae.typeObjectBeingExamined, '')
 
 
 class CustomRoot(ReferenceRoot):

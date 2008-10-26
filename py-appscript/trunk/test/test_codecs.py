@@ -32,9 +32,9 @@ class TC_Codecs(unittest.TestCase):
 		self.assertEqual(None, self.c.unpack(d))
 	
 	def test_bool(self):
-		self.assertEqual(True, self.c.unpack(aem.ae.createdesc(aem.kae.typeBoolean, "\xfe")))
-		self.assertEqual(True, self.c.unpack(aem.ae.createdesc(aem.kae.typeTrue, '')))
-		self.assertEqual(False, self.c.unpack(aem.ae.createdesc(aem.kae.typeFalse, '')))
+		self.assertEqual(True, self.c.unpack(aem.ae.newdesc(aem.kae.typeBoolean, "\xfe")))
+		self.assertEqual(True, self.c.unpack(aem.ae.newdesc(aem.kae.typeTrue, '')))
+		self.assertEqual(False, self.c.unpack(aem.ae.newdesc(aem.kae.typeFalse, '')))
 	
 	def test_num(self):
 		for val, data, type, expected in [ # (mostly testing at threshold points where Codecs switches types when packing integers)
@@ -92,7 +92,7 @@ class TC_Codecs(unittest.TestCase):
 			d = self.c.pack(t)
 			self.assertEqual(aem.kae.typeLongDateTime, d.type)
 			self.assertEqual(data, d.data)
-			self.assertEqual(t, self.c.unpack(aem.ae.createdesc(aem.kae.typeLongDateTime, data)))
+			self.assertEqual(t, self.c.unpack(aem.ae.newdesc(aem.kae.typeLongDateTime, data)))
 	
 	def test_file(self):
 		path = '/Applications/TextEdit.app'
