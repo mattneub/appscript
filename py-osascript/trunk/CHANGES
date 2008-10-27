@@ -1,3 +1,8 @@
-2008-??-?? -- 0.5.0
+2008-10-26 -- 0.6.0
+
+- updated for py-appscript 0.19.0
+
+2008-07-16 -- 0.5.0
 
 - moved CarbonX.OSA, osascript from py-appscript to py-osascript project
+- fixed bug in ScriptError.__init__

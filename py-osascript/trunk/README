@@ -4,7 +4,7 @@ osascript is packaged using the standard Python Distribution Utilities (a.k.a. D
 
 Setuptools will be used if available, otherwise the setup.py script will revert to distutils.
 
-Building osascript from source requires the gcc compiler (supplied with Apple's Developer Tools). Setuptools is available from <http://cheeseshop.python.org/pypi>.
+Building osascript from source requires the gcc compiler (supplied with Apple's Developer Tools). Setuptools is available from <http://www.python.org/pypi>.
 
 
 ======================================================================

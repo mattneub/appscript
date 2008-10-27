@@ -7,7 +7,7 @@ except ImportError:
 
 setup(
 		name = "osascript",
-		version = "0.5.0",
+		version = "0.6.0",
 		description = "Load and run OSA scripts from Python.",
 		author = "HAS",
 		author_email='',

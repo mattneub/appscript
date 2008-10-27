@@ -87,7 +87,7 @@ class Interpreter:
 	def displayevent(self, event):
 		if event.type != 'aevt':
 			raise TypeError, 'Not an Apple event descriptor.'
-		app = event.AEGetAttributeDesc(keyAddressAttr, typeWildCard)
+		app = event.getattr(keyAddressAttr, typeWildCard)
 		if (app.type, app.data) == (currentapp.type, currentapp.data): # TO DELETE: shouldn't be needed
 			return (False, '', '')
 		return (True, self.displayvalue(app), self.displayvalue(event, app))
@@ -96,11 +96,11 @@ class Interpreter:
 	def displayreply(self, event):
 		if event.type != 'aevt':
 			raise TypeError, 'Not an Apple event descriptor.'
-		app = event.AEGetAttributeDesc(keyOriginalAddressAttr, typeWildCard)
+		app = event.getattr(keyOriginalAddressAttr, typeWildCard)
 		if (app.type, app.data) == (currentapp.type, currentapp.data): # TO DELETE: shouldn't be needed
 			return (False, '')
 		try:
-			resultDesc = event.AEGetParamDesc('----', typeWildCard)
+			resultDesc = event.getparam('----', typeWildCard)
 		except MacOSError: # no reply value given
 			return (False, '')
 		return (True, self.displayvalue(resultDesc, app))
@@ -200,8 +200,8 @@ class Script:
 		try:
 			try:
 				self._id = self._ci.OSACompile(self._pack(source), kOSAModeCompileIntoContext, self._id)
-			except MacOS.Error, e:
-				if e[0] == -1753:
+			except (MacOS.Error, MacOSError), e:
+				if e.args[0] == -1753:
 					raise ScriptError(self._ci)
 				raise
 		finally:
@@ -212,8 +212,11 @@ class Script:
 		try:
 			return self._unpack(self._ci.OSAGetSource(self._id, typeUnicodeText)) # TO DO: style support
 		except (MacOS.Error, MacOSError), e:
-			print e
-			raise # TO DO: better error reporting (e.g. opened read-only script)
+		#	print e
+		#	raise # TO DO: better error reporting (e.g. opened read-only script)
+			if e.args[0] == -1753:
+				raise ScriptError(self._ci)
+			raise
 	
 	def loadfile(self, path, mode=kOSAModeNull): # TO DECIDE: on Panther, optionally(?) install a 'path to' handler to provide 'path to me' support
 		"""Load script from file.
@@ -253,8 +256,8 @@ class Script:
 		try:
 			try:
 				resultid = self._ci.OSAExecute(self._id, kOSANullScript, kOSAModeNull)
-			except MacOS.Error, e:
-				if e[0] == -1753:
+			except (MacOS.Error, MacOSError), e:
+				if e.args[0] == -1753:
 					raise ScriptError(self._ci)
 				raise
 		finally:
@@ -270,8 +273,8 @@ class Script:
 		self._installcallbacks(self._recordcallbacks)
 		try:
 			self._id = self._ci.OSAStartRecording(self._id)
-		except MacOS.Error, e:
-			if e[0] != -2700:
+		except (MacOS.Error, MacOSError), e:
+			if e.args[0] != -2700:
 				raise
 		print 'RECORDING'
 	
@@ -289,8 +292,8 @@ class Script:
 			self._installcallbacks(self._runcallbacks)
 			try:
 				resultid = self._ci.OSAExecuteEvent(event, self._id, modeflags)
-			except MacOS.Error, e:
-				if e[0] == -1753:
+			except (MacOS.Error, MacOSError), e:
+				if e.args[0] == -1753:
 					raise ScriptError(self._ci)
 				raise
 		finally:
@@ -310,14 +313,19 @@ class ScriptError(Exception): # TO DO: make subclass of MacOS.Error?
 	"""A script error."""
 	
 	def __init__(self, ci):
-		errorinfo = [_defaultCodecs.unpack(ci.OSAScriptError(key, aetype)) for key, aetype in [
+		errorinfo = []
+		for key, aetype in [
 				(kOSAErrorNumber, typeWildCard),
 				(kOSAErrorMessage, typeUnicodeText),
 				(kOSAErrorBriefMessage, typeUnicodeText),
 				(kOSAErrorApp, typeWildCard),
 				(kOSAErrorPartialResult, typeWildCard),
 				(kOSAErrorOffendingObject, typeWildCard),
-				(kOSAErrorExpectedType, typeWildCard)]]
+				(kOSAErrorExpectedType, typeWildCard)]:
+			try:
+				errorinfo.append(_defaultCodecs.unpack(ci.OSAScriptError(key, aetype)))
+			except:
+				errorinfo.append(None)
 		range = _defaultCodecs.unpack(ci.OSAScriptError(kOSAErrorRange, typeAERecord))
 		errorinfo.append((
 				range[AEType(keyOSASourceStart)], 
@@ -328,4 +336,7 @@ class ScriptError(Exception): # TO DO: make subclass of MacOS.Error?
 	
 	def __str__(self):
 		return '%s (%i) [%i:%i]' % ((self.message, self.number) + self.range)
+	
+	def __repr__(self):
+		return '<osascript.ScriptError number=%r message=%r range=%r>' % (self.number, self.message, self.range)
 
