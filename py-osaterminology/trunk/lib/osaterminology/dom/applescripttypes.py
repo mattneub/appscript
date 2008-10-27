@@ -2,7 +2,7 @@
 
 """applescripttypes -- used to get default AppleScript type/class/enum names from AppleScript component; used by aeteparser.AppleScriptParser, sdefparser.AppscriptHandler"""
 
-from aem.ae import GetSysTerminology as getaeut
+from aem.ae import getsysterminology
 from osaterminology.sax import aeteparser
 
 __all__ = ['typebycode', 'enumerationbycode', 'typebyname']
@@ -45,7 +45,7 @@ class AeutTypesParser(aeteparser.Receiver):
 ##
 
 p = AeutTypesParser()
-aeteparser.parse(getaeut('ascr'), p)
+aeteparser.parse(getsysterminology('ascr'), p)
 
 ######################################################################
 # PUBLIC

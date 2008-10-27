@@ -18,7 +18,7 @@ from StringIO import StringIO
 import struct
 
 from aem import kae
-from aem.ae import CopyScriptingDefinition as getsdef
+from aem.ae import copyscriptingdefinition
 
 from osaterminology import makeidentifier
 from osadictionary import *
@@ -349,7 +349,7 @@ def parsefile(path, style='appscript'):
 	return parsexml(sdef, path, style)
 
 def parseapp(path, style='appscript'):
-	sdef = getsdef(path)
+	sdef = copyscriptingdefinition(path)
 	if sdef is None:
 		raise RuntimeError, "Can't get sdef (requires OS 10.4+)."
 	return parsexml(sdef, path, style)

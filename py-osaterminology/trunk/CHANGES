@@ -1,5 +1,6 @@
-2008-09-?? -- 0.13.?
+2008-10-26 -- 0.14.0
 
+- added py-appscript 0.19.0 support
 - added default definitions for 'item' type, 'items' elements, 'properties' property as Apple have removed the 'item' class definition from skeleton.sdef (the default terminology for Cocoa apps)
 
 2008-08-14 -- 0.13.0

@@ -8,8 +8,6 @@ try:
 except NameError: # Python 2.3
 	from sets import Set as set
 
-from aem.ae import AEDesc
-
 from osaterminology.sax.aeteparser import parse, Receiver
 from osaterminology.makeidentifier import getconverter
 

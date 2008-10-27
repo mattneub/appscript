@@ -13,7 +13,7 @@
 # TO DO: any plural classes without matching singular classes should be made singular too
 
 
-from aem.ae import AECreateDesc, GetAppTerminology as getaete, GetSysTerminology as getaeut
+from aem.ae import newdesc, getappterminology, getsysterminology
 from aem import kae
 
 from osadictionary import *
@@ -247,7 +247,7 @@ def parseaetes(aetes, path='', style='appscript'):
 
 
 def parselang(code='ascr', style='appscript'):
-	return parseaetes(getaeut(code), '', style)
+	return parseaetes(getsysterminology(code), '', style)
 
 
 def parsefile(paths, style='appscript'):
@@ -256,12 +256,12 @@ def parsefile(paths, style='appscript'):
 	aetes = []
 	for path in paths:
 		f = file(path)
-		aetes.append(AECreateDesc(kae.typeAETE, f.read()))
+		aetes.append(newdesc(kae.typeAETE, f.read()))
 		f.close()
 	return parseaetes(aetes, paths[0], style)
 	
 
 def parseapp(path, style='appscript'):
-	return parseaetes(getaete(path), path, style)
+	return parseaetes(getappterminology(path), path, style)
 
 
