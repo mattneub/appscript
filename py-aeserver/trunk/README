@@ -25,6 +25,7 @@ NOTES
 
 - aemreceive should now provide full 64-bit support with the exception of the optional aemreceive.sfba module (used to implement scriptable faceless background applications, typically used as AppleScript extensions), which is 32-bit only due to its use of Python's 32-bit Carbon.CarbonEvt extension to provide a main event loop.
 
+- note that sfba/CarbonEvt don't support background threads. Applications requiring multi-threading support can use PyObjC to provide a run loop instead.
 
 ======================================================================
 COPYRIGHT

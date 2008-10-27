@@ -40,7 +40,7 @@ class ArgDesc(ArgDef):
 	"""
 		Describes a raw AEDesc. Clients shouldn't instantiate directly; use kArgDesc instead.
 		
-		- aemreceive will pass CarbonX.AEDesc directly to callback as-is.
+		- aemreceive will pass aem.ae.AEDesc directly to callback as-is.
 	"""
 	
 	AEM_code = kae.typeWildCard
@@ -122,7 +122,7 @@ class ArgType(ArgDef):
 		if desc.type == self.AEM_code or self.AEM_code == kae.typeWildCard:
 			return True, codecs.unpack(desc)
 		else:
-			return True, codecs.unpack(desc.AECoerceDesc(self.AEM_code))
+			return True, codecs.unpack(desc.coerce(self.AEM_code))
 
 
 class ArgEnum(ArgDef):
@@ -147,7 +147,7 @@ class ArgEnum(ArgDef):
 		self._codes = [fourCharCode(code) for code in codes]
 	
 	def _unpack(self, desc, codecs):
-		desc = desc.AECoerceDesc(kae.typeEnumerated)
+		desc = desc.coerce(kae.typeEnumerated)
 		if desc.data not in self._codes:
 			return False, EventHandlerError(-1704, "Bad enumerator.", desc, AEType(kae.typeEnumerated))
 		return True, codecs.unpack(desc)
@@ -165,10 +165,10 @@ class ArgListOf(ArgDef):
 		self._datatype = buildDefs(datatype)
 	
 	def _unpack(self, desc, codecs):
-		desc = desc.AECoerceDesc(kae.typeAEList)
+		desc = desc.coerce(kae.typeAEList)
 		result = []
-		for i in range(1, desc.AECountItems() + 1):
-			succeeded, value = self._datatype.AEM_unpack(desc.AEGetNthDesc(i, kae.typeWildCard)[1], codecs)
+		for i in range(1, desc.count() + 1):
+			succeeded, value = self._datatype.AEM_unpack(desc.getitem(i, kae.typeWildCard)[1], codecs)
 			if not succeeded:
 				return False, value
 			result.append(value)

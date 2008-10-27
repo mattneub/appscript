@@ -7,7 +7,7 @@ except ImportError:
 
 setup(
 		name = "aeserver",
-		version = "0.2.0",
+		version = "0.3.0",
 		description = "Modules for adding Apple event handling support to Python-based Mac OS X applications.",
 		author = "HAS",
 		author_email='',

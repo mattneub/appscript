@@ -25,7 +25,7 @@ else: # host is small-endian
 # PUBLIC
 ######################################################################
 
-kMissingValue = ae.AECreateDesc(kae.typeType, fourCharCode('msng')) # 'missing value' constant
+kMissingValue = ae.newdesc(kae.typeType, fourCharCode('msng')) # 'missing value' constant
 
 
 class Codecs(aem.Codecs):
@@ -96,7 +96,7 @@ def _unpackEventAttributes(event):
 	attributes = {}
 	for code, name in _eventAttributes:
 		try:
-			attributes[name] = _standardCodecs.unpack(event.AEGetAttributeDesc(code, kae.typeWildCard))
+			attributes[name] = _standardCodecs.unpack(event.getattr(code, kae.typeWildCard))
 		except Exception:
 			pass
 	return attributes
@@ -116,7 +116,7 @@ def _unpackAppleEvent(event, includeAttributes, requiredArgDefs, optionalArgDefs
 		kargs = {_attributesArgName: _unpackEventAttributes(event)}
 	else:
 		kargs = {}
-	params = dict([event.AEGetNthDesc(i + 1, kae.typeWildCard) for i in range(event.AECountItems())])
+	params = dict([event.getitem(i + 1, kae.typeWildCard) for i in range(event.count())])
 	for code, argName, datatypes in requiredArgDefs:
 		try:
 			argValue = params.pop(code)
@@ -141,7 +141,7 @@ def _unpackAppleEvent(event, includeAttributes, requiredArgDefs, optionalArgDefs
 def _packAppleEvent(desc, parameters, codecs=_standardCodecs):
 	if desc.type == kae.typeAppleEvent: # only pack and return a result/error where event has requested one
 		for key, value in parameters.items():
-			desc.AEPutParamDesc(key, codecs.pack(value))
+			desc.setparam(key, codecs.pack(value))
 
 
 #######
@@ -155,7 +155,7 @@ def makeCallbackWrapper(callback, eventCode, parameterDefinitions, codecs):
 			reply = callback(**kargs)
 			if desiredResultType:
 				try:
-					reply = codecs.pack(reply).AECoerceDesc(desiredResultType)
+					reply = codecs.pack(reply).coerce(desiredResultType)
 				except: # TO DECIDE: should we raise coercion error -1700 here, or return value as-is? (latter is safest if we can't find out)
 					pass
 			if reply is not None:
@@ -181,20 +181,20 @@ def makeCallbackWrapper(callback, eventCode, parameterDefinitions, codecs):
 def installeventhandler(callback, eventCode, *parameterDefinitions, **kargs):
 	"""Install an Apple event handler."""
 	codecs = kargs.pop('codecs', _standardCodecs)
-	ae.AEInstallEventHandler(eventCode[:4], eventCode[4:], 
+	ae.installeventhandler(eventCode[:4], eventCode[4:], 
 			makeCallbackWrapper(callback, eventCode, parameterDefinitions, codecs))
 
 def removeeventhandler(eventCode):
 	"""Remove an installed Apple event handler."""
-	ae.AERemoveEventHandler(eventCode[:4], eventCode[4:])
+	ae.removeeventhandler(eventCode[:4], eventCode[4:])
 
 def installcoercionhandler(callback, fromType, toType):
 	"""Install an AEDesc coercion handler."""
-	ae.AEInstallCoercionHandler(fromType, toType, callback)
+	ae.installcoercionhandler(fromType, toType, callback)
 
 def removecoercionhandler(fromType, toType):
 	"""Remove an installed AEDesc coercion handler."""
-	ae.AERemoveCoercionHandler(fromType, toType)
+	ae.removecoercionhandler(fromType, toType)
 
 
 ######################################################################
@@ -206,10 +206,10 @@ def _coerceTypeAndEnum(desc, toType):
 	return _standardCodecs.pack(unicode(fourCharCode(desc.data)))
 
 def _coerceBoolAndNum(desc, toType):
-	return desc.AECoerceDesc('TEXT').AECoerceDesc('utxt')
+	return desc.coerce('TEXT').coerce('utxt')
 
 def _coerceFileTypes(desc, toType):
-	return desc.AECoerceDesc('furl').AECoerceDesc('utxt')
+	return desc.coerce('furl').coerce('utxt')
 
 _extraCoercions = [
 		(aem.AEType('utxt'), kae.typeType, _coerceTypeAndEnum),
@@ -225,7 +225,7 @@ _extraCoercions = [
 
 for testVal, fromType, func in _extraCoercions:
 	try:
-		_standardCodecs.pack(testVal).AECoerceDesc(kae.typeUnicodeText)
+		_standardCodecs.pack(testVal).coerce(kae.typeUnicodeText)
 	except ae.MacOSError, err:
 		if err[0] == -1700:
 			try:
