@@ -401,12 +401,13 @@ static PyMethodDef AEDesc_methods[] = {
 	
 	{"flatten", (PyCFunction)AEDesc_AEFlattenDesc, 1, PyDoc_STR(
 		"D.flatten() -> (Ptr buffer)\n"
-		"Flattens the specified descriptor and stores the data in the supplied buffer.")},
+		"Flattens the specified descriptor and stores the data in the\n"
+		"supplied buffer.")},
 	
 	{"coerce", (PyCFunction)AEDesc_AECoerceDesc, 1, PyDoc_STR(
 		"D.coerce(DescType toType) -> (AEDesc result)\n"
-		"Coerces the data in a descriptor to another descriptor type and creates\n"
-		"a descriptor containing the newly coerced data.")},
+		"Coerces the data in a descriptor to another descriptor type and\n"
+		"creates a descriptor containing the newly coerced data.")},
 	
 	{"duplicate", (PyCFunction)AEDesc_AEDuplicateDesc, 1, PyDoc_STR(
 		"D.duplicate() -> (AEDesc result)\n"
@@ -423,25 +424,26 @@ static PyMethodDef AEDesc_methods[] = {
 	
 	{"setitem", (PyCFunction)AEDesc_AEPutDesc, 1, PyDoc_STR(
 		"D.setitem(long index, AEDesc theAEDesc) -> None\n"
-		"Inserts a descriptor and a keyword into an Apple event record as an Apple event\n"
-		"parameter.")},
+		"Inserts a descriptor and a keyword into an Apple event record as an\n"
+		"Apple event parameter.")},
 	
 	{"getitem", (PyCFunction)AEDesc_AEGetNthDesc, 1, PyDoc_STR(
 		"D.getitem(long index, DescType desiredType)\n"
 		"-> (AEKeyword theAEKeyword, AEDesc result)\n"
-		"Copies a descriptor from a specified position in a descriptor list into a\n"
-		"specified descriptor.")},
+		"Copies a descriptor from a specified position in a descriptor list\n"
+		"into a specified descriptor.")},
 	
 	
 	{"setparam", (PyCFunction)AEDesc_AEPutParamDesc, 1, PyDoc_STR(
 		"D.setparam(AEKeyword theAEKeyword, AEDesc theAEDesc) -> None\n"
-		"Inserts a descriptor and a keyword into an Apple event or Apple event record as\n"
-		"an Apple event parameter.")},
+		"Inserts a descriptor and a keyword into an Apple event or Apple\n"
+		"event record as an Apple event parameter.")},
 	
 	{"getparam", (PyCFunction)AEDesc_AEGetParamDesc, 1, PyDoc_STR(
-		"D.getparam(AEKeyword theAEKeyword, DescType desiredType) -> (AEDesc result)\n"
-		"Gets a copy of the descriptor for a keyword-specified Apple event parameter\n"
-		"from an Apple event or an Apple event record.")},
+		"D.getparam(AEKeyword theAEKeyword, DescType desiredType)\n"
+		"-> (AEDesc result)\n"
+		"Gets a copy of the descriptor for a keyword-specified Apple event\n"
+		"parameter from an Apple event or an Apple event record.")},
 	
 	
 	{"setattr", (PyCFunction)AEDesc_AEPutAttributeDesc, 1, PyDoc_STR(
@@ -449,13 +451,15 @@ static PyMethodDef AEDesc_methods[] = {
 		"Adds a descriptor and a keyword to an Apple event as an attribute.")},
 	
 	{"getattr", (PyCFunction)AEDesc_AEGetAttributeDesc, 1, PyDoc_STR(
-		"D.getattr(AEKeyword theAEKeyword, DescType desiredType) -> (AEDesc result)\n"
-		"Gets a copy of the descriptor for a specified Apple event attribute from an\n"
-		"Apple event.")},
+		"D.getattr(AEKeyword theAEKeyword, DescType desiredType)\n"
+		"-> (AEDesc result)\n"
+		"Gets a copy of the descriptor for a specified Apple event attribute\n"
+		"from an Apple event.")},
 	
 	
 	{"send", (PyCFunction)AEDesc_AESendMessage, 1, PyDoc_STR(
-		"D.send(AESendMode sendMode, long timeOutInTicks) -> (AppleEvent reply)\n"
+		"D.send(AESendMode sendMode, long timeOutInTicks)\n"
+		"-> (AppleEvent reply)\n"
 		"Sends an AppleEvent to a target process.")},
 	
 	{NULL, NULL, 0}
@@ -498,7 +502,19 @@ static PyGetSetDef AEDesc_getsetlist[] = {
 
 #define AEDesc_compare NULL
 
-#define AEDesc_repr NULL
+static PyObject *AEDesc_repr(AEDescObject *self)
+{
+	PyObject *type, *typerep, *rep;
+	
+	type = AE_BuildOSType(self->ob_itself.descriptorType);
+	typerep = PyObject_Repr(type);
+	rep = PyString_FromFormat("<aem.ae.AEDesc type=%s size=%ld>",
+							  PyString_AsString(typerep),
+							  AEGetDescDataSize(&self->ob_itself));
+	Py_DECREF(type);
+	Py_DECREF(typerep);
+	return rep;
+}
 
 #define AEDesc_hash NULL
 #define AEDesc_tp_init 0
@@ -1285,7 +1301,7 @@ static PyObject *AE_CopyScriptingDefinition(PyObject* self, PyObject* args)
 	
 	if (OSACopyScriptingDefinition == NULL) {
 		PyErr_SetString(PyExc_NotImplementedError,
-						"CopyScriptingDefinition isn't available in OS X 10.3.");
+						"aem.ae.copyscriptingdefinition isn't available in OS X 10.3.");
 		return NULL;
 	}
 	if (!PyArg_ParseTuple(args, "O&", AE_GetFSRef, &fsRef))
@@ -1310,7 +1326,7 @@ static PyObject *AE_GetAppTerminology(PyObject* self, PyObject* args)
 {
 #if defined(__LP64__)
 	PyErr_SetString(PyExc_NotImplementedError,
-					"GetAppTerminology isn't available in 64-bit processes.");
+					"aem.ae.getappterminology isn't available in 64-bit processes.");
 	return NULL;
 #else
 	static ComponentInstance defaultComponent;
@@ -1368,7 +1384,8 @@ static PyMethodDef AE_methods[] = {
 	
 	{"unflattendesc", (PyCFunction)AE_AEUnflattenDesc, 1, PyDoc_STR(
 		"unflattendesc(Buffer data) -> (AEDesc result)\n"
-		"Unflattens the data in the passed buffer and creates a descriptor from it.")},
+		"Unflattens the data in the passed buffer and creates a descriptor\n"
+		"from it.")},
 		
 	{"newdesc", (PyCFunction)AE_AECreateDesc, 1, PyDoc_STR(
 		"newdesc(DescType typeCode, Buffer dataPtr) -> (AEDesc result)\n"
@@ -1381,7 +1398,7 @@ static PyMethodDef AE_methods[] = {
 	{"newrecord", (PyCFunction)AE_AECreateRecord, 1, PyDoc_STR(
 		"newrecord() -> (AERecord result)\n"
 		"Creates an empty Apple event record.")},
-		
+	
 	{"newappleevent", (PyCFunction)AE_AECreateAppleEvent, 1, PyDoc_STR(
 		"newappleevent(AEEventClass theAEEventClass,\n"
 		"              AEEventID theAEEventID,\n"
@@ -1389,7 +1406,8 @@ static PyMethodDef AE_methods[] = {
 		"              AEReturnID returnID,\n"
 		"              AETransactionID transactionID)\n"
 		"-> (AppleEvent result)\n"
-		"Creates an Apple event with several important attributes but no parameters.")},
+		"Creates an Apple event with several important attributes but no\n"
+		"parameters.")},
 	
 	 
 	{"installeventhandler", (PyCFunction)AE_AEInstallEventHandler, 1, PyDoc_STR(
@@ -1416,7 +1434,8 @@ static PyMethodDef AE_methods[] = {
 		"                       DescType toType,\n"
 		"                       CoercionHandler handler)\n"
 		"-> None\n"
-		"Installs a coercion handler in the application coercion handler dispatch table.")},
+		"Installs a coercion handler in the application coercion handler\n"
+		"dispatch table.")},
 		
 	{"removecoercionhandler", (PyCFunction)AE_AERemoveCoercionHandler, 1, PyDoc_STR(
 		"removecoercionhandler(DescType fromType,\n"
@@ -1442,16 +1461,18 @@ static PyMethodDef AE_methods[] = {
 		"                       CFStringRef inBundleID,\n"
 		"                       CFStringRef inName)\n"
 		"-> (unicode outAppURL)\n"
-		"Locates the preferred application for opening items with a specified file\n"
-		"type, creator signature, filename extension, or any combination of these\n"
-		"characteristics.")},
+		"Locates the preferred application for opening items with a specified\n"
+		"file type, creator signature, filename extension, or any combination\n"
+		"of these characteristics.")},
 	 
 	
 	{"pidforapplicationpath", AE_PIDForApplicationPath, METH_VARARGS, PyDoc_STR(
 		"pidforapplicationpath(unicode path) -> (pid_t pid)")},
 	
   	{"launchapplication", (PyCFunction)AE_LaunchApplication, METH_VARARGS, PyDoc_STR(
-		"launchapplication(unicode path, AEDesc firstEvent, unsigned short flags)\n"
+		"launchapplication(unicode path,\n"
+		"                  AEDesc firstEvent,\n"
+		"                  unsigned short flags)\n"
 		"-> (pid_t pid)")},
 	
   	{"isvalidpid", (PyCFunction)AE_IsValidPID, METH_VARARGS, PyDoc_STR(
@@ -1464,12 +1485,13 @@ static PyMethodDef AE_methods[] = {
 	
   	{"copyscriptingdefinition", (PyCFunction) AE_CopyScriptingDefinition, METH_VARARGS, PyDoc_STR(
 		"copyscriptingdefinition(unicode path) -> (unicode sdef)\n"
-		"Creates a copy of a scripting definition (sdef) from the specified file or\n"
-		"bundle.")},
+		"Creates a copy of a scripting definition (sdef) from the specified\n"
+		"file or bundle.")},
 		
   	{"getappterminology", (PyCFunction) AE_GetAppTerminology, METH_VARARGS,  PyDoc_STR(
 		"getappterminology(unicode path) -> (AEDesc aete)\n"
-		"Gets one or more scripting terminology resources from the specified file.")},
+		"Gets one or more scripting terminology resources from the specified\n"
+		"file.")},
 		
   	{"getsysterminology", (PyCFunction) AE_GetSysTerminology, METH_VARARGS, PyDoc_STR(
 		"getsysterminology(OSType subTypeCode) -> (AEDesc aeut)\n"

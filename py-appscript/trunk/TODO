@@ -2,6 +2,10 @@ TO DO
 
 ============================ aem ============================
 
+
+----------------------------------------------------------------------
+Following will probably be rejected as too hard or not important enough to do:
+
 - following should work but doesn't:
 
 	Application('/System/Library/CoreServices/Finder.app').event('coregetd', {'----': app.elements('pcap')}).send()
@@ -22,13 +26,6 @@ TO DO
 - find a way to avoid GUI process starting when running from python2.4/python2.5; calling Process Manager functions (GetNextEvent, GetProcessBundleLocation, LaunchApplication) seems to trigger this. e.g. Might be BSD APIs that could be used instead.
 
 
-- ae.AEGetEventHandler, ae.AEGetCoercionHandler functions will crash when getting C-based callbacks (to fix this, would need to check if function is GenericEventHandler/GenericCoercionHandler, and if not, wrap and return the function pointer as [e.g.] a Python CObject)
-
-
-----------------------------------------------------------------------
-Following will probably be rejected as too hard or not important enough to do:
-
-
 - support for default 'open' events (i.e. where aevtodoc event is passed via LaunchApplication)
 
 
@@ -45,22 +42,28 @@ print its == its.eq(True)
 - How should terminology module handle malformed aetes? Ignore them? Raise proper error (except for zero-length aetes, which AS seems to ignore)?
 
 
-- Introspection support? (Do clients really need ability to examine references' structure? What about getting lists of supported property, element, type, enum and command names, as in rb-appscript?)
+- See also TO DOs in terminology.py
 
 
 - More tests.
 
 
-- See also TO DOs in terminology.py
-
-
 - Allow multiple instances of same application to be launched and/or controlled. (Currently clients can launch new instances themselves, then create Application objects using their PIDs.)
+
+----------------------------------------------------------------------
+Following will probably be rejected as too hard or not important enough to do:
 
 
 - improve rendering when a custom root is used
 
 
+- Introspection support? (Do clients really need ability to examine references' structure? What about getting lists of supported property, element, type, enum and command names, as in rb-appscript?)
+
+
 ============================ mactypes ============================
+
+----------------------------------------------------------------------
+Following will probably be rejected as too hard or not important enough to do:
 
 - make comparisons more robust? make hashes smarter (if possible)? (note: if clients need to perform more sophisticated, e.g. case-insensitive, comparisons, particularly for File objects, they should probably do this themselves)
 
@@ -72,4 +75,4 @@ print its == its.eq(True)
 
 ============================ misc ============================
 
-- all identifiers should follow PEP 8
+

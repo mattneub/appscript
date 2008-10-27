@@ -28,19 +28,36 @@
 <pre><code>reference.command_name(*arg, **args, waitreply=True,
          timeout=60, resulttype=None, ignore=None)
     *arg : anything -- direct arg, if any
-    **args : anything -- labelled arg(s), if any
+    **kargs : anything -- labelled arg(s), if any
     waitreply : bool -- wait for application to return a result/error?
-    timeout : int -- no. of seconds to wait for a reply (no timeout = 0)
+    timeout : int -- no. of seconds to wait for a reply
     resulttype : None | Keyword -- AE type to coerce return value to
-                                   (e.g. k.file_ref)
     ignore : None | list of Keyword -- string characteristics to ignore
-                                       when evaluating references [1]
+                                       when evaluating references
     Result : anything -- value returned by application, if any</code></pre>
 
 
-<!-- TO DO: expand descriptions of above args -->
+<dl>
+<dt>*arg</dt>
+<dd>An application command can have either zero or one direct parameters. The application's dictionary indicates which commands take a direct parameter, and if it is optional or required.</dd>
 
-<p>[1] The Keyword list should contain zero or more of the following enumerators: <code>k.case</code>, <code>k.diacriticals</code>, <code>k.expansion</code>, <code>k.hyphens</code>, <code>k.punctuation</code>, <code>k.whitespace</code>. Note that most applications currently ignore this setting and use default behaviour (ignore case).</p>
+<dt>*kargs</dt>
+<dd>An application command can have zero or more labelled parameters. The application's dictionary describes the labelled parameters for each command, and if they are optional or required.</dd>
+
+<dt>waitreply</dt>
+<dd>If <code>true</code>, appscript will wait for the application to reply to the command (the default). If <code>false</code>, it will return as soon as the command is sent, ignoring any return values or application errors.</dd>
+
+<dt>timeout</dt>
+<dd>The number of seconds to wait for the application to reply before raising a timeout error. The default is 60 seconds but may be increased or decreased as needed; Use 0 to wait indefinitely. For example, a longer timeout may be needed to prevent a timeout error occurring during a particularly long-running application command. Note: due to a quirk in the Apple Event Manager API, timeout errors may be reported as either error -1712 (the Apple event timed out) or -609 (connection invalid, which is also raised when an application unexpectedly quits while handling a command).</dd>
+
+<dt>resulttype</dt>
+<dd>Some applications may allow the return value's type to be specified for certain commands (typically <code>get</code>). For example, the Finder's <code>get</code> command returns filesystem references as alias objects if the resulttype is <code>k.alias</code>.</dd>
+
+<dt>ignore</dt>
+<dd>Some applications may allow the client to specify text attributes that should be considered or ignored when performing string comparisons, e.g. when resolving by-test references. When specifying the attributes to ignore, the list should contain zero or more of the following enumerators: <code>k.case</code>, <code>k.diacriticals</code>, <code>k.expansion</code>, <code>k.hyphens</code>, <code>k.punctuation</code>, <code>k.whitespace</code>. Note that most applications currently ignore this setting and always use the default behaviour, which is to ignore case but consider everything else.</dd>
+</dl>
+
+
 
 <h2>Examples</h2>
 

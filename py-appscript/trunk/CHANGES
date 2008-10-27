@@ -40,7 +40,7 @@ The aemreceive, osascript and osaterminology packages can be obtained separately
 
 - added compatibility fix to aem.Codecs packUnicodeText, unpackUnicodeText due to change in behaviour of unicode(data, 'utf16') in Python 2.6
 
-- renamed aem.Event._createAppleEvent, aem.Event._sendAppleEvent hook methods to _createappleevent, _sendappleevent; _sendappleevent is now a static method
+- moved aem.Event's _createAppleEvent, _sendAppleEvent hook methods to aem.Application and renamed them _createproc, _sendproc; both are now defined as static methods
 
 - added errornumber, errormessage properties to aem.CommandError, appscript.CommandError. Deprecated 'number' and 'message' attributes in aem.CommandError; clients should update any existing code to use errornumber, errormessage properties instead.
 
@@ -66,7 +66,7 @@ The aemreceive, osascript and osaterminology packages can be obtained separately
 
 - Alias constructor now raises ValueError instead of MacOS.Error(-1700) if file not found; clients should update any existing code as needed.
 
-- lowercased all public and private function/method/variable names as-per Python style guidelines (constant names remain camelcased)
+- lowercased all public and private function/method/variable names as-per Python style guidelines (constant names remain camelcased); revised function/method names in aem.ae
 
 
 2007-12-19 -- 0.18.0

@@ -32,7 +32,7 @@
 <dd>Represents a ready-to-send Apple event, and provides a <code>send</code> method for sending it. Returned by the <code>Application</code> class's <code>event</code> method.</dd>
 
 <dt>CommandError</dt>
-<dd>Exception raised to indicate an application or Apple Event Manager error.</dd>
+<dd>Represents an error raised by the target application or the Apple Event Manager.</dd>
 
 <dt>Codecs</dt>
 <dd>Provides <code>pack</code> and <code>unpack</code> methods for converting Python values to AE types, and vice-versa. Clients usually don't need to access this class directly.</dd>
@@ -73,7 +73,7 @@
 <dd>Provides functions for locating applications by name, bundle id or creator code.</dd>
 
 <dt>ae</dt>
-<dd>Exports aem.ae.AEDesc type that represents Carbon AEDescs and associated functions.</dd>
+<dd>Low-level extension that defines an <code>AEDesc</code> type representing Carbon Apple event descriptors (AEDescs). Also provides a number of support functions used by aem, appscript and related packages.</dd>
 
 <dt>kae</dt>
 <dd>Exports constants defined by Apple Event Manager and Open Scripting APIs.</dd>

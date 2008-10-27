@@ -41,30 +41,26 @@
 
 <p>The Apple Event Manager (and, in turn, the <code>aem.ae</code> extension) provides several ways to construct object specifiers and assemble them into a complete reference, but these are all rather verbose and low-level. Aem hides all these details behind an object-oriented wrapper that uses chained property and method calls to gather the data needed to create object specifiers and assemble them into linked lists.</p>
 
-<p>For example, consider the reference <code>text of document 1</code>. The code for constructing this reference using a relatively low-level bridge, in this case RubyAEOSA, would be:</p>
+<p>For example, consider the reference <code>text of document 1</code>. The code for constructing this reference using the low-level <code>aem.ae</code> bridge would be:</p>
 
-<pre><code>ref = OSX::AEDesc.null
+<pre><code>rootref = newdesc('null', '')
 
-ref = OSX::AEDesc.record({
-    'want' =&gt; OSX::AEDesc.new('type', 'docu'),
-    'from' =&gt; ref,
-    'form' =&gt; OSX::AEDesc.new('enum', 'indx'),
-    'seld' =&gt; 1,
-}).coerce('obj ')
+docref = newrecord().coerce('obj ')
+docref.setparam('want', newdesc('type', 'docu'))
+docref.setparam('from', rootref)
+docref.setparam('form', newdesc('enum', 'indx'))
+docref.setparam('seld', newdesc('long', '\x00\x00\x00\x01'))
 
-ref = OSX::AEDesc.record({
-    'want' =&gt; OSX::AEDesc.new('type', 'prop'),
-    'from' =&gt; ref,
-    'form' =&gt; OSX::AEDesc.new('enum', 'prop'), 
-    'seld' =&gt; OSX::AEDesc.new('type', 'ctxt'),
-}).coerce('obj ')
+textref = newrecord().coerce('obj ')
+textref.setparam('want', newdesc('type', 'prop'))
+textref.setparam('from', docref)
+textref.setparam('form', newdesc('enum', 'prop'))
+textref.setparam('seld', newdesc('type', 'ctxt'))
 
-p ref 
-#&lt;AEDesc:0x57594 type='obj '&gt;</code></pre>
+print textref
+# &lt;aem.ae.AEDesc type='obj ' size=152&gt;</code></pre>
 
-<p>(Python's <code>aem.ae</code> extension is even lower-level and more verbose.)</p>
-
-<p>This code works by creating each AEDesc of <code>typeAERecord</code> in turn, populating it, then coercing it to <code>typeObjectSpecifier</code>. Each AEDesc is nested within the next to form a linked list of object specifier records; the last (innermost) descriptor in the finished list indicates the reference's root object in the AEOM (in this case, the <code>application</code> object, which is represented by a null descriptor).</p>
+<p>This code works by creating an AEDesc of <code>typeObjectSpecifier</code> to represent each specifier and populating its fields one at a time. Each AEDesc is nested within the next to form a linked list of object specifier records; the last (innermost) descriptor in the finished list indicates the reference's root object in the AEOM (in this case, the <code>application</code> object, which is represented by a null descriptor).</p>
 
 <p>Now, compare the above with the aem equivalent:</p>
 
@@ -144,11 +140,11 @@ p ref
 <h3>Basic methods</h3>
 
 <pre><code>BASE -- Base class for all reference form and test clause classes.
-    __hash__() -- aem references can be used as dictionary keys
+    __hash__(self) -- aem references can be used as dictionary keys
 
-    __eq__(value) -- aem references can be compared for equality
+    __eq__(self, value) -- aem references can be compared for equality
 
-    __ne__(value)</code></pre>
+    __ne__(self, value)</code></pre>
 
 
 <h3>Properties and methods for all position specifiers</h3>
@@ -163,66 +159,66 @@ p ref
         after -&gt; InsertionSpecifier
 
     Methods:
-        property(propertycode)
+        property(self, propertycode)
             propertycode : str -- four-char code
             Result : Property
 
-        userproperty(name)
+        userproperty(self, name)
             name : str
             Result : UserProperty
 
-        elements(classcode)
+        elements(self, classcode)
             classcode : str -- four-char code
             Result : AllElements
 
-        previous(classcode)
+        previous(self, classcode)
             classcode : str -- four-char code
             Result : Element
 
-        next(classcode)
+        next(self, classcode)
             classcode : str -- four-char code
             Result : Element
         
         -- Note: following methods are for use on
            its-based references only
 
-        gt(val) -- self is greater than value
+        gt(self, val) -- self is greater than value
             val : anything
             Result : Test
         
-        ge(val) -- self is greater than or equal to value
+        ge(self, val) -- self is greater than or equal to value
             val : anything
             Result : Test
             
-        eq(val) -- self equals value
+        eq(self, val) -- self equals value
             val : anything
             Result : Test
     
-        ne(val) -- self does not equal value
+        ne(self, val) -- self does not equal value
             val : anything
             Result : Test
     
-        lt(val) -- self is less than value
+        lt(self, val) -- self is less than value
             val : anything
             Result : Test
     
-        le(val) -- self is less than or equal to value
+        le(self, val) -- self is less than or equal to value
             val : anything
             Result : Test
     
-        beginswith(val) -- self begins with value
+        beginswith(self, val) -- self begins with value
             val : anything
             Result : Test
     
-        endswith(val) -- self ends with value
+        endswith(self, val) -- self ends with value
             val : anything
             Result : Test
     
-        contains(val) -- self contains value
+        contains(self, val) -- self contains value
             val : anything
             Result : Test
     
-        isin(val) -- self is in value
+        isin(self, val) -- self is in value
             val : anything
             Result : Test</code></pre>
 
@@ -239,25 +235,25 @@ p ref
         any -&gt; Element
 
     Methods:
-        byindex(key)
+        byindex(self, key)
             key : int -- normally an integer, though some apps may 
                     accept other types (e.g. Finder accepts an Alias)
             Result : ElementByIndex
 
-        byname(key)
+        byname(self, key)
             key : str -- the object's name
             Result : ElementByName
 
-        byid(key)
+        byid(self, key)
             key : anything -- the object's unique id
             Result : ElementByID
 
-        byrange(startref, endref)
+        byrange(self, startref, endref)
             startref : Element -- an app- or con-based reference
             endref : Element -- an app- or con-based reference
             Result : ElementByRange
 
-        byfilter(testref)
+        byfilter(self, testref)
             testref : Test -- an its-based reference
             Result : ElementsByFilter</code></pre>
 
@@ -269,13 +265,13 @@ p ref
         NOT -&gt; Test -- apply a logical 'not' test to self
 
     Methods:
-        AND(*operands) -- apply a logical 'and' test to self and
+        AND(self, *operands) -- apply a logical 'and' test to self and
                 one or more other operands
             *operands : Test -- one or more comparison/logic test
                 objects
             Result : Test
             
-        OR(*operands) -- apply a logical 'or' test to self and one
+        OR(self, *operands) -- apply a logical 'or' test to self and one
                     or more other operands
             *operands : Test -- one or more comparison/logic test
                 objects

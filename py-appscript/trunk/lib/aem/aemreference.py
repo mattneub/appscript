@@ -37,10 +37,10 @@ else: # host is small-endian
 
 
 def packlistas(type, lst):
-	desc = ae.newrecord()
+	desc = ae.newrecord().coerce(type)
 	for key, value in lst:
 		desc.setparam(key, value)
-	return desc.coerce(type)
+	return desc
 
 
 ###################################
