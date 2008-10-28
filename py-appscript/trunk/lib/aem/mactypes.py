@@ -35,7 +35,7 @@ def _ro(*args):
 	raise AttributeError('Property is read-only.')
 
 
-class _Base:
+class _Base(object):
 	def __eq__(self, val):
 		return self is val or (self.__class__ == val.__class__ and self.url == val.url)
 	
@@ -191,7 +191,7 @@ class File(_Base):
 
 #######
 
-class Units:
+class Units(object):
 	"""Represents a measurement; e.g. 3 inches, 98.5 degrees Fahrenheit.
 	
 	The AEM defines a standard set of unit types; some applications may define additional types for their own use. This wrapper stores the raw unit type and value data; aem/appscript Codecs objects will convert this to/from an AEDesc, or raise an error if the unit type is unrecognised.
