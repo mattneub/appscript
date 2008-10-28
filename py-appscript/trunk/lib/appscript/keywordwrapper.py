@@ -6,7 +6,7 @@
 # Users don't instantiate this class directly; instead, the syntactic sugar layer allows keywords
 # to be created by referring to the exported 'k' variable; e.g. k.document, k.ask, k.name, k.String.
 
-class Keyword:
+class Keyword(object):
 	"""A class/property/enumerator/type name."""
 	
 	def __init__(self, name): 
