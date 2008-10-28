@@ -283,7 +283,7 @@ class Codecs:
 		"""Clients may override this to provide additional unpackers."""
 		if desc.isrecord():
 			rec = desc.coerce('reco')
-			rec.putparam('pcls', self.pack(AEType(desc.type)))
+			rec.setparam('pcls', self.pack(AEType(desc.type)))
 			decoder = self.decoders.get('reco')
 			if decoder:
 				return decoder(rec)
