@@ -31,10 +31,6 @@ __all__ = ['Alias', 'File', 'Units']
 
 class _kNoPath: pass
 
-def _ro(*args):
-	raise AttributeError('Property is read-only.')
-
-
 class _Base(object):
 	def __eq__(self, val):
 		return self is val or (self.__class__ == val.__class__ and self.url == val.url)
@@ -98,17 +94,17 @@ class Alias(_Base):
 	
 	# Properties
 	
-	path = property(lambda self: converturltopath(self.url, kCFURLPOSIXPathStyle), _ro, doc="Get as POSIX path.")
+	path = property(lambda self: converturltopath(self.url, kCFURLPOSIXPathStyle), doc="Get as POSIX path.")
 	
-	hfspath = property(lambda self: converturltopath(self.url, kCFURLHFSPathStyle), _ro, doc="Get as HFS path.")
+	hfspath = property(lambda self: converturltopath(self.url, kCFURLHFSPathStyle), doc="Get as HFS path.")
 	
-	url = property(lambda self: self._desc.coerce(kae.typeFileURL).data, _ro, doc="Get as file URL.")
+	url = property(lambda self: self._desc.coerce(kae.typeFileURL).data, doc="Get as file URL.")
 	
-	file = property(lambda self: File.makewithdesc(self._desc), _ro, doc="Get as mactypes.File.")
+	file = property(lambda self: File.makewithdesc(self._desc), doc="Get as mactypes.File.")
 	
-	alias = property(lambda self: self, _ro, doc="Get as mactypes.Alias (i.e. itself).")
+	alias = property(lambda self: self, doc="Get as mactypes.Alias (i.e. itself).")
 	
-	desc = property(lambda self: self._desc, _ro, doc="Get as aem.ae.AEDesc.")
+	desc = property(lambda self: self._desc, doc="Get as aem.ae.AEDesc.")
 
 
 
@@ -164,9 +160,9 @@ class File(_Base):
 		if self._path is None:
 			self._path = converturltopath(self.url, kCFURLPOSIXPathStyle)
 		return self._path
-	path = property(path, _ro, doc="Get as POSIX path.")
+	path = property(path, doc="Get as POSIX path.")
 	
-	hfspath = property(lambda self: converturltopath(self.url, kCFURLHFSPathStyle), _ro, doc="Get as HFS path.")
+	hfspath = property(lambda self: converturltopath(self.url, kCFURLHFSPathStyle), doc="Get as HFS path.")
 	
 	def url(self):
 		if self._url is None:
@@ -175,17 +171,17 @@ class File(_Base):
 			else:
 				self._url = self._desc.coerce(kae.typeFileURL).data
 		return self._url
-	url = property(url, _ro, doc="Get as file URL.")
+	url = property(url, doc="Get as file URL.")
 	
-	file = property(lambda self: File(self.path), _ro, doc="Get as mactypes.File.")
+	file = property(lambda self: File(self.path), doc="Get as mactypes.File.")
 	
-	alias = property(lambda self: Alias.makewithdesc(self.desc), _ro, doc="Get as mactypes.Alias.")
+	alias = property(lambda self: Alias.makewithdesc(self.desc), doc="Get as mactypes.Alias.")
 	
 	def desc(self):
 		if self._desc is None:
 			self._desc = newdesc(kae.typeFileURL, self.url)
 		return self._desc
-	desc = property(desc, _ro, doc="Get as aem.ae.AEDesc.")
+	desc = property(desc, doc="Get as aem.ae.AEDesc.")
 
 
 
@@ -205,8 +201,8 @@ class Units(object):
 		self._value = value
 		self._type = type
 	
-	value = property(lambda self: self._value, _ro, doc="Get unit value, e.g. 3")
-	type = property(lambda self: self._type, _ro, doc="Get unit type, e.g. 'inches'")
+	value = property(lambda self: self._value, doc="Get unit value, e.g. 3")
+	type = property(lambda self: self._type, doc="Get unit type, e.g. 'inches'")
 	
 	def __eq__(self, val):
 		return self is val or (self.__class__ == val.__class__ 
