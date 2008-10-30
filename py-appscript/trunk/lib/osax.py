@@ -76,7 +76,7 @@ class ScriptingAddition(reference.Application):
 		try:
 			self.AS_appdata.target.event('ascrgdut').send(300) # make sure target application has loaded event handlers for all installed OSAXen
 		except aem.CommandError, e:
-			if e.number != -1708: # ignore 'event not handled' error
+			if e.errornumber != -1708: # ignore 'event not handled' error
 				raise
 		self.AS_appdata.help = _OSAXHelp(_osaxcache[osaxname][0])
 		

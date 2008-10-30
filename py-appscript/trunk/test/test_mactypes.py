@@ -1,6 +1,6 @@
 #!/usr/local/bin/python
 
-import unittest, os, os.path
+import unittest, os, os.path, tempfile
 from aem.ae import MacOSError
 import mactypes
 
@@ -9,8 +9,8 @@ class TC_MacTypes(unittest.TestCase):
 	dir = '/private/tmp'
 	
 	def setUp(self):
-		self.path1 = os.tempnam(self.dir, 'py-mactypes-test.') # tempnam raises a security warning re. security; it's part of the test code, not mactypes, so ignore it
-		file(self.path1, 'w').close()
+		self.path1 = tempfile.mkstemp('', 'py-mactypes-test.', self.dir)[1] # tempnam raises a security warning re. security; it's part of the test code, not mactypes, so ignore it
+		open(self.path1, 'w').close()
 		fname = os.path.split(self.path1)[1]
 		self.path2 = os.path.join(self.dir, 'moved-' + fname)
 		# print "path: %r" % self.path1 # e.g. /private/tmp/py-mactypes-test.VLrUW7

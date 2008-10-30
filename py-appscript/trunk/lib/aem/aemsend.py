@@ -76,8 +76,8 @@ class Event(object):
 		try:
 			replyevent = self._sendproc(self.AEM_event, flags, timeout)
 		except MacOSError, err: # an OS-level error occurred
-			if not (self._eventcode == 'aevtquit' and err[0] == -609): # Ignore invalid connection error (-609) when quitting
-				raise CommandError(err[0])
+			if not (self._eventcode == 'aevtquit' and err.args[0] == -609): # Ignore invalid connection error (-609) when quitting
+				raise CommandError(err.args[0])
 		else: # decode application's reply, if any
 			if replyevent.type != kae.typeNull:
 				eventresult = dict([replyevent.getitem(i + 1, kae.typeWildCard) 

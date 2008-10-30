@@ -6,11 +6,9 @@
 import struct, datetime, time
 from codecs import BOM_UTF16_LE, BOM_UTF16_BE
 
-import kae
 from ae import AEDesc, newdesc, newlist, newrecord
-
 from typewrappers import AEType, AEEnum, AEProp, AEKey
-import aemreference, mactypes
+import aemreference, mactypes, kae
 
 
 ######################################################################
