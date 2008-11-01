@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 
-<title>aem | 4. References</title>
+<title>py-aem manual | 4. References</title>
 
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <style type="text/css" media="all"><!--@import url(../full.css);--></style>
@@ -10,18 +10,28 @@
 </head>
 <body>
 
-<h1>4. References</h1>
+<h1><img src="../py-appscript-logo.png" alt="py-appscript" title="py-appscript" /></h1>
 
 <!-- top navigation -->
 <div class="navbar">
-	<a href="03_packingandunpackingdata.html">Previous</a> | <a href="index.html">Up</a> | <a href="05_targettingapplications.html">Next</a>
+<a href="03_packingandunpackingdata.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="05_targettingapplications.html">Next</a>
+
+<span>
+<a href="../appscript-manual/index.html">appscript</a> /
+<a href="../mactypes-manual/index.html">mactypes</a> /
+<a href="../osax-manual/index.html">osax</a> /
+<strong><a href="../aem-manual/index.html">aem</a></strong>
+</span>
 </div>
 
 <!-- content -->
 <div id="content">
 
+<h2>4. References</h2>
 
-<h2>About references</h2>
+<h3>About references</h3>
 
 <p>An Apple Event Object Model query (a.k.a. "reference") essentially consists of a linked list made up of one or more Apple event descriptors (AEDescs) of, for the most part, <code>typeObjectSpecifier</code>. Object specifiers are used to identify properties and elements in the application's AEOM. Each object specifer contains four fields:</p>
 
@@ -90,7 +100,7 @@ print textref
 
 
 
-<h2>Reference forms</h2>
+<h3>Reference forms</h3>
 
 <p>Aem defines a number of classes representing each of the AEOM reference forms. There are eight AEOM reference forms:</p>
 
@@ -133,11 +143,11 @@ print textref
 
 
 
-<h2>Base classes</h2>
+<h3>Base classes</h3>
 
 <p>(Note: <code>self</code> arguments omitted for clarity.)</p>
 
-<h3>Basic methods</h3>
+<h4>Basic methods</h4>
 
 <pre><code>BASE -- Base class for all reference form and test clause classes.
     __hash__(self) -- aem references can be used as dictionary keys
@@ -147,7 +157,7 @@ print textref
     __ne__(self, value)</code></pre>
 
 
-<h3>Properties and methods for all position specifiers</h3>
+<h4>Properties and methods for all position specifiers</h4>
 
 <pre><code>PositionSpecifier(Specifier) -- base class for all property and element
         reference forms (i.e. all forms except insertion location)
@@ -223,7 +233,7 @@ print textref
             Result : Test</code></pre>
 
 
-<h3>Properties and methods for all multi-element specifiers</h3>
+<h4>Properties and methods for all multi-element specifiers</h4>
 
 <pre><code>MultipleElements(PositionSpecifier) -- base class for all multi-
         element reference forms
@@ -257,7 +267,7 @@ print textref
             testref : Test -- an its-based reference
             Result : ElementsByFilter</code></pre>
 
-<h3>Properties and methods for all test clause classes</h3>
+<h4>Properties and methods for all test clause classes</h4>
 
 <pre><code>Test(BASE) -- represents a comparison/logic test
 
@@ -278,14 +288,14 @@ print textref
             Result : Test</code></pre>
 
 
-<h2>Concrete classes</h2>
+<h3>Concrete classes</h3>
 
-<h3>Insertion location reference form</h3>
+<h4>Insertion location reference form</h4>
 
 <pre><code>InsertionSpecifier(Specifier) -- refers to insertion point before or after/at
         beginning or end of element(s); e.g. ref.before</code></pre>
 
-<h3>Property reference forms</h3>
+<h4>Property reference forms</h4>
 
 <pre><code>Property(PositionSpecifier) -- refers to a property (whose value
         may be a basic type, application object or reference);
@@ -296,7 +306,7 @@ UserProperty(PositionSpecifier) -- refers to a user-defined property
         (typically in an OSA applet); e.g. ref.userproperty('myVar')</code></pre>
 
 
-<h3>Single element reference forms</h3>
+<h4>Single element reference forms</h4>
 
 
 <pre><code>ElementByIndex(SingleElement) -- refers to a single element in the referenced 
@@ -319,7 +329,7 @@ ElementByRelativePosition(SingleElement) -- refers to the previous or next eleme
         e.g. ref.next('cpar')</code></pre>
 
 
-<h3>Multiple element reference forms</h3>
+<h4>Multiple element reference forms</h4>
 
 <pre><code>ElementsByRange(MultipleElements) -- refers to a range of elements
         in the referenced container object(s) (including start and 
@@ -337,14 +347,14 @@ AllElements(MultipleElements) -- refers to all elements of
         e.g. ref.elements('docu')</code></pre>
 
 
-<h3>Tests</h3>
+<h4>Tests</h4>
 
 <p>The <code>Test</code> class represents a comparison test or logical test, and defines methods for composing additional logical tests on top of these. Each kind of test clause is represented by a different subclass of the main <code>Test</code> class. The details are not that important, however, so they're not listed here.</p>
 
 
 
 
-<h3>Reference Roots</h3>
+<h4>Reference Roots</h4>
 
 <p>The following classes are used to construct standard AEM references:</p>
 
@@ -373,17 +383,17 @@ ObjectBeingExamined(ReferenceRoot) -- the exported 'its' variable contains
 <p>AEM exports the <code>CustomRoot</code> class via the <code>customroot</code> variable.</p>
 
 
-<!-- TO DO: note on AEM_resolve -->
-
-
 </div>
 
 <!-- bottom navigation -->
-<div class="navbar">
-	<a href="03_packingandunpackingdata.html">Previous</a> | <a href="index.html">Up</a> | <a href="05_targettingapplications.html">Next</a>
+
+<div class="footer">
+<a href="03_packingandunpackingdata.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="05_targettingapplications.html">Next</a>
+
+<span>&copy; 2006-2008 HAS</span>
 </div>
 
-<!--footer-->
-<p class="footer">&copy; 2006-2008 HAS</p>
 </body>
 </html>

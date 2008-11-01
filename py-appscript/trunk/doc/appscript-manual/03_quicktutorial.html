@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 
-<title>appscript | 3. Quick Tutorial</title>
+<title>py-appscript manual | 3. Quick tutorial</title>
 
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <style type="text/css" media="all"><!--@import url(../full.css);--></style>
@@ -10,19 +10,30 @@
 </head>
 <body>
 
-<h1>3. Quick Tutorial</h1>
+<h1><img src="../py-appscript-logo.png" alt="py-appscript" title="py-appscript" /></h1>
 
 <!-- top navigation -->
 <div class="navbar">
-	<a href="02_aboutappscripting.html">Previous</a> | <a href="index.html">Up</a> | <a href="04_gettinghelp.html">Next</a>
-	
+<a href="02_aboutappscripting.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="04_gettinghelp.html">Next</a>
+
+<span>
+<strong><a href="../appscript-manual/index.html">appscript</a></strong> /
+<a href="../mactypes-manual/index.html">mactypes</a> /
+<a href="../osax-manual/index.html">osax</a> /
+<a href="../aem-manual/index.html">aem</a>
+</span>
 </div>
 
 <!-- content -->
 <div id="content">
+
+<h2>3. A quick tutorial</h2>
+
 <p>The following tutorial provides a practical taste of application scripting with appscript. Later chapters cover the technical details of appscript usage that are mostly skimmed over here.</p>
 
-<h2>'Hello World' tutorial</h2>
+<h3>'Hello World' tutorial</h3>
 
 <p>This tutorial uses appscript, TextEdit and the interactive command line <code>python</code> interpreter to perform a simple 'Hello World' exercise.</p>
 
@@ -36,7 +47,7 @@ Python 2.5.1 (r251:54863, Jan 17 2008, 19:35:17)
 Type "help", "copyright", "credits" or "license" for more information.
 &gt;&gt;&gt; </code></pre>
 
-<h3>Target TextEdit</h3>
+<h4>Target TextEdit</h4>
 
 <p>The first step is to import the appscript module. Appscript exports only a few public attributes - <code>app</code>, <code>k</code>, <code>con</code>, <code>its</code>, <code>CommandError</code> and <code>ApplicationNotFoundError</code> - so it's common practice to import these into the top-level namespace for convenience:</p>
 
@@ -50,7 +61,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 
 <p>The application may be identified by name, path, bundle ID, creator type or, if running remotely, URL. If the application is local and is not already running, it will be launched automatically for you.</p>
 
-<h3>Create a new document</h3>
+<h4>Create a new document</h4>
 
 <p>First, create a new TextEdit document by making a new <code>document</code> object. This is done using the <code>make</code> command, passing it a single parameter, <code>new=k.document</code>, indicating the type of object to create:</p>
 
@@ -65,7 +76,7 @@ app(u'/Applications/TextEdit.app').documents[1]
 <pre><code>&gt;&gt;&gt; doc = te.make(new=k.document)
 &gt;&gt;&gt; </code></pre>
 
-<h3>Set the document's content</h3>
+<h4>Set the document's content</h4>
 
 <p>The next step is to set the document's content to the string <code>"Hello World"</code>. Every TextEdit document has a property, <code>text</code>, that represents the entire text of the document. This property is both readable and writeable, allowing you to retrieve and/or modify the document's textual content as unstyled unicode text.</p>
 
@@ -82,7 +93,7 @@ app(u'/Applications/TextEdit.app').documents[1]
 
 <p>Appscript converts this second form to the first form internally, so the end result is exactly the same. Appscript supports several such special cases, and these are described in the chapter on Application Commands. Using these special cases produces more elegant, readable source code, and is recommended.</p>
 
-<h3>Get the document's content</h3>
+<h4>Get the document's content</h4>
 
 <p>Retrieving the document's text is done using the <code>get()</code> command:</p>
 
@@ -124,7 +135,7 @@ app('/Applications/TextEdit.app').documents[1]
 
 
 
-<h3>More on <code>make()</code></h3>
+<h4>More on <code>make()</code></h4>
 
 <p>The above exercise uses two commands to create a new TextEdit document containing the text '<tt>Hello World</tt>'. It is also possible to perform both operations using the <code>make()</code> command alone by passing the value for the new document's <code>text</code> property via the <code>make()</code> command's optional <code>with_properties</code> parameter:</p> 
 
@@ -135,7 +146,7 @@ app('/Applications/TextEdit.app').documents[1]
 <p>Incidentally, you might note that every time the <code>make()</code> command is used, it returns a reference to document <em>1</em>. TextEdit identifies <code>document</code> objects according to the stacking order of their windows, with document 1 being frontmost. When the window stacking order changes, whether as a result of a script command or GUI-based interaction, so does the order of their corresponding <code>document</code> objects. This means that a previously created reference such as <code>app('/Applications/TextEdit.app').documents[1]</code> may now identify a different <code>document</code> object to before! Some applications prefer to return references that identify objects by name or unique ID rather than index to reduce or eliminate the potential for confusion, but it's an issue you should be aware of, particularly with long-running scripts where there is greater opportunity for unexpected third-party interactions to throw a spanner in the works.</p>
 
 
-<h3>More on manipulating <code>text</code></h3>
+<h4>More on manipulating <code>text</code></h4>
 
 <p>In addition to getting and setting a document's entire text by applying <code>get()</code> and <code>set()</code> commands to <code>text</code> property, it's also possible to manipulate selected sections of a document's text directly. TextEdit's <code>text</code> property contains a <code>text</code> object, which in turn has <code>character</code>, <code>word</code> and <code>paragraph</code> elements, all of which can be manipulated using a variety of commands - <code>get()</code>, <code>set()</code>, <code>make()</code>, <code>move</code>, <code>delete</code>, etc. For example, to set the size of the first character of every paragraph of the front document to 24pt:</p>
 
@@ -153,12 +164,14 @@ app('/Applications/TextEdit.app').documents[1]
 </div>
 
 <!-- bottom navigation -->
-<div class="navbar">
-	<a href="02_aboutappscripting.html">Previous</a> | <a href="index.html">Up</a> | <a href="04_gettinghelp.html">Next</a>
+
+<div class="footer">
+<a href="02_aboutappscripting.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="04_gettinghelp.html">Next</a>
 	
+<span>&copy; 2006-2008 HAS</span>
 </div>
 
-<!--footer-->
-<p class="footer">&copy; 2004-2008 HAS</p>
 </body>
 </html>

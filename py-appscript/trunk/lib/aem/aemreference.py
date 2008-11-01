@@ -277,7 +277,7 @@ class UserProperty(_PositionSpecifier):
 		Note that OSA languages may have additional rules regarding case sensitivity/conversion.
 	"""
 	_kBy = 'userproperty'
-	_kKeyForm = packenum('usrp')
+	_kKeyForm = packenum(kae.formUserPropertyID)
 	
 	def _packkey(self, codecs):
 		return codecs.pack(self._key).coerce(kae.typeChar)

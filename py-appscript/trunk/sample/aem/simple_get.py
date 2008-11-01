@@ -12,7 +12,7 @@ print textedit.event('coregetd', {'----': aem.app.property('pnam')}).send()
 finder = aem.Application(aem.findapp.byname('Finder'))
 print finder.event('coregetd', {
 		'----': aem.app.property('home').elements('cobj'), 
-		aem.kae.keyAERequestedType: aem.kae.typeAlias,
+		aem.kae.keyAERequestedType: aem.AEType(aem.kae.typeAlias),
 		}).send()
 		
 		

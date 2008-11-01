@@ -43,4 +43,5 @@ kReservedKeywords = [
 	"waitreply",
 	"help",
 	"as",
+	"with",
 	 ] + keyword.kwlist

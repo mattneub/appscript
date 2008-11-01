@@ -32,10 +32,10 @@ for track in app('iTunes').sources['Library'] \
 # number of Apple events that the script sends (a common performance 
 # bottleneck).
 #
-#	tracksRef = app('iTunes').sources['Library'] \
+#	tracksref = app('iTunes').sources['Library'] \
 #           .library_playlists['Library'].file_tracks
-#	tracks = tracksRef.get()
-#	locs = tracksRef.location.get()
+#	tracks = tracksref.get()
+#	locs = tracksref.location.get()
 #	for i in range(len(tracks)):
 #		if locs[i] == k.missing_value:
 #			tracks[i].delete()

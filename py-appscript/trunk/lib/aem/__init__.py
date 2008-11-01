@@ -27,7 +27,7 @@ __all__ = [
 # PRIVATE
 ######################################################################
 
-_defaultCodecs = Codecs()
+_defaultcodecs = Codecs()
 
 ######################################################################
 # PUBLIC
@@ -50,7 +50,7 @@ class Application(Query):
 	# at cleanup time, otherwise it may be disposed of before __del__() can use it
 	_transaction = _kAnyTransactionID = kae.kAnyTransactionID
 	
-	def __init__(self, path=None, pid=None, url=None, desc=None, codecs= _defaultCodecs):
+	def __init__(self, path=None, pid=None, url=None, desc=None, codecs= _defaultcodecs):
 		"""
 			path : str | None -- full path to local application
 			pid : int | None -- Unix process id for local process
@@ -90,7 +90,7 @@ class Application(Query):
 			args.append(repr(self.AEM_identity[1]))
 		elif self.AEM_identity[0] != 'current':
 			args.append('%s=%r' % self.AEM_identity)
-		if self._codecs != _defaultCodecs:
+		if self._codecs != _defaultcodecs:
 			args.append('codecs=%r' % self._codecs)
 		modulename = '%s.' % self.__class__.__module__
 		if modulename == 'aem.send.':
@@ -175,7 +175,7 @@ class Application(Query):
 		if self._transaction != self._kAnyTransactionID:
 			raise RuntimeError("Transaction is already active.")
 		self._transaction = self._Event(self._address, 'miscbegi', 
-				session is not None and {'----':session} or {}, codecs=_defaultCodecs).send()
+				session is not None and {'----':session} or {}, codecs=_defaultcodecs).send()
 	
 	def aborttransaction(self):
 		"""Abort the current transaction."""

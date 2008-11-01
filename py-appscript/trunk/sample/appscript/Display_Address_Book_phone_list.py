@@ -5,10 +5,11 @@
 #
 # Requires HTMLTemplate <http://pypi.python.org/pypi/HTMLTemplate>
 
-import os
+import os, tempfile
+
 from HTMLTemplate import Template
+
 from appscript import *
-import mactypes
 
 #######
 # Template
@@ -41,10 +42,10 @@ html = '''<html>
 def render_template(node, people):
     node.row.repeat(render_row, people, [False])
 
-def render_row(node, person, isEvenRow):
-    if isEvenRow[0]: 
+def render_row(node, person, isevenrow):
+    if isevenrow[0]: 
         node.atts['bgcolor'] = '#CCF'
-    isEvenRow[0] = not isEvenRow[0]
+    isevenrow[0] = not isevenrow[0]
     node.name.content = person[0]
     node.phone.repeat(render_phone, person[1])
 
@@ -61,7 +62,7 @@ def write(path, txt):
     f.write(txt)
     f.close()
 
-def listPeopleWithPhones():
+def listpeoplewithphones():
     p = app('Address Book').people[its.phones != []]
     people = zip(p.last_name.get(), p.first_name.get(), 
             p.phones.label.get(), p.phones.value.get())
@@ -73,7 +74,7 @@ def listPeopleWithPhones():
     result.sort(lambda i, j: cmp(i[0].lower(), j[0].lower()))
     return result
 
-page = template.render(listPeopleWithPhones())
-path = os.tmpnam() + '.html'
+page = template.render(listpeoplewithphones())
+path = tempfile.mkstemp('.html')[1]
 write(path, page)
-app('Safari').open(mactypes.Alias('/private' + path))
+app('Safari').open(mactypes.Alias(path))

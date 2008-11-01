@@ -42,7 +42,7 @@ html = """<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
             <tfoot>
                 <tr>
                     <td colspan="4">Total playing time</td>
-                    <td node="con:totalTime">1:00</td>
+                    <td node="con:totaltime">1:00</td>
                 </tr>
             </tfoot>
         </table>
@@ -51,7 +51,7 @@ html = """<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 
 def render_template(node, playlist):
     node.title.content = node.title2.content = playlist.name.get() + ' playlist'
-    node.totalTime.content = playlist.time.get()
+    node.totaltime.content = playlist.time.get()
     ref = playlist.tracks
     node.track.repeat(render_track, range(0, playlist.count(each=k.track)), 
             ref.name.get(), ref.artist.get(), ref.album.get(), ref.time.get())
@@ -70,7 +70,7 @@ def render_track(node, i, names, artists, albums, times):
 #######
 # Support
 
-def encodeNonASCII(txt):
+def encodenonascii(txt):
     """Convert non-ASCII characters to HTML entities"""
     res = []
     for char in txt:
@@ -98,7 +98,7 @@ outfile = sa.choose_file_name(default_name='iTunes_albums.html')
 template = Template(render_template, html)
 playlist = app('iTunes').browser_windows[1].view.get()
 page = template.render(playlist)
-write(outfile.path, encodeNonASCII(page))
+write(outfile.path, encodenonascii(page))
 
 # Preview HTML file in user's default browser:
 sa.open_location(outfile.url)

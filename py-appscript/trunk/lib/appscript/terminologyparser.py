@@ -12,7 +12,7 @@ except NameError: # Python 2.3
 	from sets import Set as set
 import string
 
-from aem.ae import AEDesc
+from aem import ae, kae
 from reservedkeywords import kReservedKeywords
 
 
@@ -51,11 +51,24 @@ class Parser:
 		self._foundclasscodes = set()
 		self._foundelementcodes = set()
 	
-	def convert(self, s):
-		"""Convert string to identifier.
-			s : str
-			Result : str
-		"""
+	def integer(self):
+		"""Read a 2-byte integer."""
+		self._ptr += 2
+		return unpack("H", self._data[self._ptr - 2:self._ptr])[0]
+	
+	def word(self):
+		"""Read a 4-byte string (really a long, but represented as an 4-character 8-bit string for readability)."""
+		self._ptr += 4
+		return self._data[self._ptr - 4:self._ptr] # big-endian
+	
+	def name(self):
+		"""Read a MacRoman-encoded Pascal keyword string."""
+		count = ord(self._data[self._ptr])
+		self._ptr += 1 + count
+		# Note: non-ASCII characters will be differently encoded than in osaterminology.sax.aeteparser or 
+		# py3-appscript, which turn everything into unicode first. Not aware of any apps using non-ASCII 
+		# characters in keywords though.
+		s = self._data[self._ptr - count:self._ptr]
 		if s not in self._keywordcache:
 			legal = self._legalchars
 			res = ''
@@ -73,38 +86,22 @@ class Parser:
 				res += '_'
 			self._keywordcache[s] = str(res)
 		return self._keywordcache[s]
-		
-	def integer(self):
-		"""Read a 2-byte integer."""
-		self._ptr += 2
-		return unpack("H", self._str[self._ptr - 2:self._ptr])[0] 
-	
-	def word(self):
-		"""Read a 4-byte string (really a long, but represented as an 4-character 8-bit string for readability)."""
-		self._ptr += 4
-		return self._str[self._ptr - 4:self._ptr] # big-endian
-	
-	def name(self):
-		"""Read a MacRoman-encoded Pascal keyword string."""
-		count = ord(self._str[self._ptr])
-		self._ptr += 1 + count
-		return self.convert(self._str[self._ptr - count:self._ptr]) # Note: non-ASCII characters will be differently encoded than in osaterminology.sax.aeteparser, which turns everything into unicode first. Not aware of any apps using non-ASCII characters in keywords though.
 	
 	##
 	
 	def parsecommand(self):
 		name = self.name()
-		self._ptr += 1 + ord(self._str[self._ptr]) # description string
+		self._ptr += 1 + ord(self._data[self._ptr]) # description string
 		self._ptr += self._ptr & 1 # align
 		code = self.word() + self.word() # event class + event id
 		# skip result
 		self._ptr += 4 # datatype word
-		self._ptr += 1 + ord(self._str[self._ptr]) # description string
+		self._ptr += 1 + ord(self._data[self._ptr]) # description string
 		self._ptr += self._ptr & 1 # align
 		self._ptr += 2 # flags integer
 		# skip direct parameter
 		self._ptr += 4 # datatype word
-		self._ptr += 1 + ord(self._str[self._ptr]) # description string
+		self._ptr += 1 + ord(self._data[self._ptr]) # description string
 		self._ptr += self._ptr & 1 # align
 		self._ptr += 2 # flags integer
 		#
@@ -121,7 +118,7 @@ class Parser:
 			self._ptr += self._ptr & 1 # align
 			code = self.word()
 			self._ptr += 4 # datatype word
-			self._ptr += 1 + ord(self._str[self._ptr]) # description string
+			self._ptr += 1 + ord(self._data[self._ptr]) # description string
 			self._ptr += self._ptr & 1 # align
 			self._ptr += 2 # flags integer
 			currentcommandargs.append((name, code))
@@ -131,7 +128,7 @@ class Parser:
 		name = self.name()
 		self._ptr += self._ptr & 1 # align
 		code = self.word()
-		self._ptr += 1 + ord(self._str[self._ptr]) # description string
+		self._ptr += 1 + ord(self._data[self._ptr]) # description string
 		self._ptr += self._ptr & 1 # align
 		isplural = False
 		for _ in range(self.integer()): # properties
@@ -139,10 +136,10 @@ class Parser:
 			self._ptr += self._ptr & 1 # align
 			propcode = self.word()
 			self._ptr += 4 # datatype word
-			self._ptr += 1 + ord(self._str[self._ptr]) # description string
+			self._ptr += 1 + ord(self._data[self._ptr]) # description string
 			self._ptr += self._ptr & 1 # align
 			flags = self.integer()
-			if propcode != 'c@#^': # not a superclass definition (see kAEInheritedProperties)
+			if propcode != kae.pInherits: # not a superclass definition (see kAEInheritedProperties)
 				if flags & 1: # indicates class name is plural (see kAESpecialClassProperties)
 					isplural = True
 				elif (propname + propcode) not in self._foundproperties:
@@ -166,10 +163,10 @@ class Parser:
 	
 	
 	def parsecomparison(self): # comparison info isn't used
-		self._ptr += 1 + ord(self._str[self._ptr]) # name string
+		self._ptr += 1 + ord(self._data[self._ptr]) # name string
 		self._ptr += self._ptr & 1 # align
 		self._ptr += 4 # code word
-		self._ptr += 1 + ord(self._str[self._ptr]) # description string
+		self._ptr += 1 + ord(self._data[self._ptr]) # description string
 		self._ptr += self._ptr & 1 # align
 	
 	
@@ -179,7 +176,7 @@ class Parser:
 			name = self.name()
 			self._ptr += self._ptr & 1 # align
 			code = self.word()
-			self._ptr += 1 + ord(self._str[self._ptr]) # description string
+			self._ptr += 1 + ord(self._data[self._ptr]) # description string
 			self._ptr += self._ptr & 1 # align
 			if (name + code) not in self._foundenumerators:
 				self.enumerators.append((name, code))
@@ -187,8 +184,8 @@ class Parser:
 
 	
 	def parsesuite(self):
-		self._ptr += 1 + ord(self._str[self._ptr]) # name string
-		self._ptr += 1 + ord(self._str[self._ptr]) # description string
+		self._ptr += 1 + ord(self._data[self._ptr]) # name string
+		self._ptr += 1 + ord(self._data[self._ptr]) # description string
 		self._ptr += self._ptr & 1 # align
 		self._ptr += 4 # code word
 		self._ptr += 4 # level, version integers
@@ -201,8 +198,8 @@ class Parser:
 	
 	def parse(self, aetes):
 		for aete in aetes:
-			if isinstance(aete, AEDesc) and aete.type in ['aete', 'aeut'] and aete.data:
-				self._str = aete.data
+			if isinstance(aete, ae.AEDesc) and aete.type in [kae.typeAETE, kae.typeAEUT] and aete.data:
+				self._data = aete.data
 				self._ptr = 6 # version, language, script integers
 				for _ in range(self.integer()):
 					self.parsesuite()
@@ -221,7 +218,7 @@ class LittleEndianParser(Parser):
 	def word(self):
 		"""Read a 4-byte string (really a long, but represented as an 4-character 8-bit string for readability)."""
 		self._ptr += 4
-		return self._str[self._ptr - 1:self._ptr - 5:-1] # little-endian
+		return self._data[self._ptr - 1:self._ptr - 5:-1] # little-endian
 
 
 ######################################################################
@@ -230,7 +227,7 @@ class LittleEndianParser(Parser):
 
 def buildtablesforaetes(aetes):
 	"""
-		aetes : list of AEDesc
+		aetes : list of aem.ae.AEDesc
 	"""
 	if pack("H", 1) == '\x00\x01': # is it big-endian?
 		return Parser().parse(aetes)

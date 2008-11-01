@@ -5,7 +5,7 @@
 
 from appscript import *
 
-def infoForSelectedPhotos():
+def infoforselectedphotos():
     """Get properties of currently selected photo(s) in iPhoto."""
     selection = app('iPhoto').selection.get()
     photos = []
@@ -18,4 +18,4 @@ def infoForSelectedPhotos():
 
 # Test
 from pprint import pprint
-pprint(infoForSelectedPhotos())
+pprint(infoforselectedphotos())

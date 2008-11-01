@@ -225,6 +225,10 @@ class AppData(aem.Codecs):
 		self.typebycode, self.typebyname, self.referencebycode, self.referencebyname = self._terms
 		return self
 	
+	# note: these properties are a cheat and only work as needed if AppData is an old-style class;
+	# basically causes AppData to connect to target app and get terminology the first time they're
+	# accessed; thereafter they're replaced with the objects themselves
+	
 	target = property(lambda self: self.connect().target)
 	typebycode = property(lambda self: self.connect().typebycode)
 	typebyname = property(lambda self: self.connect().typebyname)
@@ -797,7 +801,7 @@ class CommandError(Exception):
 	
 	def __str__(self):
 		if isinstance(self.realerror, aem.CommandError):
-			err = "CommandError:\n\t\tOSERROR: %i" % self.errornumber
+			err = "Command failed:\n\t\tOSERROR: %i" % self.errornumber
 			msg = self.errormessage
 			if msg:
 				err += "\n\t\tMESSAGE: %s" % msg

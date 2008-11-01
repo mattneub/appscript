@@ -250,7 +250,7 @@ class CommandError(MacOSError):
 		return self._number
 	
 	def __str__(self):
-		return "CommandError: %s (%i)" % (self.errormessage, self.errornumber)
+		return "Command failed: %s (%i)" % (self.errormessage, self.errornumber)
 	
 	# basic error info (an error number is always given by AEM/application;
 	# message is either supplied by application or generated here)	

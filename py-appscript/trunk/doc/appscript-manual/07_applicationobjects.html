@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 
-<title>appscript | 7. Application Objects</title>
+<title>py-appscript manual | 7. Application objects</title>
 
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <style type="text/css" media="all"><!--@import url(../full.css);--></style>
@@ -10,17 +10,28 @@
 </head>
 <body>
 
-<h1>7. Application Objects</h1>
+<h1><img src="../py-appscript-logo.png" alt="py-appscript" title="py-appscript" /></h1>
 
 <!-- top navigation -->
 <div class="navbar">
-	<a href="06_classesandenums.html">Previous</a> | <a href="index.html">Up</a> | <a href="08_realvsgenericreferences.html">Next</a>
-	
+<a href="06_classesandenums.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="08_realvsgenericreferences.html">Next</a>
+
+<span>
+<strong><a href="../appscript-manual/index.html">appscript</a></strong> /
+<a href="../mactypes-manual/index.html">mactypes</a> /
+<a href="../osax-manual/index.html">osax</a> /
+<a href="../aem-manual/index.html">aem</a>
+</span>
 </div>
 
 <!-- content -->
 <div id="content">
-<h2>Creating application objects</h2>
+
+<h2>7. Application objects</h2>
+
+<h3>Creating application objects</h3>
 
 
 <p>Before you can communicate with a scriptable application, you must call the <code>app</code> object to create an application object. For example:</p>
@@ -84,7 +95,7 @@ address = 'eppc://%s:%s@0.0.0.15/Terminal' % (quote(user), quote(pass))
 terminal = app(url=address)</code></pre>
 
 
-<h2>Basic commands</h2>
+<h3>Basic commands</h3>
 
 <p>All applications should respond to the following commands:</p>
 
@@ -131,7 +142,7 @@ set(reference, to) -- Set an object's data.
 <p>Note that these commands are only useful in applications that define an Apple Event Object Model as part of their Apple event interface.</p>
 
 
-<h2>Transaction support</h2>
+<h3>Transaction support</h3>
 
 <p>Application objects implement three additional methods, <code>begintransaction</code>, <code>endtransaction</code> and <code>aborttransaction</code> that allow a sequence of related commands to be handled as a single operation by applications that support transactions, e.g. FileMaker Pro.</p>
 
@@ -142,19 +153,19 @@ set(reference, to) -- Set an object's data.
 <p class="hilitebox">Remember to call <code>endtransaction</code> or <code>aborttransaction</code> at the end of every transaction. (This includes transactions interrupted by a raised exception.) If a transaction is accidentally left open, appscript will try to end it automatically when the application object is garbage-collected, but this is not guaranteed to succeed.</p>
 
 
-<h2>Local application launching notes</h2>
+<h3>Local application launching notes</h3>
 
 <p>Note: the following information only applies to local applications as appscript cannot directly launch applications on a remote Mac. To control a remote application, the application must be running beforehand or else launched indirectly (e.g. by using the remote Mac's Finder to open it).</p>
 
 
-<h3>How applications are identified</h3>
+<h4>How applications are identified</h4>
 
 <p>When you create an <code>app</code> object by application name, bundle id or creator type, appscript uses LaunchServices to locate an application matching that description. If you have more than one copy of the same application installed, you can identify the one you want by providing its full path, otherwise LaunchServices will identify the newest copy for you.</p>
 
 <p>Appscript identifies running applications by their process ids so it's possible to control multiple versions of an application running at the same time if their Application objects are created using process ids or eppc URLs.</p>
 
 
-<h3>Checking if an application is running</h3>
+<h4>Checking if an application is running</h4>
 
 <p>You can check if the application specified by an Application object is currently running by calling its <code>isrunning</code> method. This is useful if you don't want to perform commands on an application that isn't already running. For example:</p>
 
@@ -166,12 +177,12 @@ if te.isrunning:
 <p class="hilitebox">Remember that appscript automatically launches a non-running application the first time your script makes reference to any of its properties, elements or commands. To avoid accidental launches, <em>all</em> code relating to that application must be included in a conditional block that only executes if <code>isrunning</code> returns <code>True</code>.</p>
 
 
-<h3>Launch errors</h3>
+<h4>Launch errors</h4>
 
 <p>If the application can't be launched for some reason (e.g. if it's in the Trash), an <code>appscript.CantLaunchApplicationError</code> error will be raised. This provides a description of the problem (if it's a standard LaunchServices error) along with the original OS error number, which you can also obtain by casting the error object to an integer.</p>
 
 
-<h3>Using <code>launch</code> vs <code>run</code></h3>
+<h4>Using <code>launch</code> vs <code>run</code></h4>
 
 <p>When appscript launches a non-running application, it normally sends it a <code>run</code> command as part of the launching process. If you wish to avoid this, you should start the application by sending it a <code>launch</code> command before doing anything else. For example:</p>
 
@@ -184,7 +195,7 @@ te.launch()
 <p><code>launch</code> is also useful if you need to send a non-running application an <code>open</code> command as its very first instruction. For example, to send an <code>open</code> command to a non-stay-open application that batch processes one or more dropped files then quits again, you must first start it using <code>launch</code>, then send it an <code>open</code> command with the files to process. If you forget to do this, the application will first receive a <code>run</code> command and quit again before the <code>open</code> command can be handled.</p>
 
 
-<h3>Restarting applications</h3>
+<h4>Restarting applications</h4>
 
 <p>As soon as you start to construct a reference or command using a newly created <code>app</code> objects, if the application is not already running then appscript will automatically launch it in order to obtain its terminology. (In earlier versions of appscript, the application was launched as soon as the <code>app</code> object was created, but this behaviour has been modified to give scripts the opportunity to launch it using the <code>launch</code> command instead.)</p>
 
@@ -200,12 +211,14 @@ te.launch()
 </div>
 
 <!-- bottom navigation -->
-<div class="navbar">
-	<a href="06_classesandenums.html">Previous</a> | <a href="index.html">Up</a> | <a href="08_realvsgenericreferences.html">Next</a>
+
+<div class="footer">
+<a href="06_classesandenums.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="08_realvsgenericreferences.html">Next</a>
 	
+<span>&copy; 2006-2008 HAS</span>
 </div>
 
-<!--footer-->
-<p class="footer">&copy; 2004-2008 HAS</p>
 </body>
 </html>

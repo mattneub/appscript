@@ -1515,19 +1515,18 @@ AE_CAPI aeCAPI = {
 
 void initae(void)
 {
-	PyObject *m, *d, *errClass;
+	PyObject *m, *errClass;
 
 	upp_GenericEventHandler = NewAEEventHandlerUPP(GenericEventHandler);
 	upp_GenericCoercionHandler = NewAECoerceDescUPP(GenericCoercionHandler);
 
 	m = Py_InitModule("ae", AE_methods);
-	d = PyModule_GetDict(m);
+	
 	errClass = AE_GetMacOSErrorException();
-	if (errClass == NULL ||
-	    PyDict_SetItemString(d, "MacOSError", errClass) != 0)
-		return;
+	if (!errClass || PyModule_AddObject(m, "MacOSError", errClass)) return;
+	
 	AEDesc_Type.ob_type = &PyType_Type;
-	if (PyType_Ready(&AEDesc_Type) < 0) return;
+	if (PyType_Ready(&AEDesc_Type)) return;
 	Py_INCREF(&AEDesc_Type);
 	PyModule_AddObject(m, "AEDesc", (PyObject *)&AEDesc_Type);
 

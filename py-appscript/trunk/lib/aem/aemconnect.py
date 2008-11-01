@@ -35,7 +35,7 @@ def _launchapplication(path, event):
 		return ae.launchapplication(path, event,
 				_kLaunchContinue + _kLaunchNoFileFlags + _kLaunchDontSwitch)
 	except ae.MacOSError, err:
-		raise CantLaunchApplicationError(err.args[0])
+		raise CantLaunchApplicationError(err.args[0], path)
 
 
 ######################################################################
@@ -63,19 +63,22 @@ class CantLaunchApplicationError(Exception):
 		-10829: "The application to be launched cannot run simultaneously in two different user sessions.",
 	}
 
-	def __init__(self, errornumber):
+	def __init__(self, errornumber, apppath):
 		self._number = errornumber
-		Exception.__init__(self, errornumber)
+		self._apppath = apppath
+		Exception.__init__(self, errornumber, apppath)
 	
 	number = property(lambda self: self._number) # deprecated; TO DO: remove
 	
 	errornumber = property(lambda self: self._number, doc="int -- Mac OS error number")
 	
+	apppath = property(lambda self: self._apppath, doc="str -- application path")
+	
 	def __int__(self):
 		return self._number
 	
 	def __str__(self):
-		return "CantLaunchApplicationError: %s (%i)" % (self._lserrors.get(self._number, 'OS error'), self._number)
+		return "Can't launch application at %r: %s (%i)" % (self._apppath, self._lserrors.get(self._number, 'OS error'), self._number)
 
 
 def launchapp(path):

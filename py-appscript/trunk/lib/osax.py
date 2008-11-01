@@ -51,7 +51,7 @@ class _OSAXHelp:
 		self.helpobj = None
 	
 	def __call__(self, flags, ref):
-		raise NotImplementedError, "Built-in help isn't available for scripting additions."
+		raise NotImplementedError("Built-in help isn't available for scripting additions.")
 
 
 ######################################################################
@@ -69,7 +69,7 @@ class ScriptingAddition(reference.Application):
 			try:
 				osaxpath, terms = _osaxcache[osaxname]
 			except KeyError:
-				raise KeyError, "Scripting addition not found: %r" % self._osaxname
+				raise KeyError("Scripting addition not found: %r" % self._osaxname)
 			if not terms:
 				terms = _osaxcache[osaxname][1] = terminology.tablesforaetes(aem.ae.getappterminology(osaxpath))
 		reference.Application.__init__(self, name, id, creator, pid, url, aemapp, terms)

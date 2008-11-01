@@ -3,7 +3,7 @@
 (C) 2004-2008 HAS
 """
 
-from aem import AEType, AEEnum, CommandError, findapp, ae
+from aem import AEType, AEEnum, CommandError, findapp, ae, kae
 import defaultterminology
 
 from terminologyparser import buildtablesforaetes
@@ -137,7 +137,7 @@ def aetesforapp(aemapp):
 			raise RuntimeError("Can't get terminology for application (%r): %s" % (aemapp, e))
 	if not isinstance(aetes, list):
 		aetes = [aetes]
-	return [aete for aete in aetes if isinstance(aete, ae.AEDesc) and aete.type == 'aete' and aete.data]
+	return [aete for aete in aetes if isinstance(aete, ae.AEDesc) and aete.type == kae.typeAETE and aete.data]
 
 
 def tablesforaetes(aetes):

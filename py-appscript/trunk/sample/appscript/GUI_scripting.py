@@ -4,14 +4,17 @@
 
 from appscript import *
 
-texteditGUI = app('System Events').processes['TextEdit']
+texteditgui = app('System Events').processes['TextEdit']
 
 app('TextEdit').activate()
 
-mref = texteditGUI.menu_bars[1].menus
+mref = texteditgui.menu_bars[1].menus
 mref['File'].menu_items['New'].click()
 mref['Edit'].menu_items['Paste'].click()
-mref['Window'].menu_items['Zoom Window'].click()
+mref['Window'].menu_items['Zoom'].click()
+
+# Note: TextEdit's 'Zoom' menu item has a different name in OS X 10.4:
+# mref['Window'].menu_items['Zoom Model'].click()
 
 # Note: the System Events object model is slightly different in OS X 10.3,
 # so 10.3 users should change the last three lines to:

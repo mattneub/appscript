@@ -60,6 +60,8 @@ The aemreceive, osascript and osaterminology packages can be obtained separately
 
 - improved error reporting in Reference.__getitem__ when a malformed generic reference containing a command expands to a non-reference value. e.g. its.name.get() would previously expand the the value of the object's 'name' property, typically a string, resulting in a cryptic AttributeError; this now raises a descriptive ValueError.
 
+- added 'with' to list of reserved keywords
+
 - Removed the following Carbon.File-dependent methods from mactypes.Alias, mactypes.File: makewithfsalias, makewithfsref, makewithfsspec, fsalias, fsref, fsspec. Added makewithhfspath, hfspath methods. Renamed makewithaedesc, aedesc methods to makewithdesc, desc. Users should update any existing code that refers to these methods as needed.
 
 - mactypes.Alias.__init__, mactypes.File.__init__ now use os.path.abspath to normalise path parameter; this allows relative as well as absolute paths to be used as arguments
