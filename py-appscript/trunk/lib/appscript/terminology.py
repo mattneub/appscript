@@ -82,8 +82,6 @@ def _maketypetable(classes, enums, properties):
 	# TO DO: testing indicates that where name+code clashes occur, classes have highest priority, followed by properties, with enums last; currently this code gives higher priority to enums:
 	for klass, table in [(AEType, properties), (AEEnum, enums), (AEType, classes)]: # note: packing properties as AEProp causes problems when the same name is used for both a class and a property, and the property's definition masks the class's one (e.g. Finder's 'file'); if an AEProp is passed where an AEType is expected, it can cause an error as it's not what the receiving app expects. (Whereas they may be more tolerant of an AEType being passed where an AEProp is expected.) Also, note that AppleScript always seems to pack property names as typeType, so we should be ok following its lead here.
 		for i, (name, code) in enumerate(table):
-			# TO DO: decide where best to apply AE keyword escaping, language keyword escaping
-			# TO DO: make sure same collision avoidance is done in help terminology (i.e. need to centralise all this stuff in a single osaterminology module)
 			# If an application-defined name overlaps an existing type name but has a different code, append '_' to avoid collision:
 			if name in _typebyname and _typebyname[name].code != code:
 				name += '_'
@@ -110,7 +108,6 @@ def _makereferencetable(properties, elements, commands):
 	if 'text' in referencebyname: # special case: AppleScript always packs 'text of...' as all-elements specifier
 		referencebyname['text'] = (kElement, referencebyname['text'][1])
 	for name, code, args in commands[::-1]: # to handle synonyms, if two commands have same name but different codes, only the first definition should be used (iterating over the commands list in reverse ensures this)
-		# TO DO: make sure same collision avoidance is done in help terminology (i.e. need to centralise all this stuff in a single osaterminology module)
 		# Avoid collisions between default commands and application-defined commands with same name but different code (e.g. 'get' and 'set' in InDesign CS2):
 		if name in _defaultcommands and code != _defaultcommands[name][1][0]:
 			name += '_'

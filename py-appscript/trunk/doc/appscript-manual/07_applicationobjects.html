@@ -66,7 +66,7 @@
 <dd>A valid Unix process id, e.g. <code>5678</code>.</dd>
 
 <dt><code>url</code></dt>
-<dd>A URL of form <code>eppc://[user[:password]@host/Application%20Name[?[uid=#]&[pid=#]</code>, e.g. <code>eppc://johnsmith:foobar@office-mac.local/TextEdit?uid=501</code>. The host name/IP address and the process name (case-sensitive) are required. The username and password are optional: if omitted, the OS will obtain this information from the user's keychain or display a dialog asking the user to input one or both values. The user id and process id are also optional; if the process id is given, the process name will be ignored.</dd>
+<dd>A URL of form <code>eppc://[user[:password]@host/Application%20Name[?[uid=#]&amp;[pid=#]</code>, e.g. <code>eppc://johnsmith:foobar@office-mac.local/TextEdit?uid=501</code>. The host name/IP address and the process name (case-sensitive) are required. The username and password are optional: if omitted, the OS will obtain this information from the user's keychain or display a dialog asking the user to input one or both values. The user id and process id are also optional; if the process id is given, the process name will be ignored.</dd>
 </dl>
 
 <p>If none of these arguments is given, the host process (current application) is targetted.</p>
@@ -201,7 +201,7 @@ te.launch()
 
 <p>If the target application has stopped running since the <code>app</code> object was created, trying to send it a command using that <code>app</code> object will result in an invalid connection error (-609), unless that command is <code>run</code> or <code>launch</code>. This restriction prevents appscript accidentally restarting an application that has unexpectedly quit while a script is controlling it. Scripts can restart an application by sending an explicit <code>run</code> or <code>launch</code> command, or by creating a new <code>app</code> object for it.</p>
 
-</p>Note that you can still use <code>app</code> objects to control applications that have been quit <em>and</em> restarted since the <code>app</code> object was created. Appscript will automatically update the <code>app</code> object's process id information as needed.</p>
+<p>Note that you can still use <code>app</code> objects to control applications that have been quit <em>and</em> restarted since the <code>app</code> object was created. Appscript will automatically update the <code>app</code> object's process id information as needed.</p>
 
 
 <p class="hilitebox">There is a known problem with quitting and immediately relaunching an application via appscript, where the relaunch instruction is sent to the application before it has actually quit. This timing issue appears to be the OS's fault; the current workaround for scripts that need to quit and restart applications is to insert a few seconds' delay between the <code>quit</code> and <code>run</code>/<code>launch</code> using the <code>time</code> module's <code>sleep</code> function.</p>

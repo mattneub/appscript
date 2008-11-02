@@ -50,7 +50,7 @@ app('Finder').get(app.home.folders.name)</code></pre>
 
 <h3><code>set</code></h3>
 
-<p>Set the content of a TextEdit document:</p
+<p>Set the content of a TextEdit document:</p>
 
 <pre><code># tell application "TextEdit" to set text of document 1 to "Hello World"
 
@@ -107,7 +107,7 @@ app('TextEdit').make(
 
 <p>Duplicate a folder to a disk, replacing an existing item if one exists:</p>
 
-<code><pre># tell application "Finder" to &not;
+<pre><code># tell application "Finder" to &not;
 #     duplicate folder "Projects" of home to disk "Work" with replacing
 
 app('Finder').home.folders['Projects'].duplicate(

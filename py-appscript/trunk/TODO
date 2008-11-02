@@ -39,13 +39,10 @@ print its == its.eq(True)
 
 ============================ appscript ============================
 
-- How should terminology module handle malformed aetes? Ignore them? Raise proper error (except for zero-length aetes, which AS seems to ignore)?
 
+- See also TO DO in terminology.py:
 
-- See also TO DOs in terminology.py
-
-
-- More tests.
+	# TO DO: testing indicates that where name+code clashes occur, classes have highest priority, followed by properties, with enums last; currently this code gives higher priority to enums:
 
 
 - Allow multiple instances of same application to be launched and/or controlled. (Currently clients can launch new instances themselves, then create Application objects using their PIDs.)

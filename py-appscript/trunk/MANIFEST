@@ -2,7 +2,6 @@ CHANGES
 LICENSE
 MANIFEST
 README
-TODO
 doc/aem-manual/01_introduction.html
 doc/aem-manual/02_apioverview.html
 doc/aem-manual/03_packingandunpackingdata.html
@@ -37,8 +36,16 @@ doc/appscript-manual/python_to_itunes_event.gif
 doc/appscript-manual/relationships_example.gif
 doc/full.css
 doc/index.html
+doc/mactypes-manual/01_introduction.html
+doc/mactypes-manual/02_aliasclass.html
+doc/mactypes-manual/03_fileclass.html
+doc/mactypes-manual/04_unitsclass.html
 doc/mactypes-manual/CHANGES-OLD
 doc/mactypes-manual/index.html
+doc/osax-manual/01_introduction.html
+doc/osax-manual/02_interface.html
+doc/osax-manual/03_examples.html
+doc/osax-manual/04_notes.html
 doc/osax-manual/CHANGES-OLD
 doc/osax-manual/index.html
 ext/ae.c
