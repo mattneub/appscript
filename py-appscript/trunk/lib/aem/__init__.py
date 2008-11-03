@@ -115,7 +115,7 @@ class Application(Query):
 	def AEM_comparable(self):
 		return ['AEMApplication', self.AEM_identity]
 	
-	def AEM_packSelf(self, codecs):
+	def AEM_packself(self, codecs):
 		return self._address
 	
 	def __del__(self):

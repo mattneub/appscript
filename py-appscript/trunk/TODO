@@ -40,6 +40,9 @@ print its == its.eq(True)
 ============================ appscript ============================
 
 
+- implement Reference.AS_relaunchmode as in objc-appscript
+
+
 - See also TO DO in terminology.py:
 
 	# TO DO: testing indicates that where name+code clashes occur, classes have highest priority, followed by properties, with enums last; currently this code gives higher priority to enums:

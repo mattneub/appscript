@@ -31,7 +31,7 @@
 
 <h2>1. Introduction</h2>
 
-<h3>What is appscript?</h3>
+<h3>About appscript</h3>
 
 <p>Python appscript (py-appscript) is a high-level, user-friendly Apple event bridge that allows you to control scriptable Mac OS X applications using ordinary Python scripts. Appscript makes Python an excellent alternative to Apple's own AppleScript language for automating your Mac.</p>
 
@@ -46,22 +46,20 @@
 end tell</code></pre>
 
 
-<p>Appscript includes:</p>
+<h3>Notes</h3>
+
+<p>In contrast to the familiar object-oriented approach of other inter-process communication systems such as COM and Distributed Objects, Apple event IPC is based on a combination of remote procedure calls and first-class queries. (Think of it as a bit like using XPath over XML-RPC.) While appscript uses an object-oriented-like syntax for conciseness and readability, like AppleScript, its behaviour follows Apple event rules. As a result, Python users will discover that some things work differently in appscript from what they're used to - for example:</p>
 
 <ul>
-<li>a concise, elegant, object-oriented-like syntax for constructing references to application objects and sending application commands</li>
+<li>object elements are one-indexed, not zero-indexed like Python lists</li>
 
-<li>a robust, flexible and mature architecture providing excellent compatibility with the wide range of scriptable OS X applications that are currently available</li>
+<li>referencing a property of an application object does not automatically return the property's value (you need a <code>get</code> command for that)</li>
 
-<li>a powerful interactive help system for exploring application dictionaries and object models</li>
-
-<li>multi-threading support</li>
-
-<li>32-bit support from Mac OS X 10.3.9 onwards, with 64-bit support on Mac OS X 10.5 and beyond.</li>
+<li>many applications allow a single command to operate on multiple objects at the same time, providing significant performance benefits when manipulating large numbers of application objects.</li>
 
 </ul>
 
-<p class="hilitebox">Note that appscript's primary goal is to provide levels of functionality, reliability and application compatibility that equal to, or better than, AppleScript's own. Where Apple event behaviours differ from Python behaviours (e.g. Apple event elements are 1-indexed while Python lists are 0-indexed), appscript follows the Apple event approach to ensure the best possible compatibility with scriptable applications.</p>
+<p>Chapters 2 and 3 of this manual provide further information on how Apple event IPC works and a tutorial-based introduction to the Python appscript bridge. Chapter 4 describes various ways of getting help when scripting applications. Chapters 5 through 12 cover the appscript API, and chapter 13 discusses techniques for optimising performance.</p>
 
 
 </div>
