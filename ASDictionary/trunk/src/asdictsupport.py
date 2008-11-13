@@ -11,7 +11,7 @@ from StringIO import StringIO
 
 import appscript
 from appscript import terminology
-from aem.ae import GetAppTerminology as getaete
+from aem.ae import getappterminology
 from osaterminology.dom import aeteparser, osadictionary
 from osaterminology.renderers import htmldoc, quickdoc
 from osaterminology.makeidentifier import getconverter
@@ -46,11 +46,11 @@ for domain in ['flds', 'fldl', 'fldu']:
 
 def getaetedata(appname):
 	if _osaxpathsbyname.has_key(appname.lower()):
-		return getaete(_osaxpathsbyname[appname.lower()])
+		return getappterminology(_osaxpathsbyname[appname.lower()])
 	elif appname.startswith('eppc://'):
 		return terminology.aetedataforapp(aem.Application(url=appname))
 	else:
-		return getaete(aem.findapp.byname(appname))
+		return getappterminology(aem.findapp.byname(appname))
 
 def _makehelpobj(appname, style):
 	# TO DO: osax support

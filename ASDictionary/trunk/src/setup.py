@@ -5,9 +5,8 @@ Requirements:
 - Python 2.4+ <http://www.python.org>
 
 - py-appscript 0.19.0+ <http://appscript.sourceforge.net>
-- py-aeserver 0.2.0+
-- py-osaterminology 0.12.0+
-- osaglue 0.5.0+ (from objc-appscript svn)
+- py-aemreceive 0.3.0+
+- py-osaterminology 0.14.0+
 
 - PyObjC <http://pyobjc.sourceforge.net/>
 
@@ -27,7 +26,7 @@ from plistlib import Plist
 import os
 
 name = 'ASDictionary'
-version='0.11.0'
+version='0.11.1'
 
 os.system('''
 sdp -fa %s.sdef;

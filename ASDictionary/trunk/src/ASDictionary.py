@@ -4,7 +4,9 @@
 """
 
 __name__ = 'ASDictionary'
-__version__ = '0.11.0'
+__version__ = '0.11.1'
+
+import os, os.path
 
 import objc
 from Foundation import NSUserDefaultsDidChangeNotification
@@ -12,13 +14,10 @@ from AppKit import *
 from PyObjCTools.KeyValueCoding import *
 from PyObjCTools import NibClassBuilder, AppHelper
 
-import osax, appscript
+import osax, appscript, mactypes
+from aem import kae
+from osaterminology import makeglue
 
-import osaglue
-
-import os, os.path
-
-import mactypes
 
 ######################################################################
 # Initialise support for appscript help system and asdict tool
@@ -53,7 +52,7 @@ def getd(ref):
 installeventhandler(
 		getd,
 		'coregetd',
-		('----', 'ref', kAE.typeObjectSpecifier)
+		('----', 'ref', kae.typeObjectSpecifier)
 		)
 
 
@@ -72,7 +71,7 @@ def namefrompath(path):
 ######################################################################
 # Main export function
 
-from aem.ae import MacOSError, GetAppTerminology
+from aem.ae import MacOSError, getappterminology
 from osaterminology.dom import aeteparser
 from osaterminology.renderers import quickdoc, htmldoc, htmldoc2
 from osaterminology.makeidentifier import getconverter
@@ -102,7 +101,7 @@ def _export(items, styles, plainText, singleHTML, frameHTML, objcGlue, options, 
 		progress.nextitem(name, path)
 		try:
 			try:
-				aetes = GetAppTerminology(path)
+				aetes = getappterminology(path)
 			except MacOSError, e:
 				if e.args[0] != -192:
 					raise
@@ -147,13 +146,12 @@ def _export(items, styles, plainText, singleHTML, frameHTML, objcGlue, options, 
 						progress.nextoutput(u'%s' % outputPath)
 						htmldoc2.renderdictionary(terms, outputPath, style, options)
 			if objcGlue:
-				outputPath = _makeDestinationFolder(outFolder, 'objc-appscript', 
+				outputPath = _makeDestinationFolder(outFolder, exportToSubfolders and 'objc-appscript' or '', 
 							'%s%sGlue' % (exportToSubfolders and 'glues/' or '', objcPrefix), '')
-				renderer = osaglue.GlueRenderer(outputPath, objcPrefix)
 				if isOSAX:
-					renderer.renderosaxaetes(path, aetes)
+					makeglue.objcappscript.makeosaxglue(path, objcPrefix, outputPath, aetes)
 				else:
-					renderer.renderappaetes(path, aetes)
+					makeglue.objcappscript.makeappglue(path, objcPrefix, outputPath, aetes)
 				progress.nextoutput(u'%s' % outputPath)
 		except Exception, err:
 			from traceback import print_exc
@@ -244,13 +242,13 @@ def exportdictionaries(sources, outfolder,
 
 installeventhandler(exportdictionaries,
 		'ASDiExpD',
-		('----', 'sources', ArgListOf(kAE.typeAlias)),
-		('ToFo', 'outfolder', kAE.typeAlias),
+		('----', 'sources', ArgListOf(kae.typeAlias)),
+		('ToFo', 'outfolder', kae.typeAlias),
 		('Form', 'fileformats', ArgListOf(ArgEnum(kPlainText, kSingleHTML, kFrameHTML, kObjCGlue))),
 		('Styl', 'styles', ArgListOf(ArgEnum(kASStyle, kPyStyle, kRbStyle, kObjCStyle))),
-		('ClaC', 'compactclasses', kAE.typeBoolean),
-		('SInv', 'showinvisibles', kAE.typeBoolean),
-		('SubF', 'usesubfolders', kAE.typeBoolean))
+		('ClaC', 'compactclasses', kae.typeBoolean),
+		('SInv', 'showinvisibles', kae.typeBoolean),
+		('SubF', 'usesubfolders', kae.typeBoolean))
 
 
 
@@ -268,7 +266,7 @@ userDefaults = NSUserDefaults.standardUserDefaults()
 # OSATerminology.so functions should not be called before main event loop
 # is started, otherwise it triggers strange behaviour where minimised windows
 # refuse to expand when clicked on in Dock. (This is a Cocoa/Carbon issue.)
-# Since osax.ScriptingAddition constructor calls aem.ae.GetAppTerminology
+# Since osax.ScriptingAddition constructor calls aem.ae.getappterminology
 # (which in turn calls OSATerminology.OSAGetAppTerminology), it should not be
 # called here (ie. at top level of script).
 #

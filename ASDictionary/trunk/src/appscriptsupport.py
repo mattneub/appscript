@@ -9,6 +9,7 @@ from StringIO import StringIO
 import textwrap
 
 import aem, appscript
+from aem import kae
 from aemreceive import *
 
 from osaterminology.dom import aeteparser
@@ -488,10 +489,10 @@ def help(constructor, identity, style, flags, aemreference, commandname=''):
 
 installeventhandler(help,
 		'AppSHelp',
-		('Cons', 'constructor', kAE.typeChar),
-		('Iden', 'identity', kAE.typeWildCard),
-		('Styl', 'style', kAE.typeChar),
-		('Flag', 'flags', kAE.typeChar),
-		('aRef', 'aemreference', kAE.typeWildCard),
-		('CNam', 'commandname', kAE.typeChar)
+		('Cons', 'constructor', kae.typeChar),
+		('Iden', 'identity', kae.typeWildCard),
+		('Styl', 'style', kae.typeChar),
+		('Flag', 'flags', kae.typeChar),
+		('aRef', 'aemreference', kae.typeWildCard),
+		('CNam', 'commandname', kae.typeChar)
 		)
