@@ -6,9 +6,9 @@ except ImportError:
 
 
 setup(
-		name = "aeserver",
+		name = "aemreceive",
 		version = "0.3.0",
-		description = "Modules for adding Apple event handling support to Python-based Mac OS X applications.",
+		description = "Basic Apple event handling support for Python-based Mac OS X applications.",
 		author = "HAS",
 		author_email='',
 		url='http://appscript.sourceforge.net',
