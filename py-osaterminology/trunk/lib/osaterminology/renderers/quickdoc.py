@@ -8,7 +8,7 @@ from aem import kae
 from os import sys
 
 from osaterminology.sax.aeteparser import Receiver, parse
-from aem.ae import GetAppTerminology as getaete, GetSysTerminology as getaeut
+from aem.ae import getappterminology, getsysterminology
 
 
 __all__ = ['app', 'component', 'QuickDoc']
@@ -125,7 +125,7 @@ def app(path, out=sys.stdout, converter=None):
 		out : file -- open file object to write to (default: stdout)
 		converter : function -- function to convert AppleScript-style keywords (default: None)
 	"""
-	data = getaete(path)
+	data = getappterminology(path)
 	parse(data, QuickDoc(out, converter))
 
 def component(code='ascr', out=sys.stdout, converter=None):
@@ -134,6 +134,6 @@ def component(code='ascr', out=sys.stdout, converter=None):
 		out : file -- open file object to write to (default: stdout)
 		converter : function -- function to convert AppleScript-style keywords (default: None)
 	"""
-	data = getaeut(code)
+	data = getsysterminology(code)
 	parse(data, QuickDoc(out, converter))
 

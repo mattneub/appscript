@@ -18,6 +18,7 @@ setup(
 			'osaterminology',
 			'osaterminology/defaultterminology',
 			'osaterminology/dom',
+			'osaterminology/makeglue',
 			'osaterminology/makeidentifier',
 			'osaterminology/renderers',
 			'osaterminology/sax',

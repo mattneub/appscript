@@ -14,6 +14,8 @@ lib/osaterminology/dom/applescripttypes.py
 lib/osaterminology/dom/appscripttypes.py
 lib/osaterminology/dom/osadictionary.py
 lib/osaterminology/dom/sdefparser.py
+lib/osaterminology/makeglue/__init__.py
+lib/osaterminology/makeglue/objcappscript.py
 lib/osaterminology/makeidentifier/__init__.py
 lib/osaterminology/makeidentifier/objcappscript.py
 lib/osaterminology/makeidentifier/pyappscript.py
