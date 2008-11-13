@@ -80,7 +80,7 @@ class _Formatter:
 		return '"%s"' % s
 	
 	def formatStr(self, val):
-		return self.formatUnicodeText(_codecs.unpack(_codecs.pack(val).AECoerceDesc('utxt')))
+		return self.formatUnicodeText(_codecs.unpack(_codecs.pack(val).coerce('utxt')))
 	
 	##
 		

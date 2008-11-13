@@ -35,7 +35,7 @@ kAll = None
 def _unpackEventAttributes(event):
 	atts = []
 	for code in [kae.keyEventClassAttr, kae.keyEventIDAttr, kae.keyAddressAttr]:
-		atts.append(_standardCodecs.unpack(event.AEGetAttributeDesc(code, kae.typeWildCard)))
+		atts.append(_standardCodecs.unpack(event.getattr(code, kae.typeWildCard)))
 	return atts[0].code + atts[1].code, atts[2]
 
 
@@ -44,7 +44,7 @@ def makeCustomSendProc(addResultFn, origSendProc):
 		# unpack required attributes
 		try:
 			eventcode, addressdesc = _unpackEventAttributes(event)
-			appPath = ae.AddressDescToPath(addressdesc)
+			appPath = ae.addressdesctopath(addressdesc)
 			
 			# get app instance and associated data
 			if not _appCache.has_key((addressdesc.type, addressdesc.data)):
@@ -58,15 +58,15 @@ def makeCustomSendProc(addResultFn, origSendProc):
 			app, appData = _appCache[(addressdesc.type, addressdesc.data)]
 			
 			# unpack parameters
-			desc = event.AECoerceDesc(kae.typeAERecord)
+			desc = event.coerce(kae.typeAERecord)
 			params = {}
-			for i in range(desc.AECountItems()):
-				key, value = desc.AEGetNthDesc(i + 1, kae.typeWildCard)
+			for i in range(desc.count()):
+				key, value = desc.getitem(i + 1, kae.typeWildCard)
 				params[key] = appData.unpack(value)
 			resultType = params.pop('rtyp', None)
 			directParam = params.pop('----', None)
 			try:
-				subject = appData.unpack(event.AEGetAttributeDesc(kae.keySubjectAttr, kae.typeWildCard))
+				subject = appData.unpack(event.getattr(kae.keySubjectAttr, kae.typeWildCard))
 			except Exception:
 				subject = None
 			
@@ -106,6 +106,6 @@ def makeCustomSendProc(addResultFn, origSendProc):
 		if _userDefaults.boolForKey_('sendEvents'):
 			return origSendProc(event, modeFlags, priority, timeout)
 		else:
-			return ae.AECreateDesc(kae.typeNull, '')
+			return ae.newdesc(kae.typeNull, '')
 	return customSendProc
 

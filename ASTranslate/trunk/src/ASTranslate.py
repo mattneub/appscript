@@ -78,7 +78,7 @@ class ASTranslateDocument(NibClassBuilder.AutoBaseClass): # (NSDocument)
 			self.codeView.setString_(self._script.compile(self.codeView.string()))
 			errorKind = 'Runtime'
 			self._script.run()
-			self._addResult(eventformatter.kAll, u'Done.')
+			self._addResult(eventformatter.kAll, u'OK')
 		except osascript.ScriptError, e:
 			start, end = e.range
 			self.codeView.setSelectedRange_((start, end - start))

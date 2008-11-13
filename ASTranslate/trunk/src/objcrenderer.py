@@ -8,6 +8,8 @@ from osaterminology import makeidentifier
 
 from osaterminology.tables.tablebuilder import *
 
+from osaterminology.makeglue.objcappscript import nametoprefix
+
 #######
 
 _formatterCache = {}
@@ -74,7 +76,7 @@ class _Formatter:
 		return '@"%s"' % val.replace('\\', '\\\\').replace('"', '\\"').replace('\r', '\\r').replace('\n', '\\n').replace('\t', '\\t') # "
 	
 	def formatStr(self, val):
-		return self.formatUnicodeText(_codecs.unpack(_codecs.pack(val).AECoerceDesc('utxt')))
+		return self.formatUnicodeText(_codecs.unpack(_codecs.pack(val).coerce('utxt')))
 	
 	##
 		
@@ -249,16 +251,6 @@ class _Formatter:
 			return self._valueFormatters[val.__class__](val)
 
 
-def makeprefix(name):
-	m = re.findall('\\b.*?([A-Z])\W*?([A-Z]*)', name.upper())
-	s = m[0][0]
-	if len(m) >= 2:
-		s += m[1][0]
-	else:
-		s += m[0][1][0]
-	return s
-
-
 ######################################################################
 # PUBLIC
 ######################################################################
@@ -280,12 +272,12 @@ def renderCommand(apppath, addressdesc,
 		
 		appname = os.path.splitext(os.path.basename(apppath))[0]
 		appvar = _convert(appname.lower())
-		prefix = makeprefix(appname)
+		prefix = nametoprefix(appname)
 		
-		s = '// To create glue:  osaglue  -o %sGlue  -p %s  %s\n\n' % (prefix, prefix, appname)
+		s = '#import "%sGlue/%sGlue.h"\n' % (prefix, prefix)
 		
 		f = _Formatter(typebycode, referencebycode, '', '')
-		s += '%sApplication *%s = [%sApplication applicationWithName: %s];\n\n' % (
+		s += '%sApplication *%s = [%sApplication applicationWithName: %s];\n' % (
 				prefix, appvar, prefix, f.format(appname)) # TO DO: use bundle ID if available
 
 		commandname, paramnamebycode = referencebycode[kCommand+eventcode][1]
@@ -301,7 +293,7 @@ def renderCommand(apppath, addressdesc,
 		
 		if targetref and not isinstance(targetref, appscript.Application):
 			f = _Formatter(typebycode, referencebycode, appvar, prefix)
-			s += '%sReference *ref = %s;\n\n' % (prefix, f.format(targetref))
+			s += '%sReference *ref = %s;\n' % (prefix, f.format(targetref))
 			target = 'ref'
 		else:
 			target = appvar
@@ -327,15 +319,15 @@ def renderCommand(apppath, addressdesc,
 			if modeflags & 3 == aem.kae.kAENoReply:
 				tmp = '[%s ignoreReply]' % tmp
 			
-			s += '%s%sCommand *cmd = %s;\n\n' % (prefix, classprefix, tmp)
+			s += '%s%sCommand *cmd = %s;\n' % (prefix, classprefix, tmp)
 			target = 'cmd'
 		elif eventcode == 'coresetd':
-			return s + 'id result = [%s setItem: %s];\n' % (target, directparam)
+			return s + 'id result = [%s setItem: %s];' % (target, directparam)
 		elif eventcode == 'coregetd':
-			return s + 'id result = [%s getItem];\n' % target
+			return s + 'id result = [%s getItem];' % target
 		else:
 			target = '[%s %s]' % (target, commandname)
-		s += 'id result = [%s send];\n' % target
+		s += 'id result = [%s send];' % target
 		return s
 		
 	except Exception, e:

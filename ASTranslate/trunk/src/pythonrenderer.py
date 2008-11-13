@@ -6,22 +6,17 @@ import os.path
 
 _commandscache = {}
 
+_originalformatter = referencerenderer._Formatter
 
-class ReFormatter(referencerenderer._Formatter):
-	def __init__(self, appData, nested=False):
-		self._appData = appData
-		if nested:
-			self.root = 'app'
-		elif self._appData.constructor == 'current':
-			self.root = 'app()'
-		elif self._appData.constructor == 'path':
-			name = os.path.basename(self._appData.identifier)
+class ReFormatter(_originalformatter):
+	def __init__(self, appdata, nested=False):
+		_originalformatter.__init__(self, appdata, nested)
+		# appscript shows full app path in references, but just want visible name here for simplicity
+		if not nested and self._appdata.constructor == 'path':
+			name = os.path.basename(appdata.identifier)
 			if name.lower().endswith('.app'):
 				name = name[:-4]
 			self.root = 'app(%r)' % name
-		else:
-			self.root = 'app(%s=%r)' % (self._appData.constructor, self._appData.identifier)
-		self.result = ''
 
 referencerenderer._Formatter = ReFormatter
 
@@ -41,12 +36,12 @@ def renderobject(obj):
 def renderCommand(appPath, addressdesc, eventcode, 
 		targetRef, directParam, params, 
 		resultType, modeFlags, timeout, 
-		appData):
+		appdata):
 	args = []
 	if not _commandscache.has_key((addressdesc.type, addressdesc.data)):
 		_commandscache[(addressdesc.type, addressdesc.data)] = dict([(data[1][0], (name, 
 				dict([(v, k) for (k, v) in data[1][-1].items()])
-				)) for (name, data) in appData.referencebyname.items() if data[0] == 'c'])
+				)) for (name, data) in appdata.referencebyname.items() if data[0] == 'c'])
 	commandsbycode = _commandscache[(addressdesc.type, addressdesc.data)]
 	commandName, argNames = commandsbycode[eventcode]
 	if directParam is not None:
@@ -60,3 +55,5 @@ def renderCommand(appPath, addressdesc, eventcode,
 	if timeout != -1:
 		args.append('timeout=%i' % (timeout / 60))
 	return '%r.%s(%s)' % (targetRef, commandName, ', '.join(args))
+
+

@@ -3,9 +3,9 @@ Requirements:
 
 - py-appscript 0.19.0+ <http://appscript.sourceforge.net>
 
-- py-osascript 0.5.0+
+- py-osascript 0.6.0+
 
-- py-osaterminology 0.11.0+
+- py-osaterminology 0.14.0+
 
 - pyobjc <http://pyobjc.sourceforge.net>
 
