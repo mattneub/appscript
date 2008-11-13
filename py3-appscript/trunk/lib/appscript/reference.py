@@ -91,6 +91,7 @@ class AppData(aem.Codecs):
 		# store parameters for later use
 		self._aemapplicationclass = aemapplicationclass
 		self.constructor, self.identifier = constructor, identifier
+		self._relaunchmode = 'limited'
 		self._terms = terms
 		self._helpagent = None
 	
@@ -263,6 +264,14 @@ class AppData(aem.Codecs):
 			except KeyError:
 				raise KeyError("Unknown Keyword: k.%s" % data.AS_name)
 		return aem.Codecs.pack(self, data)
+	
+	# Relaunch mode
+	
+	def _setrelaunchmode(self, mode):
+		if mode not in ['never', 'limited', 'always']:
+			raise ValueError('Unknown relaunch mode: %r' % mode)
+		self._relaunchmode = mode
+	relaunchmode = property(lambda self: self._relaunchmode, _setrelaunchmode)
 		
 	# Help system
 	
@@ -386,13 +395,16 @@ class _Base:
 
 class Command(_Base):
 	
-	def __init__(self, appdata, aemreference, repr, name, info):
-		_Base.__init__(self, appdata)
-		self.AS_aemreference, self._repr, self.AS_name = aemreference, repr, name
-		self._code, self._labelledargterms = info
+	def __init__(self, parentref, name, code, arginfo):
+		_Base.__init__(self, parentref.AS_appdata)
+		self.AS_aemreference = parentref.AS_aemreference
+		self.AS_name = name
+		self._parentref = parentref
+		self._code = code
+		self._labelledargterms = arginfo
 	
 	def __repr__(self):
-		return self._repr() + '.' + self.AS_name
+		return '%r.%s' % (self._parentref, self.AS_name)
 	
 	def __call__(self, *args, **kargs):
 		keywordargs = kargs.copy()
@@ -478,10 +490,14 @@ class Command(_Base):
 				#   if not, the error is rethrown.
 				#
 				if not self.AS_appdata.target().processexistsforpath(self.AS_appdata.identifier):
-					if self._code == b'ascrnoop':
-						aem.Application.launch(self.AS_appdata.identifier) # relaunch app in background
-					elif self._code != b'aevtoapp': # only 'launch' and 'run' are allowed to restart a local application that's been quit
+					if self.AS_appdata.relaunchmode == 'never':
 						raise CommandError(self, (args, kargs), e, self.AS_appdata)
+					elif self.AS_appdata.relaunchmode == 'limited':
+						if self._code == b'ascrnoop':
+							aem.Application.launch(self.AS_appdata.identifier) # relaunch app in background
+						elif self._code != b'aevtoapp': # only 'launch' and 'run' are allowed to restart a local application that's been quit
+							raise CommandError(self, (args, kargs), e, self.AS_appdata)
+					# else always relaunch
 				# update AEMApplication object's AEAddressDesc
 				self.AS_appdata.target().reconnect()
 				# re-send command
@@ -489,6 +505,8 @@ class Command(_Base):
 					return self.AS_appdata.target().event(self._code, params, atts, 
 							codecs=self.AS_appdata).send(timeout, sendflags)
 				except aem.CommandError as e:
+					if e.errornumber == -1708 and self._code == 'ascrnoop':
+						return
 					raise CommandError(self, (args, kargs), e, self.AS_appdata)
 			raise CommandError(self, (args, kargs), e, self.AS_appdata)
 	
@@ -560,6 +578,10 @@ class Reference(_Base):
 			return aem.Application.processexistsforpath(identifier.addressdesc)
 		else: # constructor == 'current'
 			return True
+	
+	def _setrelaunchmode(self, mode): # mode = 'never', 'limited' or 'always'
+		self.AS_appdata.relaunchmode = mode
+	relaunchmode = property(lambda self: self.AS_appdata.relaunchmode, _setrelaunchmode)
 	
 	# Public properties and methods; these are called by end-user and other clients (e.g. generic references)
 	
@@ -763,11 +785,12 @@ class Application(Reference):
 			bundle id/creator type. Apps specified by other means will be still sent a 
 			launch event if already running, but an error will occur if they're not.
 		"""
-		if self.AS_appdata.constructor == 'path':
+		if not self.isrunning() and self.AS_appdata.constructor == 'path' \
+				and self.AS_appdata.relaunchmode != 'never':
 			aem.Application.launch(self.AS_appdata.identifier)
 			self.AS_appdata.target().reconnect() # make sure aem.Application object's AEAddressDesc is up to date
-		else:
-			self.AS_appdata.target().event(b'ascrnoop').send() # will send launch event to app if already running; else will error
+		else: # send launch event to app (will error if not already running)
+			Command(self, 'launch', 'ascrnoop', {})()
 
 
 #######

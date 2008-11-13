@@ -44,4 +44,5 @@ kReservedKeywords = [
 	"help",
 	"as",
 	"with",
+	"relaunchmode",
 	 ] + keyword.kwlist
