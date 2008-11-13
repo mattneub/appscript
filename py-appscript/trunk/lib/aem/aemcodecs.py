@@ -37,7 +37,7 @@ class _Range:
 ######################################################################
 
 
-class UnitTypeCodecs:
+class UnitTypeCodecs(object):
 	"""Provides pack and unpack methods for converting between mactypes.Units instances and AE unit types. Each Codecs instance is allocated its own UnitTypeCodecs instance.
 	"""
 	
@@ -132,7 +132,7 @@ class UnitTypeCodecs:
 ######################################################################
 
 
-class Codecs:
+class Codecs(object):
 	"""Convert between Python and Apple event data types.
 	Clients may add additional encoders/decoders and/or subclass to suit their needs.
 	"""

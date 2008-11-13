@@ -74,7 +74,7 @@ class ScriptingAddition(reference.Application):
 				terms = _osaxcache[osaxname][1] = terminology.tablesforaetes(aem.ae.getappterminology(osaxpath))
 		reference.Application.__init__(self, name, id, creator, pid, url, aemapp, terms)
 		try:
-			self.AS_appdata.target.event('ascrgdut').send(300) # make sure target application has loaded event handlers for all installed OSAXen
+			self.AS_appdata.target().event('ascrgdut').send(300) # make sure target application has loaded event handlers for all installed OSAXen
 		except aem.CommandError, e:
 			if e.errornumber != -1708: # ignore 'event not handled' error
 				raise

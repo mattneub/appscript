@@ -199,9 +199,28 @@ te.launch()
 
 <p>As soon as you start to construct a reference or command using a newly created <code>app</code> objects, if the application is not already running then appscript will automatically launch it in order to obtain its terminology. (In earlier versions of appscript, the application was launched as soon as the <code>app</code> object was created, but this behaviour has been modified to give scripts the opportunity to launch it using the <code>launch</code> command instead.)</p>
 
-<p>If the target application has stopped running since the <code>app</code> object was created, trying to send it a command using that <code>app</code> object will result in an invalid connection error (-609), unless that command is <code>run</code> or <code>launch</code>. This restriction prevents appscript accidentally restarting an application that has unexpectedly quit while a script is controlling it. Scripts can restart an application by sending an explicit <code>run</code> or <code>launch</code> command, or by creating a new <code>app</code> object for it.</p>
+<p>If the target application has stopped running since the <code>app</code> object was created, trying to send it a command using that <code>app</code> object will normally result in an invalid connection error (-609), unless that command is <code>run</code> or <code>launch</code>. This restriction prevents appscript accidentally restarting an application that has unexpectedly quit while a script is controlling it. Scripts can restart an application by sending an explicit <code>run</code> or <code>launch</code> command, or by creating a new <code>app</code> object for it.</p>
 
-<p>Note that you can still use <code>app</code> objects to control applications that have been quit <em>and</em> restarted since the <code>app</code> object was created. Appscript will automatically update the <code>app</code> object's process id information as needed.</p>
+<p>An <code>app</code> object's auto-relaunching behaviour can be modified by setting its <code>relaunchmode</code> property to one of the following string values:</p>
+
+<dl>
+<dt>'never'</dt>
+<dd>Sending any command to a previously quit application will produce an 'invalid connection' error.</dd>
+
+<dt>'limited'</dt>
+<dd>A previously quit application will be automatically relaunched when a <code>run</code> or <code>launch</code> command is sent; other commands will produce an 'invalid connection' error. This is the default behaviour.</dd>
+
+<dt>'always'</dt>
+<dd>A previously quit application will be automatically relaunched when any command is sent. This is the same behaviour as AppleScript.</dd>
+</dl>
+
+<p>For example:</p>
+
+<pre><code>itunes = app('iTunes')
+itunes.relaunchmode = 'always'
+# rest of code goes here...</code></pre>
+
+<p>Note that you can use <code>app</code> objects to control applications that have been quit <em>and restarted</em> since the <code>app</code> object was created. Appscript will automatically update the <code>app</code> object's process id information as needed, as long as the application is running at the time.</p>
 
 
 <p class="hilitebox">There is a known problem with quitting and immediately relaunching an application via appscript, where the relaunch instruction is sent to the application before it has actually quit. This timing issue appears to be the OS's fault; the current workaround for scripts that need to quit and restart applications is to insert a few seconds' delay between the <code>quit</code> and <code>run</code>/<code>launch</code> using the <code>time</code> module's <code>sleep</code> function.</p>

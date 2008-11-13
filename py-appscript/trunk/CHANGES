@@ -1,4 +1,4 @@
-2008-10-25 -- 0.19.0
+2008-11-?? -- 0.19.0
 
 - The following packages/modules have been removed from the appscript distribution:
 
@@ -60,7 +60,9 @@ The aemreceive, osascript and osaterminology packages can be obtained separately
 
 - improved error reporting in Reference.__getitem__ when a malformed generic reference containing a command expands to a non-reference value. e.g. its.name.get() would previously expand the the value of the object's 'name' property, typically a string, resulting in a cryptic AttributeError; this now raises a descriptive ValueError.
 
-- added 'with' to list of reserved keywords
+- added 'relaunchmode' property to app objects
+
+- added 'with', 'relaunchmode' to list of reserved keywords
 
 - Removed the following Carbon.File-dependent methods from mactypes.Alias, mactypes.File: makewithfsalias, makewithfsref, makewithfsspec, fsalias, fsref, fsspec. Added makewithhfspath, hfspath methods. Renamed makewithaedesc, aedesc methods to makewithdesc, desc. Users should update any existing code that refers to these methods as needed.
 

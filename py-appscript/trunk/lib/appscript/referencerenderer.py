@@ -9,6 +9,8 @@ from aem import Query
 # PRIVATE
 ######################################################################
 
+_property_ = property
+
 class _Formatter:
 	def __init__(self, appdata, nested=False):
 		self._appdata = appdata
@@ -28,29 +30,102 @@ class _Formatter:
 		else:
 			return repr(val)
 	
+	# reference roots
+	
+	def app(self):
+		self.result += self.root
+		return self
+	app = _property_(app)
+	
+	def con(self):
+		self.result += 'con'
+		return self
+	con = _property_(con)
+	
+	def its(self):
+		self.result += 'its'
+		return self
+	its = _property_(its)
+
+	# insertion locs
+	
+	def beginning(self):
+		self.result += '.beginning'
+		return self
+	beginning = _property_(beginning)
+	
+	def end(self):
+		self.result += '.end'
+		return self
+	end = _property_(end)
+	
+	def before(self):
+		self.result += '.before'
+		return self
+	before = _property_(before)
+	
+	def after(self):
+		self.result += '.after'
+		return self
+	after = _property_(after)
+	
+	# property, elements specifiers
+	
 	def property(self, code):
 		try:
-			self.result += '.' + self._appdata.referencebycode[kProperty+code][1]
+			self.result += '.' + self._appdata.referencebycode()[kProperty+code][1]
 		except KeyError:
-			self.result += '.' + self._appdata.referencebycode[kElement+code][1]
+			self.result += '.' + self._appdata.referencebycode()[kElement+code][1]
 		return self
 
 	def elements(self, code):
 		try:
-			self.result += '.' + self._appdata.referencebycode[kElement+code][1]
+			self.result += '.' + self._appdata.referencebycode()[kElement+code][1]
 		except KeyError:
-			self.result += '.' + self._appdata.referencebycode[kProperty+code][1]
+			self.result += '.' + self._appdata.referencebycode()[kProperty+code][1]
 		return self
 	
-	def byname(self, sel):
+	# single-element selectors
+	
+	def first(self):
+		self.result += '.first'
+		return self
+	first = _property_(first)
+	
+	def middle(self):
+		self.result += '.middle'
+		return self
+	middle = _property_(middle)
+	
+	def last(self):
+		self.result += '.last'
+		return self
+	last = _property_(last)
+	
+	def any(self):
+		self.result += '.any'
+		return self
+	any = _property_(any)
+	
+	def byindex(self, sel):
 		self.result += '[%r]' % sel
 		return self
 	
-	byindex = byname
+	byname = byindex
 	
 	def byid(self, sel):
 		self.result += '.ID(%r)' % sel
 		return self
+	
+	def previous(self, sel):
+		self.result += '.previous(%r)' % self._appdata.typebycode()[sel]
+		return self
+	
+	def next(self, sel):
+		self.result += '.next(%r)' % self._appdata.typebycode()[sel]
+		return self
+	
+	# multi-element selectors
 	
 	def byrange(self, sel1, sel2):
 		self.result += '[%s:%s]' %(self._format(sel1), self._format(sel2))
@@ -60,24 +135,7 @@ class _Formatter:
 		self.result += '[%s]' % self._format(sel)
 		return self
 	
-	def previous(self, sel):
-		self.result += '.previous(%r)' % self._appdata.typebycode[sel]
-		return self
-	
-	def next(self, sel):
-		self.result += '.next(%r)' % self._appdata.typebycode[sel]
-		return self
-	
-	def __getattr__(self, name):
-		if name == 'app':
-			self.result += self.root
-		elif name == 'NOT':
-			self.result = '(%s).NOT' % self.result
-		else:
-			if name not in ['con', 'its']:
-				self.result += '.'
-			self.result += name
-		return self
+	# comparison tests
 	
 	def gt(self, sel):
 		self.result += ' > %s' % self._format(sel)
@@ -119,6 +177,8 @@ class _Formatter:
 		self.result += '.isin(%s)' % self._format(sel)
 		return self
 	
+	# logical tests
+	
 	def AND(self, *operands):
 		self.result = '(%s).AND(%s)' % (self.result, ', '.join([self._format(o) for o in operands]))
 		return self
@@ -126,6 +186,11 @@ class _Formatter:
 	def OR(self, *operands):
 		self.result = '(%s).OR(%s)' % (self.result, ', '.join([self._format(o) for o in operands]))
 		return self
+	
+	def NOT(self):
+		self.result = '(%s).NOT' % self.result
+		return self
+	NOT = _property_(NOT)
 
 
 ######################################################################

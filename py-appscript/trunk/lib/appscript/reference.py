@@ -91,6 +91,7 @@ class AppData(aem.Codecs):
 		# store parameters for later use
 		self._aemapplicationclass = aemapplicationclass
 		self.constructor, self.identifier = constructor, identifier
+		self._relaunchmode = 'limited'
 		self._terms = terms
 		self._helpagent = None
 	
@@ -111,7 +112,7 @@ class AppData(aem.Codecs):
 			else:
 				value = newval.pop(self.kClassType)
 			if isinstance(value, Keyword): # get the corresponding AEType (assuming there is one)
-				value = self.typebyname.get(value.name, value)
+				value = self.typebyname().get(value.name, value)
 			if isinstance(value, aem.AEType): # coerce the record to the desired type
 				record = record.coerce(value.code)
 				val = newval
@@ -119,7 +120,7 @@ class AppData(aem.Codecs):
 		for key, value in val.items():
 			if isinstance(key, Keyword):
 				try:
-					keyCode = self.typebyname[key.AS_name].code
+					keyCode = self.typebyname()[key.AS_name].code
 				except KeyError:
 					raise KeyError("Unknown Keyword: k.%s" % key.AS_name)
 				record.setparam(keyCode, self.pack(value))
@@ -144,8 +145,8 @@ class AppData(aem.Codecs):
 				lst = self.unpack(value)
 				for i in range(0, len(lst), 2):
 					dct[lst[i]] = lst[i+1]
-			elif key in self.typebycode:
-				dct[self.typebycode[key]] = self.unpack(value)
+			elif key in self.typebycode():
+				dct[self.typebycode()[key]] = self.unpack(value)
 			else:
 				dct[aem.AEType(key)] = self.unpack(value)
 		return dct
@@ -156,7 +157,7 @@ class AppData(aem.Codecs):
 		# Unpack typeType, typeEnum, typeProperty; replaces default aem decoders to convert types, enums, etc.
 		# to Keyword objects instead of AETypes, AEEnums, etc.
 		aemValue = _lowlevelcodecs.unpack(desc)
-		return self.typebycode.get(aemValue.code, aemValue)
+		return self.typebycode().get(aemValue.code, aemValue)
 	
 	
 	def unpackreference(self, desc):
@@ -210,31 +211,48 @@ class AppData(aem.Codecs):
 		"""
 		# initialise target (by default an aem.Application instance)
 		if self.constructor == 'aemapp':
-			self.target = self.identifier
+			t = self._target = self.identifier
 		elif self.constructor == 'current':
-			self.target = self._aemapplicationclass()
+			t = self._target = self._aemapplicationclass()
 		else:
-			self.target = self._aemapplicationclass(**{self.constructor: self.identifier})
+			t = self._target = self._aemapplicationclass(**{self.constructor: self.identifier})
 		# initialise translation tables
 		if self._terms == True: # obtain terminology from application
-			self._terms = terminology.tablesforapp(self.target)
+			self._terms = terminology.tablesforapp(t)
 		elif self._terms == False: # use built-in terminology only (e.g. use this when running AppleScript applets)
 			self._terms = terminology.defaulttables
 		elif not isinstance(self._terms, tuple): # use user-supplied terminology module
 			self._terms = terminology.tablesformodule(self._terms)
-		self.typebycode, self.typebyname, self.referencebycode, self.referencebyname = self._terms
-		return self
+		d1, d2, d3, d4 = self._typebycode, self._typebyname, \
+				self._referencebycode, self._referencebyname = self._terms
+		self.target = lambda: t
+		self.typebycode = lambda: d1
+		self.typebyname = lambda: d2
+		self.referencebycode = lambda: d3
+		self.referencebyname = lambda: d4
 	
-	# note: these properties are a cheat and only work as needed if AppData is an old-style class;
-	# basically causes AppData to connect to target app and get terminology the first time they're
-	# accessed; thereafter they're replaced with the objects themselves
+	def target(self):
+		self.connect()
+		return self._target
 	
-	target = property(lambda self: self.connect().target)
-	typebycode = property(lambda self: self.connect().typebycode)
-	typebyname = property(lambda self: self.connect().typebyname)
-	referencebycode = property(lambda self: self.connect().referencebycode)
-	referencebyname = property(lambda self: self.connect().referencebyname)
-
+	def typebycode(self):
+		self.connect()
+		return self._typebycode
+	
+	def typebyname(self):
+		self.connect()
+		return self._typebyname
+	
+	def referencebycode(self):
+		self.connect()
+		return self._referencebycode
+	
+	def referencebyname(self):
+		self.connect()
+		return self._referencebyname
+	
+	##
+	
 	def pack(self, data):
 		if isinstance(data, GenericReference):
 			data = data.AS_resolve(Reference, self)
@@ -242,11 +260,19 @@ class AppData(aem.Codecs):
 			data = data.AS_aemreference
 		elif isinstance(data, Keyword):
 			try:
-				data = self.typebyname[data.AS_name]
+				data = self.typebyname()[data.AS_name]
 			except KeyError:
 				raise KeyError("Unknown Keyword: k.%s" % data.AS_name)
 		return aem.Codecs.pack(self, data)
-		
+	
+	# Relaunch mode
+	
+	def _setrelaunchmode(self, mode):
+		if mode not in ['never', 'limited', 'always']:
+			raise ValueError('Unknown relaunch mode: %r' % mode)
+		self._relaunchmode = mode
+	relaunchmode = property(lambda self: self._relaunchmode, _setrelaunchmode)
+	
 	# Help system
 	
 	def _write(self, s):
@@ -371,13 +397,16 @@ class _Base(object):
 
 class Command(_Base):
 	
-	def __init__(self, appdata, aemreference, repr, name, info):
-		_Base.__init__(self, appdata)
-		self.AS_aemreference, self._repr, self.AS_name = aemreference, repr, name
-		self._code, self._labelledargterms = info
+	def __init__(self, parentref, name, code, arginfo):
+		_Base.__init__(self, parentref.AS_appdata)
+		self.AS_aemreference = parentref.AS_aemreference
+		self.AS_name = name
+		self._parentref = parentref
+		self._code = code
+		self._labelledargterms = arginfo
 	
 	def __repr__(self):
-		return self._repr() + '.' + self.AS_name
+		return '%r.%s' % (self._parentref, self.AS_name)
 	
 	def __call__(self, *args, **kargs):
 		keywordargs = kargs.copy()
@@ -445,7 +474,7 @@ class Command(_Base):
 				params['----'] = self.AS_aemreference
 		# build and send the Apple event, returning its result, if any
 		try:
-			return self.AS_appdata.target.event(self._code, params, atts, codecs=self.AS_appdata).send(timeout, sendflags)
+			return self.AS_appdata.target().event(self._code, params, atts, codecs=self.AS_appdata).send(timeout, sendflags)
 		except aem.CommandError, e:
 			if e.errornumber == -1708 and self._code == 'ascrnoop':
 				return # 'launch' events always return 'not handled' errors; just ignore these
@@ -462,18 +491,24 @@ class Command(_Base):
 				#   application is relaunched, the process id updated and the event resent;
 				#   if not, the error is rethrown.
 				#
-				if not self.AS_appdata.target.processexistsforpath(self.AS_appdata.identifier):
-					if self._code == 'ascrnoop':
-						aem.Application.launch(self.AS_appdata.identifier) # relaunch app in background
-					elif self._code != 'aevtoapp': # only 'launch' and 'run' are allowed to restart a local application that's been quit
+				if not self.AS_appdata.target().processexistsforpath(self.AS_appdata.identifier):
+					if self.AS_appdata.relaunchmode == 'never':
 						raise CommandError(self, (args, kargs), e, self.AS_appdata)
+					elif self.AS_appdata.relaunchmode == 'limited':
+						if self._code == 'ascrnoop':
+							aem.Application.launch(self.AS_appdata.identifier) # relaunch app in background
+						elif self._code != 'aevtoapp': # only 'launch' and 'run' are allowed to restart a local application that's been quit
+							raise CommandError(self, (args, kargs), e, self.AS_appdata)
+					# else always relaunch
 				# update AEMApplication object's AEAddressDesc
-				self.AS_appdata.target.reconnect()
+				self.AS_appdata.target().reconnect()
 				# re-send command
 				try:
-					return self.AS_appdata.target.event(self._code, params, atts, 
+					return self.AS_appdata.target().event(self._code, params, atts, 
 							codecs=self.AS_appdata).send(timeout, sendflags)
 				except aem.CommandError, e:
+					if e.errornumber == -1708 and self._code == 'ascrnoop':
+						return
 					raise CommandError(self, (args, kargs), e, self.AS_appdata)
 			raise CommandError(self, (args, kargs), e, self.AS_appdata)
 	
@@ -511,14 +546,14 @@ class Reference(_Base):
 	
 	def __eq__(self, val):
 		return self.__class__ == val.__class__ and \
-				self.AS_appdata.target == val.AS_appdata.target and \
+				self.AS_appdata.target() == val.AS_appdata.target() and \
 				self.AS_aemreference == val.AS_aemreference
 	
 	def __ne__(self, val):
 		return not self == val
 	
 	def __hash__(self):
-		val = hash((self.AS_aemreference, self.AS_appdata.target))
+		val = hash((self.AS_aemreference, self.AS_appdata.target()))
 		self.__hash__ = lambda: val
 		return val
 	
@@ -546,11 +581,15 @@ class Reference(_Base):
 		else: # constructor == 'current'
 			return True
 	
+	def _setrelaunchmode(self, mode): # mode = 'never', 'limited' or 'always'
+		self.AS_appdata.relaunchmode = mode
+	relaunchmode = property(lambda self: self.AS_appdata.relaunchmode, _setrelaunchmode)
+	
 	# Public properties and methods; these are called by end-user and other clients (e.g. generic references)
 	
 	def __getattr__(self, name):
 		try:
-			selectortype, code = self.AS_appdata.referencebyname[name]
+			selectortype, code = self.AS_appdata.referencebyname()[name]
 		except KeyError:
 			raise AttributeError("Unknown property, element or command: %r" % name)
 		if selectortype == kProperty:
@@ -558,7 +597,7 @@ class Reference(_Base):
 		elif selectortype == kElement:
 			return Reference(self.AS_appdata, self.AS_aemreference.elements(code))
 		else: # kCommand (note: 'code' variable here actually contains a (code, args) struct)
-			return Command(self.AS_appdata, self.AS_aemreference, self.__repr__, name, code)
+			return Command(self, name, code[0], code[1])
 	
 	def __getitem__(self, selector):
 		if isinstance(selector, basestring): # by-name
@@ -595,7 +634,7 @@ class Reference(_Base):
 	
 	def previous(self, klass):
 		try:
-			aemtype = self.AS_appdata.typebyname[klass.AS_name]
+			aemtype = self.AS_appdata.typebyname()[klass.AS_name]
 		except AttributeError: # can't get klass.AS_name
 			raise TypeError("Not a keyword: %r" % name)
 		except KeyError: # can't get typebyname[<name>]
@@ -604,7 +643,7 @@ class Reference(_Base):
 	
 	def next(self, klass):
 		try:
-			aemtype = self.AS_appdata.typebyname[klass.AS_name]
+			aemtype = self.AS_appdata.typebyname()[klass.AS_name]
 		except AttributeError: # can't get klass.AS_name
 			raise TypeError("Not a keyword: %r" % name)
 		except KeyError: # can't get typebyname[<name>]
@@ -734,13 +773,13 @@ class Application(Reference):
 			return Reference(self.AS_appdata, aem.customroot(ref))
 
 	def begintransaction(self, session=None):
-		self.AS_appdata.target.begintransaction(session)
+		self.AS_appdata.target().begintransaction(session)
 	
 	def aborttransaction(self):
-		self.AS_appdata.target.aborttransaction()
+		self.AS_appdata.target().aborttransaction()
 	
 	def endtransaction(self):
-		self.AS_appdata.target.endtransaction()
+		self.AS_appdata.target().endtransaction()
 	
 	def launch(self):
 		"""Launch a non-running application in the background and send it a 'launch' event. 
@@ -748,11 +787,12 @@ class Application(Reference):
 			bundle id/creator type. Apps specified by other means will be still sent a 
 			launch event if already running, but an error will occur if they're not.
 		"""
-		if self.AS_appdata.constructor == 'path':
+		if not self.isrunning() and self.AS_appdata.constructor == 'path' \
+				and self.AS_appdata.relaunchmode != 'never':
 			aem.Application.launch(self.AS_appdata.identifier)
-			self.AS_appdata.target.reconnect() # make sure aem.Application object's AEAddressDesc is up to date
-		else:
-			self.AS_appdata.target.event('ascrnoop').send() # will send launch event to app if already running; else will error
+			self.AS_appdata.target().reconnect() # make sure aem.Application object's AEAddressDesc is up to date
+		else: # send launch event to app (will error if not already running)
+			Command(self, 'launch', 'ascrnoop', {})()
 
 
 #######
