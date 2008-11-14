@@ -1,15 +1,13 @@
 /*
  * SFConstantGlue.m
- *
  * /Applications/Safari.app
- * osaglue 0.4.0
+ * osaglue 0.5.1
  *
  */
 
 #import "SFConstantGlue.h"
 
 @implementation SFConstant
-
 + (id)constantWithCode:(OSType)code_ {
     switch (code_) {
         case 'apr ': return [self April];
@@ -1502,5 +1500,4 @@
 }
 
 @end
-
 

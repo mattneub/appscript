@@ -1,15 +1,13 @@
 /*
  * TEConstantGlue.m
- *
  * /Applications/TextEdit.app
- * osaglue 0.4.0
+ * osaglue 0.5.1
  *
  */
 
 #import "TEConstantGlue.h"
 
 @implementation TEConstant
-
 + (id)constantWithCode:(OSType)code_ {
     switch (code_) {
         case 'apr ': return [self April];
@@ -1470,5 +1468,4 @@
 }
 
 @end
-
 

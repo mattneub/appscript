@@ -1,15 +1,13 @@
 /*
  * ITConstantGlue.m
- *
  * /Applications/iTunes.app
- * osaglue 0.4.0
+ * osaglue 0.5.1
  *
  */
 
 #import "ITConstantGlue.h"
 
 @implementation ITConstant
-
 + (id)constantWithCode:(OSType)code_ {
     switch (code_) {
         case 'apr ': return [self April];
@@ -97,7 +95,7 @@
         case 'pBPM': return [self bpm];
         case 'cBrW': return [self browserWindow];
         case 'capa': return [self capacity];
-        case 'case': return [self case];
+        case 'case': return [self case_];
         case 'pCat': return [self category];
         case 'kCDi': return [self cdInsert];
         case 'cmtr': return [self centimeters];
@@ -258,6 +256,7 @@
         case 'pset': return [self printSettings];
         case 'lwpf': return [self printerFeatures];
         case 'psn ': return [self processSerialNumber];
+        case 'pALL': return [self properties];
         case 'prop': return [self property];
         case 'pinf': return [self propertyInfo];
         case 'punc': return [self punctuation];
@@ -266,6 +265,7 @@
         case 'cRTP': return [self radioTunerPlaylist];
         case 'pRte': return [self rating];
         case 'pRtk': return [self ratingKind];
+        case 'pRaw': return [self rawData];
         case 'reco': return [self record];
         case 'obj ': return [self reference];
         case 'lwqt': return [self requestedPrintTime];
@@ -472,10 +472,10 @@
     return constantObj;
 }
 
-+ (ITConstant *)case {
++ (ITConstant *)case_ {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"case" type: typeEnumerated code: 'case'];
+        constantObj = [ITConstant constantWithName: @"case_" type: typeEnumerated code: 'case'];
     return constantObj;
 }
 
@@ -744,1949 +744,1962 @@
 + (ITConstant *)April {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"April" type: typeEnumerated code: 'apr '];
+        constantObj = [ITConstant constantWithName: @"April" type: typeType code: 'apr '];
     return constantObj;
 }
 
 + (ITConstant *)August {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"August" type: typeEnumerated code: 'aug '];
+        constantObj = [ITConstant constantWithName: @"August" type: typeType code: 'aug '];
     return constantObj;
 }
 
 + (ITConstant *)December {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"December" type: typeEnumerated code: 'dec '];
+        constantObj = [ITConstant constantWithName: @"December" type: typeType code: 'dec '];
     return constantObj;
 }
 
 + (ITConstant *)EPSPicture {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"EPSPicture" type: typeEnumerated code: 'EPS '];
+        constantObj = [ITConstant constantWithName: @"EPSPicture" type: typeType code: 'EPS '];
     return constantObj;
 }
 
 + (ITConstant *)EQ {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"EQ" type: typeEnumerated code: 'pEQp'];
+        constantObj = [ITConstant constantWithName: @"EQ" type: typeType code: 'pEQp'];
     return constantObj;
 }
 
 + (ITConstant *)EQEnabled {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"EQEnabled" type: typeEnumerated code: 'pEQ '];
+        constantObj = [ITConstant constantWithName: @"EQEnabled" type: typeType code: 'pEQ '];
     return constantObj;
 }
 
 + (ITConstant *)EQPreset {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"EQPreset" type: typeEnumerated code: 'cEQP'];
+        constantObj = [ITConstant constantWithName: @"EQPreset" type: typeType code: 'cEQP'];
     return constantObj;
 }
 
 + (ITConstant *)EQWindow {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"EQWindow" type: typeEnumerated code: 'cEQW'];
+        constantObj = [ITConstant constantWithName: @"EQWindow" type: typeType code: 'cEQW'];
     return constantObj;
 }
 
 + (ITConstant *)February {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"February" type: typeEnumerated code: 'feb '];
+        constantObj = [ITConstant constantWithName: @"February" type: typeType code: 'feb '];
     return constantObj;
 }
 
 + (ITConstant *)Friday {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"Friday" type: typeEnumerated code: 'fri '];
+        constantObj = [ITConstant constantWithName: @"Friday" type: typeType code: 'fri '];
     return constantObj;
 }
 
 + (ITConstant *)GIFPicture {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"GIFPicture" type: typeEnumerated code: 'GIFf'];
+        constantObj = [ITConstant constantWithName: @"GIFPicture" type: typeType code: 'GIFf'];
     return constantObj;
 }
 
 + (ITConstant *)JPEGPicture {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"JPEGPicture" type: typeEnumerated code: 'JPEG'];
+        constantObj = [ITConstant constantWithName: @"JPEGPicture" type: typeType code: 'JPEG'];
     return constantObj;
 }
 
 + (ITConstant *)January {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"January" type: typeEnumerated code: 'jan '];
+        constantObj = [ITConstant constantWithName: @"January" type: typeType code: 'jan '];
     return constantObj;
 }
 
 + (ITConstant *)July {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"July" type: typeEnumerated code: 'jul '];
+        constantObj = [ITConstant constantWithName: @"July" type: typeType code: 'jul '];
     return constantObj;
 }
 
 + (ITConstant *)June {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"June" type: typeEnumerated code: 'jun '];
+        constantObj = [ITConstant constantWithName: @"June" type: typeType code: 'jun '];
     return constantObj;
 }
 
 + (ITConstant *)March {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"March" type: typeEnumerated code: 'mar '];
+        constantObj = [ITConstant constantWithName: @"March" type: typeType code: 'mar '];
     return constantObj;
 }
 
 + (ITConstant *)May {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"May" type: typeEnumerated code: 'may '];
+        constantObj = [ITConstant constantWithName: @"May" type: typeType code: 'may '];
     return constantObj;
 }
 
 + (ITConstant *)Monday {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"Monday" type: typeEnumerated code: 'mon '];
+        constantObj = [ITConstant constantWithName: @"Monday" type: typeType code: 'mon '];
     return constantObj;
 }
 
 + (ITConstant *)November {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"November" type: typeEnumerated code: 'nov '];
+        constantObj = [ITConstant constantWithName: @"November" type: typeType code: 'nov '];
     return constantObj;
 }
 
 + (ITConstant *)October {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"October" type: typeEnumerated code: 'oct '];
+        constantObj = [ITConstant constantWithName: @"October" type: typeType code: 'oct '];
     return constantObj;
 }
 
 + (ITConstant *)PICTPicture {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"PICTPicture" type: typeEnumerated code: 'PICT'];
+        constantObj = [ITConstant constantWithName: @"PICTPicture" type: typeType code: 'PICT'];
     return constantObj;
 }
 
 + (ITConstant *)RGB16Color {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"RGB16Color" type: typeEnumerated code: 'tr16'];
+        constantObj = [ITConstant constantWithName: @"RGB16Color" type: typeType code: 'tr16'];
     return constantObj;
 }
 
 + (ITConstant *)RGB96Color {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"RGB96Color" type: typeEnumerated code: 'tr96'];
+        constantObj = [ITConstant constantWithName: @"RGB96Color" type: typeType code: 'tr96'];
     return constantObj;
 }
 
 + (ITConstant *)RGBColor {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"RGBColor" type: typeEnumerated code: 'cRGB'];
+        constantObj = [ITConstant constantWithName: @"RGBColor" type: typeType code: 'cRGB'];
     return constantObj;
 }
 
 + (ITConstant *)Saturday {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"Saturday" type: typeEnumerated code: 'sat '];
+        constantObj = [ITConstant constantWithName: @"Saturday" type: typeType code: 'sat '];
     return constantObj;
 }
 
 + (ITConstant *)September {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"September" type: typeEnumerated code: 'sep '];
+        constantObj = [ITConstant constantWithName: @"September" type: typeType code: 'sep '];
     return constantObj;
 }
 
 + (ITConstant *)Sunday {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"Sunday" type: typeEnumerated code: 'sun '];
+        constantObj = [ITConstant constantWithName: @"Sunday" type: typeType code: 'sun '];
     return constantObj;
 }
 
 + (ITConstant *)TIFFPicture {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"TIFFPicture" type: typeEnumerated code: 'TIFF'];
+        constantObj = [ITConstant constantWithName: @"TIFFPicture" type: typeType code: 'TIFF'];
     return constantObj;
 }
 
 + (ITConstant *)Thursday {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"Thursday" type: typeEnumerated code: 'thu '];
+        constantObj = [ITConstant constantWithName: @"Thursday" type: typeType code: 'thu '];
     return constantObj;
 }
 
 + (ITConstant *)Tuesday {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"Tuesday" type: typeEnumerated code: 'tue '];
+        constantObj = [ITConstant constantWithName: @"Tuesday" type: typeType code: 'tue '];
     return constantObj;
 }
 
 + (ITConstant *)URLTrack {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"URLTrack" type: typeEnumerated code: 'cURT'];
+        constantObj = [ITConstant constantWithName: @"URLTrack" type: typeType code: 'cURT'];
     return constantObj;
 }
 
 + (ITConstant *)Wednesday {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"Wednesday" type: typeEnumerated code: 'wed '];
+        constantObj = [ITConstant constantWithName: @"Wednesday" type: typeType code: 'wed '];
     return constantObj;
 }
 
 + (ITConstant *)address {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"address" type: typeEnumerated code: 'pURL'];
+        constantObj = [ITConstant constantWithName: @"address" type: typeType code: 'pURL'];
     return constantObj;
 }
 
 + (ITConstant *)album {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"album" type: typeEnumerated code: 'pAlb'];
+        constantObj = [ITConstant constantWithName: @"album" type: typeType code: 'pAlb'];
     return constantObj;
 }
 
 + (ITConstant *)albumArtist {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"albumArtist" type: typeEnumerated code: 'pAlA'];
+        constantObj = [ITConstant constantWithName: @"albumArtist" type: typeType code: 'pAlA'];
     return constantObj;
 }
 
 + (ITConstant *)albumRating {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"albumRating" type: typeEnumerated code: 'pAlR'];
+        constantObj = [ITConstant constantWithName: @"albumRating" type: typeType code: 'pAlR'];
     return constantObj;
 }
 
 + (ITConstant *)albumRatingKind {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"albumRatingKind" type: typeEnumerated code: 'pARk'];
+        constantObj = [ITConstant constantWithName: @"albumRatingKind" type: typeType code: 'pARk'];
     return constantObj;
 }
 
 + (ITConstant *)alias {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"alias" type: typeEnumerated code: 'alis'];
+        constantObj = [ITConstant constantWithName: @"alias" type: typeType code: 'alis'];
     return constantObj;
 }
 
 + (ITConstant *)anything {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"anything" type: typeEnumerated code: '****'];
+        constantObj = [ITConstant constantWithName: @"anything" type: typeType code: '****'];
     return constantObj;
 }
 
 + (ITConstant *)application {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"application" type: typeEnumerated code: 'capp'];
+        constantObj = [ITConstant constantWithName: @"application" type: typeType code: 'capp'];
     return constantObj;
 }
 
 + (ITConstant *)applicationBundleID {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"applicationBundleID" type: typeEnumerated code: 'bund'];
+        constantObj = [ITConstant constantWithName: @"applicationBundleID" type: typeType code: 'bund'];
     return constantObj;
 }
 
 + (ITConstant *)applicationSignature {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"applicationSignature" type: typeEnumerated code: 'sign'];
+        constantObj = [ITConstant constantWithName: @"applicationSignature" type: typeType code: 'sign'];
     return constantObj;
 }
 
 + (ITConstant *)applicationURL {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"applicationURL" type: typeEnumerated code: 'aprl'];
+        constantObj = [ITConstant constantWithName: @"applicationURL" type: typeType code: 'aprl'];
     return constantObj;
 }
 
 + (ITConstant *)artist {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"artist" type: typeEnumerated code: 'pArt'];
+        constantObj = [ITConstant constantWithName: @"artist" type: typeType code: 'pArt'];
     return constantObj;
 }
 
 + (ITConstant *)artwork {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"artwork" type: typeEnumerated code: 'cArt'];
+        constantObj = [ITConstant constantWithName: @"artwork" type: typeType code: 'cArt'];
     return constantObj;
 }
 
 + (ITConstant *)audioCDPlaylist {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"audioCDPlaylist" type: typeEnumerated code: 'cCDP'];
+        constantObj = [ITConstant constantWithName: @"audioCDPlaylist" type: typeType code: 'cCDP'];
     return constantObj;
 }
 
 + (ITConstant *)audioCDTrack {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"audioCDTrack" type: typeEnumerated code: 'cCDT'];
+        constantObj = [ITConstant constantWithName: @"audioCDTrack" type: typeType code: 'cCDT'];
     return constantObj;
 }
 
 + (ITConstant *)band1 {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"band1" type: typeEnumerated code: 'pEQ1'];
+        constantObj = [ITConstant constantWithName: @"band1" type: typeType code: 'pEQ1'];
     return constantObj;
 }
 
 + (ITConstant *)band10 {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"band10" type: typeEnumerated code: 'pEQ0'];
+        constantObj = [ITConstant constantWithName: @"band10" type: typeType code: 'pEQ0'];
     return constantObj;
 }
 
 + (ITConstant *)band2 {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"band2" type: typeEnumerated code: 'pEQ2'];
+        constantObj = [ITConstant constantWithName: @"band2" type: typeType code: 'pEQ2'];
     return constantObj;
 }
 
 + (ITConstant *)band3 {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"band3" type: typeEnumerated code: 'pEQ3'];
+        constantObj = [ITConstant constantWithName: @"band3" type: typeType code: 'pEQ3'];
     return constantObj;
 }
 
 + (ITConstant *)band4 {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"band4" type: typeEnumerated code: 'pEQ4'];
+        constantObj = [ITConstant constantWithName: @"band4" type: typeType code: 'pEQ4'];
     return constantObj;
 }
 
 + (ITConstant *)band5 {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"band5" type: typeEnumerated code: 'pEQ5'];
+        constantObj = [ITConstant constantWithName: @"band5" type: typeType code: 'pEQ5'];
     return constantObj;
 }
 
 + (ITConstant *)band6 {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"band6" type: typeEnumerated code: 'pEQ6'];
+        constantObj = [ITConstant constantWithName: @"band6" type: typeType code: 'pEQ6'];
     return constantObj;
 }
 
 + (ITConstant *)band7 {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"band7" type: typeEnumerated code: 'pEQ7'];
+        constantObj = [ITConstant constantWithName: @"band7" type: typeType code: 'pEQ7'];
     return constantObj;
 }
 
 + (ITConstant *)band8 {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"band8" type: typeEnumerated code: 'pEQ8'];
+        constantObj = [ITConstant constantWithName: @"band8" type: typeType code: 'pEQ8'];
     return constantObj;
 }
 
 + (ITConstant *)band9 {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"band9" type: typeEnumerated code: 'pEQ9'];
+        constantObj = [ITConstant constantWithName: @"band9" type: typeType code: 'pEQ9'];
     return constantObj;
 }
 
 + (ITConstant *)best {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"best" type: typeEnumerated code: 'best'];
+        constantObj = [ITConstant constantWithName: @"best" type: typeType code: 'best'];
     return constantObj;
 }
 
 + (ITConstant *)bitRate {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"bitRate" type: typeEnumerated code: 'pBRt'];
+        constantObj = [ITConstant constantWithName: @"bitRate" type: typeType code: 'pBRt'];
     return constantObj;
 }
 
 + (ITConstant *)bookmark {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"bookmark" type: typeEnumerated code: 'pBkt'];
+        constantObj = [ITConstant constantWithName: @"bookmark" type: typeType code: 'pBkt'];
     return constantObj;
 }
 
 + (ITConstant *)bookmarkable {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"bookmarkable" type: typeEnumerated code: 'pBkm'];
+        constantObj = [ITConstant constantWithName: @"bookmarkable" type: typeType code: 'pBkm'];
     return constantObj;
 }
 
 + (ITConstant *)boolean {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"boolean" type: typeEnumerated code: 'bool'];
+        constantObj = [ITConstant constantWithName: @"boolean" type: typeType code: 'bool'];
     return constantObj;
 }
 
 + (ITConstant *)boundingRectangle {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"boundingRectangle" type: typeEnumerated code: 'qdrt'];
+        constantObj = [ITConstant constantWithName: @"boundingRectangle" type: typeType code: 'qdrt'];
     return constantObj;
 }
 
 + (ITConstant *)bounds {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"bounds" type: typeEnumerated code: 'pbnd'];
+        constantObj = [ITConstant constantWithName: @"bounds" type: typeType code: 'pbnd'];
     return constantObj;
 }
 
 + (ITConstant *)bpm {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"bpm" type: typeEnumerated code: 'pBPM'];
+        constantObj = [ITConstant constantWithName: @"bpm" type: typeType code: 'pBPM'];
     return constantObj;
 }
 
 + (ITConstant *)browserWindow {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"browserWindow" type: typeEnumerated code: 'cBrW'];
+        constantObj = [ITConstant constantWithName: @"browserWindow" type: typeType code: 'cBrW'];
     return constantObj;
 }
 
 + (ITConstant *)capacity {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"capacity" type: typeEnumerated code: 'capa'];
+        constantObj = [ITConstant constantWithName: @"capacity" type: typeType code: 'capa'];
     return constantObj;
 }
 
 + (ITConstant *)category {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"category" type: typeEnumerated code: 'pCat'];
+        constantObj = [ITConstant constantWithName: @"category" type: typeType code: 'pCat'];
     return constantObj;
 }
 
 + (ITConstant *)centimeters {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"centimeters" type: typeEnumerated code: 'cmtr'];
+        constantObj = [ITConstant constantWithName: @"centimeters" type: typeType code: 'cmtr'];
     return constantObj;
 }
 
 + (ITConstant *)classInfo {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"classInfo" type: typeEnumerated code: 'gcli'];
+        constantObj = [ITConstant constantWithName: @"classInfo" type: typeType code: 'gcli'];
     return constantObj;
 }
 
 + (ITConstant *)class_ {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"class_" type: typeEnumerated code: 'pcls'];
+        constantObj = [ITConstant constantWithName: @"class_" type: typeType code: 'pcls'];
     return constantObj;
 }
 
 + (ITConstant *)closeable {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"closeable" type: typeEnumerated code: 'hclb'];
+        constantObj = [ITConstant constantWithName: @"closeable" type: typeType code: 'hclb'];
     return constantObj;
 }
 
 + (ITConstant *)collapseable {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"collapseable" type: typeEnumerated code: 'pWSh'];
+        constantObj = [ITConstant constantWithName: @"collapseable" type: typeType code: 'pWSh'];
     return constantObj;
 }
 
 + (ITConstant *)collapsed {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"collapsed" type: typeEnumerated code: 'wshd'];
+        constantObj = [ITConstant constantWithName: @"collapsed" type: typeType code: 'wshd'];
     return constantObj;
 }
 
 + (ITConstant *)collating {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"collating" type: typeEnumerated code: 'lwcl'];
+        constantObj = [ITConstant constantWithName: @"collating" type: typeType code: 'lwcl'];
     return constantObj;
 }
 
 + (ITConstant *)colorTable {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"colorTable" type: typeEnumerated code: 'clrt'];
+        constantObj = [ITConstant constantWithName: @"colorTable" type: typeType code: 'clrt'];
     return constantObj;
 }
 
 + (ITConstant *)comment {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"comment" type: typeEnumerated code: 'pCmt'];
+        constantObj = [ITConstant constantWithName: @"comment" type: typeType code: 'pCmt'];
     return constantObj;
 }
 
 + (ITConstant *)compilation {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"compilation" type: typeEnumerated code: 'pAnt'];
+        constantObj = [ITConstant constantWithName: @"compilation" type: typeType code: 'pAnt'];
     return constantObj;
 }
 
 + (ITConstant *)composer {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"composer" type: typeEnumerated code: 'pCmp'];
+        constantObj = [ITConstant constantWithName: @"composer" type: typeType code: 'pCmp'];
     return constantObj;
 }
 
 + (ITConstant *)container {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"container" type: typeEnumerated code: 'ctnr'];
+        constantObj = [ITConstant constantWithName: @"container" type: typeType code: 'ctnr'];
     return constantObj;
 }
 
 + (ITConstant *)copies {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"copies" type: typeEnumerated code: 'lwcp'];
+        constantObj = [ITConstant constantWithName: @"copies" type: typeType code: 'lwcp'];
     return constantObj;
 }
 
 + (ITConstant *)cubicCentimeters {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"cubicCentimeters" type: typeEnumerated code: 'ccmt'];
+        constantObj = [ITConstant constantWithName: @"cubicCentimeters" type: typeType code: 'ccmt'];
     return constantObj;
 }
 
 + (ITConstant *)cubicFeet {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"cubicFeet" type: typeEnumerated code: 'cfet'];
+        constantObj = [ITConstant constantWithName: @"cubicFeet" type: typeType code: 'cfet'];
     return constantObj;
 }
 
 + (ITConstant *)cubicInches {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"cubicInches" type: typeEnumerated code: 'cuin'];
+        constantObj = [ITConstant constantWithName: @"cubicInches" type: typeType code: 'cuin'];
     return constantObj;
 }
 
 + (ITConstant *)cubicMeters {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"cubicMeters" type: typeEnumerated code: 'cmet'];
+        constantObj = [ITConstant constantWithName: @"cubicMeters" type: typeType code: 'cmet'];
     return constantObj;
 }
 
 + (ITConstant *)cubicYards {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"cubicYards" type: typeEnumerated code: 'cyrd'];
+        constantObj = [ITConstant constantWithName: @"cubicYards" type: typeType code: 'cyrd'];
     return constantObj;
 }
 
 + (ITConstant *)currentEQPreset {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"currentEQPreset" type: typeEnumerated code: 'pEQP'];
+        constantObj = [ITConstant constantWithName: @"currentEQPreset" type: typeType code: 'pEQP'];
     return constantObj;
 }
 
 + (ITConstant *)currentEncoder {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"currentEncoder" type: typeEnumerated code: 'pEnc'];
+        constantObj = [ITConstant constantWithName: @"currentEncoder" type: typeType code: 'pEnc'];
     return constantObj;
 }
 
 + (ITConstant *)currentPlaylist {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"currentPlaylist" type: typeEnumerated code: 'pPla'];
+        constantObj = [ITConstant constantWithName: @"currentPlaylist" type: typeType code: 'pPla'];
     return constantObj;
 }
 
 + (ITConstant *)currentStreamTitle {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"currentStreamTitle" type: typeEnumerated code: 'pStT'];
+        constantObj = [ITConstant constantWithName: @"currentStreamTitle" type: typeType code: 'pStT'];
     return constantObj;
 }
 
 + (ITConstant *)currentStreamURL {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"currentStreamURL" type: typeEnumerated code: 'pStU'];
+        constantObj = [ITConstant constantWithName: @"currentStreamURL" type: typeType code: 'pStU'];
     return constantObj;
 }
 
 + (ITConstant *)currentTrack {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"currentTrack" type: typeEnumerated code: 'pTrk'];
+        constantObj = [ITConstant constantWithName: @"currentTrack" type: typeType code: 'pTrk'];
     return constantObj;
 }
 
 + (ITConstant *)currentVisual {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"currentVisual" type: typeEnumerated code: 'pVis'];
+        constantObj = [ITConstant constantWithName: @"currentVisual" type: typeType code: 'pVis'];
     return constantObj;
 }
 
 + (ITConstant *)dashStyle {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"dashStyle" type: typeEnumerated code: 'tdas'];
+        constantObj = [ITConstant constantWithName: @"dashStyle" type: typeType code: 'tdas'];
     return constantObj;
 }
 
 + (ITConstant *)data {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"data" type: typeEnumerated code: 'rdat'];
+        constantObj = [ITConstant constantWithName: @"data" type: typeType code: 'rdat'];
     return constantObj;
 }
 
 + (ITConstant *)data_ {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"data_" type: typeEnumerated code: 'pPCT'];
+        constantObj = [ITConstant constantWithName: @"data_" type: typeType code: 'pPCT'];
     return constantObj;
 }
 
 + (ITConstant *)databaseID {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"databaseID" type: typeEnumerated code: 'pDID'];
+        constantObj = [ITConstant constantWithName: @"databaseID" type: typeType code: 'pDID'];
     return constantObj;
 }
 
 + (ITConstant *)date {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"date" type: typeEnumerated code: 'ldt '];
+        constantObj = [ITConstant constantWithName: @"date" type: typeType code: 'ldt '];
     return constantObj;
 }
 
 + (ITConstant *)dateAdded {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"dateAdded" type: typeEnumerated code: 'pAdd'];
+        constantObj = [ITConstant constantWithName: @"dateAdded" type: typeType code: 'pAdd'];
     return constantObj;
 }
 
 + (ITConstant *)decimalStruct {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"decimalStruct" type: typeEnumerated code: 'decm'];
+        constantObj = [ITConstant constantWithName: @"decimalStruct" type: typeType code: 'decm'];
     return constantObj;
 }
 
 + (ITConstant *)degreesCelsius {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"degreesCelsius" type: typeEnumerated code: 'degc'];
+        constantObj = [ITConstant constantWithName: @"degreesCelsius" type: typeType code: 'degc'];
     return constantObj;
 }
 
 + (ITConstant *)degreesFahrenheit {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"degreesFahrenheit" type: typeEnumerated code: 'degf'];
+        constantObj = [ITConstant constantWithName: @"degreesFahrenheit" type: typeType code: 'degf'];
     return constantObj;
 }
 
 + (ITConstant *)degreesKelvin {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"degreesKelvin" type: typeEnumerated code: 'degk'];
+        constantObj = [ITConstant constantWithName: @"degreesKelvin" type: typeType code: 'degk'];
     return constantObj;
 }
 
 + (ITConstant *)description_ {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"description_" type: typeEnumerated code: 'pDes'];
+        constantObj = [ITConstant constantWithName: @"description_" type: typeType code: 'pDes'];
     return constantObj;
 }
 
 + (ITConstant *)devicePlaylist {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"devicePlaylist" type: typeEnumerated code: 'cDvP'];
+        constantObj = [ITConstant constantWithName: @"devicePlaylist" type: typeType code: 'cDvP'];
     return constantObj;
 }
 
 + (ITConstant *)deviceTrack {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"deviceTrack" type: typeEnumerated code: 'cDvT'];
+        constantObj = [ITConstant constantWithName: @"deviceTrack" type: typeType code: 'cDvT'];
     return constantObj;
 }
 
 + (ITConstant *)discCount {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"discCount" type: typeEnumerated code: 'pDsC'];
+        constantObj = [ITConstant constantWithName: @"discCount" type: typeType code: 'pDsC'];
     return constantObj;
 }
 
 + (ITConstant *)discNumber {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"discNumber" type: typeEnumerated code: 'pDsN'];
+        constantObj = [ITConstant constantWithName: @"discNumber" type: typeType code: 'pDsN'];
     return constantObj;
 }
 
 + (ITConstant *)doubleInteger {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"doubleInteger" type: typeEnumerated code: 'comp'];
+        constantObj = [ITConstant constantWithName: @"doubleInteger" type: typeType code: 'comp'];
     return constantObj;
 }
 
 + (ITConstant *)downloaded {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"downloaded" type: typeEnumerated code: 'pDlA'];
+        constantObj = [ITConstant constantWithName: @"downloaded" type: typeType code: 'pDlA'];
     return constantObj;
 }
 
 + (ITConstant *)duration {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"duration" type: typeEnumerated code: 'pDur'];
+        constantObj = [ITConstant constantWithName: @"duration" type: typeType code: 'pDur'];
     return constantObj;
 }
 
 + (ITConstant *)elementInfo {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"elementInfo" type: typeEnumerated code: 'elin'];
+        constantObj = [ITConstant constantWithName: @"elementInfo" type: typeType code: 'elin'];
     return constantObj;
 }
 
 + (ITConstant *)enabled {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"enabled" type: typeEnumerated code: 'enbl'];
+        constantObj = [ITConstant constantWithName: @"enabled" type: typeType code: 'enbl'];
     return constantObj;
 }
 
 + (ITConstant *)encodedString {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"encodedString" type: typeEnumerated code: 'encs'];
+        constantObj = [ITConstant constantWithName: @"encodedString" type: typeType code: 'encs'];
     return constantObj;
 }
 
 + (ITConstant *)encoder {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"encoder" type: typeEnumerated code: 'cEnc'];
+        constantObj = [ITConstant constantWithName: @"encoder" type: typeType code: 'cEnc'];
     return constantObj;
 }
 
 + (ITConstant *)endingPage {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"endingPage" type: typeEnumerated code: 'lwlp'];
+        constantObj = [ITConstant constantWithName: @"endingPage" type: typeType code: 'lwlp'];
     return constantObj;
 }
 
 + (ITConstant *)enumerator {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"enumerator" type: typeEnumerated code: 'enum'];
+        constantObj = [ITConstant constantWithName: @"enumerator" type: typeType code: 'enum'];
     return constantObj;
 }
 
 + (ITConstant *)episodeID {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"episodeID" type: typeEnumerated code: 'pEpD'];
+        constantObj = [ITConstant constantWithName: @"episodeID" type: typeType code: 'pEpD'];
     return constantObj;
 }
 
 + (ITConstant *)episodeNumber {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"episodeNumber" type: typeEnumerated code: 'pEpN'];
+        constantObj = [ITConstant constantWithName: @"episodeNumber" type: typeType code: 'pEpN'];
     return constantObj;
 }
 
 + (ITConstant *)errorHandling {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"errorHandling" type: typeEnumerated code: 'lweh'];
+        constantObj = [ITConstant constantWithName: @"errorHandling" type: typeType code: 'lweh'];
     return constantObj;
 }
 
 + (ITConstant *)eventInfo {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"eventInfo" type: typeEnumerated code: 'evin'];
+        constantObj = [ITConstant constantWithName: @"eventInfo" type: typeType code: 'evin'];
     return constantObj;
 }
 
 + (ITConstant *)extendedFloat {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"extendedFloat" type: typeEnumerated code: 'exte'];
+        constantObj = [ITConstant constantWithName: @"extendedFloat" type: typeType code: 'exte'];
     return constantObj;
 }
 
 + (ITConstant *)faxNumber {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"faxNumber" type: typeEnumerated code: 'faxn'];
+        constantObj = [ITConstant constantWithName: @"faxNumber" type: typeType code: 'faxn'];
     return constantObj;
 }
 
 + (ITConstant *)feet {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"feet" type: typeEnumerated code: 'feet'];
+        constantObj = [ITConstant constantWithName: @"feet" type: typeType code: 'feet'];
     return constantObj;
 }
 
 + (ITConstant *)fileRef {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"fileRef" type: typeEnumerated code: 'fsrf'];
+        constantObj = [ITConstant constantWithName: @"fileRef" type: typeType code: 'fsrf'];
     return constantObj;
 }
 
 + (ITConstant *)fileSpecification {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"fileSpecification" type: typeEnumerated code: 'fss '];
+        constantObj = [ITConstant constantWithName: @"fileSpecification" type: typeType code: 'fss '];
     return constantObj;
 }
 
 + (ITConstant *)fileTrack {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"fileTrack" type: typeEnumerated code: 'cFlT'];
+        constantObj = [ITConstant constantWithName: @"fileTrack" type: typeType code: 'cFlT'];
     return constantObj;
 }
 
 + (ITConstant *)fileURL {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"fileURL" type: typeEnumerated code: 'furl'];
+        constantObj = [ITConstant constantWithName: @"fileURL" type: typeType code: 'furl'];
     return constantObj;
 }
 
 + (ITConstant *)finish {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"finish" type: typeEnumerated code: 'pStp'];
+        constantObj = [ITConstant constantWithName: @"finish" type: typeType code: 'pStp'];
     return constantObj;
 }
 
 + (ITConstant *)fixed {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"fixed" type: typeEnumerated code: 'fixd'];
+        constantObj = [ITConstant constantWithName: @"fixed" type: typeType code: 'fixd'];
     return constantObj;
 }
 
 + (ITConstant *)fixedIndexing {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"fixedIndexing" type: typeEnumerated code: 'pFix'];
+        constantObj = [ITConstant constantWithName: @"fixedIndexing" type: typeType code: 'pFix'];
     return constantObj;
 }
 
 + (ITConstant *)fixedPoint {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"fixedPoint" type: typeEnumerated code: 'fpnt'];
+        constantObj = [ITConstant constantWithName: @"fixedPoint" type: typeType code: 'fpnt'];
     return constantObj;
 }
 
 + (ITConstant *)fixedRectangle {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"fixedRectangle" type: typeEnumerated code: 'frct'];
+        constantObj = [ITConstant constantWithName: @"fixedRectangle" type: typeType code: 'frct'];
     return constantObj;
 }
 
 + (ITConstant *)float128bit {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"float128bit" type: typeEnumerated code: 'ldbl'];
+        constantObj = [ITConstant constantWithName: @"float128bit" type: typeType code: 'ldbl'];
     return constantObj;
 }
 
 + (ITConstant *)float_ {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"float_" type: typeEnumerated code: 'doub'];
+        constantObj = [ITConstant constantWithName: @"float_" type: typeType code: 'doub'];
     return constantObj;
 }
 
 + (ITConstant *)folderPlaylist {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"folderPlaylist" type: typeEnumerated code: 'cFoP'];
+        constantObj = [ITConstant constantWithName: @"folderPlaylist" type: typeType code: 'cFoP'];
     return constantObj;
 }
 
 + (ITConstant *)format {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"format" type: typeEnumerated code: 'pFmt'];
+        constantObj = [ITConstant constantWithName: @"format" type: typeType code: 'pFmt'];
     return constantObj;
 }
 
 + (ITConstant *)freeSpace {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"freeSpace" type: typeEnumerated code: 'frsp'];
+        constantObj = [ITConstant constantWithName: @"freeSpace" type: typeType code: 'frsp'];
     return constantObj;
 }
 
 + (ITConstant *)frontmost {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"frontmost" type: typeEnumerated code: 'pisf'];
+        constantObj = [ITConstant constantWithName: @"frontmost" type: typeType code: 'pisf'];
     return constantObj;
 }
 
 + (ITConstant *)fullScreen {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"fullScreen" type: typeEnumerated code: 'pFSc'];
+        constantObj = [ITConstant constantWithName: @"fullScreen" type: typeType code: 'pFSc'];
     return constantObj;
 }
 
 + (ITConstant *)gallons {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"gallons" type: typeEnumerated code: 'galn'];
+        constantObj = [ITConstant constantWithName: @"gallons" type: typeType code: 'galn'];
     return constantObj;
 }
 
 + (ITConstant *)gapless {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"gapless" type: typeEnumerated code: 'pGpl'];
+        constantObj = [ITConstant constantWithName: @"gapless" type: typeType code: 'pGpl'];
     return constantObj;
 }
 
 + (ITConstant *)genre {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"genre" type: typeEnumerated code: 'pGen'];
+        constantObj = [ITConstant constantWithName: @"genre" type: typeType code: 'pGen'];
     return constantObj;
 }
 
 + (ITConstant *)grams {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"grams" type: typeEnumerated code: 'gram'];
+        constantObj = [ITConstant constantWithName: @"grams" type: typeType code: 'gram'];
     return constantObj;
 }
 
 + (ITConstant *)graphicText {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"graphicText" type: typeEnumerated code: 'cgtx'];
+        constantObj = [ITConstant constantWithName: @"graphicText" type: typeType code: 'cgtx'];
     return constantObj;
 }
 
 + (ITConstant *)grouping {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"grouping" type: typeEnumerated code: 'pGrp'];
+        constantObj = [ITConstant constantWithName: @"grouping" type: typeType code: 'pGrp'];
     return constantObj;
 }
 
 + (ITConstant *)id_ {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"id_" type: typeEnumerated code: 'ID  '];
+        constantObj = [ITConstant constantWithName: @"id_" type: typeType code: 'ID  '];
     return constantObj;
 }
 
 + (ITConstant *)inches {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"inches" type: typeEnumerated code: 'inch'];
+        constantObj = [ITConstant constantWithName: @"inches" type: typeType code: 'inch'];
     return constantObj;
 }
 
 + (ITConstant *)index {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"index" type: typeEnumerated code: 'pidx'];
+        constantObj = [ITConstant constantWithName: @"index" type: typeType code: 'pidx'];
     return constantObj;
 }
 
 + (ITConstant *)integer {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"integer" type: typeEnumerated code: 'long'];
+        constantObj = [ITConstant constantWithName: @"integer" type: typeType code: 'long'];
     return constantObj;
 }
 
 + (ITConstant *)internationalText {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"internationalText" type: typeEnumerated code: 'itxt'];
+        constantObj = [ITConstant constantWithName: @"internationalText" type: typeType code: 'itxt'];
     return constantObj;
 }
 
 + (ITConstant *)internationalWritingCode {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"internationalWritingCode" type: typeEnumerated code: 'intl'];
+        constantObj = [ITConstant constantWithName: @"internationalWritingCode" type: typeType code: 'intl'];
     return constantObj;
 }
 
 + (ITConstant *)item {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"item" type: typeEnumerated code: 'cobj'];
+        constantObj = [ITConstant constantWithName: @"item" type: typeType code: 'cobj'];
     return constantObj;
 }
 
 + (ITConstant *)kernelProcessID {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"kernelProcessID" type: typeEnumerated code: 'kpid'];
+        constantObj = [ITConstant constantWithName: @"kernelProcessID" type: typeType code: 'kpid'];
     return constantObj;
 }
 
 + (ITConstant *)kilograms {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"kilograms" type: typeEnumerated code: 'kgrm'];
+        constantObj = [ITConstant constantWithName: @"kilograms" type: typeType code: 'kgrm'];
     return constantObj;
 }
 
 + (ITConstant *)kilometers {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"kilometers" type: typeEnumerated code: 'kmtr'];
+        constantObj = [ITConstant constantWithName: @"kilometers" type: typeType code: 'kmtr'];
     return constantObj;
 }
 
 + (ITConstant *)kind {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"kind" type: typeEnumerated code: 'pKnd'];
+        constantObj = [ITConstant constantWithName: @"kind" type: typeType code: 'pKnd'];
     return constantObj;
 }
 
 + (ITConstant *)libraryPlaylist {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"libraryPlaylist" type: typeEnumerated code: 'cLiP'];
+        constantObj = [ITConstant constantWithName: @"libraryPlaylist" type: typeType code: 'cLiP'];
     return constantObj;
 }
 
 + (ITConstant *)list {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"list" type: typeEnumerated code: 'list'];
+        constantObj = [ITConstant constantWithName: @"list" type: typeType code: 'list'];
     return constantObj;
 }
 
 + (ITConstant *)liters {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"liters" type: typeEnumerated code: 'litr'];
+        constantObj = [ITConstant constantWithName: @"liters" type: typeType code: 'litr'];
     return constantObj;
 }
 
 + (ITConstant *)location {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"location" type: typeEnumerated code: 'pLoc'];
+        constantObj = [ITConstant constantWithName: @"location" type: typeType code: 'pLoc'];
     return constantObj;
 }
 
 + (ITConstant *)locationReference {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"locationReference" type: typeEnumerated code: 'insl'];
+        constantObj = [ITConstant constantWithName: @"locationReference" type: typeType code: 'insl'];
     return constantObj;
 }
 
 + (ITConstant *)longDescription {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"longDescription" type: typeEnumerated code: 'pLds'];
+        constantObj = [ITConstant constantWithName: @"longDescription" type: typeType code: 'pLds'];
     return constantObj;
 }
 
 + (ITConstant *)longFixed {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"longFixed" type: typeEnumerated code: 'lfxd'];
+        constantObj = [ITConstant constantWithName: @"longFixed" type: typeType code: 'lfxd'];
     return constantObj;
 }
 
 + (ITConstant *)longFixedPoint {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"longFixedPoint" type: typeEnumerated code: 'lfpt'];
+        constantObj = [ITConstant constantWithName: @"longFixedPoint" type: typeType code: 'lfpt'];
     return constantObj;
 }
 
 + (ITConstant *)longFixedRectangle {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"longFixedRectangle" type: typeEnumerated code: 'lfrc'];
+        constantObj = [ITConstant constantWithName: @"longFixedRectangle" type: typeType code: 'lfrc'];
     return constantObj;
 }
 
 + (ITConstant *)longPoint {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"longPoint" type: typeEnumerated code: 'lpnt'];
+        constantObj = [ITConstant constantWithName: @"longPoint" type: typeType code: 'lpnt'];
     return constantObj;
 }
 
 + (ITConstant *)longRectangle {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"longRectangle" type: typeEnumerated code: 'lrct'];
+        constantObj = [ITConstant constantWithName: @"longRectangle" type: typeType code: 'lrct'];
     return constantObj;
 }
 
 + (ITConstant *)lyrics {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"lyrics" type: typeEnumerated code: 'pLyr'];
+        constantObj = [ITConstant constantWithName: @"lyrics" type: typeType code: 'pLyr'];
     return constantObj;
 }
 
 + (ITConstant *)machPort {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"machPort" type: typeEnumerated code: 'port'];
+        constantObj = [ITConstant constantWithName: @"machPort" type: typeType code: 'port'];
     return constantObj;
 }
 
 + (ITConstant *)machine {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"machine" type: typeEnumerated code: 'mach'];
+        constantObj = [ITConstant constantWithName: @"machine" type: typeType code: 'mach'];
     return constantObj;
 }
 
 + (ITConstant *)machineLocation {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"machineLocation" type: typeEnumerated code: 'mLoc'];
+        constantObj = [ITConstant constantWithName: @"machineLocation" type: typeType code: 'mLoc'];
     return constantObj;
 }
 
 + (ITConstant *)meters {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"meters" type: typeEnumerated code: 'metr'];
+        constantObj = [ITConstant constantWithName: @"meters" type: typeType code: 'metr'];
     return constantObj;
 }
 
 + (ITConstant *)miles {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"miles" type: typeEnumerated code: 'mile'];
+        constantObj = [ITConstant constantWithName: @"miles" type: typeType code: 'mile'];
     return constantObj;
 }
 
 + (ITConstant *)minimized {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"minimized" type: typeEnumerated code: 'pMin'];
+        constantObj = [ITConstant constantWithName: @"minimized" type: typeType code: 'pMin'];
     return constantObj;
 }
 
 + (ITConstant *)missingValue {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"missingValue" type: typeEnumerated code: 'msng'];
+        constantObj = [ITConstant constantWithName: @"missingValue" type: typeType code: 'msng'];
     return constantObj;
 }
 
 + (ITConstant *)modifiable {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"modifiable" type: typeEnumerated code: 'pMod'];
+        constantObj = [ITConstant constantWithName: @"modifiable" type: typeType code: 'pMod'];
     return constantObj;
 }
 
 + (ITConstant *)modificationDate {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"modificationDate" type: typeEnumerated code: 'asmo'];
+        constantObj = [ITConstant constantWithName: @"modificationDate" type: typeType code: 'asmo'];
     return constantObj;
 }
 
 + (ITConstant *)mute {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"mute" type: typeEnumerated code: 'pMut'];
+        constantObj = [ITConstant constantWithName: @"mute" type: typeType code: 'pMut'];
     return constantObj;
 }
 
 + (ITConstant *)name {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"name" type: typeEnumerated code: 'pnam'];
+        constantObj = [ITConstant constantWithName: @"name" type: typeType code: 'pnam'];
     return constantObj;
 }
 
 + (ITConstant *)null {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"null" type: typeEnumerated code: 'null'];
+        constantObj = [ITConstant constantWithName: @"null" type: typeType code: 'null'];
     return constantObj;
 }
 
 + (ITConstant *)ounces {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"ounces" type: typeEnumerated code: 'ozs '];
+        constantObj = [ITConstant constantWithName: @"ounces" type: typeType code: 'ozs '];
     return constantObj;
 }
 
 + (ITConstant *)pagesAcross {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"pagesAcross" type: typeEnumerated code: 'lwla'];
+        constantObj = [ITConstant constantWithName: @"pagesAcross" type: typeType code: 'lwla'];
     return constantObj;
 }
 
 + (ITConstant *)pagesDown {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"pagesDown" type: typeEnumerated code: 'lwld'];
+        constantObj = [ITConstant constantWithName: @"pagesDown" type: typeType code: 'lwld'];
     return constantObj;
 }
 
 + (ITConstant *)parameterInfo {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"parameterInfo" type: typeEnumerated code: 'pmin'];
+        constantObj = [ITConstant constantWithName: @"parameterInfo" type: typeType code: 'pmin'];
     return constantObj;
 }
 
 + (ITConstant *)parent {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"parent" type: typeEnumerated code: 'pPlP'];
+        constantObj = [ITConstant constantWithName: @"parent" type: typeType code: 'pPlP'];
     return constantObj;
 }
 
 + (ITConstant *)persistentID {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"persistentID" type: typeEnumerated code: 'pPIS'];
+        constantObj = [ITConstant constantWithName: @"persistentID" type: typeType code: 'pPIS'];
     return constantObj;
 }
 
 + (ITConstant *)pixelMapRecord {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"pixelMapRecord" type: typeEnumerated code: 'tpmm'];
+        constantObj = [ITConstant constantWithName: @"pixelMapRecord" type: typeType code: 'tpmm'];
     return constantObj;
 }
 
 + (ITConstant *)playedCount {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"playedCount" type: typeEnumerated code: 'pPlC'];
+        constantObj = [ITConstant constantWithName: @"playedCount" type: typeType code: 'pPlC'];
     return constantObj;
 }
 
 + (ITConstant *)playedDate {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"playedDate" type: typeEnumerated code: 'pPlD'];
+        constantObj = [ITConstant constantWithName: @"playedDate" type: typeType code: 'pPlD'];
     return constantObj;
 }
 
 + (ITConstant *)playerPosition {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"playerPosition" type: typeEnumerated code: 'pPos'];
+        constantObj = [ITConstant constantWithName: @"playerPosition" type: typeType code: 'pPos'];
     return constantObj;
 }
 
 + (ITConstant *)playerState {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"playerState" type: typeEnumerated code: 'pPlS'];
+        constantObj = [ITConstant constantWithName: @"playerState" type: typeType code: 'pPlS'];
     return constantObj;
 }
 
 + (ITConstant *)playlist {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"playlist" type: typeEnumerated code: 'cPly'];
+        constantObj = [ITConstant constantWithName: @"playlist" type: typeType code: 'cPly'];
     return constantObj;
 }
 
 + (ITConstant *)playlistWindow {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"playlistWindow" type: typeEnumerated code: 'cPlW'];
+        constantObj = [ITConstant constantWithName: @"playlistWindow" type: typeType code: 'cPlW'];
     return constantObj;
 }
 
 + (ITConstant *)podcast {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"podcast" type: typeEnumerated code: 'pTPc'];
+        constantObj = [ITConstant constantWithName: @"podcast" type: typeType code: 'pTPc'];
     return constantObj;
 }
 
 + (ITConstant *)point {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"point" type: typeEnumerated code: 'QDpt'];
+        constantObj = [ITConstant constantWithName: @"point" type: typeType code: 'QDpt'];
     return constantObj;
 }
 
 + (ITConstant *)position {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"position" type: typeEnumerated code: 'ppos'];
+        constantObj = [ITConstant constantWithName: @"position" type: typeType code: 'ppos'];
     return constantObj;
 }
 
 + (ITConstant *)pounds {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"pounds" type: typeEnumerated code: 'lbs '];
+        constantObj = [ITConstant constantWithName: @"pounds" type: typeType code: 'lbs '];
     return constantObj;
 }
 
 + (ITConstant *)preamp {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"preamp" type: typeEnumerated code: 'pEQA'];
+        constantObj = [ITConstant constantWithName: @"preamp" type: typeType code: 'pEQA'];
     return constantObj;
 }
 
 + (ITConstant *)printSettings {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"printSettings" type: typeEnumerated code: 'pset'];
+        constantObj = [ITConstant constantWithName: @"printSettings" type: typeType code: 'pset'];
     return constantObj;
 }
 
 + (ITConstant *)printerFeatures {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"printerFeatures" type: typeEnumerated code: 'lwpf'];
+        constantObj = [ITConstant constantWithName: @"printerFeatures" type: typeType code: 'lwpf'];
     return constantObj;
 }
 
 + (ITConstant *)processSerialNumber {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"processSerialNumber" type: typeEnumerated code: 'psn '];
+        constantObj = [ITConstant constantWithName: @"processSerialNumber" type: typeType code: 'psn '];
+    return constantObj;
+}
+
++ (ITConstant *)properties {
+    static ITConstant *constantObj;
+    if (!constantObj)
+        constantObj = [ITConstant constantWithName: @"properties" type: typeType code: 'pALL'];
     return constantObj;
 }
 
 + (ITConstant *)property {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"property" type: typeEnumerated code: 'prop'];
+        constantObj = [ITConstant constantWithName: @"property" type: typeType code: 'prop'];
     return constantObj;
 }
 
 + (ITConstant *)propertyInfo {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"propertyInfo" type: typeEnumerated code: 'pinf'];
+        constantObj = [ITConstant constantWithName: @"propertyInfo" type: typeType code: 'pinf'];
     return constantObj;
 }
 
 + (ITConstant *)quarts {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"quarts" type: typeEnumerated code: 'qrts'];
+        constantObj = [ITConstant constantWithName: @"quarts" type: typeType code: 'qrts'];
     return constantObj;
 }
 
 + (ITConstant *)radioTunerPlaylist {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"radioTunerPlaylist" type: typeEnumerated code: 'cRTP'];
+        constantObj = [ITConstant constantWithName: @"radioTunerPlaylist" type: typeType code: 'cRTP'];
     return constantObj;
 }
 
 + (ITConstant *)rating {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"rating" type: typeEnumerated code: 'pRte'];
+        constantObj = [ITConstant constantWithName: @"rating" type: typeType code: 'pRte'];
     return constantObj;
 }
 
 + (ITConstant *)ratingKind {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"ratingKind" type: typeEnumerated code: 'pRtk'];
+        constantObj = [ITConstant constantWithName: @"ratingKind" type: typeType code: 'pRtk'];
+    return constantObj;
+}
+
++ (ITConstant *)rawData {
+    static ITConstant *constantObj;
+    if (!constantObj)
+        constantObj = [ITConstant constantWithName: @"rawData" type: typeType code: 'pRaw'];
     return constantObj;
 }
 
 + (ITConstant *)record {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"record" type: typeEnumerated code: 'reco'];
+        constantObj = [ITConstant constantWithName: @"record" type: typeType code: 'reco'];
     return constantObj;
 }
 
 + (ITConstant *)reference {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"reference" type: typeEnumerated code: 'obj '];
+        constantObj = [ITConstant constantWithName: @"reference" type: typeType code: 'obj '];
     return constantObj;
 }
 
 + (ITConstant *)requestedPrintTime {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"requestedPrintTime" type: typeEnumerated code: 'lwqt'];
+        constantObj = [ITConstant constantWithName: @"requestedPrintTime" type: typeType code: 'lwqt'];
     return constantObj;
 }
 
 + (ITConstant *)resizable {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"resizable" type: typeEnumerated code: 'prsz'];
+        constantObj = [ITConstant constantWithName: @"resizable" type: typeType code: 'prsz'];
     return constantObj;
 }
 
 + (ITConstant *)rotation {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"rotation" type: typeEnumerated code: 'trot'];
+        constantObj = [ITConstant constantWithName: @"rotation" type: typeType code: 'trot'];
     return constantObj;
 }
 
 + (ITConstant *)sampleRate {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"sampleRate" type: typeEnumerated code: 'pSRt'];
+        constantObj = [ITConstant constantWithName: @"sampleRate" type: typeType code: 'pSRt'];
     return constantObj;
 }
 
 + (ITConstant *)script {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"script" type: typeEnumerated code: 'scpt'];
+        constantObj = [ITConstant constantWithName: @"script" type: typeType code: 'scpt'];
     return constantObj;
 }
 
 + (ITConstant *)seasonNumber {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"seasonNumber" type: typeEnumerated code: 'pSeN'];
+        constantObj = [ITConstant constantWithName: @"seasonNumber" type: typeType code: 'pSeN'];
     return constantObj;
 }
 
 + (ITConstant *)selection {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"selection" type: typeEnumerated code: 'sele'];
+        constantObj = [ITConstant constantWithName: @"selection" type: typeType code: 'sele'];
     return constantObj;
 }
 
 + (ITConstant *)shared {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"shared" type: typeEnumerated code: 'pShr'];
+        constantObj = [ITConstant constantWithName: @"shared" type: typeType code: 'pShr'];
     return constantObj;
 }
 
 + (ITConstant *)sharedTrack {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"sharedTrack" type: typeEnumerated code: 'cShT'];
+        constantObj = [ITConstant constantWithName: @"sharedTrack" type: typeType code: 'cShT'];
     return constantObj;
 }
 
 + (ITConstant *)shortFloat {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"shortFloat" type: typeEnumerated code: 'sing'];
+        constantObj = [ITConstant constantWithName: @"shortFloat" type: typeType code: 'sing'];
     return constantObj;
 }
 
 + (ITConstant *)shortInteger {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"shortInteger" type: typeEnumerated code: 'shor'];
+        constantObj = [ITConstant constantWithName: @"shortInteger" type: typeType code: 'shor'];
     return constantObj;
 }
 
 + (ITConstant *)show {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"show" type: typeEnumerated code: 'pShw'];
+        constantObj = [ITConstant constantWithName: @"show" type: typeType code: 'pShw'];
     return constantObj;
 }
 
 + (ITConstant *)shufflable {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"shufflable" type: typeEnumerated code: 'pSfa'];
+        constantObj = [ITConstant constantWithName: @"shufflable" type: typeType code: 'pSfa'];
     return constantObj;
 }
 
 + (ITConstant *)shuffle {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"shuffle" type: typeEnumerated code: 'pShf'];
+        constantObj = [ITConstant constantWithName: @"shuffle" type: typeType code: 'pShf'];
     return constantObj;
 }
 
 + (ITConstant *)size {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"size" type: typeEnumerated code: 'pSiz'];
+        constantObj = [ITConstant constantWithName: @"size" type: typeType code: 'pSiz'];
     return constantObj;
 }
 
 + (ITConstant *)skippedCount {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"skippedCount" type: typeEnumerated code: 'pSkC'];
+        constantObj = [ITConstant constantWithName: @"skippedCount" type: typeType code: 'pSkC'];
     return constantObj;
 }
 
 + (ITConstant *)skippedDate {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"skippedDate" type: typeEnumerated code: 'pSkD'];
+        constantObj = [ITConstant constantWithName: @"skippedDate" type: typeType code: 'pSkD'];
     return constantObj;
 }
 
 + (ITConstant *)smart {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"smart" type: typeEnumerated code: 'pSmt'];
+        constantObj = [ITConstant constantWithName: @"smart" type: typeType code: 'pSmt'];
     return constantObj;
 }
 
 + (ITConstant *)songRepeat {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"songRepeat" type: typeEnumerated code: 'pRpt'];
+        constantObj = [ITConstant constantWithName: @"songRepeat" type: typeType code: 'pRpt'];
     return constantObj;
 }
 
 + (ITConstant *)sortAlbum {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"sortAlbum" type: typeEnumerated code: 'pSAl'];
+        constantObj = [ITConstant constantWithName: @"sortAlbum" type: typeType code: 'pSAl'];
     return constantObj;
 }
 
 + (ITConstant *)sortAlbumArtist {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"sortAlbumArtist" type: typeEnumerated code: 'pSAA'];
+        constantObj = [ITConstant constantWithName: @"sortAlbumArtist" type: typeType code: 'pSAA'];
     return constantObj;
 }
 
 + (ITConstant *)sortArtist {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"sortArtist" type: typeEnumerated code: 'pSAr'];
+        constantObj = [ITConstant constantWithName: @"sortArtist" type: typeType code: 'pSAr'];
     return constantObj;
 }
 
 + (ITConstant *)sortComposer {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"sortComposer" type: typeEnumerated code: 'pSCm'];
+        constantObj = [ITConstant constantWithName: @"sortComposer" type: typeType code: 'pSCm'];
     return constantObj;
 }
 
 + (ITConstant *)sortName {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"sortName" type: typeEnumerated code: 'pSNm'];
+        constantObj = [ITConstant constantWithName: @"sortName" type: typeType code: 'pSNm'];
     return constantObj;
 }
 
 + (ITConstant *)sortShow {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"sortShow" type: typeEnumerated code: 'pSSN'];
+        constantObj = [ITConstant constantWithName: @"sortShow" type: typeType code: 'pSSN'];
     return constantObj;
 }
 
 + (ITConstant *)soundVolume {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"soundVolume" type: typeEnumerated code: 'pVol'];
+        constantObj = [ITConstant constantWithName: @"soundVolume" type: typeType code: 'pVol'];
     return constantObj;
 }
 
 + (ITConstant *)source {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"source" type: typeEnumerated code: 'cSrc'];
+        constantObj = [ITConstant constantWithName: @"source" type: typeType code: 'cSrc'];
     return constantObj;
 }
 
 + (ITConstant *)specialKind {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"specialKind" type: typeEnumerated code: 'pSpK'];
+        constantObj = [ITConstant constantWithName: @"specialKind" type: typeType code: 'pSpK'];
     return constantObj;
 }
 
 + (ITConstant *)squareFeet {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"squareFeet" type: typeEnumerated code: 'sqft'];
+        constantObj = [ITConstant constantWithName: @"squareFeet" type: typeType code: 'sqft'];
     return constantObj;
 }
 
 + (ITConstant *)squareKilometers {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"squareKilometers" type: typeEnumerated code: 'sqkm'];
+        constantObj = [ITConstant constantWithName: @"squareKilometers" type: typeType code: 'sqkm'];
     return constantObj;
 }
 
 + (ITConstant *)squareMeters {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"squareMeters" type: typeEnumerated code: 'sqrm'];
+        constantObj = [ITConstant constantWithName: @"squareMeters" type: typeType code: 'sqrm'];
     return constantObj;
 }
 
 + (ITConstant *)squareMiles {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"squareMiles" type: typeEnumerated code: 'sqmi'];
+        constantObj = [ITConstant constantWithName: @"squareMiles" type: typeType code: 'sqmi'];
     return constantObj;
 }
 
 + (ITConstant *)squareYards {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"squareYards" type: typeEnumerated code: 'sqyd'];
+        constantObj = [ITConstant constantWithName: @"squareYards" type: typeType code: 'sqyd'];
     return constantObj;
 }
 
 + (ITConstant *)start {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"start" type: typeEnumerated code: 'pStr'];
+        constantObj = [ITConstant constantWithName: @"start" type: typeType code: 'pStr'];
     return constantObj;
 }
 
 + (ITConstant *)startingPage {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"startingPage" type: typeEnumerated code: 'lwfp'];
+        constantObj = [ITConstant constantWithName: @"startingPage" type: typeType code: 'lwfp'];
     return constantObj;
 }
 
 + (ITConstant *)string {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"string" type: typeEnumerated code: 'TEXT'];
+        constantObj = [ITConstant constantWithName: @"string" type: typeType code: 'TEXT'];
     return constantObj;
 }
 
 + (ITConstant *)styledClipboardText {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"styledClipboardText" type: typeEnumerated code: 'styl'];
+        constantObj = [ITConstant constantWithName: @"styledClipboardText" type: typeType code: 'styl'];
     return constantObj;
 }
 
 + (ITConstant *)styledText {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"styledText" type: typeEnumerated code: 'STXT'];
+        constantObj = [ITConstant constantWithName: @"styledText" type: typeType code: 'STXT'];
     return constantObj;
 }
 
 + (ITConstant *)suiteInfo {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"suiteInfo" type: typeEnumerated code: 'suin'];
+        constantObj = [ITConstant constantWithName: @"suiteInfo" type: typeType code: 'suin'];
     return constantObj;
 }
 
 + (ITConstant *)targetPrinter {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"targetPrinter" type: typeEnumerated code: 'trpr'];
+        constantObj = [ITConstant constantWithName: @"targetPrinter" type: typeType code: 'trpr'];
     return constantObj;
 }
 
 + (ITConstant *)textStyleInfo {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"textStyleInfo" type: typeEnumerated code: 'tsty'];
+        constantObj = [ITConstant constantWithName: @"textStyleInfo" type: typeType code: 'tsty'];
     return constantObj;
 }
 
 + (ITConstant *)time {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"time" type: typeEnumerated code: 'pTim'];
+        constantObj = [ITConstant constantWithName: @"time" type: typeType code: 'pTim'];
     return constantObj;
 }
 
 + (ITConstant *)track {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"track" type: typeEnumerated code: 'cTrk'];
+        constantObj = [ITConstant constantWithName: @"track" type: typeType code: 'cTrk'];
     return constantObj;
 }
 
 + (ITConstant *)trackCount {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"trackCount" type: typeEnumerated code: 'pTrC'];
+        constantObj = [ITConstant constantWithName: @"trackCount" type: typeType code: 'pTrC'];
     return constantObj;
 }
 
 + (ITConstant *)trackNumber {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"trackNumber" type: typeEnumerated code: 'pTrN'];
+        constantObj = [ITConstant constantWithName: @"trackNumber" type: typeType code: 'pTrN'];
     return constantObj;
 }
 
 + (ITConstant *)typeClass {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"typeClass" type: typeEnumerated code: 'type'];
+        constantObj = [ITConstant constantWithName: @"typeClass" type: typeType code: 'type'];
     return constantObj;
 }
 
 + (ITConstant *)unicodeText {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"unicodeText" type: typeEnumerated code: 'utxt'];
+        constantObj = [ITConstant constantWithName: @"unicodeText" type: typeType code: 'utxt'];
     return constantObj;
 }
 
 + (ITConstant *)unplayed {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"unplayed" type: typeEnumerated code: 'pUnp'];
+        constantObj = [ITConstant constantWithName: @"unplayed" type: typeType code: 'pUnp'];
     return constantObj;
 }
 
 + (ITConstant *)unsignedInteger {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"unsignedInteger" type: typeEnumerated code: 'magn'];
+        constantObj = [ITConstant constantWithName: @"unsignedInteger" type: typeType code: 'magn'];
     return constantObj;
 }
 
 + (ITConstant *)updateTracks {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"updateTracks" type: typeEnumerated code: 'pUTC'];
+        constantObj = [ITConstant constantWithName: @"updateTracks" type: typeType code: 'pUTC'];
     return constantObj;
 }
 
 + (ITConstant *)userPlaylist {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"userPlaylist" type: typeEnumerated code: 'cUsP'];
+        constantObj = [ITConstant constantWithName: @"userPlaylist" type: typeType code: 'cUsP'];
     return constantObj;
 }
 
 + (ITConstant *)utf16Text {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"utf16Text" type: typeEnumerated code: 'ut16'];
+        constantObj = [ITConstant constantWithName: @"utf16Text" type: typeType code: 'ut16'];
     return constantObj;
 }
 
 + (ITConstant *)utf8Text {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"utf8Text" type: typeEnumerated code: 'utf8'];
+        constantObj = [ITConstant constantWithName: @"utf8Text" type: typeType code: 'utf8'];
     return constantObj;
 }
 
 + (ITConstant *)version {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"version" type: typeEnumerated code: 'vers'];
+        constantObj = [ITConstant constantWithName: @"version" type: typeType code: 'vers'];
     return constantObj;
 }
 
 + (ITConstant *)version_ {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"version_" type: typeEnumerated code: 'vers'];
+        constantObj = [ITConstant constantWithName: @"version_" type: typeType code: 'vers'];
     return constantObj;
 }
 
 + (ITConstant *)videoKind {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"videoKind" type: typeEnumerated code: 'pVdK'];
+        constantObj = [ITConstant constantWithName: @"videoKind" type: typeType code: 'pVdK'];
     return constantObj;
 }
 
 + (ITConstant *)view {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"view" type: typeEnumerated code: 'pPly'];
+        constantObj = [ITConstant constantWithName: @"view" type: typeType code: 'pPly'];
     return constantObj;
 }
 
 + (ITConstant *)visible {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"visible" type: typeEnumerated code: 'pvis'];
+        constantObj = [ITConstant constantWithName: @"visible" type: typeType code: 'pvis'];
     return constantObj;
 }
 
 + (ITConstant *)visual {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"visual" type: typeEnumerated code: 'cVis'];
+        constantObj = [ITConstant constantWithName: @"visual" type: typeType code: 'cVis'];
     return constantObj;
 }
 
 + (ITConstant *)visualSize {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"visualSize" type: typeEnumerated code: 'pVSz'];
+        constantObj = [ITConstant constantWithName: @"visualSize" type: typeType code: 'pVSz'];
     return constantObj;
 }
 
 + (ITConstant *)visualsEnabled {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"visualsEnabled" type: typeEnumerated code: 'pVsE'];
+        constantObj = [ITConstant constantWithName: @"visualsEnabled" type: typeType code: 'pVsE'];
     return constantObj;
 }
 
 + (ITConstant *)volumeAdjustment {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"volumeAdjustment" type: typeEnumerated code: 'pAdj'];
+        constantObj = [ITConstant constantWithName: @"volumeAdjustment" type: typeType code: 'pAdj'];
     return constantObj;
 }
 
 + (ITConstant *)window {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"window" type: typeEnumerated code: 'cwin'];
+        constantObj = [ITConstant constantWithName: @"window" type: typeType code: 'cwin'];
     return constantObj;
 }
 
 + (ITConstant *)writingCode {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"writingCode" type: typeEnumerated code: 'psct'];
+        constantObj = [ITConstant constantWithName: @"writingCode" type: typeType code: 'psct'];
     return constantObj;
 }
 
 + (ITConstant *)yards {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"yards" type: typeEnumerated code: 'yard'];
+        constantObj = [ITConstant constantWithName: @"yards" type: typeType code: 'yard'];
     return constantObj;
 }
 
 + (ITConstant *)year {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"year" type: typeEnumerated code: 'pYr '];
+        constantObj = [ITConstant constantWithName: @"year" type: typeType code: 'pYr '];
     return constantObj;
 }
 
 + (ITConstant *)zoomable {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"zoomable" type: typeEnumerated code: 'iszm'];
+        constantObj = [ITConstant constantWithName: @"zoomable" type: typeType code: 'iszm'];
     return constantObj;
 }
 
 + (ITConstant *)zoomed {
     static ITConstant *constantObj;
     if (!constantObj)
-        constantObj = [ITConstant constantWithName: @"zoomed" type: typeEnumerated code: 'pzum'];
+        constantObj = [ITConstant constantWithName: @"zoomed" type: typeType code: 'pzum'];
     return constantObj;
 }
 
 @end
-
 

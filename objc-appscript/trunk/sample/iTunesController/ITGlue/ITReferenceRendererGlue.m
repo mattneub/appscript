@@ -1,15 +1,13 @@
 /*
  * ITReferenceRendererGlue.m
- *
  * /Applications/iTunes.app
- * osaglue 0.4.0
+ * osaglue 0.5.1
  *
  */
 
 #import "ITReferenceRendererGlue.h"
 
 @implementation ITReferenceRenderer
-
 - (NSString *)propertyByCode:(OSType)code {
     switch (code) {
         case 'pEQp': return @"EQ";
@@ -100,8 +98,10 @@
         case 'ppos': return @"position";
         case 'pEQA': return @"preamp";
         case 'lwpf': return @"printerFeatures";
+        case 'pALL': return @"properties";
         case 'pRte': return @"rating";
         case 'pRtk': return @"ratingKind";
+        case 'pRaw': return @"rawData";
         case 'lwqt': return @"requestedPrintTime";
         case 'prsz': return @"resizable";
         case 'pSRt': return @"sampleRate";
@@ -142,7 +142,6 @@
         case 'pYr ': return @"year";
         case 'iszm': return @"zoomable";
         case 'pzum': return @"zoomed";
-
         default: return nil;
     }
 }
@@ -174,7 +173,6 @@
         case 'cUsP': return @"userPlaylists";
         case 'cVis': return @"visuals";
         case 'cwin': return @"windows";
-
         default: return nil;
     }
 }
@@ -184,3 +182,4 @@
 }
 
 @end
+

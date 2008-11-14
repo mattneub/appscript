@@ -1,8 +1,7 @@
 /*
  * MLReferenceGlue.m
- *
  * /Applications/Mail.app
- * osaglue 0.4.0
+ * osaglue 0.5.1
  *
  */
 
@@ -10,9 +9,27 @@
 
 @implementation MLReference
 
-- (NSString *)description {
-	return [MLReferenceRenderer formatObject: AS_aemReference appData: AS_appData];
+/* +app, +con, +its methods can be used in place of MLApp, MLCon, MLIts macros */
+
++ (MLReference *)app {
+    return [self referenceWithAppData: nil aemReference: AEMApp];
 }
+
++ (MLReference *)con {
+    return [self referenceWithAppData: nil aemReference: AEMCon];
+}
+
++ (MLReference *)its {
+    return [self referenceWithAppData: nil aemReference: AEMIts];
+}
+
+
+/* ********************************* */
+
+- (NSString *)description {
+    return [MLReferenceRenderer formatObject: AS_aemReference appData: AS_appData];
+}
+
 
 /* Commands */
 
@@ -1504,9 +1521,10 @@
 }
 
 
-/***********************************/
+/* ********************************* */
 
-// ordinal selectors
+
+/* ordinal selectors */
 
 - (MLReference *)first {
     return [MLReference referenceWithAppData: AS_appData
@@ -1528,19 +1546,20 @@
                                  aemReference: [AS_aemReference any]];
 }
 
-// by-index, by-name, by-id selectors
- 
+
+/* by-index, by-name, by-id selectors */
+
 - (MLReference *)at:(long)index {
     return [MLReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference at: index]];
 }
 
-- (MLReference *)byIndex:(id)index { // index is normally NSNumber, but may occasionally be other types
+- (MLReference *)byIndex:(id)index {
     return [MLReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference byIndex: index]];
 }
 
-- (MLReference *)byName:(NSString *)name {
+- (MLReference *)byName:(id)name {
     return [MLReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference byName: name]];
 }
@@ -1550,7 +1569,8 @@
                                  aemReference: [AS_aemReference byID: id_]];
 }
 
-// by-relative-position selectors
+
+/* by-relative-position selectors */
 
 - (MLReference *)previous:(ASConstant *)class_ {
     return [MLReference referenceWithAppData: AS_appData
@@ -1562,7 +1582,8 @@
                                  aemReference: [AS_aemReference next: [class_ AS_code]]];
 }
 
-// by-range selector
+
+/* by-range selector */
 
 - (MLReference *)at:(long)fromIndex to:(long)toIndex {
     return [MLReference referenceWithAppData: AS_appData
@@ -1579,15 +1600,16 @@
                                  aemReference: [AS_aemReference byRange: fromObject to: toObject]];
 }
 
-// by-test selector
+
+/* by-test selector */
 
 - (MLReference *)byTest:(MLReference *)testReference {
-    // note: getting AS_aemReference won't work for ASDynamicReference
     return [MLReference referenceWithAppData: AS_appData
                     aemReference: [AS_aemReference byTest: [testReference AS_aemReference]]];
 }
 
-// insertion location selectors
+
+/* insertion location selectors */
 
 - (MLReference *)beginning {
     return [MLReference referenceWithAppData: AS_appData
@@ -1609,7 +1631,8 @@
                                  aemReference: [AS_aemReference after]];
 }
 
-// Comparison and logic tests
+
+/* Comparison and logic tests */
 
 - (MLReference *)greaterThan:(id)object {
     return [MLReference referenceWithAppData: AS_appData
@@ -1677,5 +1700,4 @@
 }
 
 @end
-
 

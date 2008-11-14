@@ -1,24 +1,29 @@
 /*
  * SEReferenceGlue.h
- *
  * /System/Library/CoreServices/System Events.app
- * osaglue 0.4.0
+ * osaglue 0.5.1
  *
  */
 
 #import <Foundation/Foundation.h>
-
-
 #import "Appscript/Appscript.h"
 #import "SECommandGlue.h"
 #import "SEReferenceRendererGlue.h"
-
 #define SEApp ((SEReference *)[SEReference referenceWithAppData: nil aemReference: AEMApp])
 #define SECon ((SEReference *)[SEReference referenceWithAppData: nil aemReference: AEMCon])
 #define SEIts ((SEReference *)[SEReference referenceWithAppData: nil aemReference: AEMIts])
 
-
 @interface SEReference : ASReference
+
+/* +app, +con, +its methods can be used in place of SEApp, SECon, SEIts macros */
+
++ (SEReference *)app;
++ (SEReference *)con;
++ (SEReference *)its;
+
+/* ********************************* */
+
+- (NSString *)description;
 
 /* Commands */
 
@@ -471,23 +476,47 @@
 - (SEReference *)zone;
 - (SEReference *)zoomable;
 - (SEReference *)zoomed;
+
+/* ********************************* */
+
+
+/* ordinal selectors */
+
 - (SEReference *)first;
 - (SEReference *)middle;
 - (SEReference *)last;
 - (SEReference *)any;
+
+/* by-index, by-name, by-id selectors */
+
 - (SEReference *)at:(long)index;
 - (SEReference *)byIndex:(id)index;
-- (SEReference *)byName:(NSString *)name;
+- (SEReference *)byName:(id)name;
 - (SEReference *)byID:(id)id_;
+
+/* by-relative-position selectors */
+
 - (SEReference *)previous:(ASConstant *)class_;
 - (SEReference *)next:(ASConstant *)class_;
+
+/* by-range selector */
+
 - (SEReference *)at:(long)fromIndex to:(long)toIndex;
 - (SEReference *)byRange:(id)fromObject to:(id)toObject;
+
+/* by-test selector */
+
 - (SEReference *)byTest:(SEReference *)testReference;
+
+/* insertion location selectors */
+
 - (SEReference *)beginning;
 - (SEReference *)end;
 - (SEReference *)before;
 - (SEReference *)after;
+
+/* Comparison and logic tests */
+
 - (SEReference *)greaterThan:(id)object;
 - (SEReference *)greaterOrEquals:(id)object;
 - (SEReference *)equals:(id)object;
@@ -502,5 +531,4 @@
 - (SEReference *)OR:(id)remainingOperands;
 - (SEReference *)NOT;
 @end
-
 

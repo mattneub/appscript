@@ -1,24 +1,29 @@
 /*
  * FNReferenceGlue.h
- *
  * /System/Library/CoreServices/Finder.app
- * osaglue 0.4.0
+ * osaglue 0.5.1
  *
  */
 
 #import <Foundation/Foundation.h>
-
-
 #import "Appscript/Appscript.h"
 #import "FNCommandGlue.h"
 #import "FNReferenceRendererGlue.h"
-
 #define FNApp ((FNReference *)[FNReference referenceWithAppData: nil aemReference: AEMApp])
 #define FNCon ((FNReference *)[FNReference referenceWithAppData: nil aemReference: AEMCon])
 #define FNIts ((FNReference *)[FNReference referenceWithAppData: nil aemReference: AEMIts])
 
-
 @interface FNReference : ASReference
+
+/* +app, +con, +its methods can be used in place of FNApp, FNCon, FNIts macros */
+
++ (FNReference *)app;
++ (FNReference *)con;
++ (FNReference *)its;
+
+/* ********************************* */
+
+- (NSString *)description;
 
 /* Commands */
 
@@ -250,23 +255,47 @@
 - (FNReference *)window;
 - (FNReference *)zoomable;
 - (FNReference *)zoomed;
+
+/* ********************************* */
+
+
+/* ordinal selectors */
+
 - (FNReference *)first;
 - (FNReference *)middle;
 - (FNReference *)last;
 - (FNReference *)any;
+
+/* by-index, by-name, by-id selectors */
+
 - (FNReference *)at:(long)index;
 - (FNReference *)byIndex:(id)index;
-- (FNReference *)byName:(NSString *)name;
+- (FNReference *)byName:(id)name;
 - (FNReference *)byID:(id)id_;
+
+/* by-relative-position selectors */
+
 - (FNReference *)previous:(ASConstant *)class_;
 - (FNReference *)next:(ASConstant *)class_;
+
+/* by-range selector */
+
 - (FNReference *)at:(long)fromIndex to:(long)toIndex;
 - (FNReference *)byRange:(id)fromObject to:(id)toObject;
+
+/* by-test selector */
+
 - (FNReference *)byTest:(FNReference *)testReference;
+
+/* insertion location selectors */
+
 - (FNReference *)beginning;
 - (FNReference *)end;
 - (FNReference *)before;
 - (FNReference *)after;
+
+/* Comparison and logic tests */
+
 - (FNReference *)greaterThan:(id)object;
 - (FNReference *)greaterOrEquals:(id)object;
 - (FNReference *)equals:(id)object;
@@ -281,5 +310,4 @@
 - (FNReference *)OR:(id)remainingOperands;
 - (FNReference *)NOT;
 @end
-
 

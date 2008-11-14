@@ -1,16 +1,12 @@
 /*
  * SEConstantGlue.h
- *
  * /System/Library/CoreServices/System Events.app
- * osaglue 0.4.0
+ * osaglue 0.5.1
  *
  */
 
 #import <Foundation/Foundation.h>
-
-
 #import "Appscript/Appscript.h"
-
 
 @interface SEConstant : ASConstant
 + (id)constantWithCode:(OSType)code_;
@@ -591,5 +587,4 @@
 + (SEConstant *)zoomable;
 + (SEConstant *)zoomed;
 @end
-
 

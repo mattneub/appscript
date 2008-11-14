@@ -1,16 +1,12 @@
 /*
  * ITConstantGlue.h
- *
  * /Applications/iTunes.app
- * osaglue 0.4.0
+ * osaglue 0.5.1
  *
  */
 
 #import <Foundation/Foundation.h>
-
-
 #import "Appscript/Appscript.h"
-
 
 @interface ITConstant : ASConstant
 + (id)constantWithCode:(OSType)code_;
@@ -34,7 +30,7 @@
 + (ITConstant *)artists;
 + (ITConstant *)ask;
 + (ITConstant *)audioCD;
-+ (ITConstant *)case;
++ (ITConstant *)case_;
 + (ITConstant *)cdInsert;
 + (ITConstant *)composers;
 + (ITConstant *)computed;
@@ -277,12 +273,14 @@
 + (ITConstant *)printSettings;
 + (ITConstant *)printerFeatures;
 + (ITConstant *)processSerialNumber;
++ (ITConstant *)properties;
 + (ITConstant *)property;
 + (ITConstant *)propertyInfo;
 + (ITConstant *)quarts;
 + (ITConstant *)radioTunerPlaylist;
 + (ITConstant *)rating;
 + (ITConstant *)ratingKind;
++ (ITConstant *)rawData;
 + (ITConstant *)record;
 + (ITConstant *)reference;
 + (ITConstant *)requestedPrintTime;
@@ -354,5 +352,4 @@
 + (ITConstant *)zoomable;
 + (ITConstant *)zoomed;
 @end
-
 

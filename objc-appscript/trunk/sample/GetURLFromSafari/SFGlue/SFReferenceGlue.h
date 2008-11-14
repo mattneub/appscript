@@ -1,24 +1,29 @@
 /*
  * SFReferenceGlue.h
- *
  * /Applications/Safari.app
- * osaglue 0.4.0
+ * osaglue 0.5.1
  *
  */
 
 #import <Foundation/Foundation.h>
-
-
 #import "Appscript/Appscript.h"
 #import "SFCommandGlue.h"
 #import "SFReferenceRendererGlue.h"
-
 #define SFApp ((SFReference *)[SFReference referenceWithAppData: nil aemReference: AEMApp])
 #define SFCon ((SFReference *)[SFReference referenceWithAppData: nil aemReference: AEMCon])
 #define SFIts ((SFReference *)[SFReference referenceWithAppData: nil aemReference: AEMIts])
 
-
 @interface SFReference : ASReference
+
+/* +app, +con, +its methods can be used in place of SFApp, SFCon, SFIts macros */
+
++ (SFReference *)app;
++ (SFReference *)con;
++ (SFReference *)its;
+
+/* ********************************* */
+
+- (NSString *)description;
 
 /* Commands */
 
@@ -121,23 +126,47 @@
 - (SFReference *)visible;
 - (SFReference *)zoomable;
 - (SFReference *)zoomed;
+
+/* ********************************* */
+
+
+/* ordinal selectors */
+
 - (SFReference *)first;
 - (SFReference *)middle;
 - (SFReference *)last;
 - (SFReference *)any;
+
+/* by-index, by-name, by-id selectors */
+
 - (SFReference *)at:(long)index;
 - (SFReference *)byIndex:(id)index;
-- (SFReference *)byName:(NSString *)name;
+- (SFReference *)byName:(id)name;
 - (SFReference *)byID:(id)id_;
+
+/* by-relative-position selectors */
+
 - (SFReference *)previous:(ASConstant *)class_;
 - (SFReference *)next:(ASConstant *)class_;
+
+/* by-range selector */
+
 - (SFReference *)at:(long)fromIndex to:(long)toIndex;
 - (SFReference *)byRange:(id)fromObject to:(id)toObject;
+
+/* by-test selector */
+
 - (SFReference *)byTest:(SFReference *)testReference;
+
+/* insertion location selectors */
+
 - (SFReference *)beginning;
 - (SFReference *)end;
 - (SFReference *)before;
 - (SFReference *)after;
+
+/* Comparison and logic tests */
+
 - (SFReference *)greaterThan:(id)object;
 - (SFReference *)greaterOrEquals:(id)object;
 - (SFReference *)equals:(id)object;
@@ -152,5 +181,4 @@
 - (SFReference *)OR:(id)remainingOperands;
 - (SFReference *)NOT;
 @end
-
 

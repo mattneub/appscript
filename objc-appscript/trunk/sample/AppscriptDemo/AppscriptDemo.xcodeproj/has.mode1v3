@@ -329,11 +329,11 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>4F0FB0CF0E39FEF2008AA167</string>
+										<string>4FA486650ECE037900DB9A71</string>
 										<key>history</key>
 										<array>
 											<string>4F0FAF710E33C27F008AA167</string>
-											<string>4F0FAF740E33C27F008AA167</string>
+											<string>4F2F3B180EAF93FB00A6BFF0</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -395,9 +395,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>4F0FB0D00E39FEF2008AA167</string>
+				<string>4FA486660ECE037900DB9A71</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>4F0FB0D10E39FEF2008AA167</string>
+				<string>4FA486670ECE037900DB9A71</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -529,9 +529,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>1C78EAAD065D492600B07095</string>
-		<string>1CD10A99069EF8BA00B06720</string>
-		<string>4F7791520CD8BA6000125605</string>
 		<string>/Users/has/Dev/appscript/objc-appscript/sample/AppscriptDemo/AppscriptDemo.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
@@ -612,7 +609,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>4F7791520CD8BA6000125605</string>
-				<string>4F0FB0C70E39FEEF008AA167</string>
+				<string>4F2F3AD00EAF8E7F00A6BFF0</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
@@ -732,13 +729,13 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1CD10A99069EF8BA00B06720</string>
-				<string>4F0FB0C80E39FEEF008AA167</string>
+				<string>4F2F3AD10EAF8E7F00A6BFF0</string>
 				<string>1C162984064C10D400B95A72</string>
-				<string>4F0FB0C90E39FEEF008AA167</string>
-				<string>4F0FB0CA0E39FEEF008AA167</string>
-				<string>4F0FB0CB0E39FEEF008AA167</string>
-				<string>4F0FB0CC0E39FEEF008AA167</string>
-				<string>4F0FB0CD0E39FEEF008AA167</string>
+				<string>4F2F3AD20EAF8E7F00A6BFF0</string>
+				<string>4F2F3AD30EAF8E7F00A6BFF0</string>
+				<string>4F2F3AD40EAF8E7F00A6BFF0</string>
+				<string>4F2F3AD50EAF8E7F00A6BFF0</string>
+				<string>4F2F3AD60EAF8E7F00A6BFF0</string>
 			</array>
 			<key>ToolbarConfiguration</key>
 			<string>xcode.toolbar.config.debugV3</string>
@@ -896,7 +893,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C78EAAD065D492600B07095</string>
-				<string>4F0FB0CE0E39FEEF008AA167</string>
+				<string>4F2F3AD70EAF8E7F00A6BFF0</string>
 				<string>1C78EAAC065D492600B07095</string>
 			</array>
 			<key>ToolbarConfiguration</key>

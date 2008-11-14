@@ -1,15 +1,13 @@
 /*
  * SEReferenceRendererGlue.m
- *
  * /System/Library/CoreServices/System Events.app
- * osaglue 0.4.0
+ * osaglue 0.5.1
  *
  */
 
 #import "SEReferenceRendererGlue.h"
 
 @implementation SEReferenceRenderer
-
 - (NSString *)propertyByCode:(OSType)code {
     switch (code) {
         case 'dhas': return @"CDAndDVDPreferences";
@@ -261,7 +259,6 @@
         case 'zone': return @"zone";
         case 'iszm': return @"zoomable";
         case 'pzum': return @"zoomed";
-
         default: return nil;
     }
 }
@@ -370,7 +367,6 @@
         case 'vali': return @"valueIndicators";
         case 'cwin': return @"windows";
         case 'cwor': return @"words";
-
         default: return nil;
     }
 }
@@ -380,3 +376,4 @@
 }
 
 @end
+

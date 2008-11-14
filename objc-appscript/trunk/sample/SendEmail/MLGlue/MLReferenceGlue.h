@@ -1,24 +1,29 @@
 /*
  * MLReferenceGlue.h
- *
  * /Applications/Mail.app
- * osaglue 0.4.0
+ * osaglue 0.5.1
  *
  */
 
 #import <Foundation/Foundation.h>
-
-
 #import "Appscript/Appscript.h"
 #import "MLCommandGlue.h"
 #import "MLReferenceRendererGlue.h"
-
 #define MLApp ((MLReference *)[MLReference referenceWithAppData: nil aemReference: AEMApp])
 #define MLCon ((MLReference *)[MLReference referenceWithAppData: nil aemReference: AEMCon])
 #define MLIts ((MLReference *)[MLReference referenceWithAppData: nil aemReference: AEMIts])
 
-
 @interface MLReference : ASReference
+
+/* +app, +con, +its methods can be used in place of MLApp, MLCon, MLIts macros */
+
++ (MLReference *)app;
++ (MLReference *)con;
++ (MLReference *)its;
+
+/* ********************************* */
+
+- (NSString *)description;
 
 /* Commands */
 
@@ -287,23 +292,47 @@
 - (MLReference *)window;
 - (MLReference *)zoomable;
 - (MLReference *)zoomed;
+
+/* ********************************* */
+
+
+/* ordinal selectors */
+
 - (MLReference *)first;
 - (MLReference *)middle;
 - (MLReference *)last;
 - (MLReference *)any;
+
+/* by-index, by-name, by-id selectors */
+
 - (MLReference *)at:(long)index;
 - (MLReference *)byIndex:(id)index;
-- (MLReference *)byName:(NSString *)name;
+- (MLReference *)byName:(id)name;
 - (MLReference *)byID:(id)id_;
+
+/* by-relative-position selectors */
+
 - (MLReference *)previous:(ASConstant *)class_;
 - (MLReference *)next:(ASConstant *)class_;
+
+/* by-range selector */
+
 - (MLReference *)at:(long)fromIndex to:(long)toIndex;
 - (MLReference *)byRange:(id)fromObject to:(id)toObject;
+
+/* by-test selector */
+
 - (MLReference *)byTest:(MLReference *)testReference;
+
+/* insertion location selectors */
+
 - (MLReference *)beginning;
 - (MLReference *)end;
 - (MLReference *)before;
 - (MLReference *)after;
+
+/* Comparison and logic tests */
+
 - (MLReference *)greaterThan:(id)object;
 - (MLReference *)greaterOrEquals:(id)object;
 - (MLReference *)equals:(id)object;
@@ -318,5 +347,4 @@
 - (MLReference *)OR:(id)remainingOperands;
 - (MLReference *)NOT;
 @end
-
 

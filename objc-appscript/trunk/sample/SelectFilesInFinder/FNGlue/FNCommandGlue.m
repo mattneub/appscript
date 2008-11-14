@@ -1,21 +1,21 @@
 /*
  * FNCommandGlue.m
- *
  * /System/Library/CoreServices/Finder.app
- * osaglue 0.4.0
+ * osaglue 0.5.1
  *
  */
 
 #import "FNCommandGlue.h"
 
 @implementation FNCommand
-- (NSString *)AS_formatObject:(id)obj appData:(id)appData{
+- (NSString *)AS_formatObject:(id)obj appData:(id)appData {
     return [FNReferenceRenderer formatObject: obj appData: appData];
 }
+
 @end
 
-@implementation FNActivateCommand
 
+@implementation FNActivateCommand
 - (NSString *)AS_commandName {
     return @"activate";
 }
@@ -24,10 +24,10 @@
 
 
 @implementation FNCleanUpCommand
-
 - (FNCleanUpCommand *)by:(id)value {
     [AS_event setParameter: value forKeyword: 'by  '];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -46,7 +46,6 @@
 
 
 @implementation FNCloseCommand
-
 - (NSString *)AS_commandName {
     return @"close";
 }
@@ -55,7 +54,6 @@
 
 
 @implementation FNCopy_Command
-
 - (NSString *)AS_commandName {
     return @"copy_";
 }
@@ -64,10 +62,10 @@
 
 
 @implementation FNCountCommand
-
 - (FNCountCommand *)each:(id)value {
     [AS_event setParameter: value forKeyword: 'kocl'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -86,10 +84,10 @@
 
 
 @implementation FNDataSizeCommand
-
 - (FNDataSizeCommand *)as:(id)value {
     [AS_event setParameter: value forKeyword: 'rtyp'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -108,7 +106,6 @@
 
 
 @implementation FNDeleteCommand
-
 - (NSString *)AS_commandName {
     return @"delete";
 }
@@ -117,20 +114,22 @@
 
 
 @implementation FNDuplicateCommand
-
 - (FNDuplicateCommand *)replacing:(id)value {
     [AS_event setParameter: value forKeyword: 'alrp'];
     return self;
+
 }
 
 - (FNDuplicateCommand *)routingSuppressed:(id)value {
     [AS_event setParameter: value forKeyword: 'rout'];
     return self;
+
 }
 
 - (FNDuplicateCommand *)to:(id)value {
     [AS_event setParameter: value forKeyword: 'insh'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -153,7 +152,6 @@
 
 
 @implementation FNEjectCommand
-
 - (NSString *)AS_commandName {
     return @"eject";
 }
@@ -162,10 +160,10 @@
 
 
 @implementation FNEmptyCommand
-
 - (FNEmptyCommand *)security:(id)value {
     [AS_event setParameter: value forKeyword: 'sec?'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -184,7 +182,6 @@
 
 
 @implementation FNEraseCommand
-
 - (NSString *)AS_commandName {
     return @"erase";
 }
@@ -193,7 +190,6 @@
 
 
 @implementation FNExistsCommand
-
 - (NSString *)AS_commandName {
     return @"exists";
 }
@@ -202,7 +198,6 @@
 
 
 @implementation FNGetCommand
-
 - (NSString *)AS_commandName {
     return @"get";
 }
@@ -211,7 +206,6 @@
 
 
 @implementation FNLaunchCommand
-
 - (NSString *)AS_commandName {
     return @"launch";
 }
@@ -220,25 +214,28 @@
 
 
 @implementation FNMakeCommand
-
 - (FNMakeCommand *)at:(id)value {
     [AS_event setParameter: value forKeyword: 'insh'];
     return self;
+
 }
 
 - (FNMakeCommand *)new_:(id)value {
     [AS_event setParameter: value forKeyword: 'kocl'];
     return self;
+
 }
 
 - (FNMakeCommand *)to:(id)value {
     [AS_event setParameter: value forKeyword: 'to  '];
     return self;
+
 }
 
 - (FNMakeCommand *)withProperties:(id)value {
     [AS_event setParameter: value forKeyword: 'prdt'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -263,25 +260,28 @@
 
 
 @implementation FNMoveCommand
-
 - (FNMoveCommand *)positionedAt:(id)value {
     [AS_event setParameter: value forKeyword: 'mvpl'];
     return self;
+
 }
 
 - (FNMoveCommand *)replacing:(id)value {
     [AS_event setParameter: value forKeyword: 'alrp'];
     return self;
+
 }
 
 - (FNMoveCommand *)routingSuppressed:(id)value {
     [AS_event setParameter: value forKeyword: 'rout'];
     return self;
+
 }
 
 - (FNMoveCommand *)to:(id)value {
     [AS_event setParameter: value forKeyword: 'insh'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -306,15 +306,16 @@
 
 
 @implementation FNOpenCommand
-
 - (FNOpenCommand *)using:(id)value {
     [AS_event setParameter: value forKeyword: 'usin'];
     return self;
+
 }
 
 - (FNOpenCommand *)withProperties:(id)value {
     [AS_event setParameter: value forKeyword: 'prdt'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -335,10 +336,10 @@
 
 
 @implementation FNOpenLocationCommand
-
 - (FNOpenLocationCommand *)window:(id)value {
     [AS_event setParameter: value forKeyword: 'WIND'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -357,10 +358,10 @@
 
 
 @implementation FNPrintCommand
-
 - (FNPrintCommand *)withProperties:(id)value {
     [AS_event setParameter: value forKeyword: 'prdt'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -379,7 +380,6 @@
 
 
 @implementation FNQuitCommand
-
 - (NSString *)AS_commandName {
     return @"quit";
 }
@@ -388,7 +388,6 @@
 
 
 @implementation FNReopenCommand
-
 - (NSString *)AS_commandName {
     return @"reopen";
 }
@@ -397,7 +396,6 @@
 
 
 @implementation FNRestartCommand
-
 - (NSString *)AS_commandName {
     return @"restart";
 }
@@ -406,7 +404,6 @@
 
 
 @implementation FNRevealCommand
-
 - (NSString *)AS_commandName {
     return @"reveal";
 }
@@ -415,7 +412,6 @@
 
 
 @implementation FNRunCommand
-
 - (NSString *)AS_commandName {
     return @"run";
 }
@@ -424,7 +420,6 @@
 
 
 @implementation FNSelectCommand
-
 - (NSString *)AS_commandName {
     return @"select";
 }
@@ -433,10 +428,10 @@
 
 
 @implementation FNSetCommand
-
 - (FNSetCommand *)to:(id)value {
     [AS_event setParameter: value forKeyword: 'data'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -455,7 +450,6 @@
 
 
 @implementation FNShutDownCommand
-
 - (NSString *)AS_commandName {
     return @"shutDown";
 }
@@ -464,7 +458,6 @@
 
 
 @implementation FNSleepCommand
-
 - (NSString *)AS_commandName {
     return @"sleep";
 }
@@ -473,10 +466,10 @@
 
 
 @implementation FNSortCommand
-
 - (FNSortCommand *)by:(id)value {
     [AS_event setParameter: value forKeyword: 'by  '];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -495,15 +488,16 @@
 
 
 @implementation FNUpdateCommand
-
 - (FNUpdateCommand *)necessity:(id)value {
     [AS_event setParameter: value forKeyword: 'nec?'];
     return self;
+
 }
 
 - (FNUpdateCommand *)registeringApplications:(id)value {
     [AS_event setParameter: value forKeyword: 'reg?'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -521,5 +515,4 @@
 }
 
 @end
-
 

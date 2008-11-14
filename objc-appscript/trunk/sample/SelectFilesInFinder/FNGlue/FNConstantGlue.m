@@ -1,15 +1,13 @@
 /*
  * FNConstantGlue.m
- *
  * /System/Library/CoreServices/Finder.app
- * osaglue 0.4.0
+ * osaglue 0.5.1
  *
  */
 
 #import "FNConstantGlue.h"
 
 @implementation FNConstant
-
 + (id)constantWithCode:(OSType)code_ {
     switch (code_) {
         case 'padv': return [self AdvancedPreferencesPanel];
@@ -2865,5 +2863,4 @@
 }
 
 @end
-
 

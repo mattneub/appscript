@@ -1,15 +1,13 @@
 /*
  * FNReferenceRendererGlue.m
- *
  * /System/Library/CoreServices/Finder.app
- * osaglue 0.4.0
+ * osaglue 0.5.1
  *
  */
 
 #import "FNReferenceRendererGlue.h"
 
 @implementation FNReferenceRenderer
-
 - (NSString *)propertyByCode:(OSType)code {
     switch (code) {
         case 'pfrp': return @"FinderPreferences";
@@ -143,7 +141,6 @@
         case 'cwin': return @"window";
         case 'iszm': return @"zoomable";
         case 'pzum': return @"zoomed";
-
         default: return nil;
     }
 }
@@ -182,7 +179,6 @@
         case 'prcs': return @"processes";
         case 'ctrs': return @"trashObject";
         case 'cwin': return @"windows";
-
         default: return nil;
     }
 }
@@ -192,3 +188,4 @@
 }
 
 @end
+

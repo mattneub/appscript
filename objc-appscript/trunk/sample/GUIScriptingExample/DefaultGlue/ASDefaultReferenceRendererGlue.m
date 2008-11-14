@@ -1,27 +1,25 @@
 /*
  * ASDefaultReferenceRendererGlue.m
- *
  * <default terminology>
- * osaglue 0.4.0
+ * osaglue 0.5.1
  *
  */
 
 #import "ASDefaultReferenceRendererGlue.h"
 
 @implementation ASDefaultReferenceRenderer
-
 - (NSString *)propertyByCode:(OSType)code {
     switch (code) {
         case 'pcls': return @"class_";
         case 'ID  ': return @"id_";
-
+        case 'pALL': return @"properties";
         default: return nil;
     }
 }
 
 - (NSString *)elementByCode:(OSType)code {
     switch (code) {
-
+        case 'cobj': return @"items";
         default: return nil;
     }
 }
@@ -31,3 +29,4 @@
 }
 
 @end
+

@@ -1,15 +1,13 @@
 /*
  * ITConstantGlue.m
- *
  * /Applications/iTunes.app
- * osaglue 0.4.0
+ * osaglue 0.5.1
  *
  */
 
 #import "ITConstantGlue.h"
 
 @implementation ITConstant
-
 + (id)constantWithCode:(OSType)code_ {
     switch (code_) {
         case 'apr ': return [self April];
@@ -258,6 +256,7 @@
         case 'pset': return [self printSettings];
         case 'lwpf': return [self printerFeatures];
         case 'psn ': return [self processSerialNumber];
+        case 'pALL': return [self properties];
         case 'prop': return [self property];
         case 'pinf': return [self propertyInfo];
         case 'punc': return [self punctuation];
@@ -2156,6 +2155,13 @@
     return constantObj;
 }
 
++ (ITConstant *)properties {
+    static ITConstant *constantObj;
+    if (!constantObj)
+        constantObj = [ITConstant constantWithName: @"properties" type: typeType code: 'pALL'];
+    return constantObj;
+}
+
 + (ITConstant *)property {
     static ITConstant *constantObj;
     if (!constantObj)
@@ -2696,5 +2702,4 @@
 }
 
 @end
-
 

@@ -1,16 +1,12 @@
 /*
  * SFConstantGlue.h
- *
  * /Applications/Safari.app
- * osaglue 0.4.0
+ * osaglue 0.5.1
  *
  */
 
 #import <Foundation/Foundation.h>
-
-
 #import "Appscript/Appscript.h"
-
 
 @interface SFConstant : ASConstant
 + (id)constantWithCode:(OSType)code_;
@@ -206,5 +202,4 @@
 + (SFConstant *)zoomable;
 + (SFConstant *)zoomed;
 @end
-
 

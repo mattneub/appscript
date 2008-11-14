@@ -1,21 +1,21 @@
 /*
  * MLCommandGlue.m
- *
  * /Applications/Mail.app
- * osaglue 0.4.0
+ * osaglue 0.5.1
  *
  */
 
 #import "MLCommandGlue.h"
 
 @implementation MLCommand
-- (NSString *)AS_formatObject:(id)obj appData:(id)appData{
+- (NSString *)AS_formatObject:(id)obj appData:(id)appData {
     return [MLReferenceRenderer formatObject: obj appData: appData];
 }
+
 @end
 
-@implementation MLGetURLCommand
 
+@implementation MLGetURLCommand
 - (NSString *)AS_commandName {
     return @"GetURL";
 }
@@ -24,7 +24,6 @@
 
 
 @implementation MLActivateCommand
-
 - (NSString *)AS_commandName {
     return @"activate";
 }
@@ -33,7 +32,6 @@
 
 
 @implementation MLBounceCommand
-
 - (NSString *)AS_commandName {
     return @"bounce";
 }
@@ -42,10 +40,10 @@
 
 
 @implementation MLCheckForNewMailCommand
-
 - (MLCheckForNewMailCommand *)for_:(id)value {
     [AS_event setParameter: value forKeyword: 'acna'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -64,15 +62,16 @@
 
 
 @implementation MLCloseCommand
-
 - (MLCloseCommand *)saving:(id)value {
     [AS_event setParameter: value forKeyword: 'savo'];
     return self;
+
 }
 
 - (MLCloseCommand *)savingIn:(id)value {
     [AS_event setParameter: value forKeyword: 'kfil'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -93,10 +92,10 @@
 
 
 @implementation MLCountCommand
-
 - (MLCountCommand *)each:(id)value {
     [AS_event setParameter: value forKeyword: 'kocl'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -115,7 +114,6 @@
 
 
 @implementation MLDeleteCommand
-
 - (NSString *)AS_commandName {
     return @"delete";
 }
@@ -124,10 +122,10 @@
 
 
 @implementation MLDuplicateCommand
-
 - (MLDuplicateCommand *)to:(id)value {
     [AS_event setParameter: value forKeyword: 'insh'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -146,7 +144,6 @@
 
 
 @implementation MLExistsCommand
-
 - (NSString *)AS_commandName {
     return @"exists";
 }
@@ -155,7 +152,6 @@
 
 
 @implementation MLExtractAddressFromCommand
-
 - (NSString *)AS_commandName {
     return @"extractAddressFrom";
 }
@@ -164,7 +160,6 @@
 
 
 @implementation MLExtractNameFromCommand
-
 - (NSString *)AS_commandName {
     return @"extractNameFrom";
 }
@@ -173,10 +168,10 @@
 
 
 @implementation MLForwardCommand
-
 - (MLForwardCommand *)openingWindow:(id)value {
     [AS_event setParameter: value forKeyword: 'ropw'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -195,7 +190,6 @@
 
 
 @implementation MLGetCommand
-
 - (NSString *)AS_commandName {
     return @"get";
 }
@@ -204,10 +198,10 @@
 
 
 @implementation MLImportMailMailboxCommand
-
 - (MLImportMailMailboxCommand *)at:(id)value {
     [AS_event setParameter: value forKeyword: 'mbpt'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -226,7 +220,6 @@
 
 
 @implementation MLLaunchCommand
-
 - (NSString *)AS_commandName {
     return @"launch";
 }
@@ -235,7 +228,6 @@
 
 
 @implementation MLMailtoCommand
-
 - (NSString *)AS_commandName {
     return @"mailto";
 }
@@ -244,25 +236,28 @@
 
 
 @implementation MLMakeCommand
-
 - (MLMakeCommand *)at:(id)value {
     [AS_event setParameter: value forKeyword: 'insh'];
     return self;
+
 }
 
 - (MLMakeCommand *)new_:(id)value {
     [AS_event setParameter: value forKeyword: 'kocl'];
     return self;
+
 }
 
 - (MLMakeCommand *)withData:(id)value {
     [AS_event setParameter: value forKeyword: 'data'];
     return self;
+
 }
 
 - (MLMakeCommand *)withProperties:(id)value {
     [AS_event setParameter: value forKeyword: 'prdt'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -287,10 +282,10 @@
 
 
 @implementation MLMoveCommand
-
 - (MLMoveCommand *)to:(id)value {
     [AS_event setParameter: value forKeyword: 'insh'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -309,7 +304,6 @@
 
 
 @implementation MLOpenCommand
-
 - (NSString *)AS_commandName {
     return @"open";
 }
@@ -318,10 +312,10 @@
 
 
 @implementation MLOpenLocationCommand
-
 - (MLOpenLocationCommand *)window:(id)value {
     [AS_event setParameter: value forKeyword: 'WIND'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -340,15 +334,16 @@
 
 
 @implementation MLPerformMailActionWithMessagesCommand
-
 - (MLPerformMailActionWithMessagesCommand *)forRule:(id)value {
     [AS_event setParameter: value forKeyword: 'pmar'];
     return self;
+
 }
 
 - (MLPerformMailActionWithMessagesCommand *)inMailboxes:(id)value {
     [AS_event setParameter: value forKeyword: 'pmbx'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -369,15 +364,16 @@
 
 
 @implementation MLPrintCommand
-
 - (MLPrintCommand *)printDialog:(id)value {
     [AS_event setParameter: value forKeyword: 'pdlg'];
     return self;
+
 }
 
 - (MLPrintCommand *)withProperties:(id)value {
     [AS_event setParameter: value forKeyword: 'prdt'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -398,10 +394,10 @@
 
 
 @implementation MLQuitCommand
-
 - (MLQuitCommand *)saving:(id)value {
     [AS_event setParameter: value forKeyword: 'savo'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -420,10 +416,10 @@
 
 
 @implementation MLRedirectCommand
-
 - (MLRedirectCommand *)openingWindow:(id)value {
     [AS_event setParameter: value forKeyword: 'ropw'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -442,7 +438,6 @@
 
 
 @implementation MLReopenCommand
-
 - (NSString *)AS_commandName {
     return @"reopen";
 }
@@ -451,15 +446,16 @@
 
 
 @implementation MLReplyCommand
-
 - (MLReplyCommand *)openingWindow:(id)value {
     [AS_event setParameter: value forKeyword: 'ropw'];
     return self;
+
 }
 
 - (MLReplyCommand *)replyToAll:(id)value {
     [AS_event setParameter: value forKeyword: 'rpal'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -480,7 +476,6 @@
 
 
 @implementation MLRunCommand
-
 - (NSString *)AS_commandName {
     return @"run";
 }
@@ -489,15 +484,16 @@
 
 
 @implementation MLSaveCommand
-
 - (MLSaveCommand *)as:(id)value {
     [AS_event setParameter: value forKeyword: 'fltp'];
     return self;
+
 }
 
 - (MLSaveCommand *)in:(id)value {
     [AS_event setParameter: value forKeyword: 'kfil'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -518,7 +514,6 @@
 
 
 @implementation MLSend_Command
-
 - (NSString *)AS_commandName {
     return @"send_";
 }
@@ -527,10 +522,10 @@
 
 
 @implementation MLSetCommand
-
 - (MLSetCommand *)to:(id)value {
     [AS_event setParameter: value forKeyword: 'data'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -549,10 +544,10 @@
 
 
 @implementation MLSynchronizeCommand
-
 - (MLSynchronizeCommand *)with:(id)value {
     [AS_event setParameter: value forKeyword: 'acna'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -568,5 +563,4 @@
 }
 
 @end
-
 

@@ -1,8 +1,7 @@
 /*
  * SFReferenceGlue.m
- *
  * /Applications/Safari.app
- * osaglue 0.4.0
+ * osaglue 0.5.1
  *
  */
 
@@ -10,9 +9,27 @@
 
 @implementation SFReference
 
-- (NSString *)description {
-	return [SFReferenceRenderer formatObject: AS_aemReference appData: AS_appData];
+/* +app, +con, +its methods can be used in place of SFApp, SFCon, SFIts macros */
+
++ (SFReference *)app {
+    return [self referenceWithAppData: nil aemReference: AEMApp];
 }
+
++ (SFReference *)con {
+    return [self referenceWithAppData: nil aemReference: AEMCon];
+}
+
++ (SFReference *)its {
+    return [self referenceWithAppData: nil aemReference: AEMIts];
+}
+
+
+/* ********************************* */
+
+- (NSString *)description {
+    return [SFReferenceRenderer formatObject: AS_aemReference appData: AS_appData];
+}
+
 
 /* Commands */
 
@@ -614,9 +631,10 @@
 }
 
 
-/***********************************/
+/* ********************************* */
 
-// ordinal selectors
+
+/* ordinal selectors */
 
 - (SFReference *)first {
     return [SFReference referenceWithAppData: AS_appData
@@ -638,19 +656,20 @@
                                  aemReference: [AS_aemReference any]];
 }
 
-// by-index, by-name, by-id selectors
- 
+
+/* by-index, by-name, by-id selectors */
+
 - (SFReference *)at:(long)index {
     return [SFReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference at: index]];
 }
 
-- (SFReference *)byIndex:(id)index { // index is normally NSNumber, but may occasionally be other types
+- (SFReference *)byIndex:(id)index {
     return [SFReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference byIndex: index]];
 }
 
-- (SFReference *)byName:(NSString *)name {
+- (SFReference *)byName:(id)name {
     return [SFReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference byName: name]];
 }
@@ -660,7 +679,8 @@
                                  aemReference: [AS_aemReference byID: id_]];
 }
 
-// by-relative-position selectors
+
+/* by-relative-position selectors */
 
 - (SFReference *)previous:(ASConstant *)class_ {
     return [SFReference referenceWithAppData: AS_appData
@@ -672,7 +692,8 @@
                                  aemReference: [AS_aemReference next: [class_ AS_code]]];
 }
 
-// by-range selector
+
+/* by-range selector */
 
 - (SFReference *)at:(long)fromIndex to:(long)toIndex {
     return [SFReference referenceWithAppData: AS_appData
@@ -689,15 +710,16 @@
                                  aemReference: [AS_aemReference byRange: fromObject to: toObject]];
 }
 
-// by-test selector
+
+/* by-test selector */
 
 - (SFReference *)byTest:(SFReference *)testReference {
-    // note: getting AS_aemReference won't work for ASDynamicReference
     return [SFReference referenceWithAppData: AS_appData
                     aemReference: [AS_aemReference byTest: [testReference AS_aemReference]]];
 }
 
-// insertion location selectors
+
+/* insertion location selectors */
 
 - (SFReference *)beginning {
     return [SFReference referenceWithAppData: AS_appData
@@ -719,7 +741,8 @@
                                  aemReference: [AS_aemReference after]];
 }
 
-// Comparison and logic tests
+
+/* Comparison and logic tests */
 
 - (SFReference *)greaterThan:(id)object {
     return [SFReference referenceWithAppData: AS_appData
@@ -787,5 +810,4 @@
 }
 
 @end
-
 

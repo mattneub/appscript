@@ -1,16 +1,12 @@
 /*
  * MLConstantGlue.h
- *
  * /Applications/Mail.app
- * osaglue 0.4.0
+ * osaglue 0.5.1
  *
  */
 
 #import <Foundation/Foundation.h>
-
-
 #import "Appscript/Appscript.h"
-
 
 @interface MLConstant : ASConstant
 + (id)constantWithCode:(OSType)code_;
@@ -411,5 +407,4 @@
 + (MLConstant *)zoomable;
 + (MLConstant *)zoomed;
 @end
-
 

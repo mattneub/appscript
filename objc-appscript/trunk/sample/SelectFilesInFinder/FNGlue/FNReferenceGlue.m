@@ -1,8 +1,7 @@
 /*
  * FNReferenceGlue.m
- *
  * /System/Library/CoreServices/Finder.app
- * osaglue 0.4.0
+ * osaglue 0.5.1
  *
  */
 
@@ -10,9 +9,27 @@
 
 @implementation FNReference
 
-- (NSString *)description {
-	return [FNReferenceRenderer formatObject: AS_aemReference appData: AS_appData];
+/* +app, +con, +its methods can be used in place of FNApp, FNCon, FNIts macros */
+
++ (FNReference *)app {
+    return [self referenceWithAppData: nil aemReference: AEMApp];
 }
+
++ (FNReference *)con {
+    return [self referenceWithAppData: nil aemReference: AEMCon];
+}
+
++ (FNReference *)its {
+    return [self referenceWithAppData: nil aemReference: AEMIts];
+}
+
+
+/* ********************************* */
+
+- (NSString *)description {
+    return [FNReferenceRenderer formatObject: AS_aemReference appData: AS_appData];
+}
+
 
 /* Commands */
 
@@ -1313,9 +1330,10 @@
 }
 
 
-/***********************************/
+/* ********************************* */
 
-// ordinal selectors
+
+/* ordinal selectors */
 
 - (FNReference *)first {
     return [FNReference referenceWithAppData: AS_appData
@@ -1337,19 +1355,20 @@
                                  aemReference: [AS_aemReference any]];
 }
 
-// by-index, by-name, by-id selectors
- 
+
+/* by-index, by-name, by-id selectors */
+
 - (FNReference *)at:(long)index {
     return [FNReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference at: index]];
 }
 
-- (FNReference *)byIndex:(id)index { // index is normally NSNumber, but may occasionally be other types
+- (FNReference *)byIndex:(id)index {
     return [FNReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference byIndex: index]];
 }
 
-- (FNReference *)byName:(NSString *)name {
+- (FNReference *)byName:(id)name {
     return [FNReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference byName: name]];
 }
@@ -1359,7 +1378,8 @@
                                  aemReference: [AS_aemReference byID: id_]];
 }
 
-// by-relative-position selectors
+
+/* by-relative-position selectors */
 
 - (FNReference *)previous:(ASConstant *)class_ {
     return [FNReference referenceWithAppData: AS_appData
@@ -1371,7 +1391,8 @@
                                  aemReference: [AS_aemReference next: [class_ AS_code]]];
 }
 
-// by-range selector
+
+/* by-range selector */
 
 - (FNReference *)at:(long)fromIndex to:(long)toIndex {
     return [FNReference referenceWithAppData: AS_appData
@@ -1388,15 +1409,16 @@
                                  aemReference: [AS_aemReference byRange: fromObject to: toObject]];
 }
 
-// by-test selector
+
+/* by-test selector */
 
 - (FNReference *)byTest:(FNReference *)testReference {
-    // note: getting AS_aemReference won't work for ASDynamicReference
     return [FNReference referenceWithAppData: AS_appData
                     aemReference: [AS_aemReference byTest: [testReference AS_aemReference]]];
 }
 
-// insertion location selectors
+
+/* insertion location selectors */
 
 - (FNReference *)beginning {
     return [FNReference referenceWithAppData: AS_appData
@@ -1418,7 +1440,8 @@
                                  aemReference: [AS_aemReference after]];
 }
 
-// Comparison and logic tests
+
+/* Comparison and logic tests */
 
 - (FNReference *)greaterThan:(id)object {
     return [FNReference referenceWithAppData: AS_appData
@@ -1486,5 +1509,4 @@
 }
 
 @end
-
 

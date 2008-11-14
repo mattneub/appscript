@@ -1,21 +1,21 @@
 /*
  * ITCommandGlue.m
- *
  * /Applications/iTunes.app
- * osaglue 0.4.0
+ * osaglue 0.5.1
  *
  */
 
 #import "ITCommandGlue.h"
 
 @implementation ITCommand
-- (NSString *)AS_formatObject:(id)obj appData:(id)appData{
+- (NSString *)AS_formatObject:(id)obj appData:(id)appData {
     return [ITReferenceRenderer formatObject: obj appData: appData];
 }
+
 @end
 
-@implementation ITActivateCommand
 
+@implementation ITActivateCommand
 - (NSString *)AS_commandName {
     return @"activate";
 }
@@ -24,10 +24,10 @@
 
 
 @implementation ITAddCommand
-
 - (ITAddCommand *)to:(id)value {
     [AS_event setParameter: value forKeyword: 'insh'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -46,7 +46,6 @@
 
 
 @implementation ITBackTrackCommand
-
 - (NSString *)AS_commandName {
     return @"backTrack";
 }
@@ -55,7 +54,6 @@
 
 
 @implementation ITCloseCommand
-
 - (NSString *)AS_commandName {
     return @"close";
 }
@@ -64,7 +62,6 @@
 
 
 @implementation ITConvertCommand
-
 - (NSString *)AS_commandName {
     return @"convert";
 }
@@ -73,10 +70,10 @@
 
 
 @implementation ITCountCommand
-
 - (ITCountCommand *)each:(id)value {
     [AS_event setParameter: value forKeyword: 'kocl'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -95,7 +92,6 @@
 
 
 @implementation ITDeleteCommand
-
 - (NSString *)AS_commandName {
     return @"delete";
 }
@@ -104,7 +100,6 @@
 
 
 @implementation ITDownloadCommand
-
 - (NSString *)AS_commandName {
     return @"download";
 }
@@ -113,10 +108,10 @@
 
 
 @implementation ITDuplicateCommand
-
 - (ITDuplicateCommand *)to:(id)value {
     [AS_event setParameter: value forKeyword: 'insh'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -135,7 +130,6 @@
 
 
 @implementation ITEjectCommand
-
 - (NSString *)AS_commandName {
     return @"eject";
 }
@@ -144,7 +138,6 @@
 
 
 @implementation ITExistsCommand
-
 - (NSString *)AS_commandName {
     return @"exists";
 }
@@ -153,7 +146,6 @@
 
 
 @implementation ITFastForwardCommand
-
 - (NSString *)AS_commandName {
     return @"fastForward";
 }
@@ -162,7 +154,6 @@
 
 
 @implementation ITGetCommand
-
 - (NSString *)AS_commandName {
     return @"get";
 }
@@ -171,7 +162,6 @@
 
 
 @implementation ITLaunchCommand
-
 - (NSString *)AS_commandName {
     return @"launch";
 }
@@ -180,20 +170,22 @@
 
 
 @implementation ITMakeCommand
-
 - (ITMakeCommand *)at:(id)value {
     [AS_event setParameter: value forKeyword: 'insh'];
     return self;
+
 }
 
 - (ITMakeCommand *)new_:(id)value {
     [AS_event setParameter: value forKeyword: 'kocl'];
     return self;
+
 }
 
 - (ITMakeCommand *)withProperties:(id)value {
     [AS_event setParameter: value forKeyword: 'prdt'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -216,10 +208,10 @@
 
 
 @implementation ITMoveCommand
-
 - (ITMoveCommand *)to:(id)value {
     [AS_event setParameter: value forKeyword: 'insh'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -238,7 +230,6 @@
 
 
 @implementation ITNextTrackCommand
-
 - (NSString *)AS_commandName {
     return @"nextTrack";
 }
@@ -247,7 +238,6 @@
 
 
 @implementation ITOpenCommand
-
 - (NSString *)AS_commandName {
     return @"open";
 }
@@ -256,7 +246,6 @@
 
 
 @implementation ITOpenLocationCommand
-
 - (NSString *)AS_commandName {
     return @"openLocation";
 }
@@ -265,7 +254,6 @@
 
 
 @implementation ITPauseCommand
-
 - (NSString *)AS_commandName {
     return @"pause";
 }
@@ -274,10 +262,10 @@
 
 
 @implementation ITPlayCommand
-
 - (ITPlayCommand *)once:(id)value {
     [AS_event setParameter: value forKeyword: 'POne'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -296,7 +284,6 @@
 
 
 @implementation ITPlaypauseCommand
-
 - (NSString *)AS_commandName {
     return @"playpause";
 }
@@ -305,7 +292,6 @@
 
 
 @implementation ITPreviousTrackCommand
-
 - (NSString *)AS_commandName {
     return @"previousTrack";
 }
@@ -314,25 +300,28 @@
 
 
 @implementation ITPrintCommand
-
 - (ITPrintCommand *)kind:(id)value {
     [AS_event setParameter: value forKeyword: 'pKnd'];
     return self;
+
 }
 
 - (ITPrintCommand *)printDialog:(id)value {
     [AS_event setParameter: value forKeyword: 'pdlg'];
     return self;
+
 }
 
 - (ITPrintCommand *)theme:(id)value {
     [AS_event setParameter: value forKeyword: 'pThm'];
     return self;
+
 }
 
 - (ITPrintCommand *)withProperties:(id)value {
     [AS_event setParameter: value forKeyword: 'prdt'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -357,7 +346,6 @@
 
 
 @implementation ITQuitCommand
-
 - (NSString *)AS_commandName {
     return @"quit";
 }
@@ -366,7 +354,6 @@
 
 
 @implementation ITRefreshCommand
-
 - (NSString *)AS_commandName {
     return @"refresh";
 }
@@ -375,7 +362,6 @@
 
 
 @implementation ITReopenCommand
-
 - (NSString *)AS_commandName {
     return @"reopen";
 }
@@ -384,7 +370,6 @@
 
 
 @implementation ITResumeCommand
-
 - (NSString *)AS_commandName {
     return @"resume";
 }
@@ -393,7 +378,6 @@
 
 
 @implementation ITRevealCommand
-
 - (NSString *)AS_commandName {
     return @"reveal";
 }
@@ -402,7 +386,6 @@
 
 
 @implementation ITRewindCommand
-
 - (NSString *)AS_commandName {
     return @"rewind";
 }
@@ -411,7 +394,6 @@
 
 
 @implementation ITRunCommand
-
 - (NSString *)AS_commandName {
     return @"run";
 }
@@ -420,15 +402,16 @@
 
 
 @implementation ITSearchCommand
-
 - (ITSearchCommand *)for_:(id)value {
     [AS_event setParameter: value forKeyword: 'pTrm'];
     return self;
+
 }
 
 - (ITSearchCommand *)only:(id)value {
     [AS_event setParameter: value forKeyword: 'pAre'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -449,10 +432,10 @@
 
 
 @implementation ITSetCommand
-
 - (ITSetCommand *)to:(id)value {
     [AS_event setParameter: value forKeyword: 'data'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -471,7 +454,6 @@
 
 
 @implementation ITStopCommand
-
 - (NSString *)AS_commandName {
     return @"stop";
 }
@@ -480,7 +462,6 @@
 
 
 @implementation ITSubscribeCommand
-
 - (NSString *)AS_commandName {
     return @"subscribe";
 }
@@ -489,7 +470,6 @@
 
 
 @implementation ITUpdateCommand
-
 - (NSString *)AS_commandName {
     return @"update";
 }
@@ -498,7 +478,6 @@
 
 
 @implementation ITUpdateAllPodcastsCommand
-
 - (NSString *)AS_commandName {
     return @"updateAllPodcasts";
 }
@@ -507,11 +486,9 @@
 
 
 @implementation ITUpdatePodcastCommand
-
 - (NSString *)AS_commandName {
     return @"updatePodcast";
 }
 
 @end
-
 

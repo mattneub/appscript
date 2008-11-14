@@ -1,21 +1,21 @@
 /*
  * SFCommandGlue.m
- *
  * /Applications/Safari.app
- * osaglue 0.4.0
+ * osaglue 0.5.1
  *
  */
 
 #import "SFCommandGlue.h"
 
 @implementation SFCommand
-- (NSString *)AS_formatObject:(id)obj appData:(id)appData{
+- (NSString *)AS_formatObject:(id)obj appData:(id)appData {
     return [SFReferenceRenderer formatObject: obj appData: appData];
 }
+
 @end
 
-@implementation SFActivateCommand
 
+@implementation SFActivateCommand
 - (NSString *)AS_commandName {
     return @"activate";
 }
@@ -24,15 +24,16 @@
 
 
 @implementation SFCloseCommand
-
 - (SFCloseCommand *)saving:(id)value {
     [AS_event setParameter: value forKeyword: 'savo'];
     return self;
+
 }
 
 - (SFCloseCommand *)savingIn:(id)value {
     [AS_event setParameter: value forKeyword: 'kfil'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -53,10 +54,10 @@
 
 
 @implementation SFCountCommand
-
 - (SFCountCommand *)each:(id)value {
     [AS_event setParameter: value forKeyword: 'kocl'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -75,7 +76,6 @@
 
 
 @implementation SFDeleteCommand
-
 - (NSString *)AS_commandName {
     return @"delete";
 }
@@ -84,10 +84,10 @@
 
 
 @implementation SFDoJavaScriptCommand
-
 - (SFDoJavaScriptCommand *)in:(id)value {
     [AS_event setParameter: value forKeyword: 'dcnm'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -106,15 +106,16 @@
 
 
 @implementation SFDuplicateCommand
-
 - (SFDuplicateCommand *)to:(id)value {
     [AS_event setParameter: value forKeyword: 'insh'];
     return self;
+
 }
 
 - (SFDuplicateCommand *)withProperties:(id)value {
     [AS_event setParameter: value forKeyword: 'prdt'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -135,10 +136,10 @@
 
 
 @implementation SFEmailContentsCommand
-
 - (SFEmailContentsCommand *)of:(id)value {
     [AS_event setParameter: value forKeyword: 'dcnm'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -157,7 +158,6 @@
 
 
 @implementation SFExistsCommand
-
 - (NSString *)AS_commandName {
     return @"exists";
 }
@@ -166,7 +166,6 @@
 
 
 @implementation SFGetCommand
-
 - (NSString *)AS_commandName {
     return @"get";
 }
@@ -175,7 +174,6 @@
 
 
 @implementation SFLaunchCommand
-
 - (NSString *)AS_commandName {
     return @"launch";
 }
@@ -184,25 +182,28 @@
 
 
 @implementation SFMakeCommand
-
 - (SFMakeCommand *)at:(id)value {
     [AS_event setParameter: value forKeyword: 'insh'];
     return self;
+
 }
 
 - (SFMakeCommand *)new_:(id)value {
     [AS_event setParameter: value forKeyword: 'kocl'];
     return self;
+
 }
 
 - (SFMakeCommand *)withData:(id)value {
     [AS_event setParameter: value forKeyword: 'data'];
     return self;
+
 }
 
 - (SFMakeCommand *)withProperties:(id)value {
     [AS_event setParameter: value forKeyword: 'prdt'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -227,10 +228,10 @@
 
 
 @implementation SFMoveCommand
-
 - (SFMoveCommand *)to:(id)value {
     [AS_event setParameter: value forKeyword: 'insh'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -249,7 +250,6 @@
 
 
 @implementation SFOpenCommand
-
 - (NSString *)AS_commandName {
     return @"open";
 }
@@ -258,10 +258,10 @@
 
 
 @implementation SFOpenLocationCommand
-
 - (SFOpenLocationCommand *)window:(id)value {
     [AS_event setParameter: value forKeyword: 'WIND'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -280,15 +280,16 @@
 
 
 @implementation SFPrintCommand
-
 - (SFPrintCommand *)printDialog:(id)value {
     [AS_event setParameter: value forKeyword: 'pdlg'];
     return self;
+
 }
 
 - (SFPrintCommand *)withProperties:(id)value {
     [AS_event setParameter: value forKeyword: 'prdt'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -309,10 +310,10 @@
 
 
 @implementation SFQuitCommand
-
 - (SFQuitCommand *)saving:(id)value {
     [AS_event setParameter: value forKeyword: 'savo'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -331,7 +332,6 @@
 
 
 @implementation SFReopenCommand
-
 - (NSString *)AS_commandName {
     return @"reopen";
 }
@@ -340,7 +340,6 @@
 
 
 @implementation SFRunCommand
-
 - (NSString *)AS_commandName {
     return @"run";
 }
@@ -349,15 +348,16 @@
 
 
 @implementation SFSaveCommand
-
 - (SFSaveCommand *)as:(id)value {
     [AS_event setParameter: value forKeyword: 'fltp'];
     return self;
+
 }
 
 - (SFSaveCommand *)in:(id)value {
     [AS_event setParameter: value forKeyword: 'kfil'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -378,10 +378,10 @@
 
 
 @implementation SFSetCommand
-
 - (SFSetCommand *)to:(id)value {
     [AS_event setParameter: value forKeyword: 'data'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -400,11 +400,9 @@
 
 
 @implementation SFShowBookmarksCommand
-
 - (NSString *)AS_commandName {
     return @"showBookmarks";
 }
 
 @end
-
 

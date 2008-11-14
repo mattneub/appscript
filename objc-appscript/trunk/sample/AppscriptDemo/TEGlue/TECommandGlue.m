@@ -1,21 +1,21 @@
 /*
  * TECommandGlue.m
- *
  * /Applications/TextEdit.app
- * osaglue 0.4.0
+ * osaglue 0.5.1
  *
  */
 
 #import "TECommandGlue.h"
 
 @implementation TECommand
-- (NSString *)AS_formatObject:(id)obj appData:(id)appData{
+- (NSString *)AS_formatObject:(id)obj appData:(id)appData {
     return [TEReferenceRenderer formatObject: obj appData: appData];
 }
+
 @end
 
-@implementation TEActivateCommand
 
+@implementation TEActivateCommand
 - (NSString *)AS_commandName {
     return @"activate";
 }
@@ -24,15 +24,16 @@
 
 
 @implementation TECloseCommand
-
 - (TECloseCommand *)saving:(id)value {
     [AS_event setParameter: value forKeyword: 'savo'];
     return self;
+
 }
 
 - (TECloseCommand *)savingIn:(id)value {
     [AS_event setParameter: value forKeyword: 'kfil'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -53,10 +54,10 @@
 
 
 @implementation TECountCommand
-
 - (TECountCommand *)each:(id)value {
     [AS_event setParameter: value forKeyword: 'kocl'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -75,7 +76,6 @@
 
 
 @implementation TEDeleteCommand
-
 - (NSString *)AS_commandName {
     return @"delete";
 }
@@ -84,15 +84,16 @@
 
 
 @implementation TEDuplicateCommand
-
 - (TEDuplicateCommand *)to:(id)value {
     [AS_event setParameter: value forKeyword: 'insh'];
     return self;
+
 }
 
 - (TEDuplicateCommand *)withProperties:(id)value {
     [AS_event setParameter: value forKeyword: 'prdt'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -113,7 +114,6 @@
 
 
 @implementation TEExistsCommand
-
 - (NSString *)AS_commandName {
     return @"exists";
 }
@@ -122,7 +122,6 @@
 
 
 @implementation TEGetCommand
-
 - (NSString *)AS_commandName {
     return @"get";
 }
@@ -131,7 +130,6 @@
 
 
 @implementation TELaunchCommand
-
 - (NSString *)AS_commandName {
     return @"launch";
 }
@@ -140,25 +138,28 @@
 
 
 @implementation TEMakeCommand
-
 - (TEMakeCommand *)at:(id)value {
     [AS_event setParameter: value forKeyword: 'insh'];
     return self;
+
 }
 
 - (TEMakeCommand *)new_:(id)value {
     [AS_event setParameter: value forKeyword: 'kocl'];
     return self;
+
 }
 
 - (TEMakeCommand *)withData:(id)value {
     [AS_event setParameter: value forKeyword: 'data'];
     return self;
+
 }
 
 - (TEMakeCommand *)withProperties:(id)value {
     [AS_event setParameter: value forKeyword: 'prdt'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -183,10 +184,10 @@
 
 
 @implementation TEMoveCommand
-
 - (TEMoveCommand *)to:(id)value {
     [AS_event setParameter: value forKeyword: 'insh'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -205,7 +206,6 @@
 
 
 @implementation TEOpenCommand
-
 - (NSString *)AS_commandName {
     return @"open";
 }
@@ -214,10 +214,10 @@
 
 
 @implementation TEOpenLocationCommand
-
 - (TEOpenLocationCommand *)window:(id)value {
     [AS_event setParameter: value forKeyword: 'WIND'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -236,15 +236,16 @@
 
 
 @implementation TEPrintCommand
-
 - (TEPrintCommand *)printDialog:(id)value {
     [AS_event setParameter: value forKeyword: 'pdlg'];
     return self;
+
 }
 
 - (TEPrintCommand *)withProperties:(id)value {
     [AS_event setParameter: value forKeyword: 'prdt'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -265,10 +266,10 @@
 
 
 @implementation TEQuitCommand
-
 - (TEQuitCommand *)saving:(id)value {
     [AS_event setParameter: value forKeyword: 'savo'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -287,7 +288,6 @@
 
 
 @implementation TEReopenCommand
-
 - (NSString *)AS_commandName {
     return @"reopen";
 }
@@ -296,7 +296,6 @@
 
 
 @implementation TERunCommand
-
 - (NSString *)AS_commandName {
     return @"run";
 }
@@ -305,15 +304,16 @@
 
 
 @implementation TESaveCommand
-
 - (TESaveCommand *)as:(id)value {
     [AS_event setParameter: value forKeyword: 'fltp'];
     return self;
+
 }
 
 - (TESaveCommand *)in:(id)value {
     [AS_event setParameter: value forKeyword: 'kfil'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -334,10 +334,10 @@
 
 
 @implementation TESetCommand
-
 - (TESetCommand *)to:(id)value {
     [AS_event setParameter: value forKeyword: 'data'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -353,5 +353,4 @@
 }
 
 @end
-
 

@@ -1,15 +1,13 @@
 /*
  * MLReferenceRendererGlue.m
- *
  * /Applications/Mail.app
- * osaglue 0.4.0
+ * osaglue 0.5.1
  *
  */
 
 #import "MLReferenceRendererGlue.h"
 
 @implementation MLReferenceRenderer
-
 - (NSString *)propertyByCode:(OSType)code {
     switch (code) {
         case 'attp': return @"MIMEType";
@@ -176,7 +174,6 @@
         case 'cwin': return @"window";
         case 'iszm': return @"zoomable";
         case 'pzum': return @"zoomed";
-
         default: return nil;
     }
 }
@@ -215,7 +212,6 @@
         case 'trcp': return @"toRecipients";
         case 'cwin': return @"windows";
         case 'cwor': return @"words";
-
         default: return nil;
     }
 }
@@ -225,3 +221,4 @@
 }
 
 @end
+

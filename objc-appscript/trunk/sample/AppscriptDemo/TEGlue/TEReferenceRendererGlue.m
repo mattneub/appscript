@@ -1,15 +1,13 @@
 /*
  * TEReferenceRendererGlue.m
- *
  * /Applications/TextEdit.app
- * osaglue 0.4.0
+ * osaglue 0.5.1
  *
  */
 
 #import "TEReferenceRendererGlue.h"
 
 @implementation TEReferenceRenderer
-
 - (NSString *)propertyByCode:(OSType)code {
     switch (code) {
         case 'pbnd': return @"bounds";
@@ -48,7 +46,6 @@
         case 'pvis': return @"visible";
         case 'iszm': return @"zoomable";
         case 'pzum': return @"zoomed";
-
         default: return nil;
     }
 }
@@ -67,7 +64,6 @@
         case 'ctxt': return @"text";
         case 'cwin': return @"windows";
         case 'cwor': return @"words";
-
         default: return nil;
     }
 }
@@ -77,3 +73,4 @@
 }
 
 @end
+

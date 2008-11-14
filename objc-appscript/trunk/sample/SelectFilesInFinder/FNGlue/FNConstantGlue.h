@@ -1,16 +1,12 @@
 /*
  * FNConstantGlue.h
- *
  * /System/Library/CoreServices/Finder.app
- * osaglue 0.4.0
+ * osaglue 0.5.1
  *
  */
 
 #import <Foundation/Foundation.h>
-
-
 #import "Appscript/Appscript.h"
-
 
 @interface FNConstant : ASConstant
 + (id)constantWithCode:(OSType)code_;
@@ -377,5 +373,4 @@
 + (FNConstant *)zoomable;
 + (FNConstant *)zoomed;
 @end
-
 

@@ -1,8 +1,7 @@
 /*
  * ASDefaultReferenceGlue.m
- *
  * <default terminology>
- * osaglue 0.4.0
+ * osaglue 0.5.1
  *
  */
 
@@ -10,9 +9,27 @@
 
 @implementation ASDefaultReference
 
-- (NSString *)description {
-	return [ASDefaultReferenceRenderer formatObject: AS_aemReference appData: AS_appData];
+/* +app, +con, +its methods can be used in place of ASDefaultApp, ASDefaultCon, ASDefaultIts macros */
+
++ (ASDefaultReference *)app {
+    return [self referenceWithAppData: nil aemReference: AEMApp];
 }
+
++ (ASDefaultReference *)con {
+    return [self referenceWithAppData: nil aemReference: AEMCon];
+}
+
++ (ASDefaultReference *)its {
+    return [self referenceWithAppData: nil aemReference: AEMIts];
+}
+
+
+/* ********************************* */
+
+- (NSString *)description {
+    return [ASDefaultReferenceRenderer formatObject: AS_aemReference appData: AS_appData];
+}
+
 
 /* Commands */
 
@@ -177,6 +194,14 @@
 }
 
 
+/* Elements */
+
+- (ASDefaultReference *)items {
+    return [ASDefaultReference referenceWithAppData: AS_appData
+                    aemReference: [AS_aemReference elements: 'cobj']];
+}
+
+
 /* Properties */
 
 - (ASDefaultReference *)class_ {
@@ -189,10 +214,16 @@
                     aemReference: [AS_aemReference property: 'ID  ']];
 }
 
+- (ASDefaultReference *)properties {
+    return [ASDefaultReference referenceWithAppData: AS_appData
+                    aemReference: [AS_aemReference property: 'pALL']];
+}
 
-/***********************************/
 
-// ordinal selectors
+/* ********************************* */
+
+
+/* ordinal selectors */
 
 - (ASDefaultReference *)first {
     return [ASDefaultReference referenceWithAppData: AS_appData
@@ -214,19 +245,20 @@
                                  aemReference: [AS_aemReference any]];
 }
 
-// by-index, by-name, by-id selectors
- 
+
+/* by-index, by-name, by-id selectors */
+
 - (ASDefaultReference *)at:(long)index {
     return [ASDefaultReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference at: index]];
 }
 
-- (ASDefaultReference *)byIndex:(id)index { // index is normally NSNumber, but may occasionally be other types
+- (ASDefaultReference *)byIndex:(id)index {
     return [ASDefaultReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference byIndex: index]];
 }
 
-- (ASDefaultReference *)byName:(NSString *)name {
+- (ASDefaultReference *)byName:(id)name {
     return [ASDefaultReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference byName: name]];
 }
@@ -236,7 +268,8 @@
                                  aemReference: [AS_aemReference byID: id_]];
 }
 
-// by-relative-position selectors
+
+/* by-relative-position selectors */
 
 - (ASDefaultReference *)previous:(ASConstant *)class_ {
     return [ASDefaultReference referenceWithAppData: AS_appData
@@ -248,7 +281,8 @@
                                  aemReference: [AS_aemReference next: [class_ AS_code]]];
 }
 
-// by-range selector
+
+/* by-range selector */
 
 - (ASDefaultReference *)at:(long)fromIndex to:(long)toIndex {
     return [ASDefaultReference referenceWithAppData: AS_appData
@@ -265,15 +299,16 @@
                                  aemReference: [AS_aemReference byRange: fromObject to: toObject]];
 }
 
-// by-test selector
+
+/* by-test selector */
 
 - (ASDefaultReference *)byTest:(ASDefaultReference *)testReference {
-    // note: getting AS_aemReference won't work for ASDynamicReference
     return [ASDefaultReference referenceWithAppData: AS_appData
                     aemReference: [AS_aemReference byTest: [testReference AS_aemReference]]];
 }
 
-// insertion location selectors
+
+/* insertion location selectors */
 
 - (ASDefaultReference *)beginning {
     return [ASDefaultReference referenceWithAppData: AS_appData
@@ -295,7 +330,8 @@
                                  aemReference: [AS_aemReference after]];
 }
 
-// Comparison and logic tests
+
+/* Comparison and logic tests */
 
 - (ASDefaultReference *)greaterThan:(id)object {
     return [ASDefaultReference referenceWithAppData: AS_appData
@@ -363,5 +399,4 @@
 }
 
 @end
-
 

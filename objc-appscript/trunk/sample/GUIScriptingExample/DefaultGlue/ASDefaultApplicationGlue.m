@@ -1,33 +1,32 @@
 /*
  * ASDefaultApplicationGlue.m
- *
  * <default terminology>
- * osaglue 0.4.0
+ * osaglue 0.5.1
  *
  */
 
 #import "ASDefaultApplicationGlue.h"
 
-
-
 @implementation ASDefaultApplication
 
-// clients shouldn't need to call this next method themselves
+/* note: clients shouldn't need to call -initWithTargetType:data: themselves */
+
 - (id)initWithTargetType:(ASTargetType)targetType_ data:(id)targetData_ {
     ASAppData *appData;
-    
+
     appData = [[ASAppData alloc] initWithApplicationClass: [AEMApplication class]
                                             constantClass: [ASDefaultConstant class]
                                            referenceClass: [ASDefaultReference class]
                                                targetType: targetType_
                                                targetData: targetData_];
     self = [super initWithAppData: appData aemReference: AEMApp];
+
     if (!self) return self;
-    
     return self;
 }
 
-// initialisers
+
+/* initialisers */
 
 + (id)application {
     return [[[self alloc] init] autorelease];
@@ -37,8 +36,8 @@
     return [[[self alloc] initWithName: name] autorelease];
 }
 
-+ (id)applicationWithBundleID:(NSString *)bundleID  {
-    return [[[self alloc] initWithBundleID: bundleID ] autorelease];
++ (id)applicationWithBundleID:(NSString *)bundleID {
+    return [[[self alloc] initWithBundleID: bundleID] autorelease];
 }
 
 + (id)applicationWithURL:(NSURL *)url {
@@ -53,7 +52,6 @@
     return [[[self alloc] initWithDescriptor: desc] autorelease];
 }
 
-
 - (id)init {
     return [self initWithTargetType: kASTargetCurrent data: nil];
 }
@@ -63,7 +61,7 @@
 }
 
 - (id)initWithBundleID:(NSString *)bundleID {
-    return [self initWithTargetType: kASTargetBundleID data: bundleID];    
+    return [self initWithTargetType: kASTargetBundleID data: bundleID];
 }
 
 - (id)initWithURL:(NSURL *)url {
@@ -78,7 +76,8 @@
     return [self initWithTargetType: kASTargetDescriptor data: desc];
 }
 
-// misc
+
+/* misc */
 
 - (ASDefaultReference *)AS_referenceWithObject:(id)object {
     if ([object isKindOfClass: [ASDefaultReference class]])
@@ -94,5 +93,6 @@
         return [[[ASDefaultReference alloc] initWithAppData: AS_appData
                 aemReference: AEMRoot(object)] autorelease];
 }
+
 @end
 

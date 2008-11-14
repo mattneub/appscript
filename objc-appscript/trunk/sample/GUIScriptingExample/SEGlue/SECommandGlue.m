@@ -1,21 +1,21 @@
 /*
  * SECommandGlue.m
- *
  * /System/Library/CoreServices/System Events.app
- * osaglue 0.4.0
+ * osaglue 0.5.1
  *
  */
 
 #import "SECommandGlue.h"
 
 @implementation SECommand
-- (NSString *)AS_formatObject:(id)obj appData:(id)appData{
+- (NSString *)AS_formatObject:(id)obj appData:(id)appData {
     return [SEReferenceRenderer formatObject: obj appData: appData];
 }
+
 @end
 
-@implementation SEAbortTransaction_Command
 
+@implementation SEAbortTransaction_Command
 - (NSString *)AS_commandName {
     return @"abortTransaction_";
 }
@@ -24,7 +24,6 @@
 
 
 @implementation SEActivateCommand
-
 - (NSString *)AS_commandName {
     return @"activate";
 }
@@ -33,10 +32,10 @@
 
 
 @implementation SEAttachActionToCommand
-
 - (SEAttachActionToCommand *)using:(id)value {
     [AS_event setParameter: value forKeyword: 'faal'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -55,7 +54,6 @@
 
 
 @implementation SEAttachedScriptsCommand
-
 - (NSString *)AS_commandName {
     return @"attachedScripts";
 }
@@ -64,7 +62,6 @@
 
 
 @implementation SEBeginTransaction_Command
-
 - (NSString *)AS_commandName {
     return @"beginTransaction_";
 }
@@ -73,7 +70,6 @@
 
 
 @implementation SECancelCommand
-
 - (NSString *)AS_commandName {
     return @"cancel";
 }
@@ -82,10 +78,10 @@
 
 
 @implementation SEClickCommand
-
 - (SEClickCommand *)at:(id)value {
     [AS_event setParameter: value forKeyword: 'insh'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -104,15 +100,16 @@
 
 
 @implementation SECloseCommand
-
 - (SECloseCommand *)saving:(id)value {
     [AS_event setParameter: value forKeyword: 'savo'];
     return self;
+
 }
 
 - (SECloseCommand *)savingIn:(id)value {
     [AS_event setParameter: value forKeyword: 'kfil'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -133,7 +130,6 @@
 
 
 @implementation SEConfirmCommand
-
 - (NSString *)AS_commandName {
     return @"confirm";
 }
@@ -142,7 +138,6 @@
 
 
 @implementation SEConnectCommand
-
 - (NSString *)AS_commandName {
     return @"connect";
 }
@@ -151,10 +146,10 @@
 
 
 @implementation SECountCommand
-
 - (SECountCommand *)each:(id)value {
     [AS_event setParameter: value forKeyword: 'kocl'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -173,7 +168,6 @@
 
 
 @implementation SEDecrementCommand
-
 - (NSString *)AS_commandName {
     return @"decrement";
 }
@@ -182,7 +176,6 @@
 
 
 @implementation SEDeleteCommand
-
 - (NSString *)AS_commandName {
     return @"delete";
 }
@@ -191,7 +184,6 @@
 
 
 @implementation SEDisconnectCommand
-
 - (NSString *)AS_commandName {
     return @"disconnect";
 }
@@ -200,20 +192,22 @@
 
 
 @implementation SEDoFolderActionCommand
-
 - (SEDoFolderActionCommand *)folderActionCode:(id)value {
     [AS_event setParameter: value forKeyword: 'actn'];
     return self;
+
 }
 
 - (SEDoFolderActionCommand *)withItemList:(id)value {
     [AS_event setParameter: value forKeyword: 'flst'];
     return self;
+
 }
 
 - (SEDoFolderActionCommand *)withWindowSize:(id)value {
     [AS_event setParameter: value forKeyword: 'fnsz'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -236,7 +230,6 @@
 
 
 @implementation SEDoScriptCommand
-
 - (NSString *)AS_commandName {
     return @"doScript";
 }
@@ -245,15 +238,16 @@
 
 
 @implementation SEDuplicateCommand
-
 - (SEDuplicateCommand *)to:(id)value {
     [AS_event setParameter: value forKeyword: 'insh'];
     return self;
+
 }
 
 - (SEDuplicateCommand *)withProperties:(id)value {
     [AS_event setParameter: value forKeyword: 'prdt'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -274,15 +268,16 @@
 
 
 @implementation SEEditActionOfCommand
-
 - (SEEditActionOfCommand *)usingActionName:(id)value {
     [AS_event setParameter: value forKeyword: 'snam'];
     return self;
+
 }
 
 - (SEEditActionOfCommand *)usingActionNumber:(id)value {
     [AS_event setParameter: value forKeyword: 'indx'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -303,7 +298,6 @@
 
 
 @implementation SEEndTransaction_Command
-
 - (NSString *)AS_commandName {
     return @"endTransaction_";
 }
@@ -312,7 +306,6 @@
 
 
 @implementation SEExistsCommand
-
 - (NSString *)AS_commandName {
     return @"exists";
 }
@@ -321,7 +314,6 @@
 
 
 @implementation SEGetCommand
-
 - (NSString *)AS_commandName {
     return @"get";
 }
@@ -330,7 +322,6 @@
 
 
 @implementation SEIncrementCommand
-
 - (NSString *)AS_commandName {
     return @"increment";
 }
@@ -339,10 +330,10 @@
 
 
 @implementation SEKeyCodeCommand
-
 - (SEKeyCodeCommand *)using:(id)value {
     [AS_event setParameter: value forKeyword: 'faal'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -361,7 +352,6 @@
 
 
 @implementation SEKeyDownCommand
-
 - (NSString *)AS_commandName {
     return @"keyDown";
 }
@@ -370,7 +360,6 @@
 
 
 @implementation SEKeyUpCommand
-
 - (NSString *)AS_commandName {
     return @"keyUp";
 }
@@ -379,10 +368,10 @@
 
 
 @implementation SEKeystrokeCommand
-
 - (SEKeystrokeCommand *)using:(id)value {
     [AS_event setParameter: value forKeyword: 'faal'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -401,7 +390,6 @@
 
 
 @implementation SELaunchCommand
-
 - (NSString *)AS_commandName {
     return @"launch";
 }
@@ -410,7 +398,6 @@
 
 
 @implementation SELogOutCommand
-
 - (NSString *)AS_commandName {
     return @"logOut";
 }
@@ -419,25 +406,28 @@
 
 
 @implementation SEMakeCommand
-
 - (SEMakeCommand *)at:(id)value {
     [AS_event setParameter: value forKeyword: 'insh'];
     return self;
+
 }
 
 - (SEMakeCommand *)new_:(id)value {
     [AS_event setParameter: value forKeyword: 'kocl'];
     return self;
+
 }
 
 - (SEMakeCommand *)withData:(id)value {
     [AS_event setParameter: value forKeyword: 'data'];
     return self;
+
 }
 
 - (SEMakeCommand *)withProperties:(id)value {
     [AS_event setParameter: value forKeyword: 'prdt'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -462,10 +452,10 @@
 
 
 @implementation SEMoveCommand
-
 - (SEMoveCommand *)to:(id)value {
     [AS_event setParameter: value forKeyword: 'insh'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -484,7 +474,6 @@
 
 
 @implementation SEOpenCommand
-
 - (NSString *)AS_commandName {
     return @"open";
 }
@@ -493,10 +482,10 @@
 
 
 @implementation SEOpenLocationCommand
-
 - (SEOpenLocationCommand *)window:(id)value {
     [AS_event setParameter: value forKeyword: 'WIND'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -515,7 +504,6 @@
 
 
 @implementation SEPerformCommand
-
 - (NSString *)AS_commandName {
     return @"perform";
 }
@@ -524,7 +512,6 @@
 
 
 @implementation SEPickCommand
-
 - (NSString *)AS_commandName {
     return @"pick";
 }
@@ -533,15 +520,16 @@
 
 
 @implementation SEPrintCommand
-
 - (SEPrintCommand *)printDialog:(id)value {
     [AS_event setParameter: value forKeyword: 'pdlg'];
     return self;
+
 }
 
 - (SEPrintCommand *)withProperties:(id)value {
     [AS_event setParameter: value forKeyword: 'prdt'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -562,10 +550,10 @@
 
 
 @implementation SEQuitCommand
-
 - (SEQuitCommand *)saving:(id)value {
     [AS_event setParameter: value forKeyword: 'savo'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -584,15 +572,16 @@
 
 
 @implementation SERemoveActionFromCommand
-
 - (SERemoveActionFromCommand *)usingActionName:(id)value {
     [AS_event setParameter: value forKeyword: 'snam'];
     return self;
+
 }
 
 - (SERemoveActionFromCommand *)usingActionNumber:(id)value {
     [AS_event setParameter: value forKeyword: 'indx'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -613,7 +602,6 @@
 
 
 @implementation SEReopenCommand
-
 - (NSString *)AS_commandName {
     return @"reopen";
 }
@@ -622,7 +610,6 @@
 
 
 @implementation SERestartCommand
-
 - (NSString *)AS_commandName {
     return @"restart";
 }
@@ -631,7 +618,6 @@
 
 
 @implementation SERunCommand
-
 - (NSString *)AS_commandName {
     return @"run";
 }
@@ -640,15 +626,16 @@
 
 
 @implementation SESaveCommand
-
 - (SESaveCommand *)as:(id)value {
     [AS_event setParameter: value forKeyword: 'fltp'];
     return self;
+
 }
 
 - (SESaveCommand *)in:(id)value {
     [AS_event setParameter: value forKeyword: 'kfil'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -669,7 +656,6 @@
 
 
 @implementation SESelectCommand
-
 - (NSString *)AS_commandName {
     return @"select";
 }
@@ -678,10 +664,10 @@
 
 
 @implementation SESetCommand
-
 - (SESetCommand *)to:(id)value {
     [AS_event setParameter: value forKeyword: 'data'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -700,7 +686,6 @@
 
 
 @implementation SEShutDownCommand
-
 - (NSString *)AS_commandName {
     return @"shutDown";
 }
@@ -709,11 +694,9 @@
 
 
 @implementation SESleepCommand
-
 - (NSString *)AS_commandName {
     return @"sleep";
 }
 
 @end
-
 

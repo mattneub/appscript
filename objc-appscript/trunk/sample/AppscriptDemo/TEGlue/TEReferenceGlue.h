@@ -1,24 +1,29 @@
 /*
  * TEReferenceGlue.h
- *
  * /Applications/TextEdit.app
- * osaglue 0.4.0
+ * osaglue 0.5.1
  *
  */
 
 #import <Foundation/Foundation.h>
-
-
 #import "Appscript/Appscript.h"
 #import "TECommandGlue.h"
 #import "TEReferenceRendererGlue.h"
-
 #define TEApp ((TEReference *)[TEReference referenceWithAppData: nil aemReference: AEMApp])
 #define TECon ((TEReference *)[TEReference referenceWithAppData: nil aemReference: AEMCon])
 #define TEIts ((TEReference *)[TEReference referenceWithAppData: nil aemReference: AEMIts])
 
-
 @interface TEReference : ASReference
+
+/* +app, +con, +its methods can be used in place of TEApp, TECon, TEIts macros */
+
++ (TEReference *)app;
++ (TEReference *)con;
++ (TEReference *)its;
+
+/* ********************************* */
+
+- (NSString *)description;
 
 /* Commands */
 
@@ -111,23 +116,47 @@
 - (TEReference *)visible;
 - (TEReference *)zoomable;
 - (TEReference *)zoomed;
+
+/* ********************************* */
+
+
+/* ordinal selectors */
+
 - (TEReference *)first;
 - (TEReference *)middle;
 - (TEReference *)last;
 - (TEReference *)any;
+
+/* by-index, by-name, by-id selectors */
+
 - (TEReference *)at:(long)index;
 - (TEReference *)byIndex:(id)index;
-- (TEReference *)byName:(NSString *)name;
+- (TEReference *)byName:(id)name;
 - (TEReference *)byID:(id)id_;
+
+/* by-relative-position selectors */
+
 - (TEReference *)previous:(ASConstant *)class_;
 - (TEReference *)next:(ASConstant *)class_;
+
+/* by-range selector */
+
 - (TEReference *)at:(long)fromIndex to:(long)toIndex;
 - (TEReference *)byRange:(id)fromObject to:(id)toObject;
+
+/* by-test selector */
+
 - (TEReference *)byTest:(TEReference *)testReference;
+
+/* insertion location selectors */
+
 - (TEReference *)beginning;
 - (TEReference *)end;
 - (TEReference *)before;
 - (TEReference *)after;
+
+/* Comparison and logic tests */
+
 - (TEReference *)greaterThan:(id)object;
 - (TEReference *)greaterOrEquals:(id)object;
 - (TEReference *)equals:(id)object;
@@ -142,5 +171,4 @@
 - (TEReference *)OR:(id)remainingOperands;
 - (TEReference *)NOT;
 @end
-
 

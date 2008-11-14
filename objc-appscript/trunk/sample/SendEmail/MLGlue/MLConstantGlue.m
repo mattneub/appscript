@@ -1,15 +1,13 @@
 /*
  * MLConstantGlue.m
- *
  * /Applications/Mail.app
- * osaglue 0.4.0
+ * osaglue 0.5.1
  *
  */
 
 #import "MLConstantGlue.h"
 
 @implementation MLConstant
-
 + (id)constantWithCode:(OSType)code_ {
     switch (code_) {
         case 'apr ': return [self April];
@@ -3143,5 +3141,4 @@
 }
 
 @end
-
 

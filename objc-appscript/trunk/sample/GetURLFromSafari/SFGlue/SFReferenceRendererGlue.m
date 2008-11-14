@@ -1,15 +1,13 @@
 /*
  * SFReferenceRendererGlue.m
- *
  * /Applications/Safari.app
- * osaglue 0.4.0
+ * osaglue 0.5.1
  *
  */
 
 #import "SFReferenceRendererGlue.h"
 
 @implementation SFReferenceRenderer
-
 - (NSString *)propertyByCode:(OSType)code {
     switch (code) {
         case 'pURL': return @"URL";
@@ -51,7 +49,6 @@
         case 'pvis': return @"visible";
         case 'iszm': return @"zoomable";
         case 'pzum': return @"zoomed";
-
         default: return nil;
     }
 }
@@ -71,7 +68,6 @@
         case 'ctxt': return @"text";
         case 'cwin': return @"windows";
         case 'cwor': return @"words";
-
         default: return nil;
     }
 }
@@ -81,3 +77,4 @@
 }
 
 @end
+

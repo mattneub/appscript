@@ -1,7 +1,7 @@
 /*
  * ICCommandGlue.h
  * /Applications/iCal.app
- * osaglue 0.5.0
+ * osaglue 0.5.1
  *
  */
 

@@ -1,8 +1,7 @@
 /*
  * ITReferenceGlue.m
- *
  * /Applications/iTunes.app
- * osaglue 0.4.0
+ * osaglue 0.5.1
  *
  */
 
@@ -10,9 +9,27 @@
 
 @implementation ITReference
 
-- (NSString *)description {
-	return [ITReferenceRenderer formatObject: AS_aemReference appData: AS_appData];
+/* +app, +con, +its methods can be used in place of ITApp, ITCon, ITIts macros */
+
++ (ITReference *)app {
+    return [self referenceWithAppData: nil aemReference: AEMApp];
 }
+
++ (ITReference *)con {
+    return [self referenceWithAppData: nil aemReference: AEMCon];
+}
+
++ (ITReference *)its {
+    return [self referenceWithAppData: nil aemReference: AEMIts];
+}
+
+
+/* ********************************* */
+
+- (NSString *)description {
+    return [ITReferenceRenderer formatObject: AS_aemReference appData: AS_appData];
+}
+
 
 /* Commands */
 
@@ -1195,6 +1212,11 @@
                     aemReference: [AS_aemReference property: 'lwpf']];
 }
 
+- (ITReference *)properties {
+    return [ITReference referenceWithAppData: AS_appData
+                    aemReference: [AS_aemReference property: 'pALL']];
+}
+
 - (ITReference *)rating {
     return [ITReference referenceWithAppData: AS_appData
                     aemReference: [AS_aemReference property: 'pRte']];
@@ -1203,6 +1225,11 @@
 - (ITReference *)ratingKind {
     return [ITReference referenceWithAppData: AS_appData
                     aemReference: [AS_aemReference property: 'pRtk']];
+}
+
+- (ITReference *)rawData {
+    return [ITReference referenceWithAppData: AS_appData
+                    aemReference: [AS_aemReference property: 'pRaw']];
 }
 
 - (ITReference *)requestedPrintTime {
@@ -1406,9 +1433,10 @@
 }
 
 
-/***********************************/
+/* ********************************* */
 
-// ordinal selectors
+
+/* ordinal selectors */
 
 - (ITReference *)first {
     return [ITReference referenceWithAppData: AS_appData
@@ -1430,19 +1458,20 @@
                                  aemReference: [AS_aemReference any]];
 }
 
-// by-index, by-name, by-id selectors
- 
+
+/* by-index, by-name, by-id selectors */
+
 - (ITReference *)at:(long)index {
     return [ITReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference at: index]];
 }
 
-- (ITReference *)byIndex:(id)index { // index is normally NSNumber, but may occasionally be other types
+- (ITReference *)byIndex:(id)index {
     return [ITReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference byIndex: index]];
 }
 
-- (ITReference *)byName:(NSString *)name {
+- (ITReference *)byName:(id)name {
     return [ITReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference byName: name]];
 }
@@ -1452,7 +1481,8 @@
                                  aemReference: [AS_aemReference byID: id_]];
 }
 
-// by-relative-position selectors
+
+/* by-relative-position selectors */
 
 - (ITReference *)previous:(ASConstant *)class_ {
     return [ITReference referenceWithAppData: AS_appData
@@ -1464,7 +1494,8 @@
                                  aemReference: [AS_aemReference next: [class_ AS_code]]];
 }
 
-// by-range selector
+
+/* by-range selector */
 
 - (ITReference *)at:(long)fromIndex to:(long)toIndex {
     return [ITReference referenceWithAppData: AS_appData
@@ -1481,15 +1512,16 @@
                                  aemReference: [AS_aemReference byRange: fromObject to: toObject]];
 }
 
-// by-test selector
+
+/* by-test selector */
 
 - (ITReference *)byTest:(ITReference *)testReference {
-    // note: getting AS_aemReference won't work for ASDynamicReference
     return [ITReference referenceWithAppData: AS_appData
                     aemReference: [AS_aemReference byTest: [testReference AS_aemReference]]];
 }
 
-// insertion location selectors
+
+/* insertion location selectors */
 
 - (ITReference *)beginning {
     return [ITReference referenceWithAppData: AS_appData
@@ -1511,7 +1543,8 @@
                                  aemReference: [AS_aemReference after]];
 }
 
-// Comparison and logic tests
+
+/* Comparison and logic tests */
 
 - (ITReference *)greaterThan:(id)object {
     return [ITReference referenceWithAppData: AS_appData
@@ -1579,5 +1612,4 @@
 }
 
 @end
-
 

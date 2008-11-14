@@ -1,8 +1,7 @@
 /*
  * TEReferenceGlue.m
- *
  * /Applications/TextEdit.app
- * osaglue 0.4.0
+ * osaglue 0.5.1
  *
  */
 
@@ -10,9 +9,27 @@
 
 @implementation TEReference
 
-- (NSString *)description {
-	return [TEReferenceRenderer formatObject: AS_aemReference appData: AS_appData];
+/* +app, +con, +its methods can be used in place of TEApp, TECon, TEIts macros */
+
++ (TEReference *)app {
+    return [self referenceWithAppData: nil aemReference: AEMApp];
 }
+
++ (TEReference *)con {
+    return [self referenceWithAppData: nil aemReference: AEMCon];
+}
+
++ (TEReference *)its {
+    return [self referenceWithAppData: nil aemReference: AEMIts];
+}
+
+
+/* ********************************* */
+
+- (NSString *)description {
+    return [TEReferenceRenderer formatObject: AS_aemReference appData: AS_appData];
+}
+
 
 /* Commands */
 
@@ -546,9 +563,10 @@
 }
 
 
-/***********************************/
+/* ********************************* */
 
-// ordinal selectors
+
+/* ordinal selectors */
 
 - (TEReference *)first {
     return [TEReference referenceWithAppData: AS_appData
@@ -570,19 +588,20 @@
                                  aemReference: [AS_aemReference any]];
 }
 
-// by-index, by-name, by-id selectors
- 
+
+/* by-index, by-name, by-id selectors */
+
 - (TEReference *)at:(long)index {
     return [TEReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference at: index]];
 }
 
-- (TEReference *)byIndex:(id)index { // index is normally NSNumber, but may occasionally be other types
+- (TEReference *)byIndex:(id)index {
     return [TEReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference byIndex: index]];
 }
 
-- (TEReference *)byName:(NSString *)name {
+- (TEReference *)byName:(id)name {
     return [TEReference referenceWithAppData: AS_appData
                                  aemReference: [AS_aemReference byName: name]];
 }
@@ -592,7 +611,8 @@
                                  aemReference: [AS_aemReference byID: id_]];
 }
 
-// by-relative-position selectors
+
+/* by-relative-position selectors */
 
 - (TEReference *)previous:(ASConstant *)class_ {
     return [TEReference referenceWithAppData: AS_appData
@@ -604,7 +624,8 @@
                                  aemReference: [AS_aemReference next: [class_ AS_code]]];
 }
 
-// by-range selector
+
+/* by-range selector */
 
 - (TEReference *)at:(long)fromIndex to:(long)toIndex {
     return [TEReference referenceWithAppData: AS_appData
@@ -621,15 +642,16 @@
                                  aemReference: [AS_aemReference byRange: fromObject to: toObject]];
 }
 
-// by-test selector
+
+/* by-test selector */
 
 - (TEReference *)byTest:(TEReference *)testReference {
-    // note: getting AS_aemReference won't work for ASDynamicReference
     return [TEReference referenceWithAppData: AS_appData
                     aemReference: [AS_aemReference byTest: [testReference AS_aemReference]]];
 }
 
-// insertion location selectors
+
+/* insertion location selectors */
 
 - (TEReference *)beginning {
     return [TEReference referenceWithAppData: AS_appData
@@ -651,7 +673,8 @@
                                  aemReference: [AS_aemReference after]];
 }
 
-// Comparison and logic tests
+
+/* Comparison and logic tests */
 
 - (TEReference *)greaterThan:(id)object {
     return [TEReference referenceWithAppData: AS_appData
@@ -719,5 +742,4 @@
 }
 
 @end
-
 

@@ -1,24 +1,29 @@
 /*
  * ITReferenceGlue.h
- *
  * /Applications/iTunes.app
- * osaglue 0.4.0
+ * osaglue 0.5.1
  *
  */
 
 #import <Foundation/Foundation.h>
-
-
 #import "Appscript/Appscript.h"
 #import "ITCommandGlue.h"
 #import "ITReferenceRendererGlue.h"
-
 #define ITApp ((ITReference *)[ITReference referenceWithAppData: nil aemReference: AEMApp])
 #define ITCon ((ITReference *)[ITReference referenceWithAppData: nil aemReference: AEMCon])
 #define ITIts ((ITReference *)[ITReference referenceWithAppData: nil aemReference: AEMIts])
 
-
 @interface ITReference : ASReference
+
+/* +app, +con, +its methods can be used in place of ITApp, ITCon, ITIts macros */
+
++ (ITReference *)app;
++ (ITReference *)con;
++ (ITReference *)its;
+
+/* ********************************* */
+
+- (NSString *)description;
 
 /* Commands */
 
@@ -217,8 +222,10 @@
 - (ITReference *)position;
 - (ITReference *)preamp;
 - (ITReference *)printerFeatures;
+- (ITReference *)properties;
 - (ITReference *)rating;
 - (ITReference *)ratingKind;
+- (ITReference *)rawData;
 - (ITReference *)requestedPrintTime;
 - (ITReference *)resizable;
 - (ITReference *)sampleRate;
@@ -259,23 +266,47 @@
 - (ITReference *)year;
 - (ITReference *)zoomable;
 - (ITReference *)zoomed;
+
+/* ********************************* */
+
+
+/* ordinal selectors */
+
 - (ITReference *)first;
 - (ITReference *)middle;
 - (ITReference *)last;
 - (ITReference *)any;
+
+/* by-index, by-name, by-id selectors */
+
 - (ITReference *)at:(long)index;
 - (ITReference *)byIndex:(id)index;
-- (ITReference *)byName:(NSString *)name;
+- (ITReference *)byName:(id)name;
 - (ITReference *)byID:(id)id_;
+
+/* by-relative-position selectors */
+
 - (ITReference *)previous:(ASConstant *)class_;
 - (ITReference *)next:(ASConstant *)class_;
+
+/* by-range selector */
+
 - (ITReference *)at:(long)fromIndex to:(long)toIndex;
 - (ITReference *)byRange:(id)fromObject to:(id)toObject;
+
+/* by-test selector */
+
 - (ITReference *)byTest:(ITReference *)testReference;
+
+/* insertion location selectors */
+
 - (ITReference *)beginning;
 - (ITReference *)end;
 - (ITReference *)before;
 - (ITReference *)after;
+
+/* Comparison and logic tests */
+
 - (ITReference *)greaterThan:(id)object;
 - (ITReference *)greaterOrEquals:(id)object;
 - (ITReference *)equals:(id)object;
@@ -290,5 +321,4 @@
 - (ITReference *)OR:(id)remainingOperands;
 - (ITReference *)NOT;
 @end
-
 

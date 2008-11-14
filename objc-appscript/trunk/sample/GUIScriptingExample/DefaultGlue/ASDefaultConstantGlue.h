@@ -1,16 +1,12 @@
 /*
  * ASDefaultConstantGlue.h
- *
  * <default terminology>
- * osaglue 0.4.0
+ * osaglue 0.5.1
  *
  */
 
 #import <Foundation/Foundation.h>
-
-
 #import "Appscript/Appscript.h"
-
 
 @interface ASDefaultConstant : ASConstant
 + (id)constantWithCode:(OSType)code_;
@@ -105,6 +101,7 @@
 + (ASDefaultConstant *)integer;
 + (ASDefaultConstant *)internationalText;
 + (ASDefaultConstant *)internationalWritingCode;
++ (ASDefaultConstant *)item;
 + (ASDefaultConstant *)kernelProcessID;
 + (ASDefaultConstant *)kilograms;
 + (ASDefaultConstant *)kilometers;
@@ -129,6 +126,7 @@
 + (ASDefaultConstant *)point;
 + (ASDefaultConstant *)pounds;
 + (ASDefaultConstant *)processSerialNumber;
++ (ASDefaultConstant *)properties;
 + (ASDefaultConstant *)property;
 + (ASDefaultConstant *)propertyInfo;
 + (ASDefaultConstant *)quarts;
@@ -157,5 +155,4 @@
 + (ASDefaultConstant *)writingCode;
 + (ASDefaultConstant *)yards;
 @end
-
 

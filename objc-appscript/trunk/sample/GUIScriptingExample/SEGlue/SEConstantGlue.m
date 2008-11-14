@@ -1,15 +1,13 @@
 /*
  * SEConstantGlue.m
- *
  * /System/Library/CoreServices/System Events.app
- * osaglue 0.4.0
+ * osaglue 0.5.1
  *
  */
 
 #import "SEConstantGlue.h"
 
 @implementation SEConstant
-
 + (id)constantWithCode:(OSType)code_ {
     switch (code_) {
         case 'dfph': return [self ApplePhotoFormat];
@@ -126,8 +124,8 @@
         case 'apre': return [self autoPresent];
         case 'aqui': return [self autoQuitWhenDone];
         case 'dahd': return [self autohide];
-        case 'autm': return [self automatic];
         case 'auto': return [self automatic];
+        case 'autm': return [self automatic];
         case 'aulg': return [self automaticLogin];
         case 'bkgo': return [self backgroundOnly];
         case 'best': return [self best];
@@ -843,7 +841,7 @@
 + (SEConstant *)command {
     static SEConstant *constantObj;
     if (!constantObj)
-        constantObj = [SEConstant constantWithName: @"command" type: typeEnumerated code: 'eCmd'];
+        constantObj = [SEConstant constantWithName: @"command" type: typeEnumerated code: 'cmdm'];
     return constantObj;
 }
 
@@ -857,7 +855,7 @@
 + (SEConstant *)control {
     static SEConstant *constantObj;
     if (!constantObj)
-        constantObj = [SEConstant constantWithName: @"control" type: typeEnumerated code: 'eCnt'];
+        constantObj = [SEConstant constantWithName: @"control" type: typeEnumerated code: 'ctlm'];
     return constantObj;
 }
 
@@ -1081,7 +1079,7 @@
 + (SEConstant *)option {
     static SEConstant *constantObj;
     if (!constantObj)
-        constantObj = [SEConstant constantWithName: @"option" type: typeEnumerated code: 'eOpt'];
+        constantObj = [SEConstant constantWithName: @"option" type: typeEnumerated code: 'optm'];
     return constantObj;
 }
 
@@ -1186,7 +1184,7 @@
 + (SEConstant *)shift {
     static SEConstant *constantObj;
     if (!constantObj)
-        constantObj = [SEConstant constantWithName: @"shift" type: typeEnumerated code: 'eSft'];
+        constantObj = [SEConstant constantWithName: @"shift" type: typeEnumerated code: 'shtm'];
     return constantObj;
 }
 
@@ -4582,5 +4580,4 @@
 }
 
 @end
-
 

@@ -1,15 +1,13 @@
 /*
  * ASDefaultConstantGlue.m
- *
  * <default terminology>
- * osaglue 0.4.0
+ * osaglue 0.5.1
  *
  */
 
 #import "ASDefaultConstantGlue.h"
 
 @implementation ASDefaultConstant
-
 + (id)constantWithCode:(OSType)code_ {
     switch (code_) {
         case 'apr ': return [self April];
@@ -92,6 +90,7 @@
         case 'long': return [self integer];
         case 'itxt': return [self internationalText];
         case 'intl': return [self internationalWritingCode];
+        case 'cobj': return [self item];
         case 'kpid': return [self kernelProcessID];
         case 'kgrm': return [self kilograms];
         case 'kmtr': return [self kilometers];
@@ -118,6 +117,7 @@
         case 'QDpt': return [self point];
         case 'lbs ': return [self pounds];
         case 'psn ': return [self processSerialNumber];
+        case 'pALL': return [self properties];
         case 'prop': return [self property];
         case 'pinf': return [self propertyInfo];
         case 'punc': return [self punctuation];
@@ -753,6 +753,13 @@
     return constantObj;
 }
 
++ (ASDefaultConstant *)item {
+    static ASDefaultConstant *constantObj;
+    if (!constantObj)
+        constantObj = [ASDefaultConstant constantWithName: @"item" type: typeType code: 'cobj'];
+    return constantObj;
+}
+
 + (ASDefaultConstant *)kernelProcessID {
     static ASDefaultConstant *constantObj;
     if (!constantObj)
@@ -918,6 +925,13 @@
     static ASDefaultConstant *constantObj;
     if (!constantObj)
         constantObj = [ASDefaultConstant constantWithName: @"processSerialNumber" type: typeType code: 'psn '];
+    return constantObj;
+}
+
++ (ASDefaultConstant *)properties {
+    static ASDefaultConstant *constantObj;
+    if (!constantObj)
+        constantObj = [ASDefaultConstant constantWithName: @"properties" type: typeType code: 'pALL'];
     return constantObj;
 }
 
@@ -1111,5 +1125,4 @@
 }
 
 @end
-
 

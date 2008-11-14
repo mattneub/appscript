@@ -1,21 +1,21 @@
 /*
  * ASDefaultCommandGlue.m
- *
  * <default terminology>
- * osaglue 0.4.0
+ * osaglue 0.5.1
  *
  */
 
 #import "ASDefaultCommandGlue.h"
 
 @implementation ASDefaultCommand
-- (NSString *)AS_formatObject:(id)obj appData:(id)appData{
+- (NSString *)AS_formatObject:(id)obj appData:(id)appData {
     return [ASDefaultReferenceRenderer formatObject: obj appData: appData];
 }
+
 @end
 
-@implementation ASDefaultActivateCommand
 
+@implementation ASDefaultActivateCommand
 - (NSString *)AS_commandName {
     return @"activate";
 }
@@ -24,7 +24,6 @@
 
 
 @implementation ASDefaultGetCommand
-
 - (NSString *)AS_commandName {
     return @"get";
 }
@@ -33,7 +32,6 @@
 
 
 @implementation ASDefaultLaunchCommand
-
 - (NSString *)AS_commandName {
     return @"launch";
 }
@@ -42,7 +40,6 @@
 
 
 @implementation ASDefaultOpenCommand
-
 - (NSString *)AS_commandName {
     return @"open";
 }
@@ -51,10 +48,10 @@
 
 
 @implementation ASDefaultOpenLocationCommand
-
 - (ASDefaultOpenLocationCommand *)window:(id)value {
     [AS_event setParameter: value forKeyword: 'WIND'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -73,7 +70,6 @@
 
 
 @implementation ASDefaultPrintCommand
-
 - (NSString *)AS_commandName {
     return @"print";
 }
@@ -82,10 +78,10 @@
 
 
 @implementation ASDefaultQuitCommand
-
 - (ASDefaultQuitCommand *)saving:(id)value {
     [AS_event setParameter: value forKeyword: 'savo'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -104,7 +100,6 @@
 
 
 @implementation ASDefaultReopenCommand
-
 - (NSString *)AS_commandName {
     return @"reopen";
 }
@@ -113,7 +108,6 @@
 
 
 @implementation ASDefaultRunCommand
-
 - (NSString *)AS_commandName {
     return @"run";
 }
@@ -122,10 +116,10 @@
 
 
 @implementation ASDefaultSetCommand
-
 - (ASDefaultSetCommand *)to:(id)value {
     [AS_event setParameter: value forKeyword: 'data'];
     return self;
+
 }
 
 - (NSString *)AS_commandName {
@@ -141,5 +135,4 @@
 }
 
 @end
-
 
