@@ -33,16 +33,16 @@
 
 <p>The <code>EventHandlerError</code> constructor takes, at minimum, a single argument containing the Apple event error code, in this case <code>-1704</code> ("some parameter was invalid"). A second argument containing a descriptive string is optional, though as error codes alone rarely provide sufficient information for the user to determine the exact cause its inclusion is recommended.</p>
 
-<p>Installing this function as an event handler is also a little more complex as the type of its direct parameter, <code>list of integer</code>, cannot be adequately expressed using a simple constant as was the case for the <code>unicode numbers</code> handler. While you could use the <code>kAE.typeAEList</code> constant to declare it as a list, this will only perform automatic type-checking and coercion of the list itself, leaving your function to type-check and where necessary cast each item of that list itself. It's much more convenient to have this done for you, which is why aemreceive allows parameter type declarations to be assembled using a limited form of composition. In this case, <code>list of integer</code> is expressed by an <code>ArgListOf</code> instance containing a <code>kAE.typeInteger</code> constant:</p>
+<p>Installing this function as an event handler is also a little more complex as the type of its direct parameter, <code>list of integer</code>, cannot be adequately expressed using a simple constant as was the case for the <code>unicode numbers</code> handler. While you could use the <code>kae.typeAEList</code> constant to declare it as a list, this will only perform automatic type-checking and coercion of the list itself, leaving your function to type-check and where necessary cast each item of that list itself. It's much more convenient to have this done for you, which is why aemreceive allows parameter type declarations to be assembled using a limited form of composition. In this case, <code>list of integer</code> is expressed by an <code>ArgListOf</code> instance containing a <code>kae.typeInteger</code> constant:</p>
 
-<pre><code>ArgListOf(kAE.typeInteger)</code></pre>
+<pre><code>ArgListOf(kae.typeInteger)</code></pre>
 
 <p>The rest of the <code>installeventhandler()</code> call's parameters are similar to before - the <code>unicodeCharacters</code> function, its Apple event code as declared in <code>MiniTC.sdef</code>, and a single tuple binding the event's direct parameter to the function's <code>intList</code> parameter and declaring its required type as <code>list of integer</code>:</p>
 
 <pre><code>installeventhandler(
         unicodeCharacters,
         'TeCoUcha',
-        ('----', 'intList', ArgListOf(kAE.typeInteger))
+        ('----', 'intList', ArgListOf(kae.typeInteger))
         )</code></pre>
 
 <p>Once you've added this code to <code>MiniTC.py</code> and rebuilt and/or restarted MiniTC.app as necessary, you can test this handler using the following AppleScripts:</p>

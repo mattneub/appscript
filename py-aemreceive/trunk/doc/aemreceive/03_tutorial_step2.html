@@ -30,7 +30,7 @@
 <pre><code>installeventhandler(
         unicodeNumbers,
         'TeCoUnum',
-        ('----', 'text', kAE.typeUnicodeText)
+        ('----', 'text', kae.typeUnicodeText)
         )</code></pre>
 
 <p>The first argument is the <code>unicodeNumbers</code> function. The second argument is an 8-letter string containing the event handler's 8-letter code as defined in <code>MiniTC.sdef</code>. The third argument is a tuple describing the <code>unicode numbers</code> command's direct parameter; <code>installeventhandler()</code> accepts any number of these tuples, one for each required/optional parameter to the Apple event. Each tuple contains three items:</p>
@@ -43,7 +43,7 @@
 <li>A value indicating the acceptable type(s) or enumeration(s) for this parameter. aemreceive will use this value when unpacking incoming parameters to ensure the arguments passed to the Python function are of the correct kind. Where an event parameter is of a different type to those specified, aemreceive will attempt to coerce it to the right type before unpacking it, automatically returning a coercion error (<code>-1700</code>) if it is unable to do so.</li>
 </ol>
 
-<p>In this case, the <code>unicode numbers</code> command takes a single direct parameter (<code>'----'</code>), the value of which should be bound to the <code>unicodeNumbers</code> function's <code>text</code> parameter. The only accepted type for this parameter is Unicode text, which is most easily expressed using the <code>typeUnicodeText</code> from the <code>kAE</code> module exported by aemreceive.</p>
+<p>In this case, the <code>unicode numbers</code> command takes a single direct parameter (<code>'----'</code>), the value of which should be bound to the <code>unicodeNumbers</code> function's <code>text</code> parameter. The only accepted type for this parameter is Unicode text, which is most easily expressed using the <code>typeUnicodeText</code> from the <code>kae</code> module exported by aemreceive.</p>
 
 <p>Once you've added this code to <code>MiniTC.py</code> and rebuilt and/or restarted MiniTC.app as necessary, you can test this handler using the following AppleScript:</p>
 

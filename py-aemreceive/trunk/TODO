@@ -12,8 +12,8 @@ TO DO
 
 	installeventhandler(callbackfunction,
 			'evntcode',
-			(kAE.keyDirectObject, 'param', ...), # parameter
-			(kOSA.keySubjectAttr, 'subject', ...), # attribute
+			(kae.keyDirectObject, 'param', ...), # parameter
+			(kae.keySubjectAttr, 'subject', ...), # attribute
 			)
 
 
@@ -22,7 +22,7 @@ Following will probably be rejected as too hard or not important enough to do:
 
 - geteventhandler & getcoercionhandler function # users are unlikely to need these
 
-- allow lower-level event handlers to be installed, e.g. to allow request and reply events to be forwarded to OSADoEvent() in an applet shell # users can just use CarbonX.AE directly for this
+- allow lower-level event handlers to be installed, e.g. to allow request and reply events to be forwarded to OSADoEvent() in an applet shell # users can just use aem.ae directly for this
 
 - better handling of return values? (e.g. check return types match type specified in [terminology] definition) # think it should be left to developer to return correct type(s)
 
