@@ -42,8 +42,8 @@ static NSAppleEventDescriptor *defaultIgnore;
 	// if an application specified by path has quit/restart, its AEAddressDesc is no longer valid;
 	// this code will automatically restart it (or not) according to client-specified auto-relaunch policy
 	ASRelaunchMode relaunchPolicy = [appData relaunchMode];
-	if (relaunchPolicy != kASRelaunchNever & [target targetType] == kAEMTargetFileURL
-			& ![AEMApplication processExistsForPID: [[target descriptor] int32Value]]) {
+	if (relaunchPolicy != kASRelaunchNever && [target targetType] == kAEMTargetFileURL
+			&& ![AEMApplication processExistsForPID: [[target descriptor] int32Value]]) {
 		// TO DO: what, if any, other events should be allowed to relaunch app when kASRelaunchSpecial is used?
 		if (relaunchPolicy == kASRelaunchAlways || classCode == kCoreEventClass && code == kAEOpenApplication) {
 			BOOL success = [target reconnectWithError: &targetError];

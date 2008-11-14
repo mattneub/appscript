@@ -44,7 +44,7 @@
 
 - (OSType)eventID;
 
-- (OSType)parameterForName:(NSString *)name_;
+- (OSType)parameterForName:(NSString *)name_; // TO DO: needs to return error by arg if not found
 
 - (NSString *)parameterForCode:(OSType)code_;
 

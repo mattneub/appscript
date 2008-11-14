@@ -1,0 +1,104 @@
+#!/usr/bin/env python
+
+""" osaglue -- generates objc-appscript glue files
+
+(C) 2007-2008 HAS
+
+To install, cd to bin and run:
+
+	sudo cp osaglue /usr/local/bin/osaglue
+	sudo chmod 755 /usr/local/bin/osaglue
+
+Usage:
+
+	Run 'osaglue' to display command line help.
+
+Example:
+
+	osaglue -o FNGlue -p FN Finder
+
+Dependencies:
+
+	- py-appscript 0.19.0+ 
+	- py-osaterminology 0.13.0+
+"""
+
+import getopt, os, sys
+
+from osaterminology.makeglue.objcappscript import *
+
+
+######################################################################
+# CLI SUPPORT
+######################################################################
+
+
+_help =  """osaglue -- Generate .h and .m glue files for objc-appscript.
+    
+SYNOPSIS
+    
+        osaglue [-hvx] [-o output-directory] [-p prefix] [app-or-osax-name]
+    
+DESCRIPTION
+    
+    The -h option prints this help and exits immediately.
+    
+    The -v option prints osaglue's version number and exits immediately.
+    
+    The -o option may be used to specify the directory to which the glue files
+    should be written. If the directory doesn't already exist, one is created.
+    If omitted, the glue files are written to the current directory.
+    
+    The prefix argument, -p, is prepended to the names of all glue files and 
+    classes. Developers should specify a unique prefix that won't cause 
+    namespace conflicts in their project. If omitted, a two-character prefix 
+    based on the application or scripting addition name is created or, if no 
+    name is given, 'ASDefault'.
+    
+    The app-or-osax-name argument may be the name or full path of the 
+    application for which glues should be generated, or, if the -x option is 
+    given, the name of an installed scripting addition or the full path to a 
+    scripting addition. If no argument is given, the resulting glue files will 
+    contain only the default terminology provided by appscript.
+    
+    On success, returns the path to the generated glue folder.
+    
+EXAMPLES
+    
+    To generate TEGlue.h and associated files for TextEdit:
+    
+        osaglue -o TEGlue -p TE TextEdit
+"""
+
+
+opts, args = getopt.getopt(sys.argv[1:], 'hvo:p:x')
+opts = dict(opts)
+
+if opts.has_key('-v'):
+	print >> sys.stderr, kGlueVersion
+	sys.exit()
+elif opts.has_key('-h'):
+	print >> sys.stderr, _help
+	sys.exit()
+appname = args and args[0] or ''
+
+if opts.has_key('-p'):
+	prefix = opts['-p']
+elif args:
+	prefix = nametoprefix(appname)
+else:
+	prefix = 'ASDefault'
+
+outdir = os.path.abspath(opts.get('-o', '%sGlue' % prefix))
+
+if not os.path.exists(outdir):
+	os.makedirs(outdir)
+
+if opts.get('-x', ''):
+	makeosaxglue(appname, prefix, outdir)
+elif args:
+	makeappglue(appname, prefix, outdir)
+else:
+	makedefaultglue(prefix, outdir)
+
+print outdir
