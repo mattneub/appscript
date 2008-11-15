@@ -19,7 +19,7 @@ The following constants are exported by the top-level aemreceive module:
 
 kArgDesc -- Used in installeventhandler where a parameter should be passed directly to eventcallback as an AEDesc without unpacking or typechecking
 
-kArgMissingValue -- Used in installeventhandler to indicate that a 'missing value' constant is an acceptable parameter, e.g. ArgMultiChoice(kAE.typeUnicodeText, kArgMissingValue)
+kArgMissingValue -- Used in installeventhandler to indicate that a 'missing value' constant is an acceptable parameter, e.g. ArgMultiChoice(kae.typeUnicodeText, kArgMissingValue)
 
 kArgAny -- Used in installeventhandler to indicate that any type of descriptor is an acceptable parameter
 
@@ -33,7 +33,7 @@ kMissingValue -- The 'missing value' constant. Event handlers that sometimes ret
 
 ------- Other constants -------
 
-kAE -- aemreceive re-exports CarbonX's kAE constants module for convenience; contains a range of common AE type constants useful when declaring event parameters' types
+kae -- aemreceive re-exports aem's kae constants module for convenience; contains a range of common AE type constants useful when declaring event parameters' types
 
 
 ======================================================================
@@ -158,8 +158,8 @@ def stripText(text, removing=None, fromEnd=AEEnum('Both')):
 installeventhandler(
 		stripText,
 		'TeCoStrp',
-		('----', 'text', kAE.typeUnicodeText),
-		('Remo', 'removing', kAE.typeUnicodeText),
+		('----', 'text', kae.typeUnicodeText),
+		('Remo', 'removing', kae.typeUnicodeText),
 		('From', 'fromEnd', ArgEnum('Left', 'Rght', 'Both'))
 		)
 
@@ -173,8 +173,8 @@ def coerceAETypeToUnicodeText(desc, totype):
 
 installcoercionhandler(
 		coerceAETypeToUnicodeText, 
-		kAE.typeType, 
-		kAE.typeUnicodeText)
+		kae.typeType, 
+		kae.typeUnicodeText)
 
 
 ======================================================================

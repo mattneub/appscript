@@ -18,7 +18,7 @@ def unicodeNumbers(text):
 installeventhandler(
 		unicodeNumbers,
 		'TeCoUnum',
-		('----', 'text', kAE.typeUnicodeText)
+		('----', 'text', kae.typeUnicodeText)
 		)
 
 
@@ -31,7 +31,7 @@ def unicodeCharacters(intList):
 installeventhandler(
 		unicodeCharacters,
 		'TeCoUcha',
-		('----', 'intList', ArgListOf(kAE.typeInteger))
+		('----', 'intList', ArgListOf(kae.typeInteger))
 		)
 
 
@@ -43,8 +43,8 @@ def stripText(text, removing=None, fromEnd=AEEnum('Both')):
 installeventhandler(
 		stripText,
 		'TeCoStrp',
-		('----', 'text', kAE.typeUnicodeText),
-		('Remo', 'removing', kAE.typeUnicodeText),
+		('----', 'text', kae.typeUnicodeText),
+		('Remo', 'removing', kae.typeUnicodeText),
 		('From', 'fromEnd', ArgEnum('Left', 'Rght', 'Both'))
 		)
 
