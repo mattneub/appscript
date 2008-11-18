@@ -1,4 +1,4 @@
-2008-11-?? -- 0.19.0
+2008-11-18 -- 0.19.0
 
 - The following packages/modules have been removed from the appscript distribution:
 
@@ -14,7 +14,7 @@ The aemreceive, osascript and osaterminology packages can be obtained separately
 
 - The CarbonX package is deprecated and will be removed in a future release. The original CarbonX.AE and CarbonX.kAE modules have been aliased to aem.ae and aem.kae, which provide most of the same functionality. Users should update any existing code that refers to these modules as needed.
 
-- All remaining modules now support 64-bit Python, except for osax which currently provides limited 64-bit support only (i.e. a scripting addition's terminology cannot be obtained dynamically; use appscript.terminology.dump() under 32-bit Python to export a scripting addition's terminology as a static glue module and use that as the 'terms' argument to osax.ScriptingAddition.__init__)
+- All remaining modules now support 64-bit Python, except for osax which currently provides limited 64-bit support only (i.e. a scripting addition's terminology cannot be obtained dynamically; use appscript.terminology.dump() under 32-bit Python to export a scripting addition's terminology as a static glue module and use that as the 'terms' argument to osax.OSAX.__init__)
 
 - The aem package's internal structure has been simplified and some modules renamed. The base class for all specifier and test objects is now named 'Query' and is exported by aem's public API for typechecking use only.
 
@@ -24,7 +24,9 @@ The aemreceive, osascript and osaterminology packages can be obtained separately
 
 - aem.ae raises aem.ae.MacOSError exceptions. Users should update any existing code that refers to the MacOS.Error type as needed.
 
-- aem.CommandError now subclasses aem.ae.MacOSError instead of MacOS.Error.
+- aem.ae.AEDesc.send() now releases GIL during AESendMessage() calls
+
+- renamed aem.CommandError to aem.EventError; now subclasses aem.ae.MacOSError instead of MacOS.Error
 
 - Added aem.kae, containing all constants previously defined by CarbonX.kAE and CarbonX.kOSA.
 
@@ -38,15 +40,17 @@ The aemreceive, osascript and osaterminology packages can be obtained separately
 
 - For convenience, aem and appscript modules re-export mactypes module as part of their public APIs.
 
-- added compatibility fix to aem.Codecs packUnicodeText, unpackUnicodeText due to change in behaviour of unicode(data, 'utf16') in Python 2.6
+- added compatibility fix to aem.Codecs packUnicodeText, unpackUnicodeText due to change in behaviour of 'utf16' codec in Python 2.6
+
+- added aem.Codecs.dontcacheunpackedspecifiers() compatibility option
 
 - moved aem.Event's _createAppleEvent, _sendAppleEvent hook methods to aem.Application and renamed them _createproc, _sendproc; both are now defined as static methods
 
-- added errornumber, errormessage properties to aem.CommandError, appscript.CommandError. Deprecated 'number' and 'message' attributes in aem.CommandError; clients should update any existing code to use errornumber, errormessage properties instead.
+- added errornumber, errormessage properties to aem.EventError, appscript.CommandError. Deprecated 'number' and 'message' attributes in aem.EventError; clients should update any existing code to use errornumber, errormessage properties instead.
 
 - added errornumber property to aem.CantLaunchApplicationError. Deprecated 'number' attribute in aem.CantLaunchApplicationError; clients should update any existing code to use errornumber property instead.
 
-- aem.CommandError, appscript.CommandError now include any additional error info provided by applications (i.e. offending object, expected type, partial result) in error messages
+- aem.EventError, appscript.CommandError now include any additional error info provided by applications (i.e. offending object, expected type, partial result) in error messages
 
 - fixed bug in appscript.Reference.AS_newreference
 
@@ -60,6 +64,8 @@ The aemreceive, osascript and osaterminology packages can be obtained separately
 
 - improved error reporting in Reference.__getitem__ when a malformed generic reference containing a command expands to a non-reference value. e.g. its.name.get() would previously expand the the value of the object's 'name' property, typically a string, resulting in a cryptic AttributeError; this now raises a descriptive ValueError.
 
+- where an application's property and enumerator definitions conflict, the terminology module now gives higher priority to the property definition
+
 - added 'relaunchmode' property to app objects
 
 - added 'with', 'relaunchmode' to list of reserved keywords
@@ -69,6 +75,8 @@ The aemreceive, osascript and osaterminology packages can be obtained separately
 - mactypes.Alias.__init__, mactypes.File.__init__ now use os.path.abspath to normalise path parameter; this allows relative as well as absolute paths to be used as arguments
 
 - Alias constructor now raises ValueError instead of MacOS.Error(-1700) if file not found; clients should update any existing code as needed.
+
+- renamed osax.ScriptingAddition to osax.OSAX; osax module retains a ScriptingAddition attribute for backwards compatibility, but this is deprecated and will eventually be removed. Users should update any existing code as necessary.
 
 - lowercased all public and private function/method/variable names as-per Python style guidelines (constant names remain camelcased); revised function/method names in aem.ae
 

@@ -106,17 +106,10 @@ sample/osax/standard_additions.py
 setup.py
 test/README
 test/test_aemreference.py
-test/test_aemreference.py
-test/test_appscriptcommands.py
 test/test_appscriptcommands.py
 test/test_appscriptreference.py
-test/test_appscriptreference.py
-test/test_codecs.py
 test/test_codecs.py
 test/test_findapp.py
-test/test_findapp.py
 test/test_mactypes.py
-test/test_mactypes.py
-test/test_osax.py
 test/test_osax.py
 test/testall.sh

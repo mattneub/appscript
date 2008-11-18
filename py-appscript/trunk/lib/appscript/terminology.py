@@ -3,7 +3,7 @@
 (C) 2004-2008 HAS
 """
 
-from aem import AEType, AEEnum, CommandError, findapp, ae, kae
+from aem import AEType, AEEnum, EventError, findapp, ae, kae
 import defaultterminology
 
 from terminologyparser import buildtablesforaetes
@@ -79,8 +79,8 @@ def _maketypetable(classes, enums, properties):
 	# Each argument is of format [[name, code], ...]
 	typebycode = _typebycode.copy()
 	typebyname = _typebyname.copy()
-	# TO DO: testing indicates that where name+code clashes occur, classes have highest priority, followed by properties, with enums last; currently this code gives higher priority to enums:
-	for klass, table in [(AEType, properties), (AEEnum, enums), (AEType, classes)]: # note: packing properties as AEProp causes problems when the same name is used for both a class and a property, and the property's definition masks the class's one (e.g. Finder's 'file'); if an AEProp is passed where an AEType is expected, it can cause an error as it's not what the receiving app expects. (Whereas they may be more tolerant of an AEType being passed where an AEProp is expected.) Also, note that AppleScript always seems to pack property names as typeType, so we should be ok following its lead here.
+	# note: testing indicates that where name+code clashes occur, classes have highest priority, followed by properties, with enums last (prior to 0.19.0 this code gave higher priority to enums):
+	for klass, table in [(AEEnum, enums), (AEType, properties), (AEType, classes)]: # note: packing properties as AEProp causes problems when the same name is used for both a class and a property, and the property's definition masks the class's one (e.g. Finder's 'file'); if an AEProp is passed where an AEType is expected, it can cause an error as it's not what the receiving app expects. (Whereas they may be more tolerant of an AEType being passed where an AEProp is expected.) Also, note that AppleScript always seems to pack property names as typeType, so we should be ok following its lead here.
 		for i, (name, code) in enumerate(table):
 			# If an application-defined name overlaps an existing type name but has a different code, append '_' to avoid collision:
 			if name in _typebyname and _typebyname[name].code != code:
@@ -128,7 +128,7 @@ def aetesforapp(aemapp):
 	try:
 		aetes = aemapp.event('ascrgdte', {'----':0}).send(120 * 60)
 	except Exception, e: # (e.g.application not running)
-		if isinstance(e, CommandError) and e.errornumber == -192:
+		if isinstance(e, EventError) and e.errornumber == -192:
 			aetes = []
 		else:
 			raise RuntimeError("Can't get terminology for application (%r): %s" % (aemapp, e))

@@ -39,24 +39,24 @@
 
 <h3>64-bit limitations</h3>
 
-<p>The <code>osax</code> module currently only supports dynamic retrieval of scripting addition terminology when running in 32-bit processes. To use it in 64-bit processes, use the <code>appscript.terminology</code> module's <code>dump</code> function to export a static terminology 'glue' module for the desired scripting addition (running it in a 32-bit process), then import that module and pass it as the second argument to the <code>ScriptingAddition</code> class's initialiser. For example, to export a glue module for Standard Additions:</p>
+<p>The <code>osax</code> module currently only supports dynamic retrieval of scripting addition terminology when running in 32-bit processes. To use it in 64-bit processes, use the <code>appscript.terminology</code> module's <code>dump</code> function to export a static terminology 'glue' module for the desired scripting addition (running it in a 32-bit process), then import that module and pass it as the second argument to the <code>OSAX</code> class's initialiser. For example, to export a glue module for Standard Additions:</p>
 
 <pre><code>from appscript import terminology
 
 terminology.dump('/System/Library/ScriptingAdditions/StandardAdditions.osax', 
         'StandardAdditions', 'standardadditions.py')</code></pre>
 
-<p>To create a new <code>ScriptingAddition</code> instance using the terminology provided by this glue module:</p>
+<p>To create a new <code>OSAX</code> instance using the terminology provided by this glue module:</p>
 
 <pre><code>import osax
 import standardadditions
 
-sa = osax.ScriptingAddition('StandardAdditions', standardadditions)</code></pre>
+sa = osax.OSAX(terms=standardadditions)</code></pre>
 
 
 <h3>Known problems</h3>
 
-<p>When using the <code>osax</code> module within PyObjC-based applications, avoid creating <code>ScriptingAddition</code> instances before the main event loop is started as this can result in the application behaving strangely (minimised windows don't expand correctly) due to a bug in OS X's <code>OSAGetAppTerminology</code> function.</p>
+<p>When using the <code>osax</code> module within PyObjC-based applications, avoid creating <code>OSAX</code> instances before the main event loop is started as this can result in the application behaving strangely (minimised windows don't expand correctly) due to a bug in OS X's <code>OSAGetAppTerminology</code> function.</p>
 
 
 

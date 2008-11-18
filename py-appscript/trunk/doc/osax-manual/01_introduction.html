@@ -33,23 +33,23 @@
 
 <h3>About osax</h3>
 
-<p>The <code>osax</code> module provides an easy way to call scripting additions (a.k.a. OSAXen) from Python. It exports a single public class, <code>ScriptingAddition</code>, and a single variable, <code>scriptingadditions</code>. For convenience, it also re-exports appscript's <code>ApplicationNotFoundError</code> and <code>CommandError</code> classes and <code>k</code> variable.</p>
+<p>The <code>osax</code> module provides an easy way to call scripting additions (a.k.a. OSAXen) from Python. It exports a single public class, <code>OSAX</code>, and a single variable, <code>scriptingadditions</code>. For convenience, it also re-exports appscript's <code>ApplicationNotFoundError</code> and <code>CommandError</code> classes and <code>k</code> variable.</p>
 
-<p>The <code>ScriptingAddition</code> class represents a single scripting addition. It is similar to an appscript application object, except that it defines commands for the specified scripting addition instead of the application's normal commands. </p>
+<p>The <code>OSAX</code> class represents a single scripting addition. It is similar to an appscript application object, except that it defines commands for the specified scripting addition instead of the application's normal commands. </p>
 
-<p>Once you've created a <code>ScriptingAddition</code> instance, you can invoke its commands in exactly the same way as you would call a scriptable application's commands in appscript.</p>
+<p>Once you've created a <code>OSAX</code> instance, you can invoke its commands in exactly the same way as you would call a scriptable application's commands in appscript.</p>
 
 <p>For example:</p>
 
 <pre><code>import osax
 
-sa = osax.ScriptingAddition()
+sa = osax.OSAX()
 
 sa.say("Hello world", using="Victoria")</code></pre>
 
 <p>The default application commands (<code>run</code>, <code>activate</code>, <code>quit</code>, etc.) are also available; see the appscript manual for details on those.</p>
 
-<p>By default, <code>ScriptingAddition</code> objects use StandardAdditions terminology and are targeted at the current application. You can specify the name of a different scripting addition via the constructor's <code>osaxname</code> argument. You can specify another application by supplying one of the following optional keyword arguments: <code>name</code>, <code>id</code>, <code>creator</code> or <code>url</code>. These arguments are the same as for appscript.</p>
+<p>By default, <code>OSAX</code> objects use StandardAdditions terminology and are targeted at the current application. You can specify the name of a different scripting addition via the constructor's <code>osaxname</code> argument. You can specify another application by supplying one of the following optional keyword arguments: <code>name</code>, <code>id</code>, <code>creator</code> or <code>url</code>. These arguments are the same as for appscript.</p>
 
 
 </div>

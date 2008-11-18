@@ -34,18 +34,21 @@
 
 <pre><code>from osax import *
 
-# Create a new ScriptingAddition object:
+# Create an OSAX instance that contains Standard Additions
+# terminology and targets the host process
+sa = OSAX() 
 
-sa = ScriptingAddition()
-
-
-# Call some commands:
-
+# Beep
 sa.beep()
 
+# Speak a phrase
+sa.say("Hello World!")
+
+# Get path to user's Scripts folder
 print sa.path_to(k.scripts_folder)
 # Result: mactypes.Alias(u"/Users/foo/Library/Scripts/")
 
+# Display a dialog
 print sa.display_dialog("Python says hello!",
                         buttons=["Hi!", "Howdy!", "Duuuude!"],
                         default_button=3)

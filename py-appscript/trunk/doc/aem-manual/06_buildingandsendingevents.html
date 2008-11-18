@@ -162,11 +162,11 @@ kAECanSwitchLayer</code></pre>
 
 <h3>Exception classes</h3>
 
-<h4><code>aem.CommandError</code></h4>
+<h4><code>aem.EventError</code></h4>
 
-<p>The <code>aem.CommandError</code> exception is raised by <code>Event.send</code> and represents an error raised by the target application or Apple Event Manager when sending an event.</p>
+<p>The <code>aem.EventError</code> exception is raised by <code>Event.send</code> and represents an error raised by the target application or Apple Event Manager when sending an event.</p>
 
-<pre><code>CommandError(aem.ae.MacOSError)
+<pre><code>EventError(aem.ae.MacOSError)
 
     Properties:
         errornumber : int -- Mac OS error number
@@ -186,9 +186,11 @@ kAECanSwitchLayer</code></pre>
         __str__(self) -- formatted description of error</code></pre>
 
 
+<p class="hilitebox">Prior to appscript 0.19.0, this class was named <code>aem.CommandError</code>. That name is deprecated in appscript 0.19.0+, but is still supported for backwards compatibility.</p>
+
 <h4><code>aem.ae.MacOSError</code></h4>
 
-<p>The <code>aem.ae.MacOSError</code> exception is raised by the low-level <code>aem.ae</code> extension and represents an error raised by the Apple Event Manager. The <code>aem</code> API usually traps these low-level errors and throws more descriptive errors in their place (e.g. <code>aem.CommandError</code>).</p>
+<p>The <code>aem.ae.MacOSError</code> exception is raised by the low-level <code>aem.ae</code> extension and represents an error raised by the Apple Event Manager. The <code>aem</code> API usually traps these low-level errors and throws more descriptive errors in their place (e.g. <code>aem.EventError</code>).</p>
 
 <pre><code>MacOSError(Exception)
 

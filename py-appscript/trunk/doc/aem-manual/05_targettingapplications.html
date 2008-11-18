@@ -140,7 +140,7 @@ typeProcessSerialNumber</code></pre>
 
 <h3>Reconnecting to local applications</h3>
 
-<p>Because local applications are identified by process serial number, an existing <code>Application</code> object created using the <code>path</code> argument will no longer hold a valid <code>AEAddressDesc</code> if the target application quits. Sending events to an invalid address will cause a <code>CommandError</code> -600 ("application isn't running") or -609 ("connection is invalid") to be raised.</p>
+<p>Because local applications are identified by process serial number, an existing <code>Application</code> object created using the <code>path</code> argument will no longer hold a valid <code>AEAddressDesc</code> if the target application quits. Sending events to an invalid address will cause a <code>EventError</code> -600 ("application isn't running") or -609 ("connection is invalid") to be raised.</p>
 
 <p>The <code>isrunning</code> static method can be used to check if a local application is running or not, given its full path.</p>
 

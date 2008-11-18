@@ -90,7 +90,7 @@ def write(path, txt):
 # Main
 
 # Prompt user to specify HTML file to save to:
-sa = ScriptingAddition()
+sa = OSAX()
 sa.activate()
 outfile = sa.choose_file_name(default_name='iTunes_albums.html')
 

@@ -7,8 +7,9 @@ from appscript import *
 from appscript import reference, terminology
 import aem
 
-__all__ = ['ApplicationNotFoundError', 'ScriptingAddition','CommandError', 
-		'k', 'scriptingadditions', 'mactypes']
+__all__ = ['ApplicationNotFoundError', 'OSAX', 
+		'ScriptingAddition', # deprecated; use OSAX instead
+		'CommandError', 'k', 'scriptingadditions', 'mactypes']
 
 
 ######################################################################
@@ -45,20 +46,12 @@ for domaincode in ['flds', 'fldl', 'fldu']:
 scriptingadditions.sort()
 
 
-class _OSAXHelp:
-	def __init__(self, osaxpath):
-		self.osaxpath = osaxpath
-		self.helpobj = None
-	
-	def __call__(self, flags, ref):
-		raise NotImplementedError("Built-in help isn't available for scripting additions.")
-
 
 ######################################################################
 # PUBLIC
 ######################################################################
 
-class ScriptingAddition(reference.Application):
+class OSAX(reference.Application):
 
 	def __init__(self, osaxname='StandardAdditions', name=None, id=None, creator=None, pid=None, url=None, aemapp=None, terms=True):
 		self._osaxname = osaxname
@@ -75,18 +68,23 @@ class ScriptingAddition(reference.Application):
 		reference.Application.__init__(self, name, id, creator, pid, url, aemapp, terms)
 		try:
 			self.AS_appdata.target().event('ascrgdut').send(300) # make sure target application has loaded event handlers for all installed OSAXen
-		except aem.CommandError, e:
+		except aem.EventError, e:
 			if e.errornumber != -1708: # ignore 'event not handled' error
 				raise
-		self.AS_appdata.help = _OSAXHelp(_osaxcache[osaxname][0])
+		def _help(*args):
+			raise NotImplementedError("Built-in help isn't available for scripting additions.")
+		self.AS_appdata.help = _help
 		
 	def __str__(self):
 		if self.AS_appdata.constructor == 'current':
-			return 'ScriptingAddition(%r)' % self._osaxname
+			return 'OSAX(%r)' % self._osaxname
 		elif self.AS_appdata.constructor == 'path':
-			return 'ScriptingAddition(%r, %r)' % (self._osaxname, self.AS_appdata.identifier)
+			return 'OSAX(%r, %r)' % (self._osaxname, self.AS_appdata.identifier)
 		else:
-			return 'ScriptingAddition(%r, %s=%r)' % (self._osaxname, self.AS_appdata.constructor, self.AS_appdata.identifier)
+			return 'OSAX(%r, %s=%r)' % (self._osaxname, self.AS_appdata.constructor, self.AS_appdata.identifier)
 		
 	__repr__ = __str__
+
+
+ScriptingAddition = OSAX # backwards compatibility; deprecated # TO DO: delete
 

@@ -8,7 +8,9 @@ import kae
 
 from aemcodecs import Codecs
 
-__all__ = ['CommandError', 'Event']
+__all__ = ['Event', 'EventError', 
+	'CommandError' # deprecated; use EventError instead
+]
 
 ######################################################################
 # PRIVATE
@@ -77,7 +79,7 @@ class Event(object):
 			replyevent = self._sendproc(self.AEM_event, flags, timeout)
 		except MacOSError, err: # an OS-level error occurred
 			if not (self._eventcode == 'aevtquit' and err.args[0] == -609): # Ignore invalid connection error (-609) when quitting
-				raise CommandError(err.args[0])
+				raise EventError(err.args[0])
 		else: # decode application's reply, if any
 			if replyevent.type != kae.typeNull:
 				eventresult = dict([replyevent.getitem(i + 1, kae.typeWildCard) 
@@ -92,7 +94,7 @@ class Event(object):
 						errormsg = eventresult.get(kae.keyErrorString)
 						if errormsg:
 							errormsg = _defaultcodecs.unpack(errormsg)
-						raise CommandError(errornum, errormsg, eventresult)
+						raise EventError(errornum, errormsg, eventresult)
 				if kae.keyAEResult in eventresult: # application has returned a value
 					# note: unpack result with [optionally] user-specified codecs, allowing clients to customise unpacking (e.g. appscript)
 					return self._codecs.unpack(eventresult[kae.keyAEResult])
@@ -102,7 +104,7 @@ class Event(object):
 ######################################################################
 
 
-class CommandError(MacOSError):
+class EventError(MacOSError):
 	"""Represents an error message returned by application/Apple Event Manager.
 		
 		Notes:
@@ -244,7 +246,7 @@ class CommandError(MacOSError):
 			doc="dict -- raw error data from reply event, if any (note: clients should not need to use this directly)")
 	
 	def __repr__(self):
-		return "aem.CommandError(%r, %r, %r)" % (self._number, self._message, self._raw)
+		return "aem.EventError(%r, %r, %r)" % (self._number, self._message, self._raw)
 		
 	def __int__(self):
 		return self._number
@@ -285,3 +287,5 @@ class CommandError(MacOSError):
 	partialresult = property(lambda self: self._errorinfo(kae.kOSAErrorPartialResult),
 			doc="anything | None -- part of return value constructed before error occurred, if given by application")
 
+
+CommandError = EventError # backwards compatibility; deprecated

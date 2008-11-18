@@ -264,12 +264,24 @@ class Codecs(object):
 	
 	
 	###################################
+	# compatibility options
 	
 	def addunittypes(self, typedefs):
 		"""Register custom unit type definitions with this Codecs instance
 			e.g. Adobe apps define additional unit types (ciceros, pixels, etc.)
 		"""
 		self._unittypecodecs.addtypes(typedefs)
+	
+	def dontcacheunpackedspecifiers(self):
+		""" When unpacking object specifiers, unlike AppleScript, appscript caches
+			the original AEDesc for efficiency, allowing the resulting reference to
+			be re-packed much more quickly. Occasionally this causes compatibility
+			problems with applications that returned subtly malformed specifiers.
+			To force a Codecs object to fully unpack and repack object specifiers,
+			call its dontcacheunpackedspecifiers method.
+		"""
+		self.unpackobjectspecifier = self.fullyunpackobjectspecifier
+	
 	
 	###################################
 	

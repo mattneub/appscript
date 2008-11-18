@@ -5,7 +5,7 @@
 
 import ae, kae, findapp, mactypes, aemconnect
 from aemconnect import CantLaunchApplicationError
-from aemsend import Event, CommandError, newappleevent, sendappleevent
+from aemsend import Event, CommandError, EventError, newappleevent, sendappleevent
 from aemcodecs import Codecs
 from aemreference import app, con, its, customroot, Query
 from typewrappers import AETypeBase, AEType, AEEnum, AEProp, AEKey
@@ -15,7 +15,8 @@ __all__ = [
 	'ae', 'kae',
 	'findapp', 'mactypes',
 	'Application',
-	'Event', 'CommandError',
+	'Event', 'EventError',
+	'CommandError', # deprecated; use EventError instead
 	'CantLaunchApplicationError',
 	'Codecs', 
 	'app', 'con', 'its', 'customroot', 'Query',
