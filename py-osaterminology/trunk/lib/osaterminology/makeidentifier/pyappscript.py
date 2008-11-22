@@ -43,6 +43,7 @@ kReservedWords = keyword.kwlist + [
 	"waitreply",
 	"help",
 	"as", # not in kwlist before Python 2.5, so defined here to ensure scripts are portable between versions
-	# TO DO: add "with" (new in Python 3.0)?
+	"with", # not in kwlist before Python 2.6, so defined here to ensure scripts are portable between versions
+	"relaunchmode",
 ]
 
