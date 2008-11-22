@@ -16,7 +16,7 @@ from PyObjCTools import NibClassBuilder, AppHelper
 
 import osax, appscript, mactypes
 from aem import kae
-from osaterminology import makeglue
+import osaterminology.makeglue.objcappscript as objcglue
 
 
 ######################################################################
@@ -149,9 +149,9 @@ def _export(items, styles, plainText, singleHTML, frameHTML, objcGlue, options, 
 				outputPath = _makeDestinationFolder(outFolder, exportToSubfolders and 'objc-appscript' or '', 
 							'%s%sGlue' % (exportToSubfolders and 'glues/' or '', objcPrefix), '')
 				if isOSAX:
-					makeglue.objcappscript.makeosaxglue(path, objcPrefix, outputPath, aetes)
+					objcglue.makeosaxglue(path, objcPrefix, outputPath, aetes)
 				else:
-					makeglue.objcappscript.makeappglue(path, objcPrefix, outputPath, aetes)
+					objcglue.makeappglue(path, objcPrefix, outputPath, aetes)
 				progress.nextoutput(u'%s' % outputPath)
 		except Exception, err:
 			from traceback import print_exc
@@ -473,7 +473,7 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 	
 	def _addPathToSelectedFiles(self, path, isosax=False):
 		name = namefrompath(path)
-		item = {'objcPrefix': osaglue.prefixfromname(name), 'name': name, 'path': path, 'isOSAX': isosax}
+		item = {'objcPrefix': objcglue.nametoprefix(name), 'name': name, 'path': path, 'isOSAX': isosax}
 		if item not in self.selectedFiles():
 			self.insertObject_inSelectedFilesAtIndex_(item, self.countOfSelectedFiles())
 		self._updateLocks()

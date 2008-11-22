@@ -197,7 +197,7 @@ For example, to print an overview of TextEdit, a description of its make command
 			aetes : list of AEDesc -- list of aetes
 			out : anything -- any file-like object that implements a write(str) method
 		"""
-		aetes = terminology.aetesforapp(appobj.AS_appdata.target)
+		aetes = terminology.aetesforapp(appobj.AS_appdata.target())
 		appname = appobj.AS_appdata.identifier or u'Current Application'
 		self.terms = aeteparser.parseaetes(aetes, appname, style)
 		self.style = style

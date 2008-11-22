@@ -255,10 +255,10 @@ def ensureasdictionary():
 	isrunning = getoutput("""osascript -e 'tell application "System Events" to exists process "ASDictionary" ' """) == 'true'
 	if not isrunning:
 		errn = os.system('open -b ' + _supportapp)
-		print errn
+	#	print errn
 		if errn:
 			exit("Can't open ASDictionary (error %i). You may need to install it or launch it manually. See <http://appscript.sourceforge.net>." % errn)
-		print os.system("""osascript -e 'tell app "System Events" to set visible of process "ASDictionary" to false' """)
+		os.system("""osascript -e 'tell app "System Events" to set visible of process "ASDictionary" to false' """)
 
 
 #######
@@ -274,7 +274,6 @@ def doevent(eventid, **args):
 	try:
 		reply = evt.AESend(3, 0, -1)
 	except MacOS.Error, err:
-		print 'err', err
 		if err[0] in [-600, -609]:
 			exit('Error: ASDictionary has quit or relaunched since asdict was started. Please re-run asdict to continue.')
 		else:
