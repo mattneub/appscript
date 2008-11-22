@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<title>py-aemreceive manual | 3. Other handler operations</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<style type="text/css" media="all"><!--@import url(../full.css);--></style>
+
+</head>
+<body>
+
+<h1><img src="../py-appscript-logo.png" alt="py-appscript" title="py-appscript" /></h1>
+
+<!-- top navigation -->
+<div class="navbar">
+<a href="02_installingeventhandlers.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="04_sfbamodule.html">Next</a>
+
+<span>
+<strong><a href="../aemreceive-manual/index.html">manual</a></strong> /
+<a href="../aemreceive-tutorial/index.html">tutorial</a>
+</span>
+</div>
+
+<!-- content -->
+<div id="content">
+
+<h2>3. Other handler operations</h2>
+
+
+
+<h3>Removing event handlers</h3>
+
+<pre><code>removeeventhandler(eventcode)
+    
+    eventcode : str -- 8-letter code indicating the Apple event handler's 
+                       event class and id</code></pre>
+
+
+
+<h3>Installing coercion handlers</h3>
+
+<p><code>aemreceive</code> allows Python functions to be installed as coercion handlers, augmenting/replacing the Apple Event Manager's built-in coercion handlers. </p>
+
+
+<h4>The installer function</h4>
+
+<pre><code>installcoercionhandler(coercioncallback, fromtype, totype)
+
+    coercioncallback : function -- the callback function invoked to 
+                                   process the Apple event
+                                   
+    fromtype : str -- the four-character descriptor type to coerce from
+    
+    totype : str -- the four-character descriptor type to coerce to</code></pre>
+
+
+<h4>The coercion callback</h4>
+
+<p><code>installcoercionhandler</code> takes a callback function as its first argument. The signature for this callback is:</p>
+
+<pre><code>coercioncallback(value, totype)
+    
+    value : AEDesc -- the descriptor containing the data to coerce
+    
+    totype : str -- the desired OSType for the new descriptor
+    
+    Result : AEDesc -- the new descriptor</code></pre>
+
+<p>If the callback raises an error, a coercion error (-1700) is automatically returned to the calling application.</p>
+
+
+<h3>Removing coercion handlers</h3>
+
+<pre><code>removecoercionhandler(fromtype, totype)
+                                   
+    fromtype : str -- the four-character descriptor type to coerce from
+    
+    totype : str -- the four-character descriptor type to coerce to</code></pre>
+
+
+<h3>Other module attributes</h3>
+
+<p><code>aemreceive</code> re-exports following <code>aem</code> attributes for convenience:</p>
+
+
+<pre><code>Codecs
+AEType
+AEEnum
+kae</code></pre>
+
+
+</div>
+
+<!-- bottom navigation -->
+
+<div class="footer">
+<a href="02_installingeventhandlers.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="04_sfbamodule.html">Next</a>
+
+<span>&copy; 2006-2008 HAS</span>
+</div>
+
+</body>
+</html>

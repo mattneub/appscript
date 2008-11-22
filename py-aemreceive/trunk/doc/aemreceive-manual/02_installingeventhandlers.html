@@ -1,0 +1,219 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<title>py-aemreceive manual | 2. Installing Apple event handlers</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<style type="text/css" media="all"><!--@import url(../full.css);--></style>
+
+</head>
+<body>
+
+<h1><img src="../py-appscript-logo.png" alt="py-appscript" title="py-appscript" /></h1>
+
+<!-- top navigation -->
+<div class="navbar">
+<a href="01_introduction.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="03_otherhandlertasks.html">Next</a>
+
+<span>
+<strong><a href="../aemreceive-manual/index.html">manual</a></strong> /
+<a href="../aemreceive-tutorial/index.html">tutorial</a>
+</span>
+</div>
+
+<!-- content -->
+<div id="content">
+
+<h2>2. Installing Apple event handlers</h2>
+
+<h3>Introduction</h3>
+
+<p><code>aemreceive</code> allows Python functions to be installed as Apple event handlers.</p>
+
+<h3>Installing event handlers</h3>
+
+<p>Apple event handlers are installed via the <code>aemreceive.installeventhandler</code> function:</p>
+
+<pre><code>installeventhandler(eventcallback,
+                    eventcode,
+                    *parameterdefinitions, 
+                    codecs=aem.Codecs())
+    
+    eventcallback : function -- the callback function invoked to process 
+                                the Apple event
+                                
+    eventcode : str -- 8-letter code indicating the Apple event handler's 
+                       event class and id, e.g. 'aevtodoc'
+                       
+    *parameterdefinitions : tuple -- zero or more three-item tuples, each 
+                                     mapping an Apple event parameter to 
+                                     an eventcallback parameter
+                                     
+    codecs : Codecs -- the Codecs object to use when unpacking the Apple 
+                       event's parameters and packing the return value</code></pre>
+
+
+<h3>The event handling callback</h3>
+
+<p><code>installeventhandler</code> takes a callback function as its first argument. The signature for this callback is:</p>
+
+<pre><code>eventcallback(**kargs)
+
+    kargs : anything -- the event's parameters, bound to names 
+                        specified via installeventhandler
+    
+    Result : anything | None -- the reply value, or None if the event 
+                                handler does not return one; see also 
+                                the kMissingValue constant</code></pre>
+
+
+<p>If the Apple event's attributes are also required, include a <code>attributes</code> keyword parameter. The event's attributes will be passed as a dict with the following string-based keys:</p>
+
+<pre><code>'TransactionID'
+'ReturnID'
+'EventClass'
+'EventID'
+'Address'
+'OptionalKeyword'
+'Timeout'
+'InteractLevel'
+'EventSource'
+'OriginalAddress'
+'AcceptTimeout'
+'ReplyRequested'
+'Subject'
+'Ignore'
+'ConsiderIgnore'</code></pre>
+
+
+<h3>Specifying event parameters</h3>
+
+<h4>Defining an event parameter</h4>
+
+
+<p>Each <code>parameterdefinitions</code> tuple takes the form:</p>
+<pre><code>(eventparametercode, callbackparametername, desiredtype)
+    
+    eventparametercode : str -- a 4-character string
+    
+    callbackparametername : str -- the name of the eventcallback parameter 
+                                   to which the event parameter's value 
+                                   should be bound
+    
+    desiredtype : ArgType | ArgEnum | ArgListOf | ArgMultiChoice | kArgDesc 
+             -- an object describing the parameter's accepted type(s) or 
+                values; aemreceive will apply any necessary coercion to 
+                the event parameter's value and unpack it automatically 
+                unless kArgDesc is used, in which case it will pass the 
+                original AEDesc unmodified</code></pre>
+
+
+<h4>Specifying parameter types</h4>
+
+<p>The following classes are used in parameter definition tuples to specify how event parameters should be unpacked:</p>
+
+<pre><code>ArgType -- Describes an AE type; used in installeventhandler to 
+           declare a parameter's desired type
+
+    __init__(self, code)
+        code : str -- a 4-character AE code
+
+
+ArgEnum -- Describes an AE enumeration; used in installeventhandler to 
+           declare a parameter's desired values
+
+    __init__(self, *codes)
+        *codes : str -- 4-character AE codes, one for 
+                each enumerator in the enumeration
+
+
+ArgListOf -- Describes a list of values; used in installeventhandler to 
+             declare a parameter's desired type
+
+    __init__(self, datatype)
+        datatype : ArgType | ArgEnum | ArgMultiChoice 
+              -- the desired type(s)/enumerators of the 
+             list's items
+
+
+ArgMultiChoice -- Allows multiple acceptable types to be declared; used 
+                  in installeventhandler to declare a parameter's desired 
+                  types/values
+
+    __init__(self, *datatypes)
+        datatypes : ArgType | ArgEnum | ArgListOf 
+               -- the desired types/values</code></pre>
+
+
+<p>For convenience, <code>aemreceive</code> also allows <code>ArgType</code> objects to be specified as plain strings and <code>ArgMultiChoice</code> objects as lists whereever these values are used; e.g. <code>'utxt'</code> and <code>ArgType('utxt')</code> are interchangeable, as are <code>['long', 'doub']</code> and <code>ArgMultiChoice(ArgType('long')</code>, <code>ArgType('doub'))</code> or any combination thereof.</p>
+
+<p>If <code>ArgMultiChoice</code> is used, <code>aemreceive</code> will first check if the event parameter's type matches one of those given, it will be unpacked as that type. Otherwise <code>aemreceive</code> will attempt to coerce it to each type in turn until one succeeds, in which case it is unpacked as that type, or all attempts fail, in which case a coercion error is returned to client.</p>
+
+<p>The following constants may also be used in parameter definition tuples to specify how event parameters should be unpacked:</p>
+
+<pre><code>kArgDesc -- Used in installeventhandler where a parameter should be 
+            passed directly to the event callback as an AEDesc without 
+            unpacking or typechecking
+
+kArgMissingValue -- Used in installeventhandler to indicate that a 
+                    'missing value' constant is an acceptable parameter, 
+                    e.g. ArgMultiChoice(kae.typeUnicodeText, kArgMissingValue)
+
+kArgAny -- Used in installeventhandler to indicate that any type of 
+           descriptor is an acceptable parameter
+
+kArgNull -- Used in installeventhandler to indicate that a null descriptor 
+            is an acceptable parameter</code></pre>
+
+
+<h3>Returning results to the calling application</h3>
+
+<h4>Returning values</h4>
+
+<p><code>aemreceive</code> uses the Codecs object supplied in <code>installeventhandler</code> to pack the event callback's return value, or returns a coercion error to the calling application if the callback's return value was not recognised.</p>
+
+<p>The following special-case behaviours also apply:</p>
+
+<ul>
+<li>If the event callback returns a dict or list containing <code>None</code> values, those values will be packed as <code>missing value</code> contants.</li> 
+
+<li>If the event callback returns <code>None</code>, no value will be returned to the calling application.</li>
+
+<li>If the event callback returns the <code>aemreceive.kMissingValue</code> constant, a <code>missing value</code> constant is returned to the calling application.</li>
+</ul>
+
+
+<h4>Returning errors</h4>
+
+<p>To return an error to the calling application, the event callback should raise an <code>EventHandlerError</code> instance:</p>
+<pre><code>
+EventHandlerError(Exception)
+
+    __init__(self, number, message=None, object=None, coercion=None)
+    
+        number : int -- a MacOS error number
+        
+        message : str | unicode -- user-readable error message; this is 
+                                   recommended for most types of errors
+        object : anything -- the problem object, or an aem reference to it
+        coercion : aem.AEType -- in error -1700, the type to which the 
+                                 object could not be coerced</code></pre>
+
+
+</div>
+
+<!-- bottom navigation -->
+
+<div class="footer">
+<a href="01_introduction.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="03_otherhandlertasks.html">Next</a>
+
+<span>&copy; 2006-2008 HAS</span>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<title>py-aemreceive manual | 5. Examples</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<style type="text/css" media="all"><!--@import url(../full.css);--></style>
+
+</head>
+<body>
+
+<h1><img src="../py-appscript-logo.png" alt="py-appscript" title="py-appscript" /></h1>
+
+<!-- top navigation -->
+<div class="navbar">
+<a href="04_sfbamodule.html">Previous</a> &bull;
+<a href="index.html">Up</a>
+
+<span>
+<strong><a href="../aemreceive-manual/index.html">manual</a></strong> /
+<a href="../aemreceive-tutorial/index.html">tutorial</a>
+</span>
+</div>
+
+<!-- content -->
+<div id="content">
+
+<h2>5. Examples</h2>
+
+<h3>Event handler</h3>
+
+<pre><code>def striptext(text, removing=None, fromend=AEEnum('Both')):
+    method = {'Left': text.lstrip,
+              'Rght': text.rstrip,
+              'Both': text.strip}[fromend.code]
+    return method(removing)
+
+installeventhandler(
+        striptext,
+        'TeCoStrp',
+        ('----', 'text',     kae.typeUnicodeText),
+        ('Remo', 'removing', kae.typeUnicodeText),
+        ('From', 'fromend',  ArgEnum('Left', 'Rght', 'Both'))
+        )</code></pre>
+
+
+<h3>Coercion handler</h3>
+
+<pre><code>codecs = Codecs()
+
+def aetypetounicode(desc, totype):
+    s = u'\u00abclass %s\u00bb' % codecs.unpack(desc).code
+    return codecs.pack(s)
+
+installcoercionhandler(
+        aetypetounicode, 
+        kae.typeType, 
+        kae.typeUnicodeText)</code></pre>
+
+
+
+</div>
+
+<!-- bottom navigation -->
+
+<div class="footer">
+<a href="04_sfbamodule.html">Previous</a> &bull;
+<a href="index.html">Up</a>
+
+<span>&copy; 2006-2008 HAS</span>
+</div>
+
+</body>
+</html>

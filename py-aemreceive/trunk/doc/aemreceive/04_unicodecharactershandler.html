@@ -5,21 +5,30 @@
 <title>aemreceive tutorial | 4. Implementing the 'unicode characters' event handler</title>
 
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<style type="text/css" media="all"><!--@import url(full.css);--></style>
+<style type="text/css" media="all"><!--@import url(../full.css);--></style>
 
 </head>
 <body>
 
-<h1>4. Implementing the 'unicode characters' event handler</h1>
+<h1><img src="../py-appscript-logo.png" alt="py-appscript" title="py-appscript" /></h1>
 
 <!-- top navigation -->
 <div class="navbar">
-	<a href="03_tutorial_step2.html">Previous</a> | <a href="00_tutorial_index.html">Up</a> | <a href="05_tutorial_step4.html">Next</a>
-	
+<a href="03_unicodenumbershandler.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="05_striphandler.html">Next</a>
+
+<span>
+<a href="../aemreceive-manual/index.html">manual</a> /
+<strong><a href="../aemreceive-tutorial/index.html">tutorial</a></strong>
+</span>
 </div>
 
 <!-- content -->
 <div id="content">
+
+<h2>4. Implementing the 'unicode characters' event handler</h2>
+
 <p>Along with the <code>unicode numbers</code> command, MiniTC also provides a <code>unicode characters</code> command that performs the reverse operation by converting a list of ordinals into a Unicode text string.</p>
 
 <p>The code for handling this Apple event is a little more complex as it has to allow for users passing integers that are not valid ordinals, e.g. <code>-1</code> or <code>100,000</code>. Should this happen, the <code>unichr()</code> function used to convert ordinals to Unicode characters will raise a <code>ValueError</code>. While aemreceive is smart enough to catch and report unhandled Python errors such as this, it is much more polite for the function to return a standard Apple event error code along with an easy-to-understand explanation of why the error occurred. This is done by catching the <code>ValueError</code> within the Python function and raising an <code>EventHandlerError</code> in its place:</p>
@@ -64,19 +73,23 @@ end tell
 --> {-1704, "Some number was outside range 0-65535."}</code></pre>
 
 
-<h2>Tips</h2>
+<h3>Tips</h3>
 
 <ul>
 <li>The <code>EventHandlerError</code> constructor provides several optional parameters for supplying additional error information; see <code>Manual.txt</code> for details.</li>
+</ul>
+
 </div>
 
 <!-- bottom navigation -->
-<div class="navbar">
-	<a href="03_tutorial_step2.html">Previous</a> | <a href="00_tutorial_index.html">Up</a> | <a href="05_tutorial_step4.html">Next</a>
-	
+
+<div class="footer">
+<a href="03_unicodenumbershandler.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="05_striphandler.html">Next</a>
+
+<span>&copy; 2005-2008 HAS</span>
 </div>
 
-<!--footer-->
-<p class="footer">&copy; 2005 HAS</p>
 </body>
 </html>
