@@ -41,7 +41,7 @@ def renderCommand(appPath, addressdesc, eventcode,
 	if not _commandscache.has_key((addressdesc.type, addressdesc.data)):
 		_commandscache[(addressdesc.type, addressdesc.data)] = dict([(data[1][0], (name, 
 				dict([(v, k) for (k, v) in data[1][-1].items()])
-				)) for (name, data) in appdata.referencebyname.items() if data[0] == 'c'])
+				)) for (name, data) in appdata.referencebyname().items() if data[0] == 'c'])
 	commandsbycode = _commandscache[(addressdesc.type, addressdesc.data)]
 	commandName, argNames = commandsbycode[eventcode]
 	if directParam is not None:
