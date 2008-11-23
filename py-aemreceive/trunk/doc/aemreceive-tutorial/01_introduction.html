@@ -48,9 +48,9 @@
 <ul>
 <li>The FBA_tutorial project already includes the <code>MiniTC.icns</code>, <code>MiniTC.sdef</code> and <code>setup.py</code> files needed to build MiniTC.app. These files may also be used as templates when creating new scriptable FBA projects.</li>
 
-<li>The supplied <code>setup.py</code> file hardcodes the paths to <code>sdp</code> and <code>Rez</code> (used to generate the <code>MiniTC.rsrc</code> file from <code>MiniTC.sdef</code>); you may need to modify one or both of these before running <code>setup.py</code> depending on where <code>sdp</code> and <code>Rez</code> are located on your system.</li>
+<li>The supplied <code>setup.py</code> file assumes that <code>sdp</code> and <code>Rez</code> (part of Apple's Developer Tools) can be found on your shell's search path. If not, you'll need to modify your shell's <code>$PATH</code> before use. See <code>setup.py</code> for further information.</li>
 
-<li>The supplied <code>MiniTC.sdef</code> uses the older, pre-10.4, format. OS 10.4+ users may convert this file to the new format if they wish; see the <code>sdef</code> manpage for details.</li>
+<li>The supplied <code>MiniTC.sdef</code> is suitable for use on Mac OS X 10.4 and later.</li>
 </ul>
 
 </div>

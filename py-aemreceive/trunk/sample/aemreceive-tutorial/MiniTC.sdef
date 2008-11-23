@@ -6,20 +6,24 @@
 	<suite name="Basic Text Suite" code="????" description="Basic commands for working with text.">
 
 		<command name="unicode numbers" code="TeCoUnum" description="Convert Unicode text to a list of integers.">
-			<direct-parameter type="string" description="The unicode text."/>
-			<result type="list of integer" description="A list of integers in range 0-65535."/>
+			<direct-parameter type="text" description="The unicode text."/>
+			<result description="A list of integers in range 0-65535.">
+				<type type="integer" list="yes"/>
+			</result>
 		</command>
 
 		<command name="unicode characters" code="TeCoUcha" description="Convert a list of integers to Unicode text.">
-			<direct-parameter type="list of integer" description="A list of integers in range 0-65535."/>
-			<result type="string" description="The unicode text."/>
+			<direct-parameter description="A list of integers in range 0-65535.">
+				<type type="integer" list="yes"/>
+			</direct-parameter>
+			<result type="text" description="The unicode text."/>
 		</command>
 
 		<command name="strip" code="TeCoStrp" description="Strip whitespace or other characters from Unicode text.">
-			<direct-parameter type="string" description="The Unicode text to modify."/>
-			<parameter name="removing" code="Remo" type="string" optional="optional" description="The character(s) to remove. (default: whitespace characters)"/>
+			<direct-parameter type="text" description="The Unicode text to modify."/>
+			<parameter name="removing" code="Remo" type="text" optional="optional" description="The character(s) to remove. (default: whitespace characters)"/>
 			<parameter name="from" code="From" type="strip location" optional="optional" description="Where to remove characters. (default: both ends)"/>
-			<result type="string" description="The modified text."/>
+			<result type="text" description="The modified text."/>
 		</command>
 
 

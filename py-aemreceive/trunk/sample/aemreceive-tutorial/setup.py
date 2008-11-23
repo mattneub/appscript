@@ -5,40 +5,47 @@ import os
 
 #######
 
-name = 'MiniTC'
-version = '0.1.0'
-#url = 'org.foo.MiniTC'
+kName = 'MiniTC'
+kVersion = '0.1.0'
+kBundleID = 'net.sourceforge.appscript.py-aemreceive.MiniTC'
+
+# For testing, use kHide = False to so that MiniTC application can be seen when running.
+# For deployment, use kHide = True to build MiniTC as a faceless background application.
+kHide = False # True
 
 
-hide = True # set to False during development so that application is visible while running; set to True for deployment
+#######
+# generate .rsrc file containing application's terminology for 10.4 and earlier
 
+# note: older versions of Mac OS X may install sdp and/or Rez in /Developer/Tools;
+# if so, modify your shell's profile include /Developer/Tools on its $PATH, e.g. for bash,
+# open ~/.bash_profile and add the following line:
+# export PATH=${PATH}:/Developer/Tools
 
-# sdpPath = '/Developer/Tools/sdp' # Panther?
-sdpPath = 'sdp' # Tiger
-RezPath = '/Developer/Tools/Rez'
+os.system("sdp -fa '%s.sdef' && Rez '%sScripting.r' -o '%s.rsrc' -useDF" % (kName, kName, kName))
+
 
 #######
 
-os.system('''
-%r -fa %s.sdef;
-%r %sScripting.r -o %s.rsrc -useDF
-''' % (sdpPath, name, RezPath, name, name))
-
 setup(
-	name= name,
-	version=version,
-	app=[name + '.py'],
+	name=kName,
+	version=kVersion,
+	app=[kName + '.py'],
 	options={
 		'py2app': {
 			'plist': Plist(
-				LSUIElement=int(hide), 
+				LSUIElement=int(kHide), 
 				NSAppleScriptEnabled=True,
-				#CFBundleIdentifier=url,
-				CFBundleVersion=version, 
-				CFBundleShortVersionString=version,
-				CFBundleIconFile=name + '.icns'
+				CFBundleIdentifier=kBundleID,
+				CFBundleVersion=kVersion, 
+				CFBundleShortVersionString=kVersion,
+				CFBundleIconFile=kName + '.icns'
 			),
-			'resources': [name + '.rsrc', name + '.icns']
+			'resources': [
+					kName + '.rsrc', 
+					kName + '.icns', 
+					kName + '.sdef'
+			]
 		}
 	}
 )
