@@ -6,7 +6,7 @@ import osax, mactypes, aem
 class TC_OSAX(unittest.TestCase):
 	
 	def test_1(self):
-		sa = osax.ScriptingAddition('Standardadditions')
+		sa = osax.OSAX('Standardadditions')
 		
 		self.assertEqual(65, sa.ASCII_number('A'))
 		
@@ -19,19 +19,19 @@ class TC_OSAX(unittest.TestCase):
 	
 	
 	def test_2(self):
-		sa = osax.ScriptingAddition('Standardadditions', name='Finder')
+		sa = osax.OSAX('Standardadditions', name='Finder')
 		self.assertEqual(65, sa.ASCII_number('A'))
 		self.assertEqual(mactypes.Alias("/System/Library/CoreServices/Finder.app/"), sa.path_to(None))
 	
 	
 	def test_3(self):
-		sa = osax.ScriptingAddition('Standardadditions', creator=b'MACS')
+		sa = osax.OSAX('Standardadditions', creator=b'MACS')
 		self.assertEqual(65, sa.ASCII_number('A'))
 		self.assertEqual(mactypes.Alias("/System/Library/CoreServices/Finder.app/"), sa.path_to(None))
 	
 	
 	def test_4(self):
-		sa = osax.ScriptingAddition('Standardadditions', id='com.apple.finder')
+		sa = osax.OSAX('Standardadditions', id='com.apple.finder')
 		self.assertEqual(65, sa.ASCII_number('A'))
 		self.assertEqual(mactypes.Alias("/System/Library/CoreServices/Finder.app/"), sa.path_to(None))
 	
@@ -41,13 +41,13 @@ class TC_OSAX(unittest.TestCase):
 				shell=True, stdout=subprocess.PIPE)
 		p.wait()
 		pid = int(p.stdout.read())
-		sa = osax.ScriptingAddition('Standardadditions', pid=pid)
+		sa = osax.OSAX('Standardadditions', pid=pid)
 		self.assertEqual(mactypes.Alias("/System/Library/CoreServices/Finder.app/"), sa.path_to(None))
 		self.assertEqual(65, sa.ASCII_number('A'))
 	
 
 	def test_6(self):
-		sa = osax.ScriptingAddition('Standardadditions', aemapp=aem.Application("/System/Library/CoreServices/Finder.app/"))
+		sa = osax.OSAX('Standardadditions', aemapp=aem.Application("/System/Library/CoreServices/Finder.app/"))
 		self.assertEqual(65, sa.ASCII_number('A'))
 		self.assertEqual(mactypes.Alias("/System/Library/CoreServices/Finder.app/"), sa.path_to(None))
 	

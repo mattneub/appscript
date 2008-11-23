@@ -7,7 +7,7 @@ from appscript import *
 from appscript import reference, terminology
 import aem
 
-__all__ = ['ApplicationNotFoundError', 'ScriptingAddition','CommandError', 
+__all__ = ['ApplicationNotFoundError', 'OSAX','CommandError', 
 		'k', 'scriptingadditions', 'mactypes']
 
 
@@ -58,7 +58,7 @@ class _OSAXHelp:
 # PUBLIC
 ######################################################################
 
-class ScriptingAddition(reference.Application):
+class OSAX(reference.Application):
 
 	def __init__(self, osaxname='StandardAdditions', name=None, id=None, creator=None, pid=None, url=None, aemapp=None, terms=True):
 		self._osaxname = osaxname
@@ -75,18 +75,18 @@ class ScriptingAddition(reference.Application):
 		reference.Application.__init__(self, name, id, creator, pid, url, aemapp, terms)
 		try:
 			self.AS_appdata.target().event(b'ascrgdut').send(300) # make sure target application has loaded event handlers for all installed OSAXen
-		except aem.CommandError as e:
+		except aem.EventError as e:
 			if e.errornumber != -1708: # ignore 'event not handled' error
 				raise
 		self.AS_appdata.help = _OSAXHelp(_osaxcache[osaxname][0])
 		
 	def __str__(self):
 		if self.AS_appdata.constructor == 'current':
-			return 'ScriptingAddition(%r)' % self._osaxname
+			return 'OSAX(%r)' % self._osaxname
 		elif self.AS_appdata.constructor == 'path':
-			return 'ScriptingAddition(%r, %r)' % (self._osaxname, self.AS_appdata.identifier)
+			return 'OSAX(%r, %r)' % (self._osaxname, self.AS_appdata.identifier)
 		else:
-			return 'ScriptingAddition(%r, %s=%r)' % (self._osaxname, self.AS_appdata.constructor, self.AS_appdata.identifier)
+			return 'OSAX(%r, %s=%r)' % (self._osaxname, self.AS_appdata.constructor, self.AS_appdata.identifier)
 		
 	__repr__ = __str__
 

@@ -1,4 +1,4 @@
-"""py30-appscript -- High-level Mac OS X application scripting support for Python 3.0+.
+"""py3-appscript -- High-level Mac OS X application scripting support for Python 3.0+.
 
 (C) 2004-2008 HAS
 """

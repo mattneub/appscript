@@ -2,8 +2,8 @@
 
 from osax import *
 
-# create a ScriptingAddition instance for StandardAdditions
-sa = ScriptingAddition()
+# create an OSAX instance for StandardAdditions
+sa = OSAX()
 
 sa.beep(2)
 
