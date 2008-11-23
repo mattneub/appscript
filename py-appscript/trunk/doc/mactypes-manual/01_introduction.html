@@ -14,8 +14,8 @@
 
 <!-- top navigation -->
 <div class="navbar">
-<a href="../index.html">Previous</a> &bull;
-<a href="../index.html">Up</a> &bull;
+<a href="index.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
 <a href="02_aliasclass.html">Next</a>
 
 <span>
@@ -30,9 +30,13 @@
 <div id="content">
 <h2>1. Introduction</h2>
 
-<p>The <code>mactypes</code> module provides user-friendly wrappers for Apple event descriptors used to identify filesystem objects and locations, and for unit type values used by some applications to represent lengths, etc.</p>
+<h3>About mactypes</h3>
 
-<p class="hilitebox">Note that most scriptable applications do not use or understand POSIX paths, and while the Apple Event Manager does provide some built-in coercions for converting between path strings and alias/file objects, these work with HFS paths only. Therefore, when specifying files and folders to scriptable applications, use <code>mactypes.Alias</code> and <code>mactypes.File</code> objects - not path strings - unless otherwise indicated.</p>
+<p>The <code>mactypes</code> module provides user-friendly wrappers for Apple event descriptors that do not have direct equivalents in the Python language. It contains Python classes for specifying filesystem objects and locations, and unit type values (lengths, weights, etc.), and is used in conjunction with the <code>appscript</code>, <code>osax</code> and/or <code>aem</code> modules.</p>
+
+<h3>Notes</h3>
+
+<p>Be aware that most scriptable applications do not use or understand POSIX paths, and while the Apple Event Manager does provide some built-in coercions for converting between path strings and alias/file objects, these work with HFS paths only. Therefore, when specifying files and folders to scriptable applications, use <code>mactypes.Alias</code> and <code>mactypes.File</code> objects - not path strings - unless otherwise indicated.</p>
 
 
 </div>
@@ -40,11 +44,11 @@
 <!-- bottom navigation -->
 
 <div class="footer">
-<a href="../index.html">Previous</a> &bull;
-<a href="../index.html">Up</a> &bull;
+<a href="index.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
 <a href="02_aliasclass.html">Next</a>
 
-<span>&copy; 2006-2008 HAS</span>    
+<span>&copy; 2004-2008 HAS</span>    
 </div>
 
 </body>
