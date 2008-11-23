@@ -1,4 +1,4 @@
-2008-11-11 -- 0.3.0
+2008-11-23 -- 0.3.0
 - renamed distribution to aemreceive
 - updated for py-appscript 0.19.0
 - added top-level kae attribute and deprecated existing kAE attribute. Clients should update their code accordingly.
