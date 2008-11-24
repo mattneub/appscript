@@ -1,0 +1,14 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {selectStyle = id; }; 
+            CLASS = ASTranslateDocument; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {codeView = id; resultView = id; styleControl = id; }; 
+            SUPERCLASS = NSDocument; 
+        }, 
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {CLASS = NSSegmentedControl; LANGUAGE = ObjC; SUPERCLASS = NSControl; }
+    ); 
+    IBVersion = 1; 
+}
