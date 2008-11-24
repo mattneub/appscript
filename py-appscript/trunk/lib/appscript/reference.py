@@ -860,9 +860,12 @@ class CommandError(Exception):
 	
 	errornumber = property(lambda self: int(self), doc="int -- Mac OS error number")
 	
-	errormessage = property(lambda self: 
-			self.realerror.errormessage if isinstance(self.realerror, aem.EventError) else '', 
-			doc="str -- application-supplied/generic error description")
+	def _errormessage(self):
+		if isinstance(self.realerror, aem.EventError):
+			return self.realerror.errormessage
+		else:
+			return ''
+	errormessage = property(_errormessage, doc="str -- application-supplied/generic error description")
 
 	# extended error info (some apps may return some or all additional error info, though most don't)
 	
