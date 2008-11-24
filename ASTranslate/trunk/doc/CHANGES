@@ -1,4 +1,4 @@
-2008-11-11 -- 0.4.3
+2008-11-23 -- 0.4.3
 
 - fixed bug in Python render when rendering dicts
 - improved objc-appscript formatter output
