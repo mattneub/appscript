@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 
-<title>aem | 5. Targetting Applications</title>
+<title>rb-aem manual | 5. Targetting Applications</title>
 
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <style type="text/css" media="all"><!--@import url(../full.css);--></style>
@@ -10,20 +10,28 @@
 </head>
 <body>
 
-<h1>5. Targetting Applications</h1>
+<h1><img src="../rb-appscript-logo.png" alt="rb-appscript" title="rb-appscript" /></h1>
 
 <!-- top navigation -->
 <div class="navbar">
-	<a href="04_references.html">Previous</a> | <a href="index.html">Up</a> | <a href="06_buildingandsendingevents.html">Next</a>
+<a href="04_references.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="06_buildingandsendingevents.html">Next</a>
+
+<span>
+<a href="../appscript-manual/index.html">appscript</a> /
+<a href="../mactypes-manual/index.html">mactypes</a> /
+<a href="../osax-manual/index.html">osax</a> /
+<strong><a href="../aem-manual/index.html">aem</a></strong>
+</span>
 </div>
 
 <!-- content -->
 <div id="content">
 
+<h2>5. Targetting Applications</h2>
 
-
-
-<h2>The <code>Application</code> class</h2>
+<h3>The <code>Application</code> class</h3>
 
 <p>The <code>Application</code> class represents an application to which Apple events will be sent. Its constructor allows applications to be identified in one of four ways: by full path, by eppc URL, by custom <code>AEAddressDesc</code>, or the host application if no other value is given. Its main method, <code>#event</code>, is used to construct the Apple events to send. Several utility methods are also provided.</p>
 
@@ -99,7 +107,7 @@
                 via the by_path constructor.)</code></pre>
 
 
-<h2>Creating <code>Application</code> objects</h2>
+<h3>Creating <code>Application</code> objects</h3>
 
 <p>When targetting a local application by path, the full path to the application (or application bundle) must be given, including a <code>.app</code> suffix if present. Note that aem identifies local applications by process serial number for reliability. If the target application is not already running when a new <code>Application</code> instance is created, it will be started automatically so that a PSN can be acquired. If the application can't be launched for some reason (e.g. if it's in the Trash), an <code>AEM::CantLaunchApplicationError</code> error will be raised.</p>
 
@@ -117,12 +125,12 @@ KAE::TypeProcessSerialNumber</code></pre>
 <p>See the Apple Event Manager documentation for more information on these addressing modes.</p>
 
 
-<h2>Launching applications</h2>
+<h3>Launching applications</h3>
 
 <p><code>Application.launch</code> is a class method attached to the <code>Application</code> class for convenience. It allows a non-running application to be launched without sending it the 'run' event (<code>aevtoapp</code>) normally sent to applications - a 'no-op' event (<code>ascrnoop</code>) is sent instead. It should be called before creating an <code>Application</code> object for the target application, otherwise the application will be launched as normal.</p>
 
 
-<h2>Transactions</h2>
+<h3>Transactions</h3>
 
 <p>The <code>#begin_transaction</code> and <code>#end_transaction</code> methods are used to start and stop transaction sessions for applications that support this. All events <em>created</em> while a transaction session is active will be identified as part of that transaction.</p>
 
@@ -131,7 +139,7 @@ KAE::TypeProcessSerialNumber</code></pre>
 <p>The <code>#end_transaction</code> method must be called to close both successful and failed transactions on completion. If a transaction session is accidentally left open, aem will attempt to close it when the <code>Application</code> object is garbage-collected, although this cannot be guaranteed to succeed.</p>
 
 
-<h2>Reconnecting to local applications</h2>
+<h3>Reconnecting to local applications</h3>
 
 <p>Because local applications are identified by process serial number, an existing <code>Application</code> object created using the <code>by_path</code> constructor will no longer hold a valid <code>AEAddressDesc</code> if the target application subsequently quits. Sending events to an invalid address will cause a <code>CommandError</code> -600 ("application isn't running") or -609 ("connection is invalid") to be raised.</p>
 
@@ -145,11 +153,14 @@ KAE::TypeProcessSerialNumber</code></pre>
 </div>
 
 <!-- bottom navigation -->
-<div class="navbar">
-	<a href="04_references.html">Previous</a> | <a href="index.html">Up</a> | <a href="06_buildingandsendingevents.html">Next</a>
+
+<div class="footer">
+<a href="04_references.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="06_buildingandsendingevents.html">Next</a>
+
+<span>&copy; 2006-2008 HAS</span>
 </div>
 
-<!--footer-->
-<p class="footer">&copy; 2006-2008 HAS</p>
 </body>
 </html>

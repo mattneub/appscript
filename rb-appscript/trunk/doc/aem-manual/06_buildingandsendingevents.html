@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 
-<title>aem | 6. Building and sending events</title>
+<title>rb-aem manual | 6. Building and sending events</title>
 
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <style type="text/css" media="all"><!--@import url(../full.css);--></style>
@@ -10,20 +10,29 @@
 </head>
 <body>
 
-<h1>6. Building and sending events</h1>
+<h1><img src="../rb-appscript-logo.png" alt="rb-appscript" title="rb-appscript" /></h1>
 
 <!-- top navigation -->
 <div class="navbar">
-	<a href="05_targettingapplications.html">Previous</a> | <a href="index.html">Up</a> | <a href="07_findapp.html">Next</a>
+<a href="05_targettingapplications.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="07_findapp.html">Next</a>
+
+<span>
+<a href="../appscript-manual/index.html">appscript</a> /
+<a href="../mactypes-manual/index.html">mactypes</a> /
+<a href="../osax-manual/index.html">osax</a> /
+<strong><a href="../aem-manual/index.html">aem</a></strong>
+</span>
 </div>
 
 <!-- content -->
 <div id="content">
 
+<h2>6. Building and sending events</h2>
 
 
-
-<h2>The <code>Application#event</code> method</h2>
+<h3>The <code>Application#event</code> method</h3>
 
 <p>The <code>Application#event</code> method is used to create new Apple events targetted at the specified application.</p>
 
@@ -45,9 +54,7 @@
 
 
 
-
-
-<h2>The <code>Event</code> class</h2>
+<h3>The <code>Event</code> class</h3>
 
 <p>The <code>Event</code> class represents an Apple event that has been packed and is ready to send.</p>
 
@@ -66,11 +73,11 @@
 <p>The <code>send</code> method may be called any number of times.</p>
 
 
-<h2>Constants</h2>
+<h3>Constants</h3>
 
 <p>The following constants are defined in the <code>KAE</code> module.</p>
 
-<h3>Common parameter keys</h3>
+<h4>Common parameter keys</h4>
 
 <pre><code>KAE::KeyDirectObject
 KAE::KeyAERequestedType</code></pre>
@@ -80,10 +87,11 @@ KAE::KeyAERequestedType</code></pre>
 <p>Other parameter keys are defined by individual applications.</p>
 
 
-<h3>Attribute keys</h3>
+<h4>Attribute keys</h4>
 
 <p>Most of the following attributes are already supplied by other means (e.g. keyEventClassAttr, keyEventIDAttr are supplied separately when creating an Apple event; keyTimeoutAttr when sending it) and are only of interest if unpacking AppleEvent descriptors manually. A few  may be used when passing an attributes dict to <code>Application#event</code> (<code>EnumConsiderations</code>, <code>EnumConsidsAndIgnores</code>, <code>KeySubjectAttr</code>):</p>
-<pre><code>KAE::KeyTransactionIDAttr
+
+<pre><code>KAE::KeyTransactionIDAttr
 KAE::KeyReturnIDAttr
 KAE::KeyEventClassAttr
 KAE::KeyEventIDAttr
@@ -115,11 +123,26 @@ KAE::KASNumericStrings</code></pre>
 
 <p>The value of the <code>EnumConsidsAndIgnores</code> attribute should be an integer composed from the sum of zero or more of the following bit masks:</p>
 
-<pre><code>KAE::KAECaseConsiderMaskKAE::KAEDiacriticConsiderMaskKAE::KAEWhiteSpaceConsiderMaskKAE::KAEHyphensConsiderMaskKAE::KAEExpansionConsiderMaskKAE::KAEPunctuationConsiderMaskKAE::KASConsiderRepliesConsiderMaskKAE::KASNumericStringsConsiderMask
-KAE::KAECaseIgnoreMaskKAE::KAEDiacriticIgnoreMaskKAE::KAEWhiteSpaceIgnoreMaskKAE::KAEHyphensIgnoreMaskKAE::KAEExpansionIgnoreMaskKAE::KAEPunctuationIgnoreMaskKAE::KASConsiderRepliesIgnoreMaskKAE::KASNumericStringsIgnoreMask</code></pre>
+<pre><code>KAE::KAECaseConsiderMask
+KAE::KAEDiacriticConsiderMask
+KAE::KAEWhiteSpaceConsiderMask
+KAE::KAEHyphensConsiderMask
+KAE::KAEExpansionConsiderMask
+KAE::KAEPunctuationConsiderMask
+KAE::KASConsiderRepliesConsiderMask
+KAE::KASNumericStringsConsiderMask
+
+KAE::KAECaseIgnoreMask
+KAE::KAEDiacriticIgnoreMask
+KAE::KAEWhiteSpaceIgnoreMask
+KAE::KAEHyphensIgnoreMask
+KAE::KAEExpansionIgnoreMask
+KAE::KAEPunctuationIgnoreMask
+KAE::KASConsiderRepliesIgnoreMask
+KAE::KASNumericStringsIgnoreMask</code></pre>
 
 
-<h3>Send flag constants</h3>
+<h4>Send flag constants</h4>
 
 <p>The value of the <code>send</code> method's <code>flags</code> argument should be an integer composed from the sum of zero or more of the following bit masks:</p>
 
@@ -140,12 +163,12 @@ KAE::KAECanSwitchLayer</code></pre>
 <p>See the <a href="http://developer.apple.com/documentation/Carbon/Reference/Apple_Event_Manager/apple_event_manager_ref/chapter_1.4_section_6.html">Apple Event Manager</a> API reference for details.</p>
 
 
-<h3>Other constants</h3>
+<h4>Other constants</h4>
 
 <pre><code>KAE::KAutoGenerateReturnID</code></pre>
 
 
-<h2>The <code>CommandError</code> class</h2>
+<h3>The <code>CommandError</code> class</h3>
 
 <p>The <code>CommandError</code> class is raised by <code>Event#send</code> and represents an error raised by the target application or Apple Event Manager when sending an event.</p>
 
@@ -165,11 +188,14 @@ KAE::KAECanSwitchLayer</code></pre>
 </div>
 
 <!-- bottom navigation -->
-<div class="navbar">
-	<a href="05_targettingapplications.html">Previous</a> | <a href="index.html">Up</a> | <a href="07_findapp.html">Next</a>
+
+<div class="footer">
+<a href="05_targettingapplications.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="07_findapp.html">Next</a>
+
+<span>&copy; 2006-2008 HAS</span>
 </div>
 
-<!--footer-->
-<p class="footer">&copy; 2006-2008 HAS</p>
 </body>
 </html>

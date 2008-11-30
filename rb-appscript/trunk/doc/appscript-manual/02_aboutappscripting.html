@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 
-<title>appscript | 2. About Application Scripting</title>
+<title>rb-appscript manual | 2. About Application Scripting</title>
 
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <style type="text/css" media="all"><!--@import url(../full.css);--></style>
@@ -10,19 +10,30 @@
 </head>
 <body>
 
-<h1>2. About Application Scripting</h1>
+<h1><img src="../rb-appscript-logo.png" alt="rb-appscript" title="rb-appscript" /></h1>
 
 <!-- top navigation -->
 <div class="navbar">
-	<a href="01_introduction.html">Previous</a> | <a href="index.html">Up</a> | <a href="03_quicktutorial.html">Next</a>
-	
+<a href="01_introduction.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="03_quicktutorial.html">Next</a>
+
+<span>
+<strong><a href="../appscript-manual/index.html">appscript</a></strong> /
+<a href="../mactypes-manual/index.html">mactypes</a> /
+<a href="../osax-manual/index.html">osax</a> /
+<a href="../aem-manual/index.html">aem</a>
+</span>
 </div>
 
 <!-- content -->
 <div id="content">
+
+<h2>2. About Application Scripting</h2>
+
 <p>This chapter introduces the main concepts behind Apple event-based application scripting. However, if you just can't wait to begin using appscript, you can skip to the tutorial in <a href="03_quicktutorial.html">chapter 3</a> and return to this chapter later on.</p>
 
-<h2>What are Apple events?</h2>
+<h3>What are Apple events?</h3>
 
 <p>Apple events are a high-level message-based form of Interprocess Communication (IPC; also known as Interapplication Communication, or IAC), used to communicate between local or remote application processes (and, in some cases, within the same process).</p>
 
@@ -59,7 +70,7 @@
 <p>Applications may respond to an incoming Apple event by sending a reply event back to the client application. The reply event may contain either a return value, if there is one, or an error description if it was unable to handle the event as requested. For example, executing the command <code>app('TextEdit').name.get</code> in a Ruby interpreter sends TextEdit a <code>code/getd</code> event containing an object specifier identifying the <code>name</code> property of its root <code>application</code> object. TextEdit processes this event, then sends a reply event containing the string '<tt>TextEdit</tt>' back to the Ruby interpreter, where it is displayed as the command's result. This exchange is usually performed synchronously, appearing to the user as a simple remote procedure call. Asynchronous messaging is also supported, though is not normally used in application scripting.</p>
 
 
-<h2>What is a scriptable application?</h2>
+<h3>What is a scriptable application?</h3>
 
 <p>A scriptable (or 'AppleScriptable') application is an application that provides an Apple event interface intended for third-party (e.g. end-user) use. The application implements one or more event handlers that respond to corresponding events, and may also support the Apple Event Object Model. While this interface may be regarded as an API, the emphasis is on providing a high-level <em>user interface</em> that is peer to other users interfaces the application may have (GUI, CLI, web, etc.) and accessible to end-users as much as developers.</p>
 
@@ -78,7 +89,7 @@
 <p>(Note that the <code>aete</code> and <code>sdef</code> formats do not provide an exhaustive description of the application's scripting interface, and additional documentation is usually required - if not always provided - to form a complete understanding of that interface and how to use it effectively.)</p>
 
 
-<h2>What is the Apple Event Object Model?</h2>
+<h3>What is the Apple Event Object Model?</h3>
 
 <p>The Apple Event Object Model (AEOM) is an idealised, user-oriented representation of the application's internal data model, allowing clients to identify and manipulate parts of that structure via Apple events. An incoming Apple event representing a particular command (get, set, move, etc.) is unpacked, and any object specifiers in its parameter list are evaluated against the application's AEOM to identify the user-level object(s) upon which the command should act. The command is then applied these objects, with the AEOM translating this into operations upon the application's implementation-level objects. These implementation-level objects are mostly user-data objects in the application's Model layer, plus a few GUI objects of interest to scripters (such as those representing document windows). The internal architecture of a typical scriptable desktop application might look something like this:</p>
 
@@ -99,7 +110,7 @@
 </div>
 
 
-<h2>How does the AEOM work?</h2>
+<h3>How does the AEOM work?</h3>
 
 <p>The AEOM is a tree structure made up of objects. These objects may have attributes (descriptive values such as class, name, id, size, bounds; usually primitive AE types but occasionally other application objects), e.g.:</p>
 
@@ -175,7 +186,7 @@ app('TextEdit').documents[1].text.paragraphs</code></pre>
 
 </div>
 
-<h2>What is appscript?</h2>
+<h3>What is appscript?</h3>
 
 <p>Appscript is a high-level Ruby-to-Apple Event Manager bridge, intended for use by both developers and end-users. The appscript architecture consists of three layers:</p>
 
@@ -212,7 +223,7 @@ app('TextEdit').documents[1].text.paragraphs</code></pre>
 
 
 
-<h2>Additional resources</h2>
+<h3>Additional resources</h3>
 
 <p>Background information links can be found on the <a href="http://rb-appscript.rubyforge.org">rb-appscript website</a>.</p>
 
@@ -225,12 +236,14 @@ app('TextEdit').documents[1].text.paragraphs</code></pre>
 </div>
 
 <!-- bottom navigation -->
-<div class="navbar">
-	<a href="01_introduction.html">Previous</a> | <a href="index.html">Up</a> | <a href="03_quicktutorial.html">Next</a>
-	
+
+<div class="footer">
+<a href="01_introduction.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="03_quicktutorial.html">Next</a>
+
+<span>&copy; 2006-2008 HAS</span>
 </div>
 
-<!--footer-->
-<p class="footer">&copy; 2006-2008 HAS</p>
 </body>
 </html>

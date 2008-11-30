@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 
-<title>appscript | 4. Getting Help</title>
+<title>rb-appscript manual | 4. Getting Help</title>
 
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <style type="text/css" media="all"><!--@import url(../full.css);--></style>
@@ -10,21 +10,32 @@
 </head>
 <body>
 
-<h1>4. Getting Help</h1>
+<h1><img src="../rb-appscript-logo.png" alt="rb-appscript" title="rb-appscript" /></h1>
 
 <!-- top navigation -->
 <div class="navbar">
-	<a href="03_quicktutorial.html">Previous</a> | <a href="index.html">Up</a> | <a href="05_keywordconversion.html">Next</a>
-	
+<a href="03_quicktutorial.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="05_keywordconversion.html">Next</a>
+
+<span>
+<strong><a href="../appscript-manual/index.html">appscript</a></strong> /
+<a href="../mactypes-manual/index.html">mactypes</a> /
+<a href="../osax-manual/index.html">osax</a> /
+<a href="../aem-manual/index.html">aem</a>
+</span>
 </div>
 
 <!-- content -->
 <div id="content">
+
+<h2>4. Getting Help</h2>
+
 <p>When developing appscript-based scripts, there are several ways to get information about applications' scripting interfaces: the ASDictionary application and its bundled <code>asdict</code> command-line tool, appscript's powerful built-in <code>help</code> method, and introspection.</p>
 
 
 
-<h2>ASDictionary</h2>
+<h3>ASDictionary</h3>
 
 <p>ASDictionary, available from the appscript website's <a href="http://rb-appscript.rubyforge.org/downloads.html">Downloads page</a>, provides a convenient GUI interface for exporting application terminology resources in plain text and HTML formats. ASDictionary can export HTML dictionaries in both single-file format and a frame-based format similar to rdoc's.</p>
 
@@ -32,7 +43,7 @@
 
 
 
-<h2>Built-in <code>help</code> method</h2>
+<h3>Built-in <code>help</code> method</h3>
 
 <p>Appscript's <code>Application</code> and <code>Reference</code> classes include a powerful interactive help system that allows you to explore applications' scripting interfaces from within running scripts and Ruby's interactive <code>irb</code> interpreter. The <code>help</code> method can provide information on any suite, class, command or reference, and display the inheritance and relationships for a selected class or the entire application.</p>
 
@@ -94,7 +105,7 @@ app('TextEdit').documents.help('-t count -t close')</code></pre>
 
 
 
-<h2>Introspection</h2>
+<h3>Introspection</h3>
 
 <p>In addition to supporting Ruby's standard <code>#methods</code> and <code>#respond_to?</code> methods, appscript's <code>Application</code> and <code>Reference</code> classes also define several instance methods for obtaining information on the target application: </p>
 
@@ -128,12 +139,12 @@ p te.parameters('make')
 # ["at", "new", "with_data", "with_properties"]</code></pre>
 
 
-<h2>Notes</h2>
+<h3>Notes</h3>
 
 <p>While appscript's documentation systems try to be reasonably forgiving of flawed or faulty terminology resources, there may be a few particularly problematic applications on which they fail. Should this happen, use ASDictionary to export the application's terminology in plain text format instead.</p>
 
 
-<h2>Other sources of help</h2>
+<h3>Other sources of help</h3>
 
 <ul>
 <li>The <code>sample</code> folder contains example scripts demonstrating a range of common tasks.</li>
@@ -144,19 +155,21 @@ p te.parameters('make')
 
 <li>The <a href="http://appscript.sourceforge.net/tools.html">ASTranslate</a> tool can be used to convert application commands from AppleScript to Ruby syntax.</li>
 
-<li>The <a href="http://rb-appscript.rubyforge.org">rb-appscript website</a> has links to mailing lists and other general resources.</li>
+<li>The <a href="http://appscript.sourceforge.net">appscript website</a> has links to mailing lists and other general resources.</li>
 </ul>
 
 
 </div>
 
 <!-- bottom navigation -->
-<div class="navbar">
-	<a href="03_quicktutorial.html">Previous</a> | <a href="index.html">Up</a> | <a href="05_keywordconversion.html">Next</a>
-	
+
+<div class="footer">
+<a href="03_quicktutorial.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="05_keywordconversion.html">Next</a>
+
+<span>&copy; 2006-2008 HAS</span>
 </div>
 
-<!--footer-->
-<p class="footer">&copy; 2006-2008 HAS</p>
 </body>
-</html> 
+</html>

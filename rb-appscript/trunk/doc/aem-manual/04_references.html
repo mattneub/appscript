@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 
-<title>aem | 4. References</title>
+<title>rb-aem manual | 4. References</title>
 
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <style type="text/css" media="all"><!--@import url(../full.css);--></style>
@@ -10,18 +10,28 @@
 </head>
 <body>
 
-<h1>4. References</h1>
+<h1><img src="../rb-appscript-logo.png" alt="rb-appscript" title="rb-appscript" /></h1>
 
 <!-- top navigation -->
 <div class="navbar">
-	<a href="03_packingandunpackingdata.html">Previous</a> | <a href="index.html">Up</a> | <a href="05_targettingapplications.html">Next</a>
+<a href="03_packingandunpackingdata.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="05_targettingapplications.html">Next</a>
+
+<span>
+<a href="../appscript-manual/index.html">appscript</a> /
+<a href="../mactypes-manual/index.html">mactypes</a> /
+<a href="../osax-manual/index.html">osax</a> /
+<strong><a href="../aem-manual/index.html">aem</a></strong>
+</span>
 </div>
 
 <!-- content -->
 <div id="content">
 
+<h2>4. References</h2>
 
-<h2>About references</h2>
+<h3>About references</h3>
 
 <p>An Apple Event Object Model query (a.k.a. "reference") essentially consists of a linked list made up of one or more Apple event descriptors (AEDescs) of, for the most part, <code>typeObjectSpecifier</code>. Object specifiers are used to identify properties and elements in the application's AEOM. Each object specifer contains four fields:</p>
 
@@ -39,7 +49,7 @@
 <dd>selector data (e.g. in a by-name specifier, this would be a string)</dd>
 </dl>
 
-<p>The Apple Event Manager provides several ways to construct object specifiers and assemble them into a complete reference, but these are all rather verbose and low-level. Aem hides all these details behind an object-oriented wrapper that uses chained property and method calls to gather the data needed to create object specifiers and assemble them into linked lists.</p>
+<p>The Apple Event Manager provides several ways to construct object specifiers and assemble them into a complete reference, but these are all rather verbose and low-level. AEM hides all these details behind an object-oriented wrapper that uses chained property and method calls to gather the data needed to create object specifiers and assemble them into linked lists.</p>
 
 <p>For example, consider the reference <code>text of document 1</code>. The code for constructing this reference using a relatively low-level bridge, in this case RubyAEOSA, would be:</p>
 
@@ -68,19 +78,19 @@ p ref
 
 <p>Now, compare the above with the AEM equivalent:</p>
 
-<pre><code>[[[AEMApp elements: 'docu'] at: 1] property: 'ctxt']</code></pre>
+<pre><code>app.elements('docu').by_index(1).property('ctxt')</code></pre>
 
-<p>As you can see, AEM still uses low-level four-character codes to identify the <code>text</code> property and <code>document</code> class, but is otherwise a high-level object-oriented API. Once again, each reference begins with a root object, in this case <code>AEMApp</code>. New AEM specifiers are constructed by method calls; each call returning a new specifier object whose own methods can be called, and so on. This allows clients to build up a chain of AEM specifier objects that aem can later pack into AEDescs for sending to applications.</p>
+<p>As you can see, AEM still uses low-level four-character codes to identify the <code>text</code> property and <code>document</code> class, but is otherwise a high-level object-oriented API. Once again, each reference begins with a root object, in this case <code>AEM.app</code>. New AEM specifiers are constructed by method calls; each call returning a new specifier object whose own methods can be called, and so on. This allows clients to build up a chain of AEM specifier objects that aem can later pack into AEDescs for sending to applications.</p>
 
-<p>One more thing to notice: in AEM, specifying a class of elements and indicating which of those elements should be selected are performed by separate method calls, although the information provided will eventually be packed into a single AEDesc of <code>typeObjectSpecifier</code>. This two-step approach makes it easier to integrate aem with the higher-level appscript bridge, which also uses two calls to construct element specifiers (one to specify the element class, e.g. <code>-document</code>, and another to specify the selection, e.g. <code>-at:</code>).</p>
+<p>One more thing to notice: in AEM, specifying a class of elements and indicating which of those elements should be selected are performed by separate method calls, although the information provided will eventually be packed into a single AEDesc of <code>typeObjectSpecifier</code>. This two-step approach makes it easier to integrate aem with the higher-level appscript bridge, which also uses two calls to construct element specifiers (one to specify the element class, e.g. <code>#document</code>, and another to specify the selection, e.g. <code>#by_index</code>).</p>
 
-<p>Note that <code>[AEMApp elements: 'docu']</code> is itself a valid reference, identifying <em>all</em> the document elements of the application class. You do not have to call an explicit <code>all</code> selector (indeed, none is provided) as AEM automatically handles the details for you. AEM even allows for some convenient shorthand, e.g. writing:</p>
+<p>Note that <code>app.elements('docu')</code> is itself a valid reference, identifying <em>all</em> the document elements of the application class. You do not have to call an explicit <code>#all</code> selector (indeed, none is provided) as AEM automatically handles the details for you. AEM even allows for some convenient shorthand, e.g. writing:</p>
 
-<pre><code>[[[AEMApp elements: 'docu'] byTest: ...] first]</code></pre>
+<pre><code>app.elements('docu')by_filter(...).first</code></pre>
 
 <p>is equivalent to writing:</p>
 
-<pre><code>[[[[AEMApp elements: 'docu'] byTest: ...] elements: 'docu'] first]</code></pre>
+<pre><code>app.elements('docu')by_filter(...).elements('docu').first</code></pre>
 
 <p>This allows clients to specify the first document that matches the given condition without having to specify the element class a second time. In AppleScript, the equivalent to this is:</p>
 
@@ -94,9 +104,9 @@ p ref
 
 
 
-<h2>Reference forms</h2>
+<h3>Reference forms</h3>
 
-<p>Aem defines a number of classes representing each of the AEOM reference forms. There are eight AEOM reference forms:</p>
+<p>AEM defines a number of classes representing each of the AEOM reference forms. There are eight AEOM reference forms:</p>
 
 <ul>
 <li>insertion location</li>
@@ -121,7 +131,7 @@ p ref
 
 
 
-TO DO: finish
+<!-- TO DO: finish -->
 
 
 <p>In fact, it really isn't necessary to remember the reference class hierarchy at all, only to know which concrete classes implement which methods. All user-accessible properties and methods are defined by just four superclasses:</p>
@@ -142,9 +152,9 @@ TO DO: finish
 
 
 
-<h2>Base classes</h2>
+<h3>Base classes</h3>
 
-<h3>Basic methods</h3>
+<h4>Basic methods</h4>
 
 <pre><code>BASE -- Base class for all reference form and test clause classes.
     hash -- aem references can be used as dictionary keys
@@ -152,7 +162,7 @@ TO DO: finish
     ==(value) -- aem references can be compared for equality</code></pre>
 
 
-<h3>Methods for all position specifiers</h3>
+<h4>Methods for all position specifiers</h4>
 
 <pre><code>PositionSpecifier &lt; Specifier -- base class for all property and element
         reference forms (i.e. all forms except insertion location)
@@ -235,7 +245,7 @@ TO DO: finish
             Result : Test</code></pre>
 
 
-<h3>Methods for all multi-element specifiers</h3>
+<h4>Methods for all multi-element specifiers</h4>
 
 <pre><code>MultipleElements &lt; PositionSpecifier -- base class for all multi-
         element reference forms
@@ -277,7 +287,7 @@ TO DO: finish
             Result : ElementsByFilter</code></pre>
 
 
-<h3>Methods for all test clause classes</h3>
+<h4>Methods for all test clause classes</h4>
 
 <pre><code>Test &lt; BASE -- represents a comparison/logic test
 
@@ -300,14 +310,14 @@ TO DO: finish
 
 
 
-<h2>Concrete classes</h2>
+<h3>Concrete classes</h3>
 
-<h3>Insertion location reference form</h3>
+<h4>Insertion location reference form</h4>
 
 <pre><code>InsertionSpecifier &lt; Specifier -- refers to insertion point before or after/at
         beginning or end of element(s); e.g. ref.before</code></pre>
 
-<h3>Property reference forms</h3>
+<h4>Property reference forms</h4>
 
 <pre><code>Property &lt; PositionSpecifier -- refers to a property (whose value
         may be a basic type, application object or reference);
@@ -318,7 +328,7 @@ UserProperty &lt; PositionSpecifier -- refers to a user-defined property
         (typically in an OSA applet); e.g. ref.user_property('myVar')</code></pre>
 
 
-<h3>Single element reference forms</h3>
+<h4>Single element reference forms</h4>
 
 
 <pre><code>ElementByIndex &lt; SingleElement -- refers to a single element in the referenced 
@@ -341,7 +351,7 @@ ElementByRelativePosition &lt; SingleElement -- refers to the previous or next e
         e.g. ref.next('cpar')</code></pre>
 
 
-<h3>Multiple element reference forms</h3>
+<h4>Multiple element reference forms</h4>
 
 <pre><code>ElementsByRange &lt; MultipleElements -- refers to a range of elements
         in the referenced container object(s) (including beginning and 
@@ -358,23 +368,23 @@ AllElements &lt; MultipleElements -- refers to all elements of the given class
         in the referenced container object(s); e.g. ref.elements('docu')</code></pre>
 
 
-<h3>Tests</h3>
+<h4>Tests</h4>
 
 <p>The <code>Test</code> class represents a comparison test or logical test, and defines methods for composing additional logical tests on top of these. Each kind of test clause is represented by a different subclass of the main <code>Test</code> class. The details are not that important, however, so they're not listed here.</p>
 
 
 
 
-<h3>Reference Roots</h3>
+<h4>Reference Roots</h4>
 
-<pre><code>ApplicationRoot &lt; PositionSpecifier -- AEM.app returns an instance of
-       this class
+<pre><code>ApplicationRoot &lt; PositionSpecifier
+       -- AEM.app returns an instance of this class
 
-CurrentContainer &lt; PositionSpecifier -- AEM.con returns an instance of
-       this class
+CurrentContainer &lt; PositionSpecifier
+       -- AEM.con returns an instance of this class
 
-ObjectBeingExamined &lt; PositionSpecifier -- AEM.its returns an instance
-       of this class</code></pre>
+ObjectBeingExamined &lt; PositionSpecifier
+       -- AEM.its returns an instance of this class</code></pre>
 
 
 
@@ -384,11 +394,14 @@ ObjectBeingExamined &lt; PositionSpecifier -- AEM.its returns an instance
 </div>
 
 <!-- bottom navigation -->
-<div class="navbar">
-	<a href="03_packingandunpackingdata.html">Previous</a> | <a href="index.html">Up</a> | <a href="05_targettingapplications.html">Next</a>
+
+<div class="footer">
+<a href="03_packingandunpackingdata.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="05_targettingapplications.html">Next</a>
+
+<span>&copy; 2006-2008 HAS</span>
 </div>
 
-<!--footer-->
-<p class="footer">&copy; 2006-2008 HAS</p>
 </body>
 </html>
