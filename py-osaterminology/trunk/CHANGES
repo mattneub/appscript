@@ -1,3 +1,7 @@
+2008-12-01 -- 0.?.?
+
+- fixed argument types for -at:, -at:to:, -initWithPID: in makeglue/objcappscript.py (now int, pid_t; previously declared as long)
+
 2008-11-11 -- 0.14.1
 
 - added py-appscript 0.19.0 support

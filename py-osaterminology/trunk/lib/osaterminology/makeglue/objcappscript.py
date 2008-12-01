@@ -276,7 +276,7 @@ class ClassBuilder:
 			src.endmethod()
 		#
 		src.comment('by-index, by-name, by-id selectors')
-		for methodname, type, var in [('at', 'long', 'index'), ('byIndex', 'id', 'index'), ('byName', 'id', 'name'), ('byID', 'id', 'id_')]:
+		for methodname, type, var in [('at', 'int', 'index'), ('byIndex', 'id', 'index'), ('byName', 'id', 'name'), ('byID', 'id', 'id_')]:
 			src.newmethod('- (<PREFIX>Reference *)%s:(%s)%s' % (methodname, type, var))
 			src += '    return [<PREFIX>Reference referenceWithAppData: AS_appData'
 			src += '                                 aemReference: [AS_aemReference %s: %s]];' % (methodname, var)
@@ -290,7 +290,7 @@ class ClassBuilder:
 			src.endmethod()
 		#
 		src.comment('by-range selector')
-		src.newmethod('- (<PREFIX>Reference *)at:(long)fromIndex to:(long)toIndex')
+		src.newmethod('- (<PREFIX>Reference *)at:(int)fromIndex to:(int)toIndex')
 		src += '    return [<PREFIX>Reference referenceWithAppData: AS_appData'
 		src += '                                 aemReference: [AS_aemReference at: fromIndex to: toIndex]];'
 		src.endmethod()
@@ -380,7 +380,7 @@ class ClassBuilder:
 				('- (id)initWithName:(NSString *)name', 'kASTargetName', 'name'),
 				('- (id)initWithBundleID:(NSString *)bundleID', 'kASTargetBundleID', 'bundleID'),
 				('- (id)initWithURL:(NSURL *)url', 'kASTargetURL', 'url'),
-				('- (id)initWithPID:(pid_t)pid', 'kASTargetPID', '[NSNumber numberWithUnsignedLong: pid]'),
+				('- (id)initWithPID:(pid_t)pid', 'kASTargetPID', '[NSNumber numberWithInteger: pid]'),
 				('- (id)initWithDescriptor:(NSAppleEventDescriptor *)desc', 'kASTargetDescriptor', 'desc')]:
 			src.newmethod(name)
 			src += '    return [self initWithTargetType: %s data: %s];' % (target, data)
