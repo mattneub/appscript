@@ -26,5 +26,5 @@ def makemessage(addresses, subject, content, showwindow=False):
 
 
 # test
-print makemessage(['joe@foo.com', 'jane@bar.net'],
+print makemessage(['joe@example.com', 'jane@example.net'],
         'Hello World', 'Some body text.', True)

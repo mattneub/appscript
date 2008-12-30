@@ -1,3 +1,8 @@
+2009-01-01 -- 0.19.1
+
+- Fixed minor bug/inconsistency where an application-defined property name that overlapped a built-in property name but used a different code was correctly escaped when used in references (e.g. someobj.rotation_) but not in keywords (e.g. should be k.rotation_ but was k.rotation instead).
+
+
 2008-11-23 -- 0.19.0
 
 - The following packages/modules have been removed from the appscript distribution:

@@ -53,14 +53,14 @@
 <pre><code>from appscript import *
 
 
-desiredEmail = 'sam.brown@foo.com'
+desiredemail = 'sam.brown@example.com'
 
-foundNames = []
+foundnames = []
 for person in app('Address Book').people.get():
     for email in person.emails.get()
-        if email.value.get() == desiredEmail:
-            foundNames.append(person.name.get())
-print foundNames</code></pre>
+        if email.value.get() == desiredemail:
+            foundnames.append(person.name.get())
+print foundnames</code></pre>
 
 
 <p>The above script sends one Apple event to get a list of references to all people, then one Apple event for each person to get a list of references to their emails, then one Apple event for each of those emails. Thus the time taken increases directly in proportion to the number of people in Address Book. If there's hundreds of people to search, that's hundreds of Apple events to be built, sent and individually resolved, and performance suffers as a result.</p>
@@ -77,10 +77,10 @@ print foundNames</code></pre>
 <pre><code>from appscript import *
 
 
-desiredEmail = 'sam.brown@foo.com'
+desiredemail = 'sam.brown@example.com'
 
 print app('Address Book').people[
-        its.emails.value.contains(desiredEmail)
+        its.emails.value.contains(desiredemail)
         ].name.get()</code></pre>
 
 <p>To explain:</p>
@@ -88,7 +88,7 @@ print app('Address Book').people[
 <ul>
 <li>The query states: find the name of every person object that passes a specific test.</li>
 
-<li>The test is: does a given value, 'sam.brown@foo.com', appear in a list that consists of the value of each email object contained by an individual person?</li>
+<li>The test is: does a given value, 'sam.brown@example.com', appear in a list that consists of the value of each email object contained by an individual person?</li>
 
 <li>The command is: evaluate that query against the AEOM and get (return) the result, which is a list of zero or more strings: the names of the people matched by the query.</li>
 </ul>
@@ -106,10 +106,10 @@ desiredDomain = 'foo.com'
 names = app('Address Book').people.name.get()
 
 # a list of lists of email strings
-emailsOfEveryPerson = app('Address Book').people.emails.value.get()
+emailsofeveryperson = app('Address Book').people.emails.value.get()
 
 result = []
-for name, emails in zip(names, emailsOfEveryPerson):
+for name, emails in zip(names, emailsofeveryperson):
     for email in emails:
         if email.endswith('@'+desiredDomain):
             result.append(name)
@@ -126,7 +126,7 @@ print result</code></pre>
 <a href="index.html">Up</a> &bull;
 <a href="14_notes.html">Next</a>
 	
-<span>&copy; 2004-2008 HAS</span>
+<span>&copy; 2004-2009 HAS</span>
 </div>
 
 </body>

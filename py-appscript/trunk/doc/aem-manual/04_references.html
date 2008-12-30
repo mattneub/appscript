@@ -53,19 +53,19 @@
 
 <p>For example, consider the reference <code>text of document 1</code>. The code for constructing this reference using the low-level <code>aem.ae</code> bridge would be:</p>
 
-<pre><code>rootref = newdesc('null', '')
+<pre><code>rootref = aem.ae.newdesc('null', '')
 
-docref = newrecord().coerce('obj ')
-docref.setparam('want', newdesc('type', 'docu'))
+docref = aem.ae.newrecord().coerce('obj ')
+docref.setparam('want', aem.ae.newdesc('type', 'docu'))
 docref.setparam('from', rootref)
-docref.setparam('form', newdesc('enum', 'indx'))
-docref.setparam('seld', newdesc('long', '\x00\x00\x00\x01'))
+docref.setparam('form', aem.ae.newdesc('enum', 'indx'))
+docref.setparam('seld', aem.ae.newdesc('long', '\x00\x00\x00\x01'))
 
-textref = newrecord().coerce('obj ')
-textref.setparam('want', newdesc('type', 'prop'))
+textref = aem.ae.newrecord().coerce('obj ')
+textref.setparam('want', aem.ae.newdesc('type', 'prop'))
 textref.setparam('from', docref)
-textref.setparam('form', newdesc('enum', 'prop'))
-textref.setparam('seld', newdesc('type', 'ctxt'))
+textref.setparam('form', aem.ae.newdesc('enum', 'prop'))
+textref.setparam('seld', aem.ae.newdesc('type', 'ctxt'))
 
 print textref
 # &lt;aem.ae.AEDesc type='obj ' size=152&gt;</code></pre>
@@ -392,7 +392,7 @@ ObjectBeingExamined(ReferenceRoot) -- the exported 'its' variable contains
 <a href="index.html">Up</a> &bull;
 <a href="05_targettingapplications.html">Next</a>
 
-<span>&copy; 2004-2008 HAS</span>
+<span>&copy; 2004-2009 HAS</span>
 </div>
 
 </body>

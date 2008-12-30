@@ -33,7 +33,7 @@
 
 <h3>About appscript</h3>
 
-<p>Python appscript (py-appscript) is a high-level, user-friendly Apple event bridge that allows you to control scriptable Mac OS X applications using ordinary Python scripts. Appscript makes Python an excellent alternative to Apple's own AppleScript language for automating your Mac.</p>
+<p>Python appscript (py-appscript) is an easy-to-use Apple event bridge that allows 'AppleScriptable' applications to be controlled by ordinary Python scripts. Appscript makes Python an excellent alternative to Apple's own AppleScript language for automating your Mac.</p>
 
 <p>For example, to get the value of the first paragraph of the topmost document in TextEdit:</p>
 
@@ -46,9 +46,13 @@
 end tell</code></pre>
 
 
-<h3>Notes</h3>
+<h3>Before you start...</h3>
 
-<p>In contrast to the familiar object-oriented approach of other inter-process communication systems such as COM and Distributed Objects, Apple event IPC is based on a combination of remote procedure calls and first-class queries. (Think of it as a bit like using XPath over XML-RPC.) While appscript uses an object-oriented-like syntax for conciseness and readability, like AppleScript, its behaviour follows Apple event rules. As a result, Python users will discover that some things work differently in appscript from what they're used to - for example:</p>
+<p>In order to use appscript effectively, you will need to understand the differences between the Apple event and Python object systems.</p>
+
+<p>In contrast to the familiar object-oriented approach of other inter-process communication systems such as COM and Distributed Objects, Apple event IPC is based on a combination of <em>remote procedure calls</em> and <em>first-class queries</em> - somewhat analogous to using XPath over XML-RPC.</p>
+
+<p>While appscript uses an object-oriented-like syntax for conciseness and readability, like AppleScript, it behaves according to Apple event rules. As a result, Python users will discover that some things work differently in appscript from what they're used to. For example:</p>
 
 <ul>
 <li>object elements are one-indexed, not zero-indexed like Python lists</li>
@@ -71,7 +75,7 @@ end tell</code></pre>
 <a href="index.html">Up</a> &bull;
 <a href="02_aboutappscripting.html">Next</a>
 	
-<span>&copy; 2004-2008 HAS</span>
+<span>&copy; 2004-2009 HAS</span>
 </div>
 
 </body>
