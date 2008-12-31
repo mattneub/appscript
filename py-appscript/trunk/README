@@ -1,4 +1,4 @@
-Appscript is packaged using the standard Python Distribution Utilities (a.k.a. Distutils). To install appscript, cd to the appscript-0.19.0 directory and run:
+Appscript is packaged using the standard Python Distribution Utilities (a.k.a. Distutils). To install appscript, cd to the appscript-0.19.1 directory and run:
 
 	python setup.py install
 
@@ -6,11 +6,9 @@ Setuptools will be used if available, otherwise the setup.py script will revert 
 
 Building appscript from source requires the gcc compiler (supplied with Apple's Developer Tools). Setuptools is available from <http://cheeseshop.python.org/pypi>.
 
-Appscript requires Python 2.3 or later and Mac OS X 10.3 or later. 
+Appscript requires Python 2.3 or later and Mac OS X 10.3.9 or later. 
 
-This appscript distribution supports Python 2.x only. A separate distribution is available for Python 3.x. See the following page for more information:
-
-	http://appscript.sourceforge.net/py-appscript/index.html
+This appscript distribution supports both Python 2.x and Python 3.x. Documentation and sample scripts for each can be found under the appscript_2x and appscript_3x directories.
 
 
 ======================================================================
@@ -46,7 +44,7 @@ NOTES
 
 -------
 
-- Appscript 0.19.0 is beta 1. Please report any problems you encounter either in the appscript bridge or in using it to control particular applications.
+- Appscript 0.19.1 is beta 2. Please report any problems you encounter either in the appscript bridge or in using it to control particular applications.
 
 
 ======================================================================
@@ -58,5 +56,5 @@ AUTHOR
 ======================================================================
 COPYRIGHT
 
-(C) 2003 - 2008 HAS <http://appscript.sourceforge.net>
+(C) 2003 - 2009 HAS <http://appscript.sourceforge.net>
 

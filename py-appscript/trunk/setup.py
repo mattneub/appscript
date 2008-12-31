@@ -4,11 +4,18 @@ except ImportError:
 	print("Note: couldn't import setuptools so using distutils instead.")
 	from distutils.core import setup, Extension
 
+import os, sys
+
+if sys.version >= (3,0):
+	root_dir = 'appscript_3x'
+else:
+	root_dir = 'appscript_2x'
+
 
 setup(
 		name = "appscript",
 		version = "0.19.1",
-		description = "Control scriptable Mac OS X applications from Python.",
+		description = "Control scriptable Mac OS X applications and scripting additions from Python.",
 		author = "HAS",
 		author_email='',
 		url='http://appscript.sourceforge.net',
@@ -16,7 +23,7 @@ setup(
 		platforms=['Mac OS X'],
 		ext_modules = [
 			Extension('aem.ae',
-				sources=['ext/ae.c'],
+				sources=[os.path.join(root_dir, 'ext/ae.c')],
 				extra_compile_args=['-DMAC_OS_X_VERSION_MIN_REQUIRED=MAC_OS_X_VERSION_10_3'],
 				extra_link_args=[
 						'-framework', 'CoreFoundation', 
@@ -34,5 +41,5 @@ setup(
 			'osax',
 		],
 		extra_path = "aeosa",
-		package_dir = { '': 'lib' }
+		package_dir = {'': os.path.join(root_dir, 'lib')}
 )
