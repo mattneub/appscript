@@ -6,10 +6,12 @@ except ImportError:
 
 import os, sys
 
-if sys.version >= (3,0):
+if sys.version_info >= (3,0):
 	root_dir = 'appscript_3x'
+	packages = []
 else:
 	root_dir = 'appscript_2x'
+	packages =['CarbonX']
 
 
 setup(
@@ -31,8 +33,7 @@ setup(
 						'-framework', 'Carbon'],
 			),
 		],
-		packages = [
-			'CarbonX',
+		packages = packages + [
 			'aem',
 			'appscript',
 		],
