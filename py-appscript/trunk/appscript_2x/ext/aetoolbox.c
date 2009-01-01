@@ -1,7 +1,7 @@
 /* 
-** aemtoolbox.c
+** aetoolbox.c
 **
-** (C) 2006-2008 HAS
+** (C) 2006-2009 HAS
 */
 
 #include "aetoolbox.h"

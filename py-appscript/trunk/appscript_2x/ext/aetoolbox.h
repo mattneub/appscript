@@ -1,5 +1,5 @@
 /* 
- * aemtoolbox.h
+ * aetoolbox.h
  *
  * Provides access to the following aem.ae C functions:
  *
@@ -10,8 +10,11 @@
  *
  * Extensions that need to use these functions should include aetoolbox.c
  *
- * (C) 2006-2008 HAS
+ * (C) 2006-2009 HAS
  */
+
+#ifndef APPSCRIPT_AETOOLBOX_H
+#define APPSCRIPT_AETOOLBOX_H
 
 #include <Carbon/Carbon.h>
 
@@ -37,3 +40,5 @@ PyObject *AE_GetMacOSErrorException(void);
 PyObject *AE_MacOSError(int err);
 int AE_GetOSType(PyObject *v, OSType *pr);
 PyObject *AE_BuildOSType(OSType t);
+
+#endif /* APPSCRIPT_AETOOLBOX_H */
