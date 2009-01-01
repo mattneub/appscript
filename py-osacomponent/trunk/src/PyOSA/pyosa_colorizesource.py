@@ -13,8 +13,8 @@ from struct import pack
 from tokenize import *
 from keyword import iskeyword
 
-from CarbonX.AE import AECreateDesc
-from CarbonX.kAE import *
+from aem.ae import newdesc
+from aem.kae import *
 import aem
 
 __all__ = ['sourcetostyledtext']
@@ -51,7 +51,7 @@ kStyleData = {
 ######################################################################
 
 def sourcetostyledtext(desc):
-	chardesc = desc.AECoerceDesc(typeChar)
+	chardesc = desc.coerce(typeChar)
 	source = chardesc.data
 	linelengths = [0] + [len(line) for line in source.split('\n')]
 	styledata = []
@@ -77,7 +77,7 @@ def sourcetostyledtext(desc):
 	styledata = pack('h', len(styledata)) + ''.join(styledata)
 	return codecs.pack({
 				aem.AEType(keyAEText): chardesc,
-				aem.AEType(keyAEStyles): AECreateDesc(typeScrapStyles, styledata)
-				}).AECoerceDesc(typeStyledText)
+				aem.AEType(keyAEStyles): newdesc(typeScrapStyles, styledata)
+				}).coerce(typeStyledText)
 
 

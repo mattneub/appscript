@@ -12,7 +12,7 @@ import MacOS
 from sys import exc_info, stderr
 from traceback import extract_tb, print_stack
 
-from CarbonX.kOSA import *
+from aem.kae import *
 from pyosa_appscript import aem, appscript
 
 #######
@@ -298,7 +298,7 @@ def packerror(selector, desiredtype, errorobj, codecs):
 			val = codecs.pack({
 					aem.AEType(keyOSASourceStart): startindex, 
 					aem.AEType(keyOSASourceEnd): endindex,
-					}).AECoerceDesc(typeOSAErrorRange)
+					}).coerce(typeOSAErrorRange)
 	elif isinstance(errorobj, ComponentError):
 		# TO DO: some/all of this code should be moved into a ComponentError method)
 		if selector == kOSAErrorNumber:
@@ -318,7 +318,7 @@ def packerror(selector, desiredtype, errorobj, codecs):
 	desc = codecs.pack(val)
 #	print >> stderr, '    desc=%r' % desc # debug
 	try:
-		return desc.AECoerceDesc(desiredtype)
+		return desc.coerce(desiredtype)
 	except MacOS.Error:
 		raisecomponenterror(errOSACantCoerce)
 

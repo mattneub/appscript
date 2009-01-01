@@ -65,7 +65,7 @@ except ImportError:
 # check appscript __version__, and disable component if it's earlier than 0.19.0
 
 vers, subvers, patch = getattr(appscript, '__version__', '0.0.0').split('.')
-if int(vers) == 0 and (int(subvers) < 19): # or (int(subvers) == 17 and int(patch) < 2)):
+if int(vers) == 0 and (int(subvers) < 19):
 	print >> sys.stderr, "*" * 70
 	print >> sys.stderr, "PyOSA: can't open component: appscript version is too old (0.19.0+ required)."
 	print >> sys.stderr, "*" * 70

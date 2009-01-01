@@ -12,9 +12,12 @@
  * retrieve/replace its contents.
  *
  */
+ 
+#ifndef PYOSA_HOSTCALLBACKS_H
+#define PYOSA_HOSTCALLBACKS_H
 
 #include <Carbon/Carbon.h>
-#include "carbonxtoolbox.h"
+#include "aetoolbox.h"
 
 
 AEIdleUPP defaultIdleProc;
@@ -39,3 +42,5 @@ typedef struct {
 PyObject* createCallbacks(void);
 
 void importCallbacksModule(void);
+
+#endif

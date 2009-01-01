@@ -13,7 +13,7 @@
 
 from sys import stderr # debug
 
-from CarbonX.kOSA import *
+from aem.kae import *
 import aem
 import appscript, appscript.reference, appscript.terminology
 
@@ -91,7 +91,8 @@ class AppscriptServices:
 	
 		# print >> stderr, 'initing AppscriptServices: (%r %r)' %(osacallbacks, terminologycache) # debug
 		hostapp = appscript.app()
-		self.codecs = hostapp.AS_appdata.connect()
+		self.codecs = hostapp.AS_appdata
+		self.codecs.connect()
 		self.pack = self.codecs.pack
 		self.unpack = self.codecs.unpack
 		self.referencebyname = self.codecs.referencebyname
@@ -134,11 +135,11 @@ class AppscriptServices:
 		attributes, parameters = {}, {}
 		for key in self._kEventAttributes:
 			try:
-				attributes[key] = self.unpack(desc.AEGetAttributeDesc(key, typeWildCard))
+				attributes[key] = self.unpack(desc.getattr(key, typeWildCard))
 			except:
 				pass
-		for i in range(desc.AECountItems()):
-			key, value = desc.AEGetNthDesc(i + 1, typeWildCard)
+		for i in range(desc.count()):
+			key, value = desc.getitem(i + 1, typeWildCard)
 			parameters[key] = self.unpack(value)
 		code = attributes[keyEventClassAttr].code + attributes[keyEventIDAttr].code
 		return code, attributes, parameters

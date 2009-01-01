@@ -19,6 +19,9 @@
  * Uses pyosa_errors module to do some of the error processing work.
  */
 
+#ifndef PYOSA_PYTHONERRORS_H
+#define PYOSA_PYTHONERRORS_H
+
 #include <Carbon/Carbon.h>
 
 #include "statemanager.h"
@@ -37,3 +40,5 @@ typedef struct {
 
 
 ComponentResult raisePythonError(CIStorageHandle ciStorage, OSAID scriptID);
+
+#endif

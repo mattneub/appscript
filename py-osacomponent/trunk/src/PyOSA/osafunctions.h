@@ -12,6 +12,9 @@
  *
  */
 
+#ifndef PYOSA_OSAFUNCTIONS_H
+#define PYOSA_OSAFUNCTIONS_H
+
 #include <Carbon/Carbon.h>
 #include "pythonerrors.h"
 
@@ -29,4 +32,4 @@ typedef struct {
 
 ComponentFunctionUPP getComponentFunction(SInt16 selector);
 
-
+#endif

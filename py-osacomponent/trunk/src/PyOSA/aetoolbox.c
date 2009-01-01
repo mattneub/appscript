@@ -1,17 +1,10 @@
 /* 
-** carbonxtoolbox - CarbonX.AE new/convert functions:
-** AE_AEDesc_New, AE_AEDesc_NewBorrowed, AE_AEDesc_Convert
+** aetoolbox.c
 **
-** (C) 2006 HAS
+** (C) 2006-2009 HAS
 */
 
-#include "carbonxtoolbox.h"
-
-/* 
-** aemtoolbox.c
-**
-** (C) 2006-2008 HAS
-*/
+#include "aetoolbox.h"
 
 static int shouldLoad = 1;
 

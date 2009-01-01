@@ -66,7 +66,7 @@ class EventHandlerManager:
 			print >> stderr, 'Initialising event handler table...' # debug
 			self._hasautoloaded = True
 			# for each command definition in built-in list/host application dictionary...
-			for defs in [kBuiltInEventHandlerDefs, self._appdata.referencebyname]:
+			for defs in [kBuiltInEventHandlerDefs, self._appdata.referencebyname()]:
 				for name, (kind, info) in defs.items():
 					if kind == kCommand:
 						code, paramdefs = info

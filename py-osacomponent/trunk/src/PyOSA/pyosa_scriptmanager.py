@@ -10,8 +10,8 @@
 # load/store/compile/run/etc. client scripts, and to hold and display result values.
 #
 
-# IMPORTANT NOTE: C code retains ownership of all CarbonX.AEDescs passed as arguments,
-# and takes ownership of all CarbonX.AEDescs returned as results. Python code must NOT
+# IMPORTANT NOTE: C code retains ownership of all aem.ae.AEDescs passed as arguments,
+# and takes ownership of all aem.ae.AEDescs returned as results. Python code must NOT
 # retain these AEDescs after returning control to C code or memory errors will occur.
 
 import MacOS, struct
@@ -20,8 +20,8 @@ from pprint import pprint
 from StringIO import StringIO
 from copy import deepcopy
 
-from CarbonX.kOSA import *
-from CarbonX.AE import AECreateDesc, AEDesc
+from aem.kae import *
+from aem.ae import newdesc, AEDesc
 import appscript.reference
 
 from pyosa_errors import *
@@ -73,9 +73,9 @@ class ScriptManager:
 	
 	def _coercedesc(self, desc, desiredtype):
 		if desiredtype in [typeWildCard, typeBest] or desc.type == typeNull:
-			return desc.AEDuplicateDesc()
+			return desc.coerce(desc.type)
 		try:
-			return desc.AECoerceDesc(desiredtype)
+			return desc.coerce(desiredtype)
 		except MacOS.Error:
 			raisecomponenterror(errOSACantCoerce)
 	
@@ -89,9 +89,9 @@ class ScriptManager:
 	
 	
 	def _formatevent(self, desc): # TO DO: finish
-		code = fourcharcode(desc.AEGetAttributeDesc('evcl', '****').data) \
-				+ fourcharcode(desc.AEGetAttributeDesc('evid', '****').data)
-		target = desc.AEGetAttributeDesc('addr', '****')
+		code = fourcharcode(desc.getattr('evcl', '****').data) \
+				+ fourcharcode(desc.getattr('evid', '****').data)
+		target = desc.getattr('addr', '****')
 		if code == 'ascrgdte':
 			return '\nGET AETE: %r %r' % (target.type, target.data)
 		if code in ['ascrtell', 'ascrtend']: # Python doesn't do 'tell' blocks, so ignore these
@@ -101,15 +101,15 @@ class ScriptManager:
 			if self._appidentity(targetapp) == ('desc', 
 					('psn ', '\x00\x00\x00\x00' + fourcharcode('\x00\x00\x00\x02'))):
 				try:
-					data = desc.AEGetParamDesc('----', '****')
+					data = desc.getparam('----', '****')
 				except:
 					return '\n#'
 				return '\n# %r' % self.appscriptservices.unpack(data)
 		code, atts, params = self.appscriptservices.unpackappleevent(desc)
 		# TO DO: if psn target, get app's path; if url target, get url; then construct app object using these for readability (note: this isn't ideal since there might be >1 instance of an app; the alternative is to improve appscript's repr support)
 		parameters = {}
-		for i in range(desc.AECountItems()):
-			key, value = desc.AEGetNthDesc(i + 1, typeWildCard)
+		for i in range(desc.count()):
+			key, value = desc.getitem(i + 1, typeWildCard)
 			parameters[key] = targetapp.AS_appdata.unpack(value)
 		s = StringIO()
 		pprint(atts, s)
@@ -200,10 +200,10 @@ class ScriptManager:
 			for key in kScriptErrorSelectors:
 				desc = packerror(key, typeWildCard, self.source, e)
 				if desc.type != typeNull:
-					reply.AEPutParamDesc(key, desc)
+					reply.setparam(key, desc)
 		else:
 			if result is not None:
-				reply.AEPutParamDesc('----', self.appscriptservices.pack(result))
+				reply.setparam('----', self.appscriptservices.pack(result))
 	
 	
 	#######

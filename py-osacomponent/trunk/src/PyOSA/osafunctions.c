@@ -200,7 +200,7 @@ static ComponentResult handleOSADispose(CIStorageHandle ciStorage,
 										OSAID scriptID) {
 	OSErr err = noErr;
 	err = disposeScriptState(ciStorage, scriptID);
-	fprintf(stderr, "OSADispose scriptID=%i\n", scriptID);
+	fprintf(stderr, "OSADispose scriptID=%u\n", (unsigned)scriptID);
 	return err;
 }
 

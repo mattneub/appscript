@@ -9,6 +9,9 @@
  *
  */
 
+#ifndef PYOSA_STATEMANAGER_H
+#define PYOSA_STATEMANAGER_H
+
 #include <Carbon/Carbon.h>
 #include "hostcallbacks.h"
 
@@ -62,3 +65,4 @@ PyObject* getContextManager(CIStorageHandle ciStorage, OSAID contextID);
 
 OSErr createValue(CIStorageHandle ciStorage, PyObject *value, ScriptStateRef parent, OSAID *valueID);
 
+#endif

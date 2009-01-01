@@ -54,7 +54,7 @@ ComponentResult PyOSA_main(ComponentParameters *params, Handle ciStorage) {
 		err = badComponentSelector;
 	}
 	#ifdef DEBUG_ON
-	if (err) fprintf(stderr, "PyOSA_main returned error: %i\n", err);
+	if (err) fprintf(stderr, "PyOSA_main returned error: %i\n", (int)err);
 	#endif
 	return err;
 }

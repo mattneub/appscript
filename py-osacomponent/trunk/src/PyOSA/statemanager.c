@@ -7,6 +7,7 @@
  */
 
 #include "statemanager.h"
+#include "pythonerrors.h"
 
 /*
 PyThreadState* global_state = PyThreadState_Get();
@@ -267,14 +268,14 @@ OSErr createScriptState(CIStorageHandle ciStorage,
 	// create new script state
 	*scriptID = createScriptID(ciStorage);
 	#ifdef DEBUG_ON
-		fprintf(stderr, "Creating new script state %i...\n", *scriptID);
+		fprintf(stderr, "Creating new script state %u...\n", (unsigned)(*scriptID));
 	#endif
 	*scriptState = malloc(sizeof(ScriptState));
 	(*scriptState)->scriptID = *scriptID;
 	// assign it a context
 	if (parent) { // script was created by another script, so reuse that script's context
 		#ifdef DEBUG_ON
-			fprintf(stderr, "    reusing context from script %i\n", parent->scriptID);
+			fprintf(stderr, "    reusing context from script %u\n", (unsigned)(parent->scriptID));
 		#endif
 		context = parent->context;
 		retainExecutionContext(context);

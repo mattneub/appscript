@@ -16,6 +16,9 @@
  *
  */
 
+#ifndef PYOSA_PYTHONLOADER_H
+#define PYOSA_PYTHONLOADER_H
+
 #include <Carbon/Carbon.h>
 #include <CoreFoundation/CoreFoundation.h>
 #include <sys/stat.h>
@@ -63,7 +66,7 @@ PyTypeObject *PyInt_Type_ptr; // used for checking values returned by Python cod
 /**********************************************************************/
 // Python objects
 
-PyObject *PyExc_ImportError; // used by carbonxtoolbox when raising exception
+PyObject *PyExc_ImportError; // used by aetoolbox when raising exception
 
 
 /**********************************************************************/
@@ -201,3 +204,4 @@ PyList_Insert_ptr PyList_Insert;
 
 Boolean loadPythonFramework(void); // returns true on success, else false; subsequent calls are a no-op
 
+#endif
