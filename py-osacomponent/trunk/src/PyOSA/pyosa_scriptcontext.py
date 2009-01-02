@@ -139,7 +139,7 @@ class ScriptContext:
 		for name in ['k', 'ApplicationNotFoundError', 'CommandError', 'con', 'its', 'app']:
 			setattr(self._context, name, getattr(appscript, name))
 		# log() is equivalent to AppleScript's log command
-		self._aemhost = appscript.app().AS_appdata.target
+		self._aemhost = appscript.app().AS_appdata.target()
 		self._context.log = self._log
 		# parent.somecommand(...) is equivalent to AppleScript's continue somecommand(...) statement
 		self._context.parent = appscript.reference.Reference(appscriptservices, aem.app)
