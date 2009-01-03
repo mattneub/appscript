@@ -93,7 +93,7 @@ class EventHandlerManager:
 							# to event handler table
 							self._eventhandlerdefs[code] = (callback, paramdefs)
 							print >> stderr, '    autoinstalled %r handler' % name # debug
-		print >> stderr, '...done.' # debug
+			print >> stderr, '...done.' # debug
 		return self._eventhandlerdefs
 	
 	#######

@@ -99,6 +99,7 @@ class AppscriptServices:
 		self.referencebycode = self.codecs.referencebycode
 		self.typebyname = self.codecs.typebyname
 		self.typebycode = self.codecs.typebycode
+		self.constructor, self.identifier = 'current', None
 		#######
 		def createappleevent(self, eventclass, eventid, target, returnid, transactionid):
 		#	print >> stderr, '*called createappleevent*' # debug
@@ -113,8 +114,10 @@ class AppscriptServices:
 			return invokecontinueproc(self.AEM_event, osacallbacks)
 		self.continueappleevent = continueappleevent
 		#######
-		self.target = DelegateApplication() # see pyosa_scriptcontext.ParentDelegate.__getattr__
+		self._target = DelegateApplication() # see pyosa_scriptcontext.ParentDelegate.__getattr__
 	
+	def target(self):
+		return self._target
 	
 	def installcallbacks(self): # note: modifying aem module in-situ will be a bit unsafe if there's only a single interpreter supporting multiple component instances; should work ok when there's separate interpreters though
 		aem.Event._createAppleEvent = self.createappleevent
