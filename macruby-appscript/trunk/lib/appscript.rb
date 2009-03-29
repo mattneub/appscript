@@ -1,4 +1,4 @@
-# Copyright (C) 2008 HAS. 
+# Copyright (C) 2008-2009 HAS
 # Released under MIT License.
 
 module Appscript
@@ -52,9 +52,10 @@ module Appscript
 		end
 		
 		def connect
-			error = nil
-			@target = self.targetWithError(error) # TO DO
-			raise RuntimeError, error.to_s if not @target
+			error_ptr = Pointer.new_with_type('@')
+			@target = self.targetWithError(error_ptr)
+			error = error_ptr[0]
+			raise Appscript::ApplicationError.new(error) if not @target # TO DO: currently doesn't distinguish 'can't find' vs 'can't launch' errors as in rb-appscript
 			@type_by_name = {}
 			self.terminology.typeByNameTable.each do |name, code|
 				@type_by_name[name.intern] = code
@@ -370,9 +371,10 @@ module Appscript
 		##
 		
 		def _send_command(args, name, definition)
-			error = nil
-			target = @AS_app_data.targetWithError(error) # TO DO
-			raise RuntimeError, error.to_s if error
+			error_ptr = Pointer.new_with_type('@')
+			target = @AS_app_data.targetWithError(error_ptr)
+			error = error_ptr[0]
+			raise Appscript::ApplicationError.new(error) if error # TO DO: distinguish can't find vs can't launch errors as in rb-appscript?
 			eventClass, eventID = definition.eventClass, definition.eventID
 			subject_attr = NSAppleEventDescriptor.nullDescriptor
 			direct_param = Appscript::NOVALUE
@@ -454,13 +456,13 @@ module Appscript
 			# extract labelled parameters, if any
 			keyword_args.each do |param_name, param_value|
 				param_code = definition.parameterForName(param_name)
-				raise ArgumentError, "Unknown keyword parameter: #{param_name}" if param_code == nil # TO DO: param_code is 0, not nil, on error
+				raise ArgumentError, "Unknown keyword parameter: #{param_name}" if param_code == 0 # TO DO: note that param_code is 0 on error, so cannot distinguish a non-existent parameter from a parameter whose code is '\0\0\0\0' (not that this code ought to be used in practice)
 				event.setParameter(param_value, forKeyword:param_code)
 			end
 			# build and send the Apple event, returning its result, if any
-			error = nil
-			result = event.sendWithMode(send_flags, timeout:timeout, error:error) # TO DO
-#			p [result, result.description, result.class]
+			error_ptr = Pointer.new_with_type('@')
+			result = event.sendWithMode(send_flags, timeout:timeout, error:error_ptr)
+			error = error_ptr[0]
 			return result if not error
 			# relaunch/reconnect/resend/raise exception as needed
 			# 'launch' events always return 'not handled' errors; just ignore these
@@ -478,21 +480,21 @@ module Appscript
 				#   application is relaunched, the process id updated and the event resent;
 				#   if not, the error is rethrown.
 				#
-#				p AEMApplication.processExistsForFileURL(target.targetData) # test; TO DO: delete
-				# TO DO: next call should yield bool, but is int so block never executes as 'not 0' -> false (global check, fix)
 				if not AEMApplication.processExistsForFileURL(target.targetData)
 					if eventClass == KAE::KASAppleScriptSuite and eventID == KAE::KASLaunchEvent
-						error = nil
-						pid = AEMApplication.launchApplication(target.targetData, error:error) # TO DO
-						raise RuntimeError, error.to_s if error # TO DO: error class
+						error_ptr = Pointer.new_with_type('@')
+						pid = AEMApplication.launchApplication(target.targetData, error:error_ptr)
+						error = error_ptr[0]
+						raise Appscript::ApplicationError.new(error) if error
 					elsif eventClass != KAE::KCoreEventClass or eventID != KAE::KAEOpenApplication
 						raise Appscript::CommandError.new(self, name, args, error)
 					end
 				end
 				# update AEMApplication object's AEAddressDesc
-				error = nil
-				success = target.reconnectWithError(error) # TO DO
-				raise RuntimeError, error.to_s if error # TO DO: error class
+				error_ptr = Pointer.new_with_type('@')
+				success = target.reconnectWithError(error_ptr)
+				error = error_ptr[0]
+				raise Appscript::ApplicationError.new(error) if error
 				# re-send command
 				event = target.eventWithEventClass(eventClass, eventID:eventID, codecs:@AS_app_data)
 				event.setAttribute(enum_considerations, forKeyword:KAE::EnumConsiderations)
@@ -503,8 +505,9 @@ module Appscript
 					event.setParameter(param_value, forKeyword:definition.parameterForName(param_name))
 				end
 				event.setParameter(result_type, forKeyword:KAE::KeyAERequestedType) if result_type != Appscript::NOVALUE
-				error = nil
-				result = event.sendWithMode(send_flags, timeout:timeout, error:error) # TO DO
+				error_ptr = Pointer.new_with_type('@')
+				result = event.sendWithMode(send_flags, timeout:timeout, error:error_ptr)
+				error = error_ptr[0]
 				return result if not error
 			end
 			raise Appscript::CommandError.new(self, name, args, error)
@@ -804,27 +807,31 @@ module Appscript
 		end
 		
 		def _launch_app(url)
-			error = nil
-			pid = AEMApplication.launchApplication(url, error:error) # TO DO
-			raise RuntimeError, error.to_s if error # TO DO: error class
-			error = nil
-			success = @AS_app_data.target.reconnectWithError(error) # TO DO
-			raise RuntimeError, error.to_s if error # TO DO: error class
+			error_ptr = Pointer.new_with_type('@')
+			pid = AEMApplication.launchApplication(url, error:error_ptr)
+			error = error_ptr[0]
+			raise Appscript::ApplicationError.new(error) if error
+			error_ptr = Pointer.new_with_type('@')
+			success = @AS_app_data.target.reconnectWithError(error_ptr)
+			error = error_ptr[0]
+			raise Appscript::ApplicationError.new(error) if error
 		end
 		
 		def launch
 			if @AS_app_data.targetType == KASTargetName
-				error = nil
-				url = AEMApplication.findApplicationForName(@AS_app_data.targetData, error:error) # TO DO
-				raise RuntimeError, error.to_s if error # TO DO: error class
+				error_ptr = Pointer.new_with_type('@')
+				url = AEMApplication.findApplicationForName(@AS_app_data.targetData, error:error_ptr)
+				error = error_ptr[0]
+				raise Appscript::ApplicationError.new(error) if error
 				_launch_app(url)
 			elsif @AS_app_data.targetType == KASTargetURL and @AS_app_data.targetData.isFileURL
 				_launch_app(@AS_app_data.targetData)
 			else
 				event = target.eventWithEventClass(KAE::KASAppleScriptSuite, eventID:KAE::KASLaunchEvent)
-				error = nil
-				result = event.sendWithError(error) # TO DO
-				raise RuntimeError, error.to_s if error.code != -1708 # TO DO: error class
+				error_ptr = Pointer.new_with_type('@')
+				result = event.sendWithError(error_ptr)
+				error = error_ptr[0]
+				raise Appscript::ApplicationError.new(error) if error.code != -1708 # TO DO: CommandError?
 			end
 		end
 	end
@@ -948,9 +955,37 @@ module Appscript
 		alias_method :inspect, :to_s
 	end
 	
-	# TO DO
-	# ApplicationNotFoundError
-	# CantLaunchApplicationError
+	
+	# TO DO: currently doesn't distinguish ApplicationNotFoundError/CantLaunchApplicationError
+	class ApplicationError < RuntimeError
+	
+		# Taken from <http://developer.apple.com/documentation/Carbon/Reference/LaunchServicesReference>:
+		LSErrors = {
+			-10660 => "The application cannot be run because it is inside a Trash folder.",
+			-10810 => "An unknown error has occurred.",
+			-10811 => "The item to be registered is not an application.",
+			-10813 => "Data of the desired type is not available (for example, there is no kind string).",
+			-10814 => "No application in the Launch Services database matches the input criteria.",
+			-10817 => "Data is structured improperly (for example, an item's information property list is malformed).",
+			-10818 => "A launch of the application is already in progress.",
+			-10822 => "There is a problem communicating with the server process that maintains the Launch Services database.",
+			-10823 => "The filename extension to be hidden cannot be hidden.",
+			-10825 => "The application to be launched cannot run on the current Mac OS version.",
+			-10826 => "The user does not have permission to launch the application (on a managed network).",
+			-10827 => "The executable file is missing or has an unusable format.",
+			-10828 => "The Classic emulation environment was required but is not available.",
+			-10829 => "The application to be launched cannot run simultaneously in two different user sessions.",
+		}
+	
+		def initialize(error) # TO DO: creator/id/name info
+			@error = error
+			super(error.localizedDescription)
+		end
+		
+		def to_i
+			return @error.code
+		end
+	end
 	
 end
 
