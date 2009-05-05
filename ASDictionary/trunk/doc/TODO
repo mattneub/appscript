@@ -11,3 +11,5 @@ TO DO
 - full sdef support (see py-appscript's osaterminology package)
 
 - add scripting addition support to asdict's viewer modes
+
+- better objc-appscript support in asdict (requires improvements to appscriptsupport.py)

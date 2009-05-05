@@ -231,9 +231,9 @@ For example, to print an overview of TextEdit, a description of its make command
 			from osaterminology.dom import applescripttypes
 			typenames = applescripttypes.typebyname.keys()
 		else:
-			from osaterminology import appscripttypedefs
+			from osaterminology.dom import appscripttypes
 			formatter = {'appscript': 'k.%s', 'py-appscript': 'k.%s', 'rb-appscript': ':%s'}[self.style]
-			typenames = [formatter % name for name, code in appscripttypedefs.types]
+			typenames = [formatter % name for name in appscripttypes.typetables(self.style).typebycode.values()]
 		typenames.sort(lambda a,b:cmp(a.lower(), b.lower()))
 		for name in typenames:
 			print >> self.output, '    %s' % name
