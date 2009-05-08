@@ -233,9 +233,9 @@ class EventError(MacOSError):
 		('NSOperationNotSupportedForKeySpecifierError', 'Attempt made to perform an unsupported operation on some key.'),
 	)
 	
-	def __init__(self, number, message='', raw=None):
+	def __init__(self, number, message=None, raw=None):
 		MacOSError.__init__(self, number)
-		self._number, self._message, self._raw = number, message, raw
+		self._number, self._message, self._raw = number, '%s' % (message or ''), raw
 	
 	# TO DO: remove deprecated 'number' and 'message' properties
 	# (clients should use errornumber, errormessage instead)
@@ -260,7 +260,7 @@ class EventError(MacOSError):
 	
 	def errormessage(self):
 		message = self._message
-		if self._number > 0:
+		if self._number > 0 and message:
 			for name, description in self._cocoaerrors:
 				if message.startswith(name):
 					message = '%s (%s)' % (message, description)

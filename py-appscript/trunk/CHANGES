@@ -1,8 +1,10 @@
-2009-01-01 -- 0.19.1
+2009-xx-xx -- 0.19.1
 
 - Fixed minor bug/inconsistency where an application-defined property name that overlapped a built-in property name but used a different code was correctly escaped when used in references (e.g. someobj.rotation_) but not in keywords (e.g. should be k.rotation_ but was k.rotation instead).
 
 - Combined Python 2.x and 3.x versions in a single distribution.
+
+- Fixed bug in EventError.errormessage where it would fail if error number > 0 and EventError constructor's message arg was not a string, e.g. Event.send() passes None if application didn't return an error string itself
 
 
 2008-11-23 -- 0.19.0
