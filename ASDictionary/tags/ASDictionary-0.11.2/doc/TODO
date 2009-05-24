@@ -1,0 +1,15 @@
+TO DO
+
+- There is a problem where an 'export' command sent immediately after launching results in an 'unknown command' (-1708) error, apparently due to the application starting to handle incoming Apple events before the 'ASDiExpD' Apple event handler is installed. Not sure why but need to find out and fix; in the meantime, clients should add a (1 sec?) delay inbetween launching ASDictionary and calling the 'export' command as a workaround. Note: this problem also affects py-appscript, rb-appscript and asdict, which use ASDictionary's private Apple event APIs.
+
+- add frame-based HTML export, objc-appscript glue options to asdict
+
+- allow users to export dictionaries for remote applications (10.4+ only)
+
+- allow users to import/export sdefs
+
+- full sdef support (see py-appscript's osaterminology package)
+
+- add scripting addition support to asdict's viewer modes
+
+- better objc-appscript support in asdict (requires improvements to appscriptsupport.py)
