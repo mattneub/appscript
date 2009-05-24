@@ -1,4 +1,4 @@
-2008-??-?? -- 0.5.2
+2009-??-?? -- 0.5.2
 
 - removed deprecated AEM::Application.is_running? method
 
@@ -13,6 +13,8 @@
 - #process_exists_for_url?, #remote_app in connect.rb now raise error if URL string doesn't contain a colon (process will crash otherwise due to an OS bug)
 
 - improved error reporting in Reference#[] when a malformed generic reference containing a command expands to a non-reference value. e.g. its.name.get() would previously expand the the value of the object's 'name' property, typically a string, resulting in a cryptic NoMethodError; this now raises a descriptive ArgumentError.
+
+- fixed bug where Terminology module would error on zero-length keywords in problem dictionaries (e.g. MS Word 12.1.7)
 
 
 2008-02-18 -- 0.5.1

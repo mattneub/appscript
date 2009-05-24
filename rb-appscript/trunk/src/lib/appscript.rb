@@ -134,13 +134,7 @@ module Appscript
 					return ref if not _init_help_agent
 					e = _display_help(flags, ref)
 				end
-				if e
-					if e.number == -1708 # event wasn't handled, presumably because available ASDictionary is too old
-						$stderr.puts("No help available: ASDictionary 0.9.0 or later required.")
-					else
-						$stderr.puts("No help available: ASDictionary raised an error: #{e}.")
-					end
-				end
+				$stderr.puts("No help available: ASDictionary raised an error: #{e}.") if e
 			rescue => err
 				$stderr.puts("No help available: unknown error: #{err}")
 			end

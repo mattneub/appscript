@@ -287,13 +287,19 @@ module Terminology
 						DefaultTerminology::TypeByName[name].code != code
 					name += '_'
 				end
-				type_by_code[code] = name.intern # to handle synonyms, if same code appears more than once then use name from last definition in list
+				begin
+					type_by_code[code] = name.intern # to handle synonyms, if same code appears more than once then use name from last definition in list
+				rescue ArgumentError # ignore #intern error if name is empty string
+				end
 				name, code = table[-i - 1]
 				if DefaultTerminology::TypeByName.has_key?(name) and \
 						DefaultTerminology::TypeByName[name].code != code
 					name += '_'
 				end
-				type_by_name[name.intern] = klass.new(code) # to handle synonyms, if same name appears more than once then use code from first definition in list
+				begin
+					type_by_name[name.intern] = klass.new(code) # to handle synonyms, if same name appears more than once then use code from first definition in list
+				rescue ArgumentError # ignore #intern error if name is empty string
+				end
 			end
 		end
 		return [type_by_code, type_by_name]
@@ -309,7 +315,10 @@ module Terminology
 				name, code = item
 				reference_by_code[prefix + code] = name # to handle synonyms, if same code appears more than once then use name from last definition in list
 				name, code = table[-i - 1]
-				reference_by_name[name.intern] = [kind, code] # to handle synonyms, if same name appears more than once then use code from first definition in list
+				begin
+					reference_by_name[name.intern] = [kind, code] # to handle synonyms, if same name appears more than once then use code from first definition in list
+				rescue ArgumentError # ignore #intern error if name is empty string
+				end
 			end
 		end
 		if reference_by_name.has_key?(:text) # special case: AppleScript always packs 'text of...' as all-elements specifier
@@ -322,8 +331,16 @@ module Terminology
 						name += '_'
 			end
 			dct = {}
-			args.each { |arg_name, arg_code| dct[arg_name.intern] = arg_code }
-			reference_by_name[name.intern] = [:command, [code, dct]]
+			args.each do |arg_name, arg_code|
+				begin
+					dct[arg_name.intern] = arg_code
+				rescue ArgumentError # ignore #intern error if name is empty string
+				end
+			end
+			begin
+				reference_by_name[name.intern] = [:command, [code, dct]]
+			rescue ArgumentError # ignore #intern error if name is empty string
+			end
 		end
 		return reference_by_code, reference_by_name
 	end
