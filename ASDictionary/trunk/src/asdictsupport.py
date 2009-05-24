@@ -1,8 +1,6 @@
-#!/usr/local/bin/python
-
 """asdictsupport -- Provides support for asdict command line tool.
 
-(C) 2007 HAS
+(C) 2007-2009 HAS
 """
 
 from getopt import getopt

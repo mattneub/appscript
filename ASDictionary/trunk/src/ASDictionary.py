@@ -1,10 +1,10 @@
 """ASDictionary
 
-(C) 2007-2008 HAS
+(C) 2007-2009 HAS
 """
 
 __name__ = 'ASDictionary'
-__version__ = '0.11.1'
+__version__ = '0.11.2'
 
 import os, os.path
 

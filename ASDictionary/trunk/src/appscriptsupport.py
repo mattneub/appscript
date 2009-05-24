@@ -1,6 +1,6 @@
 """appscriptsupport -- Provides support for appscript's built-in help system.
 
-(C) 2004 HAS
+(C) 2004-2009 HAS
 """
 
 from pprint import pprint, pformat

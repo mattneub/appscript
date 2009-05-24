@@ -9,9 +9,9 @@ ASDictionary exports scriptable Mac applications' dictionaries in plain text or 
 ----------------------------------------------------------------------
 INSTALLATION
 
-To install ASDictionary, simply open the ASDictionary-0.10.1.dmg and drag the ASDictionary application to your Applications folder.
+To install ASDictionary, simply open the ASDictionary-0.11.2.dmg and drag the ASDictionary application to your Applications folder.
 
-To install the asdict command line tool (this is optional), cd to the ASDictionary-0.10.1/bin folder in Terminal and run:
+To install the asdict command line tool (this is optional), cd to the ASDictionary-0.11.2/bin folder in Terminal and run:
 
 	sudo cp asdict /usr/local/bin && chmod 755 /usr/local/bin/asdict
 
@@ -65,7 +65,7 @@ NOTES
 
 - While ASDictionary is fairly tolerant of weird and buggy application dictionaries, HTML generation may fail on a few especially strange ones. Should this happen, please submit a bug report.
 
-- Many thanks to the following for comments, suggestions and bug reports: Philip Aker, Emmanuel Levy, Tim Mansour, Jake Pietrykowski, Courtney Schwartz
+- Many thanks to the following for comments, suggestions and bug reports: Philip Aker, Emmanuel Levy, Tim Mansour, Matt Neuburg, Jake Pietrykowski, Courtney Schwartz
 
 
 ----------------------------
