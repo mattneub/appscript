@@ -449,7 +449,7 @@ class Codecs:
 		return None
 	
 	def unpackboolean(self, desc):
-		return desc.data != b'\x00'
+		return desc.data[0] != b'\x00'
 	
 	def unpacktrue(self, desc):
 		return True

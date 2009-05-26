@@ -6,6 +6,10 @@
 
 - Fixed bug in EventError.errormessage where it would fail if error number > 0 and EventError constructor's message arg was not a string, e.g. Event.send() passes None if application didn't return an error string itself
 
+- fixed bug in aem.EventError.errormessage
+
+- aem.Codecs now correctly unpacks AEDescs of typeBoolean whose data >1 byte
+
 
 2008-11-23 -- 0.19.0
 

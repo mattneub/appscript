@@ -453,7 +453,7 @@ class Codecs(object):
 		return None
 	
 	def unpackboolean(self, desc):
-		return desc.data != '\x00'
+		return desc.data[0] != '\x00'
 	
 	def unpacktrue(self, desc):
 		return True
