@@ -16,6 +16,8 @@
 
 - fixed bug where Terminology module would error on zero-length keywords in problem dictionaries (e.g. MS Word 12.1.7)
 
+- AEM::Codecs now correctly unpacks AEDescs of typeBoolean whose data >1 byte
+
 
 2008-02-18 -- 0.5.1
 

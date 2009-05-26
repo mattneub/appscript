@@ -400,7 +400,7 @@ class Codecs
 					subvers, patch = lo.divmod(16)
 					"#{vers}.#{subvers}.#{patch}"
 				end	
-			when KAE::TypeBoolean then desc.data != "\000"
+			when KAE::TypeBoolean then desc.data[0,1] != "\000"
 			
 			when KAE::TypeUInt16 then desc.data.unpack('S')[0] # 10.5+
 			when KAE::TypeUInt64 then desc.data.unpack('Q')[0] # 10.5+

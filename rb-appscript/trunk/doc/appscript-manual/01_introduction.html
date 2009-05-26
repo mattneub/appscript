@@ -33,7 +33,7 @@
 
 <h3>What is appscript?</h3>
 
-<p>Ruby appscript (rb-appscript) is a high-level, user-friendly Apple event bridge that allows you to control scriptable Mac OS X applications using ordinary Ruby scripts. Appscript makes Ruby a serious alternative to Apple's own AppleScript language for automating your Mac.</p>
+<p>Ruby appscript (rb-appscript) is an easy-to-use Apple event bridge that allows 'AppleScriptable' applications to be controlled by ordinary Ruby scripts. Appscript makes Ruby an excellent alternative to Apple's own AppleScript language for automating your Mac.</p>
 
 <p>For example, to get the value of the first paragraph of the topmost document in TextEdit:</p>
 
@@ -45,19 +45,6 @@
     get paragraph 1 of document 1
 end tell</code></pre>
 
-<p>Appscript builds upon lower-level Ruby modules (ae, aem) to provide:</p>
-
-<ol>
-<li>a high-level <em>RPC mechanism</em> for sending commands to applications via Apple events</li>
-<li>a mechanism for converting data between common Ruby and Apple event types</li>
-<li>a simple <em>embedded query language</em> for identifying one or more objects in an application's object model</li>
-<li>a mechanism for representing these object model "references" in human-readable form based on application-defined terminology</li>
-<li>a clean, <em>object oriented-like </em> syntax for ease of use.</li>
-</ol>
-
-
-
-<h3>"Hello World!"</h3>
 
 <p>The following script uses appscript to create a new "Hello World!" document in TextEdit:</p>
 
@@ -73,11 +60,24 @@ app('TextEdit').documents.end.make(
 
 
 
-<h3>Notes</h3>
+<h3>Before you start...</h3>
 
-<p>Ruby appscript (rb-appscript) is a port of the robust, mature Python appscript (py-appscript) bridge. There are a few minor syntax and API changes to accomodate the differences between the two languages, and rb-appscript lacks the built-in help system provided by py-appscript (external help tools will be provided at a later date), but apart from that they are very similar.</p>
+<p>In order to use appscript effectively, you will need to understand the differences between the Apple event and Ruby object systems.</p>
 
-<p>Please note that rb-appscript, like py-appscript, takes a few liberties with traditional Ruby syntax and semantics in order to support the behaviours and features provided by the Apple Event Manager API. These differences are noted in later chapters.</p>
+<p>In contrast to the familiar object-oriented approach of other inter-process communication systems such as COM and Distributed Objects, Apple event IPC is based on a combination of <em>remote procedure calls</em> and <em>first-class queries</em> - somewhat analogous to using XPath over XML-RPC.</p>
+
+<p>While appscript uses an object-oriented-like syntax for conciseness and readability, like AppleScript, it behaves according to Apple event rules. As a result, Ruby users will discover that some things work differently in appscript from what they're used to. For example:</p>
+
+<ul>
+<li>object elements are one-indexed, not zero-indexed like Ruby arrays</li>
+
+<li>referencing a property of an application object does not automatically return the property's value (you need a <code>get</code> command for that)</li>
+
+<li>many applications allow a single command to operate on multiple objects at the same time, providing significant performance benefits when manipulating large numbers of application objects.</li>
+
+</ul>
+
+<p>Chapters 2 and 3 of this manual provide further information on how Apple event IPC works and a tutorial-based introduction to the Ruby appscript bridge. Chapter 4 describes various ways of getting help when scripting applications. Chapters 5 through 12 cover the appscript API, and chapter 13 discusses techniques for optimising performance.</p>
 
 
 </div>
