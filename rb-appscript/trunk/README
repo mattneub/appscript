@@ -33,7 +33,7 @@ NOTES
 
 - This is a beta release. Please file bug reports if you encounter any problems.
 
-- rb-appscript 0.5.1 contains bug and compatibility fixes; see the CHANGES file and documentation for details.
+- rb-appscript 0.5.2 contains bug and compatibility fixes; see the CHANGES file and documentation for details.
 
 - rb-appscript currently provides 64-bit support for OS X 10.5 in the following modules: AE, AEM, Appscript. The OSAX module provides partial 64-bit support; see the osax manual for details.
 
@@ -48,6 +48,6 @@ AUTHOR
 ======================================================================
 COPYRIGHT
 
-Copyright (C) 2006-2008 HAS 
+Copyright (C) 2006-2009 HAS 
 
 Appscript is released under the MIT License. See the LICENSE file for more information.

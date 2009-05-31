@@ -3,7 +3,7 @@
 #
 # defaultterminology -- lookup tables for default type, enumerator and command definitions
 #
-# Copyright (C) 2006-2008 HAS. Released under MIT License.
+# Copyright (C) 2006-2009 HAS. Released under MIT License.
 #
 
 module DefaultTerminology
@@ -114,7 +114,7 @@ module DefaultTerminology
 		
 		'msng' => :missing_value,
 		
-		'pcls' => :class_,
+		'cobj' => :item,
 		
 		'null' => :null,
 		
@@ -130,8 +130,6 @@ module DefaultTerminology
 		'elin' => :element_info,
 		'evin' => :event_info,
 		'pmin' => :parameter_info,
-		
-		'cobj' => :item,
 		
 		# unit types
 		
@@ -192,62 +190,90 @@ module DefaultTerminology
 		'sat ' => :Saturday,
 	}
 	
+	Properties = {
+		'pcls' => :class_,
+		'pAll' => :properties_,
+		'ID  ' => :id_,
+	}
+	
+	Elements = {
+		'cobj' => :items,
+	}
+	
+	Commands = {
+		:quit => ['aevtquit', {
+				:saving => 'savo',
+				}],
+		:activate => ['miscactv', {
+				}],
+		:run => ['aevtoapp', {
+				}],
+		:launch => ['ascrnoop', {
+				}],
+		:open => ['aevtodoc', {
+				}],
+		:get => ['coregetd', {
+				}],
+		:print => ['aevtpdoc', {
+				}],
+		:set => ['coresetd', {
+				:to => 'data',
+				}],
+		:reopen => ['aevtrapp', {
+				}],
+		:open_location => ['GURLGURL', {
+				:window => 'WIND',
+				}],
+	}
+	
 	#######
 	# TypeByCode and TypeByName tables are used to convert Ruby Symbols to and from AEDescs of typeType, typeEnum and typeProperty.
 	
-	TypeByCode = Types.clone.update(Enums)
-
-	TypeByName = {}
-	Types.each { |code, name| TypeByName[name] = AEM::AEType.new(code) }
-	Enums.each { |code, name| TypeByName[name] = AEM::AEEnum.new(code) }
+	TypeByCode = {} # used to decode class (typeType) and enumerator (typeEnum) descriptors
+	TypeByName = {} # used to encode class and enumerator keywords
+	TypeCodeByName = {} # used to check for name collisions
+	
+	Enums.each do |code, name|
+		TypeByCode[code] = name
+		TypeByName[name] = AEM::AEEnum.new(code)
+		TypeCodeByName[name.to_s] = code
+	end
+	
+	[Types, Properties].each do |table|
+		table.each do |code, name|
+			TypeByCode[code] = name
+			TypeByName[name] = AEM::AEType.new(code)
+			TypeCodeByName[name.to_s] = code
+		end
+	end
 	
 	#######
-	# ReferenceByCode tables is used by ReferenceRenderer module to convert property and element four-char codes to human readable names
-	#
-	# ReferenceByName table is used to convert appscript-style references and commands to their aem equivalents
+	# ReferenceByCode and ReferenceByName tables are used to convert between appscript- and aem-style references
 	
-	ReferenceByCode = {
-		'ecobj' => 'items',
-		'ppALL' => 'properties_',
-		'ppcls' => 'class_',
-		'pID  ' => 'id_',
-	}
+	ReferenceByCode = {} # used by ReferenceRenderer module to convert property and element four-char codes to human readable names
+	ReferenceByName = {} # used to convert appscript-style references and commands to their aem equivalents
 	
-	ReferenceByName = {
-		:quit => [:command, ['aevtquit', {
-				:saving => 'savo',
-				}]],
-		:activate => [:command, ['miscactv', {
-				}]],
-		:run => [:command, ['aevtoapp', {
-				}]],
-		:launch => [:command, ['ascrnoop', {
-				}]],
-		:open => [:command, ['aevtodoc', {
-				}]],
-		:get => [:command, ['coregetd', {
-				}]],
-		:print => [:command, ['aevtpdoc', {
-				}]],
-		:class_ => [:property, 'pcls'],
-		:set => [:command, ['coresetd', {
-				:to => 'data',
-				}]],
-		:reopen => [:command, ['aevtrapp', {
-				}]],
-		:id_ => [:property, 'ID  '],
-		:open_location => [:command, ['GURLGURL', {
-				:window => 'WIND',
-				}]],
-	}
-
+	Properties.each do |code, name|
+		ReferenceByCode['p' + code] = name.to_s
+		ReferenceByName[name] = [:property, code]
+	end
+	
+	Elements.each do |code, name|
+		ReferenceByCode['e' + code] = name.to_s
+		ReferenceByName[name] = [:element, code]
+	end
+	
+	Commands.each do |name, info|
+		ReferenceByName[name] = [:command, info]
+	end
+	
 	#######
-	# DefaultCommands; used by Terminology._make_reference_table to check for any collisions between standard and application-defined commands where the command names are the same but the codes are different
+	# CommandCodeByName; used by Terminology._make_reference_table to check for any collisions between standard and application-defined commands where the command names are the same but the codes are different
 	
-	DefaultCommands = {} # {'quit' => 'aevtquit', 'activate' => 'miscactv',...}
+	CommandCodeByName = {} # {'quit' => 'aevtquit', 'activate' => 'miscactv',...}
 	ReferenceByName.each do |name, info|
 		if info[0] == :command
-			DefaultCommands[name.to_s] = info[1][0]
+			CommandCodeByName[name.to_s] = info[1][0]
 		end
 	end
 end

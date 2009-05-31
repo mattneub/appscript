@@ -4,7 +4,7 @@
 # appscript -- syntactically sugared wrapper around the mid-level aem API;
 #    provides a high-level, easy-to-use API for creating and sending Apple events
 #
-# Copyright (C) 2006-2008 HAS. Released under MIT License.
+# Copyright (C) 2006-2009 HAS. Released under MIT License.
 #
 
 require "_aem/mactypes"

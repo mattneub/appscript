@@ -3,7 +3,7 @@
 #
 # connect -- launch applications and create AEAddressDescs
 #
-# Copyright (C) 2006-2008 HAS. Released under MIT License.
+# Copyright (C) 2006-2009 HAS. Released under MIT License.
 #
 
 module Connect

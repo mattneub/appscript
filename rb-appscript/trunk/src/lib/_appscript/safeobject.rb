@@ -3,7 +3,7 @@
 #
 # safeobject -- ensure Appscript::Reference#method_missing works reliably
 #
-# New code Copyright (C) 2006-2008 HAS
+# New code Copyright (C) 2006-2009 HAS
 # Original code Copyright (C) 2005 Thomas Sawyer, Jim Weirich; see below for original copyright
 #
 

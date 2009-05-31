@@ -3,7 +3,7 @@
 #
 # aemreference -- an object-oriented API for constructing object specifier AEDescs
 #
-# Copyright (C) 2006-2008 HAS. Released under MIT License.
+# Copyright (C) 2006-2009 HAS. Released under MIT License.
 #
 
 ######################################################################

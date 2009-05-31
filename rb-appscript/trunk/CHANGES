@@ -18,6 +18,11 @@
 
 - AEM::Codecs now correctly unpacks AEDescs of typeBoolean whose data >1 byte
 
+- Fixed minor bug/inconsistency where an application-defined property name that overlapped a built-in property name but used a different code was correctly escaped when used in references (e.g. someobj.rotation_ in Adobe Illustrator CS3) but not in symbols (e.g. should be :rotation_ but was :rotation instead).
+
+- restructured defaultterminology.rb to make it easier to maintain
+
+
 
 2008-02-18 -- 0.5.1
 

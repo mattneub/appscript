@@ -3,7 +3,7 @@
 #
 # terminology -- retrieve and convert an application's terminology into lookup tables
 #
-# Copyright (C) 2006-2008 HAS. Released under MIT License.
+# Copyright (C) 2006-2009 HAS. Released under MIT License.
 #
 
 ######################################################################
@@ -283,19 +283,13 @@ module Terminology
 			table.each_with_index do |item, i|
 				name, code = item
 				# If an application-defined name overlaps an existing type name but has a different code, append '_' to avoid collision:
-				if DefaultTerminology::TypeByName.has_key?(name) and \
-						DefaultTerminology::TypeByName[name].code != code
-					name += '_'
-				end
+				name += '_' if DefaultTerminology::TypeCodeByName.fetch(name, code) != code
 				begin
 					type_by_code[code] = name.intern # to handle synonyms, if same code appears more than once then use name from last definition in list
 				rescue ArgumentError # ignore #intern error if name is empty string
 				end
 				name, code = table[-i - 1]
-				if DefaultTerminology::TypeByName.has_key?(name) and \
-						DefaultTerminology::TypeByName[name].code != code
-					name += '_'
-				end
+				name += '_' if DefaultTerminology::TypeCodeByName.fetch(name, code) != code
 				begin
 					type_by_name[name.intern] = klass.new(code) # to handle synonyms, if same name appears more than once then use code from first definition in list
 				rescue ArgumentError # ignore #intern error if name is empty string
@@ -313,8 +307,11 @@ module Terminology
 			# note: if property and element names are same (e.g. 'file' in BBEdit), will pack as property specifier unless it's a special case (i.e. see :text below). Note that there is currently no way to override this, i.e. to force appscript to pack it as an all-elements specifier instead (in AS, this would be done by prepending the 'every' keyword), so clients would need to use aem for that (but could add an 'all' method to Reference class if there was demand for a built-in workaround)
 			table.each_with_index do |item, i|
 				name, code = item
+				# If an application-defined name overlaps an existing type name but has a different code, append '_' to avoid collision:
+				name += '_' if DefaultTerminology::TypeCodeByName.fetch(name, code) != code
 				reference_by_code[prefix + code] = name # to handle synonyms, if same code appears more than once then use name from last definition in list
 				name, code = table[-i - 1]
+				name += '_' if DefaultTerminology::TypeCodeByName.fetch(name, code) != code
 				begin
 					reference_by_name[name.intern] = [kind, code] # to handle synonyms, if same name appears more than once then use code from first definition in list
 				rescue ArgumentError # ignore #intern error if name is empty string
@@ -326,10 +323,7 @@ module Terminology
 		end
 		commands.reverse.each do |name, code, args| # to handle synonyms, if two commands have same name but different codes, only the first definition should be used (iterating over the commands list in reverse ensures this)
 			# Avoid collisions between default commands and application-defined commands with same name but different code (e.g. 'get' and 'set' in InDesign CS2):
-			if DefaultTerminology::DefaultCommands.has_key?(name) and \
-					code != DefaultTerminology::DefaultCommands[name]
-						name += '_'
-			end
+			name += '_' if DefaultTerminology::CommandCodeByName.fetch(name, code) != code
 			dct = {}
 			args.each do |arg_name, arg_code|
 				begin

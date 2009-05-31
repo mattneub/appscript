@@ -4,7 +4,7 @@
  * ae -- a low-level API providing a basic Ruby wrapper around the various 
  *    Apple Event Manager, Process Manager and Launch Services APIs used by aem
  *
- *  Copyright (C) 2006-2008 HAS. Released under MIT License.
+ *  Copyright (C) 2006-2009 HAS. Released under MIT License.
  *
  *  Thanks to:
  *  - FUJIMOTO Hisakuni, author of RubyAEOSA
