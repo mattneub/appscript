@@ -31,14 +31,17 @@
 
 <h2>2. Interface</h2>
 
-<h3><code>osax.scriptingadditions</code></h3>
+<h3><code>osax.scriptingadditions()</code></h3>
 
-<p>The <code>scriptingadditions</code> attribute lists the names of all installed scripting additions:</p>
+<p>The <code>scriptingadditions</code> function lists the names of all installed scripting additions:</p>
 
 <pre><code>import osax
 
-print osax.scriptingadditions
+print osax.scriptingadditions()
 # Result: ["Digital Hub Scripting", "StandardAdditions", ...]</code></pre>
+
+
+<p class="hilitebox">Prior to appscript 0.20.0, <code>osax.scriptingadditions</code> was an attribute, not a function.</p>
 
 
 <h3><code>osax.OSAX</code></h3>

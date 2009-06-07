@@ -95,6 +95,8 @@ Alias('/some/non/existent/location')
 
 <p>Note that comparing an <code>Alias</code> object against a <code>File</code> object always returns false, even if both point to the same location.</p>
 
+<p>Remember that aliases can change when the corresponding filesystem object is moved, so take care when using <code>Alias</code> objects in situations that involve comparing or hashing them (e.g. as <code>dict</code> keys).</p>
+
 
 </div>
 

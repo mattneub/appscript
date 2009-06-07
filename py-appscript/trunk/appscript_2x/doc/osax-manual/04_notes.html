@@ -37,6 +37,11 @@
 <p>Note that <code>pythonw</code> is not needed when when using Python 2.4 or later, as newer versions of the <code>python</code> interpreter can automatically connect to the Window Manager.</p>
 
 
+<h3>Event loops</h3>
+
+<p>Python-based applications that use a Carbon/Cocoa event loop can import the <code>osax</code> module as normal, but should not use it before the event loop has started as sending Apple events outwith the main event loop can disrupt the process's normal event handling.</p>
+
+
 <h3>64-bit limitations</h3>
 
 <p>The <code>osax</code> module currently only supports dynamic retrieval of scripting addition terminology when running in 32-bit processes. To use it in 64-bit processes, use the <code>appscript.terminology</code> module's <code>dump</code> function to export a static terminology 'glue' module for the desired scripting addition (running it in a 32-bit process), then import that module and pass it as the second argument to the <code>OSAX</code> class's initialiser. For example, to export a glue module for Standard Additions:</p>
@@ -52,12 +57,6 @@ terminology.dump('/System/Library/ScriptingAdditions/StandardAdditions.osax',
 import standardadditions
 
 sa = osax.OSAX(terms=standardadditions)</code></pre>
-
-
-<h3>Known problems</h3>
-
-<p>When using the <code>osax</code> module within PyObjC-based applications, avoid creating <code>OSAX</code> instances before the main event loop is started as this can result in the application behaving strangely (minimised windows don't expand correctly) due to a bug in OS X's <code>OSAGetAppTerminology</code> function.</p>
-
 
 
 </div>

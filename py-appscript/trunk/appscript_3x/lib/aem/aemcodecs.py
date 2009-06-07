@@ -191,6 +191,7 @@ class Codecs:
 				int: self.packint,
 				float: self.packfloat,
 				
+				bytes: self.packbytes,
 				str: self.packstr,
 				
 				list: self.packlist,
@@ -224,6 +225,8 @@ class Codecs:
 				kae.typeIEEE32BitFloatingPoint: self.unpackfloat32,
 				kae.typeIEEE64BitFloatingPoint: self.unpackfloat64,
 				kae.type128BitFloatingPoint: self.unpackfloat128,
+				
+				kae.typeData: self.unpackdata,
 				
 				kae.typeChar: self.unpackchar,
 				kae.typeIntlText: self.unpackintltext,
@@ -263,6 +266,7 @@ class Codecs:
 		}
 
 		self._unittypecodecs = UnitTypeCodecs()
+		self._packtextastype = kae.typeUnicodeText
 	
 	
 	###################################
@@ -282,6 +286,14 @@ class Codecs:
 			call its dontcacheunpackedspecifiers method.
 		"""
 		self.unpackobjectspecifier = self.fullyunpackobjectspecifier
+	
+	def packstringsastype(self, code):
+		""" Specify the AE type for packing str objects. Default is kae.typeUnicodeText, but 
+			some older non-Unicode-aware Carbon may require kae.typeChar or kae.typeIntlText. 
+		"""
+		if not (isinstance(code, bytes) and len(code) == 4):
+			raise TypeError('Code must be a four-byte value: %r' % code)
+		self._packtextastype = code
 	
 	
 	###################################
@@ -365,6 +377,9 @@ class Codecs:
 	
 	##
 	
+	def packbytes(self, val):
+		return newdesc(kae.typeData, val)
+	
 	def packstr(self, val):
 		# Note: optional BOM is omitted as this causes problems with stupid apps like iTunes 7 that don't
 		# handle BOMs correctly; note: while typeUnicodeText is not recommended as of OS 10.4, it's still
@@ -373,8 +388,12 @@ class Codecs:
 		data = val.encode(nativeutf16encoding)
 		if data.startswith(BOM_UTF16_LE) or data.startswith(BOM_UTF16_BE):
 			data = data[2:]
-		return newdesc(kae.typeUnicodeText, data)
-	
+		desc = newdesc(kae.typeUnicodeText, data)
+		if self._packtextastype == kae.typeUnicodeText:
+			return desc
+		else:
+			return desc.coerce(self._packtextastype)
+
 	##
 	
 	def packdate(self, val):
@@ -486,8 +505,13 @@ class Codecs:
 
 	##
 	
-	def unpackchar(self, desc):
+	def unpackdata(self, desc):
 		return desc.data
+	
+	##
+	
+	def unpackchar(self, desc):
+		return self.unpackunicodetext(desc.coerce(kae.typeUnicodeText))
 	
 	def unpackintltext(self, desc):
 		return self.unpackunicodetext(desc.coerce(kae.typeUnicodeText))

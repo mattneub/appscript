@@ -43,7 +43,7 @@ types = [
 		('date', b'ldt '),
 		('list', b'list'),
 		('record', b'reco'),
-		('data', b'rdat'),
+		('data', b'tdta'),
 		('script', b'scpt'),
 		
 		('location_reference', b'insl'),

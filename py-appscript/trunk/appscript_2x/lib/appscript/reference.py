@@ -290,23 +290,14 @@ class AppData(aem.Codecs):
 				aem.Application(aem.findapp.byid('com.apple.systemevents')).event('coresetd', {
 						'----': aem.app.elements('prcs').byname('ASDictionary').property('pvis'), 
 						'data': False}).send()
-				# KLUDGE: need to workaround problem where newly launched ASDictionary starts 
-				# to handle incoming events before custom event handlers have been installed)
-				for _ in range(25):
-					try:
-						self._helpagent.event('AppSHelp', {
-								'Cons': self.constructor,
-								'Iden': self.identifier,
-								'Styl': 'py-appscript',
-								'Flag': '-h',
-								'aRef': None,
-								'CNam': ''
-								}).send()
-					except aem.EventError, e:
-						if int(e) == -1708:
-							sleep(0.2)
-						else:
-							raise
+				self._helpagent.event('AppSHelp', {
+						'Cons': self.constructor,
+						'Iden': self.identifier,
+						'Styl': 'py-appscript',
+						'Flag': '-h',
+						'aRef': None,
+						'CNam': ''
+						}).send()
 			return True
 		except aem.findapp.ApplicationNotFoundError:
 			self._write("No help available: ASDictionary application not found.")

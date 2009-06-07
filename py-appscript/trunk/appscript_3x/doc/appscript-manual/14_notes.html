@@ -40,6 +40,11 @@
 <p>If including user names and/or passwords in remote application URLs, please note that appscript retains these URLs in both the <code>terminology</code> module's internal cache and in the <code>app</code> objects created with those URLs. Security here is the user's responsibility, as it's their code that creates and retains these objects.</p>
 
 
+<h3>Event loops</h3>
+
+<p>Python-based applications that use a Carbon/Cocoa event loop can import the <code>appscript</code> module as normal, but should not use it before the event loop has started as sending Apple events outwith the main event loop can disrupt the process's normal event handling.</p>
+
+
 <h3>GUI Scripting</h3>
 
 <p>Non-scriptable applications may in some cases be controlled from Python by using System Events to manipulate their graphical user interface. Note that the &quot;Enable access for assistive devices&quot; checkbox must be selected in the Universal Access system preferences pane for GUI Scripting to work.</p>
