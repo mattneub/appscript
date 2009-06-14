@@ -1,5 +1,7 @@
 TO DO
 
+- fix keyword escaping in dom.sdefparser module; see dom.aeteparser for reference. (i.e. When making type, reference tables, need to check against all default definitions before adding trailing underscores. e.g. AI has a 'rotation' property with different code to built-in 'rotation' type definition; currently, keyword has a trailing underscore but property doesn't.)
+
 - finish osadictionary implementation
 
 - osadictionary.Element needs a method for determining if accessor forms are known or inferred

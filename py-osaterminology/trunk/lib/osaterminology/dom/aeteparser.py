@@ -57,8 +57,11 @@ class _Parser(aeteparser.Receiver):
 				kae.formTest:Accessor(self._visibility, 'test')}
 
 
-	def asname(self, s): # overrideable
-		return s
+	def asname(self, name, code): # overrideable
+		return name
+	
+	def ascommandname(self, name, code): # overrideable
+		return name
 	
 	def _gettype(self, code):
 		if not self._types.has_key(code):
@@ -93,7 +96,7 @@ class _Parser(aeteparser.Receiver):
 	def start_command(self, code, name, description, directarg, reply):
 		self._kargs = []
 		suitename = self._stack[-1].name
-		self._stack.append(Command(self._visibility, self.asname(name), code, description, self._visible, suitename))
+		self._stack.append(Command(self._visibility, self.ascommandname(name, code), code, description, self._visible, suitename))
 		description, type, isoptional, islist, isenum = directarg
 		if type != 'null':
 			o = DirectParameter(self._visibility, description, self._visible, isoptional)
@@ -106,7 +109,7 @@ class _Parser(aeteparser.Receiver):
 			self._stack[-1]._add_(o)
 	
 	def add_labelledarg(self, code, name, description, type, isoptional, islist, isenum):
-		o = Parameter(self._visibility, self.asname(name), code, description, self._visible, isoptional)
+		o = Parameter(self._visibility, self.asname(name, code), code, description, self._visible, isoptional)
 		self.addtypes(type, islist, o)
 		self._stack[-1]._add_(o)	
 	
@@ -117,7 +120,7 @@ class _Parser(aeteparser.Receiver):
 	
 	def start_class(self, code, name, description):	
 		self._isPlural = False
-		name = self.asname(name)
+		name = self.asname(name, code)
 		suitename = self._stack[-1].name
 		o = Class(self._visibility, name, code, description, self._visible, name, suitename, self._gettype(code))
 		self._stack.append(o) # no plural name yet
@@ -140,7 +143,7 @@ class _Parser(aeteparser.Receiver):
 		self._isPlural  = True
 	
 	def add_property(self, code, name, description, type, islist, isenum, ismutable):
-		o = Property(self._visibility, self.asname(name), code, description, self._visible, ismutable and 'rw' or 'r')
+		o = Property(self._visibility, self.asname(name, code), code, description, self._visible, ismutable and 'rw' or 'r')
 		self.addtypes(type, islist, o)
 		self._stack[-1]._add_(o)
 	
@@ -167,7 +170,7 @@ class _Parser(aeteparser.Receiver):
 		t._add_(o)
 	
 	def add_enumerator(self, code, name, description):
-		self._stack[-1]._add_(Enumerator([kAll], self.asname(name), code, description, self._visible)) # TO DO: temporary kludge (replacing self._visibility with [kAll]) to stop enums being hidden in (e.g.) Finder just because they're defined in the hidden tpnm suite
+		self._stack[-1]._add_(Enumerator([kAll], self.asname(name, code), code, description, self._visible)) # TO DO: temporary kludge (replacing self._visibility with [kAll]) to stop enums being hidden in (e.g.) Finder just because they're defined in the hidden tpnm suite
 	
 	end_enumeration = _end
 	
@@ -205,25 +208,32 @@ class AppleScriptParser(_Parser):
 class _AppscriptParser(_Parser):
 	elementnamesareplural = True
 	
-	def start_command(self, code, name, description, directarg, reply):
-		if (name == 'get' and code != 'coregetd') or (name == 'set' and code != 'coresetd'):
-			name += '_' # escape non-standard get/set commands (e.g. InDesign)
-		_Parser.start_command(self, code, name, description, directarg, reply)
+	def ascommandname(self, name, code):
+		name = self._asname(name)
+		if self.typemodule.commandcodebyname.get(name, code) != code:
+			name += '_'
+		return name
+		
+	def asname(self, name, code):
+		name = self._asname(name)
+		if self.typemodule.typecodebyname.get(name, code) != code:
+			name += '_'
+		return name
 
 
 
 class ObjCAppscriptParser(_AppscriptParser):
-	asname = staticmethod(makeidentifier.getconverter('objc-appscript'))
+	_asname = staticmethod(makeidentifier.getconverter('objc-appscript'))
 	typemodule = appscripttypes.typetables('objc-appscript')
 
 
 class PyAppscriptParser(_AppscriptParser):
-	asname = staticmethod(makeidentifier.getconverter('py-appscript'))
+	_asname = staticmethod(makeidentifier.getconverter('py-appscript'))
 	typemodule = appscripttypes.typetables('py-appscript')
 
 
 class RbAppscriptParser(_AppscriptParser):
-	asname = staticmethod(makeidentifier.getconverter('rb-appscript'))
+	_asname = staticmethod(makeidentifier.getconverter('rb-appscript'))
 	typemodule = appscripttypes.typetables('rb-appscript')
 
 

@@ -1,13 +1,15 @@
 try:
 	from setuptools import setup, Extension
+	args = {'install_requires': ['appscript >= 0.19.0']}
 except ImportError:
 	print "Note: couldn't import setuptools so using distutils instead."
 	from distutils.core import setup, Extension
+	args = {}
 
 
 setup(
 		name = "osaterminology",
-		version = "0.14.0",
+		version = "0.14.3",
 		description = "Parse and render aete/sdef resources.",
 		author = "HAS",
 		author_email='',
@@ -25,5 +27,6 @@ setup(
 			'osaterminology/tables',
 		],
 		extra_path = "aeosa",
-		package_dir = { '': 'lib' }
+		package_dir = { '': 'lib' },
+		**args
 )

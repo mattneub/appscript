@@ -2,6 +2,10 @@
 
 ##
 
+# TO DO: eliminate Type/Class distinction; this just causes problems, e.g. asdict mail -r
+
+# TO DO: redo visibility support
+
 # TO DO: synonyms
 
 # TO DO: NotFoundError(KeyError) class for use in Nodes.byname(), etc.
@@ -159,8 +163,16 @@ class Type(_Vis): # A property/parameter type description
 	def __init__(self, visibility, name='', code=''):
 		self._visibility = visibility
 		self.name = name
+		self.pluralname = name # kludge to avoid errors when Type gets passed in place of Class, e.g. asdict mail -r # TO DO: returns wrong value
 		self.code = code
 		self.special = Nodes(self._visibility) # class(es)/enumeration(s)/recordtype(s)/valuetype(s); parser is reponsible for calling _add_ to add these
+	
+	def full(self): # kludge to avoid errors when Type gets passed in place of Class, e.g. asdict mail -r # TO DO: fix
+		return self
+	def properties(self):
+		return []
+	def elements(self):
+		return []
 	
 	def _add_(self, item):
 		self.special.append(item) # TO FIX: weakref item
