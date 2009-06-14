@@ -4,7 +4,7 @@
 """
 
 __name__ = 'ASDictionary'
-__version__ = '0.11.2'
+__version__ = '0.11.3'
 
 import os, os.path
 
@@ -225,12 +225,21 @@ class AEProgress:
 def exportdictionaries(sources, outfolder, 
 		fileformats=[AEEnum(kFrameHTML)], styles=[AEEnum(kASStyle)],
 		compactclasses=False, showinvisibles=False, usesubfolders=False):
-	items = [{'name': namefrompath(alias.path), 'path': alias.path} for alias in sources]
+	items = []
+	for alias in sources:
+		name = namefrompath(alias.path)
+		isosax = alias.path.lower().endswith('.osax')
+		items.append({
+			'objcPrefix': objcglue.nametoprefix(name),
+			'name': name, 
+			'path': alias.path,
+			'isOSAX': isosax,
+			})
 	outfolder = outfolder.path
 	plaintext = AEEnum(kPlainText) in fileformats
 	singlehtml = AEEnum(kSingleHTML) in fileformats
 	framehtml = AEEnum(kFrameHTML) in fileformats
-	objcglue = AEEnum(kObjCGlue) in fileformats
+	isobjcglue = AEEnum(kObjCGlue) in fileformats
 	styles = [kAECodeToStyle[o.code] for o in styles]
 	options = []
 	if compactclasses:
@@ -238,7 +247,7 @@ def exportdictionaries(sources, outfolder,
 	if showinvisibles:
 		options.append('full')
 	progressobj = AEProgress(len(items), len(styles), len(fileformats), None)
-	return _export(items, styles, plaintext, singlehtml, framehtml, objcglue, options, outfolder, usesubfolders, progressobj)
+	return _export(items, styles, plaintext, singlehtml, framehtml, isobjcglue, options, outfolder, usesubfolders, progressobj)
 
 installeventhandler(exportdictionaries,
 		'ASDiExpD',
@@ -625,18 +634,23 @@ class GUIProgress:
 		NSApp().endModalSession_(self._session)
 		self._appcontroller.writeToLogWindow(u'Done.\n\n\n')
 		self._appcontroller.standardAdditions.beep()
-		if self._faileditems:
-			buttons = ['OK']
-			if not userDefaults.boolForKey_(u'showLog'):
-				buttons.insert(0, 'View Log')
-			action = self._appcontroller.standardAdditions.display_dialog("Rendered terminology for %i items.\n\n" % (self._maincount - len(self._faileditems))
-					+ "Couldn't render terminology for: \n    " + '\n    '.join(self._faileditems), 
-					buttons=buttons, default_button='OK', with_icon=osax.k.caution)[osax.k.button_returned]
-			if action == 'View Log':
-				userDefaults.setBool_forKey_(True, u'showLog')
-		else:
-			self._appcontroller.standardAdditions.display_dialog("Rendered terminology for %i items." % self._maincount, 
-					buttons=['OK'], default_button=1, with_icon=osax.k.note)
+		try:
+			if self._faileditems:
+				buttons = ['OK']
+				if not userDefaults.boolForKey_(u'showLog'):
+					buttons.insert(0, 'View Log')
+				action = self._appcontroller.standardAdditions.display_dialog(
+						"Rendered terminology for %i items.\n\n" % (self._maincount - len(self._faileditems))
+						+ "Couldn't render terminology for: \n    " + '\n    '.join(self._faileditems), 
+						buttons=buttons, default_button='OK', with_icon=osax.k.caution)[osax.k.button_returned]
+				if action == 'View Log':
+					userDefaults.setBool_forKey_(True, u'showLog')
+			else:
+				self._appcontroller.standardAdditions.display_dialog("Rendered terminology for %i items." % self._maincount, 
+						buttons=['OK'], default_button=1, with_icon=osax.k.note)
+		except CommandError, e: # ignore timeout errors from osax calls
+			if int(e) != -1712:
+				raise
 
 
 #######

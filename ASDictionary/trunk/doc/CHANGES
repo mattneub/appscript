@@ -1,5 +1,10 @@
 CHANGES
 
+2009-06-14 -- 0.11.3
+- fixed launch-time problem where ASDictionary would try to handle incoming Apple events before main event loop was started [MN/NR]
+- fixed KeyError bug in 'export' Apple event handler
+- fixed inconsistent escaping of appscript-style property names that have same name but different AE code as default terminology
+
 2009-05-05 -- 0.11.2
 - fixed bug in appscript support's -k option [MN]
 

@@ -27,6 +27,7 @@
 				<enumerator name="plain text" code="PTex" description=""/>
 				<enumerator name="single file HTML" code="SHTM" description=""/>
 				<enumerator name="frame based HTML" code="FHTM" description=""/>
+				<enumerator name="ObjC appscript glue" code="OCGl" description=""/>
 			</enumeration>
 
 			<enumeration name="styles" code="ESty">
@@ -55,17 +56,17 @@
 
 				<parameter name="to" code="ToFo" type="file" description="The folder to export to."/>
 
-				<parameter name="using file formats" code="Form" description="The output format(s) to use." optional="yes">
+				<parameter name="using file formats" code="Form" description="The output format(s) to use. (Default: frame based HTML)" optional="yes">
 					<type type="file formats" list="yes"/>
 				</parameter>
 
-				<parameter name="using styles" code="Styl" description="The terminology style(s) to use." optional="yes">
+				<parameter name="using styles" code="Styl" description="The terminology style(s) to use. (Default: AppleScript)" optional="yes">
 					<type type="styles" list="yes"/>
 				</parameter>
 
-				<parameter name="compacting classes" code="ClaC" type="boolean" description="If two or more classes share the same name, should they be combined into one?" optional="yes"/>
-				<parameter name="showing hidden items" code="SInv" type="boolean" description="Should hidden suites, commands, classes, etc. be shown?" optional="yes"/>
-				<parameter name="exporting to subfolders" code="SubF" type="boolean" description="Should the exported dictionaries be grouped into subfolders according to style and file format?" optional="yes"/>
+				<parameter name="compacting classes" code="ClaC" type="boolean" description="If two or more classes share the same name, should they be combined into one? (Default: false)" optional="yes"/>
+				<parameter name="showing hidden items" code="SInv" type="boolean" description="Should hidden suites, commands, classes, etc. be shown? (Default: false)" optional="yes"/>
+				<parameter name="exporting to subfolders" code="SubF" type="boolean" description="Should the exported dictionaries be grouped into subfolders according to style and file format? (Default: false)" optional="yes"/>
 
 				<result description="A list of records describing the outcome of each export operation.">
 					<type type="export status" list="yes"/>

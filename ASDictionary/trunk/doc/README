@@ -9,9 +9,9 @@ ASDictionary exports scriptable Mac applications' dictionaries in plain text or 
 ----------------------------------------------------------------------
 INSTALLATION
 
-To install ASDictionary, simply open the ASDictionary-0.11.2.dmg and drag the ASDictionary application to your Applications folder.
+To install ASDictionary, simply open the ASDictionary-0.11.3.dmg and drag the ASDictionary application to your Applications folder.
 
-To install the asdict command line tool (this is optional), cd to the ASDictionary-0.11.2/bin folder in Terminal and run:
+To install the asdict command line tool (this is optional), cd to the ASDictionary-0.11.3/bin folder in Terminal and run:
 
 	sudo cp asdict /usr/local/bin && chmod 755 /usr/local/bin/asdict
 
@@ -39,6 +39,16 @@ USAGE
 3. The ObjC class name prefix for each glue is shown in the Prefix column. The default prefix is the application's name converted to a C-style identifier with the first character always uppercase (e.g. Address Book becomes AddressBook, iCal becomes ICal), but this can be changed by clicking on it and typing a prefix of your choice (e.g. ADBK instead of AddressBook, IC instead of ICal). Take care not to use a prefix that may cause the glue's class names to collide with existing Cocoa classes (e.g. 'NS' is a particularly common prefix and best avoided) otherwise the glue may not compile.
 
 4. Click 'Export', and select a destination folder for the generated glue. Each glue folder's name will consist of its class name prefix followed by 'Glue' (e.g. AddressBookGlue, ICGlue).
+
+
+----------------------------------------------------------------------
+APPLESCRIPT SUPPORT
+
+ASDictionary provides a single AppleScript command, 'export', for exporting application and scripting addition dictionaries. For example:
+
+tell application "ASDictionary"	export {POSIX file "/Applications/iCal.app", POSIX file "/Applications/iTunes.app"} Â		to POSIX file "/Users/jsmith/Documents" Â		using file formats {single file HTML, frame based HTML} Â		with exporting to subfoldersend tell
+
+See ASDictionary's built-in dictionary for more information.
 
 
 ----------------------------------------------------------------------

@@ -4,9 +4,9 @@ Requirements:
 
 - Python 2.4+ <http://www.python.org>
 
-- py-appscript 0.19.0+ <http://appscript.sourceforge.net>
+- py-appscript 0.20.0+ <http://appscript.sourceforge.net>
 - py-aemreceive 0.3.0+
-- py-osaterminology 0.14.0+
+- py-osaterminology 0.14.3+
 
 - PyObjC <http://pyobjc.sourceforge.net/>
 
@@ -26,7 +26,7 @@ from plistlib import Plist
 import os
 
 name = 'ASDictionary'
-version='0.11.2'
+version='0.11.3'
 
 os.system('''
 sdp -fa %s.sdef;
@@ -44,7 +44,7 @@ setup(
 				NSAppleScriptEnabled=True,
 				CFBundleVersion=version,
 				CFBundleShortVersionString=version,
-				NSHumanReadableCopyright="(C) 2005-2008 HAS",
+				NSHumanReadableCopyright="(C) 2005-2009 HAS",
 				CFBundleIdentifier="net.sourceforge.appscript.asdictionary",
 				CFBundleDocumentTypes = [
 					dict(
