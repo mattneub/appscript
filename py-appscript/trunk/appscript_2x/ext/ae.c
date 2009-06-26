@@ -499,9 +499,6 @@ static PyGetSetDef AEDesc_getsetlist[] = {
 	{NULL, NULL, NULL, NULL},
 };
 
-
-#define AEDesc_compare NULL
-
 static PyObject *AEDesc_repr(AEDescObject *self)
 {
 	PyObject *type, *typerep, *rep;
@@ -543,16 +540,16 @@ PyTypeObject AEDesc_Type = {
 	sizeof(AEDescObject), /*tp_basicsize*/
 	0, /*tp_itemsize*/
 	/* methods */
-	(destructor) AEDesc_dealloc, /*tp_dealloc*/
+	(destructor)AEDesc_dealloc, /*tp_dealloc*/
 	0, /*tp_print*/
-	(getattrfunc)0, /*tp_getattr*/
-	(setattrfunc)0, /*tp_setattr*/
-	(cmpfunc) AEDesc_compare, /*tp_compare*/
-	(reprfunc) AEDesc_repr, /*tp_repr*/
-	(PyNumberMethods *)0, /* tp_as_number */
-	(PySequenceMethods *)0, /* tp_as_sequence */
-	(PyMappingMethods *)0, /* tp_as_mapping */
-	(hashfunc) AEDesc_hash, /*tp_hash*/
+	0, /*tp_getattr*/
+	0, /*tp_setattr*/
+	0, /*tp_compare*/
+	(reprfunc)AEDesc_repr, /*tp_repr*/
+	0, /* tp_as_number */
+	0, /* tp_as_sequence */
+	0, /* tp_as_mapping */
+	(hashfunc)AEDesc_hash, /*tp_hash*/
 	0, /*tp_call*/
 	0, /*tp_str*/
 	PyObject_GenericGetAttr, /*tp_getattro*/
