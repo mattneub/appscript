@@ -1,0 +1,62 @@
+Appscript is packaged using the standard Python Distribution Utilities (a.k.a. Distutils). To install appscript, cd to the appscript-0.20.0 directory and run:
+
+	python setup.py install
+
+Setuptools will be used if available, otherwise the setup.py script will revert to distutils.
+
+Building appscript from source requires the gcc compiler (supplied with Apple's Developer Tools). Setuptools is available from <http://cheeseshop.python.org/pypi>.
+
+Appscript requires Python 2.3 or later and Mac OS X 10.3.9 or later. 
+
+This appscript distribution supports both Python 2.x and Python 3.x. Documentation and sample scripts for each can be found under the appscript_2x and appscript_3x directories.
+
+
+======================================================================
+NOTES
+
+- Appscript 0.19.0+ is a significant restructuring of the appscript 0.18.x package. Several non-core modules - aemreceive, osaterminology, CarbonX.OSA/osascript - have been moved to separate projects. The remaining codebase has been cleaned up and reworked to enable 64-bit support.
+
+- The following modules now provide full 64-bit support: aem, appscript, mactypes. The osax module currently provides partial 64-bit support; see doc/osax-manual for details.
+
+-------
+
+- Except for the removed modules, appscript's high-level public APIs remain almost entirely unaffected by these changes, so the vast majority of existing code should require no changes. API changes which may affect some users are:
+
+	- The osax.ScriptingAddition class has been renamed to osax.OSAX. The previous class name is deprecated, though currently remains supported for backwards compatibility.
+
+	- The osax.scriptingadditions attribute is now a function, so any existing code that uses this attribute will need to be updated accordingly. See the CHANGES file for more details.
+
+	- The mactypes module's Alias and File classes no longer provide methods for working with Python's Carbon.Alias and Carbon.File types, so any existing code that uses these methods will need to be updated accordingly. See the CHANGES file for more details.
+
+	- The aem.CommandError class has been renamed to aem.EventError. The previous class name is deprecated and will be removed in the 1.0.0 release.
+
+	- The 'number' and 'message' attributes in aem.EventError are deprecated and will be removed in the 1.0.0 release; clients should use aem.EventError's errornumber and errormessage attributes instead.
+
+	- The CarbonX package is deprecated and will be removed completely in the 1.0.0 release; client code that refers to CarbonX.AE and/or CarbonX.kAE should be updated to use aem.ae and/or aem.kae instead. 
+
+	- The low-level public APIs in the aem.ae extension (which includes the aem.ae.AEDesc type) have been cleaned up and renamed. See aem.ae's docstrings for details.
+
+--------
+
+- Developer tools for exporting application dictionaries (ASDictionary) and converting application commands from AppleScript to appscript syntax (ASTranslate) are available separately:
+
+	http://appscript.sourceforge.net/tools.html
+
+- ASDictionary 0.11.3 or later is required to use appscript's built-in help() method. If ASDictionary isn't installed, interactive help won't be available but appscript will continue to operate as normal.
+
+-------
+
+- Appscript 0.20.0 is beta 2. Please report any problems you encounter either in the appscript bridge or in using it to control particular applications.
+
+
+======================================================================
+AUTHOR
+
+- HAS -- hhas -at- users - sourceforge - net <http://appscript.sourceforge.net>
+
+
+======================================================================
+COPYRIGHT
+
+(C) 2003 - 2009 HAS <http://appscript.sourceforge.net>
+

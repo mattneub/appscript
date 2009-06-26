@@ -1,0 +1,296 @@
+2007-12-19 -- 0.18.0
+
+- reference.Reference.__getitem__ now accepts real references and aem specifiers as by-filter test clauses (previously only accepted GenericReference)
+
+- no longer raises error if aete isn't fully parsed
+
+- built-in help() system now requires ASDictionary.app to operate; now prints help info to stderr only 
+
+- added Reference.isrunning method
+
+
+2007-04-19 -- 0.17.3
+
+- fixed reconnection code in reference module's Command class (was referring to non-existent AS_appdata.path)
+
+
+2007-03-28 -- 0.17.2
+
+- terminology.aetedataforapp now omits zero-length aetes from result list
+
+
+2007-02-23 -- 0.17.1
+
+- fixed cosmetic glitch when rendering 'app(...).AS_newreference(...)' style references
+
+- changed timeout for ascrgdte event to 60 sec
+
+
+2007-01-15 -- 0.17.0
+
+- removed 'filter' method; 'filter' is no longer a reserved word. Users will need to update any scripts that use apps with a 'filter' keyword (e.g. Photoshop has a 'filter' command) to change 'filter_' -> 'filter'.
+
+- fixed various errors in appscript manual
+
+- terms argument in appscript.app(...) now takes module/True/False instead of module/None, allowing users to indicate that only built-in terminology should be used.
+
+- added note to Problem Apps chapter on sending run and open events to non-stay-open applications
+
+- added optional pid, aemapp arguments to Application.__init__
+
+- modified terminology module API; now uses the aem.Application instance from AppData.target when sending ascrgdte event (note: clients that customise Application._Application, e.g. aemcodegen, will need to take this into account)
+
+- added Application.AS_newreference
+
+- referencerenderer now displays accurate representation of an appscript reference when appscript-style representation is unavailable (previously rendered the appscript reference as an aem-style reference string, which was misleading)
+
+- added __version__ attribute
+
+- reference.Command.__call__ now only raises CommandError for errors raised when sending an event; errors that occur while packing it are individually reported
+
+- now always packs a subject attribute (typeSubjectAttr); this is normally a null descriptor. (Note: AS includes a subject attribute for commands whose direct parameter isn't a reference, e.g. make. Photoshop CS2's make command requires either an 'at' parameter or subject attribute and throws an error if it doesn't get one. Including a subject attribute by default should hopefully prevent any complaints.)
+
+- removed built-in 'telltarget' argument to simplify the API a bit. Now, if a command is called on a reference and already has a direct parameter, the reference is packed as the subject attribute instead. Also, 'telltarget' is no longer a reserved word.
+
+- added Application.aborttransaction method, and added optional 'session' argument to Application.starttransaction
+
+- modified AppData API ('path', 'pid', 'url' variables are replaced by 'constructor', 'identifier' variables)
+
+- changed the way that AppData is initialised on first use
+
+- modified terminologyparser so that enumerator synonyms are preserved
+
+- added tests
+
+- added CommandError.__int__
+
+- removed expanduser usage in dump.py; 'path' attribute in exported modules now always contains full path
+
+- modified helpsystem to support multiple languages
+
+- added -u option to built-in help for displaying summary of suites
+
+- improved osadict now supports multiple formatting styles, HTML export, scripting additions, remote apps, interactive mode
+
+- built-in help no longer errors when target is current application
+
+- fixed bug in Command.AS_formatCommand that would cause CommandError.__str__ to fail silently if the failed command's direct parameter was a tuple
+
+- Reference.__getattr__ now raises AttributeError, not RuntimeError, for unknown property/element/command names
+
+- improved error reporting in Reference.previous, Reference.next
+
+- improved handling of synonyms in terminology, terminologyparser modules (definitions with same codes but different names are now retained; previously only the last-found definition was retained). Still doesn't mimic AS's behaviour 100%, but it's difficult to get any closer without studying the original AS source code.
+
+
+2006-08-16 -- 0.16.2
+
+- fixed unpacking of comparison descriptors
+
+- no longer raises error -192 when getting an aete from an application that doesn't have one
+
+- terminology module now times out after 30 seconds (was 120) when getting application aete via ascrgdte event
+
+- addressed compatibility issue in terminology module so that an ambiguous keyword is used as both a class name and an enumerator name (e.g. k.workbook in Excel) will now be packed as typeType (same as in AppleScript), not typeEnumerated
+
+- fixed problem where temporary traceback code in CommandError.__init__ could cause an error in Python 2.5
+
+- when packing dicts containing a k.class_ or AEType('pcls') property, the remaining properties are packed and the record is coerced to the type indicated by the 'class' property (i.e. same as in AppleScript)
+
+- where property and element names are the same (e.g. file, text in BBEdit), appscript now packs this as a property specifier, unless the name is 'text', in which case it's packed as an elements specifier (i.e. [hopefully] same as AppleScript)
+
+- fixed bug in help system when getting terminology for remote apps
+
+- help system now provides proper error message when resolving a reference for an application that doesn't define an 'application' class in its dictionary
+
+- setup.py now uses setuptools if available, reverting to plain distutils if not
+
+- setup.py now reverts to using plain distutils when bdist_mpkg is unavailable instead of raising ImportError (note that setuptools and py2app are also required when using bdist_mpkg)
+
+
+2006-08-16 -- 0.16.1
+
+- unbroke terminologyparser on i386
+
+- temporarily reinstated 'filter' as a reserved word and reference method to ease update; it will be going away in the next release, however
+
+
+2006-08-08 -- 0.16.0
+
+- dropped official support for OS 10.2.x
+
+- rewrote help system; dictionary parsing and rendering functionality has been decoupled from appscript and moved to the osaterminology package, and various rendering bugs have been eliminated; -k option now lists built-in keywords only. The htmldoc module has moved from appscript package to osaterminology.renderers package so scripts should now import it from there. Built-in help() now uses osaterminology.renderers.textdoc to render documentation, though osaterminology isn't finished yet so expect some rendering glitches and bugs in the meantime.
+
+- 'app' is no longer a class; it's now a variable containing a GenericApp instance, allowing it to be used to construct both real app instances by calling it, e.g. app('Finder'), and app-based generic references, e.g. app.home.folders['Documents']. This is more convenient when using app references as command parameters as you no longer need to use a concrete reference, e.g. app('Finder').duplicate(app.selection(), to=app.home.folders['Documents']).
+
+- replaced filter() method with index notation, e.g. items.filter(its.size>100) -> items[its.size>100]; users will need to update their scripts accordingly
+
+- 'filter' is no longer a reserved word; users will need to update any scripts that use apps with a 'filter' keyword (e.g. Photoshop has a 'filter' command) to change 'filter_' -> 'filter'
+
+- relaxed rules on determining element names (now all classes are available as elements, instead of only those that were listed as elements of a class somewhere in dictionary); behaviour should now be same as AppleScript (e.g. app('Finder').processes() should work, but is still busted for some reason)
+
+- added 'ShortInteger' (typeSInt16), 'UnsignedInteger' (typeUInt32), 'DoubleInteger'(typeSInt64) to typetables
+
+- added default definition for 'id' property (e.g. iTunes forgets to define this itself)
+
+- implemented a launch() method that actually works. Applications are no longer launched automatically as soon an application object is created. Instead, they launch when appscript needs to get their terminology or send an event other than 'launch'. This gives clients an opportunity to call launch() as their first action.
+
+- when appscript launches an application automatically, the application will be launched in the background
+
+- changed dump module's output format (now uses terminologyparser output format)
+
+- added 'telltarget' parameter to Command.__call__ that allows users to deal with dodgy apps that _require_ a 'subj' attribute even though they shouldn't (e.g. 'do query' command in MacSQL3, 'make' command in Database Events on 10.4)
+
+- ASTS no longer used. Appscript now uses an 'ascrgdte' event to get remote application's terminology (avoids problems with pids and uids in eppc urls). External caching not currently used for local scripting; aete parser speed is much improved so going to see if it's practical to do without it.
+
+- application aetes now fetched via ascrgdte events instead of OSAGetAppTerminology; this reduces startup time a bit (the latter is relatively slow to initialise as it needs to load an OSA language component before the first call can be made)
+
+- osadict now handles non-ASCII characters in application name correctly
+
+- renamed/rearranged various modules
+
+- added osascangui tool
+
+
+2006-04-06 -- 0.15.5
+- fixed URL encoding bug in remote scripting (e.g. 'eppc://address/some%20app' would fail due to encoded space character)
+
+2006-03-25 -- 0.15.4
+- fixed some endian bugs
+
+2006-03-10 -- 0.15.3
+- changed from LGPL to MIT license
+
+2005-12-16 -- 0.15.2
+- added 'Performance Issues' chapter to documentation
+- added important note to 'Introduction' chapter about aem.sendsafe
+- added more default search paths to asts.py
+- fixed bug in translationtablereader.py (thanks CW)
+
+2005-12-06 -- 0.15.1
+- fixed bug when unpacking insertion location references
+
+2005-11-09 -- 0.15.0
+- now uses CarbonX.AE and CarbonX.kAE instead of Carbon.AE and Carbon.AppleScript; note that any client code that refers to Carbon.AE directly will need to be modified to use CarbonX.AE for compatibility
+- added workaround to findapp.py for LaunchServices dependency resolution problem in py2app 0.2 when building a standalone app with embedded Python.framework
+
+2005-10-30 -- 0.14.0
+- added standard 'ignore' arg to commands, allowing user to specify whether case, diacriticals, expansion, hyphens, punctuation and whitespace should be considered or ignored when resolving application references in applications that support it
+- added default definitions for k.case, k.diacriticals, k.expansion, k.hyphens, k.punctuation and k.whitespace enumerators
+- added read-only name property to Keyword class
+- added optional 'window' (WIND) parameter to default 'open_location' event definition
+- renamed specifier.Specifier class to specifier.Reference and genericspecifier.GenericSpecifier class to genericspecifier.GenericReference
+- tweaked formatting for help system's -r option
+- included osadict command-line tool
+- improved documentation
+
+2005-08-18 -- 0.13.1
+- Specifier.__getitem__() now treats non-basestring values as by-index selectors (same behaviour as AppleScript)
+- translationtablebuilder.py no longer raises warning when an element code with no corresponding class is found (problem elements are still flagged by help() and htmldoc though)
+
+2005-07-07 -- 0.13.0
+- fixed bug when getting interactive help() for a command
+- interactive help() system no longer raises an error due to buggy terminology (in e.g. Tiger iCal, Tiger Mail, InDesign CS2) when getting interactive help() for a class that specifies an invalid superclass
+- property names now pack as typeType, not typeProperty; previously there was a problem with e.g. app('Finder').home.count(each=k.file), where Finder uses the 'file' keyword for both a class and a property, causing it to be packed as an AEProp which Finder would error on
+- fixed unpacking of types and enumerators so now returns an AEType/AEEnum when a corresponding keyword doesn't exist
+- renamed aemcodeextractor to aemcodegen
+- fixed aemcodegen so all specifier selectors and command parameters are now correctly converted to aem - previously, values like k.document weren't being converted to their aem equivalents
+- fixed bug in help() that prevented descriptions of property references appearing
+- made class and command hyperlinks in htmldoc more robust by including suite name
+- htmldoc no longer generates blank terminology docs for terminology-less applications
+- removed concrete built-in definitions of k.Number and k.File types, now only used in documentation
+- improved formatting of commands' labelled args in help()
+- added code-name translations to helpterminologyparser for some archaic pseudo-types defined by AppleScript component for use in aete-based documentation, e.g. AEType('ns  ') now appears as 'Number | String' in htmldoc and help()
+- added definitions for k.JPEG and k.GIF as these aren't [reliably?] defined by Carbon.AppleEvents
+- made references callable so that someRef() acts as convenient shortcut for someRef.get(), e.g. both app('TextEdit').documents.get() and app('TextEdit').documents() return a list of document references
+- documented aemcodegen, threading issues
+
+2005-06-08 -- 0.12.1
+- altered asts.run() so that if laggard LaunchServices doesn't find ASTS automatically it'll try /Applications/Utilities/Appscript/AppscriptTerminologyServer.app (default location used by binary installer) as fallback
+- added aemcodeextractor tool module
+
+2005-06-02 -- 0.12.0
+- fixed built-in help bug which inverted read-only '(r/o)' labels on property definitions
+- fixed event id for 'reopen' event
+- fixed memory leak in specifier module where a circular reference between _AppData, _AppSpecificCodecs and Application objects prevented their reference count ever reaching zero
+- fixed reserved names in osaterminology.makeidentifier to include all identifers used by appscript 
+- Specifier.__item__() now treats non-numerical values as by-name selectors (the logical default, since it lets the application decide if it can handle the datatype provided) instead of non-text values as by-integer selectors (which causes Specifier to reject other datatypes offhand). This means that references like app('Finder').items[File('/foo/bar/baz')] (which is legal for Finder) will no longer cause an immediate TypeError
+- now raises CommandError if command contains a direct arg and is called on a reference (resulting in two direct args), e.g. app('Finder').home.get(3)
+- now raises CommandError ('Unknown coercion type...') if command contains a bad value for 'type' arg.
+- helpterminologyparser should now handle classes with multiple superclasses correctly, including weird circular 'inheritance' schemes as found in Word 10.1
+- eliminated duplicate names for AE types (duplicate names could cause false negatives when user tried to compare two Keywords for equality, e.g. k.Char == k.Text, as the test was done by name, not by underlying AE code)
+- now use appscript-defined names for common AE types (see typetables.py)
+- renamed k.missing_value to k.MissingValue
+- where an application-defined type/enum/etc. would collide with an AEM-defined one (i.e. same name but different code), an underscore is now appended to the application-defined name
+- added open_location(url) to standard commands (it's a borderline case for inclusion: not many apps actually support it and it's not part of the Required or Standard Suites, but Safari supports it without defining it in its dictionary and we'd like to keep those users sweet so we bend the rules a bit)
+- added help('-k') option to show all supported Keywords
+- help('-s') option now supported on commands
+- help() output now uses utf8 instead of ascii encoding as standard
+- added 'asts' module for controlling ASTS more conveniently
+- htmldoc can now hyperlink command parameter and result types as well as class property types
+- commands can now take references as direct arg even when arg's type is not 'cobj' as this was causing problems with System Events on 10.3, where click(), etc. took a direct arg of type 'uiel' (UI element), a subclass of 'cobj' (item)
+- removed RenderTerminology applet; use HTMLDictionary <http://freespace.virgin.net/hamish.sanderson/htmldictionary.html> instead
+- move ASTS into a separate distribution
+- help system now ignores invalid element accessor forms instead of erroring
+- renamed commands' 'response' parameter to 'waitreply'
+- fixed bug in timeout parameter
+- default timeout now 60 sec (previously used OS default [120 sec])
+
+2005-02-03 -- 0.11.1
+- now works with official LaunchServices package
+- temporarily disabled 'ASTS not found' warnings as they get annoying
+
+2005-01-27 -- 0.11.0
+- now supplies support apps in source form (binaries were non-portable between systems with different MacPython installations)
+- minor tweaks to use aem 0.5.0
+- help('-s') now works for properties containing datatypes
+- fixed bug where help() failed if called after filter(), previous() or next()
+- changed help()'s '-c' flag to '-r' to more accurately indicate its purpose (displaying one-to-one and one-to-many relationships)
+- simplified ASTS (remote scripting no longer requires ASTS to be running locally as well)
+- improved ASTS error reporting
+- fixed minor bug where help terminology was being reparsed each time help() was called within a reference
+- can now specify a file/StringIO/etc. object for help() to write to
+
+2005-01-10 -- 0.10.0
+- fixed NameErrors in specifier._packDict, specifier._unpackAERecord
+- added default definition for 'class_' property (which is implemented in [e.g.] Finder but not defined in its terminology)
+- app() constructor can now also take an app instance as its 'terms' argument
+- moved help code from specifier module to helpmixins module to improve maintainability
+- renamed -d flag to -t ('terminology') and made it non-optional
+- help() now supports -r flag, equivalent to help()
+- help() now supports -s flag to print current state of properties and elements of referenced object(s)
+
+2004-12-23 -- 0.9.0
+- added dump module
+- added ability to pass dumped terminology modules to app() constructor
+- revised app() constructor args
+- reformatted documentation
+- various improvements to AppscriptTerminologyServer
+- appscript now falls back to retrieving and parsing application terminology itself if ASTS is unavailable
+- '.app' suffixes in application names/paths now optional
+- k.missing_value now returns False for __nonzero__
+- tidied documentation a bit
+
+2004-10-18 -- 0.8.0
+- rewrote appscript.terminology to use AppscriptTerminologyServer
+- fixed bug that caused property and element names to get mixed up in repr
+- now supports Python's slice shorthand - [:n], [n:], [:] - in range specifiers
+- moved/renamed various modules
+- revised and improved interactive help
+- fixed careless bug in helpterminology.makeAETypeTable()
+
+2004-10-14 -- 0.7.1
+- added dump() function to appscript.terminology
+- fixed repr for previous and next specifiers
+- help() now works with references containing ID() calls
+- fixed typo in manual ('cont' -> 'con')
+
+2004-10-13 -- 0.7.0
+- added new and improved built-in help() system
+- updated documentation
+
+2004-10-01 -- 0.6.1
+- attempting to iterate a reference now raises an error (thanks, Nathaniel Gray!)
+
+2004-09-14 -- 0.6.0
+- total rewrite
