@@ -1,3 +1,8 @@
+2009-07-04 -- 0.4.4
+
+- fixed inconsistent escaping of appscript-style property names that have same name but different AE code as default terminology
+
+
 2008-11-23 -- 0.4.3
 
 - fixed bug in Python render when rendering dicts
