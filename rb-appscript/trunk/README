@@ -37,7 +37,7 @@ NOTES
 
 - rb-appscript currently provides 64-bit support for OS X 10.5 in the following modules: AE, AEM, Appscript. The OSAX module provides partial 64-bit support; see the osax manual for details.
 
-- ASDictionary 0.9.0 or later is required to use rb-appscript's built-in #help method. If ASDictionary isn't installed, interactive help won't be available but appscript will continue to operate as normal.
+- ASDictionary 0.11.3 or later is required to use rb-appscript's built-in #help method. If ASDictionary isn't installed, interactive help won't be available but appscript will continue to operate as normal.
 
 
 ======================================================================

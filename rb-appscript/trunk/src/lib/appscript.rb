@@ -94,11 +94,10 @@ module Appscript
 				apppath = FindApp.by_id(ASDictionaryBundleID)
 				asdictionary_is_running = AEM::Application.process_exists_for_path?(apppath)
 				@_help_agent = AEM::Application.by_path(apppath)
-				if not asdictionary_is_running # hide ASDictionary after launching it # TO DO: something less kludgy
+				if not asdictionary_is_running # hide ASDictionary after launching it
 					AEM::Application.by_path(FindApp.by_id('com.apple.systemevents')).event('coresetd', {
 							'----' => AEM.app.elements('prcs').by_name('ASDictionary').property('pvis'), 
 							'data' => false}).send
-					sleep(1) # KLUDGE: need a short delay here to workaround ASDictionary 0.9.0's event handling glitches # TO DO: delete after ASDictionary is fixed
 				end
 				return true
 			rescue FindApp::ApplicationNotFoundError => e

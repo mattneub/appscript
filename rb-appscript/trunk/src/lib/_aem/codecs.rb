@@ -168,7 +168,7 @@ class Codecs
 		# typeChar or typeIntlText rather than the usual typeUnicodeText. To force
 		# an AEM::Codecs object to pack strings as one of these older types, call 
 		# its pack_strings_as_type method, specifying the type you want used instead.
-		if not (code.is_a?(String) and code.length == 4)
+		if not(code.is_a?(String) and code.length == 4)
 			raise ArgumentError, "Code must be a four-character string: #{code.inspect}"
 		end
 		@pack_text_as_type = code

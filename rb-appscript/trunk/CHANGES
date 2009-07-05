@@ -1,4 +1,4 @@
-2009-??-?? -- 0.5.2
+2009-07-05 -- 0.5.2
 
 - removed deprecated AEM::Application.is_running? method
 
@@ -18,9 +18,13 @@
 
 - AEM::Codecs now correctly unpacks AEDescs of typeBoolean whose data >1 byte
 
-- Fixed minor bug/inconsistency where an application-defined property name that overlapped a built-in property name but used a different code was correctly escaped when used in references (e.g. someobj.rotation_ in Adobe Illustrator CS3) but not in symbols (e.g. should be :rotation_ but was :rotation instead).
+- fixed inconsistent escaping of application-defined property/element names that overlap built-in type/enum/property names but uses different codes. e.g. Adobe Illustrator defines 'rotation' as 'SxRx' - this overlaps built-in definition ('rotation' = 'trot'), so is escaped as 'rotation_'. Previously only the Keyword was escaped (i.e. :rotation_ but ref.rotation) now both are escaped (i.e. :rotation_, ref.rotation_). Users should update existing code as needed.
 
 - restructured defaultterminology.rb to make it easier to maintain
+
+- changed default terminology mapping for :data from KAE::CRawData ('rdat') to KAE::TypeData ('tdta')
+
+- the OSAX module now obtains list of installed scripting additions on first use instead of import (the .osax scanning code uses System Events via AEM, and sending Apple events in event loop-based application before the event loop is started can disrupt the process's handling of incoming Apple events)
 
 
 

@@ -72,7 +72,7 @@ module Send
 			begin
 				reply_event = _send_apple_event(flags, timeout)
 			rescue AE::MacOSError => err # The Apple Event Manager raised an error.
-				if not (@_event_code == 'aevtquit' and err.to_i == -609) # Ignore invalid connection errors (-609) when quitting
+				if not(@_event_code == 'aevtquit' and err.to_i == -609) # Ignore invalid connection errors (-609) when quitting
 					raise CommandError.new(err.to_i)
 				end
 			else # Decode application's reply, if any. May be a return value, error number (and optional message), or nothing.

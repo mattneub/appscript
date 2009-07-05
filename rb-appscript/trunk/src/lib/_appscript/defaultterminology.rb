@@ -64,7 +64,7 @@ module DefaultTerminology
 		'ldt ' => :date,
 		'list' => :list,
 		'reco' => :record,
-		'rdat' => :data,
+		'tdta' => :data,
 		'scpt' => :script,
 		
 		'insl' => :location_reference,

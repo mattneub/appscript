@@ -15,3 +15,5 @@ TO DO
 - document extended error info methods
 
 - add compatibility flag to AppData for unpacking typeLongDateTime descs as Date instead of Time instances (the latter has limited range)
+
+- fix strict warnings in Ruby 1.9.1

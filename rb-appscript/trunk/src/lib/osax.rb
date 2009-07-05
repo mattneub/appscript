@@ -23,22 +23,6 @@ module OSAX
 	
 	OSAXCache = {}
 	OSAXNames = []
-	
-	se = AEM::Application.by_path(FindApp.by_id('com.apple.systemevents'))
-	['flds', 'fldl', 'fldu'].each do |domain_code|
-		osaxen = AEM.app.property(domain_code).property('$scr').elements('file').by_filter(
-				AEM.its.property('asty').eq('osax').or(AEM.its.property('extn').eq('osax')))
-		if se.event('coredoex', {'----' => osaxen.property('pnam')}).send # domain has ScriptingAdditions folder
-			names = se.event('coregetd', {'----' => osaxen.property('pnam')}).send
-			paths = se.event('coregetd', {'----' => osaxen.property('posx')}).send
-			names.zip(paths).each do |name, path|
-				name = name.sub(/(?i)\.osax$/, '') # remove name extension, if any
-				OSAXNames.push(name)
-				OSAXCache[name.downcase] = [path, nil]
-			end
-		end
-	end
-	OSAXNames.sort!.uniq!
 
 	#######
 	# modified AppData class
@@ -64,6 +48,23 @@ module OSAX
 	
 	@_standard_additions = nil
 	
+	def OSAX._init_caches
+		se = AEM::Application.by_path(FindApp.by_id('com.apple.systemevents'))
+		['flds', 'fldl', 'fldu'].each do |domain_code|
+			osaxen = AEM.app.property(domain_code).property('$scr').elements('file').by_filter(
+					AEM.its.property('asty').eq('osax').or(AEM.its.property('extn').eq('osax')))
+			if se.event('coredoex', {'----' => osaxen.property('pnam')}).send # domain has ScriptingAdditions folder
+				names = se.event('coregetd', {'----' => osaxen.property('pnam')}).send
+				paths = se.event('coregetd', {'----' => osaxen.property('posx')}).send
+				names.zip(paths).each do |name, path|
+					name = name.sub(/(?i)\.osax$/, '') # remove name extension, if any
+					OSAXNames.push(name)
+					OSAXCache[name.downcase] = [path, nil]
+				end
+			end
+		end
+		OSAXNames.sort!.uniq!
+	end
 	
 	######################################################################
 	# PUBLIC
@@ -71,7 +72,8 @@ module OSAX
 	
 	def OSAX.scripting_additions
 		# list names of all currently installed scripting additions
-		return OSAXNames
+		OSAX._init_caches if OSAXNames == []
+		return OSAXNames.clone
 	end
 	
 	def OSAX.osax(name=nil, app_name=nil)
@@ -95,6 +97,7 @@ module OSAX
 		#
 		# without the additional overhead of creating a new ScriptingAddition object each time.
 		#
+		OSAX._init_caches if OSAXCache == {}
 		if name == nil and app_name == nil
 			if @_standard_additions == nil
 				@_standard_additions = ScriptingAddition.new('StandardAdditions')

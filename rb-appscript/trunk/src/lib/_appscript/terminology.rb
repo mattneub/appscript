@@ -350,7 +350,7 @@ module Terminology
 	def Terminology.tables_for_aetes(aetes)
 		# Build terminology tables from a list of unpacked aete byte strings.
 		# Result : list of hash -- [typebycode, typebyname, referencebycode, referencebyname]
-		aetes = aetes.reject { |aete| not (aete.is_a?(AE::AEDesc) and aete.type == KAE::TypeAETE and aete.data != '') }
+		aetes = aetes.reject { |aete| not(aete.is_a?(AE::AEDesc) and aete.type == KAE::TypeAETE and aete.data != '') }
 		classes, enums, properties, elements, commands = TerminologyParser.build_tables_for_aetes(aetes)
 		return _make_type_table(classes, enums, properties) + _make_reference_table(properties, elements, commands)
 	end
@@ -404,7 +404,7 @@ module Terminology
 		# module_name : string -- name of generated module (must be a valid Ruby constant)
 		# out_path : string -- module file to write
 		app_path = FindApp.by_name(app_name)
-		if not /^[A-Z][A-Za-z0-9_]*$/ === module_name
+		if not(/^[A-Z][A-Za-z0-9_]*$/ === module_name)
 			raise RuntimeError, "Invalid module name."
 		end
 		# Get aete(s)
@@ -421,7 +421,7 @@ module Terminology
 				raise
 			end
 		end
-		aetes.delete_if { |aete| not (aete.is_a?(AE::AEDesc) and aete.type == KAE::TypeAETE) }
+		aetes.delete_if { |aete| not(aete.is_a?(AE::AEDesc) and aete.type == KAE::TypeAETE) }
 		# Parse aete(s) into intermediate tables, suitable for use by Terminology#tables_for_module
 		tables = TerminologyParser.build_tables_for_aetes(aetes)
 		# Write module
