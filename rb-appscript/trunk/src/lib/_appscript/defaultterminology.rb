@@ -192,7 +192,7 @@ module DefaultTerminology
 	
 	Properties = {
 		'pcls' => :class_,
-		'pAll' => :properties_,
+		'pALL' => :properties_,
 		'ID  ' => :id_,
 	}
 	
