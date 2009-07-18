@@ -1,3 +1,12 @@
+2009-07-18 -- 0.5.3
+
+- fixed pALL code in defaultterminology
+
+- fixed OSAX module initialisation code (previously didn't initialise if ScriptingAddition.new was called directly)
+
+- fixed out-of-date URLs in appscript manual
+
+
 2009-07-05 -- 0.5.2
 
 - removed deprecated AEM::Application.is_running? method

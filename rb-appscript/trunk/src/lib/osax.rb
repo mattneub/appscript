@@ -97,7 +97,6 @@ module OSAX
 		#
 		# without the additional overhead of creating a new ScriptingAddition object each time.
 		#
-		OSAX._init_caches if OSAXCache == {}
 		if name == nil and app_name == nil
 			if @_standard_additions == nil
 				@_standard_additions = ScriptingAddition.new('StandardAdditions')
@@ -142,6 +141,7 @@ module OSAX
 			@_osax_name = name
 			if not terms
 				osax_name = name.downcase.sub(/(?i)\.osax$/, '')
+				OSAX._init_caches if OSAXCache == {}
 				path, terminology_tables = OSAXCache[osax_name]
 				if not path
 					raise ArgumentError, "Scripting addition not found: #{name.inspect}"
