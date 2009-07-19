@@ -1,0 +1,19 @@
+TO DO
+
+- Add a libxml2-based sdef parser for use by OSAX::ScriptingAddition in 64-bit Leopard as OSAGetAppTerminology is not available there. (note: OSAGetAppTerminology, OSACopyScriptingDefinition should be weakly bound in rbae.c)
+
+- can numbers in range (2**63)..(2**64 - 1) safely be packed as typeUInt64 on 10.5+? Or stick with packing those as lossy 64-bit floating point for compatibility?
+
+- unpack support for typeISO8601DateTime (10.1+), typeCFAbsoluteTime (10.5+)?
+
+- _aem/connect.rb module refers directly to Send::Event instead of going via the AEM::Application::Event hook, which might cause problems when used in an OSA component or other situation where client needs to customise all event creation and/or dispatch.
+
+- #== and #hash methods in MacTypes::Alias, MacTypes::FileURL lack robustness; see notes in mactypes manual for details. Could these be improved? (Note: some mactypes unit tests may fail in some situations due to 'dumb' nature of these methods.)
+
+- support string encodings in Ruby 1.9
+
+- document extended error info methods
+
+- add compatibility flag to AppData for unpacking typeLongDateTime descs as Date instead of Time instances (the latter has limited range)
+
+- fix strict warnings in Ruby 1.9.1

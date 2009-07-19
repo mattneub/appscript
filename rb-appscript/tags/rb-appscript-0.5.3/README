@@ -1,0 +1,53 @@
+Appscript Read Me
+
+======================================================================
+ABOUT
+
+Ruby appscript (rb-appscript) is a high-level Apple event bridge for the Ruby scripting language. rb-appscript is closely based on the Python appscript (py-appscript) bridge.
+
+See the doc folder for more information.
+
+======================================================================
+REQUIREMENTS
+
+- Mac OS X 10.3+
+- Ruby 1.8+
+
+======================================================================
+INSTALLATION
+
+$ ruby extconf.rb
+$ make
+$ sudo make install
+
+-------
+
+Please note that the version of Ruby included with Mac OS X 10.4 (Tiger) is missing the header files needed to build appscript on PPC-based Macs. Tiger users can avoid this issue by installing the latest version of Ruby from <http://www.ruby-lang.org/en/downloads/> and updating their shell login profiles to suit.
+
+======================================================================
+NOTES
+
+- Developer tools for exporting application dictionaries (ASDictionary) and converting application commands from AppleScript to appscript syntax (ASTranslate) are available separately:
+
+	http://appscript.sourceforge.net/tools.html
+
+- This is a beta release. Please file bug reports if you encounter any problems.
+
+- rb-appscript 0.5.2 contains bug and compatibility fixes; see the CHANGES file and documentation for details.
+
+- rb-appscript currently provides 64-bit support for OS X 10.5 in the following modules: AE, AEM, Appscript. The OSAX module provides partial 64-bit support; see the osax manual for details.
+
+- ASDictionary 0.11.3 or later is required to use rb-appscript's built-in #help method. If ASDictionary isn't installed, interactive help won't be available but appscript will continue to operate as normal.
+
+
+======================================================================
+AUTHOR
+
+- HAS -- hhas -at- users - sourceforge - net <http://rb-appscript.rubyforge.org> <http://appscript.sourceforge.net>
+
+======================================================================
+COPYRIGHT
+
+Copyright (C) 2006-2009 HAS 
+
+Appscript is released under the MIT License. See the LICENSE file for more information.
