@@ -2,7 +2,7 @@ require "rubygems"
 
 spec = Gem::Specification.new do |s|
 	s.name = "rb-appscript"
-	s.version = "0.5.2"
+	s.version = "0.5.3"
 	s.author = "HAS"
 	s.homepage = "http://appscript.sourceforge.net/rb-appscript"
 	s.rubyforge_project="rb-appscript"
