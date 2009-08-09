@@ -79,6 +79,12 @@ static ASEventAttributeDescription attributeKeys[] = {
 	[super dealloc];
 }
 
+-(void)finalize {
+	AEDisposeDesc(event);
+	free(event);
+	[super finalize];
+}
+
 - (NSString *)description {
 	AEDesc aeDesc;
 	NSAppleEventDescriptor *descriptor;
