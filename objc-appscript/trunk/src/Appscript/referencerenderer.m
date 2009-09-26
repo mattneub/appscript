@@ -161,15 +161,17 @@
 
 // by-relative-position selectors
 
-- (ASReferenceRenderer *)previous:(ASConstant *)class_ {
+- (ASReferenceRenderer *)previous:(OSType)class_ {
+	NSAppleEventDescriptor *desc = [NSAppleEventDescriptor descriptorWithTypeCode:class_];
 	[result insertString: @"[" atIndex: 0];
-	[result appendFormat: @" previous: %@]", [self format: class_]];
+	[result appendFormat: @" previous: %@]", [appData unpack: desc]];
     return self;
 }
 
-- (ASReferenceRenderer *)next:(ASConstant *)class_ {
+- (ASReferenceRenderer *)next:(OSType)class_ {
+	NSAppleEventDescriptor *desc = [NSAppleEventDescriptor descriptorWithTypeCode:class_];
 	[result insertString: @"[" atIndex: 0];
-	[result appendFormat: @" next: %@]", [self format: class_]];
+	[result appendFormat: @" next: %@]", [appData unpack: desc]];
     return self;
 }
 
