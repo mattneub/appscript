@@ -30,48 +30,53 @@
 
 <h2>Generating a glue</h2>
 
-<p>Glues are generated using the command-line <code>osaglue</code> tool:</p>
+<p>Glues are generated using the ASDictionary application (available from the appscript website's <a href="http://appscript.sourceforge.net/tools.html">Tools page</a>):</p>
 
-<pre><code>osaglue [-hv] [-o output-directory] [-p prefix] [application-name]</code></pre>
+<ol>
 
-<li>The <code>-h</code> option prints this help and exits immediately.</li>
+<li>Use the Dictionary menu to select one or more scriptable applications or scripting additions, or drag-and-drop one or more application and/or scripting addition files onto ASDictionary's application icon or Export window.</li>
 
-<li>The <code>-v</code> option prints osaglue's version number and exits immediately.</li>
+<li>Select the "objc-appscript glue" format.</li>
 
-<li>The <code>-o</code> option may be used to specify the directory to which the glue files should be written. If the directory doesn't already exist, one is created. If omitted, the glue files are written to the current directory.</li>
+<li>The ObjC class name prefix for each glue is shown in the Prefix column. The default prefix is an abbreviation of the application's name (e.g. Address Book becomes <code>AB</code>, iCal becomes <code>IC</code>, TextEdit becomes <code>TE</code>), but this can be changed by clicking on it and typing a prefix of your choice. Take care not to use a prefix that may cause the glue's class names to collide with existing Cocoa classes (e.g. 'NS' is a particularly common prefix and best avoided) otherwise the glue may not compile.</li>
 
-<li>The prefix argument, <code>-p</code>, is prepended to the names of all glue files and classes.
-Developers should specify a unique prefix that won't cause namespace conflicts
-in their project. If omitted, the application name is used instead.</li>
+<li>Click 'Export', and select a destination folder for the generated glue. Each glue folder's name will consist of its class name prefix followed by 'Glue' (e.g. <code>ABGlue</code>, <code>ICGlue</code>).</li>
 
-<li>The application-name argument may be the name or full path of the application for which glues should be generated. If omitted, the resulting glue files will contain only the default terminology provided by appscript.</li>
-</ul>
-
-<p>For example, to output <code>TEGlue.h</code> and associated files for TextEdit to the folder <code>TEGlue</code>:</p>
-
-<pre><code>osaglue -o TEGlue -p TE TextEdit</code></pre>
+</ol>
 
 
 <h2>Using a glue</h2>
 
-<p>To use a glue, include the generated glue files in your project and import the main <code><var>PREFIX</var>Glue.h</code> header file, where <var>PREFIX</var> is the prefix code given in the <code>osaglue</code> command. For example:</p>
+<p>To include the generated glue files in your project:
 
-<pre><code>import "TEGlue.h"</code></pre>
+<ol>
+
+<li>Right-click on the Classes group in the left-hand Groups &amp; Files pane of the Xcode project window, and select Add &gt; Existing Files... from the contextual menu.</li>
+
+<li>Select the generated glue folder (e.g. <code>TEGlue</code>) and click Add.</li>
+
+<li>In the following sheet, check the "Copy items into destination group's folder" and "Recursively create groups for any added folders" options, and click Add.</li>
+
+</ol>
+
+<p>You can now import the main <code><var>XX</var>Glue/<var>XX</var>Glue.h</code> header file into your own files (where <code><var>XX</var></code> is the prefix code given in the <code>osaglue</code> command). For example:</p>
+
+<pre><code>#import "TEGlue/TEGlue.h"</code></pre>
 
 <p>Each glue contains the following classes:</p>
 
 <ul>
-<li><code><var>PREFIX</var>Constant</code> -- represents Apple event types and enumerators, e.g. <code>TEConstant</code></li>
+<li><code><var>XX</var>Constant</code> -- represents Apple event types and enumerators, e.g. <code>TEConstant</code></li>
 
-<li><code><var>PREFIX</var>Reference</code> -- represents Apple Event Object Model queries (a.k.a. application references), e.g. <code>TEReference</code></li>
+<li><code><var>XX</var>Reference</code> -- represents Apple Event Object Model queries (a.k.a. application references), e.g. <code>TEReference</code></li>
 
-<li><code><var>PREFIXNAME</var>Command</code> -- represents an application command (one class for each application command), e.g. <code>TEMakeCommand</code>, <code>TEMoveCommand</code>, etc.</li>
+<li><code><var>XXNAME</var>Command</code> -- represents an application command (one class for each application command), e.g. <code>TEMakeCommand</code>, <code>TEMoveCommand</code>, etc.</li>
 
-<li><code><var>PREFIX</var>Application</code> -- represents an application, e.g. <code>TEApplication</code></li>
+<li><code><var>XX</var>Application</code> -- represents an application, e.g. <code>TEApplication</code></li>
 </ul>
 
 
-<p>Each glue also provides three macros - <code><var>PREFIX</var>App</code>, <code><var>PREFIX</var>Con</code> and <code><var>PREFIX</var>Its</code> - for use in constructing application references.</code>
+<p>Each glue also provides three macros - <code><var>XX</var>App</code>, <code><var>XX</var>Con</code> and <code><var>XX</var>Its</code> - for use in constructing application references.</p>
 
 
 <p class="hilitebox">Note that the code examples in this manual assume the presence of suitable glues; e.g. TextEdit-based examples assume a TextEdit glue with the prefix <code>TE</code>, Finder-based examples assume a Finder glue with the prefix <code>FN</code>, etc.</p>

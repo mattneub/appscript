@@ -274,13 +274,12 @@
 								<string>29B97317FDCFA39411CA2CEA</string>
 								<string>29B97323FDCFA39411CA2CEA</string>
 								<string>1C37FBAC04509CD000000102</string>
-								<string>4F1883120E4B17DF00FBC3C0</string>
 								<string>1C37FABC05509CD000000102</string>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>2</integer>
+									<integer>3</integer>
 									<integer>1</integer>
 									<integer>0</integer>
 								</array>
@@ -321,7 +320,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>ItunesController.h</string>
+								<string>ItunesController.m</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -329,22 +328,22 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>ItunesController.h</string>
+										<string>ItunesController.m</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>4F1883190E4B17DF00FBC3C0</string>
+										<string>4F4C2615102ED625004760A2</string>
 										<key>history</key>
 										<array>
-											<string>4F1882740E48FA4500FBC3C0</string>
-											<string>4F1882750E48FA4500FBC3C0</string>
 											<string>4F1882770E48FA4500FBC3C0</string>
-											<string>4F1882780E48FA4500FBC3C0</string>
-											<string>4F1882E90E4B179300FBC3C0</string>
 											<string>4F1883130E4B17DF00FBC3C0</string>
 											<string>4F1883140E4B17DF00FBC3C0</string>
 											<string>4F1883150E4B17DF00FBC3C0</string>
-											<string>4F1882920E48FC4400FBC3C0</string>
+											<string>4FCC72170F0D66FB004CCF8C</string>
+											<string>4FCC72180F0D66FB004CCF8C</string>
+											<string>4FCC72190F0D66FB004CCF8C</string>
+											<string>4FCC721A0F0D66FB004CCF8C</string>
+											<string>4FCC72250F0D66FB004CCF8C</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -414,9 +413,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>4F18831A0E4B17DF00FBC3C0</string>
+				<string>4F4C2616102ED625004760A2</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>4F18831B0E4B17DF00FBC3C0</string>
+				<string>4F4C2617102ED625004760A2</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -550,8 +549,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>4F1882250E48EADE00FBC3C0</string>
-		<string>1CD10A99069EF8BA00B06720</string>
 		<string>/Users/has/Dev/appscript/objc-appscript/sample/iTunesController/iTunesController.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
@@ -674,8 +671,8 @@
 										<string>yes</string>
 										<key>sizes</key>
 										<array>
-											<string>{{0, 0}, {341, 466}}</string>
-											<string>{{341, 0}, {406, 466}}</string>
+											<string>{{0, 0}, {341, 469}}</string>
+											<string>{{341, 0}, {406, 469}}</string>
 										</array>
 									</dict>
 									<key>VerticalSplitView</key>
@@ -690,8 +687,8 @@
 										<string>yes</string>
 										<key>sizes</key>
 										<array>
-											<string>{{0, 0}, {747, 466}}</string>
-											<string>{{0, 466}, {747, 419}}</string>
+											<string>{{0, 0}, {747, 469}}</string>
+											<string>{{0, 469}, {747, 416}}</string>
 										</array>
 									</dict>
 								</dict>
@@ -724,7 +721,7 @@
 										<real>176</real>
 									</array>
 									<key>Frame</key>
-									<string>{{341, 0}, {406, 466}}</string>
+									<string>{{341, 0}, {406, 469}}</string>
 									<key>RubberWindowFrame</key>
 									<string>413 102 747 926 0 0 1680 1028 </string>
 								</dict>
@@ -752,13 +749,13 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1CD10A99069EF8BA00B06720</string>
-				<string>4F18831D0E4B17DF00FBC3C0</string>
+				<string>4F4C2618102ED625004760A2</string>
 				<string>1C162984064C10D400B95A72</string>
-				<string>4F18831E0E4B17DF00FBC3C0</string>
-				<string>4F18831F0E4B17DF00FBC3C0</string>
-				<string>4F1883200E4B17DF00FBC3C0</string>
-				<string>4F1883210E4B17DF00FBC3C0</string>
-				<string>4F1883220E4B17DF00FBC3C0</string>
+				<string>4F4C2619102ED625004760A2</string>
+				<string>4F4C261A102ED625004760A2</string>
+				<string>4F4C261B102ED625004760A2</string>
+				<string>4F4C261C102ED625004760A2</string>
+				<string>4F4C261D102ED625004760A2</string>
 			</array>
 			<key>ToolbarConfiguration</key>
 			<string>xcode.toolbar.config.debugV3</string>
