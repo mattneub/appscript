@@ -1,3 +1,10 @@
+2009-11-17 -- 0.20.1
+
+- fixed 64-bit bug in aemconnect.currentapp
+
+- when using Standard Additions, osax.OSAX constructor will fall back to using a static glue on 64-bit (other scripting additions still need to be used under 32-bit or require static glues to be passed to constructor on 64-bit)
+
+
 2009-06-26 -- 0.20.0
 
 - Combined Python 2.x and 3.x versions in a single distribution.

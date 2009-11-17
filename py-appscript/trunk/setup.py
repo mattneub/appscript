@@ -16,12 +16,12 @@ else:
 
 setup(
 		name = "appscript",
-		version = "0.20.0",
+		version = "0.20.1",
 		description = "Control scriptable Mac OS X applications and scripting additions from Python.",
 		author = "HAS",
 		author_email='',
 		url='http://appscript.sourceforge.net',
-		license='MIT',
+		license='MIT License',
 		platforms=['Mac OS X'],
 		ext_modules = [
 			Extension('aem.ae',
@@ -42,5 +42,13 @@ setup(
 			'osax',
 		],
 		extra_path = "aeosa",
-		package_dir = {'': os.path.join(root_dir, 'lib')}
+		package_dir = {'': os.path.join(root_dir, 'lib')},
+		classifiers = [
+			'License :: OSI Approved :: MIT License',
+			'Development Status :: 4 - Beta',
+			'Operating System :: MacOS :: MacOS X',
+			'Programming Language :: Python :: 2',
+			'Programming Language :: Python :: 3',
+		],
+
 )

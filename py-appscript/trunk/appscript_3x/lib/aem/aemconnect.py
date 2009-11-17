@@ -23,7 +23,7 @@ _kLaunchDontSwitch = 0x0200
 _kNoProcess = 0
 _kCurrentProcess = 2
 
-_nulladdressdesc = ae.newdesc(kae.typeProcessSerialNumber, struct.pack('LL', 0, _kNoProcess)) # ae.newappleevent complains if you pass None as address, so we give it one to throw away
+_nulladdressdesc = ae.newdesc(kae.typeProcessSerialNumber, struct.pack('II', 0, _kNoProcess)) # ae.newappleevent complains if you pass None as address, so we give it one to throw away
 
 _launchevent = Event(_nulladdressdesc, b'ascrnoop').AEM_event
 _runevent = Event(_nulladdressdesc, b'aevtoapp').AEM_event
@@ -139,7 +139,7 @@ def processexistsfordesc(desc):
 
 #######
 
-currentapp = ae.newdesc(kae.typeProcessSerialNumber, struct.pack('LL', 0, _kCurrentProcess))
+currentapp = ae.newdesc(kae.typeProcessSerialNumber, struct.pack('II', 0, _kCurrentProcess))
 
 
 def localapp(path):
