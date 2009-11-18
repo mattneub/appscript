@@ -1,0 +1,21 @@
+2007-01-17 -- 0.3.0
+- renamed from macfile to mactypes
+- removed pathname expansion
+- added Units class
+- fixed some non-existent identifiers (k instead of kAE)
+- HTMLised documentation
+- File objects now perform (case-sensitive) comparisons for non-existent files
+- added makewithurl class method, url instance method to Alias class
+- File.file now returns a new File instance created using the current File object's path (i.e. new File object is non-deterministic and will pack as typeFileURL, even if the original File object was created from an FSRef/FSSpec)
+
+2006-03-10 -- 0.2.1
+- changed from LGPL to MIT license
+
+2005-11-10 -- 0.2.0
+- now uses CarbonX.AE and CarbonX.kAE instead of Carbon.AE and Carbon.AppleEvents
+
+2005-07-15 -- 0.1.1
+- Alias and File now show 'macfile.' prefix in repr() string
+
+2005-04-21 -- 0.1.0
+- first release
