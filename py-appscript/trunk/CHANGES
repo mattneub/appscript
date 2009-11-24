@@ -1,3 +1,10 @@
+2009-11-24 -- 0.20.3
+
+- fixed some bugs where 32-bit ints were being packed and unpacked as 64-bit longs on 64-bit, resulting in system flipper warnings and potentially incorrect behaviour
+
+- added workaround to ae.c for return ID bug in Apple Event Manager on 10.6 (when auto-incrementing return ID reaches -1, a timeout error occurs due to the return event having the wrong ID)
+
+
 2009-11-18 -- 0.20.2
 
 - bugfix in py3-osax module

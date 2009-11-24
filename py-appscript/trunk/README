@@ -1,4 +1,4 @@
-Appscript is packaged using the standard Python Distribution Utilities (a.k.a. Distutils). To install appscript, cd to the appscript-0.20.2 directory and run:
+Appscript is packaged using the standard Python Distribution Utilities (a.k.a. Distutils). To install appscript, cd to the appscript-0.20.3 directory and run:
 
 	python setup.py install
 
@@ -48,7 +48,7 @@ NOTES
 
 -------
 
-- Appscript 0.20.2 is beta 3. Please report any problems you encounter either in the appscript bridge or in using it to control particular applications.
+- Appscript 0.20.3 is beta 3. Please report any problems you encounter either in the appscript bridge or in using it to control particular applications.
 
 
 ======================================================================

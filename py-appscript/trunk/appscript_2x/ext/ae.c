@@ -665,6 +665,29 @@ static PyObject *AE_AECreateAppleEvent(PyObject *_self, PyObject *_args)
 	                          transactionID,
 	                          &result);
 	if (_err != noErr) return AE_MacOSError(_err);
+	// workaround for return ID bug in 10.6
+	DescType typeCode;
+	Size actualSize;
+	if (returnID == kAutoGenerateReturnID) {
+		_err = AEGetAttributePtr(&result, 
+								 keyReturnIDAttr, 
+								 typeSInt16,
+								 &typeCode,
+								 &returnID,
+								 sizeof(returnID),
+								 &actualSize);
+		if (_err != noErr) return AE_MacOSError(_err);
+		if (returnID == -1) {
+			AEDisposeDesc(&result);
+			_err = AECreateAppleEvent(theAEEventClass,
+									  theAEEventID,
+									  &target,
+									  returnID,
+									  transactionID,
+									  &result);
+			if (_err != noErr) return AE_MacOSError(_err);
+		}
+	}
 	_res = Py_BuildValue("O&",
 	                     AE_AEDesc_New, &result);
 	return _res;

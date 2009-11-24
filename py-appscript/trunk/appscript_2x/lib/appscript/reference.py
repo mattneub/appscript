@@ -192,10 +192,10 @@ class AppData(aem.Codecs):
 			return app(url=desc.data)
 	
 	def unpackapplicationbysignature(self, desc):
-		return app(creator=struct.pack('>L', struct.unpack('L', desc.data)[0]))
+		return app(creator=struct.pack('>I', struct.unpack('I', desc.data)[0]))
 	
 	def unpackapplicationbypid(self, desc):
-		return app(pid=struct.unpack('L', desc.data)[0])
+		return app(pid=struct.unpack('I', desc.data)[0])
 	
 	def unpackapplicationbydesc(self, desc):
 		return app(aemapp=aem.Application(desc=desc))
@@ -347,7 +347,7 @@ class AppData(aem.Codecs):
 # Considering/ignoring constants
 
 def _packuint32(n): # used to pack csig attributes
-	return newdesc(kae.typeUInt32, struct.pack('L', n))
+	return newdesc(kae.typeUInt32, struct.pack('I', n))
 
 # 'csig' attribute flags (see ASRegistry.h; note: there's no option for 'numeric strings' in 10.4)
 
