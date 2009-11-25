@@ -668,16 +668,17 @@ static PyObject *AE_AECreateAppleEvent(PyObject *_self, PyObject *_args)
 	// workaround for return ID bug in 10.6
 	DescType typeCode;
 	Size actualSize;
+	SInt32 actualReturnID;
 	if (returnID == kAutoGenerateReturnID) {
 		_err = AEGetAttributePtr(&result, 
 								 keyReturnIDAttr, 
-								 typeSInt16,
+								 typeSInt32,
 								 &typeCode,
-								 &returnID,
-								 sizeof(returnID),
+								 &actualReturnID,
+								 sizeof(actualReturnID),
 								 &actualSize);
 		if (_err != noErr) return AE_MacOSError(_err);
-		if (returnID == -1) {
+		if (actualReturnID == -1) {
 			AEDisposeDesc(&result);
 			_err = AECreateAppleEvent(theAEEventClass,
 									  theAEEventID,

@@ -16,7 +16,7 @@ else:
 
 setup(
 		name = "appscript",
-		version = "0.20.2",
+		version = "0.20.3",
 		description = "Control scriptable Mac OS X applications and scripting additions from Python.",
 		author = "HAS",
 		author_email='',
