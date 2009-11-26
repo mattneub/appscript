@@ -1,0 +1,208 @@
+2007-12-19 -- 0.13.0
+
+- Codecs.unpackunknown no longer causes infinite recursion if a record-like AEDesc is given and there's no typeAERecord unpacker available to unpack it after unpackunknown converts it to a record descriptor
+
+- added support for object specifiers with custom roots
+
+- send.Event._sendAppleEvent now uses CarbonX.AE.AEDesc.SendMessageThreadSafe  instead of CarbonX.AE.AEDesc.AESendMessage, allowing reply events to be received on non-main threads.
+
+- byfilter method no longer accepts non-test specifiers as test clauses. Previously, a reference such as 'its.visible' would automatically be expanded to the comparison test 'its.visible.eq(true)' as a convenience. However, this shortcut didn't apply when these non-test references appeared as arguments to the AND and OR logical test methods, which meant that this shortcut behaviour was inconsistent and potentially confusing; therefore it has been removed. Users should update existing code as necessary.
+
+- aem.Application.__repr__ now displays correct class name when Application class is subclassed
+
+- removed Carbon.Launch dependency in findapp module due to memory leaks in Carbon.CF; findapp now uses modified version of LSFindApplicationForInfo in PSN extension
+
+- now raises CantLaunchApplicationError if unable to launch an application (previously raised MacOS.Error; users)
+
+- now raises CantLaunchApplicationError instead of MacOS.Error if unable to launch an application. Users should update existing code as necessary.
+
+- added processexistsforpath, processexistsforpid, processexistsforurl, processexistsfordesc static methods to aem.Application
+
+- deprecated aem.Application.isrunning; any existing code that uses this method should be updated to use processexistsforpath instead
+
+
+2007-01-20 -- 0.12.1
+
+- fixed bug in unittypes' _defaultpacker
+
+
+2007-01-19 -- 0.12.0
+
+- changed aem.launch into static method of aem.Application class
+
+-removed pathname expansion in findapp.byname
+
+- removed AEEventName
+
+- in aem.Codecs, renamed packfailed method to packunknown and added unpackunknown method
+
+- added aem.types.basictypes.unittypes module, and added addunittypes method to aem.Codecs
+
+- removed 'k' module (aem.send.constants); clients should use CarbonX.kAE/kOSA instead
+
+- HTMLised manual
+
+- can now create Application instances by Unix PID
+
+- changed Application.isrunning to staticmethod
+
+- added Application.aborttransaction method, and added optional 'session' argument to Application.starttransaction
+
+- added CommandError.__int__ (equivalent to CommandError.number)
+
+- added Application.__repr__
+
+
+2006-12-03 -- 0.11.1
+
+- no longer includes BOM when packing AEDescs of typeUnicodeText as this caused problems with applications that don't handle BOMs correctly (e.g. iTunes 7)
+
+- no longer errors when packing Python longs on Python 2.5
+
+- comparing aem references now works correctly; before, comparing equivalent references for equality could return False if one had been previously unpacked (i.e. DeferredSpecifier objects weren't being taken account of)
+
+- next and previous references now unpack correctly (previously, selector would appear as an AEType, not four-char-code string)
+
+- fixed endian bugs when unpacking first/middle/last/any/all specifiers, insertion loc specifiers and comparison and logic tests
+
+- fixed problem in aem.send.send where slicing an Exception object causes an error on Python 2.5 (now uses 'err.args[1:]' instead of 'err[1:]'); previously on 2.5, aem was failing to raise a CommandError in response to an Apple Event Manager-raised error when sending an event.
+
+- fixed minor case-sensitivity issue in findapp ('.app' suffixes were previously assumed to always be lowercase)
+
+- fixed case-sensitivity issue in aem.send.connect._psnForApplicationPath (previously it lowercased file paths)
+
+- fixed problem where temporary traceback code in CommandError.__init__ could cause an error in Python 2.5
+
+- now packs Booleans as typeTrue/typeFalse (same as AppleScript)
+
+- when packing dicts containing an AEType('pcls') (class) property, the remaining properties are packed and the record is coerced to the type indicated by the 'class' property (i.e. same as in AppleScript)
+
+- AERecord-style descs with unrecognised types are now unpacked as dicts with the custom type stored as an AEType under an AEType('pcls') (class) key
+
+- minor improvements to aem.send.error message strings
+
+- kAEContains comparison descriptors now unpack correctly as 'op2.isin(op1)' when first operator isn't an its-based aem reference
+
+
+2006-08-08 -- 0.11.0
+
+- renamed ApplicationError class to CommandError
+
+- added launch(path) function
+
+- added isrunning() method to Application class for determining if target application is running
+
+- added reconnect() method to Application class for manually updating Application object's typeProcessSerialNumber AEAddressDesc should it become out of date (which happens if the target application has been restarted since the Application object was created)
+
+- Application objects are now comparable and hashable
+
+- improved application launching code (now uses Process Manager's LaunchApplication)
+
+- local applications are now always identified by process serial number when 'path' argument is used in Application.__init__() (previously aem would use creator type if one existed, which can't distinguish between application versions)
+
+- simplified class hierarchy in aem.types.objectspecifiers.specifier; relaxed rules on which reference form properties and methods are available on which specifier classes; specifier classes now implement comparison and logic operator methods though these should only be used on its-based references
+
+- doubled performance of objectspecifier modules when unpacking and repacking specifiers
+
+- revised parameters in Event._createAppleEvent, Event._sendAppleEvent hooks
+
+- added optional codecs parameter to Application.event()
+
+- now uses AESendMessage instead of AESend (much faster)
+
+- now includes BOM when packing AEDescs of typeUnicodeText
+
+
+2006-03-25 -- 0.10.4
+- fixed endian bugs when packing and unpacking dates
+
+2006-03-11 -- 0.10.3
+- now supports Intel Macs
+- Python longs now pack as typeSInt64 (previously typeSInt32) where possible, and as typeIEEE64BitFloatingPoint otherwise
+- changed from LGPL to MIT license
+
+2006-01-05 -- 0.10.2
+- byrange() now accepts either con-based or app-based references (former are normally used, but latter are legal)
+
+2005-12-08 -- 0.10.1
+- moved OS 10.2 'event hanging' bug workaround to aem.sendsafe module as it interferes with operation of PyObjC-based apps; OS 10.2 users must now import this module explicitly before using aem/appscript
+
+2005-11-15 -- 0.10.0
+- now uses CarbonX.AE instead of Carbon.AE
+- Event class now exposes reserved AEM_event attribute containing AppleEvent descriptor (note: this may change)
+- ApplicationError class's string representation now provides more meaningful generic descriptions for default Cocoa Scripting NS...Error messages
+- added AEEventName class
+
+2005-10-27 -- 0.9.0
+- added k.RequestedType, k.Ignore, k.Case, k.Diacriticals, k.Expansion, k.Punctuation, k.Hyphens, k.Whitespace constants
+- removed 'resulttype' arg from Event constructor; users should now pass this value via 'atts' arg instead
+
+2005-07-15 -- 0.8.1
+- AEType, AEEnum, etc. now show 'aem.' prefix in repr() string
+
+2005-07-11 -- 0.8.0
+- modified aem.send.send to ignore any returned error info when error number = 0 ('no error', e.g. see Finder's duplicate, move commands)
+- renamed Application.event()'s 'type' parameter to 'resulttype'
+- eliminated macerrors dependency as non-ASCII comments in that module (Apple-installed Python 2.3.5, OS 10.4) cause warnings
+- added typeUTF8Text, typeUTF16ExternalRepresentation unpackers
+- added a few minimal OS error code descriptions
+
+2005-06-22 -- 0.7.1
+- changed AEM_resolve() so each call is applied to the result of the previous call (previously sent all calls to a single object)
+
+2005-06-09 -- 0.7.0
+- Python 2.4 support (LaunchServices is in different locations on 2.3 and 2.4, so aem now tries to import from both locations)
+- uses new macfile module to wrap the various AE filesystem-related types for improved ease of use
+- now respects optional BOM when unpacking AEDescs of typeUnicodeText
+- smarter packing of Python longs as [non-lossy] int when possible and [lossy] float if not
+- now packs datetime.time as typeLongDateTime (uses current date)
+- start and end properties now available on all position specifier forms, allowing references like ref.elements(cParagraph).byindex(1).end (obscure, but supported by some apps)
+- combined Event() constructor's eventclass and eventid parameters into one
+- revised Event.send() parameters
+
+2005-04-17 -- 0.6.1
+- renamed send() method's 'astype' argument to 'type'
+- renamed ApplicationError.rawreply to ApplicationError.raw
+- renamed AEFourLetterCode to AETypeBase
+- aem now exports AETypeBase (previously AEFourLetterCode) correctly for type-checking use
+- added aem.send.errors module containing generic descriptions for application scripting-related Carbon MacOS errors (aem.send previously got descriptions from macerrors, which sucks)
+- documented hooks in Application and Event classes
+- added note about transactions to manual
+
+2005-04-10 -- 0.6.0
+- removed aem.receive as it needs a serious rethink/redesign
+- users can now use 'import aem' instead of 'import aem.send
+- import aem.types'
+- fixed bug in Root.__hash__() so references can now be hashed
+- removed Root.help() as it's not all that useful
+- rearranged specifier module's inheritance tree so ElementsByRange now supports byfilter() method
+- ApplicationError is now subclass of MacOS.Error
+- inserted hooks into Application and Event classes, allowing clients to provide their own functions for creating and sending Apple events by subclassing them
+- miscellaneous renamings and rearrangings and additional commenting of code to make it easier for maintainers/porters to follow
+
+2005-02-03 -- 0.5.1
+- now works with official LaunchServices package
+- improved error message when scripts are run without a Window Manager connection
+- added note on Window Manager issue to documentation
+
+2005-01-25 -- 0.5.0
+- exposed AEFourLetterCode class for type-checking purposes
+
+2004-12-23 -- 0.4.0
+- revised aem.send API
+
+2004-10-19
+- fixed bug in Application class where __del__ would fail if an error occurred in __init__
+- Application constructor now also takes AEAddressDescs
+
+2004-09-22
+- improved Codecs.pack() method now checks supplied values both by __class__ attribute and by isinstance() function, e.g. a value whose class is a subclass of UserDict will now be packed as a dict instead of raising a TypeError
+- now packs values of type time.struct_time
+
+2004-09-13
+- changed order of arguments in AEHandlerManager.add()
+
+2004-09-08
+- added AEM_resolve() to object specifiers
+- Codecs class now used to supply [default, overrideable] app, con, its objects when unpacking object specifiers
+- added AEProp, AEKey
