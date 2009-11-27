@@ -1,7 +1,8 @@
 """referencerenderer -- Generates string representations of appscript references from aem object specifiers.
 
-(C) 2004-2008 HAS"""
+(C) 2004-2009 HAS"""
 
+import struct
 from terminology import kProperty, kElement
 from aem import Query
 
@@ -19,7 +20,12 @@ class _Formatter:
 		elif self._appdata.constructor == 'current':
 			self.root = 'app()'
 		elif self._appdata.constructor == 'path':
-			self.root = 'app(%r)' % self._appdata.identifier
+			argstr = ''
+			newinstancearg = self._appdata.aemconstructoroptions.get('newinstance')
+			if newinstancearg:
+				argstr += ', newinstance=%r' % ((self._appdata.isconnected and
+						struct.unpack('II', self._appdata.target().addressdesc.data) or True),)
+			self.root = 'app(%r%s)' % (self._appdata.identifier, argstr)
 		else:
 			self.root = 'app(%s=%r)' % (self._appdata.constructor, self._appdata.identifier)
 		self.result = ''

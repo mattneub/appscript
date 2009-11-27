@@ -1,4 +1,4 @@
-#!/usr/local/bin/python
+#!/usr/bin/env python3
 
 import unittest, subprocess
 import osax, mactypes, aem

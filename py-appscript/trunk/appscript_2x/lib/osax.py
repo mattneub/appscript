@@ -497,5 +497,5 @@ class OSAX(reference.Application):
 	__repr__ = __str__
 
 
-ScriptingAddition = OSAX # backwards compatibility; deprecated # TO DO: delete
+ScriptingAddition = OSAX # deprecated but retained for backwards compatibility
 

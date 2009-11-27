@@ -6,7 +6,7 @@
  *     Copyright (C) 1993-2008 Apple Inc.
  *
  * New code
- *     Copyright (C) 2005-2008 HAS
+ *     Copyright (C) 2005-2009 HAS
  */
  
 /* =========================== Module AE =========================== */
@@ -46,10 +46,6 @@ extern PyObject *_AE_BuildOSType(OSType t);
 
 AEEventHandlerUPP upp_GenericEventHandler;
 AECoercionHandlerUPP upp_GenericCoercionHandler;
-
-// Get terminology
-
-extern OSAError OSACopyScriptingDefinition(const FSRef *, SInt32, CFDataRef *) __attribute__((weak_import));
 
 
 /* --------------------------- MacOSError ---------------------------- */
@@ -171,6 +167,8 @@ static PyObject *AEDesc_AEFlattenDesc(AEDescObject *_self, PyObject *_args)
 	Size dataSize;
 	void *data;
 	
+	if (!PyArg_ParseTuple(_args, ""))
+		return NULL;
 	dataSize = AESizeOfFlattenedDesc(&_self->ob_itself);
 	data = malloc(dataSize);
 	_err = AEFlattenDesc(&_self->ob_itself, data, dataSize, NULL);
@@ -474,21 +472,19 @@ static PyObject *AEDesc_get_type(AEDescObject *self, void *closure)
 
 static PyObject *AEDesc_get_data(AEDescObject *self, void *closure)
 {
-
-			PyObject *res;
-			Size size;
-			char *ptr;
-			OSErr err;
-			
-			size = AEGetDescDataSize(&self->ob_itself);
-			if ( (res = PyString_FromStringAndSize(NULL, size)) == NULL )
-				return NULL;
-			if ( (ptr = PyString_AsString(res)) == NULL )
-				return NULL;
-			if ( (err=AEGetDescData(&self->ob_itself, ptr, size)) < 0 )
-				return AE_MacOSError(err);	
-			return res;
-			
+	PyObject *res;
+	Size size;
+	char *ptr;
+	OSErr err;
+	
+	size = AEGetDescDataSize(&self->ob_itself);
+	if ( (res = PyString_FromStringAndSize(NULL, size)) == NULL )
+		return NULL;
+	if ( (ptr = PyString_AsString(res)) == NULL )
+		return NULL;
+	if ( (err=AEGetDescData(&self->ob_itself, ptr, size)) < 0 )
+		return AE_MacOSError(err);	
+	return res;
 }
 
 #define AEDesc_set_data NULL
@@ -949,6 +945,17 @@ cleanup:
 
 /* --------------------- Miscellaneous functions ---------------------- */
 
+static PyObject *AE_GetOSStatusStrings(PyObject* self, PyObject* args)
+{
+	OSStatus errNum;
+	
+	if (!PyArg_ParseTuple(args, "i", &errNum))
+		return NULL;
+	const char *errorStr = GetMacOSStatusErrorString(errNum);
+	const char *commentStr = GetMacOSStatusCommentString(errNum);
+	return Py_BuildValue("ss", errorStr, commentStr);
+}
+
 
 static PyObject *AE_ConvertPathToURL(PyObject* self, PyObject* args)
 {
@@ -1080,8 +1087,6 @@ static PyObject *AE_LSFindApplicationForInfo(PyObject *_self, PyObject *_args)
 
 /* ------------------- Process Manager functions --------------------- */
 
-// TO DO: replace with code that doesn't start Python.app GUI
-
 static int AE_GetFSRef(PyObject *v, FSRef *fsr)
 {
         OSStatus err;
@@ -1100,11 +1105,11 @@ static int AE_GetFSRef(PyObject *v, FSRef *fsr)
 }
 
 
-static PyObject *AE_PIDForApplicationPath(PyObject* self, PyObject* args)
+static PyObject *AE_PSNDescForApplicationPath(PyObject* self, PyObject* args)
 {
 	ProcessSerialNumber psn = {0, kNoProcess};
 	FSRef appRef, foundRef;
-	pid_t pid;
+	AEDesc result;
 	OSStatus err;
 	
 	if (!PyArg_ParseTuple(args, "O&", 
@@ -1116,75 +1121,64 @@ static PyObject *AE_PIDForApplicationPath(PyObject* self, PyObject* args)
 		err = GetProcessBundleLocation(&psn, &foundRef);
 		if (err == noErr && FSCompareFSRefs(&appRef, &foundRef) == noErr) break;
 	}
-	err = GetProcessPID(&psn, &pid);
-	if (err) return AE_MacOSError(err);
-	return Py_BuildValue("i", pid);
+	err = AECreateDesc(typeProcessSerialNumber,
+	                   &psn, sizeof(psn),
+	                   &result);
+	if (err != noErr) return AE_MacOSError(err);
+	return Py_BuildValue("O&",
+	                     AE_AEDesc_New, &result);
 }
 
 
 static PyObject *AE_LaunchApplication(PyObject* self, PyObject* args)
 {
 	FSRef appRef;
-#if !defined(__LP64__)
-	FSSpec appFSS;
-#endif
 	AppleEvent firstEvent;
-	LaunchFlags flags;
-	AEDesc paraDesc;
-	Size paraSize;
-	AppParametersPtr paraData;
+	LSLaunchFlags flags;
 	ProcessSerialNumber psn;
-	LaunchParamBlockRec launchParams;
-	pid_t pid;
-	OSErr err = noErr;
-	
-	if (!PyArg_ParseTuple(args, "O&O&H", 
+	AEDesc result;
+	OSStatus err = noErr;
+
+	if (!PyArg_ParseTuple(args, "O&O&I", 
 						  AE_GetFSRef, &appRef,
 						  AE_AEDesc_Convert, &firstEvent,
 						  &flags))
 		return NULL;
-#if !defined(__LP64__)
-	err = FSGetCatalogInfo(&appRef, kFSCatInfoNone, NULL, NULL, &appFSS, NULL);
-    if (err != noErr) return AE_MacOSError(err);
-#endif
-	err = AECoerceDesc(&firstEvent, typeAppParameters, &paraDesc);
-	paraSize = AEGetDescDataSize(&paraDesc);
-    paraData = (AppParametersPtr)NewPtr(paraSize);
-    if (paraData == NULL) return AE_MacOSError(memFullErr);
-    err = AEGetDescData(&paraDesc, paraData, paraSize);
-    if (err != noErr) return AE_MacOSError(err);
-	launchParams.launchBlockID = extendedBlock;
-	launchParams.launchEPBLength = extendedBlockLen;
-	launchParams.launchFileFlags = 0;
-	launchParams.launchControlFlags = flags;
-#if defined(__LP64__)
-	launchParams.launchAppRef = &appRef;
-#else
-	launchParams.launchAppSpec = &appFSS;
-#endif
-	launchParams.launchAppParameters = paraData;
-	err = LaunchApplication(&launchParams);
+	LSApplicationParameters appParams = {0, flags, &appRef, NULL, NULL, NULL, &firstEvent};
+	err = LSOpenApplication(&appParams, &psn);
+	err = AECreateDesc(typeProcessSerialNumber,
+	                   &psn, sizeof(psn),
+	                   &result);
 	if (err != noErr) return AE_MacOSError(err);
-	psn = launchParams.launchProcessSN;
-	err = GetProcessPID(&psn, &pid);
-	if (err) return AE_MacOSError(err);
-	return Py_BuildValue("i", pid);
+	return Py_BuildValue("O&",
+	                     AE_AEDesc_New, &result);
+}
+
+
+static PyObject *AE_TransformProcessToForegroundApplication(PyObject *_self, PyObject *_args)
+{
+	OSStatus err = 0;
+	ProcessSerialNumber psn = {0, kCurrentProcess};
+	
+	if (!PyArg_ParseTuple(_args, ""))
+		return NULL;
+	err = TransformProcessType(& psn, kProcessTransformToForegroundApplication);
+	if (err != noErr) return AE_MacOSError(err);
+	Py_INCREF(Py_None);
+	return Py_None;
 }
 
 
 // only needed for checking pid exists
 static PyObject *AE_IsValidPID(PyObject *_self, PyObject *_args)
 {
-	OSStatus _err = noErr;
-	int pid;
-	ProcessSerialNumber psn = {0, kNoProcess};
+	int pid, err;
 	
 	if (!PyArg_ParseTuple(_args, "i", &pid))
 		return NULL;
-	_err = GetProcessForPID((pid_t)pid, &psn);
-	return Py_BuildValue("b", (Boolean)(_err != noErr));
+	err = kill((pid_t)pid, 0);
+	return Py_BuildValue("b", (Boolean)(err == 0));
 }
-
 
 
 static PyObject *AE_AddressDescToPath(PyObject *_self, PyObject *_args)
@@ -1320,11 +1314,6 @@ static PyObject *AE_CopyScriptingDefinition(PyObject* self, PyObject* args)
 	char *data;
 	OSAError  err;
 	
-	if (OSACopyScriptingDefinition == NULL) {
-		PyErr_SetString(PyExc_NotImplementedError,
-						"aem.ae.copyscriptingdefinition isn't available in OS X 10.3.");
-		return NULL;
-	}
 	if (!PyArg_ParseTuple(args, "O&", AE_GetFSRef, &fsRef))
 		return NULL;
 	err = OSACopyScriptingDefinition(&fsRef, 0, &sdef);
@@ -1471,6 +1460,9 @@ static PyMethodDef AE_methods[] = {
 		"Gets the coercion handler for a specified descriptor type.")},
 		
 	 
+  	{"stringsforosstatus", (PyCFunction)AE_GetOSStatusStrings, METH_VARARGS, PyDoc_STR(
+		"stringsforosstatus(OSStatus errNum) -> (str errorStr, str commentStr)")},
+	 
   	{"convertpathtourl", (PyCFunction)AE_ConvertPathToURL, METH_VARARGS, PyDoc_STR(
 		"convertpathtourl(utf8 path, CFURLPathStyle style) -> (utf8 url)")},
 	
@@ -1487,14 +1479,18 @@ static PyMethodDef AE_methods[] = {
 		"of these characteristics.")},
 	 
 	
-	{"pidforapplicationpath", AE_PIDForApplicationPath, METH_VARARGS, PyDoc_STR(
-		"pidforapplicationpath(unicode path) -> (pid_t pid)")},
+	{"psnforapplicationpath", AE_PSNDescForApplicationPath, METH_VARARGS, PyDoc_STR(
+		"psnforapplicationpath(unicode path) -> (AEAddressDesc desc)")},
 	
   	{"launchapplication", (PyCFunction)AE_LaunchApplication, METH_VARARGS, PyDoc_STR(
 		"launchapplication(unicode path,\n"
 		"                  AEDesc firstEvent,\n"
 		"                  unsigned short flags)\n"
 		"-> (pid_t pid)")},
+	
+  	{"transformprocesstoforegroundapplication", 
+  		(PyCFunction)AE_TransformProcessToForegroundApplication, METH_VARARGS, PyDoc_STR(
+		"transformprocesstoforegroundapplication() -> None")},
 	
   	{"isvalidpid", (PyCFunction)AE_IsValidPID, METH_VARARGS, PyDoc_STR(
 		"isvalidpid(pid_t pid) -> (Boolean result)")},

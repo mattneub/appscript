@@ -3,7 +3,7 @@
 (C) 2005-2008 HAS
 """
 
-from .ae import newappleevent, MacOSError
+from .ae import newappleevent, stringsforosstatus, MacOSError
 from . import kae
 
 from .aemcodecs import Codecs
@@ -103,13 +103,10 @@ class Event:
 
 
 class EventError(MacOSError):
-	"""Represents an error message returned by application/Apple Event Manager.
+	""" Raised by aem.Event.send() when sending an event fails; contains error information 
+		provided by Apple Event Manager or target application.
 		
 		Notes:
-		
-			- the public 'number' and 'message' attributes are deprecated and will
-				be private in a future release; clients should use errornumber,
-				errormessage properties instead
 			
 			- the 'raw' attribute contains either a dict containing the reply event's 
 				raw parameters, or an empty dict if the error occurred while sending 
@@ -259,7 +256,9 @@ class EventError(MacOSError):
 					message = '%s (%s)' % (message, description)
 					break
 		elif not message:
-			message = self._carbonerrors.get(self._number, 'OS error')
+			message = self._carbonerrors.get(self._number)
+			if not message:
+				message = stringsforosstatus(self._number)[1] or 'OS error'
 		return message
 	errormessage = property(errormessage, 
 			doc="str -- application-supplied/generic error description")

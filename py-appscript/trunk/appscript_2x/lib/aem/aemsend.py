@@ -3,14 +3,12 @@
 (C) 2005-2008 HAS
 """
 
-from ae import newappleevent, MacOSError
+from ae import newappleevent, stringsforosstatus, MacOSError
 import kae
 
 from aemcodecs import Codecs
 
-__all__ = ['Event', 'EventError', 
-	'CommandError' # deprecated; use EventError instead
-]
+__all__ = ['Event', 'EventError']
 
 ######################################################################
 # PRIVATE
@@ -105,14 +103,11 @@ class Event(object):
 
 
 class EventError(MacOSError):
-	"""Represents an error message returned by application/Apple Event Manager.
+	""" Raised by aem.Event.send() when sending an event fails; contains error information 
+		provided by Apple Event Manager or target application.
 		
 		Notes:
 		
-			- the public 'number' and 'message' attributes are deprecated and will
-				be private in a future release; clients should use errornumber,
-				errormessage properties instead
-			
 			- the 'raw' attribute contains either a dict containing the reply event's 
 				raw parameters, or an empty dict if the error occurred while sending 
 				the outgoing event; used by appscript.CommandError; third-parties 
@@ -237,11 +232,6 @@ class EventError(MacOSError):
 		MacOSError.__init__(self, number)
 		self._number, self._message, self._raw = number, '%s' % (message or ''), raw
 	
-	# TO DO: remove deprecated 'number' and 'message' properties
-	# (clients should use errornumber, errormessage instead)
-	number = property(lambda self: self._number)
-	message = property(lambda self: self._message)
-	
 	raw = property(lambda self: self._raw or {}, 
 			doc="dict -- raw error data from reply event, if any (note: clients should not need to use this directly)")
 	
@@ -266,7 +256,9 @@ class EventError(MacOSError):
 					message = '%s (%s)' % (message, description)
 					break
 		elif not message:
-			message = self._carbonerrors.get(self._number, 'OS error')
+			message = self._carbonerrors.get(self._number)
+			if not message:
+				message = stringsforosstatus(self._number)[1] or 'OS error'
 		return message
 	errormessage = property(errormessage, 
 			doc="str -- application-supplied/generic error description")
@@ -287,5 +279,3 @@ class EventError(MacOSError):
 	partialresult = property(lambda self: self._errorinfo(kae.kOSAErrorPartialResult),
 			doc="anything | None -- part of return value constructed before error occurred, if given by application")
 
-
-CommandError = EventError # backwards compatibility; deprecated

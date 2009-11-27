@@ -1,6 +1,6 @@
 """connect - Creates Apple event descriptor records of typeProcessSerialNumber and typeApplicationURL, used to specify the target application in send.Event() constructor.
 
-(C) 2005-2008 HAS
+(C) 2005-2009 HAS
 """
 import struct
 from time import sleep
@@ -16,9 +16,25 @@ __all__ = ['launchapp', 'processexistsforpath', 'processexistsforpid', 'processe
 # PRIVATE
 ######################################################################
 
-_kLaunchContinue = 0x4000
-_kLaunchNoFileFlags = 0x0800
-_kLaunchDontSwitch = 0x0200
+kLSLaunchDefaults = 0x00000001
+kLSLaunchAndPrint = 0x00000002
+kLSLaunchReserved2 = 0x00000004
+kLSLaunchReserved3 = 0x00000008
+kLSLaunchReserved4 = 0x00000010
+kLSLaunchReserved5 = 0x00000020
+kLSLaunchAndDisplayErrors = 0x00000040
+kLSLaunchInhibitBGOnly = 0x00000080
+kLSLaunchDontAddToRecents = 0x00000100
+kLSLaunchDontSwitch = 0x00000200
+kLSLaunchNoParams = 0x00000800
+kLSLaunchAsync = 0x00010000
+kLSLaunchStartClassic = 0x00020000
+kLSLaunchInClassic = 0x00040000
+kLSLaunchNewInstance = 0x00080000
+kLSLaunchAndHide = 0x00100000
+kLSLaunchAndHideOthers = 0x00200000
+kLSLaunchHasUntrustedContents = 0x00400000
+
 
 _kNoProcess = 0
 _kCurrentProcess = 2
@@ -30,10 +46,14 @@ _runevent = Event(_nulladdressdesc, 'aevtoapp').AEM_event
 
 #######
 
-def _launchapplication(path, event):
+def _launchapplication(path, event, newinstance=False, hide=False):
+	flags = kLSLaunchNoParams | kLSLaunchStartClassic | kLSLaunchDontSwitch
+	if newinstance:
+		flags |= kLSLaunchNewInstance
+	if hide:
+		flags |= kLSLaunchAndHide
 	try:
-		return ae.launchapplication(path, event,
-				_kLaunchContinue + _kLaunchNoFileFlags + _kLaunchDontSwitch)
+		return ae.launchapplication(path, event, flags)
 	except ae.MacOSError, err:
 		raise CantLaunchApplicationError(err.args[0], path)
 
@@ -68,8 +88,6 @@ class CantLaunchApplicationError(Exception):
 		self._apppath = apppath
 		Exception.__init__(self, errornumber, apppath)
 	
-	number = property(lambda self: self._number) # deprecated; TO DO: remove
-	
 	errornumber = property(lambda self: self._number, doc="int -- Mac OS error number")
 	
 	apppath = property(lambda self: self._apppath, doc="str -- application path")
@@ -81,20 +99,29 @@ class CantLaunchApplicationError(Exception):
 		return "Can't launch application at %r: %s (%i)" % (self._apppath, self._lserrors.get(self._number, 'OS error'), self._number)
 
 
-def launchapp(path):
-	"""Send a 'launch' event to an application. If application is not already running, it will be launched in background first."""
-	try:
-		# If app is already running, calling ae.launchapplication will send a 'reopen' event, so need to check for this first:
-		pid = ae.pidforapplicationpath(path)
-	except ae.MacOSError, err:
-		if err.args[0] == -600: # Application isn't running, so launch it and send it a 'launch' event:
-			sleep(1)
-			_launchapplication(path, _launchevent)
-		else:
-			raise
-	else: # App is already running, so send it a 'launch' event:
-		ae.newappleevent('ascr', 'noop', localappbypid(pid), kae.kAutoGenerateReturnID, 
-				kae.kAnyTransactionID).send(kae.kAEWaitReply, kae.kAEDefaultTimeout)
+def launchapp(path, newinstance=False, hide=False):
+	"""Send a 'launch' event to an application. If application is not already running, it will be launched in background first.
+		path : string -- full path to application, e.g. '/Applications/TextEdit.app'
+		newinstance : bool -- launch a new application instance?
+		hide : bool -- hide after launch?
+		Result : AEAddressDesc
+	"""
+	if newinstance:
+		desc = _launchapplication(path, _launchevent, newinstance, hide)
+	else:
+		try:
+			# If app is already running, calling ae.launchapplication will send a 'reopen' event, so need to check for this first:
+			desc = ae.psnforapplicationpath(path)
+		except ae.MacOSError, err:
+			if err.args[0] == -600: # Application isn't running, so launch it and send it a 'launch' event:
+				sleep(1)
+				desc = _launchapplication(path, _launchevent, newinstance, hide)
+			else:
+				raise
+		else: # App is already running, so send it a 'launch' event:
+			ae.newappleevent('ascr', 'noop', desc, kae.kAutoGenerateReturnID, 
+					kae.kAnyTransactionID).send(kae.kAEWaitReply, kae.kAEDefaultTimeout)
+	return desc
 
 ##
 
@@ -103,7 +130,7 @@ def processexistsforpath(path):
 		Note: if path is invalid, a MacOSError is raised.
 	"""
 	try:
-		ae.pidforapplicationpath(path)
+		ae.psnforapplicationpath(path)
 		return True
 	except ae.MacOSError, err:
 		if err.args[0] == -600: 
@@ -113,7 +140,7 @@ def processexistsforpath(path):
 
 def processexistsforpid(pid):
 	"""Is there a local application process with the given unix process id?"""
-	return ae.isvalidpid(pid)
+	return bool(ae.isvalidpid(pid))
 
 def processexistsforurl(url):
 	"""Does an application process specified by the given eppc:// URL exist?
@@ -144,21 +171,26 @@ def processexistsfordesc(desc):
 currentapp = ae.newdesc(kae.typeProcessSerialNumber, struct.pack('II', 0, _kCurrentProcess))
 
 
-def localapp(path):
+def localapp(path, newinstance=False, hide=False):
 	"""Make an AEAddressDesc identifying a local application. (Application will be launched if not already running.)
 		path : string -- full path to application, e.g. '/Applications/TextEdit.app'
+		newinstance : bool -- launch a new application instance?
+		hide : bool -- hide after launch?
 		Result : AEAddressDesc
 	"""
 	# Always create AEAddressDesc by process serial number; that way there's no confusion if multiple versions of the same app are running
-	try:
-		pid = ae.pidforapplicationpath(path)
-	except ae.MacOSError, err:
-		if err.args[0] == -600: # Application isn't running, so launch it in background and send it a standard 'run' event.
-			sleep(1)
-			pid = _launchapplication(path, _runevent)
-		else:
-			raise
-	return localappbypid(pid)
+	if newinstance:
+		desc = _launchapplication(path, _runevent, newinstance, hide)
+	else:
+		try:
+			desc = ae.psnforapplicationpath(path)
+		except ae.MacOSError, err:
+			if err.args[0] == -600: # Application isn't running, so launch it in background and send it a standard 'run' event.
+				sleep(1)
+				desc = _launchapplication(path, _runevent, newinstance, hide)
+			else:
+				raise
+	return desc
 
 
 def localappbypid(pid):

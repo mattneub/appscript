@@ -22,9 +22,6 @@ Following will probably be rejected as too hard or not important enough to do:
 	- typeTextStyles
 
 
-- find a way to avoid GUI process starting when running from python2.4/python2.5. Note: certain OS calls automatically upgrade non-GUI processes that are launched from .app bundles to full GUI processes; e.g. Process Manager functions (GetNextProcess, GetProcessBundleLocation, LaunchApplication).
-
-
 - support for default 'open' events (i.e. where aevtodoc event is passed via LaunchApplication)
 
 
@@ -37,9 +34,6 @@ print its == its.eq(True)
 
 
 ============================ appscript ============================
-
-- Allow multiple instances of same application to be launched and/or controlled. (Currently clients can launch new instances themselves, then create Application objects using their PIDs.)
-
 
 ----------------------------------------------------------------------
 Following will probably be rejected as too hard or not important enough to do:
@@ -60,6 +54,9 @@ Following will probably be rejected as too hard or not important enough to do:
 
 
 ============================ osax ============================
+
+----------------------------------------------------------------------
+Following will probably be rejected as too hard or not important enough to do:
 
 - full 64-bit support
 

@@ -65,12 +65,15 @@ class AppData(aem.Codecs):
 	#######
 	# initialiser
 	
-	def __init__(self, aemapplicationclass, constructor, identifier, terms):
+	def __init__(self, aemapplicationclass, constructor, identifier, terms, aemconstructoroptions={}):
 		"""
 			aemapplicationclass : class -- aem.Application or equivalent
 			constructor : str -- indicates how to construct the aem.Application instance ('path', 'pid', 'url', 'aemapp', 'current')
 			identifier : any -- value identifying the target application (its type is dependent on constructor parameter)
-			terms : bool | module | tuple
+			terms : bool | module | tuple -- if True, retrieve terminology from target application dynamically; 
+					if false, use only default terminology; if static glue module or tuple, use terminology from that
+			aemconstructoroptions -- any additional keyword arguments to pass to aemapplicationclass constructor
+					(e.g. newinstance, hide)
 		"""
 		# initialise codecs
 		aem.Codecs.__init__(self)
@@ -91,9 +94,11 @@ class AppData(aem.Codecs):
 		# store parameters for later use
 		self._aemapplicationclass = aemapplicationclass
 		self.constructor, self.identifier = constructor, identifier
+		self.aemconstructoroptions = aemconstructoroptions
 		self._relaunchmode = 'limited'
 		self._terms = terms
 		self._helpagent = None
+		self._isconnected = False
 	
 	
 	#######
@@ -202,6 +207,7 @@ class AppData(aem.Codecs):
 
 	#######
 	
+	isconnected = property(lambda self: self._isconnected)
 	
 	def connect(self):
 		"""Initialises application target and terminology lookup tables.
@@ -215,7 +221,9 @@ class AppData(aem.Codecs):
 		elif self.constructor == 'current':
 			t = self._target = self._aemapplicationclass()
 		else:
-			t = self._target = self._aemapplicationclass(**{self.constructor: self.identifier})
+			kargs = {self.constructor: self.identifier}
+			kargs.update(self.aemconstructoroptions)
+			t = self._target = self._aemapplicationclass(**kargs)
 		# initialise translation tables
 		if self._terms == True: # obtain terminology from application
 			self._terms = terminology.tablesforapp(t)
@@ -230,6 +238,7 @@ class AppData(aem.Codecs):
 		self.typebyname = lambda: d2
 		self.referencebycode = lambda: d3
 		self.referencebyname = lambda: d4
+		self._isconnected = True
 	
 	def target(self):
 		self.connect()
@@ -717,7 +726,8 @@ class Application(Reference):
 	# use in place of the standard version.
 	_Application = aem.Application
 	
-	def __init__(self, name=None, id=None, creator=None, pid=None, url=None, aemapp=None, terms=True):
+	def __init__(self, name=None, id=None, creator=None, pid=None, url=None, aemapp=None, 
+			terms=True, newinstance=False, hide=False):
 		"""
 			app(name=None, id=None, creator=None, pid=None, url=None, terms=True)
 				name : str -- name or path of application, e.g. 'TextEdit', 'TextEdit.app', '/Applications/Textedit.app'
@@ -726,8 +736,15 @@ class Application(Reference):
 				pid : int -- Unix process id, e.g. 955
 				url : str -- eppc:// URL, e.g. eppc://G4.local/TextEdit'
 				aemapp : aem.Application
-				terms : module | bool -- if a module, get terminology from it; if True, get terminology from target application; if False, use built-in terminology only
-    		"""
+				terms : module | bool -- if a module, get terminology from it; if True, get terminology 
+						from target application; if False, use built-in terminology only
+				newinstance : bool -- launch a new application instance?
+				hide : bool -- hide after launch?
+			
+			Notes: 
+			
+			- The newinstance and hide options only apply when specifying application by name, id, or creator.
+		"""
 		if len([i for i in [name, id, creator, pid, url, aemapp] if i]) > 1:
 			raise TypeError('app() received more than one of the following arguments: name, id, creator, pid, url, aemapp')
 		if name:
@@ -750,7 +767,9 @@ class Application(Reference):
 		# will launch TE without it creating any new documents (i.e. app receives 'ascrnoop' as its first event), but:
 		#     te = app('TextEdit'); d = app.documents; te.launch()
 		# will launch TE normally (i.e. app receives 'aevtoapp' as its first event), causing it to open a new, empty window.
-		Reference.__init__(self, AppData(self._Application, constructor, identifier, terms), aem.app)
+		Reference.__init__(self, 
+				AppData(self._Application, constructor, identifier, terms, {'newinstance': newinstance, 'hide': hide}), 
+				aem.app)
 	
 	def AS_newreference(self, ref):
 		"""Create a new appscript reference from an aem reference."""

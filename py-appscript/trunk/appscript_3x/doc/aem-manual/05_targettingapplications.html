@@ -63,14 +63,16 @@
             Result : bool -- Returns false if process doesn't exist, or if
                     access isn't allowed.
 
-        launch(path) -- launch an application in background if not
-                already running, and send it a 'ascrnoop' event
+        launch(path, newinstance=False, hide=False) -- launch an application in
+                background if not already running, and send it a 'ascrnoop' event
             path : str -- path to application, e.g. '/Applications/TextEdit.app'
+            newinstance : bool -- launch a new application instance?
+            hide : bool -- hide after launch?
 
     Methods:
 
         __init__(self, path=None, pid=None, url=None, desc=None,
-                codecs=aem.Codecs())
+                codecs=aem.Codecs(), newinstance=False, hide=False)
             path : string | None -- full path to local application
                     (e.g. '/Applications/TextEdit.app')
             pid : integer | None -- Unix process id for local process
@@ -80,6 +82,10 @@
             desc : AEAddressDesc | None -- AEAddressDesc for application
             codecs : aemtypes.Codecs -- used to convert Python values
                     to AEDescs and back
+            newinstance : bool -- when specifying application by path, 
+                    launch a new application instance?  
+            hide : bool -- when specifying application by path, 
+                    hide after launch? 
 
         event(...) -- construct an Apple event (see next chapter for details)
 
@@ -121,6 +127,8 @@ typeProcessSerialNumber</code></pre>
 <p>See the Apple Event Manager documentation for more information on these addressing modes.</p>
 
 <p>The optional <code>codecs</code> argument can be used to specify the <code>Codecs</code> object to use when packing and unpacking Apple events created by this <code>Application</code> object. If no value is given, aem's standard <code>Codecs</code> object is used. (Clients can also specify <code>Codecs</code> objects for individual events via the <code>event</code> method.)</p>
+
+<p>The optional <code>newinstance</code> argument can be used to launch a new instance of the application, even if another instance is already running. (Caution: OS X applications are usually designed to operate as single instances and may not work correctly/at all if run as multiple instances.)</p>
 
 
 <h3>Launching applications</h3>

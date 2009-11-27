@@ -1,4 +1,4 @@
-#!/usr/local/bin/python
+#!/usr/bin/env python
 
 import unittest, struct, datetime
 import aem, mactypes

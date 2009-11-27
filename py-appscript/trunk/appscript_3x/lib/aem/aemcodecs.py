@@ -3,10 +3,6 @@
 (C) 2005-2008 HAS
 """
 
-# TO DO: Codecs.packstringastype()
-
-# TO DO: what to pack bytes objects as? (typeChar? cRawData???)
-
 import struct, datetime, time
 from codecs import BOM_UTF16_LE, BOM_UTF16_BE
 

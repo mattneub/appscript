@@ -1,11 +1,13 @@
 """aem -- Mid-level wrapper for building and sending Apple events.
 
-(C) 2005-2008 HAS
+(C) 2005-2009 HAS
 """
+
+import struct
 
 import ae, kae, findapp, mactypes, aemconnect
 from aemconnect import CantLaunchApplicationError
-from aemsend import Event, CommandError, EventError, newappleevent, sendappleevent
+from aemsend import Event, EventError, newappleevent, sendappleevent
 from aemcodecs import Codecs
 from aemreference import app, con, its, customroot, Query
 from typewrappers import AETypeBase, AEType, AEEnum, AEProp, AEKey
@@ -16,7 +18,6 @@ __all__ = [
 	'findapp', 'mactypes',
 	'Application',
 	'Event', 'EventError',
-	'CommandError', # deprecated; use EventError instead
 	'CantLaunchApplicationError',
 	'Codecs', 
 	'app', 'con', 'its', 'customroot', 'Query',
@@ -51,24 +52,31 @@ class Application(Query):
 	# at cleanup time, otherwise it may be disposed of before __del__() can use it
 	_transaction = _kAnyTransactionID = kae.kAnyTransactionID
 	
-	def __init__(self, path=None, pid=None, url=None, desc=None, codecs= _defaultcodecs):
+	def __init__(self, path=None, pid=None, url=None, desc=None, 
+			codecs= _defaultcodecs, newinstance=False, hide=False):
 		"""
 			path : str | None -- full path to local application
 			pid : int | None -- Unix process id for local process
 			url : str | None -- url for remote process
 			desc : AEAddressDesc | None -- AEAddressDesc for application
 			codecs : Codecs -- used to convert Python values to AEDescs and vice-versa
+			newinstance : bool -- launch a new application instance?
+			hide : bool -- hide after launch?
 			
 			Notes: 
+			
 				- If no path, pid, url or aedesc is given, target will be 'current application'.
+				
 				- If path is given, application will be launched automatically; if pid, url or 
 					desc is given, user is responsible for ensuring application is running 
 					before sending it any events.
+				
+				- The newinstance and hide options only apply when specifying application
+					by path.
 		"""
-		self._codecs = codecs
-		self._path = path
+		self._path, self._codecs, self._newinstance, self._hide = path, codecs, newinstance, hide
 		if path:
-			self._address = aemconnect.localapp(path)
+			self._address = aemconnect.localapp(path, newinstance, hide)
 			self.AEM_identity = ('path', path)
 		elif pid:
 			self._address = aemconnect.localappbypid(pid)
@@ -93,6 +101,10 @@ class Application(Query):
 			args.append('%s=%r' % self.AEM_identity)
 		if self._codecs != _defaultcodecs:
 			args.append('codecs=%r' % self._codecs)
+		if self._newinstance:
+			args.append('newinstance=%r' % (struct.unpack('II', self._address.data),))
+		if self._hide:
+			args.append('hide=True')
 		modulename = '%s.' % self.__class__.__module__
 		if modulename == 'aem.send.':
 			modulename = 'aem.'
@@ -148,12 +160,20 @@ class Application(Query):
 			will not work even when application is restarted. reconnect() will 
 			update this Application object's AEAddressDesc so it's valid again.
 		
-			Note: this only works for Application objects specified by path, not 
-			by URL or AEDesc. Also, any Event objects created prior to calling 
-			reconnect() will still be invalid.
+			Notes:
+			
+			- This only works for Application objects specified by path, not by
+				URL or AEDesc. Also, any Event objects created prior to calling 
+				reconnect() will still be invalid.
+			
+			- If the Application object was created with newinstance=True, calling
+				reconnect() will launch a new application instance and connect 
+				to that each time it is called. Otherwise it will reconnect to the
+				first existing application instance it finds, and only launches a new
+				instance if none are found.
 		"""
 		if self._path:
-			self._address = aemconnect.localapp(self._path)
+			self._address = aemconnect.localapp(self._path, self._newinstance, self._hide)
 	
 	##
 	

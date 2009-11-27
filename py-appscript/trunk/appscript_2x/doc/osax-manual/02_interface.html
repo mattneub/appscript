@@ -41,9 +41,6 @@ print osax.scriptingadditions()
 # Result: ["Digital Hub Scripting", "StandardAdditions", ...]</code></pre>
 
 
-<p class="hilitebox">Prior to appscript 0.20.0, <code>osax.scriptingadditions</code> was an attribute, not a function.</p>
-
-
 <h3><code>osax.OSAX</code></h3>
 
 <p>The <code>OSAX</code> class represents a single scripting addition and its target application. <code>OSAX</code> is a subclass of appscript's <code>Application</code> class, and its constructor is the same apart from the additional <code>osaxname</code> argument:</p>
@@ -60,8 +57,6 @@ print osax.scriptingadditions()
     url : str -- eppc URL of remote process,
             e.g. 'eppc://G5.local/System%20Events'</code></pre>
 
-
-<p class="hilitebox">Prior to appscript 0.19.0, this class was named <code>osax.ScriptingAddition</code>. That name is deprecated in appscript 0.19.0+, but is still supported for backwards compatibility.</p>
 
 </div>
 

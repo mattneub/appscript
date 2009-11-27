@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3.0
+#!/usr/bin/env python3
 
 import unittest, os, os.path, tempfile
 from aem.ae import MacOSError

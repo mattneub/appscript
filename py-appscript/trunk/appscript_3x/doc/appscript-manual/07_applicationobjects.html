@@ -40,7 +40,8 @@
 
 <p>The arguments to this call are as follows:</p>
 
-<pre><code>app(name=None, id=None, creator=None, pid=None, url=None, terms=None)
+<pre><code>app(name=None, id=None, creator=None, pid=None, url=None, 
+            terms=None, newinstance=False, hide=False)
     name : str -- name or POSIX path of local application
     id : str -- bundle id for a local application
     creator : bytes -- 4-character creator type for a local application
@@ -48,7 +49,11 @@
     url : str -- eppc URL for a remote process
     terms : module | bool -- if a module, get terminology from it;
             if True, get terminology from target application;
-            if False, use built-in terminology only</code></pre>
+            if False, use built-in terminology only
+    newinstance : bool -- when specifying application by name, id or creator,
+            launch a new application instance?  
+    hide : bool -- when specifying application by name, id or creator,
+            hide after launch?</code></pre>
 
 <p>To target an application you must supply at most <em>one</em> of the following arguments:</p>
 
@@ -224,6 +229,12 @@ itunes.relaunchmode = 'always'
 
 
 <p class="hilitebox">There is a known problem with quitting and immediately relaunching an application via appscript, where the relaunch instruction is sent to the application before it has actually quit. This timing issue appears to be the OS's fault; the current workaround for scripts that need to quit and restart applications is to insert a few seconds' delay between the <code>quit</code> and <code>run</code>/<code>launch</code> using the <code>time</code> module's <code>sleep</code> function.</p>
+
+<h4>Launching multiple instances of an application</h4>
+
+<p>The optional <code>newinstance</code> argument can be used to launch a new instance of the application, even if another instance is already running.</p>
+
+<p class="hilitebox">Caution: OS X applications are usually designed to operate as single instances and may not work correctly/at all if run as multiple instances.</p>
 
 
 

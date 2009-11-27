@@ -8,16 +8,14 @@ import os, sys
 
 if sys.version_info >= (3,0):
 	root_dir = 'appscript_3x'
-	packages = []
 else:
 	root_dir = 'appscript_2x'
-	packages =['CarbonX']
 
 
 setup(
 		name = "appscript",
-		version = "0.20.3",
-		description = "Control scriptable Mac OS X applications and scripting additions from Python.",
+		version = "0.21.0",
+		description = "Control scriptable Mac OS X applications from Python.",
 		author = "HAS",
 		author_email='',
 		url='http://appscript.sourceforge.net',
@@ -26,14 +24,14 @@ setup(
 		ext_modules = [
 			Extension('aem.ae',
 				sources=[os.path.join(root_dir, 'ext/ae.c')],
-				extra_compile_args=['-DMAC_OS_X_VERSION_MIN_REQUIRED=MAC_OS_X_VERSION_10_3'],
+				extra_compile_args=['-DMAC_OS_X_VERSION_MIN_REQUIRED=MAC_OS_X_VERSION_10_4'],
 				extra_link_args=[
 						'-framework', 'CoreFoundation', 
 						'-framework', 'ApplicationServices',
 						'-framework', 'Carbon'],
 			),
 		],
-		packages = packages + [
+		packages = [
 			'aem',
 			'appscript',
 		],
