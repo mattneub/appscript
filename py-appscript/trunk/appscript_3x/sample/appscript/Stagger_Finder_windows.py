@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3.0
+#!/usr/bin/env python3
 
 # Rearranges Finder windows diagonally across screen with title bars one above
 # another.

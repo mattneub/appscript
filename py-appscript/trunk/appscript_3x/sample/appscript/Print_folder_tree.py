@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3.0
+#!/usr/bin/env python3
 
 # Prints the sub-folder hierarchy of a given folder as a list of folder names
 # indented according to depth.

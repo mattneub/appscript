@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3.0
+#!/usr/bin/env python3
 
 # Adds a zero-padded line number to every line in the front TextEdit document.
 

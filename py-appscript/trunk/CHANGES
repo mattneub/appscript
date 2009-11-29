@@ -16,9 +16,15 @@
 
 - eliminated GetProcessID, LaunchApplication calls in ae.c as calling these would cause Process Manager to elevate a non-GUI python process to a GUI based one if python interpreter was located in a .app bundle (which it is in a standard framework build). As a result, sending commands to other applications or non-GUI-related osax commands to the current python process should no longer cause a Python.app icon to appear in the Dock. Note that when sending dialog-related OSAX commands to the current python process, the python interpreter can still elevate to GUI status automatically (which is necessary to display dialogs) as long as it is located in a standard Python.app bundle.
 
+- as a consequence of the above changes, processes are now targeted by process serial number, not pid; this should not have any effect on users, however
+
 - added aem.ae.transformprocesstoforegroundapplication(). Note: since the standard python interpreter will automatically upgrade to GUI process as needed, py-osax (unlike rb-osax) does not call this function if a 'No user interaction allowed' (-1713) error occurs while sending a (typically dialog-related) command. Client code that needs to elevate a non-GUI python process to GUI status manually (e.g. if running on a python interpreter that cannot elevate itself automatically) can call this function directly.
 
 - aem.EventError now uses MacErrors.h comment strings as error messages if no custom error message was given and EventError doesn't contain a generic message for the given error code
+
+- added optional 'newinstance' argument to aem and appscript Application constructors, allowing users to launch multiple instances of an application, assuming the application allows this
+
+- added optional 'hide' argument to aem and appscript Application constructors, allowing users to hide an application automatically upon launching it 
 
 - updated tests to work on 10.6
 

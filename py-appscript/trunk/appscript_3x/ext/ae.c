@@ -1459,7 +1459,7 @@ static PyMethodDef AE_methods[] = {
 	
 	{"stringsforosstatus", (PyCFunction)AE_GetOSStatusStrings, METH_VARARGS, PyDoc_STR(
 		"stringsforosstatus(OSStatus errNum) -> (str errorStr, str commentStr)")},
-	  
+	
   	{"convertpathtourl", (PyCFunction)AE_ConvertPathToURL, METH_VARARGS, PyDoc_STR(
 		"convertpathtourl(utf8 path, CFURLPathStyle style) -> (utf8 url)")},
 	

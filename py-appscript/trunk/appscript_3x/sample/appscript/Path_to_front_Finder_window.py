@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3.0
+#!/usr/bin/env python3
 
 # Gets the path to the front Finder window, or to the Desktop folder if
 # no Finder windows are open.

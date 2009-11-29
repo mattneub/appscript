@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3.0
+#!/usr/bin/env python3
 
 # A simple function that gets information on every photo currently selected
 # in iPhoto.

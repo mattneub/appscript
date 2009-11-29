@@ -128,17 +128,17 @@ class TC_appscriptCommands(unittest.TestCase):
 	def test_command_error(self):
 		try:
 			self.f.items[10000].get()
-		except appscript.CommandError, e:
+		except appscript.CommandError as e:
 			self.assertEqual(-1728, int(e))
 			s = [
 				"Command failed:\n\t\tOSERROR: -1728\n\t\tMESSAGE: Can't get reference.\n\t\t"
 					"OFFENDING OBJECT: 10000\n\t\tEXPECTED TYPE: k.file_url\n\t\t"
-					"COMMAND: app(u'/System/Library/CoreServices/Finder.app').items[10000].get()", # 10.6
+					"COMMAND: app('/System/Library/CoreServices/Finder.app').items[10000].get()", # 10.6
 				"Command failed:\n\t\tOSERROR: -1728\n\t\tMESSAGE: Can't get reference.\n\t\t"
-					"OFFENDING OBJECT: app(u'/System/Library/CoreServices/Finder.app').items[10000]\n\t\t"
-					"COMMAND: app(u'/System/Library/CoreServices/Finder.app').items[10000].get()", # 10.5
+					"OFFENDING OBJECT: app('/System/Library/CoreServices/Finder.app').items[10000]\n\t\t"
+					"COMMAND: app('/System/Library/CoreServices/Finder.app').items[10000].get()", # 10.5
 				"Command failed:\n\t\tOSERROR: -1728\n\t\tMESSAGE: Can't get reference.\n\t\t"
-					"COMMAND: app(u'/System/Library/CoreServices/Finder.app').items[10000].get()" # 10.3-4
+					"COMMAND: app('/System/Library/CoreServices/Finder.app').items[10000].get()" # 10.3-4
 				]
 			self.assert_(str(e) in s, '%s not in %s' % (repr(str(e)), s))
 			self.assertEqual(aem.EventError, e.realerror.__class__)

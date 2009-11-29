@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3.0
+#!/usr/bin/env python3
 
 # Compose an outgoing message in Apple's Mail.app.
 

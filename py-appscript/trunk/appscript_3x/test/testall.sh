@@ -3,7 +3,7 @@
 for f in `ls | grep '^test_'`;
 do
 	echo $f
-	/usr/local/bin/python3.1 $f
+	/usr/bin/env python3 $f
 	echo
 	echo
 done

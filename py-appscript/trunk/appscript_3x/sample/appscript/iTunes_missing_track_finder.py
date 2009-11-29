@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3.0
+#!/usr/bin/env python3
 
 # Cleans up iTunes' Library playlist by deleting tracks with missing files.
 

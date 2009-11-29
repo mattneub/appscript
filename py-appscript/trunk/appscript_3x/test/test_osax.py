@@ -20,19 +20,22 @@ class TC_OSAX(unittest.TestCase):
 	
 	def test_2(self):
 		sa = osax.OSAX('Standardadditions', name='Finder')
-		self.assertEqual(65, sa.ASCII_number('A'))
+		sa.activate()
+		self.assertEqual({osax.k.button_returned: '', osax.k.gave_up: True}, sa.display_dialog('test', giving_up_after=1))
 		self.assertEqual(mactypes.Alias("/System/Library/CoreServices/Finder.app/"), sa.path_to(None))
 	
 	
 	def test_3(self):
 		sa = osax.OSAX('Standardadditions', creator=b'MACS')
-		self.assertEqual(65, sa.ASCII_number('A'))
+		sa.activate()
+		self.assertEqual({osax.k.button_returned: '', osax.k.gave_up: True}, sa.display_dialog('test', giving_up_after=1))
 		self.assertEqual(mactypes.Alias("/System/Library/CoreServices/Finder.app/"), sa.path_to(None))
 	
 	
 	def test_4(self):
 		sa = osax.OSAX('Standardadditions', id='com.apple.finder')
-		self.assertEqual(65, sa.ASCII_number('A'))
+		sa.activate()
+		self.assertEqual({osax.k.button_returned: '', osax.k.gave_up: True}, sa.display_dialog('test', giving_up_after=1))
 		self.assertEqual(mactypes.Alias("/System/Library/CoreServices/Finder.app/"), sa.path_to(None))
 	
 	
@@ -43,12 +46,14 @@ class TC_OSAX(unittest.TestCase):
 		pid = int(p.stdout.read())
 		sa = osax.OSAX('Standardadditions', pid=pid)
 		self.assertEqual(mactypes.Alias("/System/Library/CoreServices/Finder.app/"), sa.path_to(None))
-		self.assertEqual(65, sa.ASCII_number('A'))
+		sa.activate()
+		self.assertEqual({osax.k.button_returned: '', osax.k.gave_up: True}, sa.display_dialog('test', giving_up_after=1))
 	
 
 	def test_6(self):
 		sa = osax.OSAX('Standardadditions', aemapp=aem.Application("/System/Library/CoreServices/Finder.app/"))
-		self.assertEqual(65, sa.ASCII_number('A'))
+		sa.activate()
+		self.assertEqual({osax.k.button_returned: '', osax.k.gave_up: True}, sa.display_dialog('test', giving_up_after=1))
 		self.assertEqual(mactypes.Alias("/System/Library/CoreServices/Finder.app/"), sa.path_to(None))
 	
 

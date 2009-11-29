@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3.0
+#!/usr/bin/env python3
 
 # Lists the name and email(s) of every person in Address Book
 # with one or more email addresses.

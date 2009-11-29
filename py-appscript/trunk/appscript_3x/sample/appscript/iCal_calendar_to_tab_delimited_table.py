@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3.0
+#!/usr/bin/env python3
 
 # Outputs an iCal calendar to tab-delimited table listing start and end times,
 # summary and description for each event.
