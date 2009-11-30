@@ -4,9 +4,7 @@ Appscript is packaged using the standard Python Distribution Utilities (a.k.a. D
 
 Setuptools will be used if available, otherwise the setup.py script will revert to distutils.
 
-Building appscript from source requires the gcc compiler (supplied with Apple's Developer Tools). Setuptools is available from <http://cheeseshop.python.org/pypi>. (Note: Python 2.6.3 does not work correctly with setuptools; this and other issues are addressed in 2.6.4.)
-
-Mac OS X 10.6 users: You will need to install the Mac OS X 10.4u SDK (included in the Xcode 3.2 installer) before you can build py-appscript for python.org's Python framework distributions, which are built with the 10.4 SDK. In addition, gcc 4.0, not the default 4.2, must be used to build extensions against the 10.4 SDK (note: Python 2.6.4 will automatically use gcc 4.0 as necessary).
+Building appscript from source requires the gcc compiler (supplied with Apple's Developer Tools). Setuptools is available from <http://cheeseshop.python.org/pypi>. 
 
 Appscript requires Python 2.3 or later and Mac OS X 10.4 or later. (Users who require Mac OS X 10.3.9 support should use appscript 0.20.3.)
 

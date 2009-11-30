@@ -26,6 +26,8 @@
 
 - added optional 'hide' argument to aem and appscript Application constructors, allowing users to hide an application automatically upon launching it 
 
+- fixed bug in appscript_3x help system where help messages would print as bytes objects, not text
+
 - updated tests to work on 10.6
 
 

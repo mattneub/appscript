@@ -292,21 +292,7 @@ class AppData(aem.Codecs):
 	def _inithelpagent(self):
 		try:
 			apppath = aem.findapp.byid(self.kHelpAgentBundleID)
-			asdictionaryisrunning = aem.Application.processexistsforpath(apppath)
-			self._helpagent = aem.Application(apppath)
-			if not asdictionaryisrunning:
-				# tell System Events hide ASDictionary after it's launched (kludgy, but does the job)
-				aem.Application(aem.findapp.byid('com.apple.systemevents')).event('coresetd', {
-						'----': aem.app.elements('prcs').byname('ASDictionary').property('pvis'), 
-						'data': False}).send()
-				self._helpagent.event('AppSHelp', {
-						'Cons': self.constructor,
-						'Iden': self.identifier,
-						'Styl': 'py-appscript',
-						'Flag': '-h',
-						'aRef': None,
-						'CNam': ''
-						}).send()
+			self._helpagent = aem.Application(apppath, hide=True)
 			return True
 		except aem.findapp.ApplicationNotFoundError:
 			self._write("No help available: ASDictionary application not found.")
