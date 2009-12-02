@@ -1,46 +1,32 @@
-"""appscriptsupport -- Provides support for appscript's built-in help system.
+"""appscriptsupport -- Provides support for py-/rb-appscript's built-in help system.
 
 (C) 2004-2009 HAS
 """
 
 from pprint import pprint, pformat
-from sys import stdout
 from StringIO import StringIO
 import textwrap
 
-import aem, appscript
-from aem import kae
-from aemreceive import *
-
+from AppKit import NSUserDefaults
+import aem, appscript, aemreceive
 from osaterminology.dom import aeteparser
 from osaterminology.renderers import textdoc, inheritance, relationships
 
-from appscript import reference, terminology, terminologyparser
-
 from rubyrenderer import RubyRenderer
+
 
 __all__ = ['Help']
 
-from AppKit import NSUserDefaults
 
-if not NSUserDefaults.standardUserDefaults().integerForKey_(u'lineWrap'):
-	NSUserDefaults.standardUserDefaults().setInteger_forKey_(78, u'lineWrap')
-
-#######
+######################################################################
+# PRIVATE
+######################################################################
 # Data renderers
 
 class PythonRenderer:
 	
 	def rendervalue(self, value, prettyprint=False):
 		return prettyprint and pformat(value) or repr(value)
-	
-
-#######
-
-
-######################################################################
-# PRIVATE
-######################################################################
 
 
 ############################
@@ -197,9 +183,10 @@ For example, to print an overview of TextEdit, a description of its make command
 			aetes : list of AEDesc -- list of aetes
 			out : anything -- any file-like object that implements a write(str) method
 		"""
-		aetes = terminology.aetesforapp(appobj.AS_appdata.target())
+		aetes = appscript.terminology.aetesforapp(appobj.AS_appdata.target())
 		appname = appobj.AS_appdata.identifier or u'Current Application'
-		self.terms = aeteparser.parseaetes(aetes, appname, style)
+		self.terms = aeteparser.parseaetes(
+				aetes, appname, style)
 		self.style = style
 		if style == 'rb-appscript':
 			self.datarenderer = RubyRenderer(appobj, aetes)
@@ -209,7 +196,8 @@ For example, to print an overview of TextEdit, a description of its make command
 	
 	def overview(self):
 		print >> self.output, 'Overview:\n'
-		textdoc.IndexRenderer(style=self.style, options=['sort', 'collapse'], out=self.output).draw(self.terms)
+		textdoc.IndexRenderer(
+				style=self.style, options=['sort', 'collapse'], out=self.output).draw(self.terms)
 	
 	def suite(self, suiteName=''):
 		if suiteName:
@@ -223,7 +211,8 @@ For example, to print an overview of TextEdit, a description of its make command
 		else:
 			print >> self.output, 'Summary of all suites:\n'
 			terms = self.terms
-		textdoc.SummaryRenderer(style=self.style, out=self.output).draw(terms)
+		textdoc.SummaryRenderer(
+				style=self.style, out=self.output).draw(terms)
 	
 	def keywords(self):
 		print >> self.output, 'Built-in keywords (type names):\n'
@@ -243,7 +232,8 @@ For example, to print an overview of TextEdit, a description of its make command
 		command = self.terms.commands().byname(name)
 		s = StringIO()
 		print >> s, 'Terminology for %s command\n\nCommand:' % command.name,
-		textdoc.FullRenderer(style=self.style, options=['full'], out=s).draw(command)
+		textdoc.FullRenderer(
+				style=self.style, options=['full'], out=s).draw(command)
 		print >> self.output, s.getvalue()
 	
 	
@@ -251,20 +241,23 @@ For example, to print an overview of TextEdit, a description of its make command
 		klass = self.terms.classes().byname(name).full()
 		s = StringIO()
 		print >> s, 'Terminology for %s class\n\nClass:' % klass.name,
-		textdoc.FullRenderer(style=self.style, options=['full'], out=s).draw(klass)
+		textdoc.FullRenderer(
+				style=self.style, options=['full'], out=s).draw(klass)
 		print >> self.output, s.getvalue()
 	
 	
 	def property(self, p):
 		s = StringIO()
 		print >> s, 'Property:',
-		textdoc.FullRenderer(style=self.style, options=['full'], out=s).draw(p)
+		textdoc.FullRenderer(
+				style=self.style, options=['full'], out=s).draw(p)
 		print >> self.output, s.getvalue()
 	
 	def element(self, e):
 		s = StringIO()
 		print >> s, 'Element:',
-		textdoc.FullRenderer(style=self.style, options=['full'], out=s).draw(e)
+		textdoc.FullRenderer(
+				style=self.style, options=['full'], out=s).draw(e)
 		print >> self.output, s.getvalue()
 	
 	
@@ -275,7 +268,8 @@ For example, to print an overview of TextEdit, a description of its make command
 			print >> self.output, 'Inheritance for %s class\n' % className
 		else:
 			print >> self.output, 'Inheritance for all classes:\n'
-		inheritance.InheritanceGrapher(self.terms, inheritance.TextRenderer(self.output)).draw(className)
+		inheritance.InheritanceGrapher(self.terms,
+				inheritance.TextRenderer(self.output)).draw(className)
 		print >> self.output
 
 
@@ -295,7 +289,8 @@ For example, to print an overview of TextEdit, a description of its make command
 			else:
 				print >> self.output, 'Relationships for application class\n'
 				className = 'application'
-		relationships.RelationshipGrapher(self.terms, relationships.TextRenderer(self.output)).draw(className, 2)
+		relationships.RelationshipGrapher(self.terms, 
+				relationships.TextRenderer(self.output)).draw(className, 2)
 		print >> self.output
 
 	
@@ -317,7 +312,7 @@ For example, to print an overview of TextEdit, a description of its make command
 				raise HelpError('No information available for class/command %r.' % name)
 		else:
 			print >> self.output, 'Description of reference\n'
-			if isinstance(ref, reference.Command):
+			if isinstance(ref, appscript.reference.Command):
 				self.command(ref.AS_name)
 			else:
 				definition = self._resolveRef(ref).propertyOrElement
@@ -344,7 +339,7 @@ For example, to print an overview of TextEdit, a description of its make command
 	
 	
 	def _stateForRef(self, ref, attr=None):
-		if isinstance(ref, reference.Command):
+		if isinstance(ref, appscript.reference.Command):
 			print >> self.output, "Command's state will be displayed when called."
 			return CommandDecorator
 		else: # it's a reference
@@ -487,12 +482,18 @@ def help(constructor, identity, style, flags, aemreference, commandname=''):
 	return s
 
 
-installeventhandler(help,
-		'AppSHelp',
-		('Cons', 'constructor', kae.typeChar),
-		('Iden', 'identity', kae.typeWildCard),
-		('Styl', 'style', kae.typeChar),
-		('Flag', 'flags', kae.typeChar),
-		('aRef', 'aemreference', kae.typeWildCard),
-		('CNam', 'commandname', kae.typeChar)
-		)
+
+
+def init():
+	if not NSUserDefaults.standardUserDefaults().integerForKey_(u'lineWrap'):
+		NSUserDefaults.standardUserDefaults().setInteger_forKey_(78, u'lineWrap')
+
+	aemreceive.installeventhandler(help,
+			'AppSHelp',
+			('Cons', 'constructor', aem.kae.typeChar),
+			('Iden', 'identity', aem.kae.typeWildCard),
+			('Styl', 'style', aem.kae.typeChar),
+			('Flag', 'flags', aem.kae.typeChar),
+			('aRef', 'aemreference', aem.kae.typeWildCard),
+			('CNam', 'commandname', aem.kae.typeChar)
+			)

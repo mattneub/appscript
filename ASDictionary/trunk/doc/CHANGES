@@ -1,5 +1,9 @@
 CHANGES
 
+2009-12-02 -- 0.12.0
+- removed asdict tool
+- fixed problem where ASDictionary would try to send Apple events before main event loop was started, sometimes causing launch to stall
+
 2009-06-14 -- 0.11.3
 - fixed launch-time problem where ASDictionary would try to handle incoming Apple events before main event loop was started [MN/NR]
 - fixed KeyError bug in 'export' Apple event handler

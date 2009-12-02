@@ -1,17 +1,13 @@
-#!/usr/bin/python
+""" rubyrenderer -- Render rb-appscript style references from py-appscript references
 
-import types, datetime, os.path
+(C) 2007-2009 HAS
+"""
+
+import types, datetime
 
 import aem, appscript
-from appscript import mactypes
-from osaterminology import makeidentifier
-
 from osaterminology.tables.tablebuilder import *
 
-#######
-
-_codecs = aem.Codecs()
-_terminology = TerminologyTableBuilder('rb-appscript')
 
 ######################################################################
 # PRIVATE
@@ -23,7 +19,8 @@ kNotNested = -1
 
 
 class _Formatter:
-	def __init__(self, typebycode, referencebycode, root='app', nested=kNotNested, indent=''):
+	def __init__(self, typebycode, referencebycode, root='app', nested=kNotNested, indent='', codecs=None):
+		self._codecs = codecs
 		self._referencebycode = referencebycode
 		self._typebycode = typebycode
 		self._root = root
@@ -40,8 +37,8 @@ class _Formatter:
 				types.ListType: self.formatList,
 				types.DictionaryType: self.formatDict,
 				datetime.datetime: self.formatDatetime,
-				mactypes.Alias: self.formatAlias,
-				mactypes.File: self.formatFile,
+				appscript.mactypes.Alias: self.formatAlias,
+				appscript.mactypes.File: self.formatFile,
 				aem.AEType: self.formatConstant,
 				aem.AEEnum: self.formatConstant,
 				aem.AEProp: self.formatConstant,
@@ -80,7 +77,7 @@ class _Formatter:
 		return '"%s"' % s
 	
 	def formatStr(self, val):
-		return self.formatUnicodeText(_codecs.unpack(_codecs.pack(val).coerce('utxt')))
+		return self.formatUnicodeText(self._codecs.unpack(self._codecs.pack(val).coerce('utxt')))
 	
 	##
 		
@@ -249,7 +246,7 @@ class _Formatter:
 	def format(self, val):
 		if isinstance(val, aem.Query):
 			f = _Formatter(self._typebycode, self._referencebycode, 
-					self._root, self._nested + 1, self._indent)
+					self._root, self._nested + 1, self._indent, self._codecs)
 			val.AEM_resolve(f)
 			return f.result
 		else:
@@ -264,10 +261,16 @@ class _Formatter:
 
 class RubyRenderer:
 	
+	_codecs = _terminology = None
+	
 	def __init__(self, appobj, aetes):
+		if not self._codecs:
+			self.__class__._codecs = aem.Codecs()
+			self.__class__._terminology = TerminologyTableBuilder('rb-appscript')
 		self.appobj = appobj
-		self.typebycode, typebyname, self.referencebycode, referencebyname = _terminology.tablesforaetes(aetes)
-		f = _Formatter(self.typebycode, self.referencebycode)
+		self.typebycode, typebyname, self.referencebycode, referencebyname = \
+				self._terminology.tablesforaetes(aetes)
+		f = _Formatter(self.typebycode, self.referencebycode, codecs=self._codecs)
 		constructor = appobj.AS_appdata.constructor
 		identity = appobj.AS_appdata.identifier
 		if constructor == 'path':
@@ -285,8 +288,8 @@ class RubyRenderer:
 	def rendervalue(self, value, prettyprint=False): 
 		# (note: pretty printing flag ignored; this renderer always pretty prints)
 		desc = self.appobj.AS_appdata.pack(value)
-		value = _codecs.unpack(desc)
-		f = _Formatter(self.typebycode, self.referencebycode, self.root)
+		value = self._codecs.unpack(desc)
+		f = _Formatter(self.typebycode, self.referencebycode, self.root, codecs=self._codecs)
 		return f.format(value)
 
 

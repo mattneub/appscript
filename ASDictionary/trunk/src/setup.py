@@ -26,7 +26,7 @@ from plistlib import Plist
 import os
 
 name = 'ASDictionary'
-version='0.11.3'
+version='0.12.0'
 
 os.system('''
 sdp -fa %s.sdef;

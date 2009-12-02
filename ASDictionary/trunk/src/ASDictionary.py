@@ -3,316 +3,45 @@
 (C) 2007-2009 HAS
 """
 
-__name__ = 'ASDictionary'
-__version__ = '0.11.3'
-
-import os, os.path
+import os
 
 import objc
-from Foundation import NSUserDefaultsDidChangeNotification
+from Foundation import NSUserDefaultsDidChangeNotification, NSBundle
 from AppKit import *
 from PyObjCTools.KeyValueCoding import *
 from PyObjCTools import NibClassBuilder, AppHelper
 
-import osax, appscript, mactypes
-from aem import kae
-import osaterminology.makeglue.objcappscript as objcglue
+import osax, mactypes, aemreceive
+from osaterminology.makeglue.objcappscript import nametoprefix
+
+import appscriptsupport, osaxfinder, dictionaryexporter
+
+
+NibClassBuilder.extractClasses("MainMenu")
 
 
 ######################################################################
-# Initialise support for appscript help system and asdict tool
-
-import appscriptsupport, asdictsupport
-
-
-# Initialise support for read-only 'name' and 'version' properties
-
-from aemreceive import *
+# support for read-only 'name' and 'version' properties # TO DO: use Cocoa Scripting?
 
 class _AEOMApplication:
 	def __init__(self, result):
 		self._result = result
 	
 	def property(self, code):
-		self._result['result'] = unicode({'pnam': __name__, 'vers': __version__}[code])
-
+		key = {'pnam': u'CFBundleDisplayName', 'vers': u'CFBundleShortVersionString'}[code]
+		self._result['result'] = NSBundle.mainBundle().infoDictionary()[key]
 
 class _AEOMResolver:
 	def __init__(self, result):
 		self.app = _AEOMApplication(result)
 
-
-def getd(ref):
+def handle_get(ref):
 	try:
 		result = {}
 		ref.AEM_resolve(_AEOMResolver(result))
 		return result['result']
 	except:
-		raise EventHandlerError(-1728)
-installeventhandler(
-		getd,
-		'coregetd',
-		('----', 'ref', kae.typeObjectSpecifier)
-		)
-
-
-######################################################################
-	
-def namefrompath(path):
-	if path.endswith('/'):
-		path = path[:-1]
-	name = os.path.basename(path)
-	if name.lower().endswith('.app'):
-		name = name[:-4]
-	elif name.lower().endswith('.osax'):
-		name = name[:-5]
-	return name
-		
-######################################################################
-# Main export function
-
-from aem.ae import MacOSError, getappterminology
-from osaterminology.dom import aeteparser
-from osaterminology.renderers import quickdoc, htmldoc, htmldoc2
-from osaterminology.makeidentifier import getconverter
-
-#######
-
-kStyleToSuffix = {
-		'applescript': '-AS',
-		'py-appscript': '-py', 
-		'rb-appscript': '-rb', 
-		'objc-appscript': '-objc',
-}
-
-
-def _makeDestinationFolder(outFolder, styleSubfolderName, formatSubfolderName, fileName):
-	destFolder = os.path.join(outFolder, styleSubfolderName, formatSubfolderName or '')
-	if not os.path.exists(destFolder):
-		os.makedirs(destFolder)
-	return os.path.join(destFolder, fileName)
-
-
-def _export(items, styles, plainText, singleHTML, frameHTML, objcGlue, options, outFolder, exportToSubfolders, progress):
-	styleInfo = [(style, kStyleToSuffix[style]) for style in styles]
-	# process each item
-	for i, item in enumerate(items):
-		objcPrefix, name, path, isOSAX = item['objcPrefix'], item['name'], item['path'], item['isOSAX']
-		progress.nextitem(name, path)
-		try:
-			try:
-				aetes = getappterminology(path)
-			except MacOSError, e:
-				if e.args[0] != -192:
-					raise
-				aetes = []
-			if not bool(aetes):
-				progress.didfail(u"No terminology found.")
-				continue
-			for style, suffix in styleInfo:
-				styleSubfolderName = exportToSubfolders and style or ''
-				if not progress.shouldcontinue():
-					for item in items[i:]:
-						progress.didfail(u"User cancelled.")
-						progress.nextapp(item['name'], item['path'])
-					progress.didfail(u"User cancelled.")
-					progress.didfinish()
-					return
-				if plainText:
-					outputPath = _makeDestinationFolder(outFolder, styleSubfolderName, 
-							exportToSubfolders and 'text', name + suffix + '.txt')
-					progress.nextoutput(u'%s' % outputPath)
-					f = file(outputPath, 'w')
-					try:
-						f.write('\xEF\xBB\xBF') # UTF8 BOM
-						quickdoc.app(path, f, getconverter(style))
-					except:
-						f.close()
-						raise
-					f.close()
-				if singleHTML or frameHTML:
-					terms = aeteparser.parseaetes(aetes, path, style)
-					if singleHTML:
-						outputPath = _makeDestinationFolder(outFolder, styleSubfolderName, 
-								exportToSubfolders and 'html', name + suffix + '.html')
-						progress.nextoutput(u'%s' % outputPath)
-						html = htmldoc.renderdictionary(terms, style, options)
-						f = open(outputPath, 'w')
-						f.write(str(html))
-						f.close()
-					if frameHTML:
-						outputPath = _makeDestinationFolder(outFolder, styleSubfolderName, 
-								exportToSubfolders and 'frame-html', name + suffix)
-						progress.nextoutput(u'%s' % outputPath)
-						htmldoc2.renderdictionary(terms, outputPath, style, options)
-			if objcGlue:
-				outputPath = _makeDestinationFolder(outFolder, exportToSubfolders and 'objc-appscript' or '', 
-							'%s%sGlue' % (exportToSubfolders and 'glues/' or '', objcPrefix), '')
-				if isOSAX:
-					objcglue.makeosaxglue(path, objcPrefix, outputPath, aetes)
-				else:
-					objcglue.makeappglue(path, objcPrefix, outputPath, aetes)
-				progress.nextoutput(u'%s' % outputPath)
-		except Exception, err:
-			from traceback import print_exc
-			from StringIO import StringIO
-			out = StringIO()
-			print_exc(file=out)
-			progress.didfail(u'Unexpected error:/n%s' % out.getvalue())
-		else:
-			progress.didsucceed()
-	return progress.didfinish()
-
-
-######################################################################
-# Install 'export dictionaries' event handler
-
-kPlainText = 'PTex'
-kSingleHTML = 'SHTM'
-kFrameHTML = 'FHTM'
-kObjCGlue = 'OCGl'
-kASStyle = 'AScr'
-kPyStyle = 'PyAp'
-kRbStyle = 'RbAp'
-kObjCStyle = 'OCAp'
-
-kAECodeToStyle = {
-	kASStyle: 'applescript',
-	kPyStyle: 'py-appscript',
-	kRbStyle: 'rb-appscript',
-	kObjCStyle: 'objc-appscript',
-}
-
-class AEProgress:
-
-	kClassKey = AEType('pcls')
-	kClassValue = AEType('ExpR')
-	#kNameKey = AEType('pnam')
-	kSuccessKey = AEType('Succ')
-	kSourceKey = AEType('Sour')
-	kDestKey = AEType('Dest')
-	kErrorKey = AEType('ErrS')
-	kMissingValue = AEType('msng')
-
-	def __init__(self, itemcount, stylecount, formatcount, controller):
-		self._results = []
-
-	def shouldcontinue(self):
-		return True
-		
-	def nextitem(self, name, inpath):
-		self._results.append({
-				self.kClassKey:self.kClassValue,
-				#self.kNameKey:name, 
-				self.kSourceKey:mactypes.File(inpath)})
-	
-	def nextoutput(self, outpath):
-		self._results[-1][self.kDestKey] = mactypes.File(outpath)
-		
-	def didsucceed(self):
-		self._results[-1][self.kSuccessKey] = True
-		self._results[-1][self.kErrorKey] = self.kMissingValue
-		
-	def didfail(self, errormessage):
-		self._results[-1][self.kSuccessKey] = False
-		self._results[-1][self.kDestKey] = self.kMissingValue
-		self._results[-1][self.kErrorKey] = errormessage
-	
-	def didfinish(self):
-		return self._results
-
-
-def exportdictionaries(sources, outfolder, 
-		fileformats=[AEEnum(kFrameHTML)], styles=[AEEnum(kASStyle)],
-		compactclasses=False, showinvisibles=False, usesubfolders=False):
-	items = []
-	for alias in sources:
-		name = namefrompath(alias.path)
-		isosax = alias.path.lower().endswith('.osax')
-		items.append({
-			'objcPrefix': objcglue.nametoprefix(name),
-			'name': name, 
-			'path': alias.path,
-			'isOSAX': isosax,
-			})
-	outfolder = outfolder.path
-	plaintext = AEEnum(kPlainText) in fileformats
-	singlehtml = AEEnum(kSingleHTML) in fileformats
-	framehtml = AEEnum(kFrameHTML) in fileformats
-	isobjcglue = AEEnum(kObjCGlue) in fileformats
-	styles = [kAECodeToStyle[o.code] for o in styles]
-	options = []
-	if compactclasses:
-		options.append('collapse')
-	if showinvisibles:
-		options.append('full')
-	progressobj = AEProgress(len(items), len(styles), len(fileformats), None)
-	return _export(items, styles, plaintext, singlehtml, framehtml, isobjcglue, options, outfolder, usesubfolders, progressobj)
-
-installeventhandler(exportdictionaries,
-		'ASDiExpD',
-		('----', 'sources', ArgListOf(kae.typeAlias)),
-		('ToFo', 'outfolder', kae.typeAlias),
-		('Form', 'fileformats', ArgListOf(ArgEnum(kPlainText, kSingleHTML, kFrameHTML, kObjCGlue))),
-		('Styl', 'styles', ArgListOf(ArgEnum(kASStyle, kPyStyle, kRbStyle, kObjCStyle))),
-		('ClaC', 'compactclasses', kae.typeBoolean),
-		('SInv', 'showinvisibles', kae.typeBoolean),
-		('SubF', 'usesubfolders', kae.typeBoolean))
-
-
-
-######################################################################
-# Import remaining dependencies
-
-
-######################################################################
-
-NibClassBuilder.extractClasses("MainMenu")
-
-userDefaults = NSUserDefaults.standardUserDefaults()
-
-# OS X bug workaround note: 
-# OSATerminology.so functions should not be called before main event loop
-# is started, otherwise it triggers strange behaviour where minimised windows
-# refuse to expand when clicked on in Dock. (This is a Cocoa/Carbon issue.)
-# Since osax.ScriptingAddition constructor calls aem.ae.getappterminology
-# (which in turn calls OSATerminology.OSAGetAppTerminology), it should not be
-# called here (ie. at top level of script).
-#
-# OTOH, appscript uses ascrgdte event to retrieve terminology, so app objects can
-# safely be created and used at top level of script.
-
-_sysev = appscript.app('System Events')
-
-
-######################################################################
-# Functions for locating installed osaxen by name
-
-_osaxcache = None
-
-def _osaxInfo():
-	global _osaxcache
-	if _osaxcache is None:
-		_osaxcache = {}
-		for domain in [_sysev.system_domain, _sysev.local_domain, _sysev.user_domain]:
-			osaxen = domain.scripting_additions_folder.files[appscript.its.visible == True]
-			if osaxen.name.exists():
-				for name, path in zip(osaxen.name(), osaxen.POSIX_path()):
-					if name.lower().endswith('.osax'):
-						name = name[:-5]
-					elif name.lower().endswith('.app'):
-						name = name[:-4]
-					if not _osaxcache.has_key(name.lower()):
-						_osaxcache[name] = path
-	return _osaxcache
-
-def osaxNames():
-	names = _osaxInfo().keys()
-	names.sort(lambda a,b:cmp(a.lower(), b.lower()))
-	return names
-
-def osaxPathForName(name):
-	return _osaxInfo()[name]
+		raise aemreceive.EventHandlerError(-1728)
 
 
 ######################################################################
@@ -322,14 +51,11 @@ class ArrayToBooleanTransformer(NSValueTransformer):
 	def transformedValue_(self, item):
 		return bool(item)
 
-NSValueTransformer.setValueTransformer_forName_(
-		ArrayToBooleanTransformer.alloc().init(), u"ArrayToBoolean")
 
 
 ######################################################################
 # NSApplication delegate, model logic and window controllers
-# Bit unwieldy this; would be good to move log drawer and progress dialog
-# controller logic into their own classes at some point, but it works ok for now.
+# TO DO: refactor this into separate classes
 
 class ASDictionary(NibClassBuilder.AutoBaseClass):
 	# Outlets:
@@ -351,12 +77,20 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 		self._htmlOptionsEnabled = False
 		self._itemName = u''
 		self._progressBar = 0
-		# Connect to StandardAdditions (see note at top of script)
-		self.standardAdditions = osax.ScriptingAddition()
+		NSValueTransformer.setValueTransformer_forName_(
+				ArrayToBooleanTransformer.alloc().init(), u"ArrayToBoolean")
 		return self
-		
+	
+	def applicationDidFinishLaunching_(self, sender):
+		for m in [appscriptsupport, osaxfinder, dictionaryexporter]:
+			m.init()
+		self.standardAdditions = osax.OSAX()
+		aemreceive.installeventhandler(handle_get,'coregetd', 
+				('----', 'ref', aemreceive.kae.typeObjectSpecifier))
+
 	
 	def awakeFromNib(self):
+		userDefaults = NSUserDefaults.standardUserDefaults()
 		NSNotificationCenter.defaultCenter().addObserver_selector_name_object_(
 				self, 'notifyPreferencesChanged:', NSUserDefaultsDidChangeNotification, userDefaults)
 		self._updateLocks()
@@ -370,6 +104,7 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 	
 	
 	def applicationWillTerminate_(self, notification):
+		userDefaults = NSUserDefaults.standardUserDefaults()
 		userDefaults.setObject_forKey_(list(self.logDrawer.contentSize()), u'LogDrawer')
 
 	
@@ -378,6 +113,7 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 	# chosen files list or preferences change
 	
 	def _updateLocks(self):
+		userDefaults = NSUserDefaults.standardUserDefaults()
 		self.setHtmlOptionsEnabled_(userDefaults.boolForKey_(u'singleHTML') or userDefaults.boolForKey_(u'frameHTML'))
 		hasSelectedFiles = bool(self.selectedFiles())
 		willExportDict = self.htmlOptionsEnabled() or userDefaults.boolForKey_(u'plainText')
@@ -481,8 +217,8 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 	# 'Dictionary' menu methods
 	
 	def _addPathToSelectedFiles(self, path, isosax=False):
-		name = namefrompath(path)
-		item = {'objcPrefix': objcglue.nametoprefix(name), 'name': name, 'path': path, 'isOSAX': isosax}
+		name = os.path.splitext(os.path.basename(path.rstrip('/')))[0]
+		item = {'objcPrefix': nametoprefix(name), 'name': name, 'path': path, 'isOSAX': isosax}
 		if item not in self.selectedFiles():
 			self.insertObject_inSelectedFilesAtIndex_(item, self.countOfSelectedFiles())
 		self._updateLocks()
@@ -515,7 +251,9 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 			self._addPathToSelectedFiles(alias.path)
 	
 	def chooseRunningApplications_(self, sender):
-		names = _sysev.application_processes.name()
+		from appscript import app # TO DO: use NSWorkspace
+		sysev = app('System Events')
+		names = sysev.application_processes.name()
 		names.sort(lambda a, b: cmp(a.lower(), b.lower()))
 		selection = self.standardAdditions.choose_from_list(
 				names, 
@@ -524,18 +262,14 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 		if selection == False:
 			return
 		for name in selection:
-			self._addPathToSelectedFiles(_sysev.application_processes[name].file().path)
+			self._addPathToSelectedFiles(sysev.application_processes[name].file().path)
 		
 	
 	def chooseInstalledAdditions_(self, sender):
-		selection = self.standardAdditions.choose_from_list(
-				osaxNames(), 
-				with_prompt='Choose one or more scripting additions:', 
-				multiple_selections_allowed=True)
-		if selection == False:
-			return
-		for name in selection:
-			self._addPathToSelectedFiles(osaxPathForName(name), True)
+		selection = self.standardAdditions.choose_from_list(osaxfinder.names(), 
+				with_prompt='Choose one or more scripting additions:', multiple_selections_allowed=True)
+		for name in selection or []:
+			self._addPathToSelectedFiles(osaxfinder.pathforname(name), True)
 	
 	
 	#######
@@ -549,6 +283,7 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 	
 	
 	def export_(self, sender):
+		userDefaults = NSUserDefaults.standardUserDefaults()
 		try:
 			outFolder = self.standardAdditions.choose_folder('Select the destination folder:').path
 		except osax.CommandError, e:
@@ -574,7 +309,7 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 		selection = self.selectedFiles()[:]
 		selection.sort(lambda a,b:cmp(a['name'].lower(), b['name'].lower()))
 		progressObj = GUIProgress(len(selection), len(styles), len([i for i in [plainText, singleHTML, frameHTML] if i]), self)
-		_export(selection, styles, plainText, singleHTML, frameHTML, objcGlue, options, outFolder, exportToSubfolders, progressObj)
+		dictionaryexporter.export(selection, styles, plainText, singleHTML, frameHTML, objcGlue, options, outFolder, exportToSubfolders, progressObj)
 	
 	
 	def stopProcessing_(self, sender): # cancel button on progress panel
@@ -586,8 +321,7 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 
 
 ######################################################################
-# Main _export method takes an instance of this or AEProgress class, depending on
-# whether it's invoked by GUI or Apple event handler.
+# dictionaryexporter.export() takes GUIProgress instance when invoked from GUI
 
 class GUIProgress:
 
@@ -629,6 +363,7 @@ class GUIProgress:
 		self._appcontroller.writeToLogWindow(u'%s\n\n' % errormessage)
 
 	def didfinish(self):
+		userDefaults = NSUserDefaults.standardUserDefaults()
 		# dispose progress panel
 		self._appcontroller.progressPanel.orderOut_(None)
 		NSApp().endModalSession_(self._session)

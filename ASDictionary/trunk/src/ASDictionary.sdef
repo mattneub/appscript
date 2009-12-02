@@ -4,7 +4,6 @@
 <dictionary title="ASDictionary Terminology">
 
 	<suite name="Required Suite" code="????" description="">
-		<commands>
 
 			<command name="run" code="aevtoapp" description="Run the application."/>
 
@@ -17,7 +16,6 @@
 
 			<command name="quit" code="aevtquit" description="Quit the application."/>
 
-		</commands>
 	</suite>
 
 
@@ -45,6 +43,7 @@
 				<property name="destination" code="Dest" type="file" description="The exported dictionary file/folder if the export succeeded, or 'missing value' if it failed."/>
 				<property name="error message" code="ErrS" type="text" description="An error description if the export failed, or 'missing value' if it succeeded."/>
 			</class>
+
 
 
 

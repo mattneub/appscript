@@ -1,13 +1,8 @@
 TO DO
 
-- add frame-based HTML export, objc-appscript glue options to asdict
-
 - allow users to export dictionaries for remote applications (10.4+ only)
 
 - allow users to import/export sdefs
 
 - full sdef support (see py-appscript's osaterminology package)
 
-- add scripting addition support to asdict's viewer modes
-
-- better objc-appscript support in asdict (requires improvements to appscriptsupport.py)
