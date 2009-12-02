@@ -128,7 +128,7 @@ print textref
 <p>In fact, it really isn't necessary to remember the reference class hierarchy at all, only to know which concrete classes implement which methods. All user-accessible properties and methods are defined by just four superclasses:</p>
 
 <dl>
-<dt><code>BASE</code></dt>
+<dt><code>Query</code></dt>
 <dd>Defines comparison and hashing methods.</dd>
 
 <dt><code>PositionSpecifier</code></dt>
@@ -149,7 +149,7 @@ print textref
 
 <h4>Basic methods</h4>
 
-<pre><code>BASE -- Base class for all reference form and test clause classes.
+<pre><code>Query -- Base class for all reference form and test clause classes.
     __hash__(self) -- aem references can be used as dictionary keys
 
     __eq__(self, value) -- aem references can be compared for equality
@@ -269,7 +269,7 @@ print textref
 
 <h4>Properties and methods for all test clause classes</h4>
 
-<pre><code>Test(BASE) -- represents a comparison/logic test
+<pre><code>Test(Query) -- represents a comparison/logic test
 
     Properties:    
         NOT -&gt; Test -- apply a logical 'not' test to self

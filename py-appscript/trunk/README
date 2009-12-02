@@ -6,7 +6,7 @@ Setuptools will be used if available, otherwise the setup.py script will revert 
 
 Building appscript from source requires the gcc compiler (supplied with Apple's Developer Tools). Setuptools is available from <http://cheeseshop.python.org/pypi>. 
 
-Appscript requires Python 2.3 or later and Mac OS X 10.4 or later. (Users who require Mac OS X 10.3.9 support should use appscript 0.20.3.)
+Appscript requires Python 2.3 or later and Mac OS X 10.4 or later.
 
 This appscript distribution supports both Python 2.x and Python 3.x. Documentation and sample scripts for each can be found under the appscript_2x and appscript_3x directories.
 
@@ -54,7 +54,7 @@ Some options:
 
 	http://appscript.sourceforge.net/tools.html
 
-- ASDictionary 0.11.3 or later is required to use appscript's built-in help() method. If ASDictionary isn't installed, interactive help won't be available but appscript will continue to operate as normal.
+- ASDictionary 0.12.0 or later is required to use appscript's built-in help() method. If ASDictionary isn't installed, interactive help won't be available but appscript will continue to operate as normal.
 
 -------
 
