@@ -70,20 +70,17 @@ static ASBoolean *falseValue;
 @implementation ASFileBase
 
 + (NSURL *)HFSPathToURL:(NSString *)path {
-	NSURL *url;
-	
-	url = (NSURL *)CFURLCreateWithFileSystemPath(NULL,
+	CFURLRef url = CFURLCreateWithFileSystemPath(NULL,
 												 (CFStringRef)path,
 												 kCFURLHFSPathStyle,
 												 0);
-	return [url autorelease];
+	return [(NSURL *)(url ? CFMakeCollectable(url) : nil) autorelease];
 }
 
 + (NSString *)URLToHFSPath:(NSURL *)url {
-	NSString *path;
-	
-	path = (NSString *)CFURLCopyFileSystemPath((CFURLRef)url, kCFURLHFSPathStyle);
-	return [path autorelease];
+	CFStringRef path = CFURLCopyFileSystemPath((CFURLRef)url, 
+											   kCFURLHFSPathStyle);
+	return [(NSString *)(path ? CFMakeCollectable(path) : nil) autorelease];
 }
 
 
@@ -118,7 +115,7 @@ static ASBoolean *falseValue;
 	[super dealloc];
 }
 
-- (unsigned long)hash {
+- (NSUInteger)hash {
 	return [desc hash];
 }
 
@@ -312,8 +309,8 @@ static ASBoolean *falseValue;
 	[super dealloc];
 }
 
-- (unsigned long)hash {
-	return (unsigned long)[self fourCharCode];
+- (NSUInteger)hash {
+	return (NSUInteger)[self fourCharCode];
 }
 
 - (BOOL)isEqual:(id)anObject {
@@ -460,8 +457,8 @@ static ASBoolean *falseValue;
 			[AEMObjectRenderer formatObject: value], [AEMObjectRenderer formatObject: units]];
 }
 
-- (unsigned long)hash {
-	return (unsigned long)([value hash] + [units hash]);
+- (NSUInteger)hash {
+	return (NSUInteger)([value hash] + [units hash]);
 }
 
 - (BOOL)isEqual:(id)anObject {

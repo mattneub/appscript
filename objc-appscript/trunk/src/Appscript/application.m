@@ -188,6 +188,7 @@ error:
 	// Get Apple event data
 	if (firstEvent) {
 		err = AECoerceDesc([firstEvent aeDesc], typeAppParameters, &paraDesc);
+		if (err) goto error;
 		paraSize = AEGetDescDataSize(&paraDesc);
 		paraData = (AppParametersPtr)NewPtr(paraSize);
 		if (!paraData) {
@@ -470,7 +471,7 @@ error:
 	return targetData;
 }
 
-- (unsigned long)hash {
+- (NSUInteger)hash {
 	return [[self description] hash];
 }
 
@@ -533,9 +534,29 @@ error:
 	if (!appleEvent) return nil;
 	err = createProc(classCode, code, [addressDesc aeDesc], returnID, transactionID, appleEvent);
 	if (err) return nil;
-	return [[[eventClass alloc] initWithEvent: appleEvent
-									 codecs: codecs 
-								   sendProc: sendProc] autorelease];
+	// workaround for return ID bug in 10.6
+	DescType typeCode;
+	Size actualSize;
+	SInt32 actualReturnID;
+	if (returnID == kAutoGenerateReturnID) {
+		err = AEGetAttributePtr(appleEvent, 
+								keyReturnIDAttr, 
+								typeSInt32,
+								&typeCode,
+								&actualReturnID,
+								sizeof(actualReturnID),
+								&actualSize);
+		if (err) return nil;
+		if (actualReturnID == -1) {
+			AEDisposeDesc(appleEvent);
+			err = createProc(classCode, code, [addressDesc aeDesc], returnID, transactionID, appleEvent);
+
+			if (err) return nil;
+		}
+	}
+	return [[[eventClass alloc] initWithEvent: appleEvent 
+									   codecs: codecs 
+									 sendProc: sendProc] autorelease];
 }
 
 - (id)eventWithEventClass:(AEEventClass)classCode

@@ -52,7 +52,7 @@
 	[name_ retain];
 	name = name_;
 	code = code_;
-	hash = [name hash] + (unsigned long)code;
+	hash = [name hash] + (NSUInteger)code;
 	return self;
 }
 
@@ -64,7 +64,7 @@
 	return code;
 }
 
-- (unsigned long)hash {
+- (NSUInteger)hash {
 	return hash;
 }
 
@@ -95,7 +95,7 @@
 	if (!self) return self;
 	classCode = classCode_;
 	parameters = [[NSMutableSet alloc] init];
-	hash = (unsigned long)classCode + (unsigned long)code;
+	hash = (NSUInteger)classCode + (NSUInteger)code;
 	return self;
 }
 
@@ -120,7 +120,7 @@
 	return (NSSet *)parameters;
 }
 
-- (unsigned long)hash {
+- (NSUInteger)hash {
 	return hash;
 }
 
@@ -434,6 +434,7 @@
 }
 
 - (ASAETEParser *)parse:(id)aetes {
+	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	NSEnumerator *enumerator;
 	NSString *code;
 	int i;
@@ -446,8 +447,11 @@
 	} else if ([aetes isKindOfClass: [NSArray class]]) {
 		for (i = 0; i < [aetes count]; i++)
 			[self parseAETEDescriptor: [aetes objectAtIndex: i]];
-	} else
-		return nil; // TO DO: exception?
+	} else {
+		[pool drain];
+		[NSException raise: @"Bad aete" 
+					format: @"Not an AETE descriptor or AEList/NSArray of AETE descriptors: %@", aetes];
+	}
 	/* singular names are normally used in the classes table and plural names in the elements table. However, if an aete defines a singular name but not a plural name then the missing plural name is substituted with the singular name; and vice-versa if there's no singular equivalent for a plural name.
 	*/
 	enumerator = [foundClassCodes objectEnumerator];
@@ -468,6 +472,7 @@
 			[classes addObject: [classAndElementDefsByCode objectForKey: code]];
 		}
 	}
+	[pool drain];
 	return self;
 }
 

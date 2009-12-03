@@ -41,7 +41,7 @@
 			&& [AS_aemReference isEqual: [object AS_aemReference]]); 
 }
 
-- (unsigned long)hash {
+- (NSUInteger)hash {
 	return ([[AS_appData target] hash] + [AS_aemReference hash]);
 }
 

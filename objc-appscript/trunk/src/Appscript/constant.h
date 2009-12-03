@@ -15,7 +15,7 @@
 	NSAppleEventDescriptor *desc;
 }
 
-+ (id)constantWithName:(NSString *)name_ type:(DescType)type_ code:(OSType)code_;
++ (id)constantWithName:(NSString *)name_ type:(DescType)type_ code:(OSType)code_ NS_RETURNS_RETAINED;
 + (id)constantWithCode:(OSType)code_;
 
 - (id)initWithName: (NSString *)name_ descriptor:(NSAppleEventDescriptor *)desc_;

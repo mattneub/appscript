@@ -602,7 +602,7 @@
 	NSAppleEventDescriptor *key;
 	AEMDeferredSpecifier *container;
 	AEMUnkeyedElementsShim *shim;
-	id ref;
+	id ref = nil;
 	
 	if (disableCache)
 		return [self fullyUnpackObjectSpecifier: desc];

@@ -27,7 +27,7 @@
 }
 
 
-- (unsigned long)hash {
+- (NSUInteger)hash {
 	if (!cachedHash)
 		cachedHash = [[self description] hash];
 	return cachedHash;

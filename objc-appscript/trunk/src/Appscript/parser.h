@@ -65,7 +65,7 @@
 
 - (unsigned short)integer;
 - (OSType)word;
-- (NSString *)name;
+- (NSString *)name NS_RETURNS_RETAINED;
 
 - (void)parseCommand;
 - (void)parseClass;

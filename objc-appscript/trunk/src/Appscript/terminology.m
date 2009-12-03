@@ -7,6 +7,7 @@
 
 #import "terminology.h"
 
+// TO DO: add autorelease pool?
 
 // TO DO: cache converted names here
 
@@ -175,7 +176,6 @@
 	ASParserDef *parserDef;
 	NSString *name, *convertedName;
 	OSType code;
-	AEMType *codeObj;
 	NSAppleEventDescriptor *desc;
 	NSDictionary *defaultTypeByName;
 	unsigned len, i;
@@ -199,9 +199,7 @@
 		if (desc && [desc typeCodeValue] != code)
 			name = [converter escape: name];
 		// add item
-		codeObj = [AEMType typeWithCode: code]; // OSType is UInt32
-		[typeByCode setObject: name forKey: codeObj];
-		[codeObj release];
+		[typeByCode setObject: name forKey: [AEMType typeWithCode: code]]; // OSType is UInt32
 		// add a definition to typeByCode table
 		// to handle synonyms, if same name appears more than once then use code from first definition in list
 		parserDef = [definitions objectAtIndex: (len - 1 - i)];
@@ -232,7 +230,6 @@
 						   codeTable:(NSMutableDictionary *)codeTable {
 	ASParserDef *parserDef;
 	NSString *name, *convertedName;
-	AEMType *codeObj;
 	unsigned len, i;
 	
 	len = [definitions count];
@@ -247,9 +244,7 @@
 			[keywordCache setObject: convertedName forKey: name];
 		}
 		name = convertedName;
-		codeObj = [AEMType typeWithCode: [parserDef fourCharCode]];
-		[codeTable setObject: name forKey: codeObj];
-		[codeObj release];
+		[codeTable setObject: name forKey: [AEMType typeWithCode: [parserDef fourCharCode]]];
 		// add a definition to the byName table
 		// to handle synonyms, if same name appears more than once then use code from first definition in list
 		parserDef = [definitions objectAtIndex: (len - 1 - i)];
@@ -260,9 +255,7 @@
 			[keywordCache setObject: convertedName forKey: name];
 		}
 		name = convertedName;
-		codeObj = [AEMType typeWithCode: [parserDef fourCharCode]];
-		[nameTable setObject: codeObj forKey: name];
-		[codeObj release];
+		[nameTable setObject: [AEMType typeWithCode: [parserDef fourCharCode]] forKey: name];
 	}
 }
 

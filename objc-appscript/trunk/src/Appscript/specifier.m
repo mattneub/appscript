@@ -827,7 +827,7 @@ void disposeSpecifierModule(void) {
 			|| [startReference isKindOfClass: [NSAppleEventDescriptor class]] 
 			&& [startReference descriptorType] == typeObjectSpecifier)
 		startReference_ = startReference;
-	if ([startReference isKindOfClass: [NSString class]])
+	else if ([startReference isKindOfClass: [NSString class]])
 		startReference_ = [[AEMCon elements: wantCode] byName: startReference];
 	else
 		startReference_ = [[AEMCon elements: wantCode] byIndex: startReference];
@@ -835,7 +835,7 @@ void disposeSpecifierModule(void) {
 			|| [stopReference isKindOfClass: [NSAppleEventDescriptor class]] 
 			&& [stopReference descriptorType] == typeObjectSpecifier)
 		stopReference_ = stopReference;
-	if ([stopReference isKindOfClass: [NSString class]])
+	else if ([stopReference isKindOfClass: [NSString class]])
 		stopReference_ = [[AEMCon elements: wantCode] byName: stopReference];
 	else
 		stopReference_ = [[AEMCon elements: wantCode] byIndex: stopReference];
@@ -1025,9 +1025,9 @@ void disposeSpecifierModule(void) {
 	if (!root) {
 		if (!specifierModulesAreInitialized) initSpecifierModule();
 		root = [[AEMCurrentContainerRoot alloc] initWithContainer: nil key: nil wantCode: '????'];
-		[root setCachedDesc: [[NSAppleEventDescriptor alloc] initWithDescriptorType: typeCurrentContainer
+		[root setCachedDesc: [[[NSAppleEventDescriptor alloc] initWithDescriptorType: typeCurrentContainer
 																			  bytes: NULL
-																			 length: 0]];
+																			 length: 0] autorelease]];
 	}
 	return root;
 }
@@ -1051,9 +1051,9 @@ void disposeSpecifierModule(void) {
 	if (!root) {
 		if (!specifierModulesAreInitialized) initSpecifierModule();
 		root = [[AEMObjectBeingExaminedRoot alloc] initWithContainer: nil key: nil wantCode: '????'];
-		[root setCachedDesc: [[NSAppleEventDescriptor alloc] initWithDescriptorType: typeObjectBeingExamined
+		[root setCachedDesc: [[[NSAppleEventDescriptor alloc] initWithDescriptorType: typeObjectBeingExamined
 																			  bytes: NULL
-																			 length: 0]];
+																			 length: 0] autorelease]];
 	}
 	return root;
 }
@@ -1073,7 +1073,7 @@ void disposeSpecifierModule(void) {
 
 + (AEMCustomRoot *)customRootWithObject:(id)rootObject_ {
 	if (!specifierModulesAreInitialized) initSpecifierModule();
-	return [[self alloc] initWithObject: rootObject_];
+	return [[[self alloc] initWithObject: rootObject_] autorelease];
 }
 
 - (id)initWithObject:(id)rootObject_ {
