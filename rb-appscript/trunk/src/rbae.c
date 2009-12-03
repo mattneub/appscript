@@ -177,20 +177,43 @@ rbAE_AEDesc_newList(VALUE class, VALUE isRecord)
 
 
 static VALUE
-rbAE_AEDesc_newAppleEvent(VALUE class, VALUE eventClass, VALUE eventID, 
-		VALUE target, VALUE returnID, VALUE transactionID)
+rbAE_AEDesc_newAppleEvent(VALUE class, VALUE eventClassValue, VALUE eventIDValue, 
+		VALUE targetValue, VALUE returnIDValue, VALUE transactionIDValue)
 {
 	OSErr err = noErr;
-	AEDesc desc;
+	AEEventClass theAEEventClass = rbStringToDescType(eventClassValue);
+	AEEventID theAEEventID = rbStringToDescType(eventIDValue);
+	AEAddressDesc target = AEDESC_OF(targetValue);
+	AEReturnID returnID = NUM2INT(returnIDValue);
+	AETransactionID transactionID = NUM2LONG(transactionIDValue); // TO DO: check 64-bit
+	AppleEvent result;
 	
-	err = AECreateAppleEvent(rbStringToDescType(eventClass), 
-							 rbStringToDescType(eventID),
-							 &(AEDESC_OF(target)),
-							 NUM2INT(returnID), 
-							 NUM2LONG(transactionID),
-							 &desc);
+	err = AECreateAppleEvent(theAEEventClass, 
+							 theAEEventID,
+							 &target,
+							 returnID, 
+							 transactionID,
+							 &result);
 	if (err != noErr) rbAE_raiseMacOSError("Can't create AppleEvent.", err);
-	return rbAE_wrapAEDesc(&desc);
+	// workaround for return ID bug in 10.6
+	AEDesc returnIDDesc;
+	if (returnID == kAutoGenerateReturnID) {
+		err = AEGetAttributeDesc(&result, keyReturnIDAttr, typeSInt16, &returnIDDesc);
+		if (err != noErr) rbAE_raiseMacOSError("Can't create AppleEvent.", err);
+		err = AEGetDescData(&returnIDDesc, &returnID, sizeof(returnID));
+		if (err != noErr) rbAE_raiseMacOSError("Can't create AppleEvent.", err);
+		if (returnID == -1) {
+			AEDisposeDesc(&result);
+			err = AECreateAppleEvent(theAEEventClass,
+						  theAEEventID,
+						  &target,
+						  returnID,
+						  transactionID,
+						  &result);
+			if (err != noErr) rbAE_raiseMacOSError("Can't create AppleEvent.", err);
+		}
+	}
+	return rbAE_wrapAEDesc(&result);
 }
 
 
