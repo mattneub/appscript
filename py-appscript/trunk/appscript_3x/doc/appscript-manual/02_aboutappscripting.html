@@ -202,12 +202,12 @@ app('TextEdit').documents[1].text.paragraphs</code></pre>
 
 <p>The <code>aem</code> package is largely intended for use by higher-level libraries and developers, though may also be used by end-users in cases where an application lacks terminology, or bugs within its terminology prevent its use by appscript.</p>
 
-<p>The <code>appscript</code> package is intended for use by both developers and end-users, though developers may prefer aem for certain tasks as appscript doesn't expose all aspects of the aem API (such as the ability to do asynchronous messaging) and terminology translation imposes additional overheads and dependencies on client code.</p>
+<p>The <code>appscript</code> package is intended for use by both developers and end-users, though developers may prefer AEM for certain tasks as appscript doesn't expose all aspects of the AEM API (such as the ability to do asynchronous messaging) and terminology translation imposes additional overheads and dependencies on client code.</p>
 
 <p>For example, to set the size of the first character of every non-empty paragraph in every document of TextEdit to 24 pt:</p>
 
 <ul>
-<li>using aem:
+<li>using AEM:
 
 <pre><code>Application('/Applications/TextEdit.app').event(b'coregetd', {
     b'----': app.elements(b'docu').property(b'ctxt').elements(b'cpar').byfilter(

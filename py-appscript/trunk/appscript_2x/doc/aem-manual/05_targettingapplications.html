@@ -111,9 +111,9 @@
 
 <p>When creating a new <code>Application</code> object, at most only one of the following arguments should be given: <code>path</code>, <code>pid</code>, <code>url</code> or <code>desc</code>. If none are given, the current application (host process) is targetted.</p>
 
-<p>When targetting a local application by path, the full path to the application (or application bundle) must be given, including a <code>.app</code> suffix if present. Note that aem identifies local applications by process serial number for reliability. If the target application is not already running when a new <code>Application</code> instance is created, it will be started automatically so that a PSN can be acquired. If the application can't be launched for some reason (e.g. if it's in the Trash), an <code>aem.CantLaunchApplicationError</code> error will be raised.</p>
+<p>When targetting a local application by path, the full path to the application (or application bundle) must be given, including a <code>.app</code> suffix if present. Note that AEM identifies local applications by process serial number for reliability. If the target application is not already running when a new <code>Application</code> instance is created, it will be started automatically so that a PSN can be acquired. If the application can't be launched for some reason (e.g. if it's in the Trash), an <code>aem.CantLaunchApplicationError</code> error will be raised.</p>
 
-<p>If the <code>url</code> argument is used, it should contain an eppc URL string. Aem will pack this as an <code>AEDesc</code> of <code>typeApplSignature</code>. The target machine must have Remote Apple Events enabled in its Sharing preferences.</p>
+<p>If the <code>url</code> argument is used, it should contain an eppc URL string. AEM will pack this as an <code>AEDesc</code> of <code>typeApplSignature</code>. The target machine must have Remote Apple Events enabled in its Sharing preferences.</p>
 
 <p>Clients can also supply their own <code>AEAddressDesc</code> if they prefer. This should be a <code>aem.ae.AEDesc</code> of one of the following types:</p>
 
@@ -126,7 +126,7 @@ typeProcessSerialNumber</code></pre>
 
 <p>See the Apple Event Manager documentation for more information on these addressing modes.</p>
 
-<p>The optional <code>codecs</code> argument can be used to specify the <code>Codecs</code> object to use when packing and unpacking Apple events created by this <code>Application</code> object. If no value is given, aem's standard <code>Codecs</code> object is used. (Clients can also specify <code>Codecs</code> objects for individual events via the <code>event</code> method.)</p>
+<p>The optional <code>codecs</code> argument can be used to specify the <code>Codecs</code> object to use when packing and unpacking Apple events created by this <code>Application</code> object. If no value is given, AEM's standard <code>Codecs</code> object is used. (Clients can also specify <code>Codecs</code> objects for individual events via the <code>event</code> method.)</p>
 
 <p>The optional <code>newinstance</code> argument can be used to launch a new instance of the application, even if another instance is already running. (Caution: OS X applications are usually designed to operate as single instances and may not work correctly/at all if run as multiple instances.)</p>
 
@@ -142,12 +142,12 @@ typeProcessSerialNumber</code></pre>
 
 <p>Note that during a transaction, sending the application an event not created during that transaction will cause an error. Similarly, sending the application an event created during a transaction after that transaction has ended will cause an error.</p>
 
-<p>The <code>endtransaction</code> method must be called to close both successful and failed transactions on completion. If a transaction session is accidentally left open, aem will attempt to close it when the <code>Application</code> object's <code>__del__</code> method is called, although this cannot be guaranteed to succeed.</p>
+<p>The <code>endtransaction</code> method must be called to close both successful and failed transactions on completion. If a transaction session is accidentally left open, AEM will attempt to close it when the <code>Application</code> object's <code>__del__</code> method is called, although this cannot be guaranteed to succeed.</p>
 
 
 <h3>Reconnecting to local applications</h3>
 
-<p>Because local applications are identified by process serial number, an existing <code>Application</code> object created using the <code>path</code> argument will no longer hold a valid <code>AEAddressDesc</code> if the target application quits. Sending events to an invalid address will cause a <code>EventError</code> -600 ("application isn't running") or -609 ("connection is invalid") to be raised.</p>
+<p>Because local applications are identified by process serial number, an existing <code>Application</code> object created using the <code>path</code> argument will no longer hold a valid <code>AEAddressDesc</code> if the target application quits. Sending events to an invalid address will cause an <code>EventError</code> -600 ("application isn't running") or -609 ("connection is invalid") to be raised.</p>
 
 <p>The <code>isrunning</code> static method can be used to check if a local application is running or not, given its full path.</p>
 

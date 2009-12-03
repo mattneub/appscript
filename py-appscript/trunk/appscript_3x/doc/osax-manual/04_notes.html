@@ -30,10 +30,6 @@
 
 <h2>4. Notes</h2>
 
-<h3>GUI interaction</h3>
-
-<p>Note that <code>pythonw</code> is not needed when when using Python 2.4 or later, as newer versions of the <code>python</code> interpreter can automatically connect to the Window Manager.</p>
-
 
 <h3>Event loops</h3>
 
@@ -42,9 +38,11 @@
 
 <h3>64-bit limitations</h3>
 
-<p>The <code>osax</code> module currently only supports dynamic retrieval of scripting addition terminology when running in 32-bit processes. As a partial workaround, the <code>osax</code> module includes static terminology for Mac OS X 10.6's Standard Additions scripting addition, allowing 64-bit Python processes to use Standard Additions as normal.</p>
+<p>The <code>osax</code> module only supports dynamic retrieval of scripting addition terminology when running in 32-bit processes.</p>
 
-<p>Other scripting additions can be used in 64-bit processes (assuming the additions themselves are 64-bit aware) as long as you supply the <code>OSAX.__init__</code> constructor with static terminology for that addition. To do this, first call the <code>appscript.terminology</code> module's <code>dump</code> function, passing it two arguments: the path to the scripting addition, and the path to the 'glue' module to be created. For example:</p>
+<p>The <code>osax</code> module includes static terminology for Mac OS X 10.6's Standard Additions scripting addition, allowing 64-bit Python processes to use Standard Additions as normal. Other scripting additions can be used in 64-bit processes (assuming the additions themselves are 64-bit aware) as long as you supply the <code>OSAX.__init__</code> constructor with static terminology for that addition.</p>
+
+<p>To do this, first call the <code>appscript.terminology</code> module's <code>dump</code> function, passing it two arguments: the path to the scripting addition, and the path to the 'glue' module to be created. For example:</p>
 
 <pre><code>#!/usr/bin/arch -i386 <var>/Library/Frameworks/Python.framework/Versions/3.1/bin/python3.1</var>
 
@@ -53,7 +51,7 @@ from appscript import terminology
 terminology.dump(<var>'/Library/ScriptingAdditions/Foo.osax'</var>, 
     <var>'/Library/Frameworks/Python.framework/Versions/3.1/lib/python3.1/site-packages/fooglue.py'</var>)</code></pre>
 
-<p>Once you have created a glue module and placed it on Python's module search path, import it into your script and use it as the <code>terms</code> argument to <code>OSAX.__init__</code>, like this:
+<p>Once you have created a glue module and placed it on Python's module search path, import it into your script and use it as the <code>terms</code> argument to the <code>OSAX.__init__</code> constructor, like this:
 
 <pre><code>import osax, <var>fooglue</var>
 

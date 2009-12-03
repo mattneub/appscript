@@ -167,8 +167,6 @@ set(reference, to) -- Set an object's data.
 
 <p>When you create an <code>app</code> object by application name, bundle id or creator type, appscript uses LaunchServices to locate an application matching that description. If you have more than one copy of the same application installed, you can identify the one you want by providing its full path, otherwise LaunchServices will identify the newest copy for you.</p>
 
-<p>Appscript identifies running applications by their process ids so it's possible to control multiple versions of an application running at the same time if their Application objects are created using process ids or eppc URLs.</p>
-
 
 <h4>Checking if an application is running</h4>
 
@@ -202,7 +200,7 @@ te.launch()
 
 <h4>Restarting applications</h4>
 
-<p>As soon as you start to construct a reference or command using a newly created <code>app</code> objects, if the application is not already running then appscript will automatically launch it in order to obtain its terminology. (In earlier versions of appscript, the application was launched as soon as the <code>app</code> object was created, but this behaviour has been modified to give scripts the opportunity to launch it using the <code>launch</code> command instead.)</p>
+<p>As soon as you start to construct a reference or command using a newly created <code>app</code> objects, if the application is not already running then appscript will automatically launch it in order to obtain its terminology.</p>
 
 <p>If the target application has stopped running since the <code>app</code> object was created, trying to send it a command using that <code>app</code> object will normally result in an invalid connection error (-609), unless that command is <code>run</code> or <code>launch</code>. This restriction prevents appscript accidentally restarting an application that has unexpectedly quit while a script is controlling it. Scripts can restart an application by sending an explicit <code>run</code> or <code>launch</code> command, or by creating a new <code>app</code> object for it.</p>
 
@@ -225,7 +223,7 @@ te.launch()
 itunes.relaunchmode = 'always'
 # rest of code goes here...</code></pre>
 
-<p>Note that you can use <code>app</code> objects to control applications that have been quit <em>and restarted</em> since the <code>app</code> object was created. Appscript will automatically update the <code>app</code> object's process id information as needed, as long as the application is running at the time.</p>
+<p>Note that you can use <code>app</code> objects to control applications that have been quit <em>and restarted</em> since the <code>app</code> object was created. Appscript will automatically update the <code>app</code> object's process serial number information as needed, as long as the application is running at the time.</p>
 
 
 <p class="hilitebox">There is a known problem with quitting and immediately relaunching an application via appscript, where the relaunch instruction is sent to the application before it has actually quit. This timing issue appears to be the OS's fault; the current workaround for scripts that need to quit and restart applications is to insert a few seconds' delay between the <code>quit</code> and <code>run</code>/<code>launch</code> using the <code>time</code> module's <code>sleep</code> function.</p>

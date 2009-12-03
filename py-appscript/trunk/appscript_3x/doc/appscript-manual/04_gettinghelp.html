@@ -31,7 +31,7 @@
 
 <h2>4. Getting help</h2>
 
-<p>When developing appscript-based scripts, there are several ways to get information about applications' scripting interfaces: the ASDictionary application, appscript's powerful built-in <code>help</code> method.</p>
+<p>When developing appscript-based scripts, there are several related tools that can assist you: the ASDictionary application, appscript's powerful built-in <code>help</code> method, and the ASTranslate application.</p>
 
 
 <h3>ASDictionary</h3>
@@ -44,7 +44,7 @@
 <p>Appscript's <code>Application</code> and <code>Reference</code> classes include a powerful interactive help system that allows you to explore applications' scripting interfaces in the Python interpreter while you work. The <code>help</code> method can provide information on any suite, class, command or reference, and display the inheritance and relationships for a selected class or the entire application.</p>
 
 
-<div class="hilitebox">Note that py-appscript's built-in help system is only available when ASDictionary 0.9.0 or later is installed. If ASDictionary isn't available or is too old, invoking <code>help</code> will simply result in a "No help available" message and the script will continue to run as normal.</div>
+<div class="hilitebox">Note that py-appscript's built-in help system is only available when ASDictionary 0.12.0 or later is installed. If ASDictionary isn't available or is too old, invoking <code>help</code> will simply result in a "No help available" message and the script will continue to run as normal.</div>
 
 
 <p>Built-in help is invoked by calling an <code>app</code> object's <code>help</code> method, optionally passing it a string indicating the type of information you want. The resulting help message is printed to <code>stderr</code> and script execution continues as normal. For example, to view the help system's own help, call the <code>help</code> method with <code>'-h'</code> as its argument:</p>

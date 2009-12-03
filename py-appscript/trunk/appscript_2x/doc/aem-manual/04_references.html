@@ -49,7 +49,7 @@
 <dd>selector data (e.g. in a by-name specifier, this would be a string)</dd>
 </dl>
 
-<p>The Apple Event Manager (and, in turn, the <code>aem.ae</code> extension) provides several ways to construct object specifiers and assemble them into a complete reference, but these are all rather verbose and low-level. Aem hides all these details behind an object-oriented wrapper that uses chained property and method calls to gather the data needed to create object specifiers and assemble them into linked lists.</p>
+<p>The Apple Event Manager (and, in turn, the <code>aem.ae</code> extension) provides several ways to construct object specifiers and assemble them into a complete reference, but these are all rather verbose and low-level. AEM hides all these details behind an object-oriented wrapper that uses chained property and method calls to gather the data needed to create object specifiers and assemble them into linked lists.</p>
 
 <p>For example, consider the reference <code>text of document 1</code>. The code for constructing this reference using the low-level <code>aem.ae</code> bridge would be:</p>
 
@@ -72,15 +72,15 @@ print textref
 
 <p>This code works by creating an AEDesc of <code>typeObjectSpecifier</code> to represent each specifier and populating its fields one at a time. Each AEDesc is nested within the next to form a linked list of object specifier records; the last (innermost) descriptor in the finished list indicates the reference's root object in the AEOM (in this case, the <code>application</code> object, which is represented by a null descriptor).</p>
 
-<p>Now, compare the above with the aem equivalent:</p>
+<p>Now, compare the above with the AEM equivalent:</p>
 
 <pre><code>app.elements('docu').byindex(1).property('ctxt')</code></pre>
 
-<p>As you can see, aem still uses low-level four-character codes to identify the <code>text</code> property and <code>document</code> class, but is otherwise a high-level object-oriented API. Once again, each reference begins with a root object, in this case <code>app</code>. New aem specifiers are constructed by method calls; each call returning a new specifier object whose own methods can be called, and so on. This allows clients to build up a chain of aem specifier objects that aem can later pack into AEDescs for sending to applications.</p>
+<p>As you can see, AEM still uses low-level four-character codes to identify the <code>text</code> property and <code>document</code> class, but is otherwise a high-level object-oriented API. Once again, each reference begins with a root object, in this case <code>app</code>. New AEM specifiers are constructed by method calls; each call returning a new specifier object whose own methods can be called, and so on. This allows clients to build up a chain of AEM specifier objects that AEM can later pack into AEDescs for sending to applications.</p>
 
-<p>One more thing to notice: in aem, specifying a class of elements and indicating which of those elements should be selected are performed by separate method calls, although the information provided will eventually be packed into a single AEDesc of <code>typeObjectSpecifier</code>. This two-step approach makes it easier to integrate aem with the higher-level appscript bridge, which also uses two calls to construct element specifiers (one to specify the element class, e.g. <code>document</code>, and another to specify the selection, e.g. <code>[1]</code>).</p>
+<p>One more thing to notice: in AEM, specifying a class of elements and indicating which of those elements should be selected are performed by separate method calls, although the information provided will eventually be packed into a single AEDesc of <code>typeObjectSpecifier</code>. This two-step approach makes it easier to integrate AEM with the higher-level appscript bridge, which also uses two calls to construct element specifiers (one to specify the element class, e.g. <code>document</code>, and another to specify the selection, e.g. <code>[1]</code>).</p>
 
-<p>Note that <code>app.elements('docu')</code> is itself a valid reference, identifying <em>all</em> the document elements of the application class. You do not have to call an explicit <code>all</code> selector (indeed, none is provided) as aem automatically handles the details for you. Aem even allows for some convenient shorthand, e.g. writing:</p>
+<p>Note that <code>app.elements('docu')</code> is itself a valid reference, identifying <em>all</em> the document elements of the application class. You do not have to call an explicit <code>all</code> selector (indeed, none is provided) as AEM automatically handles the details for you. AEM even allows for some convenient shorthand, e.g. writing:</p>
 
 <pre><code>app.elements('docu').byfilter(...).first</code></pre>
 
@@ -102,7 +102,7 @@ print textref
 
 <h3>Reference forms</h3>
 
-<p>Aem defines a number of classes representing each of the AEOM reference forms. There are eight AEOM reference forms:</p>
+<p>AEM defines a number of classes representing each of the AEOM reference forms. There are eight AEOM reference forms:</p>
 
 <ul>
 <li>insertion location</li>
@@ -115,15 +115,15 @@ print textref
 <li>elements by test</li>
 </ul>
 
-<p>(Actually, there's nine forms if you count the 'user property' reference form, although this is only used by OSA applets to identify script properties. Aem supports this extra form more for sake of completeness than usefulness.)</p>
+<p>(Actually, there's nine forms if you count the 'user property' reference form, although this is only used by OSA applets to identify script properties. AEM supports this extra form more for sake of completeness than usefulness.)</p>
 
-<p>Each of these reference forms is represented by a different aem specifier class, apart from the absolute position form which is represented by three different classes according to the kind of selector used: a numerical index (e.g. <code>1</code>, <code>-3</code>), a named ordinal identifying a single element (<code>first</code>, <code>middle</code>, <code>last</code>, <code>any</code>), or a named ordinal identifying all elements (<code>all</code>).</p>
+<p>Each of these reference forms is represented by a different AEM specifier class, apart from the absolute position form which is represented by three different classes according to the kind of selector used: a numerical index (e.g. <code>1</code>, <code>-3</code>), a named ordinal identifying a single element (<code>first</code>, <code>middle</code>, <code>last</code>, <code>any</code>), or a named ordinal identifying all elements (<code>all</code>).</p>
 
-<p>The following diagram shows the aem reference class hierarchy (slightly simplified for legibility); concrete classes are shown in bold:</p>
+<p>The following diagram shows the AEM reference class hierarchy (slightly simplified for legibility); concrete classes are shown in bold:</p>
 
-<p><img src="aemreferenceinheritance.gif" alt="aem reference class hierarchy" title="aem reference class hierarchy" />
+<p><img src="aemreferenceinheritance.gif" alt="AEM reference class hierarchy" title="AEM reference class hierarchy" />
 
-<p>Note that the user shouldn't instantiate these classes directly; instead, aem will instantiate them as appropriate when the client calls the properties/methods of other aem reference objects, starting with the <code>app</code>, <code>con</code> and <code>its</code> objects that form the root of all aem references.</p>
+<p>Note that the user shouldn't instantiate these classes directly; instead, AEM will instantiate them as appropriate when the client calls the properties/methods of other AEM reference objects, starting with the <code>app</code>, <code>con</code> and <code>its</code> objects that form the root of all AEM references.</p>
 
 <p>In fact, it really isn't necessary to remember the reference class hierarchy at all, only to know which concrete classes implement which methods. All user-accessible properties and methods are defined by just four superclasses:</p>
 
@@ -150,9 +150,9 @@ print textref
 <h4>Basic methods</h4>
 
 <pre><code>Query -- Base class for all reference form and test clause classes.
-    __hash__(self) -- aem references can be used as dictionary keys
+    __hash__(self) -- AEM references can be used as dictionary keys
 
-    __eq__(self, value) -- aem references can be compared for equality
+    __eq__(self, value) -- AEM references can be compared for equality
 
     __ne__(self, value)</code></pre>
 
@@ -367,7 +367,7 @@ CurrentContainer(ReferenceRoot) -- the exported 'con' variable contains
 ObjectBeingExamined(ReferenceRoot) -- the exported 'its' variable contains
         an instance of this class</code></pre>
 
-<p>Clients shouldn't instantiate the above classes directly; instead, they should refer to the <code>app</code>, <code>con</code> and <code>its</code> variables exported by aem.</p>
+<p>Clients shouldn't instantiate the above classes directly; instead, they should refer to the <code>app</code>, <code>con</code> and <code>its</code> variables exported by AEM.</p>
 
 <p>The <code>CustomRoot</code> class is used to construct AEM references with a non-standard root:</p>
 
