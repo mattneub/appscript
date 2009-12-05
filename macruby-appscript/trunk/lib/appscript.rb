@@ -290,7 +290,8 @@ module Appscript
 	
 		def to_s
 			s= @_call[0]
-			@_call[1, @_call.length].each do |name, args|					if name == :[]
+			@_call[1, @_call.length].each do |name, args|
+				if name == :[]
 					if args.length == 1
 						s += "[#{args[0].inspect}]"
 					else
@@ -448,6 +449,7 @@ module Appscript
 			end
 			# pack event
 			event = target.eventWithEventClass(eventClass, eventID:eventID, codecs:@AS_app_data)
+			# TO DO: following cause segfault if value is nil (suspect this is MacRuby 0.5 not quite handling NSExceptions right yet)	
 			event.setAttribute(enum_considerations, forKeyword:KAE::EnumConsiderations)
 			event.setAttribute(enum_consids_and_ignores, forKeyword:KAE::EnumConsidsAndIgnores)
 			event.setAttribute(subject_attr, forKeyword:KAE::KeySubjectAttr)
@@ -736,7 +738,7 @@ module Appscript
 	
 	class Application < Reference
 		
-		private_class_method :new
+#		private_class_method :new # TO DO: making new private is completely messed up in 0.5; poss due to use of safeobject magic?
 			
 		def _aem_application_class # hook
 			return AEMApplication

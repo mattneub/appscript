@@ -1,4 +1,4 @@
-# Copyright (C) 2008 HAS. 
+# Copyright (C) 2008-2009 HAS. 
 # Released under MIT License.
 
 ######################################################################

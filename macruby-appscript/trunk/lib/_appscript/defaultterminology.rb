@@ -1,5 +1,4 @@
-#!/usr/local/bin/ruby
-# Copyright (C) 2006 HAS. 
+# Copyright (C) 2006-2009 HAS. 
 # Released under MIT License.
 
 module MRADefaultTerminology

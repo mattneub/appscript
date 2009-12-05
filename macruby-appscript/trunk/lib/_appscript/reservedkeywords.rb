@@ -1,5 +1,4 @@
-#!/usr/local/bin/ruby
-# Copyright (C) 2006 HAS. 
+# Copyright (C) 2006-2009 HAS. 
 # Released under MIT License.
 
 # This list is mirrored in ch.6 of the appscript manual and in py-appscript's osaterminology.makeidentifier module

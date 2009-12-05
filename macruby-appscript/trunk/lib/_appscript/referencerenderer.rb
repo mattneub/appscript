@@ -1,4 +1,4 @@
-# Copyright (C) 2008 HAS. 
+# Copyright (C) 2008-2009 HAS. 
 # Released under MIT License.
 
 framework 'Appscript'
@@ -7,7 +7,7 @@ framework 'Appscript'
 class MRAReferenceRenderer < AEMResolver
 	# Generates string representations of appscript references from aem object specifiers.
 
-	private_class_method :new
+#	private_class_method :new # breaks MacRuby 0.5
 	attr_reader :result
 	
 	def initWithAppData(app_data)
