@@ -1,0 +1,166 @@
+2009-12-12 -- 0.21.1
+
+- fixed bug in py3-appscript when unpacking typeBoolean, typeVersion descriptors
+
+- py3-appscript now uses format method instead of % operator for string interpolation
+
+
+2009-12-03 -- 0.21.0
+
+- minimum OS requirement is now 10.4
+
+- removed previously deprecated APIs: 
+
+	CarbonX
+	aem.CommandError
+	aem.EventError.number
+	aem.EventError.message
+	aem.CantLaunchApplicationError.number
+
+- fixed bug where aem.Application.processexistsforpid would return 0 if process existed and 1 if not; now returns True and False respectively
+
+- fixed misspelt aem.Application.AEM_packself method name in appscript_3x
+
+- eliminated GetProcessID, LaunchApplication calls in ae.c as calling these would cause Process Manager to elevate a non-GUI python process to a GUI based one if python interpreter was located in a .app bundle (which it is in a standard framework build). As a result, sending commands to other applications or non-GUI-related osax commands to the current python process should no longer cause a Python.app icon to appear in the Dock. Note that when sending dialog-related OSAX commands to the current python process, the python interpreter can still elevate to GUI status automatically (which is necessary to display dialogs) as long as it is located in a standard Python.app bundle.
+
+- as a consequence of the above changes, processes are now targeted by process serial number, not pid; this should not have any effect on users, however
+
+- added aem.ae.transformprocesstoforegroundapplication(). Note: since the standard python interpreter will automatically upgrade to GUI process as needed, py-osax (unlike rb-osax) does not call this function if a 'No user interaction allowed' (-1713) error occurs while sending a (typically dialog-related) command. Client code that needs to elevate a non-GUI python process to GUI status manually (e.g. if running on a python interpreter that cannot elevate itself automatically) can call this function directly.
+
+- aem.EventError now uses MacErrors.h comment strings as error messages if no custom error message was given and EventError doesn't contain a generic message for the given error code
+
+- added optional 'newinstance' argument to aem and appscript Application constructors, allowing users to launch multiple instances of an application, assuming the application allows this
+
+- added optional 'hide' argument to aem and appscript Application constructors, allowing users to hide an application automatically upon launching it 
+
+- fixed bug in appscript_3x help system where help messages would print as bytes objects, not text
+
+- updated tests to work on 10.6
+
+
+2009-11-24 -- 0.20.3
+
+- fixed some bugs where 32-bit ints were being packed and unpacked as 64-bit longs on 64-bit, resulting in system flipper warnings and potentially incorrect behaviour
+
+- added workaround to ae.c for return ID bug in Apple Event Manager on 10.6 (when auto-incrementing return ID reaches -1, a timeout error occurs due to the return event having the wrong ID)
+
+
+2009-11-18 -- 0.20.2
+
+- bugfix in py3-osax module
+
+- improved notes on 64-bit support in osax manual
+
+
+2009-11-17 -- 0.20.1
+
+- fixed 64-bit bug in aemconnect.currentapp
+
+- when using Standard Additions, osax.OSAX constructor will fall back to using a static glue on 64-bit (other scripting additions still need to be used under 32-bit or require static glues to be passed to constructor on 64-bit)
+
+
+2009-06-26 -- 0.20.0
+
+- Combined Python 2.x and 3.x versions in a single distribution.
+
+- fixed inconsistent escaping of application-defined property/element names that overlap built-in type/enum/property names but uses different codes. e.g. Adobe Illustrator defines 'rotation' as 'SxRx' - this overlaps built-in definition ('rotation' = 'trot'), so is escaped as 'rotation_'. Previously only the Keyword was escaped (i.e. k.rotation_ but ref.rotation) now both are escaped (i.e. k.rotation_, ref.rotation_). Users should update existing code as needed.
+
+- fixed bug in EventError.errormessage where it would fail if error number > 0 and EventError constructor's message arg was not a string, e.g. Event.send() passes None if application didn't return an error string itself
+
+- fixed bug in aem.EventError.errormessage
+
+- aem.Codecs now correctly unpacks AEDescs of typeBoolean whose data >1 byte
+
+- osax module no longer sends Apple events at import time as this would cause problems with event handling in applications that subsequently start a Carbon/Cocoa event loop
+
+- changed osax.scriptingadditions from an attribute to a function; clients should update their code accordingly
+
+- changed default terminology mapping for k.data from kae.cRawData ('rdat') to kae.typeData ('tdta')
+
+
+2008-11-23 -- 0.19.0
+
+- The following packages/modules have been removed from the appscript distribution:
+
+	- aemreceive -- now a separate project
+	- CarbonX.OSA, CarbonX.kOSA, osascript -- now a separate project
+	- osaterminology -- now a separate project
+	- appscript.tools.aemcodegen -- removed
+	- appscript.tools.dump -- merged into appscript.terminology module
+
+Users should update any existing code that refers to these modules as needed.
+
+The aemreceive, osascript and osaterminology packages can be obtained separately from the appscript website/svn repository.
+
+- The CarbonX package is deprecated and will be removed in a future release. The original CarbonX.AE and CarbonX.kAE modules have been aliased to aem.ae and aem.kae, which provide most of the same functionality. Users should update any existing code that refers to these modules as needed.
+
+- All remaining modules now support 64-bit Python, except for osax which currently provides limited 64-bit support only (i.e. a scripting addition's terminology cannot be obtained dynamically; use appscript.terminology.dump() under 32-bit Python to export a scripting addition's terminology as a static glue module and use that as the 'terms' argument to osax.OSAX.__init__)
+
+- The aem package's internal structure has been simplified and some modules renamed. The base class for all specifier and test objects is now named 'Query' and is exported by aem's public API for typechecking use only.
+
+- Added aem.ae which consolidates all Carbon/CoreFoundation bindings into a single C extension and eliminates all dependencies on Python's own 'Carbon' extensions (which are absent in 64-bit builds of Python 2.x and removed altogether in Python 3.x). Removed AEDesc methods not used by aem/appscript/aemreceive. Expanded exported C API and renamed from aeAPI to aetoolbox. 
+
+- processexistsforurl, remoteapp in aemconnect now raise error if URL string doesn't contain a colon (process will crash otherwise due to an OS bug)
+
+- aem.ae raises aem.ae.MacOSError exceptions. Users should update any existing code that refers to the MacOS.Error type as needed.
+
+- aem.ae.AEDesc.send() now releases GIL during AESendMessage() calls
+
+- renamed aem.CommandError to aem.EventError; now subclasses aem.ae.MacOSError instead of MacOS.Error
+
+- Added aem.kae, containing all constants previously defined by CarbonX.kAE and CarbonX.kOSA.
+
+- aem exports ae, kae modules as part of its public API.
+
+- removed aem.Application.isrunning; use aem.Application.processexistsforpath instead
+
+- aem by-range selectors now accept non-reference values (these will be expanded to con-based references when packed)
+
+- Removed AND, OR methods and NOT property from aemreference._PositionSpecifier as these shortcuts are no longer supported
+
+- For convenience, aem and appscript modules re-export mactypes module as part of their public APIs.
+
+- added compatibility fix to aem.Codecs packUnicodeText, unpackUnicodeText due to change in behaviour of 'utf16' codec in Python 2.6
+
+- added aem.Codecs.dontcacheunpackedspecifiers() compatibility option
+
+- moved aem.Event's _createAppleEvent, _sendAppleEvent hook methods to aem.Application and renamed them _createproc, _sendproc; both are now defined as static methods
+
+- added errornumber, errormessage properties to aem.EventError, appscript.CommandError. Deprecated 'number' and 'message' attributes in aem.EventError; clients should update any existing code to use errornumber, errormessage properties instead.
+
+- added errornumber property to aem.CantLaunchApplicationError. Deprecated 'number' attribute in aem.CantLaunchApplicationError; clients should update any existing code to use errornumber property instead.
+
+- aem.EventError, appscript.CommandError now include any additional error info provided by applications (i.e. offending object, expected type, partial result) in error messages
+
+- fixed bug in appscript.Reference.AS_newreference
+
+- help system now encodes text to UTF8 before writing it to stderr
+
+- added Command, Reference, Application, Keyword, GenericReference, GenericApp classes to appscript's top-level namespace for occasional typechecking purposes only. Note: to avoid excessive namespace pollution, these classes are not added to the parent namespace when 'from appscript import *' is used, so must always be referred to as attributes of the appscript module, e.g. appscript.Reference
+
+- added default definitions for 'item' type, 'items' elements, 'properties' property as Apple have removed the 'item' class definition from skeleton.sdef (the default terminology for Cocoa apps)
+
+- in KeywordShim, added __repr__; __getattr__ now delegates any magic method calls to object superclass, e.g. 'import appscript; print appscript.k' now prints 'k' instead of erroring
+
+- improved error reporting in Reference.__getitem__ when a malformed generic reference containing a command expands to a non-reference value. e.g. its.name.get() would previously expand the the value of the object's 'name' property, typically a string, resulting in a cryptic AttributeError; this now raises a descriptive ValueError.
+
+- where an application's property and enumerator definitions conflict, the terminology module now gives higher priority to the property definition
+
+- added 'relaunchmode' property to app objects
+
+- added 'with', 'relaunchmode' to list of reserved keywords
+
+- Removed the following Carbon.File-dependent methods from mactypes.Alias, mactypes.File: makewithfsalias, makewithfsref, makewithfsspec, fsalias, fsref, fsspec. Added makewithhfspath, hfspath methods. Renamed makewithaedesc, aedesc methods to makewithdesc, desc. Users should update any existing code that refers to these methods as needed.
+
+- mactypes.Alias.__init__, mactypes.File.__init__ now use os.path.abspath to normalise path parameter; this allows relative as well as absolute paths to be used as arguments
+
+- Alias constructor now raises ValueError instead of MacOS.Error(-1700) if file not found; clients should update any existing code as needed.
+
+- renamed osax.ScriptingAddition to osax.OSAX; osax module retains a ScriptingAddition attribute for backwards compatibility, but this is deprecated and will eventually be removed. Users should update any existing code as necessary.
+
+- lowercased all public and private function/method/variable names as-per Python style guidelines (constant names remain camelcased); revised function/method names in aem.ae
+
+
+2007-12-19 -- 0.18.0
+
+See separate doc/*-manual/CHANGES-OLD files for older changes.

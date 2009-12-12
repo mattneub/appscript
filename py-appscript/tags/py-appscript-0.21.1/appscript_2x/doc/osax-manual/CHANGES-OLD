@@ -1,0 +1,5 @@
+2007-10-30 -- 0.2.1
+- no longer errors on import in 10.5 if ~/Library/ScriptingAdditions doesn't exist (improvements to Cocoa Scripting mean that System Events now raises an error if folder not found, whereas in 10.4 it did nothing)
+
+2007-01-05 -- 0.2.0
+- completely rewritten

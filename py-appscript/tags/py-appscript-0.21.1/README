@@ -1,0 +1,74 @@
+Appscript is packaged using the standard Python Distribution Utilities (a.k.a. Distutils). To install appscript, cd to the appscript-0.21.1 directory and run:
+
+	python setup.py install
+
+Setuptools will be used if available, otherwise the setup.py script will revert to distutils.
+
+Building appscript from source requires the gcc compiler (supplied with Apple's Developer Tools). Setuptools is available from <http://cheeseshop.python.org/pypi>. 
+
+Appscript requires Python 2.3 or later and Mac OS X 10.4 or later.
+
+This appscript distribution supports both Python 2.x and Python 3.x. Documentation and sample scripts for each can be found under the appscript_2x and appscript_3x directories.
+
+
+======================================================================
+NOTES
+
+- The aem, appscript and mactypes modules provide full 64-bit support. The osax module provides partial 64-bit support; see doc/osax-manual for details.
+
+-------
+
+Appscript 0.21.0 tidies up a number of deprecated APIs in appscript_2x:
+
+	- The aem.CommandError class name has been removed. Clients should use aem.EventError instead.
+
+	- The aem.CantLaunchApplicationError.number attribute has been removed. Clients should use aem.CantLaunchApplicationError.errornumber instead.
+
+	- The aem.EventError.number and aem.EventError.message attributes have been removed. Clients should use aem.EventError.errornumber and aem.EventError.errormessage instead.
+
+	- The CarbonX package has been removed. Client code that refers to CarbonX.AE and/or CarbonX.kAE should be updated to use aem.ae and/or aem.kae instead. 
+
+	- The osax.ScriptingAddition class name is deprecated, though it remains supported on Python 2.x for backwards compatibility. Clients should use osax.OSAX instead.
+
+--------
+
+Prior to 0.21.0, appscript used a number of Process Manager APIs that would automatically promote a GUI-less process to a full GUI process if its executable was located in a .app bundle. Since a standard Python 2.4+ framework build keeps its python interpreter in an embedded Python.app bundle, this would result in increased startup time and the appearance of a bouncing Python.app icon in the Dock. 
+
+This GUI-fication of a python process can be irritating to users; it's also quite unnecessary in this case as appscript does not require a Window Manager connection to operate. Therefore, appscript 0.21.0 avoids using Process Manager functions that are known to trigger GUI promotion in 10.5 and later, so that the Python.app icon no longer appears in the Dock. 
+
+Unfortunately, other system APIs still used by appscript will automatically promote a python interpreter to GUI status when running appscript-based scripts on Mac OS X 10.4 or on a copy of Python that was built against the 10.4 SDK (e.g. the python.org framework distributions). As appscript cannot avoid using some Process Manager APIs, users who don't wish to see a bouncing Python.app icon in the Dock may need to take additional steps to avoid triggering it. 
+
+Some options:
+
+1. On 10.5+, run appscript-based scripts using the Apple-supplied Python, which is built with a newer SDK.
+
+2. On 10.5+, avoid using python.org's prebuilt framework distributions. Instead, build a Python framework from source using the 10.5 SDK or later, and run appscript-based scripts with that.
+
+3. Copy the python executable from the Python framework's Python.app bundle into /usr/local/bin, renaming it as appropriate, and run appscript-based scripts with that.
+
+4. Tolerate the Python.app icon appearing in the Dock; while annoying, it's (mostly) harmless.
+
+--------
+
+- Developer tools for exporting application dictionaries (ASDictionary) and converting application commands from AppleScript to appscript syntax (ASTranslate) are available separately:
+
+	http://appscript.sourceforge.net/tools.html
+
+- ASDictionary 0.12.0 or later is required to use appscript's built-in help() method. If ASDictionary isn't installed, interactive help won't be available but appscript will continue to operate as normal.
+
+-------
+
+- Appscript 0.21.0 is beta 4. The API is frozen and no more features will be added prior to final release; only errors or significant omissions in code or documentation will be addressed. Please report any problems you encounter either in the appscript bridge or in using it to control particular applications ASAP. If no further issues are discovered, a 1.0.0 final release will follow.
+
+
+======================================================================
+AUTHOR
+
+- HAS -- hhas -at- users - sourceforge - net <http://appscript.sourceforge.net>
+
+
+======================================================================
+COPYRIGHT
+
+(C) 2003 - 2009 HAS <http://appscript.sourceforge.net>
+
