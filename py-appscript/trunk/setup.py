@@ -14,8 +14,8 @@ else:
 
 setup(
 		name = "appscript",
-		version = "0.21.0",
-		description = "Control scriptable Mac OS X applications from Python.",
+		version = "0.21.1",
+		description = "Control AppleScriptable applications from Python.",
 		author = "HAS",
 		author_email='',
 		url='http://appscript.sourceforge.net',

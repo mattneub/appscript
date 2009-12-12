@@ -23,11 +23,12 @@ class _Formatter:
 			argstr = ''
 			newinstancearg = self._appdata.aemconstructoroptions.get('newinstance')
 			if newinstancearg:
-				argstr += ', newinstance=%r' % ((self._appdata.isconnected and
-						struct.unpack('II', self._appdata.target().addressdesc.data) or True),)
-			self.root = 'app(%r%s)' % (self._appdata.identifier, argstr)
+				argstr += ', newinstance={!r}'.format(
+						struct.unpack('II', self._appdata.target().addressdesc.data) if 
+								self._appdata.isconnected else True)
+			self.root = 'app({!r}{})'.format(self._appdata.identifier, argstr)
 		else:
-			self.root = 'app(%s=%r)' % (self._appdata.constructor, self._appdata.identifier)
+			self.root = 'app({}={!r})'.format(self._appdata.constructor, self._appdata.identifier)
 		self.result = ''
 	
 	def _format(self, val):
@@ -114,87 +115,87 @@ class _Formatter:
 	any = _property_(any)
 	
 	def byindex(self, sel):
-		self.result += '[%r]' % sel
+		self.result += '[{!r}]'.format(sel)
 		return self
 	
 	byname = byindex
 	
 	def byid(self, sel):
-		self.result += '.ID(%r)' % sel
+		self.result += '.ID({!r})'.format(sel)
 		return self
 	
 	def previous(self, sel):
-		self.result += '.previous(%r)' % self._appdata.typebycode()[sel]
+		self.result += '.previous({!r})'.format(self._appdata.typebycode()[sel])
 		return self
 	
 	def next(self, sel):
-		self.result += '.next(%r)' % self._appdata.typebycode()[sel]
+		self.result += '.next({!r})'.format(self._appdata.typebycode()[sel])
 		return self
 	
 	# multi-element selectors
 	
 	def byrange(self, sel1, sel2):
-		self.result += '[%s:%s]' %(self._format(sel1), self._format(sel2))
+		self.result += '[{}:{}]'.format(self._format(sel1), self._format(sel2))
 		return self
 		
 	def byfilter(self, sel):
-		self.result += '[%s]' % self._format(sel)
+		self.result += '[{}]'.format(self._format(sel))
 		return self
 	
 	# comparison tests
 	
 	def gt(self, sel):
-		self.result += ' > %s' % self._format(sel)
+		self.result += ' > {}'.format(self._format(sel))
 		return self
 	
 	def ge(self, sel):
-		self.result += ' >= %s' % self._format(sel)
+		self.result += ' >= {}'.format(self._format(sel))
 		return self
 	
 	def eq(self, sel):
-		self.result += ' == %s' % self._format(sel)
+		self.result += ' == {}'.format(self._format(sel))
 		return self
 	
 	def ne(self, sel):
-		self.result += ' != %s' % self._format(sel)
+		self.result += ' != {}'.format(self._format(sel))
 		return self
 	
 	def lt(self, sel):
-		self.result += ' < %s' % self._format(sel)
+		self.result += ' < {}'.format(self._format(sel))
 		return self
 	
 	def le(self, sel):
-		self.result += ' <= %s' % self._format(sel)
+		self.result += ' <= {}'.format(self._format(sel))
 		return self
 	
 	def beginswith(self, sel):
-		self.result += '.beginswith(%s)' % self._format(sel)
+		self.result += '.beginswith({})'.format(self._format(sel))
 		return self
 	
 	def endswith(self, sel):
-		self.result += '.endswith(%s)' % self._format(sel)
+		self.result += '.endswith({})'.format(self._format(sel))
 		return self
 	
 	def contains(self, sel):
-		self.result += '.contains(%s)' % self._format(sel)
+		self.result += '.contains({})'.format(self._format(sel))
 		return self
 	
 	def isin(self, sel):
-		self.result += '.isin(%s)' % self._format(sel)
+		self.result += '.isin({})'.format(self._format(sel))
 		return self
 	
 	# logical tests
 	
 	def AND(self, *operands):
-		self.result = '(%s).AND(%s)' % (self.result, ', '.join([self._format(o) for o in operands]))
+		self.result = '({}).AND({})'.format(self.result, ', '.join([self._format(o) for o in operands]))
 		return self
 		
 	def OR(self, *operands):
-		self.result = '(%s).OR(%s)' % (self.result, ', '.join([self._format(o) for o in operands]))
+		self.result = '({}).OR({})'.format(self.result, ', '.join([self._format(o) for o in operands]))
 		return self
 	
 	def NOT(self):
-		self.result = '(%s).NOT' % self.result
+		self.result = '({}).NOT'.format(self.result)
 		return self
 	NOT = _property_(NOT)
 
@@ -218,6 +219,6 @@ def renderreference(appdata, aemreference, nested=False):
 	try:
 		aemreference.AEM_resolve(f)
 	except:
-		return '%s.AS_newreference(%r)' % (f.root, aemreference)
+		return '{}.AS_newreference({!r})'.format(f.root, aemreference)
 	return f.result
 	

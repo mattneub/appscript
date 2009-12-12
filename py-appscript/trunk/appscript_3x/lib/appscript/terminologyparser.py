@@ -73,7 +73,7 @@ class Parser:
 				else:
 					if res == '':
 						res = '_' # avoid creating an invalid identifier
-					res += '0x%2.2X' % ord(c)
+					res += '0x{:X}'.format(ord(c))
 				legal = self._alphanum
 			if res in self._reservedwords or res.startswith('_') or res.startswith('AS_'):
 				res += '_'

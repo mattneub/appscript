@@ -236,13 +236,13 @@ class EventError(MacOSError):
 			doc="dict -- raw error data from reply event, if any (note: clients should not need to use this directly)")
 	
 	def __repr__(self):
-		return "aem.EventError(%r, %r, %r)" % (self._number, self._message, self._raw)
+		return "aem.EventError({!r}, {!r}, {!r})".format(self._number, self._message, self._raw)
 		
 	def __int__(self):
 		return self._number
 	
 	def __str__(self):
-		return "Command failed: %s (%i)" % (self.errormessage, self.errornumber)
+		return "Command failed: {} ({})".format(self.errormessage, self.errornumber)
 	
 	# basic error info (an error number is always given by AEM/application;
 	# message is either supplied by application or generated here)	
@@ -253,7 +253,7 @@ class EventError(MacOSError):
 		if self._number > 0 and message:
 			for name, description in self._cocoaerrors:
 				if message.startswith(name):
-					message = '%s (%s)' % (message, description)
+					message = '{} ({})'.format(message, description)
 					break
 		elif not message:
 			message = self._carbonerrors.get(self._number)

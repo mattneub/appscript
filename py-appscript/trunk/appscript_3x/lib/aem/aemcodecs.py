@@ -114,7 +114,7 @@ class UnitTypeCodecs:
 			try:
 				code, packer = self._typebyname[val.type]
 			except KeyError:
-				raise TypeError('Unknown unit type: %r' % val)
+				raise TypeError('Unknown unit type: {!r}'.format(val))
 			else:
 				return True, packer(val, code)
 		else:
@@ -288,7 +288,7 @@ class Codecs:
 			some older non-Unicode-aware Carbon may require kae.typeChar or kae.typeIntlText. 
 		"""
 		if not (isinstance(code, bytes) and len(code) == 4):
-			raise TypeError('Code must be a four-byte value: %r' % code)
+			raise TypeError('Code must be a four-byte value: {!r}'.format(code))
 		self._packtextastype = code
 	
 	
@@ -296,7 +296,7 @@ class Codecs:
 	
 	def packunknown(self, data):
 		"""Clients may override this to provide additional packers."""
-		raise TypeError("Can't pack data into an AEDesc (unsupported type): %r" % data)
+		raise TypeError("Can't pack data into an AEDesc (unsupported type): {!r}".format(data))
 	
 	def unpackunknown(self, desc):
 		"""Clients may override this to provide additional unpackers."""
@@ -464,7 +464,7 @@ class Codecs:
 		return None
 	
 	def unpackboolean(self, desc):
-		return desc.data[0] != b'\x00'
+		return bool(desc.data[0])
 	
 	def unpacktrue(self, desc):
 		return True
@@ -557,7 +557,7 @@ class Codecs:
 		try:
 			return self.unpack(desc.coerce(kae.typeUnicodeText)) # supported in 10.4+
 		except:
-			return '%i.%i.%i' % ((ord(desc.data[0]),) + divmod(ord(desc.data[1]), 16)) # note: always big-endian
+			return '{}.{}.{}'.format(desc.data[0], *divmod(desc.data[1], 16)) # note: always big-endian
 	
 	##
 	
@@ -625,7 +625,7 @@ class Codecs:
 			elif key.code == kae.kAENext:
 				return ref.next(want)
 			else:
-				raise ValueError("Bad relative position selector: %r" % want)
+				raise ValueError("Bad relative position selector: {!r}".format(want))
 		else: # other element(s) specifier
 			ref = ref.elements(want)
 			if keyform == kae.formName:

@@ -127,7 +127,7 @@ class AppData(aem.Codecs):
 				try:
 					keyCode = self.typebyname()[key.AS_name].code
 				except KeyError:
-					raise KeyError("Unknown Keyword: k.%s" % key.AS_name)
+					raise ValueError("Unknown Keyword: k.{}".format(key.AS_name))
 				record.setparam(keyCode, self.pack(value))
 			elif isinstance(key, aem.AETypeBase): # AEType/AEProp (AEType is normally used in practice)
 				record.setparam(key.code, self.pack(value))
@@ -271,14 +271,14 @@ class AppData(aem.Codecs):
 			try:
 				data = self.typebyname()[data.AS_name]
 			except KeyError:
-				raise KeyError("Unknown Keyword: k.%s" % data.AS_name)
+				raise ValueError("Unknown Keyword: k.{}".format(data.AS_name))
 		return aem.Codecs.pack(self, data)
 	
 	# Relaunch mode
 	
 	def _setrelaunchmode(self, mode):
 		if mode not in ['never', 'limited', 'always']:
-			raise ValueError('Unknown relaunch mode: %r' % mode)
+			raise ValueError('Unknown relaunch mode: {!r}'.format(mode))
 		self._relaunchmode = mode
 	relaunchmode = property(lambda self: self._relaunchmode, _setrelaunchmode)
 	
@@ -328,9 +328,9 @@ class AppData(aem.Codecs):
 					return ref # if ASDictionary is unavailable then do nothing
 				e = self._displayhelp(flags, ref)
 			if e:
-				self._write("No help available: ASDictionary raised an error: %s" % e)
+				self._write("No help available: ASDictionary raised an error: {}".format(e))
 		except Exception as err:
-			self._write("No help available: unknown error: %s" % err)
+			self._write("No help available: unknown error: {}".format(err))
 			from traceback import print_exc
 			print_exc()
 		return ref
@@ -390,12 +390,12 @@ class Command(_Base):
 		self._labelledargterms = arginfo
 	
 	def __repr__(self):
-		return '%r.%s' % (self._parentref, self.AS_name)
+		return '{!r}.{}'.format(self._parentref, self.AS_name)
 	
 	def __call__(self, *args, **kargs):
 		keywordargs = kargs.copy()
 		if len(args) > 1:
-			raise TypeError("Command received more than one direct parameter %r." % (args,))
+			raise TypeError("Command received more than one direct parameter {!r}.".format(args))
 		# get user-specified timeout, if any
 		timeout = int(keywordargs.pop('timeout', 60)) # appscript's default is 60 sec
 		if timeout <= 0:
@@ -427,7 +427,7 @@ class Command(_Base):
 			for name, value in keywordargs.items():
 				params[self._labelledargterms[name]] = value
 		except KeyError:
-			raise TypeError('Unknown keyword argument %r.' % name)
+			raise TypeError('Unknown keyword argument {!r}.'.format(name))
 		# apply special cases for certain commands (make, set, any command that takes target object specifier as its direct parameter); appscript provides these as a convenience to users, making its syntax more concise, OO-like and nicer to use
 		if self.AS_aemreference is not aem.app:
 			if self._code == b'coresetd':
@@ -497,7 +497,7 @@ class Command(_Base):
 			raise CommandError(self, (args, kargs), e, self.AS_appdata)
 	
 	def AS_formatcommand(self, args):
-		return '%r(%s)' % (self, ', '.join(['%r' % (v,) for v in args[0]] + ['%s=%r' % (k, v) for (k, v) in args[1].items()]))
+		return '{!r}({})'.format(self, ', '.join(['{!r}'.format(v) for v in args[0]] + ['{}={!r}'.format(k, v) for (k, v) in args[1].items()]))
 		
 
 ######################################################################
@@ -575,7 +575,7 @@ class Reference(_Base):
 		try:
 			selectortype, code = self.AS_appdata.referencebyname()[name]
 		except KeyError:
-			raise AttributeError("Unknown property, element or command: %r" % name)
+			raise AttributeError("Unknown property, element or command: {!r}".format(name))
 		if selectortype == kProperty:
 			return Reference(self.AS_appdata, self.AS_aemreference.property(code))
 		elif selectortype == kElement:
@@ -592,13 +592,13 @@ class Reference(_Base):
 				try:
 					testclause = testclause.AS_aemreference
 				except AttributeError:
-					raise ValueError('Not a valid its-based test: %r' % selector)
+					raise ValueError('Not a valid its-based test: {!r}'.format(selector))
 			elif isinstance(selector, Reference):
 				testclause = selector.AS_aemreference
 			else:
 				testclause = selector
 			if not isinstance(testclause, Test):
-				raise TypeError('Not an its-based test: %r' % selector)
+				raise TypeError('Not an its-based test: {!r}'.format(selector))
 			return Reference(self.AS_appdata, self.AS_aemreference.byfilter(testclause))
 		elif isinstance(selector, slice): # by-range
 			return Reference(self.AS_appdata, self.AS_aemreference.byrange(
@@ -620,18 +620,18 @@ class Reference(_Base):
 		try:
 			aemtype = self.AS_appdata.typebyname()[klass.AS_name]
 		except AttributeError: # can't get klass.AS_name
-			raise TypeError("Not a keyword: %r" % name)
+			raise TypeError("Not a keyword: {!r}".format(name))
 		except KeyError: # can't get typebyname[<name>]
-			raise ValueError("Unknown class: %r" % name)
+			raise ValueError("Unknown class: {!r}".format(name))
 		return Reference(self.AS_appdata, self.AS_aemreference.previous(aemtype.code))
 	
 	def next(self, klass):
 		try:
 			aemtype = self.AS_appdata.typebyname()[klass.AS_name]
 		except AttributeError: # can't get klass.AS_name
-			raise TypeError("Not a keyword: %r" % name)
+			raise TypeError("Not a keyword: {!r}".format(name))
 		except KeyError: # can't get typebyname[<name>]
-			raise ValueError("Unknown class: %r" % name)
+			raise ValueError("Unknown class: {!r}".format(name))
 		return Reference(self.AS_appdata, self.AS_aemreference.next(aemtype.code))
 	
 	def ID(self, id):
@@ -831,23 +831,23 @@ class CommandError(Exception):
 			return -2700
 	
 	def __repr__(self):
-		return 'appscript.CommandError(%r, %r, %r)' % (self.command, self. parameters, self.realerror)
+		return 'appscript.CommandError({!r}, {!r}, {!r})'.format(self.command, self. parameters, self.realerror)
 	
 	def __str__(self):
 		if isinstance(self.realerror, aem.EventError):
-			err = "Command failed:\n\t\tOSERROR: %i" % self.errornumber
+			err = "Command failed:\n\t\tOSERROR: {}".format(self.errornumber)
 			msg = self.errormessage
 			if msg:
-				err += "\n\t\tMESSAGE: %s" % msg
+				err += "\n\t\tMESSAGE: {}".format(msg)
 			for label, key in [
 					["OFFENDING OBJECT", kae.kOSAErrorOffendingObject], 
 					["EXPECTED TYPE", kae.kOSAErrorExpectedType],
 					["PARTIAL RESULT", kae.kOSAErrorPartialResult]]:
 				if key in self.realerror.raw:
-					err += "\n\t\t%s: %r" % (label, self._codecs.unpack(self.realerror.raw[key]))
+					err += "\n\t\t{}: {!r}".format(label, self._codecs.unpack(self.realerror.raw[key]))
 		else:
 			err = self.realerror
-		return "%s\n\t\tCOMMAND: %s" % (err, self.command.AS_formatcommand(self.parameters))
+		return "{}\n\t\tCOMMAND: {}".format(err, self.command.AS_formatcommand(self.parameters))
 	
 	# basic error info (an error number is always given by AEM/application;
 	# message is either supplied by application or generated by aem.EventError)

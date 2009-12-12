@@ -1,4 +1,11 @@
-2009-11-?? -- 0.21.0
+2009-12-12 -- 0.21.1
+
+- fixed bug in py3-appscript when unpacking typeBoolean, typeVersion descriptors
+
+- py3-appscript now uses format method instead of % operator for string interpolation
+
+
+2009-12-03 -- 0.21.0
 
 - minimum OS requirement is now 10.4
 

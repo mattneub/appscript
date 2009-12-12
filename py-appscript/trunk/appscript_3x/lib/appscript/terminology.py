@@ -140,7 +140,7 @@ def aetesforapp(aemapp):
 		if isinstance(e, EventError) and e.errornumber == -192:
 			aetes = []
 		else:
-			raise RuntimeError("Can't get terminology for application (%r): %s" % (aemapp, e))
+			raise RuntimeError("Can't get terminology for application ({!r}): {}".format(aemapp, e))
 	if not isinstance(aetes, list):
 		aetes = [aetes]
 	return [aete for aete in aetes if isinstance(aete, ae.AEDesc) and aete.type == kae.typeAETE and aete.data]
@@ -207,9 +207,9 @@ def dump(apppath, modulepath):
 	atts = zip(('classes', 'enums', 'properties', 'elements', 'commands'), tables)
 	f = open(modulepath, 'w')
 	f.write('version = 1.1\n')
-	f.write('path = %r\n' % apppath)
+	f.write('path = {!r}\n'.format(apppath))
 	for key, value in atts:
 		if key[0] != '_':
-			f.write('\n%s = \\\n' % key)
+			f.write('\n{} = \\\n'.format(key))
 			pprint(value, f)
 	f.close()

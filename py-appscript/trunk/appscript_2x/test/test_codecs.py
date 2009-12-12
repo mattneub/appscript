@@ -33,6 +33,7 @@ class TC_Codecs(unittest.TestCase):
 	
 	def test_bool(self):
 		self.assertEqual(True, self.c.unpack(aem.ae.newdesc(aem.kae.typeBoolean, "\xfe")))
+		self.assertEqual(False, self.c.unpack(aem.ae.newdesc(aem.kae.typeBoolean, b"\x00")))
 		self.assertEqual(True, self.c.unpack(aem.ae.newdesc(aem.kae.typeTrue, '')))
 		self.assertEqual(False, self.c.unpack(aem.ae.newdesc(aem.kae.typeFalse, '')))
 	

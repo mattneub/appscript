@@ -33,7 +33,7 @@ class ApplicationNotFoundError(Exception):
 		Exception.__init__(self, name)
 	
 	def __str__(self):
-		return 'Local application %r not found.' % self.name
+		return 'Local application {!r} not found.'.format(self.name)
 
 
 def byname(name):

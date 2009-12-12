@@ -94,23 +94,23 @@ class Application(Query):
 	def __repr__(self):
 		args = []
 		if self.AEM_identity[0] == 'desc':
-			args.append('desc=%r' % self._address)
+			args.append('desc={!r}'.format(self._address))
 		elif self.AEM_identity[0] == 'path':
 			args.append(repr(self.AEM_identity[1]))
 		elif self.AEM_identity[0] != 'current':
-			args.append('%s=%r' % self.AEM_identity)
+			args.append('{}={!r}'.format(*self.AEM_identity))
 		if self._codecs != _defaultcodecs:
-			args.append('codecs=%r' % self._codecs)
+			args.append('codecs={!r}'.format(self._codecs))
 		if self._newinstance:
-			args.append('newinstance=%r' % (struct.unpack('II', self._address.data),))
+			args.append('newinstance={!r}'.format(struct.unpack('II', self._address.data)))
 		if self._hide:
 			args.append('hide=True')
-		modulename = '%s.' % self.__class__.__module__
+		modulename = '{}.'.format(self.__class__.__module__)
 		if modulename == 'aem.send.':
 			modulename = 'aem.'
 		elif modulename == '__main__.':
 			modulename = ''
-		return '%s%s(%s)' % (modulename, self.__class__.__name__, ', '.join(args))
+		return '{}{}({})'.format(modulename, self.__class__.__name__, ', '.join(args))
 			
 	__str__ = __repr__
 	

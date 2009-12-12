@@ -14,31 +14,31 @@ class GenericReference(object):
 		self._call = call # list of recorded call information (inital value is ['app'], ['con'] or ['its'])
 	
 	def __getattr__(self, i):
-		return GenericReference(self._call + [('__getattr__', i, '.%s')])
+		return GenericReference(self._call + [('__getattr__', i, '.{}')])
 	
 	def __getitem__(self, i):
-		return GenericReference(self._call + [('__getitem__', i, '[%r]')])
+		return GenericReference(self._call + [('__getitem__', i, '[{!r}]')])
 	
 	def __call__(self, *args, **kargs):
 		return GenericReference(self._call + [('__call__', (args, kargs), None)])
 	
 	def __gt__(self, i):
-		return GenericReference(self._call + [('AS__gt__', i, ' > %r')])
+		return GenericReference(self._call + [('AS__gt__', i, ' > {!r}')])
 	
 	def __ge__(self, i):
-		return GenericReference(self._call + [('AS__ge__', i, ' >= %r')])
+		return GenericReference(self._call + [('AS__ge__', i, ' >= {!r}')])
 	
 	def __eq__(self, i):
-		return GenericReference(self._call + [('AS__eq__', i, ' == %r')])
+		return GenericReference(self._call + [('AS__eq__', i, ' == {!r}')])
 	
 	def __ne__(self, i):
-		return GenericReference(self._call + [('AS__ne__', i, ' != %r')])
+		return GenericReference(self._call + [('AS__ne__', i, ' != {!r}')])
 	
 	def __lt__(self, i):
-		return GenericReference(self._call + [('AS__lt__', i, ' < %r')])
+		return GenericReference(self._call + [('AS__lt__', i, ' < {!r}')])
 	
 	def __le__(self, i):
-		return GenericReference(self._call + [('AS__le__', i, ' <= %r')])
+		return GenericReference(self._call + [('AS__le__', i, ' <= {!r}')])
 	
 	def __hash__(self):
 		return hash(self._call)
@@ -47,13 +47,13 @@ class GenericReference(object):
 		s = self._call[0]
 		for method, args, repstr in self._call[1:]:
 			if method == '__call__':
-				s += '(%s)' % ', '.join(['%r' % i for i in args[0]] + ['%s=%r' % i for i in args[1].items()])
+				s += '({})'.format(', '.join(['{!r}'.format(i) for i in args[0]] + ['{}={!r}'.format(i) for i in args[1].items()]))
 			elif method == '__getitem__' and isinstance(args, slice):
-				s+= '[%r:%r]' % (args.start, args.stop)
+				s+= '[{!r}:{!r}]'.format(args.start, args.stop)
 			elif method == '__getattr__' and args in ['AND', 'OR', 'NOT']:
-				s = '(%s).%s' % (s, args)
+				s = '({}).{}'.format(s, args)
 			else:
-				s += repstr % args
+				s += repstr.format(args)
 		return s
 	
 	def AS_resolve(self, Reference, appdata):

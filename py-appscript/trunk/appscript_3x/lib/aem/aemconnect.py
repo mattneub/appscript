@@ -96,7 +96,7 @@ class CantLaunchApplicationError(Exception):
 		return self._number
 	
 	def __str__(self):
-		return "Can't launch application at %r: %s (%i)" % (self._apppath, self._lserrors.get(self._number, 'OS error'), self._number)
+		return "Can't launch application at {!r}: {} ({})".format(self._apppath, self._lserrors.get(self._number, 'OS error'), self._number)
 
 
 def launchapp(path, newinstance=False, hide=False):
@@ -147,7 +147,7 @@ def processexistsforurl(url):
 		Note: this will send a 'launch' Apple event to the target application.
 	"""
 	if ':' not in url: # workaround: process will crash if no colon in URL (OS bug)
-		raise ValueError("Invalid url: %r" % url)
+		raise ValueError("Invalid url: {!r}".format(url))
 	return processexistsfordesc(ae.newdesc(kae.typeApplicationURL, url))
 
 def processexistsfordesc(desc):
@@ -207,6 +207,6 @@ def remoteapp(url):
 		Result : AEAddressDesc
 	"""
 	if ':' not in url: # workaround: process will crash if no colon in URL (OS bug)
-		raise ValueError("Invalid url: %r" % url)
+		raise ValueError("Invalid url: {!r}".format(url))
 	return ae.newdesc(kae.typeApplicationURL, url)
 

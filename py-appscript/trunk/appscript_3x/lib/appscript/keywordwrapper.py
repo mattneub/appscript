@@ -13,7 +13,7 @@ class Keyword:
 		self.AS_name = name
 	
 	def __repr__(self): 
-		return 'k.%s' % self.AS_name
+		return 'k.{}'.format(self.AS_name)
 	
 	def __hash__(self): 
 		return hash(self.AS_name)

@@ -127,7 +127,7 @@ class AppData(aem.Codecs):
 				try:
 					keyCode = self.typebyname()[key.AS_name].code
 				except KeyError:
-					raise KeyError("Unknown Keyword: k.%s" % key.AS_name)
+					raise ValueError("Unknown Keyword: k.%s" % key.AS_name)
 				record.setparam(keyCode, self.pack(value))
 			elif isinstance(key, aem.AETypeBase): # AEType/AEProp (AEType is normally used in practice)
 				record.setparam(key.code, self.pack(value))
@@ -271,7 +271,7 @@ class AppData(aem.Codecs):
 			try:
 				data = self.typebyname()[data.AS_name]
 			except KeyError:
-				raise KeyError("Unknown Keyword: k.%s" % data.AS_name)
+				raise ValueError("Unknown Keyword: k.%s" % data.AS_name)
 		return aem.Codecs.pack(self, data)
 	
 	# Relaunch mode

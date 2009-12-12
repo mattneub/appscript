@@ -463,7 +463,7 @@ class OSAX(reference.Application):
 			try:
 				osaxpath, terms = _osaxcache[osaxname]
 			except KeyError:
-				raise KeyError("Scripting addition not found: %r" % self._osaxname)
+				raise ValueError("Scripting addition not found: {!r}".format(self._osaxname))
 			if not terms:
 				try:
 					aete = aem.ae.getappterminology(osaxpath)
@@ -486,11 +486,11 @@ class OSAX(reference.Application):
 		
 	def __str__(self):
 		if self.AS_appdata.constructor == 'current':
-			return 'OSAX(%r)' % self._osaxname
+			return 'OSAX({!r})'.format(self._osaxname)
 		elif self.AS_appdata.constructor == 'path':
-			return 'OSAX(%r, %r)' % (self._osaxname, self.AS_appdata.identifier)
+			return 'OSAX({!r}, {!r})'.format(self._osaxname, self.AS_appdata.identifier)
 		else:
-			return 'OSAX(%r, %s=%r)' % (self._osaxname, self.AS_appdata.constructor, self.AS_appdata.identifier)
+			return 'OSAX({!r}, {}={!r})'.format(self._osaxname, self.AS_appdata.constructor, self.AS_appdata.identifier)
 		
 	__repr__ = __str__
 

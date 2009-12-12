@@ -62,7 +62,7 @@ class Alias(_Base):
 				self._desc = urldesc.coerce(kae.typeAlias)
 			except MacOSError as err:
 				if err.args[0] == -1700:
-					raise ValueError("Can't make mactypes.Alias as file doesn't exist: %r" % path)
+					raise ValueError("Can't make mactypes.Alias as file doesn't exist: {!r}".format(path))
 				else:
 					raise
 		
@@ -90,7 +90,7 @@ class Alias(_Base):
 	# Instance methods
 	
 	def __repr__(self):
-		return 'mactypes.Alias(%r)' % self.path
+		return 'mactypes.Alias({!r})'.format(self.path)
 	
 	# Properties
 	
@@ -152,7 +152,7 @@ class File(_Base):
 	# Instance methods
 	
 	def __repr__(self):
-		return 'mactypes.File(%r)' % self.path
+		return 'mactypes.File({!r})'.format(self.path)
 	
 	# Properties
 	
@@ -215,10 +215,10 @@ class Units:
 		return hash((self.value, self.type))
 	
 	def __repr__(self):
-		return 'mactypes.Units(%r, %r)' % (self.value, self.type)
+		return 'mactypes.Units({!r}, {!r})'.format(self.value, self.type)
 	
 	def __str__(self):
-		return '%r %s' % (self.value, self.type.replace('_', ' '))
+		return '{!r} {}'.format(self.value, self.type.replace('_', ' '))
 	
 	def __int__(self):
 		return int(self.value)

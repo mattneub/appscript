@@ -133,7 +133,7 @@ class InsertionSpecifier(Specifier):
 		self._keyname = keyname
 	
 	def __repr__(self):
-		return '%r.%s' % (self._container, self._keyname)
+		return '{!r}.{}'.format(self._container, self._keyname)
 	
 	def _packself(self, codecs):
 		return packlistas(kae.typeInsertionLoc, [
@@ -167,7 +167,7 @@ class _PositionSpecifier(Specifier):
 		Specifier.__init__(self, container, key)
 	
 	def __repr__(self):
-		return '%r.%s(%r)' % (self._container, self._kBy, self._key)
+		return '{!r}.{}({!r})'.format(self._container, self._kBy, self._key)
 	
 	def _packself(self, codecs):
 		return packlistas(kae.typeObjectSpecifier, [
@@ -345,7 +345,7 @@ class ElementByOrdinal(_SingleElement):
 		_SingleElement.__init__(self, wantcode, container, key)
 	
 	def __repr__(self):
-		return '%r.%s' % (self._container, self._keyname)
+		return '{!r}.{}'.format(self._container, self._keyname)
 	
 	def AEM_resolve(self, obj):
 		return getattr(self._container.AEM_resolve(obj), self._keyname)
@@ -364,7 +364,7 @@ class ElementByRelativePosition(_SingleElement):
 		_PositionSpecifier.__init__(self, wantcode, container, key)
 	
 	def __repr__(self):
-		return '%r.%s(%r)' % (self._container, self._keyname, self.AEM_want)
+		return '{!r}.{}({!r})'.format(self._container, self._keyname, self.AEM_want)
 	
 	def AEM_resolve(self, obj):
 		return getattr(self._container.AEM_resolve(obj), self._keyname)(self.AEM_want)
@@ -420,7 +420,7 @@ class ElementsByRange(_MultipleElements):
 		_MultipleElements.__init__(self, wantcode, container.AEM_trueself(), key)
 	
 	def __repr__(self):
-		return '%r.byrange(%r, %r)' % ((self._container,) + self._key)
+		return '{!r}.byrange({!r}, {!r})'.format(self._container, *self._key)
 
 	def _packkey(self, codecs):
 		rangeselectors = []
@@ -446,11 +446,11 @@ class ElementsByFilter(_MultipleElements):
 	
 	def __init__(self, wantcode, container, key):
 		if not isinstance(key, Test):
-			raise TypeError('Not a test specifier: %r' % key)
+			raise TypeError('Not a test specifier: {!r}'.format(key))
 		_MultipleElements.__init__(self, wantcode, container.AEM_trueself(), key)
 	
 	def __repr__(self):
-		return '%r.byfilter(%r)' % (self._container, self._key)
+		return '{!r}.byfilter({!r})'.format(self._container, self._key)
 
 	def _packkey(self, codecs):
 		return codecs.pack(self._key)
@@ -528,7 +528,7 @@ class UnkeyedElements(Specifier):
 		self._container = container
 	
 	def __repr__(self):
-		return '%r.elements(%r)' % (self._container, self.AEM_want)
+		return '{!r}.elements({!r})'.format(self._container, self.AEM_want)
 	
 	def AEM_packself(self, codecs):
 		return self._container.AEM_packself(codecs) # forward to container specifier
@@ -613,7 +613,7 @@ class _ComparisonTest(Test):
 		self._operand2 = operand2
 	
 	def __repr__(self):
-		return '%r.%s(%r)' % (self._operand1, self._name, self._operand2)
+		return '{!r}.{}({!r})'.format(self._operand1, self._name, self._operand2)
 
 	def AEM_resolve(self, obj):
 		return getattr(self._operand1.AEM_resolve(obj), self._name)(self._operand2)
@@ -686,7 +686,7 @@ class _LogicalTest(Test):
 		self._operands = operands
 		
 	def __repr__(self):
-		return '%r.%s(%s)' % (self._operands[0], self._name, repr(list(self._operands[1:]))[1:-1])
+		return '{!r}.{}({})'.format(self._operands[0], self._name, repr(list(self._operands[1:]))[1:-1])
 	
 	def AEM_resolve(self, obj):
 		return getattr(self._operands[0].AEM_resolve(obj), self._name)(*self._operands[1:])
@@ -714,7 +714,7 @@ class NOT(_LogicalTest):
 	_name = 'NOT'
 		
 	def __repr__(self):
-		return '%r.NOT' % self._operands[0]
+		return '{!r}.NOT'.format(self._operands[0])
 	
 	def AEM_resolve(self, obj):
 		return self._operands[0].AEM_resolve(obj).NOT
@@ -782,7 +782,7 @@ class CustomRoot(ReferenceRoot):
 		self._rootObj = rootObj
 	
 	def __repr__(self):
-		return 'customroot(%r)' % self._rootObj
+		return 'customroot({!r})'.format(self._rootObj)
 	
 	def _packself(self, codecs):
 		return codecs.pack(self._rootObj)
