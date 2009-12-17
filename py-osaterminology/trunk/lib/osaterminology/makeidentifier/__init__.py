@@ -47,7 +47,7 @@ class CamelCaseConverter(_Converter):
 			legal = self._legalChars
 			res = ''
 			uppercaseNext = False
-			for c in s:
+			for c in s.strip():
 				if c in legal:
 					if uppercaseNext:
 						c = c.upper()
@@ -62,7 +62,7 @@ class CamelCaseConverter(_Converter):
 						res = '_' # avoid creating an invalid identifier
 					res += '0x%2.2X' % ord(c)
 				legal = self._alphanum
-			if res in self._reservedWords or res.startswith('_') or res.startswith('AS_'):
+			if res in self._reservedWords or res.startswith('_') or res.startswith('AS_') or not res:
 				res += '_'
 			self._cache[s] = str(res)
 		return self._cache[s]
@@ -89,7 +89,7 @@ class UnderscoreConverter(_Converter):
 						res = '_' # avoid creating an invalid identifier
 					res += '0x%2.2X' % ord(c)
 				legal = self._alphanum
-			if res in self._reservedWords or res.startswith('_') or res.startswith('AS_'):
+			if res in self._reservedWords or res.startswith('_') or res.startswith('AS_') or not res:
 				res += '_'
 			self._cache[s] = str(res)
 		return self._cache[s]

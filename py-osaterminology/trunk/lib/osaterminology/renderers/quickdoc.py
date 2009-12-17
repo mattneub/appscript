@@ -1,8 +1,7 @@
-#!/usr/bin/env pythonw
-
 """quickdoc -- Dump application terminology (aete) data to file/stdout.
 
-(C) 2004 HAS"""
+(C) 2004-2009 HAS
+"""
 
 from aem import kae
 from os import sys
@@ -13,20 +12,6 @@ from aem.ae import getappterminology, getsysterminology
 
 __all__ = ['app', 'component', 'QuickDoc']
 
-
-_help = '''Usage:
-
-    pythonw quickdoc.py [-ck] application-file-or-component-code [output-file]
-
-Full paths to application and output file must be given. 
-Output is UTF8-encoded. BOM is automatically included when writing to output 
-file. If no output file is specified, stdout is used.
-
-The following options are available:
-
-    c    get scripting component terminology; otherwise get application
-             terminology
-    k    convert AppleScript keywords to appscript-style identifiers'''
 
 ######################################################################
 # PRIVATE

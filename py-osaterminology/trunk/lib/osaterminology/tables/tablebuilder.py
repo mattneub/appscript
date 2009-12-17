@@ -3,7 +3,7 @@
 (C) 2008 HAS
 """
 
-from aem import AEType, AEEnum, CommandError, findapp, ae
+from aem import AEType, AEEnum, EventError, findapp, ae
 
 from tableparser import buildtablesforaetes
 import osaterminology.defaultterminology
@@ -104,7 +104,7 @@ class TerminologyTableBuilder:
 		try:
 			aetes = app.event('ascrgdte', {'----':0}).send(120 * 60)
 		except Exception, e: # (e.g.application not running)
-			if isinstance(e, CommandError) and e.number == -192:
+			if isinstance(e, EventError) and e.number == -192:
 				aetes = []
 			else:
 				raise RuntimeError, "Can't get terminology for application (%r): %s" % (app, e)

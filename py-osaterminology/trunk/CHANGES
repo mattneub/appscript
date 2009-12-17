@@ -1,3 +1,9 @@
+2009-12-17 -- 0.14.4
+
+- updated to use py-appscript 0.21.0
+
+- fixed bug in makeidentifier where bad keywords were not always adequately escaped
+
 2009-06-14 -- 0.14.3
 
 - fixed dom.aeteparser, tables.tablebuilder so that application-defined property/element names that overlap built-in type/enum/property names but use different codes are now consistently escaped in both references and keywords; e.g. k.rotation_, someobj.rotation_. (Note: this fix has still to be made in dom.sdefparser.)

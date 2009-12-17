@@ -12,7 +12,7 @@ from osaterminology.makeidentifier import getconverter
 from osaterminology.tables.tablebuilder import *
 
 
-kGlueVersion = '0.5.1'
+kGlueVersion = '0.5.2'
 
 
 ######################################################################

@@ -1,0 +1,3 @@
+include CHANGES LICENSE README TODO
+recursive-include lib *.py
+
