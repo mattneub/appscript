@@ -607,7 +607,7 @@
 				GCC_PREFIX_HEADER = Appscript_Prefix.pch;
 				GCC_VERSION = 4.0;
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(HOME)/Library/Frameworks";
+				INSTALL_PATH = "@executable_path/../Frameworks";
 				PRODUCT_NAME = Appscript;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -783,7 +783,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Appscript_Prefix.pch;
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(HOME)/Library/Frameworks";
+				INSTALL_PATH = "@executable_path/../Frameworks";
 				PRODUCT_NAME = Appscript;
 				WRAPPER_EXTENSION = framework;
 			};
