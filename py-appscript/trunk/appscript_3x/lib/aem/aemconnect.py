@@ -55,7 +55,7 @@ def _launchapplication(path, event, newinstance=False, hide=False):
 	try:
 		return ae.launchapplication(path, event, flags)
 	except ae.MacOSError as err:
-		raise CantLaunchApplicationError(err.args[0], path)
+		raise CantLaunchApplicationError(err.args[0], path) from err
 
 
 ######################################################################

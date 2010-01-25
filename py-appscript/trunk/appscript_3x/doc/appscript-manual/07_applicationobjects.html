@@ -174,7 +174,7 @@ set(reference, to) -- Set an object's data.
 
 <pre><code>te = app('TextEdit')
 # Only perform TextEdit-related commands if it's already running:
-if te.isrunning:
+if te.isrunning():
     # all TextEdit-related code goes here...</code></pre>
 
 <p class="hilitebox">Remember that appscript automatically launches a non-running application the first time your script makes reference to any of its properties, elements or commands. To avoid accidental launches, <em>all</em> code relating to that application must be included in a conditional block that only executes if <code>isrunning</code> returns <code>True</code>.</p>

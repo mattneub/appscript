@@ -140,7 +140,7 @@ def aetesforapp(aemapp):
 		if isinstance(e, EventError) and e.errornumber == -192:
 			aetes = []
 		else:
-			raise RuntimeError("Can't get terminology for application ({!r}): {}".format(aemapp, e))
+			raise RuntimeError("Can't get terminology for application ({!r}): {}".format(aemapp, e)) from e # TO DO: is adding error string to message redundant?
 	if not isinstance(aetes, list):
 		aetes = [aetes]
 	return [aete for aete in aetes if isinstance(aete, ae.AEDesc) and aete.type == kae.typeAETE and aete.data]

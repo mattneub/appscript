@@ -113,8 +113,8 @@ class UnitTypeCodecs:
 		if isinstance(val, mactypes.Units):
 			try:
 				code, packer = self._typebyname[val.type]
-			except KeyError:
-				raise TypeError('Unknown unit type: {!r}'.format(val))
+			except KeyError as e:
+				raise TypeError('Unknown unit type: {!r}'.format(val)) from e
 			else:
 				return True, packer(val, code)
 		else:

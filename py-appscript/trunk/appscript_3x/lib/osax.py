@@ -462,8 +462,8 @@ class OSAX(reference.Application):
 		if terms == True:
 			try:
 				osaxpath, terms = _osaxcache[osaxname]
-			except KeyError:
-				raise ValueError("Scripting addition not found: {!r}".format(self._osaxname))
+			except KeyError as e:
+				raise ValueError("Scripting addition not found: {!r}".format(self._osaxname)) from e
 			if not terms:
 				try:
 					aete = aem.ae.getappterminology(osaxpath)

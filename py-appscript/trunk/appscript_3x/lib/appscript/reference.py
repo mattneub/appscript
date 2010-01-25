@@ -126,8 +126,8 @@ class AppData(aem.Codecs):
 			if isinstance(key, Keyword):
 				try:
 					keyCode = self.typebyname()[key.AS_name].code
-				except KeyError:
-					raise ValueError("Unknown Keyword: k.{}".format(key.AS_name))
+				except KeyError as err:
+					raise ValueError("Unknown Keyword: k.{}".format(key.AS_name)) from err
 				record.setparam(keyCode, self.pack(value))
 			elif isinstance(key, aem.AETypeBase): # AEType/AEProp (AEType is normally used in practice)
 				record.setparam(key.code, self.pack(value))
@@ -270,8 +270,8 @@ class AppData(aem.Codecs):
 		elif isinstance(data, Keyword):
 			try:
 				data = self.typebyname()[data.AS_name]
-			except KeyError:
-				raise ValueError("Unknown Keyword: k.{}".format(data.AS_name))
+			except KeyError as err:
+				raise ValueError("Unknown Keyword: k.{}".format(data.AS_name)) from err
 		return aem.Codecs.pack(self, data)
 	
 	# Relaunch mode
@@ -426,8 +426,8 @@ class Command(_Base):
 		try:
 			for name, value in keywordargs.items():
 				params[self._labelledargterms[name]] = value
-		except KeyError:
-			raise TypeError('Unknown keyword argument {!r}.'.format(name))
+		except KeyError as err:
+			raise TypeError('Unknown keyword argument {!r}.'.format(name)) from err
 		# apply special cases for certain commands (make, set, any command that takes target object specifier as its direct parameter); appscript provides these as a convenience to users, making its syntax more concise, OO-like and nicer to use
 		if self.AS_aemreference is not aem.app:
 			if self._code == b'coresetd':
@@ -477,12 +477,12 @@ class Command(_Base):
 				#
 				if not self.AS_appdata.target().processexistsforpath(self.AS_appdata.identifier):
 					if self.AS_appdata.relaunchmode == 'never':
-						raise CommandError(self, (args, kargs), e, self.AS_appdata)
+						raise CommandError(self, (args, kargs), e, self.AS_appdata) from e
 					elif self.AS_appdata.relaunchmode == 'limited':
 						if self._code == b'ascrnoop':
 							aem.Application.launch(self.AS_appdata.identifier) # relaunch app in background
 						elif self._code != b'aevtoapp': # only 'launch' and 'run' are allowed to restart a local application that's been quit
-							raise CommandError(self, (args, kargs), e, self.AS_appdata)
+							raise CommandError(self, (args, kargs), e, self.AS_appdata) from e
 					# else always relaunch
 				# update AEMApplication object's AEAddressDesc
 				self.AS_appdata.target().reconnect()
@@ -493,8 +493,8 @@ class Command(_Base):
 				except aem.EventError as e:
 					if e.errornumber == -1708 and self._code == 'ascrnoop':
 						return
-					raise CommandError(self, (args, kargs), e, self.AS_appdata)
-			raise CommandError(self, (args, kargs), e, self.AS_appdata)
+					raise CommandError(self, (args, kargs), e, self.AS_appdata) from e
+			raise CommandError(self, (args, kargs), e, self.AS_appdata) from e
 	
 	def AS_formatcommand(self, args):
 		return '{!r}({})'.format(self, ', '.join(['{!r}'.format(v) for v in args[0]] + ['{}={!r}'.format(k, v) for (k, v) in args[1].items()]))
@@ -574,8 +574,8 @@ class Reference(_Base):
 	def __getattr__(self, name):
 		try:
 			selectortype, code = self.AS_appdata.referencebyname()[name]
-		except KeyError:
-			raise AttributeError("Unknown property, element or command: {!r}".format(name))
+		except KeyError as e:
+			raise AttributeError("Unknown property, element or command: {!r}".format(name)) from e
 		if selectortype == kProperty:
 			return Reference(self.AS_appdata, self.AS_aemreference.property(code))
 		elif selectortype == kElement:
@@ -591,8 +591,8 @@ class Reference(_Base):
 				testclause = selector.AS_resolve(Reference, self.AS_appdata)
 				try:
 					testclause = testclause.AS_aemreference
-				except AttributeError:
-					raise ValueError('Not a valid its-based test: {!r}'.format(selector))
+				except AttributeError as e:
+					raise ValueError('Not a valid its-based test: {!r}'.format(selector)) from e
 			elif isinstance(selector, Reference):
 				testclause = selector.AS_aemreference
 			else:
@@ -619,19 +619,19 @@ class Reference(_Base):
 	def previous(self, klass):
 		try:
 			aemtype = self.AS_appdata.typebyname()[klass.AS_name]
-		except AttributeError: # can't get klass.AS_name
-			raise TypeError("Not a keyword: {!r}".format(name))
-		except KeyError: # can't get typebyname[<name>]
-			raise ValueError("Unknown class: {!r}".format(name))
+		except AttributeError as e: # can't get klass.AS_name
+			raise TypeError("Not a keyword: {!r}".format(name)) from e
+		except KeyError as e: # can't get typebyname[<name>]
+			raise ValueError("Unknown class: {!r}".format(name)) from e
 		return Reference(self.AS_appdata, self.AS_aemreference.previous(aemtype.code))
 	
 	def next(self, klass):
 		try:
 			aemtype = self.AS_appdata.typebyname()[klass.AS_name]
-		except AttributeError: # can't get klass.AS_name
-			raise TypeError("Not a keyword: {!r}".format(name))
-		except KeyError: # can't get typebyname[<name>]
-			raise ValueError("Unknown class: {!r}".format(name))
+		except AttributeError as e: # can't get klass.AS_name
+			raise TypeError("Not a keyword: {!r}".format(name)) from e
+		except KeyError as e: # can't get typebyname[<name>]
+			raise ValueError("Unknown class: {!r}".format(name)) from e
 		return Reference(self.AS_appdata, self.AS_aemreference.next(aemtype.code))
 	
 	def ID(self, id):
