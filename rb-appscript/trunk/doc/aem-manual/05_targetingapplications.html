@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 
-<title>rb-aem manual | 5. Targetting Applications</title>
+<title>rb-aem manual | 5. Targeting Applications</title>
 
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <style type="text/css" media="all"><!--@import url(../full.css);--></style>
@@ -29,7 +29,7 @@
 <!-- content -->
 <div id="content">
 
-<h2>5. Targetting Applications</h2>
+<h2>5. Targeting Applications</h2>
 
 <h3>The <code>Application</code> class</h3>
 
@@ -109,7 +109,7 @@
 
 <h3>Creating <code>Application</code> objects</h3>
 
-<p>When targetting a local application by path, the full path to the application (or application bundle) must be given, including a <code>.app</code> suffix if present. Note that aem identifies local applications by process serial number for reliability. If the target application is not already running when a new <code>Application</code> instance is created, it will be started automatically so that a PSN can be acquired. If the application can't be launched for some reason (e.g. if it's in the Trash), an <code>AEM::CantLaunchApplicationError</code> error will be raised.</p>
+<p>When targeting a local application by path, the full path to the application (or application bundle) must be given, including a <code>.app</code> suffix if present. Note that aem identifies local applications by process serial number for reliability. If the target application is not already running when a new <code>Application</code> instance is created, it will be started automatically so that a PSN can be acquired. If the application can't be launched for some reason (e.g. if it's in the Trash), an <code>AEM::CantLaunchApplicationError</code> error will be raised.</p>
 
 <p>If the <code>by_url</code> constructor is used, its <code>url</code> argument should be an eppc URL string. Aem will pack this as an <code>AEDesc</code> of <code>typeApplicationURL</code>. The target machine must have Remote Apple Events enabled in its Sharing preferences.</p>
 
