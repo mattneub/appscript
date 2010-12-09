@@ -1,7 +1,4 @@
-"""genericreference -- allows user to construct relative (con- and its- based) references without immediate access to application terminology.
-
-(C) 2004-2008 HAS
-"""
+"""genericreference -- allows user to construct relative (con- and its- based) references without immediate access to application terminology. """
 
 import aem
 

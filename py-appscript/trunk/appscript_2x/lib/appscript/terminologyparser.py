@@ -1,9 +1,6 @@
 """terminologyparser -- Basic aete parser to construct name-code terminology tables from an application's class, enumerator, property, element and command definitions. 
 
-The tables returned by this module are an intermediate format, suitable for exporting to Python modules via terminology.dump. The terminology module will convert these intermediate tables into the final format used in AppData objects.
-
-(C) 2004-2008 HAS
-"""
+The tables returned by this module are an intermediate format, suitable for exporting to Python modules via terminology.dump. The terminology module will convert these intermediate tables into the final format used in AppData objects. """
 
 from struct import pack, unpack
 try:

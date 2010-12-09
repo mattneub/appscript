@@ -1,7 +1,4 @@
-"""aemreference -- An object-oriented API for constructing object specifiers.
-
-(C) 2005-2008 HAS
-"""
+"""aemreference -- An object-oriented API for constructing object specifiers. """
 
 import struct
 import ae, kae

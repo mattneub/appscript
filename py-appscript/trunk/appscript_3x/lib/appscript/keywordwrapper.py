@@ -1,6 +1,4 @@
-"""keywordwrapper -- generic wrapper for application-specific type and enum names.
-
-(C) 2004-2008 HAS"""
+"""keywordwrapper -- generic wrapper for application-specific type and enum names. """
 
 # The Keyword class provides a generic wrapper for class, enum, property and type names.
 # Users don't instantiate this class directly; instead, the syntactic sugar layer allows keywords

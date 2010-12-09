@@ -1,3 +1,14 @@
+2010-12-09 -- 0.22.0
+
+- replaced PyCObject-based aetoolbox.h/aetoolbox.c with PyCapsule-based ae.h in appscript_3x/ext; this adds support for Python 3.2; Python 3.0 is no longer supported
+
+- removed aem.ae.getappterminology() as it relied on deprecated Carbon APIs
+
+- the osax module now uses OSACopyScriptingDefinition() to obtain scripting addition terminology, so works in both 32- and 64-bit Python. Note that in addition to limitations of OSACopyScriptingDefinition (e.g. aete-to-sdef conversion is not 100% reliable), the SdefParser is limited in capability (no support for xi:include, class-extension, synonym elements), but should suffice for parsing relatively simple osax dictionaries.
+
+- modified appscript.terminology.dump() to retrieve aete resources via 'ascrgdte' events; added osax.dump() function
+
+
 2009-12-12 -- 0.21.1
 
 - fixed bug in py3-appscript when unpacking typeBoolean, typeVersion descriptors

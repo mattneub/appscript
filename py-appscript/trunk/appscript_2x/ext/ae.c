@@ -4,9 +4,6 @@
  *
  * Docstring descriptions taken from Apple developer documentation
  *     Copyright (C) 1993-2008 Apple Inc.
- *
- * New code
- *     Copyright (C) 2005-2009 HAS
  */
  
 /* =========================== Module AE =========================== */
@@ -1332,40 +1329,6 @@ static PyObject *AE_CopyScriptingDefinition(PyObject* self, PyObject* args)
 	return res;
 }
 
-static PyObject *AE_GetAppTerminology(PyObject* self, PyObject* args)
-{
-#if defined(__LP64__)
-	PyErr_SetString(PyExc_NotImplementedError,
-					"aem.ae.getappterminology isn't available in 64-bit processes.");
-	return NULL;
-#else
-	static ComponentInstance defaultComponent;
-	FSRef fsRef;
-	FSSpec fss;
-	AEDesc theDesc;
-	Boolean didLaunch;
-	OSAError err;
-	
-	if (!PyArg_ParseTuple(args, "O&", AE_GetFSRef, &fsRef))
-		return NULL;
-	err = FSGetCatalogInfo(&fsRef, kFSCatInfoNone, NULL, NULL, &fss, NULL);
-    if (err != noErr) return AE_MacOSError(err);
-	if (!defaultComponent) {
-		defaultComponent = OpenDefaultComponent(kOSAComponentType, 'ascr');
-		err = GetComponentInstanceError(defaultComponent);
-		if (err) return AE_MacOSError(err);
-	}
-	err = OSAGetAppTerminology(defaultComponent, 
-							   kOSAModeNull,
-							   &fss, 
-							   0, 
-							   &didLaunch, 
-							   &theDesc);
-	if (err) return AE_MacOSError(err);
-	return BuildTerminologyList(&theDesc, typeAETE);
-#endif
-}
-
 static PyObject *AE_GetSysTerminology(PyObject* self, PyObject* args)
 {
 	OSType componentSubType;
@@ -1504,11 +1467,6 @@ static PyMethodDef AE_methods[] = {
 		"copyscriptingdefinition(unicode path) -> (unicode sdef)\n"
 		"Creates a copy of a scripting definition (sdef) from the specified\n"
 		"file or bundle.")},
-		
-  	{"getappterminology", (PyCFunction) AE_GetAppTerminology, METH_VARARGS,  PyDoc_STR(
-		"getappterminology(unicode path) -> (AEDesc aete)\n"
-		"Gets one or more scripting terminology resources from the specified\n"
-		"file.")},
 		
   	{"getsysterminology", (PyCFunction) AE_GetSysTerminology, METH_VARARGS, PyDoc_STR(
 		"getsysterminology(OSType subTypeCode) -> (AEDesc aeut)\n"

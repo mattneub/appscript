@@ -1,10 +1,11 @@
-"""osax.py -- Allows scripting additions (a.k.a. OSAXen) to be called from Python.
+"""osax.py -- Allows scripting additions (a.k.a. OSAXen) to be called from Python. """
 
-(C) 2006-2009 HAS
-"""
+from xml.etree import ElementTree
+import string
 
 from appscript import *
 from appscript import reference, terminology
+from appscript.reservedkeywords import kReservedKeywords
 import aem
 
 __all__ = ['OSAX', 'scriptingadditions',
@@ -16,407 +17,116 @@ __all__ = ['OSAX', 'scriptingadditions',
 # PRIVATE
 ######################################################################
 
-class StandardAdditionsGlue:
 
-	classes = \
-	[('alert_reply', 'aleR'),
-	 ('dialog_reply', 'askr'),
-	 ('file_information', 'asfe'),
-	 ('POSIX_file', 'psxf'),
-	 ('system_information', 'sirr'),
-	 ('volume_settings', 'vlst'),
-	 ('URL', 'url '),
-	 ('Internet_address', 'IPAD'),
-	 ('web_page', 'html')]
+class SdefParser:
+	""" Parse scripting addition sdef.
+		
+		Note:
+		
+		- OSAX terminology can only be retrieved via OSAGetAppTerminology or OSACopyScriptingDefinition;
+			while the latter is more reliable, it is deprecated in 32-bit and absent in 64-bit Carbon APIs.
+		
+		- Four char codes that contain non-printing codes in aetes (e.g. the 'caution' enum in StandardAdditions has code '\x00\x00\x00\x02') do not convert to valid code attributes in sdefs.
+		
+		- xi:include or class-extension elements are not supported, but osaxen are unlikely to use these anyway.
+		
+		- Synonyms are not supported. (While possible, it would require additional work to ensure that synonym names/codes don't accidentally mask the primary terms.)
+	"""
 	
-	enums = \
-	[('stop', '\x00\x00\x00\x00'),
-	 ('note', '\x00\x00\x00\x01'),
-	 ('caution', '\x00\x00\x00\x02'),
-	 ('IP', 'eipt'),
-	 ('AppleTalk', 'eatt'),
-	 ('Web_servers', 'esvw'),
-	 ('FTP_Servers', 'esvf'),
-	 ('Telnet_hosts', 'esvt'),
-	 ('File_servers', 'esva'),
-	 ('News_servers', 'esvn'),
-	 ('Directory_services', 'esvd'),
-	 ('Media_servers', 'esvm'),
-	 ('Remote_applications', 'esve'),
-	 ('critical', 'criT'),
-	 ('informational', 'infA'),
-	 ('warning', 'warN'),
-	 ('current_application', 'agcp'),
-	 ('frontmost_application', 'egfp'),
-	 ('application_0xD2AppName0xD3', 'agcp'),
-	 ('me', 'agcp'),
-	 ('it', 'agcp'),
-	 ('application_support', 'asup'),
-	 ('applications_folder', 'apps'),
-	 ('desktop', 'desk'),
-	 ('desktop_pictures_folder', 'dtp\xc4'),
-	 ('documents_folder', 'docs'),
-	 ('downloads_folder', 'down'),
-	 ('favorites_folder', 'favs'),
-	 ('Folder_Action_scripts', 'fasf'),
-	 ('fonts', 'font'),
-	 ('help_', '\xc4hlp'),
-	 ('home_folder', 'cusr'),
-	 ('internet_plugins', '\xc4net'),
-	 ('keychain_folder', 'kchn'),
-	 ('library_folder', 'dlib'),
-	 ('modem_scripts', '\xc4mod'),
-	 ('movies_folder', 'mdoc'),
-	 ('music_folder', '\xb5doc'),
-	 ('pictures_folder', 'pdoc'),
-	 ('preferences', 'pref'),
-	 ('printer_descriptions', 'ppdf'),
-	 ('public_folder', 'pubb'),
-	 ('scripting_additions', '\xc4scr'),
-	 ('scripts_folder', 'scr\xc4'),
-	 ('shared_documents', 'sdat'),
-	 ('shared_libraries', '\xc4lib'),
-	 ('sites_folder', 'site'),
-	 ('startup_disk', 'boot'),
-	 ('startup_items', 'empz'),
-	 ('system_folder', 'macs'),
-	 ('system_preferences', 'sprf'),
-	 ('temporary_items', 'temp'),
-	 ('trash', 'trsh'),
-	 ('users_folder', 'usrs'),
-	 ('utilities_folder', 'uti\xc4'),
-	 ('workflows_folder', 'flow'),
-	 ('voices', 'fvoc'),
-	 ('apple_menu', 'amnu'),
-	 ('control_panels', 'ctrl'),
-	 ('control_strip_modules', 'sdev'),
-	 ('extensions', 'extn'),
-	 ('launcher_items_folder', 'laun'),
-	 ('printer_drivers', '\xc4prd'),
-	 ('printmonitor', 'prnt'),
-	 ('shutdown_folder', 'shdf'),
-	 ('speakable_items', 'spki'),
-	 ('stationery', 'odst'),
-	 ('application_support_folder', 'asup'),
-	 ('current_user_folder', 'cusr'),
-	 ('desktop_folder', 'desk'),
-	 ('Folder_Action_scripts_folder', 'fasf'),
-	 ('fonts_folder', 'font'),
-	 ('help_folder', '\xc4hlp'),
-	 ('plugins', '\xc4net'),
-	 ('internet_plugins_folder', '\xc4net'),
-	 ('modem_scripts_folder', '\xc4mod'),
-	 ('preferences_folder', 'pref'),
-	 ('printer_descriptions_folder', 'ppdf'),
-	 ('scripting_additions_folder', '\xc4scr'),
-	 ('shared_documents_folder', 'sdat'),
-	 ('shared_libraries_folder', '\xc4lib'),
-	 ('startup', 'empz'),
-	 ('startup_items_folder', 'empz'),
-	 ('temporary_items_folder', 'temp'),
-	 ('trash_folder', 'trsh'),
-	 ('voices_folder', 'fvoc'),
-	 ('apple_menu_items', 'amnu'),
-	 ('apple_menu_items_folder', 'amnu'),
-	 ('control_panels_folder', 'ctrl'),
-	 ('control_strip_modules_folder', 'sdev'),
-	 ('extensions_folder', 'extn'),
-	 ('printer_drivers_folder', '\xc4prd'),
-	 ('printmonitor_folder', 'prnt'),
-	 ('shutdown_items', 'shdf'),
-	 ('shutdown_items_folder', 'shdf'),
-	 ('stationery_folder', 'odst'),
-	 ('At_Ease_applications', 'apps'),
-	 ('At_Ease_applications_folder', 'apps'),
-	 ('At_Ease_documents', 'docs'),
-	 ('At_Ease_documents_folder', 'docs'),
-	 ('editors', 'oded'),
-	 ('editors_folder', 'oded'),
-	 ('system_domain', 'flds'),
-	 ('local_domain', 'fldl'),
-	 ('network_domain', 'fldn'),
-	 ('user_domain', 'fldu'),
-	 ('Classic_domain', 'fldc'),
-	 ('short', 'shor'),
-	 ('eof', 'eof '),
-	 ('boolean', 'bool'),
-	 ('ask', 'ask '),
-	 ('yes', 'yes '),
-	 ('no', 'no  '),
-	 ('up', 'rndU'),
-	 ('down', 'rndD'),
-	 ('toward_zero', 'rndZ'),
-	 ('to_nearest', 'rndN'),
-	 ('as_taught_in_school', 'rndS'),
-	 ('http_URL', 'http'),
-	 ('secure_http_URL', 'htps'),
-	 ('ftp_URL', 'ftp '),
-	 ('mail_URL', 'mail'),
-	 ('file_URL_0x28obsolete0x29', 'file'),
-	 ('gopher_URL', 'gphr'),
-	 ('telnet_URL', 'tlnt'),
-	 ('news_URL', 'news'),
-	 ('secure_news_URL', 'snws'),
-	 ('nntp_URL', 'nntp'),
-	 ('message_URL', 'mess'),
-	 ('mailbox_URL', 'mbox'),
-	 ('multi_URL', 'mult'),
-	 ('launch_URL', 'laun'),
-	 ('afp_URL', 'afp '),
-	 ('AppleTalk_URL', 'at  '),
-	 ('remote_application_URL', 'eppc'),
-	 ('streaming_multimedia_URL', 'rtsp'),
-	 ('network_file_system_URL', 'unfs'),
-	 ('mailbox_access_URL', 'imap'),
-	 ('mail_server_URL', 'upop'),
-	 ('directory_server_URL', 'uldp'),
-	 ('unknown_URL', 'url?')]
+	_keywordcache = {}
+	_reservedwords = set(kReservedKeywords)
+	_specialconversions = {
+			' ': '_',
+			'-': '_',
+			'&': 'and',
+			'/': '_',
+	}
+	_legalchars = string.ascii_letters + '_'
+	_alphanum = _legalchars + string.digits
+
+	def __init__(self):
+		self.classes, self.enums, self.properties, self.elements, self.commands = [], [], [], [], []
 	
-	properties = \
-	[('button_returned', 'bhit'),
-	 ('gave_up', 'gavu'),
-	 ('text_returned', 'ttxt'),
-	 ('name', 'pnam'),
-	 ('displayed_name', 'dnam'),
-	 ('short_name', 'cfbn'),
-	 ('name_extension', 'nmxt'),
-	 ('bundle_identifier', 'bnid'),
-	 ('type_identifier', 'utid'),
-	 ('kind', 'kind'),
-	 ('default_application', 'asda'),
-	 ('creation_date', 'ascd'),
-	 ('modification_date', 'asmo'),
-	 ('file_type', 'asty'),
-	 ('file_creator', 'asct'),
-	 ('short_version', 'assv'),
-	 ('long_version', 'aslv'),
-	 ('size', 'ptsz'),
-	 ('alias', 'alis'),
-	 ('folder', 'asdr'),
-	 ('package_folder', 'ispk'),
-	 ('extension_hidden', 'hidx'),
-	 ('visible', 'pvis'),
-	 ('locked', 'aslk'),
-	 ('busy_status', 'bzst'),
-	 ('folder_window', 'asfw'),
-	 ('POSIX_path', 'psxp'),
-	 ('AppleScript_version', 'siav'),
-	 ('AppleScript_Studio_version', 'sikv'),
-	 ('system_version', 'sisv'),
-	 ('short_user_name', 'sisn'),
-	 ('long_user_name', 'siln'),
-	 ('user_ID', 'siid'),
-	 ('user_locale', 'siul'),
-	 ('home_directory', 'home'),
-	 ('boot_volume', 'sibv'),
-	 ('computer_name', 'sicn'),
-	 ('host_name', 'ldsa'),
-	 ('IPv4_address', 'siip'),
-	 ('primary_Ethernet_address', 'siea'),
-	 ('CPU_type', 'sict'),
-	 ('CPU_speed', 'sics'),
-	 ('physical_memory', 'sipm'),
-	 ('output_volume', 'ouvl'),
-	 ('input_volume', 'invl'),
-	 ('alert_volume', 'alvl'),
-	 ('output_muted', 'mute'),
-	 ('properties', 'pALL'),
-	 ('scheme', 'pusc'),
-	 ('host', 'HOST'),
-	 ('path', 'FTPc'),
-	 ('user_name', 'RAun'),
-	 ('password', 'RApw'),
-	 ('DNS_form', 'pDNS'),
-	 ('dotted_decimal_form', 'pipd'),
-	 ('port', 'ppor'),
-	 ('URL', 'pURL'),
-	 ('text_encoding', 'ptxe')]
+	def _name(self, s):
+		if s not in self._keywordcache:
+			legal = self._legalchars
+			res = ''
+			for c in s:
+				if c in legal:
+					res += c
+				elif c in self._specialconversions:
+					res += self._specialconversions[c]
+				else:
+					if res == '':
+						res = '_' # avoid creating an invalid identifier
+					res += '0x{:X}'.format(ord(c))
+				legal = self._alphanum
+			if res in self._reservedwords or res.startswith('_') or res.startswith('AS_'):
+				res += '_'
+			self._keywordcache[s] = str(res)
+		return self._keywordcache[s]
 	
-	elements = \
-	[('Internet_addresses', 'IPAD'),
-	 ('web_pages', 'html'),
-	 ('file_information', 'asfe'),
-	 ('URL', 'url '),
-	 ('dialog_reply', 'askr'),
-	 ('alert_reply', 'aleR'),
-	 ('system_information', 'sirr'),
-	 ('POSIX_file', 'psxf'),
-	 ('volume_settings', 'vlst')]
+	def _code(self, s):
+		return s.encode('macroman')
 	
-	commands = \
-	[('display_alert',
-	  'sysodisA',
-	  [('message', 'mesS'),
-	   ('as_', 'as A'),
-	   ('buttons', 'btns'),
-	   ('default_button', 'dflt'),
-	   ('cancel_button', 'cbtn'),
-	   ('giving_up_after', 'givu')]),
-	 ('get_volume_settings', 'sysogtvl', []),
-	 ('the_clipboard', 'JonsgClp', [('as_', 'rtyp')]),
-	 ('system_attribute', 'fndrgstl', [('has', 'has ')]),
-	 ('set_volume',
-	  'aevtstvl',
-	  [('output_volume', 'ouvl'),
-	   ('input_volume', 'invl'),
-	   ('alert_volume', 'alvl'),
-	   ('output_muted', 'mute')]),
-	 ('info_for', 'sysonfo4', [('size', 'ptsz')]),
-	 ('system_info', 'sysosigt', []),
-	 ('get_eof', 'rdwrgeof', []),
-	 ('choose_from_list',
-	  'gtqpchlt',
-	  [('with_title', 'appr'),
-	   ('with_prompt', 'prmp'),
-	   ('default_items', 'inSL'),
-	   ('OK_button_name', 'okbt'),
-	   ('cancel_button_name', 'cnbt'),
-	   ('multiple_selections_allowed', 'mlsl'),
-	   ('empty_selection_allowed', 'empL')]),
-	 ('say',
-	  'sysottos',
-	  [('displaying', 'DISP'),
-	   ('using', 'VOIC'),
-	   ('speaking_rate', 'RATE'),
-	   ('pitch', 'PTCH'),
-	   ('modulation', 'PMOD'),
-	   ('volume', 'VOLU'),
-	   ('stopping_current_speech', 'STOP'),
-	   ('waiting_until_completion', 'wfsp'),
-	   ('saving_to', 'stof')]),
-	 ('computer', 'fndrgstl', [('has', 'has ')]),
-	 ('handle_CGI_request',
-	  'WWW\xbdsdoc',
-	  [('searching_for', 'kfor'),
-	   ('with_posted_data', 'post'),
-	   ('of_content_type', 'ctyp'),
-	   ('using_access_method', 'meth'),
-	   ('from_address', 'addr'),
-	   ('from_user', 'user'),
-	   ('using_password', 'pass'),
-	   ('with_user_info', 'frmu'),
-	   ('from_server', 'svnm'),
-	   ('via_port', 'svpt'),
-	   ('executing_by', 'scnm'),
-	   ('referred_by', 'refr'),
-	   ('from_browser', 'Agnt'),
-	   ('using_action', 'Kapt'),
-	   ('of_action_type', 'Kact'),
-	   ('from_client_IP_address', 'Kcip'),
-	   ('with_full_request', 'Kfrq'),
-	   ('with_connection_ID', 'Kcid'),
-	   ('from_virtual_host', 'DIRE')]),
-	 ('scripting_components', 'sysocpls', []),
-	 ('run_script', 'sysodsct', [('with_parameters', 'plst'), ('in_', 'scsy')]),
-	 ('beep', 'sysobeep', []),
-	 ('mount_volume',
-	  'aevtmvol',
-	  [('on_server', 'SRVR'),
-	   ('in_AppleTalk_zone', 'ZONE'),
-	   ('as_user_name', 'USER'),
-	   ('with_password', 'PASS')]),
-	 ('write',
-	  'rdwrwrit',
-	  [('to', 'refn'),
-	   ('starting_at', 'wrat'),
-	   ('for_', 'nmwr'),
-	   ('as_', 'as  ')]),
-	 ('path_to',
-	  'earsffdr',
-	  [('from_', 'from'), ('as_', 'rtyp'), ('folder_creation', 'crfl')]),
-	 ('list_disks', 'earslvol', []),
-	 ('random_number',
-	  'sysorand',
-	  [('from_', 'from'), ('to', 'to  '), ('with_seed', 'seed')]),
-	 ('time_to_GMT', 'sysoGMT ', []),
-	 ('delay', 'sysodela', []),
-	 ('current_date', 'misccurd', []),
-	 ('ASCII_number', 'sysocton', []),
-	 ('list_folder', 'earslfdr', [('invisibles', 'lfiv')]),
-	 ('choose_file',
-	  'sysostdf',
-	  [('with_prompt', 'prmp'),
-	   ('of_type', 'ftyp'),
-	   ('default_location', 'dflc'),
-	   ('invisibles', 'lfiv'),
-	   ('multiple_selections_allowed', 'mlsl'),
-	   ('showing_package_contents', 'shpc')]),
-	 ('close_access', 'rdwrclos', []),
-	 ('open_location', 'GURLGURL', [('error_reporting', 'errr')]),
-	 ('ASCII_character', 'sysontoc', []),
-	 ('do_shell_script',
-	  'sysoexec',
-	  [('as_', 'rtyp'),
-	   ('administrator_privileges', 'badm'),
-	   ('user_name', 'RAun'),
-	   ('password', 'RApw'),
-	   ('altering_line_endings', 'alen')]),
-	 ('closing_folder_window_for', 'facofclo', []),
-	 ('choose_folder',
-	  'sysostfl',
-	  [('with_prompt', 'prmp'),
-	   ('default_location', 'dflc'),
-	   ('invisibles', 'lfiv'),
-	   ('multiple_selections_allowed', 'mlsl'),
-	   ('showing_package_contents', 'shpc')]),
-	 ('localized_string',
-	  'sysolocS',
-	  [('from_table', 'froT'), ('in_bundle', 'in B')]),
-	 ('read',
-	  'rdwrread',
-	  [('from_', 'rdfm'),
-	   ('for_', 'rdfr'),
-	   ('to', 'rdto'),
-	   ('before_', 'rbfr'),
-	   ('until', 'rdut'),
-	   ('using_delimiter', 'deli'),
-	   ('using_delimiters', 'deli'),
-	   ('as_', 'as  ')]),
-	 ('choose_color', 'sysochcl', [('default_color', 'dcol')]),
-	 ('set_the_clipboard_to', 'JonspClp', []),
-	 ('choose_file_name',
-	  'sysonwfl',
-	  [('with_prompt', 'prmt'),
-	   ('default_name', 'dfnm'),
-	   ('default_location', 'dflc')]),
-	 ('choose_URL', 'sysochur', [('showing', 'cusv'), ('editable_URL', 'pedu')]),
-	 ('choose_remote_application',
-	  'sysochra',
-	  [('with_title', 'appr'), ('with_prompt', 'prmp')]),
-	 ('offset', 'sysooffs', [('of', 'psof'), ('in_', 'psin')]),
-	 ('opening_folder', 'facofopn', []),
-	 ('summarize', 'fbcssumm', [('in_', 'in  ')]),
-	 ('moving_folder_window_for', 'facofsiz', [('from_', 'fnsz')]),
-	 ('removing_folder_items_from', 'facoflos', [('after_losing', 'flst')]),
-	 ('path_to_resource',
-	  'sysorpth',
-	  [('in_bundle', 'in B'), ('in_directory', 'in D')]),
-	 ('store_script', 'sysostor', [('in_', 'fpth'), ('replacing', 'savo')]),
-	 ('adding_folder_items_to', 'facofget', [('after_receiving', 'flst')]),
-	 ('choose_application',
-	  'sysoppcb',
-	  [('with_title', 'appr'),
-	   ('with_prompt', 'prmp'),
-	   ('multiple_selections_allowed', 'mlsl'),
-	   ('as_', 'rtyp')]),
-	 ('clipboard_info', 'JonsiClp', [('for_', 'for ')]),
-	 ('set_eof', 'rdwrseof', [('to', 'set2')]),
-	 ('open_for_access', 'rdwropen', [('write_permission', 'perm')]),
-	 ('load_script', 'sysoload', []),
-	 ('display_dialog',
-	  'sysodlog',
-	  [('default_answer', 'dtxt'),
-	   ('hidden_answer', 'htxt'),
-	   ('buttons', 'btns'),
-	   ('default_button', 'dflt'),
-	   ('cancel_button', 'cbtn'),
-	   ('with_title', 'appr'),
-	   ('with_icon', 'disp'),
-	   ('with_icon', 'disp'),
-	   ('with_icon', 'disp'),
-	   ('giving_up_after', 'givu')]),
-	 ('round', 'sysorond', [('rounding', 'dire')])]
- 
+	def _addnamecode(self, node, collection):
+		name = self._name(node.get('name'))
+		code = self._code(node.get('code'))
+		if name and len(code) == 4 and (name, code) not in collection:
+			collection.append((name, code))
+	
+	def _addnamecodeparams(self, node, collection):
+		name = self._name(node.get('name'))
+		code = self._code(node.get('code'))
+		parameters = []
+		if name and len(code) == 8:
+			collection.append((name, code, parameters))
+			for pnode in node.findall('parameter'):
+				self._addnamecode(pnode, parameters)
+	
+	def parse(self, xml):
+		""" Extract name-code mappings from an sdef.
+		
+			xml : bytes | str -- sdef data
+		"""
+		xml = ElementTree.fromstring(xml)
+		for suite in xml.findall('suite'):
+			for node in suite:
+				try:
+					if node.tag in ['command', 'event']:
+						self._addnamecodeparams(node, self.commands)
+					elif node.tag in ['class', 'record-type', 'value-type']:
+						self._addnamecode(node, self.classes)
+						for prop in node.findall('property'):
+							self._addnamecode(prop, self.properties)
+						if node.tag == 'class': # elements
+							name = self._name(node.get('plural', 
+									node.get('name', '') + 's'))
+							code = self._code(node.get('code'))
+							if name and name != 's' and len(code) == 4:
+								self.elements.append((name, code))
+					elif node.tag == 'enumeration':
+						for enum in node.findall('enumerator'):
+							self._addnamecode(enum, self.enums)
+				except:
+					pass
+	
+	def parsefile(self, path):
+		""" Extract name-code mappings from an sdef.
+		
+			path :  str -- path to .sdef file
+		"""
+		self.parse(aem.ae.copyscriptingdefinition(path))
+
+
+##
+
+
+kStandardAdditionsEnums = [ # codes from StandardAdditions aete
+		('stop', '\x00\x00\x00\x00'),
+		('note', '\x00\x00\x00\x01'),
+		('caution', '\x00\x00\x00\x02')]
+
 
 ######################################################################
 
@@ -467,15 +177,11 @@ class OSAX(reference.Application):
 			except KeyError:
 				raise ValueError("Scripting addition not found: %r" % self._osaxname)
 			if not terms:
-				try:
-					aete = aem.ae.getappterminology(osaxpath)
-				except NotImplementedError:
-					if osaxname == 'standardadditions':
-						terms = _osaxcache[osaxname][1] = terminology.tablesformodule(StandardAdditionsGlue)
-					else:
-						raise
-				else:
-					terms = _osaxcache[osaxname][1] = terminology.tablesforaetes(aete)
+				p = SdefParser()
+				p.parsefile(osaxpath)
+				if osaxname == 'standardadditions':
+					p.enums += kStandardAdditionsEnums # patch in missing codes for compatibility
+				terms = _osaxcache[osaxname][1] = terminology.tablesformodule(p)
 		reference.Application.__init__(self, name, id, creator, pid, url, aemapp, terms)
 		try:
 			self.AS_appdata.target().event('ascrgdut').send(300) # make sure target application has loaded event handlers for all installed OSAXen
@@ -493,9 +199,59 @@ class OSAX(reference.Application):
 			return 'OSAX(%r, %r)' % (self._osaxname, self.AS_appdata.identifier)
 		else:
 			return 'OSAX(%r, %s=%r)' % (self._osaxname, self.AS_appdata.constructor, self.AS_appdata.identifier)
+			
+	def __getattr__(self, name):
+		command = reference.Application.__getattr__(self, name)
+		if isinstance(command, reference.Command):
+			def osaxcommand(*args, **kargs):
+				try:
+					return command(*args, **kargs)
+				except CommandError, e:
+					if int(e) == -1713: # 'No user interaction allowed' error (e.g. user tried to send a 'display dialog' command to a non-GUI python process), so convert the target process to a full GUI process and try again
+						aem.ae.transformprocesstoforegroundapplication()
+						self.activate()
+						return command(*args, **kargs)
+			return osaxcommand
+		else:
+			return command
 		
 	__repr__ = __str__
 
 
 ScriptingAddition = OSAX # deprecated but retained for backwards compatibility
+
+
+##
+
+def dump(osaxname, modulepath):
+	"""Dump scripting addition terminology data to Python module.
+		osaxname : str -- name of installed scripting addition
+		modulepath : str -- path to generated module
+		
+	Generates a Python module containing an application's basic terminology 
+	(names and codes) as used by osax.
+	
+	Call the dump() function to dump faulty sdefs to Python module, e.g.:
+	
+		dump('MyOSAX', '/path/to/site-packages/myosaxglue.py')
+	
+	Patch any errors by hand, then import the patched module into your script 
+	and pass it to osax's OSAX() constructor via its 'terms' argument, e.g.:
+	
+		from osax import *
+		import myosaxglue
+		
+		myapp = OSAX('MyOSAX', terms=myosaxglue)
+	"""
+	originalname = osaxname
+	osaxname = osaxname.lower()
+	if osaxname.endswith('.osax'):
+		osaxname = osaxname[:-5]
+	try:
+		osaxpath, terms = _osaxcache[osaxname]
+	except KeyError, e:
+		raise ValueError("Scripting addition not found: %r" % originalname)
+	p = SdefParser()
+	p.parsefile(osaxpath)
+	terminology.dumptables((p.classes, p.enums, p.properties, p.elements, p.commands), osaxpath, modulepath)
 

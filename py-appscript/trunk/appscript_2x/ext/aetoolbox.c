@@ -1,7 +1,5 @@
 /* 
 ** aetoolbox.c
-**
-** (C) 2006-2009 HAS
 */
 
 #include "aetoolbox.h"

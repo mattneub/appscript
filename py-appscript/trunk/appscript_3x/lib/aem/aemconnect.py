@@ -1,7 +1,4 @@
-"""connect - Creates Apple event descriptor records of typeProcessSerialNumber and typeApplicationURL, used to specify the target application in send.Event() constructor.
-
-(C) 2005-2009 HAS
-"""
+"""connect - Creates Apple event descriptor records of typeProcessSerialNumber and typeApplicationURL, used to specify the target application in send.Event() constructor. """
 import struct
 from time import sleep
 

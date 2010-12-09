@@ -1,6 +1,4 @@
-"""referencerenderer -- Generates string representations of appscript references from aem object specifiers.
-
-(C) 2004-2009 HAS"""
+"""referencerenderer -- Generates string representations of appscript references from aem object specifiers. """
 
 import struct
 from terminology import kProperty, kElement

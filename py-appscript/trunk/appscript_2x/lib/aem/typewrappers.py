@@ -1,7 +1,4 @@
-"""typewrappers -- wrapper classes for AE type and enumeration codes
-
-(C) 2005-2008 HAS
-"""
+"""typewrappers -- wrapper classes for AE type and enumeration codes """
 
 ######################################################################
 # PUBLIC

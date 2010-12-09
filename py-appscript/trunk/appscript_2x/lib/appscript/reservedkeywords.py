@@ -1,7 +1,4 @@
-"""reservedkeywords
-
-(C) 2004-2008 HAS
-"""
+"""reservedkeywords """
 
 import keyword
 

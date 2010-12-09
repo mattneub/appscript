@@ -9,8 +9,6 @@
  * AE_GetOSType, AE_BuildOSType
  *
  * Extensions that need to use these functions should include aetoolbox.c
- *
- * (C) 2006-2009 HAS
  */
 
 #ifndef APPSCRIPT_AETOOLBOX_H

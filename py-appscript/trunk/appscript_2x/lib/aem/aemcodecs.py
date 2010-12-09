@@ -1,7 +1,4 @@
-"""codecs -- Convert from Python to Apple Event Manager types and vice-versa.
-
-(C) 2005-2008 HAS
-"""
+"""codecs -- Convert from Python to Apple Event Manager types and vice-versa. """
 
 import struct, datetime, time
 from codecs import BOM_UTF16_LE, BOM_UTF16_BE

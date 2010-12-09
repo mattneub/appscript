@@ -1,7 +1,4 @@
-"""defaultterminology -- translation tables between appscript-style typenames and corresponding AE codes
-
-(C) 2005-2008 HAS
-"""
+"""defaultterminology -- translation tables between appscript-style typenames and corresponding AE codes """
 
 types = [
 		# Human-readable names for commonly used AE types.

@@ -5,37 +5,15 @@
  * Docstring descriptions taken from Apple developer documentation
  *     Copyright (C) 1993-2008 Apple Inc.
  *
- * New code
- *     Copyright (C) 2005-2009 HAS
  */
  
 /* =========================== Module AE =========================== */
 
 #include "Python.h"
-#include "aetoolbox.h"
+
+#define AE_MODULE_C
+#include "ae.h"
 #include "sendthreadsafe.c"
-
-#include <Carbon/Carbon.h>
-#include <CoreFoundation/CoreFoundation.h>
-#include <ApplicationServices/ApplicationServices.h>
-
-extern PyObject *_AE_AEDesc_New(AEDesc *);
-extern PyObject *_AE_AEDesc_NewBorrowed(AEDesc *);
-extern int _AE_AEDesc_Convert(PyObject *, AEDesc *);
-extern int _AE_AEDesc_ConvertDisown(PyObject *, AEDesc *);
-extern PyObject *_AE_GetMacOSErrorException(void);
-extern PyObject *_AE_MacOSError(int err);
-extern int _AE_GetOSType(PyObject *v, OSType *pr);
-extern PyObject *_AE_BuildOSType(OSType t);
-
-#define AE_AEDesc_New _AE_AEDesc_New
-#define AE_AEDesc_NewBorrowed _AE_AEDesc_NewBorrowed
-#define AE_AEDesc_Convert _AE_AEDesc_Convert
-#define AE_AEDesc_ConvertDisown _AE_AEDesc_ConvertDisown
-#define AE_GetMacOSErrorException _AE_GetMacOSErrorException
-#define AE_MacOSError _AE_MacOSError
-#define AE_GetOSType _AE_GetOSType
-#define AE_BuildOSType _AE_BuildOSType
 
 // Event handling
 #if __LP64__
@@ -83,7 +61,7 @@ PyObject *AE_MacOSError(int err)
 
 /* ----------------------- OSType converters ------------------------ */
 
-/* Convert a 4-char string object argument to an OSType value */
+/* Convert a 4-byte bytes object argument to an OSType value */
 int AE_GetOSType(PyObject *v, OSType *pr)
 {
 	uint32_t tmp;
@@ -97,7 +75,7 @@ int AE_GetOSType(PyObject *v, OSType *pr)
 	return 1;
 }
 
-/* Convert an OSType value to a 4-char string object */
+/* Convert an OSType value to a 4-byte bytes object */
 PyObject *AE_BuildOSType(OSType t)
 {
 	uint32_t tmp = CFSwapInt32HostToBig((uint32_t)t);
@@ -1329,39 +1307,6 @@ static PyObject *AE_CopyScriptingDefinition(PyObject* self, PyObject* args)
 	return res;
 }
 
-static PyObject *AE_GetAppTerminology(PyObject* self, PyObject* args)
-{
-#if defined(__LP64__)
-	PyErr_SetString(PyExc_NotImplementedError,
-					"aem.ae.getappterminology isn't available in 64-bit processes.");
-	return NULL;
-#else
-	static ComponentInstance defaultComponent;
-	FSRef fsRef;
-	FSSpec fss;
-	AEDesc theDesc;
-	Boolean didLaunch;
-	OSAError err;
-	
-	if (!PyArg_ParseTuple(args, "O&", AE_GetFSRef, &fsRef))
-		return NULL;
-	err = FSGetCatalogInfo(&fsRef, kFSCatInfoNone, NULL, NULL, &fss, NULL);
-    if (err != noErr) return AE_MacOSError(err);
-	if (!defaultComponent) {
-		defaultComponent = OpenDefaultComponent(kOSAComponentType, 'ascr');
-		err = GetComponentInstanceError(defaultComponent);
-		if (err) return AE_MacOSError(err);
-	}
-	err = OSAGetAppTerminology(defaultComponent, 
-							   kOSAModeNull,
-							   &fss, 
-							   0, 
-							   &didLaunch, 
-							   &theDesc);
-	if (err) return AE_MacOSError(err);
-	return BuildTerminologyList(&theDesc, typeAETE);
-#endif
-}
 
 static PyObject *AE_GetSysTerminology(PyObject* self, PyObject* args)
 {
@@ -1502,28 +1447,11 @@ static PyMethodDef AE_methods[] = {
 		"Creates a copy of a scripting definition (sdef) from the specified\n"
 		"file or bundle.")},
 		
-  	{"getappterminology", (PyCFunction) AE_GetAppTerminology, METH_VARARGS,  PyDoc_STR(
-		"getappterminology(unicode path) -> (AEDesc aete)\n"
-		"Gets one or more scripting terminology resources from the specified\n"
-		"file.")},
-		
   	{"getsysterminology", (PyCFunction) AE_GetSysTerminology, METH_VARARGS, PyDoc_STR(
 		"getsysterminology(OSType subTypeCode) -> (AEDesc aeut)\n"
 		"Gets one or more scripting terminology resources from the OSA system.")},
 	
 	{NULL, NULL, 0}
-};
-
-
-AE_CAPI aeCAPI = {
-	AE_AEDesc_New,
-	AE_AEDesc_NewBorrowed,
-	AE_AEDesc_Convert,
-	AE_AEDesc_ConvertDisown,
-	AE_GetMacOSErrorException, 
-	AE_MacOSError, 
-	AE_GetOSType, 
-	AE_BuildOSType
 };
 
 
@@ -1554,7 +1482,7 @@ PyInit_ae(void)
 
 	upp_GenericEventHandler = NewAEEventHandlerUPP(GenericEventHandler);
 	upp_GenericCoercionHandler = NewAECoerceDescUPP(GenericCoercionHandler);
-
+	
 	m = PyModule_Create(&AE_module);
 	
 	errClass = AE_GetMacOSErrorException();
@@ -1563,9 +1491,20 @@ PyInit_ae(void)
 	if (PyType_Ready(&AEDesc_Type)) goto fail;
 	Py_INCREF(&AEDesc_Type);
 	PyModule_AddObject(m, "AEDesc", (PyObject *)&AEDesc_Type);
-
-	PyObject *aeCAPIObj = PyCObject_FromVoidPtr((void *)&aeCAPI, NULL);
-	PyModule_AddObject(m, "aetoolbox", aeCAPIObj);
+	
+	/* Create capsule for C API */
+	static void *aeAPI[] = {AE_AEDesc_New,
+							AE_AEDesc_NewBorrowed,
+							AE_AEDesc_Convert,
+							AE_AEDesc_ConvertDisown,
+							AE_GetMacOSErrorException,
+							AE_MacOSError,
+							AE_GetOSType,
+							AE_BuildOSType};
+	
+	PyObject *aeAPIObj = PyCapsule_New((void *)aeAPI, "ae._C_API", NULL);
+	if (aeAPIObj)
+		PyModule_AddObject(m, "_C_API", aeAPIObj);
 	return m;
  fail:
 	Py_XDECREF(m);

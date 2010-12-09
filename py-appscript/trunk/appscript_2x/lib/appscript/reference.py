@@ -1,8 +1,7 @@
 """reference -- High-level, terminology-driven wrapper for aem. 
 
 Lots of syntactic sugar allows users to construct query-based references using familiar OO-like syntax.
-
-(C) 2004-2008 HAS"""
+"""
 
 import struct, sys
 from time import sleep

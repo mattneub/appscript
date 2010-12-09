@@ -1,7 +1,4 @@
-"""send -- Construct and send Apple events.
-
-(C) 2005-2008 HAS
-"""
+"""send -- Construct and send Apple events. """
 
 from ae import newappleevent, stringsforosstatus, MacOSError
 import kae

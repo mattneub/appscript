@@ -1,7 +1,4 @@
-"""aem -- Mid-level wrapper for building and sending Apple events.
-
-(C) 2005-2009 HAS
-"""
+"""aem -- Mid-level wrapper for building and sending Apple events. """
 
 import struct
 

@@ -1,9 +1,6 @@
-"""terminology -- Obtains an application's aete resource(s) using a 'ascrgdte' event and converts them into lookup tables for use in AppData objects.
+"""terminology -- Obtains an application's aete resource(s) using a 'ascrgdte' event and converts them into lookup tables for use in AppData objects. """
 
-(C) 2004-2008 HAS
-"""
-
-from aem import AEType, AEEnum, EventError, findapp, ae, kae
+from aem import Application, AEType, AEEnum, EventError, findapp, ae, kae
 import defaultterminology
 
 from terminologyparser import buildtablesforaetes
@@ -172,13 +169,31 @@ def tablesforapp(aemapp):
 	return _terminologycache[aemapp.AEM_identity]
 
 
+def dumptables(tables, sourcepath, modulepath):
+	"""Dump terminology data to Python module.
+		tables : tuple of list -- five-item tuple: (classes, enums, properties, elements, commands)
+		sourcepath : str -- path to source application/scripting addition
+		modulepath : str -- path to generated module
+	"""
+	from pprint import pprint
+	atts = zip(('classes', 'enums', 'properties', 'elements', 'commands'), tables)
+	f = open(modulepath, 'w')
+	f.write('version = 1.1\n')
+	f.write('path = %r\n' % sourcepath)
+	for key, value in atts:
+		if key[0] != '_':
+			f.write('\n%s = \\\n' % key)
+			pprint(value, f)
+	f.close()
+
+
 ######################################################################
 # PUBLIC
 ######################################################################
 
 
 def dump(apppath, modulepath):
-	"""Dump terminology data to Python module.
+	"""Dump application terminology data to Python module.
 		apppath : str -- name or path of application
 		modulepath : str -- path to generated module
 		
@@ -187,7 +202,7 @@ def dump(apppath, modulepath):
 	
 	Call the dump() function to dump faulty aetes to Python module, e.g.:
 	
-		dump('MyApp', '/Library/Python/2.5/site-packages/myappglue.py')
+		dump('MyApp', '/path/to/site-packages/myappglue.py')
 	
 	Patch any errors by hand, then import the patched module into your script 
 	and pass it to appscript's app() constructor via its 'terms' argument, e.g.:
@@ -199,17 +214,7 @@ def dump(apppath, modulepath):
 
 	Note that dumped terminologies aren't used by appscript's built-in help system.
 	"""
-	from pprint import pprint
-	from sys import argv
-	
 	apppath = findapp.byname(apppath)
-	tables = buildtablesforaetes(ae.getappterminology(apppath))
-	atts = zip(('classes', 'enums', 'properties', 'elements', 'commands'), tables)
-	f = open(modulepath, 'w')
-	f.write('version = 1.1\n')
-	f.write('path = %r\n' % apppath)
-	for key, value in atts:
-		if key[0] != '_':
-			f.write('\n%s = \\\n' % key)
-			pprint(value, f)
-	f.close()
+	tables = buildtablesforaetes(aetesforapp(Application(apppath)))
+	dumptables(tables, apppath, modulepath)
+

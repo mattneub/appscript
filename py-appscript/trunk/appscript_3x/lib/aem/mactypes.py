@@ -1,7 +1,5 @@
 """mactypes -- Defines user-friendly wrapper classes for Mac OS datatypes that don't have a suitable Python equivalent.
 
-(C) 2008 HAS
-
 - File objects encompass AEDescs of typeFSRef/typeFSSpec/typeFileURL to save user from having to deal with them directly. File objects refer to filesystem locations which may or may not already exist.
 
 - Alias objects wrap AEDescs of typeAlias. Aliases refer to filesystem objects and can track them as they're moved around the disk or renamed.

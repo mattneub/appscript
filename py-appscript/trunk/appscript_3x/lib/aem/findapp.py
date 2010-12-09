@@ -1,7 +1,4 @@
-"""findapp -- Support module for obtaining the full path to a local application given its name, bundle id or creator type. If application isn't found, an ApplicationNotFoundError exception is raised.
-
-(C) 2004-2008 HAS
-"""
+"""findapp -- Support module for obtaining the full path to a local application given its name, bundle id or creator type. If application isn't found, an ApplicationNotFoundError exception is raised. """
 
 from os.path import exists
 

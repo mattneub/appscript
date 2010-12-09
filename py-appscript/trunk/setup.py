@@ -14,12 +14,10 @@ else:
 
 setup(
 		name = "appscript",
-		version = "0.21.1",
+		version = "0.22.0",
 		description = "Control AppleScriptable applications from Python.",
-		author = "HAS",
-		author_email='',
 		url='http://appscript.sourceforge.net',
-		license='MIT License',
+		license='Public Domain',
 		platforms=['Mac OS X'],
 		ext_modules = [
 			Extension('aem.ae',
@@ -42,8 +40,8 @@ setup(
 		extra_path = "aeosa",
 		package_dir = {'': os.path.join(root_dir, 'lib')},
 		classifiers = [
-			'License :: OSI Approved :: MIT License',
-			'Development Status :: 4 - Beta',
+			'License :: Public Domain',
+			'Development Status :: 5 - Production/Stable',
 			'Operating System :: MacOS :: MacOS X',
 			'Programming Language :: Python :: 2',
 			'Programming Language :: Python :: 3',
