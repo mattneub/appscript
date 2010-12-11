@@ -108,7 +108,7 @@ class SdefParser:
 						for enum in node.findall('enumerator'):
 							self._addnamecode(enum, self.enums)
 				except:
-					pass
+					pass # ignore problem definitions
 	
 	def parsefile(self, path):
 		""" Extract name-code mappings from an sdef.
@@ -224,8 +224,8 @@ def dump(osaxname, modulepath):
 		osaxname : str -- name of installed scripting addition
 		modulepath : str -- path to generated module
 		
-	Generates a Python module containing an application's basic terminology 
-	(names and codes) as used by osax.
+	Generates a Python module containing an scripting addition's basic terminology 
+	(names and codes).
 	
 	Call the dump() function to dump faulty sdefs to Python module, e.g.:
 	
@@ -239,6 +239,8 @@ def dump(osaxname, modulepath):
 		
 		myapp = OSAX('MyOSAX', terms=myosaxglue)
 	"""
+	if not _osaxnames:
+		_initcaches()
 	originalname = osaxname
 	osaxname = osaxname.lower()
 	if osaxname.endswith('.osax'):

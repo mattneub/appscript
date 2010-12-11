@@ -109,7 +109,7 @@ class SdefParser:
 						for enum in node.findall('enumerator'):
 							self._addnamecode(enum, self.enums)
 				except:
-					pass
+					pass # ignore problem definitions
 	
 	def parsefile(self, path):
 		""" Extract name-code mappings from an sdef.
@@ -243,6 +243,8 @@ def dump(osaxname, modulepath):
 		
 		myapp = OSAX('MyOSAX', terms=myosaxglue)
 	"""
+	if not _osaxnames:
+		_initcaches()
 	originalname = osaxname
 	osaxname = osaxname.lower()
 	if osaxname.endswith('.osax'):
