@@ -3,8 +3,6 @@
 #
 # terminology -- retrieve and convert an application's terminology into lookup tables
 #
-# Copyright (C) 2006-2009 HAS. Released under MIT License.
-#
 
 ######################################################################
 # TERMINOLOGY PARSER
@@ -339,6 +337,38 @@ module Terminology
 		return reference_by_code, reference_by_name
 	end
 	
+	def Terminology.dump_tables(tables, module_name, source_path, out_path)
+		# Parse aete(s) into intermediate tables, suitable for use by Terminology#tables_for_module
+		if not(/^[A-Z][A-Za-z0-9_]*$/ === module_name)
+			raise RuntimeError, "Invalid module name."
+		end
+		# Write module
+		File.open(out_path, "w") do |f|
+			f.puts "module #{module_name}"
+			f.puts "\tVersion = 1.1"
+			f.puts "\tPath = #{source_path.inspect}"
+			f.puts
+			(["Classes", "Enumerators", "Properties", "Elements"].zip(tables[0,4])).each do |name, table|
+				f.puts "\t#{name} = ["
+				table.sort.each do |item|
+					f.puts "\t\t#{item.inspect},"
+				end
+				f.puts "\t]"
+				f.puts
+			end
+			f.puts "\tCommands = ["
+			tables[4].sort.each do |name, code, params|
+				f.puts "\t\t[#{name.inspect}, #{code.inspect}, ["
+					params.each do |item|
+						f.puts "\t\t\t#{item.inspect},"
+					end
+				f.puts "\t\t]],"
+			end
+			f.puts "\t]"
+			f.puts "end"
+		end
+	end
+	
 	#######
 	# public
 	
@@ -365,6 +395,13 @@ module Terminology
 		end
 		return _make_type_table(terms::Classes, terms::Enumerators, terms::Properties) \
 			+ _make_reference_table(terms::Properties, terms::Elements, terms::Commands)
+	end
+	
+	def Terminology.tables_for_parsed_sdef(terms)
+		# Build terminology tables from an SdefParser instance.
+		# Result : list of hash -- [typebycode, typebyname, referencebycode, referencebyname]
+		return _make_type_table(terms.classes, terms.enumerators, terms.properties) \
+			+ _make_reference_table(terms.properties, terms.elements, terms.commands)
 	end
 	
 	def Terminology.aetes_for_app(aem_app)
@@ -397,58 +434,38 @@ module Terminology
 	end
 	
 	#######
+	# public
 	
 	def Terminology.dump(app_name, module_name, out_path)
-		# Export terminology tables as a Ruby module
+		# Export application terminology tables as a Ruby module
 		# app_path : string -- name or path of application
 		# module_name : string -- name of generated module (must be a valid Ruby constant)
 		# out_path : string -- module file to write
+		# 	
+		# Generates a Ruby module containing an application's basic terminology 
+		# (names and codes) as used by appscript.
+		# 
+		# Call the #dump method to dump faulty aetes to Ruby module, e.g.:
+		# 
+		# 	Terminology.dump('MyApp', 'MyAppGlue', '/path/to/ruby/modules/myappglue.rb')
+		# 
+		# Patch any errors by hand, then import the patched module into your script 
+		# and pass it to appscript's app() constructor via its 'terms' argument, e.g.:
+		# 
+		# 	require 'appscript'; include Appscript
+		# 	require 'myappglue'
+		# 	
+		# 	myapp = app('MyApp', terms => MyAppGlue)
+		# 
+		# Note that dumped terminologies aren't used by appscript's built-in help system.
+		#
 		app_path = FindApp.by_name(app_name)
-		if not(/^[A-Z][A-Za-z0-9_]*$/ === module_name)
-			raise RuntimeError, "Invalid module name."
-		end
 		# Get aete(s)
-		begin
-			begin
-				aetes = AEM::Codecs.new.unpack(AE.get_app_terminology(app_path).coerce(KAE::TypeAEList))
-			rescue NotImplementedError # get_app_terminology is unavailable on 64-bit Leopard
-				aetes = Terminology.aetes_for_app(AEM::Application.by_path(app_path))
-			end
-		rescue AE::MacOSError => e
-			if  e.to_i == -192 # aete resource not found
-				raise RuntimeError, "No terminology found."
-			else
-				raise
-			end
-		end
+		aetes = Terminology.aetes_for_app(Application.by_path(app_path))
 		aetes.delete_if { |aete| not(aete.is_a?(AE::AEDesc) and aete.type == KAE::TypeAETE) }
-		# Parse aete(s) into intermediate tables, suitable for use by Terminology#tables_for_module
 		tables = TerminologyParser.build_tables_for_aetes(aetes)
-		# Write module
-		File.open(out_path, "w") do |f|
-			f.puts "module #{module_name}"
-			f.puts "\tVersion = 1.1"
-			f.puts "\tPath = #{app_path.inspect}"
-			f.puts
-			(["Classes", "Enumerators", "Properties", "Elements"].zip(tables[0,4])).each do |name, table|
-				f.puts "\t#{name} = ["
-				table.sort.each do |item|
-					f.puts "\t\t#{item.inspect},"
-				end
-				f.puts "\t]"
-				f.puts
-			end
-			f.puts "\tCommands = ["
-			tables[4].sort.each do |name, code, params|
-				f.puts "\t\t[#{name.inspect}, #{code.inspect}, ["
-					params.each do |item|
-						f.puts "\t\t\t#{item.inspect},"
-					end
-				f.puts "\t\t]],"
-			end
-			f.puts "\t]"
-			f.puts "end"
-		end
+		Terminology.dump_tables(tables, module_name, app_path, out_path)
 	end
+	
 end
 

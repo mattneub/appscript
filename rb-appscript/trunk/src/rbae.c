@@ -198,7 +198,7 @@ rbAE_AEDesc_newAppleEvent(VALUE class, VALUE eventClassValue, VALUE eventIDValue
 	// workaround for return ID bug in 10.6
 	AEDesc returnIDDesc;
 	if (returnID == kAutoGenerateReturnID) {
-		err = AEGetAttributeDesc(&result, keyReturnIDAttr, typeSInt16, &returnIDDesc);
+		err = AEGetAttributeDesc(&result, keyReturnIDAttr, typeSInt32, &returnIDDesc);
 		if (err != noErr) rbAE_raiseMacOSError("Can't create AppleEvent.", err);
 		err = AEGetDescData(&returnIDDesc, &returnID, sizeof(returnID));
 		if (err != noErr) rbAE_raiseMacOSError("Can't create AppleEvent.", err);
@@ -666,37 +666,31 @@ rbAE_convertUnixSecondsToLongDateTime(VALUE self, VALUE secs)
 // Get aete
 
 static VALUE
-rbAE_OSAGetAppTerminology(VALUE self, VALUE path)
+rbAE_OSACopyScriptingDefinition(VALUE self, VALUE path)
 {
-#if defined(__LP64__)
-	rb_raise(rb_eNotImpError, "AE.get_app_terminology isn't available in 64-bit processes.\n");
-	return Qnil;
-#else
-	static ComponentInstance defaultComponent;
-	FSRef appRef;
-	FSSpec fss;
-	Boolean didLaunch;
-	AEDesc theDesc;
+	FSRef fsRef;
+	CFDataRef sdef;
+	CFIndex dataSize;
+	char *data;
+	VALUE res;
 	OSErr err = noErr;
 	
-	err = FSPathMakeRef((UInt8 *)StringValuePtr(path), &appRef, NULL);
-	if (err != 0) rbAE_raiseMacOSError("Couldn't make FSRef.", err);
-	err = FSGetCatalogInfo(&appRef, kFSCatInfoNone, NULL, NULL, &fss, NULL);
-	if (err != 0) rbAE_raiseMacOSError("Couldn't make FSSpec.", err);
-	if (!defaultComponent) {
-		defaultComponent = OpenDefaultComponent(kOSAComponentType, 'ascr');
-		err = GetComponentInstanceError(defaultComponent);
-		if (err != 0) rbAE_raiseMacOSError("Couldn't make default component instance.", err);
+	err = FSPathMakeRef((UInt8 *)StringValuePtr(path), &fsRef, NULL);
+	if (err != 0) rbAE_raiseMacOSError("Couldn't make FSRef for path.", err);
+	err = OSACopyScriptingDefinition(&fsRef, 0, &sdef);
+	if (err) rbAE_raiseMacOSError("Couldn't get sdef.", err);
+	dataSize = CFDataGetLength(sdef);
+	data = (char *)CFDataGetBytePtr(sdef);
+	if (data != NULL) {
+		res = rb_str_new(data, dataSize);
+	} else {
+		data = malloc(dataSize);
+		CFDataGetBytes(sdef, CFRangeMake(0, dataSize), (UInt8 *)data);
+		res = rb_str_new(data, dataSize);
+		free(data);
 	}
-	err = OSAGetAppTerminology(defaultComponent, 
-							   kOSAModeNull,
-							   &fss, 
-							   0,
-							   &didLaunch, 
-							   &theDesc);
-	if (err != 0) rbAE_raiseMacOSError("Couldn't get aete resource.", err);
-	return rbAE_wrapAEDesc(&theDesc);
-#endif
+	CFRelease(sdef);
+	return res;
 }
 
 
@@ -957,7 +951,7 @@ Init_ae (void)
 	rb_define_module_function(mAE, "convert_unix_seconds_to_long_date_time", 
 							  rbAE_convertUnixSecondsToLongDateTime, 1);
 							  
-	rb_define_module_function(mAE, "get_app_terminology", rbAE_OSAGetAppTerminology, 1);
+	rb_define_module_function(mAE, "copy_scripting_definition", rbAE_OSACopyScriptingDefinition, 1);
 	
 	// Event handling
 	
