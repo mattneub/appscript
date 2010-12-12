@@ -3,8 +3,6 @@
 #
 # referencerenderer -- obtain an appscript-style string representation of an aem reference
 #
-# Copyright (C) 2006-2009 HAS. Released under MIT License.
-#
 
 require "_aem/aemreference"
 

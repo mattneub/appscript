@@ -4,8 +4,6 @@
  * ae -- a low-level API providing a basic Ruby wrapper around the various 
  *    Apple Event Manager, Process Manager and Launch Services APIs used by aem
  *
- *  Copyright (C) 2006-2009 HAS. Released under MIT License.
- *
  *  Thanks to:
  *  - FUJIMOTO Hisakuni, author of RubyAEOSA
  *  - Jordan Breeding (64-bit support patch)
@@ -639,6 +637,63 @@ rbAE_convertURLToPath(VALUE self, VALUE urlStr, VALUE pathStyle)
 // Date conversion
 
 static VALUE
+rbAE_convertLongDateTimeToString(VALUE self, VALUE ldt)
+{
+	Boolean bErr;
+	OSStatus err = 0;
+	CFAbsoluteTime cfTime;
+	CFDateFormatterRef formatter;
+	CFStringRef str;
+	char buffer[20]; // size of format string + nul
+	
+	err = UCConvertLongDateTimeToCFAbsoluteTime(NUM2LL(ldt), &cfTime);
+	if (err != noErr) rbAE_raiseMacOSError("Can't convert LongDateTime to seconds.", err);
+	formatter = CFDateFormatterCreate(NULL, NULL,  kCFDateFormatterNoStyle,  kCFDateFormatterNoStyle);
+	if (!formatter) rbAE_raiseMacOSError("Can't create date formatter.", err);
+	CFDateFormatterSetFormat(formatter, CFSTR("yyyy-MM-dd HH:mm:ss"));
+	str = CFDateFormatterCreateStringWithAbsoluteTime(NULL, formatter, cfTime);
+	CFRelease(formatter);
+	if (!str) rbAE_raiseMacOSError("Can't create date string.", err);
+	bErr = CFStringGetCString(str,
+							 buffer,
+							 sizeof(buffer),
+							 kCFStringEncodingUTF8);
+	CFRelease(str);
+	if (!bErr) rb_raise(rb_eRuntimeError, "Can't convert date string.");
+	return rb_str_new2(buffer);
+}
+
+
+static VALUE
+rbAE_convertStringToLongDateTime(VALUE self, VALUE datetime)
+{
+	CFStringRef str;
+	CFAbsoluteTime cfTime;
+	CFDateFormatterRef formatter;
+	OSStatus err = 0;
+	Boolean bErr;
+	SInt64 ldt;
+	
+	str = CFStringCreateWithBytes(NULL,
+								  (UInt8 *)(RSTRING_PTR(datetime)),
+								  (CFIndex)(RSTRING_LEN(datetime)),
+								  kCFStringEncodingUTF8,
+								  false);
+	if (str == NULL || CFStringGetLength(str) != 19) rb_raise(rb_eRuntimeError, "Bad datetime string.");
+	formatter = CFDateFormatterCreate(NULL, NULL,  kCFDateFormatterNoStyle,  kCFDateFormatterNoStyle);
+	if (!formatter) rbAE_raiseMacOSError("Can't create date formatter.", err);
+	CFDateFormatterSetFormat(formatter, CFSTR("yyyy-MM-dd HH:mm:ss"));
+	bErr = CFDateFormatterGetAbsoluteTimeFromString(formatter, str, NULL, &cfTime);
+	CFRelease(formatter);
+	CFRelease(str);
+	if (!bErr) rb_raise(rb_eRuntimeError, "Can't convert date string.");
+	err = UCConvertCFAbsoluteTimeToLongDateTime(cfTime, &ldt);
+	if (err != noErr) rbAE_raiseMacOSError("Can't convert seconds to LongDateTime.", err);
+	return LL2NUM(ldt);
+}
+
+
+static VALUE
 rbAE_convertLongDateTimeToUnixSeconds(VALUE self, VALUE ldt)
 {
 	OSStatus err = 0;
@@ -946,6 +1001,10 @@ Init_ae (void)
 	rb_define_module_function(mAE, "convert_url_to_path", 
 							  rbAE_convertURLToPath, 2);
 
+	rb_define_module_function(mAE, "convert_long_date_time_to_string", 
+							  rbAE_convertLongDateTimeToString, 1);
+	rb_define_module_function(mAE, "convert_string_to_long_date_time", 
+							  rbAE_convertStringToLongDateTime, 1);
 	rb_define_module_function(mAE, "convert_long_date_time_to_unix_seconds", 
 							  rbAE_convertLongDateTimeToUnixSeconds, 1);
 	rb_define_module_function(mAE, "convert_unix_seconds_to_long_date_time", 

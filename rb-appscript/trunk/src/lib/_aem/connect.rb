@@ -3,8 +3,6 @@
 #
 # connect -- launch applications and create AEAddressDescs
 #
-# Copyright (C) 2006-2009 HAS. Released under MIT License.
-#
 
 module Connect
 	# Creates Apple event descriptor records of typeProcessSerialNumber, typeKernelProcessID and typeApplicationURL, used to specify the target application in Send::Event constructor.
@@ -13,6 +11,9 @@ module Connect
 	require "kae"
 	require "_aem/codecs"
 	require "_aem/send"
+	require "_aem/encodingsupport"
+	
+	@@encoding_support = AEMEncodingSupport.encoding_support
 	
 	LaunchContinue = 0x4000
 	LaunchNoFileFlags = 0x0800
@@ -65,6 +66,7 @@ module Connect
 	##
 	
 	def Connect.launch_application(path, event)
+		path = @@encoding_support.to_utf8_string(path)
 		begin
 			return AE.launch_application(path, event,
 					LaunchContinue + LaunchNoFileFlags + LaunchDontSwitch)
@@ -75,6 +77,7 @@ module Connect
 	
 	def Connect.launch_app_with_launch_event(path)
 		# Send a 'launch' event to an application. If application is not already running, it will be launched in background first.
+		path = @@encoding_support.to_utf8_string(path)
 		begin
 			# If app is already running, calling AE.launch_application will send a 'reopen' event, so need to check for this first:
 			psn = AE.psn_for_application_path(path)
@@ -93,6 +96,7 @@ module Connect
 	##
 	
 	def Connect.process_exists_for_path?(path)
+		path = @@encoding_support.to_utf8_string(path)
 		# Does a local process launched from the specified application file exist?
 		# Note: if path is invalid, an AE::MacOSError is raised.
 		begin
@@ -154,6 +158,7 @@ module Connect
 		#	Result : AEAddressDesc
 		#
 		# Always creates AEAddressDesc by process serial number; that way there's no confusion if multiple versions of the same app are running.
+		path = @@encoding_support.to_utf8_string(path)
 		begin
 			psn = AE.psn_for_application_path(path)
 		rescue AE::MacOSError => err
@@ -175,6 +180,7 @@ module Connect
 	end
 	
 	def Connect.remote_app(url)
+		url = @@encoding_support.to_utf8_string(url)
 		# Make an AEAddressDesc identifying a running application on another machine.
 		#	url : string -- URL for remote application, e.g. 'eppc://user:password@0.0.0.1/TextEdit'
 		#	Result : AEAddressDesc

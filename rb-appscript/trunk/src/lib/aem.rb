@@ -4,8 +4,6 @@
 # aem -- a mid-level object-oriented API for creating and sending Apple events
 #    using raw AE codes; may be used directly or via high-level appscript wrapper
 #
-# Copyright (C) 2006-2009 HAS. Released under MIT License.
-#
 
 require "ae"
 require "kae"

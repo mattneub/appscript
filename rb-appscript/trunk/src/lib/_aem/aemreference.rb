@@ -3,8 +3,6 @@
 #
 # aemreference -- an object-oriented API for constructing object specifier AEDescs
 #
-# Copyright (C) 2006-2009 HAS. Released under MIT License.
-#
 
 ######################################################################
 # Endianness support

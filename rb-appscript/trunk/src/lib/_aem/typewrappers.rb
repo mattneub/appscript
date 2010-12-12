@@ -3,8 +3,6 @@
 #
 # typewrappers -- Ruby classes representing type, enumerator, property and keyword AEDescs
 #
-# Copyright (C) 2006-2009 HAS. Released under MIT License.
-#
 
 module TypeWrappers
 	

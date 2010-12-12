@@ -50,11 +50,14 @@
 :no
 :ask</code></pre>
 
-<p>Occasionally an application dictionary defines a type or enumerator without providing it with a corresponding name name. In these cases, the value will be represented as a raw <code>AEM::AEType</code> or <code>AEM::AEEnum</code> object instead of a symbol, e.g.: <!--The aem package's documentation provides more information on these lower-level objects, should you need to use them.--></p>
+<p>Occasionally an application dictionary defines a type or enumerator without providing it with a corresponding name name. In these cases, the value will be represented as a raw <code>AEM::AEType</code> or <code>AEM::AEEnum</code> object instead of a symbol, e.g.:</p>
 
 <pre><code>AEM::AEType.new('abcd')
 
 AEM::AEEnum.new('xyz ')</code></pre>
+
+<p>See the aem manual for more information on these lower-level objects, should you need to use them.</p>
+
 
 <h3>Common AE types</h3>
 
@@ -98,21 +101,44 @@ AEM::AEEnum.new('xyz ')</code></pre>
 <p>When packing a <code>Bignum</code>, appscript will pack it either as a 32-bit integer (most preferred), 64-bit integer, or 64-bit float (least preferred), depending on the value's size.</p>
 
 
-<h4>Strings</h4>
+<h4>Strings (Ruby 1.8)</h4>
 
-<p>Because Ruby lacks a native Unicode class, appscript unpacks all text-related AE types (<code>typeChar</code>, <code>typeUnicodeText</code>, etc.) as UTF8-encoded Ruby strings.</p>
+<p>Because Ruby 1.8 lacks native Unicode support, appscript unpacks all text-related AE types (<code>typeChar</code>, <code>typeUnicodeText</code>, etc.) as String instances containing UTF8-encoded data.</p>
 
-<p>Appscript packs UTF8-encoded Ruby strings as the <code>typeUnicodeText</code> AE type. If the string does not contain valid UTF8 data, a TypeError will be raised.</p>
+<p>Appscript packs String instances containing UTF8-encoded data as the <code>typeUnicodeText</code> AE type. If the string does not contain valid UTF-8 data, a TypeError will be raised.</p>
 
 <div class="hilitebox">
-<p>You can enable a degree of UTF8 support in Ruby's <code>String</code> class via the Jcode module (included in Ruby's standard library). To use Jcode, add the following lines to the start of your Ruby scripts, irb sessions, etc.:</p>
+<p>You can enable a degree of UTF-8 support in Ruby's <code>String</code> class via the Jcode module (included in Ruby's standard library). To use Jcode, add the following lines to the start of your Ruby scripts, irb sessions, etc.:</p>
 <pre><code>require "jcode"
 $KCODE = "UTF8"</code></pre>
 
 <p>This will improve the display of non-ASCII characters in irb, amongst other things.</p>
 
 </div>
+
 <p>Note that while <code>typeUnicodeText</code> is formally deprecated in Mac OS X 10.4+ in favour of <code>typeUTF8Text</code> and <code>typeUTF16ExternalRepresentation</code>, it is still in common usage so appscript continues to use it to ensure the broadest compatibility with existing scriptable applications.</p>
+
+
+<h4>Strings (Ruby 1.9+)</h4>
+
+<p>Each String instance in Ruby 1.9+ contains an <code>Encoding</code> instance that identifies the character set used. By default, appscript unpacks a text descriptors as a String instance containing UTF-8 encoded data and a UTF-8 Encoding, and encodes a string as UTF-8 prior to packing its data into a text descriptor. To disable this behavior for individual <code>Application</code> instances:</p>
+
+<pre><code>some_app = Appscript.app('SomeApp')
+some_app.AS_app_data.use_ascii_8bit
+# Send commands here...</code></pre>
+
+<p>Once invoked, Strings will be treated as UTF-8 encoded data with ASCII-8BIT Encoding; this is equivalent to the Ruby 1.8 behavior.</p>
+
+
+<h4>Dates and Times</h4>
+
+<p>Appscript packs Ruby <code>Time</code>, <code>Date</code> and <code>DateTime</code> instances as <code>typeLongDateTime</code> descriptors. (Note that AE dates does not include locale information.)</p>
+
+<p>By default, <code>typeLongDateTime</code> descriptors are unpacked as Ruby <code>Time</code> instances. This is sufficient for most purposes; however, where the AEDesc contains a date value below or above the range supported by Ruby's <code>Time</code> class, an error will occur. To unpack dates as <code>DateTime</code> instances for individual <code>Application</code> instances:</p>
+
+<pre><code>some_app = Appscript.app('SomeApp')
+some_app.AS_app_data.use_datetime
+# Send commands here...</code></pre>
 
 
 <h4>Filesystem references</h4>
@@ -160,8 +186,6 @@ $KCODE = "UTF8"</code></pre>
 <a href="05_keywordconversion.html">Previous</a> &bull;
 <a href="index.html">Up</a> &bull;
 <a href="07_applicationobjects.html">Next</a>
-
-<span>&copy; 2006-2008 HAS</span>
 </div>
 
 </body>

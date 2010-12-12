@@ -166,6 +166,35 @@ app('Finder').home.items.get(:result_type =&gt; :alias)</code></pre>
 </ol>
 
 
+<h3>Command errors</h3>
+
+
+<p>The <code>Appscript::CommandError</code> exception describes an error raised by the target application or Apple Event Manager when sending a command.</p>
+
+<pre><code>CommandError < RuntimeError
+
+    Methods:
+        
+        error_number : FixNum -- Mac OS error number
+        
+        error_message : String -- application-supplied/generic error description
+        
+        offending_object : anything | nil -- object that caused the error, 
+                                             if given by application
+        
+        expected_type : anything | nil -- object that caused a coercion error, 
+                                          if given by application
+        
+        partial_result : anything | nil -- part of return value constructed 
+                                           before error occurred, if given 
+                                           by application
+        
+        to_i : FixNum -- equivalent to #error_number
+
+        to_s : String -- formatted error information</code></pre>
+
+
+
 <h3>Note to AppleScript users</h3>
 
 <p>Unlike AppleScript, which implicitly sends a <code>get</code> command to any unresolved application object references at the end of evaluating an expression, appscript only resolves a reference when it receives an appropriate command. For example:</p>
@@ -210,8 +239,6 @@ print d
 <a href="10_referenceexamples.html">Previous</a> &bull;
 <a href="index.html">Up</a> &bull;
 <a href="12_commandexamples.html">Next</a>
-
-<span>&copy; 2006-2008 HAS</span>
 </div>
 
 </body>

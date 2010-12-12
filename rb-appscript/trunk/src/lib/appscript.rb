@@ -4,8 +4,6 @@
 # appscript -- syntactically sugared wrapper around the mid-level aem API;
 #    provides a high-level, easy-to-use API for creating and sending Apple events
 #
-# Copyright (C) 2006-2009 HAS. Released under MIT License.
-#
 
 require "_aem/mactypes"
 
@@ -324,7 +322,8 @@ module Appscript
 	
 		def to_s
 			s= @_call[0]
-			@_call[1, @_call.length].each do |name, args|					if name == :[]
+			@_call[1, @_call.length].each do |name, args|
+				if name == :[]
 					if args.length == 1
 						s += "[#{args[0].inspect}]"
 					else

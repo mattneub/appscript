@@ -3,8 +3,6 @@
 #
 # mactypes -- Ruby classes representing Alias, FileURL and unit type AEDescs
 #
-# Copyright (C) 2006-2009 HAS. Released under MIT License.
-#
 
 module MacTypes
 	# Defines wrapper classes for Mac OS datatypes that don't have a suitable Ruby equivalent.

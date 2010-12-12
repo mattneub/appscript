@@ -30,6 +30,12 @@
 
 <h2>4. Notes</h2>
 
+
+<h3>Event loops</h3>
+
+<p>Ruby-based applications that use a Carbon/Cocoa event loop can import the <code>OSAX</code> module as normal, but should not use it before the event loop has started as sending Apple events outwith the main event loop can disrupt the process's normal event handling.</p>
+
+
 <h3>GUI interaction</h3>
 
 <p>When using scripting addition commands that require GUI access (e.g. <code>display_dialog</code>) targeted at the command-line Ruby interpreter, the osax module will automatically convert the non-GUI interpreter process into a full GUI process to allow these commands to operate correctly. If you want to avoid this, target these commands at a faceless GUI application such as System Events instead:</p>
@@ -42,29 +48,6 @@ p sa.display_dialog("Ruby says hello!",
 # Result: {:button_returned=&gt;"Duuuude!"}</code></pre>
 
 
-<h3>64-bit limitations</h3>
-
-<p>The <code>OSAX</code> module currently only supports dynamic retrieval of scripting addition terminology when running in 32-bit processes. To use it in 64-bit processes, use the <code>Terminology</code> module's <code>dump</code> method to export a static terminology 'glue' module for the desired scripting addition (running it in a 32-bit process), then import that module and pass it as the second argument to the <code>ScriptingAddition</code> class's initialiser. For example, to export a glue module for Standard Additions:</p>
-
-<pre><code>require 'appscript'
-
-Terminology.dump('/System/Library/ScriptingAdditions/StandardAdditions.osax', 
-        'StandardAdditions', 'standard_additions.rb')</code></pre>
-
-<p>To create a new <code>ScriptingAddition</code> instance using the terminology provided by this glue module:</p>
-
-<pre><code>require 'osax'
-require 'standard_additions'
-
-sa = OSAX::ScriptingAddition.new('StandardAdditions', StandardAdditions)</code></pre>
-
-
-<h3>Known problems</h3>
-
-<p>When using the <code>OSAX</code> module within RubyCocoa-based applications, avoid creating <code>ScriptingAddition</code> instances before the main event loop is started as this can result in the application behaving strangely (minimised windows don't expand correctly) due to a bug in OS X's <code>OSAGetAppTerminology</code> function.</p>
-
-
-
 </div>
 
 <!-- bottom navigation -->
@@ -72,8 +55,6 @@ sa = OSAX::ScriptingAddition.new('StandardAdditions', StandardAdditions)</code><
 <div class="footer">
 <a href="03_examples.html">Previous</a> &bull;
 <a href="index.html">Up</a>
-
-<span>&copy; 2006-2008 HAS</span>
 </div>
 
 </body>

@@ -1,5 +1,9 @@
 2010-12-?? -- 0.?.?
 
+- added UTF-8 Encoding support in Ruby 1.9+; added AEMCodecs::Codecs#use_ascii_8bit for optionally disabling it
+
+- AEM::Codecs#pack now accepts Date, DateTime instances; added AEM::Codecs#use_date_time method for unpacking typeLongDateTime descriptors as DateTime instead of Time instances
+
 - removed AE.get_app_terminology() as it relied on deprecated Carbon APIs
 
 - added AE.copy_scripting_definition()

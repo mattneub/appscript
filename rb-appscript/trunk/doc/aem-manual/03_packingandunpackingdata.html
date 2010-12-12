@@ -41,7 +41,9 @@
         new
 
     Methods:
-
+        
+        # pack/unpack data
+        
         pack(data) -- convert Ruby data to an AEDesc; will raise
                 a TypeError if data's type/class is unsupported
             data : anything
@@ -51,10 +53,35 @@
                 the AEDesc unchanged if it's an unsupported type
             desc : AEDesc
             Result : anything
-
+        
+        # compatibility options
+        
         add_unit_types(types) -- register custom unit type definitions
             types : list -- a list of lists, where each sublist is of form
-                    [name, code] or [name, code, pack_proc, unpack_proc]</code></pre>
+                    [name, code] or [name, code, pack_proc, unpack_proc]
+        
+        dont_cache_unpacked_specifiers -- by default, object specifier
+                descriptors returned by an application are reused for 
+                efficiency; invoke this method to use AppleScript-style
+                behavior instead (i.e. fully unpacking and repacking 
+                object specifiers each time) for better compatibility
+                with problem applications
+        
+        pack_strings_as_type(code) -- by default, strings are packed as
+                typeUnicodeText descriptors; some older non-Unicode-aware
+                applications may require text to be supplied as typeChar/
+                typeIntlText descriptors
+            code : String -- four-char code, e.g. KAE::TypeChar (see KAE 
+                    module for available text types)
+        
+        use_ascii_8bit -- by default, text descriptors are unpacked as 
+                Strings with UTF-8 Encoding on Ruby 1.9+; invoke this 
+                method to mimic Ruby 1.8-style behavior where Strings 
+                contain UTF-8 encoded data and ASCII-8BIT Encoding
+        
+        use_datetime -- by default, dates are unpacked as Time instances;
+                invoke this method to unpack dates as DateTime instances
+                instead</code></pre>
 
 
 
@@ -95,8 +122,6 @@ AEKey &lt; AETypeBase -- represents an AE object of typeKeyword</code></pre>
 <a href="02_apioverview.html">Previous</a> &bull;
 <a href="index.html">Up</a> &bull;
 <a href="04_references.html">Next</a>
-
-<span>&copy; 2006-2008 HAS</span>
 </div>
 
 </body>
