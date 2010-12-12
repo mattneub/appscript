@@ -36,6 +36,18 @@
 <p>Python-based applications that use a Carbon/Cocoa event loop can import the <code>osax</code> module as normal, but should not use it before the event loop has started as sending Apple events outwith the main event loop can disrupt the process's normal event handling.</p>
 
 
+<h3>GUI interaction</h3>
+
+<p>When using scripting addition commands that require GUI access (e.g. <code>display_dialog</code>) targeted at the command-line Python interpreter, the osax module will automatically convert the non-GUI interpreter process into a full GUI process to allow these commands to operate correctly. If you want to avoid this, target these commands at a faceless GUI application such as System Events instead:</p>
+
+<pre><code>sa = OSAX("StandardAdditions", name="System Events")
+sa.activate() # give focus to System Events
+print(sa.display_dialog("Python says hello!",
+                        buttons=["Hi!", "Howdy!", "Duuuude!"],
+                        default_button=3))
+# Result: {k.button_returned: "Duuuude!"}</code></pre>
+
+
 </div>
 
 <!-- bottom navigation -->

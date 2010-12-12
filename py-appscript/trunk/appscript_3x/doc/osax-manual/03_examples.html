@@ -45,13 +45,13 @@ sa.beep()
 sa.say("Hello World!")
 
 # Get path to user's Scripts folder
-print sa.path_to(k.scripts_folder)
+print(sa.path_to(k.scripts_folder))
 # Result: mactypes.Alias("/Users/foo/Library/Scripts/")
 
 # Display a dialog
-print sa.display_dialog("Python says hello!",
+print(sa.display_dialog("Python says hello!",
                         buttons=["Hi!", "Howdy!", "Duuuude!"],
-                        default_button=3)
+                        default_button=3))
 # Result: {k.button_returned: "Howdy!"}</code></pre>
 
 
