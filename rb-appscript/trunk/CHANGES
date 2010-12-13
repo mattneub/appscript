@@ -1,4 +1,4 @@
-2010-12-?? -- 0.?.?
+2010-12-?? -- 0.6.0
 
 - added UTF-8 Encoding support in Ruby 1.9+; added AEMCodecs::Codecs#use_ascii_8bit for optionally disabling it
 

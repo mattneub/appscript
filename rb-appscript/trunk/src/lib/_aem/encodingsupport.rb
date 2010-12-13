@@ -19,7 +19,7 @@ module AEMEncodingSupport
 		end
 		
 		def EnableStringEncodings.pack_string(s, as_type)
-			return AE::AEDesc.new(KAE::TypeUTF8Text, EnableStringEncodings.to_utf8_string(val)).coerce(as_type)
+			return AE::AEDesc.new(KAE::TypeUTF8Text, EnableStringEncodings.to_utf8_string(s)).coerce(as_type)
 		end
 		
 		def EnableStringEncodings.unpack_string(desc)
@@ -43,10 +43,10 @@ module AEMEncodingSupport
 			begin
 				# Note: while the BOM is optional in typeUnicodeText, it's not included by AS
 				# and some apps, e.g. iTunes 7, will handle it incorrectly, so it's omitted here.)
-				return AE::AEDesc.new(KAE::TypeUTF8Text, val).coerce(as_type)
+				return AE::AEDesc.new(KAE::TypeUTF8Text, s).coerce(as_type)
 			rescue AE::MacOSError => e
 				if e.to_i == -1700 # couldn't coerce to TypeUnicodeText
-					raise TypeError, "Not valid UTF8 data or couldn't coerce to type %{as_type}: #{val.inspect}"
+					raise TypeError, "Not valid UTF8 data or couldn't coerce to type %{as_type}: #{s.inspect}"
 				else
 					raise
 				end
