@@ -33,7 +33,7 @@ class TC_Codecs(unittest.TestCase):
 	
 	def test_bool(self):
 		self.assertEqual(True, self.c.unpack(aem.ae.newdesc(aem.kae.typeBoolean, "\xfe")))
-		self.assertEqual(False, self.c.unpack(aem.ae.newdesc(aem.kae.typeBoolean, b"\x00")))
+		self.assertEqual(False, self.c.unpack(aem.ae.newdesc(aem.kae.typeBoolean, "\x00")))
 		self.assertEqual(True, self.c.unpack(aem.ae.newdesc(aem.kae.typeTrue, '')))
 		self.assertEqual(False, self.c.unpack(aem.ae.newdesc(aem.kae.typeFalse, '')))
 	
@@ -66,9 +66,7 @@ class TC_Codecs(unittest.TestCase):
 			if expected is None:
 				expected = val
 			self.assertEqual(expected, self.c.unpack(d))
-	
-	# TO DO: test_str
-	
+		
 	def test_unicode(self):
 		for val, data in [
 			# note: UTF16 BOM must be omitted when packing UTF16 data into typeUnicodeText AEDescs, as a BOM will upset stupid apps like iTunes 7 that don't recognise it as a BOM and treat it as character data instead
@@ -117,12 +115,9 @@ class TC_Codecs(unittest.TestCase):
 			self.assertEqual(val2, val)
 		self.assertRaises(TypeError, aem.AEType, 3)
 		self.assertRaises(ValueError, aem.AEType, "docum")
-	
-	def test_list(self):
-		pass # TO DO
-	
+		
 	def test_dict(self):
-		val = {'foo': 1, aem.AEType('foob'): 2, aem.AEProp('barr'): 3} # TO DO: also need to test appscript codecs (in separate test) to check String, AEType and Keyword keys all pack and unpack correctly
+		val = {'foo': 1, aem.AEType('foob'): 2, aem.AEProp('barr'): 3}
 		expectedVal = {'foo': 1, aem.AEType('foob'): 2, aem.AEType('barr'): 3} # note that four-char-code keys are always unpacked as AEType
 		d = self.c.pack(val)
 		self.assertEqual(expectedVal, self.c.unpack(d))

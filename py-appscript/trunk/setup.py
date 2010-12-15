@@ -41,7 +41,7 @@ setup(
 		package_dir = {'': os.path.join(root_dir, 'lib')},
 		classifiers = [
 			'License :: Public Domain',
-			'Development Status :: 5 - Production/Stable',
+			'Development Status :: 4 - Beta',
 			'Operating System :: MacOS :: MacOS X',
 			'Programming Language :: Python :: 2',
 			'Programming Language :: Python :: 3',

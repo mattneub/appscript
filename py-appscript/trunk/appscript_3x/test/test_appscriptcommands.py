@@ -48,9 +48,9 @@ class TC_appscriptNewApp(unittest.TestCase):
 	
 	def test_by_pid(self):
 		p = subprocess.Popen("top -l1 | grep Finder | awk '{ print $1 }'", 
-				shell=True, stdout=subprocess.PIPE)
-		p.wait()
-		pid = int(p.stdout.read())
+				shell=True, stdout=subprocess.PIPE, close_fds=True)
+		out, err = p.communicate()
+		pid = int(out)
 		a = appscript.app(pid=pid)
 		self.assertEqual(appscript.reference.Application, a.__class__)
 		self.assertEqual(appscript.reference.Reference, a.name.__class__)
@@ -140,7 +140,7 @@ class TC_appscriptCommands(unittest.TestCase):
 				"Command failed:\n\t\tOSERROR: -1728\n\t\tMESSAGE: Can't get reference.\n\t\t"
 					"COMMAND: app('/System/Library/CoreServices/Finder.app').items[10000].get()" # 10.3-4
 				]
-			self.assert_(str(e) in s, '%s not in %s' % (repr(str(e)), s))
+			self.assertTrue(str(e) in s, '%s not in %s' % (repr(str(e)), s))
 			self.assertEqual(aem.EventError, e.realerror.__class__)
 
 

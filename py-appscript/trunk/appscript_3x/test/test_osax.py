@@ -41,9 +41,9 @@ class TC_OSAX(unittest.TestCase):
 	
 	def test_5(self):
 		p = subprocess.Popen("top -l1 | grep Finder | awk '{ print $1 }'", 
-				shell=True, stdout=subprocess.PIPE)
-		p.wait()
-		pid = int(p.stdout.read())
+				shell=True, stdout=subprocess.PIPE, close_fds=True)
+		out, err = p.communicate()
+		pid = int(out)
 		sa = osax.OSAX('Standardadditions', pid=pid)
 		self.assertEqual(mactypes.Alias("/System/Library/CoreServices/Finder.app/"), sa.path_to(None))
 		sa.activate()

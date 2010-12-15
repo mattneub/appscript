@@ -38,6 +38,9 @@ or <http://developer.apple.com>.
 Notes
 -----
 
+- appscript 0.22.0 is release candidate 1. If no new problems are reported, 
+  the 1.0.0 final release will follow.
+
 - Python 2.x documentation and sample scripts can be found in the 
   appscript_2x/doc and appscript_2x/sample directories.
 

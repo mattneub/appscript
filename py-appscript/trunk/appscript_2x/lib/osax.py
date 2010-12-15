@@ -2,6 +2,7 @@
 
 from xml.etree import ElementTree
 import string
+from StringIO import StringIO
 
 from appscript import *
 from appscript import reference, terminology
@@ -16,6 +17,13 @@ __all__ = ['OSAX', 'scriptingadditions',
 ######################################################################
 # PRIVATE
 ######################################################################
+
+
+class TreeBuilderIgnoreDoctype(ElementTree.TreeBuilder):
+	""" Suppress XMLParser.doctype() deprecation warnings in ElementTree 1.3 """
+	
+	def doctype(self, name, pubid, system):
+		pass
 
 
 class SdefParser:
@@ -43,9 +51,11 @@ class SdefParser:
 	}
 	_legalchars = string.ascii_letters + '_'
 	_alphanum = _legalchars + string.digits
+	
+	commands = property(lambda self: list(self._commands.values()))
 
 	def __init__(self):
-		self.classes, self.enums, self.properties, self.elements, self.commands = [], [], [], [], []
+		self.classes, self.enums, self.properties, self.elements, self._commands = [], [], [], [], {}
 	
 	def _name(self, s):
 		if s not in self._keywordcache:
@@ -75,12 +85,15 @@ class SdefParser:
 		if name and len(code) == 4 and (name, code) not in collection:
 			collection.append((name, code))
 	
-	def _addnamecodeparams(self, node, collection):
+	def _addcommand(self, node):
 		name = self._name(node.get('name'))
 		code = self._code(node.get('code'))
 		parameters = []
-		if name and len(code) == 8:
-			collection.append((name, code, parameters))
+		# Note: overlapping command definitions (e.g. 'path to') should be processed as follows:
+		# - If their names and codes are the same, only the last definition is used; other definitions are ignored and will not compile.
+		# - If their names are the same but their codes are different, only the first definition is used; other definitions are ignored and will not compile.
+		if name and len(code) == 8 and (name not in self._commands or self._commands[name][1] == code):
+			self._commands[name] =(name, code, parameters)
 			for pnode in node.findall('parameter'):
 				self._addnamecode(pnode, parameters)
 	
@@ -89,12 +102,12 @@ class SdefParser:
 		
 			xml : bytes | str -- sdef data
 		"""
-		xml = ElementTree.fromstring(xml)
+		xml = ElementTree.parse(StringIO(xml), ElementTree.XMLParser(target=TreeBuilderIgnoreDoctype()))
 		for suite in xml.findall('suite'):
 			for node in suite:
 				try:
 					if node.tag in ['command', 'event']:
-						self._addnamecodeparams(node, self.commands)
+						self._addcommand(node)
 					elif node.tag in ['class', 'record-type', 'value-type']:
 						self._addnamecode(node, self.classes)
 						for prop in node.findall('property'):
@@ -228,7 +241,7 @@ def dump(osaxname, modulepath):
 		osaxname : str -- name of installed scripting addition
 		modulepath : str -- path to generated module
 		
-	Generates a Python module containing an application's basic terminology 
+	Generates a Python module containing a scripting addition's basic terminology 
 	(names and codes) as used by osax.
 	
 	Call the dump() function to dump faulty sdefs to Python module, e.g.:
