@@ -1,0 +1,232 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<title>py-appscript manual | 11. Application commands</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<style type="text/css" media="all"><!--@import url(../full.css);--></style>
+
+</head>
+<body>
+
+<h1><img src="../py-appscript-logo.png" alt="py-appscript" title="py-appscript" /></h1>
+
+<!-- top navigation -->
+<div class="navbar">
+<a href="10_referenceexamples.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="12_commandexamples.html">Next</a>
+
+<span>
+<strong><a href="../appscript-manual/index.html">appscript</a></strong> /
+<a href="../mactypes-manual/index.html">mactypes</a> /
+<a href="../osax-manual/index.html">osax</a> /
+<a href="../aem-manual/index.html">aem</a>
+</span>
+</div>
+
+<!-- content -->
+<div id="content">
+
+<h2>11. Application commands</h2>
+
+<h3>Command syntax</h3>
+
+<p>For convenience, appscript makes application commands available as methods on every reference. (Note: due to the limitations of aete-based terminology, the user must determine for themselves which commands can operate on a particular reference. Some applications document this information separately.)</p>
+
+<pre><code>reference.command_name(*arg, **args, waitreply=True,
+         timeout=60, resulttype=None, ignore=None)
+    *arg : anything -- direct arg, if any
+    **kwargs : anything -- labelled arg(s), if any
+    waitreply : bool -- wait for application to return a result/error?
+    timeout : int -- no. of seconds to wait for a reply
+    resulttype : None | Keyword -- AE type to coerce return value to
+    ignore : None | list of Keyword -- string characteristics to ignore
+                                       when evaluating references
+    Result : anything -- value returned by application, if any</code></pre>
+
+
+<dl>
+<dt>*arg</dt>
+<dd>An application command can have either zero or one direct parameters. The application's dictionary indicates which commands take a direct parameter, and if it is optional or required.</dd>
+
+<dt>**kwargs</dt>
+<dd>An application command can have zero or more labelled parameters. The application's dictionary describes the labelled parameters for each command, and if they are optional or required.</dd>
+
+<dt>waitreply</dt>
+<dd>If <code>true</code>, appscript will wait for the application to reply to the command (the default). If <code>false</code>, it will return as soon as the command is sent, ignoring any return values or application errors.</dd>
+
+<dt>timeout</dt>
+<dd>The number of seconds to wait for the application to reply before raising a timeout error. The default is 60 seconds but may be increased or decreased as needed; Use 0 to wait indefinitely. For example, a longer timeout may be needed to prevent a timeout error occurring during a particularly long-running application command. Note: due to a quirk in the Apple Event Manager API, timeout errors may be reported as either error -1712 (the Apple event timed out) or -609 (connection invalid, which is also raised when an application unexpectedly quits while handling a command).</dd>
+
+<dt>resulttype</dt>
+<dd>Some applications may allow the return value's type to be specified for certain commands (typically <code>get</code>). For example, the Finder's <code>get</code> command returns filesystem references as alias objects if the resulttype is <code>k.alias</code>.</dd>
+
+<dt>ignore</dt>
+<dd>Some applications may allow the client to specify text attributes that should be considered or ignored when performing string comparisons, e.g. when resolving by-test references. When specifying the attributes to ignore, the list should contain zero or more of the following enumerators: <code>k.case</code>, <code>k.diacriticals</code>, <code>k.expansion</code>, <code>k.hyphens</code>, <code>k.punctuation</code>, <code>k.whitespace</code>. Note that most applications currently ignore this setting and always use the default behaviour, which is to ignore case but consider everything else.</dd>
+</dl>
+
+
+
+<h3>Examples</h3>
+
+<pre><code># tell application &quot;TextEdit&quot; to activate
+app('TextEdit').activate()
+
+# tell application &quot;TextEdit&quot; to open fileRefList
+app('TextEdit').open(fileRefList)
+
+# tell application &quot;Finder&quot; to get version
+app('Finder').version.get()
+
+# tell application &quot;Finder&quot; to set name of file &quot;foo.txt&quot; of home to &quot;bar.txt&quot;
+app('Finder').home.files['foo.txt'].name.set('bar.txt')
+
+# tell application &quot;TextEdit&quot; to count (text of first document) each paragraph
+app('TextEdit').documents.first.text.count(each=k.paragraph)
+
+# tell application &quot;TextEdit&quot; to make new document at end of documents
+app('TextEdit').documents.end.make(new=k.document)
+
+# tell application &quot;Finder&quot; to get items of home as alias list
+app('Finder').home.items.get(resulttype=k.alias)</code></pre>
+
+
+
+<h3>Special cases</h3>
+
+<p>The following special-case behaviours are implemented for convenience:</p>
+
+<ol>
+<li><p>Commands that take a reference to one or more application objects as a direct parameter may be written in the following form:</p>
+
+<pre><code>reference.command(**keyword_parameters)</code></pre>
+
+<p>The conventional  form is also supported should you ever wish (or need) to use it:</p>
+
+<pre><code>application.command(reference, **keyword_parameters)</code></pre>
+
+<p>The two forms are equivalent (appscript converts the first form to the second behind the scenes) although the first form is preferred for conciseness.</p></li>
+
+
+<li><p>If a command that already has a direct parameter is called on a reference, i.e.:</p>
+
+<pre><code>reference.command(direct_parameter, **keyword_parameters)</code></pre>
+
+<p>the reference upon which it is called will be packed as the Apple event's 'subject' attribute (<code>keySubjectAttr</code>).</p></li>
+
+
+<li><p>The <code>set</code> command may pass its <code>to</code> parameter as a direct rather than labelled argument if there is no other direct parameter and no other labelled <code>to</code> parameter; i.e.:</p>
+
+<pre><code>reference.set(value)</code></pre>
+
+<p>instead of:</p>
+
+<pre><code>reference.set(to=value)</code></pre>
+
+<p>or:</p>
+
+<pre><code>application.set(reference, to=value)</code></pre>
+
+<p>The first form is preferred, although all three are supported.</p></li>
+
+
+<li><p>If the <code>make</code> command is called on an insertion location reference, appscript will pack that reference as the Apple event's <code>at</code> parameter if it doesn't already have one; i.e.:</p>
+
+<pre><code>insertion_location.make(new=class)</code></pre>
+
+<p>is equivalent to:</p>
+
+<pre><code>application.make(new=class, at=insertion_location)</code></pre>
+
+<p>If the <code>make</code> command is called on an object reference, appscript will pack that reference as the Apple event's 'subject' attribute. (Note that some applications may not handle the subject attribute correctly, in which case the reference should be passed as the <code>make</code> command's <code>at</code> parameter instead.)</p></li>
+
+
+<li><p>Calling a reference directly is equivalent to invoking its <code>get</code> command. For example:</p>
+
+<pre><code>reference()</code></pre>
+
+<p>is the same as:</p>
+
+<pre><code>reference.get()</code></pre>
+</li>
+</ol>
+
+
+<h3>Command errors</h3>
+
+
+<p>The <code>appscript.CommandError</code> exception describes an error raised by the target application or Apple Event Manager when sending a command.</p>
+
+<pre><code>CommandError(Exception)
+
+    Properties:
+        errornumber : int -- Mac OS error number
+        errormessage : str -- application-supplied/generic error description
+        offendingobject : anything | None -- object that caused the error, 
+                                             if given by application
+        expectedtype : anything | None -- object that caused a coercion error, 
+                                          if given by application
+        partialresult : anything | None -- part of return value constructed 
+                                           before error occurred, if given 
+                                           by application
+
+    Methods:
+    
+        __int__() -- Mac OS error number
+
+        __str__() -- formatted description of error</code></pre>
+
+
+
+<h3>Note to AppleScript users</h3>
+
+<p>Unlike AppleScript, which implicitly sends a <code>get</code> command to any unresolved application object references at the end of evaluating an expression, appscript only resolves a reference when it receives an appropriate command. For example:</p>
+
+<pre><code>d = app('TextEdit').documents</code></pre>
+
+<p>is <em>not</em> the same as:</p>
+
+<pre><code>set d to documents of app &quot;TextEdit&quot;</code></pre>
+
+<p>even though the two may look similar. In the first case, the value assigned to <code>d</code> is an appscript reference: <code>app('TextEdit').documents</code>. In the second, AppleScript evaluates the <code>documents of app &quot;TextEdit&quot;</code> reference by performing an implicit <code>get</code> command and then assigning its result, a list of references to individual documents, to <code>d</code>. To obtain the original reference as an AppleScript value, the literal reference must be preceded by an <code>a reference to</code> operator as shown below.</p>
+
+<p>To get a single reference to all documents:</p>
+
+<pre><code>set d to a reference to documents of app &quot;TextEdit&quot;
+return d
+--&gt; a reference to documents of app &quot;TextEdit&quot;
+
+
+d = app('TextEdit').documents
+print d
+--&gt; app('TextEdit').documents</code></pre>
+
+
+<p>To get a list of references to each document:</p>
+
+<pre><code>set d to get documents of app &quot;TextEdit&quot; -- (explicit 'get' is optional)
+return d
+--&gt; {document 1 of app &quot;TextEdit&quot;, document 2 of app &quot;TextEdit&quot;}
+
+
+d = app('TextEdit').documents.get() -- (explicit 'get' is required)
+print d
+--&gt; [app('TextEdit').documents[1], app('TextEdit').documents[2]]</code></pre>
+
+
+
+</div>
+
+<!-- bottom navigation -->
+
+<div class="footer">
+<a href="10_referenceexamples.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="12_commandexamples.html">Next</a>
+	
+</div>
+
+</body>
+</html>

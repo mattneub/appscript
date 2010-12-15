@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<title>py-mactypes manual | 4. Units class</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<style type="text/css" media="all"><!--@import url(../full.css);--></style>
+
+</head>
+<body>
+
+<h1><img src="../py-appscript-logo.png" alt="py-appscript" title="py-appscript" /></h1>
+
+<!-- top navigation -->
+<div class="navbar">
+<a href="03_fileclass.html">Previous</a> &bull;
+<a href="index.html">Up</a>
+
+<span>
+<a href="../appscript-manual/index.html">appscript</a> /
+<strong><a href="../mactypes-manual/index.html">mactypes</a></strong> /
+<a href="../osax-manual/index.html">osax</a> /
+<a href="../aem-manual/index.html">aem</a>
+</span>
+</div>
+
+<!-- content -->
+<div id="content">
+
+<h2>4. The <code>Units</code> class</h2>
+
+<p>The <code>Units</code> class represents a measurement of some sort, e.g. 3 inches, 98.5 degrees Fahrenheit.</p>
+
+<pre><code>class Units
+
+    Constructor:
+
+        Units(value, type)
+            value : int | float -- the amount, e.g. 3.5
+            type : str -- the unit of measurement, e.g. 'centimeters'
+
+    Properties:
+
+        value : int | float -- returns the amount
+
+        type : str -- returns the unit of measurement</code></pre>
+
+<p>The following unit types are defined as standard:</p>
+
+<pre><code>'centimeters'                  'cubic_inches'
+'meters'                       'cubic_feet'
+'kilometers'                   'cubic_yards'
+'inches'                       
+'feet'                         'liters'
+'yards'                        'quarts'
+'miles'                        'gallons'
+                              
+'square_meters'                'grams'
+'square_kilometers'            'kilograms'
+'square_feet'                  'ounces'
+'square_yards'                 'pounds'
+'square_miles'                 
+                               'degrees_Celsius'
+'cubic_centimeters'            'degrees_Fahrenheit'
+'cubic_meters'                 'degrees_Kelvin'</code></pre>
+
+<p>Additional application-specific unit types can be added if needed.</p>
+
+
+<h3>Examples</h3>
+
+<pre><code>mactypes.Units(14, 'inches')
+
+mactypes.Units(3.5, 'square_meters')</code></pre>
+
+
+</div>
+
+<!-- bottom navigation -->
+
+<div class="footer">
+<a href="03_fileclass.html">Previous</a> &bull;
+<a href="index.html">Up</a>
+</div>
+
+</body>
+</html>
