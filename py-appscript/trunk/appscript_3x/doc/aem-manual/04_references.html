@@ -76,9 +76,9 @@ print(textref)
 
 <pre><code>app.elements(b'docu').byindex(1).property(b'ctxt')</code></pre>
 
-<p>As you can see, AEM still uses low-level four-character codes to identify the <code>text</code> property and <code>document</code> class, but is otherwise a high-level object-oriented API. Once again, each reference begins with a root object, in this case <code>app</code>. New AEM specifiers are constructed by method calls; each call returning a new specifier object whose own methods can be called, and so on. This allows clients to build up a chain of AEM specifier objects that AEM can later pack into AEDescs for sending to applications.</p>
+<p>As you can see, AEM still uses low-level four-character codes to identify the <code>text</code> property and <code>document</code> class, but is otherwise a high-level object-oriented API. Once again, each reference begins with a root object, in this case <code>aem.app</code>. New AEM specifiers are constructed by method calls; each call returning a new specifier object whose own methods can be called, and so on. This allows clients to build up a chain of AEM specifier objects that AEM can later pack into AEDescs for sending to applications.</p>
 
-<p>One more thing to notice: in AEM, specifying a class of elements and indicating which of those elements should be selected are performed by separate method calls, although the information provided will eventually be packed into a single AEDesc of <code>typeObjectSpecifier</code>. This two-step approach makes it easier to integrate AEM with the higher-level appscript bridge, which also uses two calls to construct element specifiers (one to specify the element class, e.g. <code>document</code>, and another to specify the selection, e.g. <code>[1]</code>).</p>
+<p>One more thing to notice: in AEM, specifying a class of elements and indicating which of those elements should be selected are performed by separate method calls, although the information provided will eventually be packed into a single AEDesc of <code>typeObjectSpecifier</code>. This two-step approach makes it easier to integrate AEM with the higher-level appscript bridge, which also uses two calls to construct element specifiers (one to specify the element class, e.g. <code>documents</code>, and another to specify the selection, e.g. <code>[1]</code>).</p>
 
 <p>Note that <code>app.elements(b'docu')</code> is itself a valid reference, identifying <em>all</em> the document elements of the application class. You do not have to call an explicit <code>all</code> selector (indeed, none is provided) as AEM automatically handles the details for you. AEM even allows for some convenient shorthand, e.g. writing:</p>
 
@@ -115,13 +115,13 @@ print(textref)
 <li>elements by test</li>
 </ul>
 
-<p>(Actually, there's nine forms if you count the 'user property' reference form, although this is only used by OSA applets to identify script properties. AEM supports this extra form more for sake of completeness than usefulness.)</p>
+<p>(Actually, there's nine forms if you count the 'user property' reference form, although this is only used by OSA (e.g. AppleScript Editor) applets to identify script properties. AEM supports this extra form more for sake of completeness than usefulness.)</p>
 
 <p>Each of these reference forms is represented by a different AEM specifier class, apart from the absolute position form which is represented by three different classes according to the kind of selector used: a numerical index (e.g. <code>1</code>, <code>-3</code>), a named ordinal identifying a single element (<code>first</code>, <code>middle</code>, <code>last</code>, <code>any</code>), or a named ordinal identifying all elements (<code>all</code>).</p>
 
 <p>The following diagram shows the AEM reference class hierarchy (slightly simplified for legibility); concrete classes are shown in bold:</p>
 
-<p><img src="aemreferenceinheritance.gif" alt="AEM reference class hierarchy" title="AEM reference class hierarchy" />
+<p><img src="aemreferenceinheritance.gif" alt="AEM reference class hierarchy" title="AEM reference class hierarchy" /></p>
 
 <p>Note that the user shouldn't instantiate these classes directly; instead, AEM will instantiate them as appropriate when the client calls the properties/methods of other AEM reference objects, starting with the <code>app</code>, <code>con</code> and <code>its</code> objects that form the root of all AEM references.</p>
 
@@ -144,8 +144,6 @@ print(textref)
 
 
 <h3>Base classes</h3>
-
-<p>(Note: <code>self</code> arguments omitted for clarity.)</p>
 
 <h4>Basic methods</h4>
 
