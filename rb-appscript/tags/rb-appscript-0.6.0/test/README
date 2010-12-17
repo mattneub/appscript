@@ -1,0 +1,3 @@
+Some of the code in these tests may not yet be 100% portable (hardcoded paths, etc) so may currently fail for some users, although they have passed for Ruby 1.8.x on OS X 10.3.9, OS X 10.4.x (PPC & i386) and OS X 10.5.1 (i386).
+
+Note that some mactypes unit tests may fail as Alias and FileURL comparisons are rather dumb and don't normalise path strings before comparing/hashing. Future releases may try to remedy this.
