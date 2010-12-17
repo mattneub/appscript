@@ -86,6 +86,20 @@ class TC_AppscriptCommands < Test::Unit::TestCase
 				d.text.get(:ignore=>[:diacriticals, :punctuation, :whitespace, :expansion], :timeout=>10))
 		assert_nil(d.get(:wait_reply=>false))
 		
+		
+		# test Ruby 1.9+ String Encoding support
+		version, sub_version = RUBY_VERSION.split('.').collect {|n| n.to_i} [0, 2]
+		if version >= 1 and sub_version >= 9
+			
+			print "(check Encoding support)"
+			s = "\302\251 M. Lef\303\250vre"
+			s.force_encoding('utf-8')
+			d.text.set(s)
+			assert_equal(s, d.text.get)
+		
+			@te.AS_app_data.use_ascii_8bit
+		end
+		
 		d.text.set("\302\251 M. Lef\303\250vre")
 		assert_equal("\302\251 M. Lef\303\250vre", d.text.get)
 		
@@ -131,7 +145,7 @@ class TC_AppscriptCommands < Test::Unit::TestCase
 		rescue Appscript::CommandError => e
 			assert_equal(-1728, e.to_i)
 			assert_equal("CommandError\n\t\tOSERROR: -1728\n\t\tMESSAGE: Can't get reference.\n\t\tOFFENDING OBJECT: app(\"/System/Library/CoreServices/Finder.app\").items[10000]\n\t\tCOMMAND: app(\"/System/Library/CoreServices/Finder.app\").items[10000].get()\n", e.to_s)
-			assert_instance_of(AEM::CommandError, e.real_error)
+			assert_instance_of(AEM::EventError, e.real_error)
 		end
 	end
 end

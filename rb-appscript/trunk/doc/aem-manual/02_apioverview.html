@@ -37,16 +37,16 @@
 
 <dl>
 <dt>Application</dt>
-<dd>Represents a scriptable application, and provides an <code>event</code> method for constructing Apple events.</dd>
+<dd>Represents a scriptable application, and provides an <code>#event</code> method for constructing Apple events.</dd>
 
 <dt>Event</dt>
-<dd>Represents a ready-to-send Apple event, and provides a <code>send</code> method for sending it. Returned by the <code>Application</code> class's <code>event</code> method.</dd>
+<dd>Represents a ready-to-send Apple event, and provides a <code>#send</code> method for sending it. Returned by the <code>Application</code> class's <code>#event</code> method.</dd>
 
-<dt>CommandError</dt>
+<dt>EventError</dt>
 <dd>Exception raised to indicate an application or Apple Event Manager error.</dd>
 
 <dt>Codecs</dt>
-<dd>Provides <code>pack</code> and <code>unpack</code> methods for converting Ruby values to AE types, and vice-versa. Clients usually don't need to access this class directly.</dd>
+<dd>Provides <code>#pack</code> and <code>#unpack</code> methods for converting Ruby values to AE types, and vice-versa. Clients usually don't need to access this class directly.</dd>
 
 <dt>AEType, AEEnum</dt>
 <dd>Represent Apple event type and enumerator values.</dd>
@@ -72,16 +72,22 @@
 </dl>
 
 
-<p>References are constructed from these base objects using chained property/method calls.</p>
+<p>References are constructed from these base objects using chained method calls.</p>
 
 
-<h3>Modules</h3> <!-- TO DO: improve; move to top -->
+<h3>Modules</h3>
 
-<p>The aem package also exports the following support module:</p>
+<p>The following support modules are also provided:</p>
 
 <dl>
 <dt>FindApp</dt>
 <dd>Provides functions for locating applications by name, bundle id or creator code.</dd>
+
+<dt>AE</dt>
+<dd>Low-level extension that defines an <code>AEDesc</code> class representing Carbon Apple event descriptors (AEDescs). Also provides a number of support methods used by AEM, appscript and related packages.</dd>
+
+<dt>KAE</dt>
+<dd>Exports constants defined by Apple Event Manager and Open Scripting APIs.</dd>
 
 </dl>
 

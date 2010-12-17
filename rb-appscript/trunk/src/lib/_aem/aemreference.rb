@@ -83,14 +83,14 @@ module AEMReference
 	# BASE CLASS
 	######################################################################
 	
-	class Base
+	class Query
 	
 		def initialize
 			@_comparable = nil
 		end
 	
 		def AEM_comparable
-			# called by Base#==; returns the data needed to compare two aem references
+			# called by Query#==; returns the data needed to compare two aem references
 			if not @_comparable
 				collector = AEMReference::CollectComparable.new
 				AEM_resolve(collector)
@@ -121,7 +121,7 @@ module AEMReference
 	# BASE CLASS FOR ALL REFERENCE FORMS
 	######################################################################
 	
-	class Specifier < Base
+	class Specifier < Query
 		# Base class for insertion specifier and all object specifier classes.
 		
 		attr_reader :_key, :_container
@@ -717,7 +717,7 @@ module AEMReference
 	###################################
 	# Unresolved reference
 	
-	class DeferredSpecifier < Base
+	class DeferredSpecifier < Query
 		def initialize(desc, codecs)
 			@_ref = nil
 			@_desc = desc
@@ -756,7 +756,7 @@ module AEMReference
 	###################################
 	# Base class
 	
-	class Test < Base
+	class Test < Query
 	
 		# Logical tests
 		

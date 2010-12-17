@@ -96,19 +96,11 @@ MacTypes::Alias.path('/some/non/existent/location')
 
 <h3>Notes</h3>
 
-<!-- TO DO: relative paths, normalisation
-
-<p>When creating an <code>Alias</code> instance, POSIX paths may be either relative or absolute and are automatically normalised using <code>os.path.abspath</code>. Paths to non-existent filesystem locations will result in a <code>MacTypes::FileNotFoundError</code> being raised.</p>
-
--->
-
 <p>Comparing an <code>Alias</code> object against a <code>FileURL</code> object always returns false, even if both point to the same location.</p>
 
 <p>Remember that aliases can change when the corresponding filesystem object is moved, so take care when using <code>Alias</code> objects in situations that involve comparing or hashing them (e.g. using aliases as <code>Hash</code> keys).</p>
 
 </div>
-
-<!-- TO DO: where to put FileNotFoundError section? -->
 
 <h3><code>MacTypes::FileNotFoundError</code></h3>
 

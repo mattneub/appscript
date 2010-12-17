@@ -37,7 +37,8 @@ module AEM
 	AEProp = TypeWrappers::AEProp
 	AEKey = TypeWrappers::AEKey
 	
-	CommandError = Send::CommandError
+	EventError = Send::EventError	
+	CommandError = Send::EventError # deprecated class name; kept for backwards compatibility
 	
 	#######
 	# Reference roots
@@ -61,7 +62,7 @@ module AEM
 	#######
 	# Application class
 	
-	class Application < AEMReference::Base
+	class Application < AEMReference::Query
 		# Identifies an application and provides an #event method for constructing Apple events targetted at it.
 	
 		require "weakref"

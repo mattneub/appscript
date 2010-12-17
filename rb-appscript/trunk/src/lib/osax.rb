@@ -289,11 +289,15 @@ module OSAX
 		@@_reserved_keywords = {} # ersatz set
 		ReservedKeywords.each { |name| @@_reserved_keywords[name] = nil }
 		
-		attr_reader :commands, :properties, :elements, :classes, :enumerators
+		attr_reader :properties, :elements, :classes, :enumerators
+		
+		def commands
+			return @commands.values
+		end
 		
 		def initialize
 			# terminology tables; order is significant where synonym definitions occur
-			@commands = []
+			@commands = {}
 			@properties = []
 			@elements = []
 			@classes = []
@@ -345,12 +349,15 @@ module OSAX
 			end
 		end
 		
-		def _addnamecodeparams(node, collection)
+		def _addcommand(node)
 			name = _name(node.attributes['name'])
 			code = _code(node.attributes['code'])
 			parameters = []
-			if name != '' and code.size == 8
-				collection.push([name, code, parameters])
+			# Note: overlapping command definitions (e.g. 'path to') should be processed as follows:
+			# - If their names and codes are the same, only the last definition is used; other definitions are ignored and will not compile.
+			# - If their names are the same but their codes are different, only the first definition is used; other definitions are ignored and will not compile.
+			if name != '' and code.size == 8 and (not @commands.has_key?(name) or @commands[name][1] == code)
+				@commands[name] = [name, code, parameters]
 				node.each_element('parameter') do |pnode|
 					_addnamecode(pnode, parameters)
 				end
@@ -365,7 +372,7 @@ module OSAX
 			xml.root.each_element('suite/*') do |node| 
 				begin
 					if ['command', 'event'].include?(node.name)
-						_addnamecodeparams(node, @commands)
+						_addcommand(node)
 					elsif ['class', 'record-type', 'value-type'].include?(node.name)
 						_addnamecode(node, @classes)
 						node.each_element('property') do |prop|
@@ -421,7 +428,7 @@ module OSAX
 			super
 			begin
 				@target.event('ascrgdut').send(60 * 60) # make sure target application has loaded event handlers for all installed OSAXen
-			rescue AEM::CommandError => e
+			rescue AEM::EventError => e
 				if e.number != -1708 # ignore 'event not handled' error
 					raise
 				end

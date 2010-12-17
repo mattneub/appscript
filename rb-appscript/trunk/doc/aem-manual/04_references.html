@@ -49,32 +49,28 @@
 <dd>selector data (e.g. in a by-name specifier, this would be a string)</dd>
 </dl>
 
-<p>The Apple Event Manager provides several ways to construct object specifiers and assemble them into a complete reference, but these are all rather verbose and low-level. AEM hides all these details behind an object-oriented wrapper that uses chained property and method calls to gather the data needed to create object specifiers and assemble them into linked lists.</p>
+<p>The Apple Event Manager (and, in turn, the <code>AE</code> extension) provides several ways to construct object specifiers and assemble them into a complete reference, but these are all rather verbose and low-level. AEM hides all these details behind an object-oriented wrapper that uses chained property and method calls to gather the data needed to create object specifiers and assemble them into linked lists.</p>
 
-<p>For example, consider the reference <code>text of document 1</code>. The code for constructing this reference using a relatively low-level bridge, in this case RubyAEOSA, would be:</p>
+<p>For example, consider the reference <code>text of document 1</code>. The code for constructing this reference using the low-level <code>AE</code> bridge would be:</p>
 
-<pre><code>ref = OSX::AEDesc.null
+<pre><code>rootref = AE::AEDesc.new("null", "")
 
-ref = OSX::AEDesc.record({
-    'want' =&gt; OSX::AEDesc.new('type', 'docu'),
-    'from' =&gt; ref,
-    'form' =&gt; OSX::AEDesc.new('enum', 'indx'),
-    'seld' =&gt; 1,
-}).coerce('obj ')
+docref = AE::AEDesc.new_list(true).coerce("obj ")
+docref.put_param("want", AE::AEDesc.new("type", "docu"))
+docref.put_param("from", rootref)
+docref.put_param("form", AE::AEDesc.new("enum", "indx"))
+docref.put_param("seld", AE::AEDesc.new("long", "\x00\x00\x00\x01"))
 
-ref = OSX::AEDesc.record({
-    'want' =&gt; OSX::AEDesc.new('type', 'prop'),
-    'from' =&gt; ref,
-    'form' =&gt; OSX::AEDesc.new('enum', 'prop'), 
-    'seld' =&gt; OSX::AEDesc.new('type', 'ctxt'),
-}).coerce('obj ')
+textref = AE::AEDesc.new_list(true).coerce("obj ")
+textref.put_param("want", AE::AEDesc.new("type", "prop"))
+textref.put_param("from", docref)
+textref.put_param("form", AE::AEDesc.new("enum", "prop"))
+textref.put_param("seld", AE::AEDesc.new("type", "ctxt"))
 
-p ref 
-#&lt;AEDesc:0x57594 type='obj '&gt;</code></pre>
+p textref
+#&lt;AE::AEDesc type="obj " size=152&gt;</code></pre>
 
-<p>(The equivalent C code is even lower-level and more verbose.)</p>
-
-<p>This code works by creating each AEDesc of <code>typeAERecord</code> in turn, populating it, then coercing it to <code>typeObjectSpecifier</code>. Each AEDesc is nested within the next to form a linked list of object specifier records; the last (innermost) descriptor in the finished list indicates the reference's root object in the AEOM (in this case, the <code>application</code> object, which is represented by a null descriptor).</p>
+<p>This code works by creating an AEDesc of <code>typeObjectSpecifier</code> to represent each specifier and populating its fields one at a time. Each AEDesc is nested within the next to form a linked list of object specifier records; the last (innermost) descriptor in the finished list indicates the reference's root object in the AEOM (in this case, the <code>application</code> object, which is represented by a null descriptor).</p>
 
 <p>Now, compare the above with the AEM equivalent:</p>
 
@@ -82,7 +78,7 @@ p ref
 
 <p>As you can see, AEM still uses low-level four-character codes to identify the <code>text</code> property and <code>document</code> class, but is otherwise a high-level object-oriented API. Once again, each reference begins with a root object, in this case <code>AEM.app</code>. New AEM specifiers are constructed by method calls; each call returning a new specifier object whose own methods can be called, and so on. This allows clients to build up a chain of AEM specifier objects that aem can later pack into AEDescs for sending to applications.</p>
 
-<p>One more thing to notice: in AEM, specifying a class of elements and indicating which of those elements should be selected are performed by separate method calls, although the information provided will eventually be packed into a single AEDesc of <code>typeObjectSpecifier</code>. This two-step approach makes it easier to integrate aem with the higher-level appscript bridge, which also uses two calls to construct element specifiers (one to specify the element class, e.g. <code>#document</code>, and another to specify the selection, e.g. <code>#by_index</code>).</p>
+<p>One more thing to notice: in AEM, specifying a class of elements and indicating which of those elements should be selected are performed by separate method calls, although the information provided will eventually be packed into a single AEDesc of <code>typeObjectSpecifier</code>. This two-step approach makes it easier to integrate aem with the higher-level appscript bridge, which also uses two calls to construct element specifiers (one to specify the element class, e.g. <code>documents</code>, and another to specify the selection, e.g. <code>[1]</code>).</p>
 
 <p>Note that <code>app.elements('docu')</code> is itself a valid reference, identifying <em>all</em> the document elements of the application class. You do not have to call an explicit <code>#all</code> selector (indeed, none is provided) as AEM automatically handles the details for you. AEM even allows for some convenient shorthand, e.g. writing:</p>
 
@@ -119,25 +115,20 @@ p ref
 <li>elements by test</li>
 </ul>
 
-<p>(Actually, there's nine forms if you count the 'user property' reference form, although this is only used by OSA (e.g. Script Editor) applets to identify script properties. AEM supports this extra form more for sake of completeness than usefulness.)</p>
+<p>(Actually, there's nine forms if you count the 'user property' reference form, although this is only used by OSA (e.g. AppleScript Editor) applets to identify script properties. AEM supports this extra form more for sake of completeness than usefulness.)</p>
 
 <p>Each of these reference forms is represented by a different AEM specifier class, apart from the absolute position form which is represented by three different classes according to the kind of selector used: a numerical index (e.g. <code>1</code>, <code>-3</code>), a named ordinal identifying a single element (<code>first</code>, <code>middle</code>, <code>last</code>, <code>any</code>), or a named ordinal identifying all elements (<code>all</code>).</p>
 
-<p>The following diagram shows the aem reference class hierarchy (slightly simplified for legibility); concrete classes are shown in bold:</p>
+<p>The following diagram shows the AEM reference class hierarchy (slightly simplified for legibility); concrete classes are shown in bold:</p>
 
-<p><img src="aemreferenceinheritance.gif" title="aem reference class hierarchy" />
+<p><img src="aemreferenceinheritance.gif" alt="AEM reference class hierarchy" title="AEM reference class hierarchy" /></p>
 
-<p>Note that the user shouldn't instantiate these classes directly; instead, AEM will instantiate them as appropriate when the client calls the methods of other AEM specifier objects, starting with the <code>app</code>, <code>con</code> and <code>its</code> objects that form the root of all aem references.</p>
-
-
-
-<!-- TO DO: finish -->
-
+<p>Note that the user shouldn't instantiate these classes directly; instead, AEM will instantiate them as appropriate when the client calls the methods of other AEM reference objects, starting with the <code>app</code>, <code>con</code> and <code>its</code> objects that form the root of all AEM references.</p>
 
 <p>In fact, it really isn't necessary to remember the reference class hierarchy at all, only to know which concrete classes implement which methods. All user-accessible properties and methods are defined by just four superclasses:</p>
 
 <dl>
-<dt><code>BASE</code></dt>
+<dt><code>Query</code></dt>
 <dd>Defines comparison and hashing methods.</dd>
 
 <dt><code>PositionSpecifier</code></dt>
@@ -156,7 +147,7 @@ p ref
 
 <h4>Basic methods</h4>
 
-<pre><code>BASE -- Base class for all reference form and test clause classes.
+<pre><code>Query -- Base class for all reference form and test clause classes.
     hash -- aem references can be used as dictionary keys
 
     ==(value) -- aem references can be compared for equality</code></pre>
@@ -289,7 +280,7 @@ p ref
 
 <h4>Methods for all test clause classes</h4>
 
-<pre><code>Test &lt; BASE -- represents a comparison/logic test
+<pre><code>Test &lt; Query -- represents a comparison/logic test
 
     Methods:
 
@@ -305,8 +296,8 @@ p ref
                 objects
             Result : Test
 
-        not
-            Result : Test -- apply a logical 'not' test to self</code></pre>
+        not -- apply a logical 'not' test to self
+            Result : Test</code></pre>
 
 
 
@@ -377,6 +368,8 @@ AllElements &lt; MultipleElements -- refers to all elements of the given class
 
 <h4>Reference Roots</h4>
 
+<p>The following classes are used to construct standard AEM references:</p>
+
 <pre><code>ApplicationRoot &lt; PositionSpecifier
        -- AEM.app returns an instance of this class
 
@@ -386,9 +379,20 @@ CurrentContainer &lt; PositionSpecifier
 ObjectBeingExamined &lt; PositionSpecifier
        -- AEM.its returns an instance of this class</code></pre>
 
+<p>Clients shouldn't instantiate the above classes directly; instead, they should use the <code>AEM.app</code>, <code>AEM.con</code> and <code>AEM.its</code> methods which return the appropriate objects.</p>
 
+<p>The <code>CustomRoot</code> class is used to construct AEM references with a non-standard root:</p>
 
-<!-- TO DO: note on AEM_resolve -->
+<pre><code>CustomRoot(ReferenceRoot) -- used to construct references with
+        a custom root
+
+    Constructor:
+
+        initialize(value)
+            value : anything -- value to use as innermost container
+                    in nested object specifiers</code></pre>
+
+<p>Clients can use the <code>AEM.custom_root</code> method to create new <code>CustomRoot</code> instances, passing the root object as method's sole argument.</p>
 
 
 </div>

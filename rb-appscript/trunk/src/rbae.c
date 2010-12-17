@@ -126,7 +126,7 @@ rbAE_wrapAEDesc(const AEDesc *desc)
 
 /*******/
 // Note: clients should not attempt to use retain/use borrowed AE::AEDesc instances after handler callbacks return,
-// as AEM will have disposed of the underlying AEDesc objects by then (TO DO: safety checking in AEDESC_OF?)
+// as AEM will have disposed of the underlying AEDesc objects by then
 
 static void
 rbAE_freeBorrowedAEDesc(struct rbAE_AEDescWrapper *p)
@@ -183,7 +183,7 @@ rbAE_AEDesc_newAppleEvent(VALUE class, VALUE eventClassValue, VALUE eventIDValue
 	AEEventID theAEEventID = rbStringToDescType(eventIDValue);
 	AEAddressDesc target = AEDESC_OF(targetValue);
 	AEReturnID returnID = NUM2INT(returnIDValue);
-	AETransactionID transactionID = NUM2LONG(transactionIDValue); // TO DO: check 64-bit
+	AETransactionID transactionID = NUM2LONG(transactionIDValue);
 	AppleEvent result;
 	
 	err = AECreateAppleEvent(theAEEventClass, 
@@ -379,7 +379,6 @@ rbAE_AEDesc_getItem(VALUE self, VALUE index, VALUE type)
 	AEKeyword key;
 	AEDesc desc;
 	
-	// TO DO: this gives bus error if typeAEList and index = 0 (should be OSErr -1701); why?
 	err = AEGetNthDesc(&(AEDESC_OF(self)),
 					   NUM2LONG(index),
 					   rbStringToDescType(type),
@@ -754,8 +753,6 @@ rbAE_OSACopyScriptingDefinition(VALUE self, VALUE path)
 
 // Based on Python's CarbonX.AE extension
 
-// TO DO: make sure GC won't collect handler objects while they're installed as event/coercion handlers
-
 static pascal OSErr
 rbAE_GenericEventHandler(const AppleEvent *request, AppleEvent *reply, SRefCon refcon)
 {
@@ -825,8 +822,6 @@ rbAE_AEGetEventHandler(VALUE self, VALUE eventClass, VALUE eventID)
 
 /**********************************************************************/
 // Install coercion handlers
-
-// TO DO: make sure GC won't collect handler objects while they're installed as event/coercion handlers
 
 static pascal OSErr
 rbAE_GenericCoercionHandler(const AEDesc *fromDesc, DescType toType, SRefCon refcon, AEDesc *toDesc)

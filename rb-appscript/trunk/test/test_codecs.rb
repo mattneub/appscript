@@ -89,14 +89,20 @@ class TC_Codecs < Test::Unit::TestCase
 	end
 	
 	def test_str
+		s = "\xc6\x92\xe2\x88\x82\xc2\xae\xd4\xb7\xd5\x96\xd4\xb9\xe0\xa8\x89\xe3\x82\xa2\xe3\x84\xbb"
+		# test Ruby 1.9+ String Encoding support
+		version, sub_version = RUBY_VERSION.split('.').collect {|n| n.to_i} [0, 2]
+		if version >= 1 and sub_version >= 9
+			s.force_encoding('utf-8')
+		end
+
 		[
 			# note: aem has to pack UTF8 data as typeUnicodeText (UTF16) as stupid apps expect that type and will error on typeUTF8Text instead of just asking AEM to coerce it to the desired type in advance.
 			# note: UTF16 BOM must be omitted when packing UTF16 data into typeUnicodeText AEDescs, as a BOM will upset stupid apps like iTunes 7 that don't recognise it as a BOM and treat it as character data instead
 			['', ''],
 			['hello', "\000h\000e\000l\000l\000o"],
-			["\xc6\x92\xe2\x88\x82\xc2\xae\xd4\xb7\xd5\x96\xd4\xb9\xe0\xa8\x89\xe3\x82\xa2\xe3\x84\xbb",
-				"\x01\x92\"\x02\x00\xae\x057\x05V\x059\n\t0\xa21;"],
-		].each do |val, data, type|
+			[s, "\x01\x92\"\x02\x00\xae\x057\x05V\x059\n\t0\xa21;"],
+		].each do |val, data|
 			data = ut16(data)
 			d = @c.pack(val)
 			assert_equal(KAE::TypeUnicodeText, d.type)
@@ -153,7 +159,7 @@ class TC_Codecs < Test::Unit::TestCase
 	end
 	
 	def test_hash
-		val = {'foo' => 1, AEM::AEType.new('foob') => 2, AEM::AEProp.new('barr') => 3} # TO DO: also need to test appscript codecs (in separate test) to check String, AEType and Symbol keys all pack and unpack correctly
+		val = {'foo' => 1, AEM::AEType.new('foob') => 2, AEM::AEProp.new('barr') => 3}
 		expected_val = {'foo' => 1, AEM::AEType.new('foob') => 2, AEM::AEType.new('barr') => 3} # note that four-char-code keys are always unpacked as AEType
 		d = @c.pack(val)
 		assert_equal(expected_val, @c.unpack(d))

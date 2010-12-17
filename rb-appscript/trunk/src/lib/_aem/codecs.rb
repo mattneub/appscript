@@ -231,7 +231,7 @@ class Codecs
 	
 	def pack(val) # clients may override this to replace existing packers
 		case val
-			when AEMReference::Base then val.AEM_pack_self(self)
+			when AEMReference::Query then val.AEM_pack_self(self)
 			
 			when Fixnum, Bignum then
 				if SInt32Bounds === val
@@ -632,7 +632,7 @@ class Codecs
 		# reference being tested is second operand, so need to make sure first operand is an its-based ref;
 		# if not, rearrange accordingly.
 		# Since type-checking is involved, this extra hook is provided so that appscript's AppData subclass can override this method to add its own type checking
-		if  op1.is_a?(AEMReference::Base) and op1.AEM_root == AEMReference::Its
+		if  op1.is_a?(AEMReference::Query) and op1.AEM_root == AEMReference::Its
 			return op1.contains(op2)
 		else
 			return op2.is_in(op1)

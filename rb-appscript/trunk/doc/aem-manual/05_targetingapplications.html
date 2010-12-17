@@ -141,7 +141,7 @@ KAE::TypeProcessSerialNumber</code></pre>
 
 <h3>Reconnecting to local applications</h3>
 
-<p>Because local applications are identified by process serial number, an existing <code>Application</code> object created using the <code>by_path</code> constructor will no longer hold a valid <code>AEAddressDesc</code> if the target application subsequently quits. Sending events to an invalid address will cause a <code>CommandError</code> -600 ("application isn't running") or -609 ("connection is invalid") to be raised.</p>
+<p>Because local applications are identified by process serial number, an existing <code>Application</code> object created using the <code>by_path</code> constructor will no longer hold a valid <code>AEAddressDesc</code> if the target application subsequently quits. Sending events to an invalid address will cause a <code>EventError</code> -600 ("application isn't running") or -609 ("connection is invalid") to be raised.</p>
 
 <p>The <code>process_exists_for_path?</code> class method can be used to check if a local application is running or not, given its full path.</p>
 

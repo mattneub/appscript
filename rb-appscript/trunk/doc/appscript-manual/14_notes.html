@@ -57,11 +57,6 @@ require 'appscript'
 <p>Some applications (e.g. QuarkXpress) may return values which appscript cannot convert to equivalent Ruby types. These values are usually of types which are defined, used and understood only by that particular application, and will be represented in Ruby as raw <code>AE::AEDesc</code> objects (e.g. <code>#&lt;AE::AEDesc:0x33fc40&gt;</code>). While there's not much you can do with raw <code>AEDesc</code> objects within Ruby (it's best just to treat them as opaque types), subsequent commands can pass them back to the application for further use and/or conversion just like any other value.</p>
 
 
-<h3>Dealing with problem applications</h3>
-
-<p>Appscript provides a number of mechanisms for dealing with problematic applications. See the <a href="http://appscript.sourceforge.net">appscript website</a> for more information.</p>
-
-
 <h3>Credits</h3>
 
 <p>Many thanks to Bill Birkett, Jordan Breeding, Fujimoto Hisakuni, Jordan K Hubbard, Alexander Kellett, Chris Nebel, Matt Neuburg, Laurent Sansonetti, Michelle Steiner, Kevin Van Vechten, and all the appscript users who've provided comments, criticisms and encouragement along the way.</p>

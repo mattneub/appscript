@@ -92,14 +92,6 @@ Appscript.app('TextEdit').documents[1].save(:in => f)
 
 <h3>Notes</h3>
 
-<!-- TO DO: relative paths, normalisations
-
-<p>When creating a <code>File</code> instance, POSIX paths may be either relative or absolute and are automatically normalised using <code>os.path.abspath</code>.</p>
-
--->
-
-<!-- TO DO: check this section for consistency with py-appscript manual -->
-
 <p>Unlike the <code>Alias</code> class which wraps <code>TypeAlias</code> values only, the <code>FileURL</code> class provides a uniform wrapper for several file-related types that may be returned by applications: <code>TypeFSS</code>, <code>TypeFSRef</code> and <code>TypeFileURL</code>. When passing <code>FileURL</code> values to applications, you should not normally need to worry about which value type a <code>FileURL</code> object contains as well-designed applications will ask the Apple Event Manager to coerce the given value to the desired type as necessary.</p>
 
 <p>When dealing with less well-behaved applications, however, you may need to pass an AEDesc of a specific type. In this case you should use the <code>desc</code> method to obtain an <code>AE::AEDesc</code> object, then call its <code>coerce</code> method to obtain an AEDesc of the desired type. For example, if an older Carbon application refuses to accept a FileURL identifying a non-existing file location, you may need to provide a FSSpec instead:</p>

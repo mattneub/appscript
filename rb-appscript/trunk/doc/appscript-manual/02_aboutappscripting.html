@@ -191,14 +191,14 @@ app('TextEdit').documents[1].text.paragraphs</code></pre>
 <p>Appscript is a high-level Ruby-to-Apple Event Manager bridge, intended for use by both developers and end-users. The appscript architecture consists of three layers:</p>
 
 <dl>
-<dt><code>ae</code></dt><dd>A low-level, mostly procedural Ruby wrapper around Mac OS X's Apple Event Manager API.</dd>
+<dt><code>AE</code></dt><dd>A low-level, mostly procedural Ruby wrapper around Mac OS X's Apple Event Manager API.</dd>
 
-<dt><code>aem</code></dt><dd>A mid-level wrapper around <code>AE</code>, providing an object-oriented API for building relational AEOM queries and dispatching events.</dd>
+<dt><code>AEM</code></dt><dd>A mid-level wrapper around <code>AE</code>, providing an object-oriented API for building relational AEOM queries and dispatching events.</dd>
 
-<dt><code>appscript</code></dt><dd>A high-level wrapper around <code>aem</code>, providing automatic translation between human-readable application terminology and corresponding four-letter codes, and representing relational AEOM queries in an OO-like syntax for ease of use.</dd>
+<dt><code>Appscript</code></dt><dd>A high-level wrapper around <code>AEM</code>, providing automatic translation between human-readable application terminology and corresponding four-letter codes, and representing relational AEOM queries in an OO-like syntax for ease of use.</dd>
 </dl>
 
-<p>The <code>ae</code> extension primarily serves as a foundation for higher-level libraries to build on; it's rarely used directly as it takes a significant amount of code to perform all but the most trivial of tasks. The <code>aem</code> package is largely intended for use by higher-level libraries and developers, though may also be used by end-users in cases where an application lacks terminology, or bugs within its terminology prevent its use by appscript. The <code>appscript</code> package is intended for use by both developers and end-users, though developers may prefer aem for certain tasks as appscript doesn't expose all aspects of the aem API (such as the ability to do asynchronous messaging) and terminology translation imposes additional overheads and dependencies on client code.</p>
+<p>The <code>AE</code> extension primarily serves as a foundation for higher-level libraries to build on; it's rarely used directly as it takes a significant amount of code to perform all but the most trivial of tasks. The <code>AEM</code> module is largely intended for use by higher-level libraries and developers, though may also be used by end-users in cases where an application lacks terminology, or bugs within its terminology prevent its use by appscript. The <code>Appscript</code> module is intended for use by both developers and end-users, though developers may prefer aem for certain tasks as appscript doesn't expose all aspects of the aem API (such as the ability to do asynchronous messaging) and terminology translation imposes additional overheads and dependencies on client code.</p>
 
 <p>For example, to set the size of the first character of every non-empty paragraph in every document of TextEdit to 24 pt:</p>
 

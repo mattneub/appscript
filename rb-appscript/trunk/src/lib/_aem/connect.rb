@@ -142,7 +142,7 @@ module Connect
 			# AESendMessage may return a timeout error (this should be -1712, but
 			# -609 is often returned instead for some reason).
 			Send::Event.new(desc, 'ascrnoop').send
-		rescue Send::CommandError => err
+		rescue Send::EventError => err
 			return (not [-600, -905].include?(err.to_i)) # not running/no network access
 		end
 		return true

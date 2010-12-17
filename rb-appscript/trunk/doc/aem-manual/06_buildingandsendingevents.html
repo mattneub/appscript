@@ -168,22 +168,52 @@ KAE::KAECanSwitchLayer</code></pre>
 <pre><code>KAE::KAutoGenerateReturnID</code></pre>
 
 
-<h3>The <code>CommandError</code> class</h3>
+<h3>Exception classes</h3>
 
-<p>The <code>CommandError</code> class is raised by <code>Event#send</code> and represents an error raised by the target application or Apple Event Manager when sending an event.</p>
+<h4>The <code>EventError</code> class</h4>
 
-<pre><code>CommandError(MacOS.Error)
+<p>The <code>EventError</code> class is raised by <code>Event#send</code> and represents an error raised by the target application or Apple Event Manager when sending an event.</p>
+
+<pre><code>EventError &lt; RuntimeError
 
     Methods:
-
+        
         number
-            Result: integer -- error number
+            Result: integer -- Mac OS error number
 
         message
-            Result: string | nil -- error message, if any</code></pre>
+            Result: string | nil -- application-supplied/generic 
+                    error description
+        
+        offending_object
+            Result: anything | nil -- object that caused the error, 
+                    if given by application
+        
+        expected_type
+            Result: anything | nil -- object that caused a coercion 
+                    error, if given by application
+        
+        partial_result
+            Result: anything | nil -- part of return value constructed 
+                    before error occurred, if given by application
+        
+        to_i -- Mac OS error number
+        
+        to_s -- formatted description of error</code></pre>
 
-<!-- TO DO: MacOSError notes -->
 
+<h4><code>AE::MacOSError</code></h4>
+
+<p>The <code>AE::MacOSError</code> exception is raised by the low-level <code>AE</code> extension and represents an error raised by the Apple Event Manager. The <code>AEM</code> API usually traps these low-level errors and throws more descriptive errors in their place (e.g. <code>AEM::EventError</code>).</p>
+
+<pre><code>MacOSError &lt; StandardError
+
+    Methods:
+        number
+            Result: integer -- the Mac OS error number
+        
+        description
+            Result: string -- short generic error description</code></pre>
 
 </div>
 

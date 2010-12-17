@@ -19,7 +19,7 @@ class ReferenceRenderer
 	end
 	
 	def _format(val)
-		if val.is_a?(AEMReference::Base)
+		if val.is_a?(AEMReference::Query)
 			return ReferenceRenderer.render(@_app_data, val)
 		else
 			return val.inspect

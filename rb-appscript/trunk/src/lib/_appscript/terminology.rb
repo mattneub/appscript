@@ -408,7 +408,7 @@ module Terminology
 		begin
 			begin
 				aetes = aem_app.event('ascrgdte', {'----' => 0}).send(120 * 60)
-			rescue AEM::CommandError => e
+			rescue AEM::EventError => e
 				if  e.number == -192 # aete resource not found
 					aetes = []
 				else
