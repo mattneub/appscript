@@ -2,26 +2,34 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 
-<title>aem | 7. Examples</title>
+<title>objc-aem manual | 7. Examples</title>
 
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<style type="text/css" media="all"><!--@import url(full.css);--></style>
+<style type="text/css" media="all"><!--@import url(../full.css);--></style>
 
 </head>
 <body>
 
-<h1>7. Examples</h1>
+<h1><img src="../objc-appscript-logo.png" alt="objc-appscript" title="objc-appscript" /></h1>
 
 <!-- top navigation -->
 <div class="navbar">
-	<a href="06_buildingandsendingevents.html">Previous</a> | <a href="index.html">Up</a>
+<a href="06_buildingandsendingevents.html">Previous</a> &bull;
+<a href="index.html">Up</a>
+
+<span>
+<a href="../appscript-manual/index.html">appscript</a> /
+<strong><a href="../aem-manual/index.html">aem</a></strong>
+</span>
 </div>
+
 
 <!-- content -->
 <div id="content">
 
+<h2>7. Examples</h2>
 
-<h2>Identifying applications</h2>
+<h3>Identifying applications</h3>
 
 <pre><code>// application "TextEdit"
 textedit = [[AEMApplication alloc] initWithName: @"TextEdit.app"];
@@ -35,7 +43,7 @@ eppcURL = [NSURL URLWithString: @"eppc://my-mac.local/TextEdit"];
 textedit = [[AEMApplication alloc] initWithURL: eppcURL];</code></pre>
 
 
-<h2>Building references</h2>
+<h3>Building references</h3>
 
 <pre><code>// name [of application]
 [AEMApp property: 'pnam'];
@@ -58,7 +66,7 @@ textedit = [[AEMApplication alloc] initWithURL: eppcURL];</code></pre>
            elements: 'cpar'] byTest: [AEMIts notEquals: @"\n"]];</code></pre>
 
 
-<h2>Sending events</h2>
+<h3>Sending events</h3>
 
 <pre><code>// quit TextEdit
 evt = [textedit eventWithEventClass: 'aevt' eventID: 'quit'];
@@ -85,11 +93,10 @@ evt = [textedit eventWithEventClass: 'core' eventID: 'crel'];
 </div>
 
 <!-- bottom navigation -->
-<div class="navbar">
-	<a href="06_buildingandsendingevents.html">Previous</a> | <a href="index.html">Up</a>
+<div class="footer">
+<a href="06_buildingandsendingevents.html">Previous</a> &bull;
+<a href="index.html">Up</a>
 </div>
 
-<!--footer-->
-<p class="footer">&copy; 2008 HAS</p>
 </body>
 </html>

@@ -2,25 +2,34 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 
-<title>appscript | 9. Reference Forms</title>
+<title>objc-appscript manual | 9. Reference Forms</title>
 
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<style type="text/css" media="all"><!--@import url(full.css);--></style>
+<style type="text/css" media="all"><!--@import url(../full.css);--></style>
 
 </head>
 <body>
 
-<h1>9. Reference Forms</h1>
+<h1><img src="../objc-appscript-logo.png" alt="objc-appscript" title="objc-appscript" /></h1>
 
 <!-- top navigation -->
 <div class="navbar">
-	<a href="08_realvsgenericreferences.html">Previous</a> | <a href="index.html">Up</a> | <a href="10_referenceexamples.html">Next</a>
-	
+<a href="08_realvsgenericreferences.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="10_referenceexamples.html">Next</a>
+
+<span>
+<strong><a href="../appscript-manual/index.html">appscript</a></strong> /
+<a href="../aem-manual/index.html">aem</a>
+</span>
 </div>
 
 <!-- content -->
 <div id="content">
-<h2>Property reference</h2>
+
+<h2>9. Reference Forms</h2>
+
+<h3>Property reference</h3>
 
 <p>A property either contains a simple value or represents a one-to-one relationship between two application objects. Properties either describe the application object (its name, class, size, color, preferences, etc.) or provide a convenient reference to other object(s) of interest to users (e.g. home, currentTrack).</p>
 
@@ -34,11 +43,11 @@
 
 
 
-<h2>Element references</h2>
+<h3>Element references</h3>
 
 <p>Elements represent a one-to-many relationship between application objects. Elements usually reflect the containment structure of the application object model and generally provide multiple ways of referencing some or all of those objects (e.g. characters/words/paragraphs of documents by index/relative-position/range/filter).</p>
 
-<h3>All Elements</h3>
+<h4>All Elements</h4>
 
 <p>Syntax:</p>
 <pre><code>[reference elements]</code></pre>
@@ -49,7 +58,7 @@
 [[[textedit <em>documents</em>] <em>paragraphs</em>] <em>words</em>]</code></pre>
 
 
-<h3>by Name</h3>
+<h4>by Name</h4>
 	
 <p>Syntax:</p>
 <pre><code>[elements byName: selector]
@@ -62,7 +71,7 @@
 <p class="hilitebox">Note: applications usually treat object names as case-insensitive. Where multiple element have the same name, a by-name reference only identifies the first element found with that name. (Tip: to identify <em>all</em> elements with a particular name, use a by-test reference instead.)</p>
 
 
-<h3>by Index</h3>
+<h4>by Index</h4>
 	
 <p>Syntax:</p>
 <pre><code>[elements byIndex: selector]
@@ -80,7 +89,7 @@
 <p>Note that while element indexes are usually integers, some applications may accept other types (e.g. Finder accepts aliases in filesystem references).</p>
 
 
-<h3>by ID</h3>
+<h4>by ID</h4>
 
 <p>Syntax:</p>
 <pre><code>[elements byID: selector]
@@ -90,7 +99,7 @@
 <pre><code>[windows byID: 4321]</code></pre>
 
 
-<h3>by Absolute Position</h3>
+<h4>by Absolute Position</h4>
 
 <p>Syntax:</p>
 <pre><code>[elements first] -- first element
@@ -104,7 +113,7 @@
 [files any]</code></pre>
 
 
-<h3>by Relative Position</h3>
+<h4>by Relative Position</h4>
 
 <p>Syntax:</p>
 <pre><code>[element previous: className] -- nearest element of a given class to appear 
@@ -119,7 +128,7 @@
 [[paragraphs at: -1] previous: [TEConstant character]]</code></pre>
 
 
-<h3>by Range</h3>
+<h4>by Range</h4>
 
 <p>Range references select all elements between and including two references indicating the start and end of the range. The start and end references are normally declared relative to the container of the elements being selected. These references are constructed using a glue-defined 'Con' macro, e.g. <code>TECon</code>, as their root. For example, to indicate the third paragraph of the currrent container object:</p>
 
@@ -160,7 +169,7 @@
            to: [[TEPCon words] at: -2]]</code></pre>
 
 
-<h3>by Test</h3>
+<h4>by Test</h4>
 
 <p>A reference to each element that satisfies one or more conditions specified by a test expression:</p>
 
@@ -224,7 +233,7 @@
 
 
 
-<h2>Insertion location</h2>
+<h3>Insertion location</h3>
 
 <p>Insertion locations can be specified at the beginning or end of all elements, or before or after a specified element or element range.</p>
 
@@ -243,12 +252,11 @@
 </div>
 
 <!-- bottom navigation -->
-<div class="navbar">
-	<a href="08_realvsgenericreferences.html">Previous</a> | <a href="index.html">Up</a> | <a href="10_referenceexamples.html">Next</a>
-	
+<div class="footer">
+<a href="08_realvsgenericreferences.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="10_referenceexamples.html">Next</a>	
 </div>
 
-<!--footer-->
-<p class="footer">&copy; 2008 HAS</p>
 </body>
 </html>

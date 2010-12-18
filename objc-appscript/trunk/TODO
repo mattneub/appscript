@@ -2,10 +2,6 @@ TO DO
 
 ======= appscript =======
 
-======= osaglue =======
-
-- integrate into ASDictionary
-
 
 ======= aem/application.h =======
 
@@ -42,8 +38,6 @@ TO DO
 	/Developer/SDKs/MacOSX10.4u.sdk/System/Library/Frameworks/Foundation.framework/Headers/NSRunLoop.h:37: warning: using '-(void)run'
 	/Users/has/AppscriptDemo/TEGlue/TEReferenceGlue.h:55: warning: also found '-(TERunCommand *)run'
 
-
-- add 'strict' options for class and command generation to osaterminology.makeglue.objcappscript? e.g. To create individual classes according to application dictionary and/or enforce type checking/coercion in command parameters and result. This would allow users to take advantage of ObjC static typing for applications whose dictionaries are sufficiently accurate to avoid compatibility problems.
 
 - add dynamic class generation option?
 

@@ -2,28 +2,34 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 
-<title>aem | 6. Building and sending events</title>
+<title>objc-aem manual | 6. Building and sending events</title>
 
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<style type="text/css" media="all"><!--@import url(full.css);--></style>
+<style type="text/css" media="all"><!--@import url(../full.css);--></style>
 
 </head>
 <body>
 
-<h1>6. Building and sending events</h1>
+<h1><img src="../objc-appscript-logo.png" alt="objc-appscript" title="objc-appscript" /></h1>
 
 <!-- top navigation -->
 <div class="navbar">
-	<a href="05_findingandtargetingapplications.html">Previous</a> | <a href="index.html">Up</a> | <a href="07_examples.html">Next</a>
+<a href="05_findingandtargetingapplications.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="07_examples.html">Next</a>
+
+<span>
+<a href="../appscript-manual/index.html">appscript</a> /
+<strong><a href="../aem-manual/index.html">aem</a></strong>
+</span>
 </div>
 
 <!-- content -->
 <div id="content">
 
+<h2>6. Building and sending events</h2>
 
-
-
-<h2>Creating events</h2>
+<h3>Creating events</h3>
 
 <p>The <code>AEMApplication</code> class's <code>-eventWithEventClass:eventID:returnID:codecs:</code> method is used to create new Apple events targetted at the specified application.</p>
 
@@ -62,7 +68,7 @@
 
 
 
-<h2>The <code>AEMEvent</code> class</h2>
+<h3>The <code>AEMEvent</code> class</h3>
 
 <p>The <code>AEMEvent</code> class represents an Apple event.</p>
 
@@ -166,11 +172,11 @@
 <p>The <code>send</code> method may be called any number of times.</p>
 
 
-<h2>Commonly used constants</h2>
+<h3>Commonly used constants</h3>
 
 <p>A large number of Apple event-related constants are defined in the <code>AE</code> and <code>OpenScripting</code> frameworks; some of the more relevant ones are listed below.</p>
 
-<h3>Parameter keys</h3>
+<h4>Parameter keys</h4>
 
 <pre><code>keyDirectObject
 keyAERequestedType</code></pre>
@@ -180,10 +186,11 @@ keyAERequestedType</code></pre>
 <p>Other parameter keys are defined by individual applications.</p>
 
 
-<h3>Attribute keys</h3>
+<h4>Attribute keys</h4>
 
 <p>Most of the following attributes are already supplied by other means (e.g. keyEventClassAttr, keyEventIDAttr are supplied separately when creating an Apple event; keyTimeoutAttr when sending it) and are only of interest if unpacking AppleEvent descriptors manually. A few  may be used in <code>-setAttribute:forKeyword:</code> (<code>enumConsiderations</code>, <code>enumConsidsAndIgnores</code>, <code>keySubjectAttr</code>):</p>
-<pre><code>keyTransactionIDAttr
+
+<pre><code>keyTransactionIDAttr
 keyReturnIDAttr
 keyEventClassAttr
 keyEventIDAttr
@@ -215,11 +222,26 @@ kASNumericStrings</code></pre>
 
 <p>The value of the <code>enumConsidsAndIgnores</code> attribute should be composed from zero or more of the following bit masks:</p>
 
-<pre><code>kAECaseConsiderMaskkAEDiacriticConsiderMaskkAEWhiteSpaceConsiderMaskkAEHyphensConsiderMaskkAEExpansionConsiderMaskkAEPunctuationConsiderMaskkASConsiderRepliesConsiderMaskkASNumericStringsConsiderMask
-kAECaseIgnoreMaskkAEDiacriticIgnoreMaskkAEWhiteSpaceIgnoreMaskkAEHyphensIgnoreMaskkAEExpansionIgnoreMaskkAEPunctuationIgnoreMaskkASConsiderRepliesIgnoreMaskkASNumericStringsIgnoreMask</code></pre>
+<pre><code>kAECaseConsiderMask
+kAEDiacriticConsiderMask
+kAEWhiteSpaceConsiderMask
+kAEHyphensConsiderMask
+kAEExpansionConsiderMask
+kAEPunctuationConsiderMask
+kASConsiderRepliesConsiderMask
+kASNumericStringsConsiderMask
+
+kAECaseIgnoreMask
+kAEDiacriticIgnoreMask
+kAEWhiteSpaceIgnoreMask
+kAEHyphensIgnoreMask
+kAEExpansionIgnoreMask
+kAEPunctuationIgnoreMask
+kASConsiderRepliesIgnoreMask
+kASNumericStringsIgnoreMask</code></pre>
 
 
-<h3>Send flag constants</h3>
+<h4>Send flag constants</h4>
 
 <p>The value of the <code>send</code> method's <code>flags</code> argument should be an integer composed from the sum of zero or more of the following bit masks:</p>
 
@@ -240,7 +262,7 @@ kAECanSwitchLayer</code></pre>
 <p>See the <a href="http://developer.apple.com/documentation/Carbon/Reference/Apple_Event_Manager/apple_event_manager_ref/chapter_1.4_section_6.html">Apple Event Manager</a> API reference for details.</p>
 
 
-<h3>Other constants</h3>
+<h4>Other constants</h4>
 
 <pre><code>kAutoGenerateReturnID</code></pre>
 
@@ -250,11 +272,11 @@ kAECanSwitchLayer</code></pre>
 </div>
 
 <!-- bottom navigation -->
-<div class="navbar">
-	<a href="05_findingandtargetingapplications.html">Previous</a> | <a href="index.html">Up</a> | <a href="07_examples.html">Next</a>
+<div class="footer">
+<a href="05_findingandtargetingapplications.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="07_examples.html">Next</a>
 </div>
 
-<!--footer-->
-<p class="footer">&copy; 2008 HAS</p>
 </body>
 </html>

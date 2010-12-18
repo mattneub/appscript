@@ -2,26 +2,34 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 
-<title>aem | 4. References</title>
+<title>objc-aem manual | 4. References</title>
 
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<style type="text/css" media="all"><!--@import url(full.css);--></style>
+<style type="text/css" media="all"><!--@import url(../full.css);--></style>
 
 </head>
 <body>
 
-<h1>4. References</h1>
+<h1><img src="../objc-appscript-logo.png" alt="objc-appscript" title="objc-appscript" /></h1>
 
 <!-- top navigation -->
 <div class="navbar">
-	<a href="03_packingandunpackingdata.html">Previous</a> | <a href="index.html">Up</a> | <a href="05_findingandtargetingapplications.html">Next</a>
+<a href="03_packingandunpackingdata.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="05_findingandtargetingapplications.html">Next</a>
+
+<span>
+<a href="../appscript-manual/index.html">appscript</a> /
+<strong><a href="../aem-manual/index.html">aem</a></strong>
+</span>
 </div>
 
 <!-- content -->
 <div id="content">
 
+<h2>4. References</h2>
 
-<h2>About references</h2>
+<h3>About references</h3>
 
 <p>An Apple Event Object Model query (a.k.a. "reference") essentially consists of a linked list made up of one or more Apple event descriptors (AEDescs) of, for the most part, <code>typeObjectSpecifier</code>. Object specifiers are used to identify properties and elements in the application's AEOM. Each object specifer contains four fields:</p>
 
@@ -102,7 +110,7 @@ NSLog(@"ref2 = %@", ref2);</code></pre>
 
 
 
-<h2>Reference forms</h2>
+<h3>Reference forms</h3>
 
 <p>Aem defines a number of classes representing each of the AEOM reference forms. There are nine AEOM reference forms:</p>
 
@@ -146,9 +154,9 @@ NSLog(@"ref2 = %@", ref2);</code></pre>
 
 
 
-<h2>Abstract base classes</h2>
+<h3>Abstract base classes</h3>
 
-<h3>Basic methods</h3>
+<h4>Basic methods</h4>
 
 <p>The <code>AEMQuery</code> class defines methods that allow aem references to be compared for equality and used as dictionary keys.</p>
 
@@ -166,7 +174,7 @@ NSLog(@"ref2 = %@", ref2);</code></pre>
 <p>(Defined in <code>base.h</code>.)</p>
 
 
-<h3>Methods for all positional specifiers</h3>
+<h4>Methods for all positional specifiers</h4>
 
 <pre><code>@interface AEMObjectSpecifier : AEMSpecifier
 /* 
@@ -211,7 +219,7 @@ NSLog(@"ref2 = %@", ref2);</code></pre>
 <p>(Defined in <code>specifier.h</code>.)</p>
 
 
-<h3>Methods for all multi-element specifiers</h3>
+<h4>Methods for all multi-element specifiers</h4>
 
 <pre><code>@interface AEMMultipleElementsSpecifier : AEMObjectSpecifier
 /*
@@ -268,7 +276,7 @@ NSLog(@"ref2 = %@", ref2);</code></pre>
 <p>(Defined in <code>specifier.h</code>.)</p>
 
 
-<h3>Methods for all test clause classes</h3>
+<h4>Methods for all test clause classes</h4>
 
 <pre><code>@interface AEMTest : AEMQuery
 /*
@@ -298,9 +306,9 @@ NSLog(@"ref2 = %@", ref2);</code></pre>
 
 
 
-<h2>Concrete classes</h2>
+<h3>Concrete classes</h3>
 
-<h3>Insertion location reference form</h3>
+<h4>Insertion location reference form</h4>
 
 <pre><code>AEMInsertionSpecifier : AEMSpecifier 
 /*
@@ -308,7 +316,7 @@ NSLog(@"ref2 = %@", ref2);</code></pre>
  *  start or end of element(s); e.g. [ref before]
  */</code></pre>
 
-<h3>Property reference forms</h3>
+<h4>Property reference forms</h4>
 
 <pre><code>AEMPropertySpecifier : AEMObjectSpecifier
 /*
@@ -324,7 +332,7 @@ AEMUserPropertySpecifier : AEMObjectSpecifier
  */</code></pre>
 
 
-<h3>Single element reference forms</h3>
+<h4>Single element reference forms</h4>
 
 
 <pre><code>AEMElementByIndexSpecifier : AEMSingleElementSpecifierBase
@@ -361,7 +369,7 @@ AEMElementByRelativePositionSpecifier : AEMSingleElementSpecifierBase
  */</code></pre>
 
 
-<h3>Multiple element reference forms</h3>
+<h4>Multiple element reference forms</h4>
 
 <pre><code>AEMElementsByRangeSpecifier : AEMMultipleElementsSpecifier
 /*
@@ -387,14 +395,14 @@ AEMAllElementsSpecifier : AEMMultipleElementsSpecifier
  */</code></pre>
 
 
-<h3>Tests</h3>
+<h4>Tests</h4>
 
 <p>The <code>AEMTest</code> class represents a comparison test or logical test, and defines methods for composing additional logical tests on top of these. Each kind of test clause is represented by a different subclass of the main <code>AEMTest</code> class. The details are not that important, however, so they're not listed here.</p>
 
 
 
 
-<h3>Reference Roots</h3>
+<h4>Reference Roots</h4>
 
 <pre><code>AEMApplicationRoot : AEMObjectSpecifier
 /*
@@ -420,11 +428,11 @@ AEMObjectBeingExaminedRoot : AEMObjectSpecifier
 </div>
 
 <!-- bottom navigation -->
-<div class="navbar">
-	<a href="03_packingandunpackingdata.html">Previous</a> | <a href="index.html">Up</a> | <a href="05_findingandtargetingapplications.html">Next</a>
+<div class="footer">
+<a href="03_packingandunpackingdata.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="05_findingandtargetingapplications.html">Next</a>
 </div>
 
-<!--footer-->
-<p class="footer">&copy; 2008 HAS</p>
 </body>
 </html>
