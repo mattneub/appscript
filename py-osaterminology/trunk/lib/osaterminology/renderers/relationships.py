@@ -1,4 +1,4 @@
-#!/usr/bin/env pythonw
+"""relationships"""
 
 from sys import stdout
 

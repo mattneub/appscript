@@ -1,7 +1,4 @@
-"""quickdoc -- Dump application terminology (aete) data to file/stdout.
-
-(C) 2004-2009 HAS
-"""
+"""quickdoc -- Dump application terminology (aete) data to file/stdout."""
 
 from aem import kae
 from os import sys

@@ -1,8 +1,4 @@
-#!/usr/bin/env python
-
-"""sdefparser -- parse an application's sdef, given an application path, file path or XML string. Returns a Dictionary object model.
-
-(C) 2006 HAS"""
+"""sdefparser -- parse an application's sdef, given an application path, file path or XML string. Returns a Dictionary object model. """
 
 # TO DO: objc-appscript support
 

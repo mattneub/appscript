@@ -1,7 +1,4 @@
-"""makeidentifier -- Convert AppleScript keywords to identifiers.
-
-(C) 2004-2008 HAS
-"""
+"""makeidentifier -- Convert AppleScript keywords to identifiers."""
 
 import keyword, string
 

@@ -11,10 +11,8 @@ setup(
 		name = "osaterminology",
 		version = "0.14.4",
 		description = "Parse and render aete/sdef resources.",
-		author = "HAS",
-		author_email='',
 		url='http://appscript.sourceforge.net',
-		license='MIT',
+		license='Public Domain',
 		platforms=['Mac OS X'],
 		packages = [
 			'osaterminology',

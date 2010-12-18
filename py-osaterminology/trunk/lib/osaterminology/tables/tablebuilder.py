@@ -1,7 +1,4 @@
-"""osaterminology.tables.tablebuilder -- builds lookup tables similar to those used by appscript itself; modified from py-appscript's terminology module
-
-(C) 2008 HAS
-"""
+"""osaterminology.tables.tablebuilder -- builds lookup tables similar to those used by appscript itself; modified from py-appscript's terminology module"""
 
 from aem import AEType, AEEnum, EventError, findapp, ae
 

@@ -1,7 +1,4 @@
-"""parser -- Simple SAX-like parser for parsing aete and aeut terminology data.
-
-(C) 2004 HAS	
-"""
+"""parser -- Simple SAX-like parser for parsing aete and aeut terminology data."""
 
 from struct import pack, unpack
 

@@ -1,4 +1,4 @@
-#!/usr/bin/env pythonw
+"""inheritance"""
 
 from sys import stdout
 

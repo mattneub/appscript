@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+"""typerenderers"""
 
 from osaterminology.dom.osadictionary import kAll, Nodes
 

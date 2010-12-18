@@ -1,7 +1,4 @@
-"""makeidentifier.objcappscript -- Reserved keywords for objc-appscript
-
-(C) 2004-2008 HAS
-"""
+"""makeidentifier.objcappscript -- Reserved keywords for objc-appscript """
 
 # Important: the following must be reserved:
 #

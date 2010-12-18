@@ -18,8 +18,3 @@ NOTES
 
 - Distutil users should delete older non-egg installations (see site-packages/aeosa) before installation
 
-======================================================================
-COPYRIGHT
-
-(C) 2004-2009 HAS <hhas -at- users - sourceforge - net> <http://appscript.sourceforge.net>
-

@@ -1,7 +1,4 @@
-"""makeidentifier.rbappscript -- Reserved keywords for rb-appscript
-
-(C) 2004-2008 HAS
-"""
+"""makeidentifier.rbappscript -- Reserved keywords for rb-appscript"""
 
 # Important: the following must be reserved:
 #

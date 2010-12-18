@@ -1,7 +1,4 @@
-"""osaterminology.tables.tableparser -- builds tables similar to those used by appscript itself; based on py-appscript's terminologyparser module
-
-(C) 2008 HAS
-"""
+"""osaterminology.tables.tableparser -- builds tables similar to those used by appscript itself; based on py-appscript's terminologyparser module"""
 
 try:
 	set

@@ -1,7 +1,4 @@
-"""makeidentifier.pyappscript -- Reserved keywords for py-appscript
-
-(C) 2004-2008 HAS
-"""
+"""makeidentifier.pyappscript -- Reserved keywords for py-appscript"""
 
 # Important: the following must be reserved:
 #

@@ -1,5 +1,3 @@
-#!/usr/bin/env pythonw
-
 """applescripttypes -- used to get default AppleScript type/class/enum names from AppleScript component; used by aeteparser.AppleScriptParser, sdefparser.AppscriptHandler"""
 
 from aem.ae import getsysterminology

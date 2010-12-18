@@ -5,8 +5,6 @@
 Performs a full analysis of class inheritance and object model relationships
 so resulting documentation is more detailed than that produced by htmldoc
 (and also takes longer to generate).
-
-(C) 2007 HAS
 """
 
 from os import mkdir

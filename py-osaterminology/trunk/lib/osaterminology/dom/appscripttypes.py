@@ -1,7 +1,4 @@
-"""appscripttypes -- Provides tables for converting AEM-defined AE type codes to appscript Keyword names when parsing terminology.
-
-(C) 2005 HAS
-"""
+"""appscripttypes -- Provides tables for converting AEM-defined AE type codes to appscript Keyword names when parsing terminology."""
 
 from osaterminology.defaultterminology import getterms
 

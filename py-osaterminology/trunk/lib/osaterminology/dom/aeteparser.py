@@ -1,7 +1,4 @@
-"""aeteparser -- parse an application's aete, given an application path, file path(s) or aete string. Returns a Dictionary object model.
-
-(C) 2006 HAS
-"""
+"""aeteparser -- parse an application's aete, given an application path, file path(s) or aete string. Returns a Dictionary object model. """
 
 # TO DO: synonym support, e.g. In Word:
 

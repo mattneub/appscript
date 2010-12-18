@@ -1,9 +1,4 @@
-#!/usr/bin/env python
-
-"""htmldoc - Render application terminology as a single XHTML document.
-
-(C) 2006 HAS
-"""
+"""htmldoc - Render application terminology as a single XHTML document."""
 
 from HTMLTemplate import Template
 

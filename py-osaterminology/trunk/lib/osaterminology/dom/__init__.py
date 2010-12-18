@@ -1,6 +1,3 @@
-"""osaterminology.dom -- parse aetes and sdefs into Dictionary instances
-
-(C) 2005 HAS
-"""
+"""osaterminology.dom -- parse aetes and sdefs into Dictionary instances """
 
 import aeteparser, sdefparser

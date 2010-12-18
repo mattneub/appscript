@@ -1,7 +1,4 @@
-""" makeglue.objcappscript -- generates application/osax glue files for objc-appscript
-
-(C) 2007-2008 HAS
-"""
+""" makeglue.objcappscript -- generates application/osax glue files for objc-appscript """
 
 
 from codecs import getencoder
@@ -353,6 +350,7 @@ class ClassBuilder:
 		src += '                                               targetType: targetType_'
 		src += '                                               targetData: targetData_];'
 		src += '    self = [super initWithAppData: appData aemReference: AEMApp];'
+		src += '    [appData release];'
 		src += ''
 		src += '    if (!self) return self;'
 		if self._osaxloader:

@@ -1,6 +1,4 @@
-#!/usr/bin/env pythonw
-
-##
+"""osadictionary -- dictionary object model"""
 
 # TO DO: eliminate Type/Class distinction; this just causes problems, e.g. asdict mail -r
 

@@ -1,9 +1,4 @@
-#!/usr/bin/env python
-
-"""textdoc -- Render application terminology as plain text.
-
-(C) 2006 HAS
-"""
+"""textdoc -- Render application terminology as plain text."""
 
 # TO DO: tidy
 
