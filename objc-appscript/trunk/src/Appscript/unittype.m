@@ -115,6 +115,8 @@ void AEMGetDefaultUnitTypeDefinitions(NSDictionary **definitionsByName,
 	int i = 0;
 	
 	if (!defaultDefinitionsByName) {
+		defaultDefinitionsByName = [[NSMutableDictionary alloc] init];
+		defaultDefinitionsByCode = [[NSMutableDictionary alloc] init];
 		do {
 			name = defaultUnitTypes[i].name;
 			code = defaultUnitTypes[i].code;
