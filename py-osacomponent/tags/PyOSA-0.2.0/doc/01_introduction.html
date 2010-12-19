@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<title>PyOSA | 1. Introduction</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<style type="text/css" media="all"><!--@import url(full.css);--></style>
+
+</head>
+<body>
+
+<h1>1. Introduction</h1>
+
+<!-- top navigation -->
+<div class="navbar">
+	<a href="index.html">Previous</a> | <a href="index.html">Up</a> | <a href="02_installation.html">Next</a>
+	
+</div>
+
+<!-- content -->
+<div id="content">
+<h2>What is PyOSA?</h2>
+
+<p>PyOSA is an OSA language component for the Python scripting language, allowing Python code to be executed by any OSA-enabled application (Script Editor, Mail, iTunes, etc.). PyOSA makes Python a full peer to AppleScript.</p>
+
+<p>For example, the following script will return the string <code>"Hello world!"</code> when run in Script Editor:</p>
+
+<pre><code>def run():
+    return "Hello world!"</code></pre>
+
+<h2>How does PyOSA relate to appscript?</h2>
+
+<p>Appscript is an Apple event bridge, allowing Python scripts to send Apple events to applications. That's great when you want to control one process from another, but no help if you need a script that controls and/or is controlled by its host process. For that level of integration/interaction, you need a full OSA language.</p>
+
+<p>PyOSA packages the Python interpreter as an OSA language component, allowing Python scripts to be attached to any OSA-aware application. It also fully integrates appscript, allowing PyOSA scripts to send events directly to the host process and vice-versa. Attachability and integrated Apple event support are essential for tasks like Folder Actions and Mail rules, which can't be done with appscript alone.</p>
+
+<p>For example, you could create a Mail rule that performs a <q>Run AppleScript</q> action whenever new messages are received. That rule would load a PyOSA script and call its <code>perform_mail_action_with_messages</code> function, passing it a list of message references. The script could then process those messages however it likes, getting and setting their properties, moving them to other mailboxes, and so on.</p>
+
+<h2>Important</h2>
+
+<p>PyOSA 0.1.x is an early release, so its implementation is incomplete and may be buggy. Some APIs and the compiled script (<code>.scpt</code>) file format may also change in future releases. Use at your own risk, etc.</p>
+
+<p>Note that the version of Script Editor included with Mac OS X 10.4.x contains bugs that can prevent scripts loading or compiling correctly. Script Editor users should read the Script Editor Workarounds section below before using PyOSA.</p>
+
+</div>
+
+<!-- bottom navigation -->
+<div class="navbar">
+	<a href="index.html">Previous</a> | <a href="index.html">Up</a> | <a href="02_installation.html">Next</a>
+	
+</div>
+
+<!--footer-->
+<p class="footer">&copy; 2007 HAS</p>
+</body>
+</html>

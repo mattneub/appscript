@@ -1,0 +1,26 @@
+2008-03-12 -- 0.2.1
+
+- now requires py-appscript 0.19.0+
+
+
+2008-01-02 -- 0.2.0
+
+- now requires py-appscript 0.18.0+
+
+- ComponentError now returns error message (usually generic description), error range (always (0, 0)) info. Previously, this info was only available for ScriptErrors, and component would return an error if client tried to obtain this info via OSAScriptError after a ComponentError occurred.
+
+- improved error messages
+
+- now uses AEFlattenDesc, AEUnflattenDesc to serialise, deserialise scripts
+
+
+2007-03-28 -- 0.1.1
+
+- fixes compatibility problem with Script Debugger 4
+
+- some improvements in event log support
+
+
+2007-03-26 -- 0.1.0
+
+- first release
