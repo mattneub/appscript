@@ -540,41 +540,18 @@ static VALUE
 rbAE_launchApplication(VALUE self, VALUE path, VALUE firstEvent, VALUE flags)
 {
 	FSRef appRef;
-#if !defined(__LP64__)
-	FSSpec appFSS;
-#endif
-	AEDesc paraDesc;
-	Size paraSize;
-	AppParametersPtr paraData;
 	ProcessSerialNumber psn;
-	LaunchParamBlockRec launchParams;
 	OSErr err = noErr;
 	
 	err = FSPathMakeRef((UInt8 *)StringValuePtr(path), &appRef, NULL);
-	if (err != 0) rbAE_raiseMacOSError("Couldn't make FSRef for application.", err);
-#if !defined(__LP64__)
-	err = FSGetCatalogInfo(&appRef, kFSCatInfoNone, NULL, NULL, &appFSS, NULL);
-	if (err != 0) rbAE_raiseMacOSError("Couldn't make FSSpec for application.", err);
-#endif
-	err = AECoerceDesc(&(AEDESC_OF(firstEvent)), typeAppParameters, &paraDesc);
-	paraSize = AEGetDescDataSize(&paraDesc);
-	paraData = (AppParametersPtr)NewPtr(paraSize);
-	if (paraData == NULL) rbAE_raiseMacOSError("Can't make app parameters AEDesc.", memFullErr);
-	err = AEGetDescData(&paraDesc, paraData, paraSize);
-	if (err != noErr) rbAE_raiseMacOSError("Can't get AEDesc data.", err);
-	launchParams.launchBlockID = extendedBlock;
-	launchParams.launchEPBLength = extendedBlockLen;
-	launchParams.launchFileFlags = 0;
-	launchParams.launchControlFlags = (LaunchFlags)NUM2UINT(flags);
-#if defined(__LP64__)
-	launchParams.launchAppRef = &appRef;
-#else
-	launchParams.launchAppSpec = &appFSS;
-#endif
-	launchParams.launchAppParameters = paraData;
-	err = LaunchApplication(&launchParams);
+	if (err != noErr) rbAE_raiseMacOSError("Couldn't make FSRef for application.", err);
+	LSApplicationParameters appParams = {0, 
+										 (LSLaunchFlags)NUM2UINT(flags), 
+										 &appRef, 
+										 NULL, NULL, NULL, 
+										 &(AEDESC_OF(firstEvent))};
+	err = LSOpenApplication(&appParams, &psn);
 	if (err != noErr) rbAE_raiseMacOSError("Can't launch application.", err);
-	psn = launchParams.launchProcessSN;
 	return rb_ary_new3(2, INT2NUM(psn.highLongOfPSN), INT2NUM(psn.lowLongOfPSN));
 }
 
@@ -902,29 +879,6 @@ rbAE_AEGetCoercionHandler(VALUE self, VALUE fromType, VALUE toType)
 		
 /**********************************************************************/
 // Process management
-
-static VALUE
-rbAE_RunApplicationEventLoop(VALUE self)
-{
-#if defined(__LP64__)
-	rb_raise(rb_eNotImpError, "AE.run_application_event_loop isn't available in 64-bit processes.\n");
-#else
-	RunApplicationEventLoop();
-#endif
-	return Qnil;
-}
-
-static VALUE
-rbAE_QuitApplicationEventLoop(VALUE self)
-{
-#if defined(__LP64__)
-	rb_raise(rb_eNotImpError, "AE.quit_application_event_loop isn't available in 64-bit processes.\n");
-#else
-	QuitApplicationEventLoop();
-#endif
-	return Qnil;
-}
-
 static VALUE
 rbAE_transformProcessToForegroundApplication(VALUE self)
 {
@@ -1020,8 +974,6 @@ Init_ae (void)
 	rb_define_module_function(mAE, "remove_coercion_handler", rbAE_AERemoveCoercionHandler, 2);
 	rb_define_module_function(mAE, "get_coercion_handler", rbAE_AEGetCoercionHandler, 2);
 	
-	rb_define_module_function(mAE, "run_application_event_loop", rbAE_RunApplicationEventLoop, 0);
-	rb_define_module_function(mAE, "quit_application_event_loop", rbAE_QuitApplicationEventLoop, 0);
 	rb_define_module_function(mAE, "transform_process_to_foreground_application", 
 							  rbAE_transformProcessToForegroundApplication, 0);
 }

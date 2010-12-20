@@ -1,3 +1,10 @@
+2010-12-20 -- 0.6.1
+
+- removed 32-bit only AE.run_application_event_loop, AE.quit_application_event_loop
+
+- updated AE.launch_application to use LSOpenApplication
+
+
 2010-12-17 -- 0.6.0
 
 - added UTF-8 Encoding support in Ruby 1.9+; added AEMCodecs::Codecs#use_ascii_8bit for optionally disabling it

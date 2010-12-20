@@ -15,9 +15,24 @@ module Connect
 	
 	@@encoding_support = AEMEncodingSupport.encoding_support
 	
-	LaunchContinue = 0x4000
-	LaunchNoFileFlags = 0x0800
-	LaunchDontSwitch = 0x0200
+	LSLaunchDefaults = 0x00000001
+	LSLaunchAndPrint = 0x00000002
+	LSLaunchReserved2 = 0x00000004
+	LSLaunchReserved3 = 0x00000008
+	LSLaunchReserved4 = 0x00000010
+	LSLaunchReserved5 = 0x00000020
+	LSLaunchAndDisplayErrors = 0x00000040
+	LSLaunchInhibitBGOnly = 0x00000080
+	LSLaunchDontAddToRecents = 0x00000100
+	LSLaunchDontSwitch = 0x00000200
+	LSLaunchNoParams = 0x00000800
+	LSLaunchAsync = 0x00010000
+	LSLaunchStartClassic = 0x00020000
+	LSLaunchInClassic = 0x00040000
+	LSLaunchNewInstance = 0x00080000
+	LSLaunchAndHide = 0x00100000
+	LSLaunchAndHideOthers = 0x00200000
+	LSLaunchHasUntrustedContents = 0x00400000
 	
 	KNoProcess = 0
 	KCurrentProcess = 2
@@ -69,7 +84,7 @@ module Connect
 		path = @@encoding_support.to_utf8_string(path)
 		begin
 			return AE.launch_application(path, event,
-					LaunchContinue + LaunchNoFileFlags + LaunchDontSwitch)
+					LSLaunchNoParams | LSLaunchStartClassic | LSLaunchDontSwitch)
 		rescue AE::MacOSError => err
 			raise CantLaunchApplicationError, err.to_i
 		end
