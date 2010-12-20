@@ -1,7 +1,4 @@
-"""handlererror -- Used to pass known errors back to client.
-
-(C) 2005 HAS
-"""
+"""handlererror -- Used to pass known errors back to client."""
 
 from aem import kae
 

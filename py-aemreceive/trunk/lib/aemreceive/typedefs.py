@@ -1,7 +1,4 @@
-"""typedefs -- Used by client in installeventhandler() to specify the required type(s) of each parameter of an Apple event handler. These classes are also responsible for coercing and unpacking event parameters on behalf of unpackevent.py.
-
-(C) 2005 HAS
-"""
+"""typedefs -- Used by client in installeventhandler() to specify the required type(s) of each parameter of an Apple event handler. These classes are also responsible for coercing and unpacking event parameters on behalf of unpackevent.py."""
 
 from aem import ae, kae, AEType
 import struct

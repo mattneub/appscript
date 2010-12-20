@@ -7,16 +7,12 @@ except ImportError:
 
 setup(
 		name = "aemreceive",
-		version = "0.3.0",
+		version = "0.4.0",
 		description = "Basic Apple event handling support for Python-based Mac OS X applications.",
-		author = "HAS",
-		author_email='',
 		url='http://appscript.sourceforge.net',
-		license='MIT',
+		license='Public Domain',
 		platforms=['Mac OS X'],
-		packages = [
-			'aemreceive',
-		],
+		packages = ['aemreceive'],
 		extra_path = "aeosa",
 		package_dir = { '': 'lib' }
 )

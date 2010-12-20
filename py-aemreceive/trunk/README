@@ -1,34 +1,33 @@
-aemreceive is packaged using the standard Python Distribution Utilities (a.k.a. Distutils). To install appscript, cd to the aemreceive-0.x.x directory and run:
+About aemreceive
+================
 
-	python setup.py install
+Provides basic support for handling Apple events.
 
-Setuptools will be used if available, otherwise the setup.py script will revert to distutils.
-
-
-This will build and open a binary installer for the appscript packages, documentation and examples.
-
-aemreceive requires MacPython 2.3 or later and Mac OS X 10.3 or later.
-
-Python 3.0 is currently not supported.
+Used by ASDictionary.
 
 
-======================================================================
-DEPENDENCIES
+Requirements
+------------
 
-- py-appscript 0.19.0+ <http://appscript.sourceforge.net>
+- Python 2.3+
+- Mac OS X 10.4+ 
+- appscript 0.22.0+
 
 
-======================================================================
-NOTES
+Installation
+------------
 
-- Provides basic support for handling Apple events.
+aemreceive is packaged using the standard Python Distribution Utilities 
+(a.k.a. Distutils). To install appscript, cd to the aemreceive-0.4.0 
+directory and run:
 
-- aemreceive should now provide full 64-bit support with the exception of the optional aemreceive.sfba module (used to implement scriptable faceless background applications, typically used as AppleScript extensions), which is 32-bit only due to its use of Python's 32-bit Carbon.CarbonEvt extension to provide a main event loop.
+  python setup.py install
 
-- note that sfba/CarbonEvt don't support background threads. Applications requiring multi-threading support can use PyObjC to provide a run loop instead.
+Setuptools will be used if available, otherwise the setup.py script will 
+revert to distutils.
 
-======================================================================
-COPYRIGHT
 
-(C) 2006-2008 HAS <hhas -at- users - sourceforge - net> <http://appscript.sourceforge.net>
+Copyright
+---------
 
+aemreceive is released into the public domain.

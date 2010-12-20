@@ -1,7 +1,4 @@
-"""main -- Provides functions for installing and removing Apple event handlers in Python-based applications.
-
-(C) 2005 HAS
-"""
+"""main -- Provides functions for installing and removing Apple event handlers in Python-based applications."""
 
 from StringIO import StringIO
 from traceback import print_exc
