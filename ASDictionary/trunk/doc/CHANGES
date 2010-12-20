@@ -1,5 +1,11 @@
 CHANGES
 
+2010-12-20 -- 0.13.0
+- updated to use py-appscript 0.22.0: scripting addition terminology now obtained via OSACopyScriptingDefinition instead of deprecated OSAGetAppTerminology and parsed with osaterminology.dom.sdefparser
+- no longer exports osax terminology in plain text/ObjC glue formats (since py-osaterminology doesn't provide sdef parsers for these formats)
+- fixed memory leak in ObjC glues (from py-osaterminology 0.14.5)
+- updated PyObjC-based code
+
 2009-12-02 -- 0.12.0
 - removed asdict tool
 - fixed problem where ASDictionary would try to send Apple events before main event loop was started, sometimes causing launch to stall

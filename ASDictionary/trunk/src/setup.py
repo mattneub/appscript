@@ -1,32 +1,35 @@
-"""ASDictionary build notes
+"""
+Requirements (available from PyPI except where noted):
 
-Requirements:
+- distribute 0.6.14+
 
-- Python 2.4+ <http://www.python.org>
+- HTMLTemplate 1.5.0+
 
-- py-appscript 0.20.0+ <http://appscript.sourceforge.net>
-- py-aemreceive 0.3.0+
-- py-osaterminology 0.14.3+
+- py-appscript 0.22.0+
 
-- PyObjC <http://pyobjc.sourceforge.net/>
+- py-aemreceive 0.4.0+ (from appscript svn repository)
 
-- py2app <http://undefined.org/python/>
+- py-osaterminology 0.14.5+ (from appscript svn repository)
+
+- pyobjc 2.3+
+
+- py2app 0.5.2+
 
 --
 
-To build, cd to ASDictionary/src directory and run:
+To build, cd to this directory and run:
 
 	python setup.py py2app
 
 """
 
-from distutils.core import setup
+from setuptools import setup
 import py2app
 from plistlib import Plist
 import os
 
 name = 'ASDictionary'
-version='0.12.0'
+version='0.13.0'
 
 os.system('''
 sdp -fa %s.sdef;
@@ -44,7 +47,7 @@ setup(
 				NSAppleScriptEnabled=True,
 				CFBundleVersion=version,
 				CFBundleShortVersionString=version,
-				NSHumanReadableCopyright="(C) 2005-2009 HAS",
+				NSHumanReadableCopyright="",
 				CFBundleIdentifier="net.sourceforge.appscript.asdictionary",
 				CFBundleDocumentTypes = [
 					dict(

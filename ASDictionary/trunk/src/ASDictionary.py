@@ -1,15 +1,11 @@
-"""ASDictionary
-
-(C) 2007-2009 HAS
-"""
+"""ASDictionary"""
 
 import os
 
 import objc
-from Foundation import NSUserDefaultsDidChangeNotification, NSBundle
 from AppKit import *
 from PyObjCTools.KeyValueCoding import *
-from PyObjCTools import NibClassBuilder, AppHelper
+from PyObjCTools import AppHelper
 
 import osax, mactypes, aemreceive
 from osaterminology.makeglue.objcappscript import nametoprefix
@@ -17,11 +13,8 @@ from osaterminology.makeglue.objcappscript import nametoprefix
 import appscriptsupport, osaxfinder, dictionaryexporter
 
 
-NibClassBuilder.extractClasses("MainMenu")
-
-
 ######################################################################
-# support for read-only 'name' and 'version' properties # TO DO: use Cocoa Scripting?
+# support for read-only 'name' and 'version' properties
 
 class _AEOMApplication:
 	def __init__(self, result):
@@ -57,17 +50,17 @@ class ArrayToBooleanTransformer(NSValueTransformer):
 # NSApplication delegate, model logic and window controllers
 # TO DO: refactor this into separate classes
 
-class ASDictionary(NibClassBuilder.AutoBaseClass):
-	# Outlets:
-	# mainWindow
-	# filenameTableView
-	# selectedFilesController
-	# progressPanel
-	# progressBar
-	# itemName
-	# logDrawer
-	# logTextView
-	# objcPrefixColumn
+class ASDictionary(NSDocument):
+	
+	mainWindow = objc.IBOutlet()
+	filenameTableView = objc.IBOutlet()
+	selectedFilesController = objc.IBOutlet()
+	progressPanel = objc.IBOutlet()
+	progressBar = objc.IBOutlet()
+	itemName = objc.IBOutlet()
+	logDrawer = objc.IBOutlet()
+	logTextView = objc.IBOutlet()
+	objcPrefixColumn = objc.IBOutlet()
 	
 	def init(self):
 		self = super(ASDictionary, self).init()
@@ -128,6 +121,7 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 		except:
 			pass
 	
+	@objc.IBAction
 	def notifyPreferencesChanged_(self, sender):
 		self._updateLocks()
 	
@@ -135,10 +129,12 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 	#######
 	# delete items in files list
 	
+	@objc.IBAction
 	def delete_(self, sender):
 		self.selectedFilesController.removeObjects_(self.selectedFilesController.selectedObjects())
 		self._updateLocks()
 	
+	@objc.IBAction
 	def clear_(self, sender):
 		self.selectedFilesController.removeObjects_(self.selectedFilesController.content())
 		self._updateLocks()
@@ -163,6 +159,7 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 	#######
 	# show/hide export log drawer
 	
+	@objc.IBAction
 	def showLog_(self, sender):
 		pass
 	
@@ -216,15 +213,16 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 	#######
 	# 'Dictionary' menu methods
 	
-	def _addPathToSelectedFiles(self, path, isosax=False):
+	def _addPathToSelectedFiles(self, path):
 		name = os.path.splitext(os.path.basename(path.rstrip('/')))[0]
-		item = {'objcPrefix': nametoprefix(name), 'name': name, 'path': path, 'isOSAX': isosax}
+		item = {'objcPrefix': nametoprefix(name), 'name': name, 'path': path}
 		if item not in self.selectedFiles():
 			self.insertObject_inSelectedFilesAtIndex_(item, self.countOfSelectedFiles())
 		self._updateLocks()
 	
 	##
 	
+	@objc.IBAction
 	def chooseFromFileBrowser_(self, sender):
 		try:
 			selection = self.standardAdditions.choose_file(with_prompt='Select the item(s) to process:', 
@@ -235,8 +233,9 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 			else:
 				raise
 		for alias in selection:
-			self._addPathToSelectedFiles(alias.path, alias.path.lower().endswith('.osax'))
+			self._addPathToSelectedFiles(alias.path)
 	
+	@objc.IBAction
 	def chooseFromApplicationList_(self, sender):
 		try:
 			selection = self.standardAdditions.choose_application(
@@ -250,6 +249,7 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 		for alias in selection:
 			self._addPathToSelectedFiles(alias.path)
 	
+	@objc.IBAction
 	def chooseRunningApplications_(self, sender):
 		from appscript import app # TO DO: use NSWorkspace
 		sysev = app('System Events')
@@ -262,14 +262,16 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 		if selection == False:
 			return
 		for name in selection:
-			self._addPathToSelectedFiles(sysev.application_processes[name].file().path)
-		
+			fileobj = sysev.application_processes[name].file()
+			if fileobj:
+				self._addPathToSelectedFiles(fileobj.path)
 	
+	@objc.IBAction
 	def chooseInstalledAdditions_(self, sender):
 		selection = self.standardAdditions.choose_from_list(osaxfinder.names(), 
 				with_prompt='Choose one or more scripting additions:', multiple_selections_allowed=True)
 		for name in selection or []:
-			self._addPathToSelectedFiles(osaxfinder.pathforname(name), True)
+			self._addPathToSelectedFiles(osaxfinder.pathforname(name))
 	
 	
 	#######
@@ -281,7 +283,7 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 		self.logTextView.scrollRangeToVisible_([store.length(), 0])
 
 	
-	
+	@objc.IBAction
 	def export_(self, sender):
 		userDefaults = NSUserDefaults.standardUserDefaults()
 		try:
@@ -312,9 +314,11 @@ class ASDictionary(NibClassBuilder.AutoBaseClass):
 		dictionaryexporter.export(selection, styles, plainText, singleHTML, frameHTML, objcGlue, options, outFolder, exportToSubfolders, progressObj)
 	
 	
+	@objc.IBAction
 	def stopProcessing_(self, sender): # cancel button on progress panel
 		NSApp().stopModalWithCode_(-128)
 	
+	@objc.IBAction
 	def windowWillClose_(self, sender): # quit on main window close
 		if sender.object() == self.mainWindow:
 			NSApp().terminate_(sender)

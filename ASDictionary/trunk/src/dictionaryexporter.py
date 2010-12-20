@@ -1,14 +1,13 @@
-""" dictionaryexporter -- Dictionary export function and corresponding Apple event handler.
-
-(C) 2007-2009 HAS
-"""
+""" dictionaryexporter -- Dictionary export function and corresponding Apple event handler. """
 
 import os
+
+from AppKit import *
 
 from aem import *
 from aemreceive import *
 from osaterminology import makeidentifier
-from osaterminology.dom import aeteparser
+from osaterminology.dom import aeteparser, sdefparser
 from osaterminology.makeglue import objcappscript
 from osaterminology.renderers import quickdoc, htmldoc, htmldoc2
 
@@ -97,12 +96,10 @@ def handle_exportdictionaries(sources, outfolder,
 	items = []
 	for alias in sources:
 		name = os.path.splitext(os.path.basename(alias.path.rstrip('/')))[0]
-		isosax = alias.path.lower().endswith('.osax')
 		items.append({
 			'objcPrefix': objcappscript.nametoprefix(name),
 			'name': name, 
 			'path': alias.path,
-			'isOSAX': isosax,
 			})
 	outfolder = outfolder.path
 	plaintext = AEEnum(kPlainText) in fileformats
@@ -119,6 +116,20 @@ def handle_exportdictionaries(sources, outfolder,
 	return export(items, styles, plaintext, singlehtml, framehtml, isobjcglue, options, outfolder, usesubfolders, progressobj)
 
 
+def aetesforapp(aemapp):
+	"""Get aetes from local/remote app via an ascrgdte event; result is a list of byte strings."""
+	try:
+		aetes = aemapp.event('ascrgdte', {'----':0}).send(5 * 60) # some processes (e.g. AppleSpell.service, ARDAgent.app) don't respond to ascrgdte events, so keep timeout interval short and ignore timeout errors
+	except Exception, e: # (e.g.application not running)
+		if isinstance(e, EventError) and e.errornumber in [-192, -609, -1712]:
+			aetes = []
+		else:
+			raise RuntimeError("Can't get terminology for application (%r): %s" % (aemapp, e))
+	if not isinstance(aetes, list):
+		aetes = [aetes]
+	return [aete for aete in aetes if isinstance(aete, ae.AEDesc) and aete.type == kae.typeAETE and aete.data]
+
+
 ######################################################################
 # PUBLIC
 ######################################################################
@@ -128,16 +139,26 @@ def export(items, styles, plainText, singleHTML, frameHTML, objcGlue, options, o
 	styleInfo = [(style, kStyleToSuffix[style]) for style in styles]
 	# process each item
 	for i, item in enumerate(items):
-		objcPrefix, name, path, isOSAX = item['objcPrefix'], item['name'], item['path'], item['isOSAX']
+		sdef = aetes = None
+		objcPrefix, name, path = item['objcPrefix'], item['name'], item['path']
+		if path == NSBundle.mainBundle().bundlePath():
+			continue
 		progress.nextitem(name, path)
 		try:
-			try:
-				aetes = ae.getappterminology(path)
-			except ae.MacOSError, e:
-				if e.args[0] != -192:
-					raise
-				aetes = []
-			if not bool(aetes):
+			isOSAX = path.lower().endswith('.osax')
+			if isOSAX:
+				try:
+					sdef = ae.copyscriptingdefinition(path)
+				except ae.MacOSError, e:
+					if e.args[0] == -10827:
+						progress.didfail(u"No terminology found.")
+						continue
+					else:
+						raise
+			else:
+				Application
+				aetes = aetesforapp(Application(path))
+			if not bool(sdef or aetes):
 				progress.didfail(u"No terminology found.")
 				continue
 			for style, suffix in styleInfo:
@@ -149,20 +170,23 @@ def export(items, styles, plainText, singleHTML, frameHTML, objcGlue, options, o
 					progress.didfail(u"User cancelled.")
 					progress.didfinish()
 					return
-				if plainText:
+				if plainText and not isOSAX:
 					outputPath = _makeDestinationFolder(outFolder, styleSubfolderName, 
 							exportToSubfolders and 'text', name + suffix + '.txt')
 					progress.nextoutput(u'%s' % outputPath)
 					f = file(outputPath, 'w')
 					try:
 						f.write('\xEF\xBB\xBF') # UTF8 BOM
-						quickdoc.app(path, f, makeidentifier.getconverter(style))
+						quickdoc.renderaetes(aetes, f, makeidentifier.getconverter(style))
 					except:
 						f.close()
 						raise
 					f.close()
 				if singleHTML or frameHTML:
-					terms = aeteparser.parseaetes(aetes, path, style)
+					if isOSAX:
+						terms = sdefparser.parsexml(sdef, path, style)
+					else:
+						terms = aeteparser.parseaetes(aetes, path, style)
 					if singleHTML:
 						outputPath = _makeDestinationFolder(outFolder, styleSubfolderName, 
 								exportToSubfolders and 'html', name + suffix + '.html')
@@ -176,13 +200,11 @@ def export(items, styles, plainText, singleHTML, frameHTML, objcGlue, options, o
 								exportToSubfolders and 'frame-html', name + suffix)
 						progress.nextoutput(u'%s' % outputPath)
 						htmldoc2.renderdictionary(terms, outputPath, style, options)
-			if objcGlue:
-				outputPath = _makeDestinationFolder(outFolder, exportToSubfolders and 'objc-appscript' or '', 
-							'%s%sGlue' % (exportToSubfolders and 'glues/' or '', objcPrefix), '')
-				if isOSAX:
-					objcappscript.makeosaxglue(path, objcPrefix, outputPath, aetes)
-				else:
-					objcappscript.makeappglue(path, objcPrefix, outputPath, aetes)
+			if objcGlue and not isOSAX:
+				outputPath = _makeDestinationFolder(outFolder, 
+						exportToSubfolders and 'objc-appscript' or '', 
+						'%s%sGlue' % (exportToSubfolders and 'glues/' or '', objcPrefix), '')
+				objcappscript.makeappglue(path, objcPrefix, outputPath, aetes)
 				progress.nextoutput(u'%s' % outputPath)
 		except Exception, err:
 			from traceback import format_exc

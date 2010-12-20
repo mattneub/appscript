@@ -1,7 +1,4 @@
-""" rubyrenderer -- Render rb-appscript style references from py-appscript references
-
-(C) 2007-2009 HAS
-"""
+""" rubyrenderer -- Render rb-appscript style references from py-appscript references """
 
 import types, datetime
 

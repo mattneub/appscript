@@ -1,7 +1,4 @@
-""" osaxfinder -- Provides information on installed scripting additions.
-
-(C) 2007-2009 HAS
-"""
+""" osaxfinder -- Provides information on installed scripting additions. """
 
 import os
 from appscript import *

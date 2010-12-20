@@ -1,7 +1,4 @@
-"""appscriptsupport -- Provides support for py-/rb-appscript's built-in help system.
-
-(C) 2004-2009 HAS
-"""
+"""appscriptsupport -- Provides support for py-/rb-appscript's built-in help system."""
 
 from pprint import pprint, pformat
 from StringIO import StringIO
