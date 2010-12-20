@@ -1,0 +1,97 @@
+About ASDictionary
+==================
+
+ASDictionary exports scriptable Mac applications' dictionaries in plain text 
+or HTML format. It can also be used to generate application 'glues' for use 
+with objc-appscript. Requires Mac OS X 10.4 or later. 
+
+
+Exporting application dictionaries
+----------------------------------
+
+1. Use the 'Dictionary' menu to select one or more scriptable applications 
+   or scripting additions, or drag-and-drop one or more application and/or 
+   scripting addition files onto ASDictionary's application icon or Export 
+   window.
+
+2. Select one or more file formats: plain text, single-file HTML and/or frame-
+   based HTML. If an HTML format is chosen, check the 'Compact classes' option 
+   to combine duplicate classes into one. (For example, TextEdit defines a 
+   'document' class in its Standard Suite, and again in its TextEdit Suite.) 
+   Check the 'Show invisibles' option to include hidden classes and commands 
+   in HTML output.
+
+3. Select one or more terminology styles.
+
+4. Click 'Export', and select a destination folder for the generated files.
+
+
+Generating objc-appscript glues
+-------------------------------
+
+1. Use the 'Dictionary' menu to select one or more scriptable applications, or
+   drag-and-drop one or more application files onto ASDictionary's application 
+   icon or Export window.
+
+2. Select the objc-appscript glue format.
+
+3. The ObjC class name prefix for each glue is shown in the Prefix column. 
+   The default prefix is an abbreviation of the application's name (e.g. 
+   Address Book becomes AB, iCal becomes IC), but this can be changed by 
+   clicking on it and typing a prefix of your choice. Take care not to use 
+   a prefix that may cause the glue's class names to collide with existing 
+   Cocoa classes (e.g. 'NS' is a particularly common prefix and best avoided) 
+   otherwise the glue may not compile.
+
+4. Click 'Export', and select a destination folder for the generated glue. 
+   Each glue folder's name will consist of its class name prefix followed 
+   by 'Glue' (e.g. AddressBookGlue, ICGlue).
+
+
+Scripting ASDictionary
+----------------------
+
+ASDictionary provides a single AppleScript command, 'export', for exporting 
+application and scripting addition dictionaries. For example:
+
+tell application "ASDictionary"
+  export {POSIX file "/Applications/iCal.app", 
+           POSIX file"/Applications/iTunes.app"}
+         to POSIX file "/Users/jsmith/Documents"
+         using file formats {single file HTML, frame based HTML}
+         with exporting to subfolders
+end tell
+
+See ASDictionary's built-in dictionary for more information.
+
+
+Notes
+-----
+
+- Caution: ASDictionary will overwrite any existing files when exporting 
+  dictionaries.
+
+- The HTML export options support both applications and scripting additions.
+  The plain text and objc glue export options support applications only.
+
+- Exporting larger dictionaries may take several seconds; GUI responsiveness 
+  may be limited during this time. HTML export options take longer due to the 
+  additional processing involved.
+
+- While ASDictionary is fairly tolerant of weird and buggy application 
+  dictionaries, HTML generation may fail on a few especially strange ones. 
+  Should this happen, try exporting the dictionary as plain text instead.
+
+- The appscript bridges for Python and Ruby depend on ASDictionary to support 
+  their built-in help systems. You can specify text wrapping options for help 
+  system output in ASDictionary's Preferences window. 
+
+- Many thanks to the following for comments, suggestions and bug reports: 
+  Philip Aker, Emmanuel Levy, Tim Mansour, Matt Neuburg, Jake Pietrykowski, 
+  Courtney Schwartz
+
+
+Copyright
+---------
+
+ASDictionary is released into the public domain.
