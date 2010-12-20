@@ -1143,6 +1143,7 @@ static PyObject *AE_LaunchApplication(PyObject* self, PyObject* args)
 		return NULL;
 	LSApplicationParameters appParams = {0, flags, &appRef, NULL, NULL, NULL, &firstEvent};
 	err = LSOpenApplication(&appParams, &psn);
+	if (err != noErr) return AE_MacOSError(err);
 	err = AECreateDesc(typeProcessSerialNumber,
 	                   &psn, sizeof(psn),
 	                   &result);
