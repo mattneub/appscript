@@ -1,21 +1,13 @@
-"""ASTranslate"""
+""" ASTranslate -- render Apple events sent by AppleScript in appscript syntax """
 
-import AppKit
-from PyObjCTools import NibClassBuilder, AppHelper
-from Foundation import NSUserDefaults
+from AppKit import *
+import objc
+from PyObjCTools import AppHelper
 
-import MacOS
+import aem
 
-import osascript, aem
-
-import eventformatter
-import rubyrenderer, objcrenderer
-
-
-NibClassBuilder.extractClasses("MainMenu")
-NibClassBuilder.extractClasses("ASTranslateDocument")
-
-_ci = osascript.Interpreter()
+import astranslate, eventformatter
+from constants import *
 
 
 #######
@@ -25,37 +17,30 @@ _userDefaults = NSUserDefaults.standardUserDefaults()
 if not _userDefaults.integerForKey_(u'defaultOutputLanguage'):
 	_userDefaults.setInteger_forKey_(0, u'defaultOutputLanguage')
 
+_standardCodecs = aem.Codecs()
 
 
 #######
 
-class ASApplicationDelegate(NibClassBuilder.AutoBaseClass):
-	pass
-
-
-#######
-
-class ASTranslateDocument(NibClassBuilder.AutoBaseClass): # (NSDocument)
-	# Outlets:
-	# codeView
-	# resultView
-	# styleControl
+class ASTranslateDocument(NSDocument):
 	
-	_script = None # an osascript.Script instance
-	
+	codeView = objc.IBOutlet()
+	resultView = objc.IBOutlet()
+	styleControl = objc.IBOutlet()
+		
 	currentStyle = 0
 
 #	import osax; osax.ScriptingAddition().display_dialog('add to all %r'%val)
 	
 	def _addResult(self, kind, val):
-		if kind == eventformatter.kAll:
+		if kind == kLangAll:
 			for lang in self._resultStores:
 				lang.append(val)
 		else:
 			self._resultStores[kind].append(val)
-		if kind == self.currentStyle or kind == eventformatter.kAll:
+		if kind == self.currentStyle or kind == kLangAll:
 			self.resultView.textStorage().appendAttributedString_(
-				AppKit.NSAttributedString.alloc().initWithString_(u'%s\n\n' % self._resultStores[self.currentStyle][-1]))
+				NSAttributedString.alloc().initWithString_(u'%s\n\n' % self._resultStores[self.currentStyle][-1]))
 	
 	
 	def windowNibName(self): # a default NSWindowController is created automatically
@@ -63,32 +48,38 @@ class ASTranslateDocument(NibClassBuilder.AutoBaseClass): # (NSDocument)
 
 	def windowControllerDidLoadNib_(self, controller):
 		self._resultStores = [[] for _ in range(eventformatter.kLanguageCount)]
-		self._script = _ci.newscript()
-		self._script.setruncallbacks(send=eventformatter.makeCustomSendProc(
-				self._addResult, _ci.componentcallbacks()[2]))
 		self.currentStyle = _userDefaults.integerForKey_(u'defaultOutputLanguage')
 	
+	@objc.IBAction
 	def runScript_(self, sender):
 		self.resultView.setString_(u'')
 		for lang in self._resultStores:
 			while lang:
 				lang.pop()
 		try:
-			errorKind = 'Compilation'
-			self.codeView.setString_(self._script.compile(self.codeView.string()))
-			errorKind = 'Runtime'
-			self._script.run()
-			self._addResult(eventformatter.kAll, u'OK')
-		except osascript.ScriptError, e:
-			start, end = e.range
-			self.codeView.setSelectedRange_((start, end - start))
-			errstr = u'%s Error:\n%s (%i)' % (errorKind, e.message, e.number)
-			self._addResult(eventformatter.kAll, errstr)
-		except (aem.ae.MacOSError, MacOS.Error), e:
-			errstr = u'%s Error: %i' % (errorKind, e.args[0])
-			self._addResult(eventformatter.kAll, errstr)
-			
+			sourceDesc = _standardCodecs.pack(self.codeView.string())
+			handler = eventformatter.makeCustomSendProc(
+					self._addResult, _userDefaults.boolForKey_('sendEvents'))
+			result = astranslate.translate(sourceDesc, handler) # returns tuple; first item indicates if ok
+			if result[0]: # script result
+				script, result = (_standardCodecs.unpack(desc) for desc in result[1:])
+				self.codeView.setString_(script)
+				self._addResult(kLangAll, u'OK')
+			else: # script error info
+				script, errorNum, errorMsg, pos = (_standardCodecs.unpack(desc) for desc in result[1:])
+				start, end = (pos[aem.AEType(k)] for k in ['srcs', 'srce'])
+				if script:
+					errorKind = 'Runtime'
+					self.codeView.setString_(script)
+				else:
+					errorKind = 'Compilation'
+				self._addResult(kLangAll, 
+						u'%s Error:\n%s (%i)' % (errorKind, errorMsg, errorNum))
+				self.codeView.setSelectedRange_((start, end - start))
+		except aem.ae.MacOSError, e:
+			self._addResult(kLangAll, u'OS Error: %i' % e.args[0])
 	
+	@objc.IBAction
 	def selectStyle_(self, sender):
 		self.resultView.setString_(u'\n\n'.join(self._resultStores[self.currentStyle]))
 		_userDefaults.setInteger_forKey_(self.currentStyle, u'defaultOutputLanguage')
@@ -96,8 +87,8 @@ class ASTranslateDocument(NibClassBuilder.AutoBaseClass): # (NSDocument)
 	def isDocumentEdited(self):
 		return False
 
-#######
 
+#######
 
 AppHelper.runEventLoop()
 

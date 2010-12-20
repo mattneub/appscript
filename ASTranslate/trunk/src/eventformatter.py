@@ -1,34 +1,19 @@
-#!/usr/bin/python
+""" eventformatter -- creates custom sendprocs to render Apple events in appscript syntax """
 
-import struct, traceback
+import traceback
 
-from Foundation import NSUserDefaults
+from Foundation import NSBundle
 
 from aem import kae, ae
 import appscript, aem, mactypes
 import appscript.reference
 
 import pythonrenderer, rubyrenderer, objcrenderer
-
-
-_userDefaults = NSUserDefaults.standardUserDefaults()
+from constants import *
 
 _standardCodecs = aem.Codecs()
 
 _appCache = {}
-
-#######
-# constants
-
-kLanguageCount = 3
-
-# (note: these are same as indexes of segmented control in window)
-kPython = 0
-kRuby = 1
-kObjC = 2
-
-kAll = None
-
 
 #######
 
@@ -39,13 +24,17 @@ def _unpackEventAttributes(event):
 	return atts[0].code + atts[1].code, atts[2]
 
 
-def makeCustomSendProc(addResultFn, origSendProc):
-	def customSendProc(event, modeFlags, priority, timeout):
+def makeCustomSendProc(addResultFn, isLive):
+	def customSendProc(event, modeFlags, timeout):
 		# unpack required attributes
 		try:
 			eventcode, addressdesc = _unpackEventAttributes(event)
 			appPath = ae.addressdesctopath(addressdesc)
 			
+			# reject events sent to self otherwise they'll block main event loop
+			if appPath == NSBundle.mainBundle().bundlePath():
+				raise MacOSError(-1708)
+						
 			# get app instance and associated data
 			if not _appCache.has_key((addressdesc.type, addressdesc.data)):
 				if addressdesc.type != kae.typeProcessSerialNumber:
@@ -64,7 +53,7 @@ def makeCustomSendProc(addResultFn, origSendProc):
 				key, value = desc.getitem(i + 1, kae.typeWildCard)
 				params[key] = appData.unpack(value)
 			resultType = params.pop('rtyp', None)
-			directParam = params.pop('----', None)
+			directParam = params.pop('----', kNoParam)
 			try:
 				subject = appData.unpack(event.getattr(kae.keySubjectAttr, kae.typeWildCard))
 			except Exception:
@@ -80,12 +69,12 @@ def makeCustomSendProc(addResultFn, origSendProc):
 			elif isinstance(directParam, appscript.reference.Reference):
 				# Special case: if direct parameter is a reference, use this as target reference
 				targetRef = directParam
-				directParam = None
+				directParam = kNoParam
 			else:
 				targetRef = app
 			
 			# render
-			for key, renderer in [(kPython, pythonrenderer), (kRuby, rubyrenderer), (kObjC, objcrenderer)]:
+			for key, renderer in [(kLangPython, pythonrenderer), (kLangRuby, rubyrenderer), (kLangObjC, objcrenderer)]:
 				try:
 					addResultFn(key, renderer.renderCommand(
 							appPath, addressdesc, eventcode, 
@@ -100,11 +89,11 @@ def makeCustomSendProc(addResultFn, origSendProc):
 		except Exception, e:
 			traceback.print_exc()
 			s = 'Untranslated event %r' % eventcode
-			addResultFn(kAll, s)
+			addResultFn(kLangAll, s)
 		
 		# let Apple event execute as normal, if desired
-		if _userDefaults.boolForKey_('sendEvents'):
-			return origSendProc(event, modeFlags, priority, timeout)
+		if isLive:
+			return event.send(modeFlags, timeout)
 		else:
 			return ae.newdesc(kae.typeNull, '')
 	return customSendProc

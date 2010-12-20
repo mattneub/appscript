@@ -1,8 +1,17 @@
+""" pythonrenderer -- render Apple events as Python 2.x code """
+
+import os.path
 
 from aem import kae
 from appscript import referencerenderer
 import appscript
-import os.path
+
+from constants import *
+
+######################################################################
+# PRIVATE
+######################################################################
+
 
 _commandscache = {}
 
@@ -32,6 +41,10 @@ def renderobject(obj):
 		return repr(obj)
 
 
+######################################################################
+# PUBLIC
+######################################################################
+
 
 def renderCommand(appPath, addressdesc, eventcode, 
 		targetRef, directParam, params, 
@@ -44,7 +57,7 @@ def renderCommand(appPath, addressdesc, eventcode,
 				)) for (name, data) in appdata.referencebyname().items() if data[0] == 'c'])
 	commandsbycode = _commandscache[(addressdesc.type, addressdesc.data)]
 	commandName, argNames = commandsbycode[eventcode]
-	if directParam is not None:
+	if directParam is not kNoParam:
 		args.append(renderobject(directParam))
 	for key, val in params.items():
 		args.append('%s=%s' % (argNames[key], renderobject(val)))

@@ -1,14 +1,14 @@
-#!/usr/bin/python
+""" objcrenderer -- render Apple events as ObjC code """
 
 import types, datetime, os.path, re
 
 import aem, appscript
 from appscript import mactypes
 from osaterminology import makeidentifier
-
 from osaterminology.tables.tablebuilder import *
-
 from osaterminology.makeglue.objcappscript import nametoprefix
+
+from constants import *
 
 #######
 
@@ -263,76 +263,69 @@ def renderCommand(apppath, addressdesc,
 		appdata):
 	global _appData
 	_appData = appdata
-	try:
-		if not _formatterCache.has_key((addressdesc.type, addressdesc.data)):
-			typebycode, typebyname, referencebycode, referencebyname = \
-					_terminology.tablesforapp(aem.Application(desc=addressdesc))
-			_formatterCache[(addressdesc.type, addressdesc.data)] = typebycode, referencebycode
-		typebycode, referencebycode = _formatterCache[(addressdesc.type, addressdesc.data)]
-		
-		appname = os.path.splitext(os.path.basename(apppath))[0]
-		appvar = _convert(appname.lower())
-		prefix = nametoprefix(appname)
-		
-		s = '#import "%sGlue/%sGlue.h"\n' % (prefix, prefix)
-		
-		f = _Formatter(typebycode, referencebycode, '', '')
-		s += '%sApplication *%s = [%sApplication applicationWithName: %s];\n' % (
-				prefix, appvar, prefix, f.format(appname)) # TO DO: use bundle ID if available
+	if not _formatterCache.has_key((addressdesc.type, addressdesc.data)):
+		typebycode, typebyname, referencebycode, referencebyname = \
+				_terminology.tablesforapp(aem.Application(desc=addressdesc))
+		_formatterCache[(addressdesc.type, addressdesc.data)] = typebycode, referencebycode
+	typebycode, referencebycode = _formatterCache[(addressdesc.type, addressdesc.data)]
+	
+	appname = os.path.splitext(os.path.basename(apppath))[0]
+	appvar = _convert(appname.lower())
+	prefix = nametoprefix(appname)
+	
+	s = '#import "%sGlue/%sGlue.h"\n' % (prefix, prefix)
+	
+	f = _Formatter(typebycode, referencebycode, '', '')
+	s += '%sApplication *%s = [%sApplication applicationWithName: %s];\n' % (
+			prefix, appvar, prefix, f.format(appname)) # TO DO: use bundle ID if available
 
-		commandname, paramnamebycode = referencebycode[kCommand+eventcode][1]
-		
-		if directparam is not None:
-			f = _Formatter(typebycode, referencebycode, appvar, prefix)
-			directparam = f.format(directparam)
-		
-		params = []
-		for k, v in paramsdict.items():
-			f = _Formatter(typebycode, referencebycode, appvar, prefix)
-			params.append('%s: %s' % (paramnamebycode[k], f.format(v)))
-		
-		if targetref and not isinstance(targetref, appscript.Application):
-			f = _Formatter(typebycode, referencebycode, appvar, prefix)
-			s += '%sReference *ref = %s;\n' % (prefix, f.format(targetref))
-			target = 'ref'
+	commandname, paramnamebycode = referencebycode[kCommand+eventcode][1]
+	
+	if directparam is not kNoParam:
+		f = _Formatter(typebycode, referencebycode, appvar, prefix)
+		directparam = f.format(directparam)
+	
+	params = []
+	for k, v in paramsdict.items():
+		f = _Formatter(typebycode, referencebycode, appvar, prefix)
+		params.append('%s: %s' % (paramnamebycode[k], f.format(v)))
+	
+	if targetref and not isinstance(targetref, appscript.Application):
+		f = _Formatter(typebycode, referencebycode, appvar, prefix)
+		s += '%sReference *ref = %s;\n' % (prefix, f.format(targetref))
+		target = 'ref'
+	else:
+		target = appvar
+	if params or resulttype or modeflags != 0x1043 or timeout != -1:
+		if eventcode == 'coresetd': 
+			# unlike py-appscript, objc-appscript doesn't special-case 'set' command's 'to' param,
+			# so put it back in params list
+			params = ['to: %s' % directparam] + params
+			directparam = kNoParam
+		classprefix = commandname[0].upper() + commandname[1:]
+		if directparam is not kNoParam:
+			tmp = '[%s %s: %s]' % (target, commandname, directparam)
 		else:
-			target = appvar
-		if params or resulttype or modeflags != 0x1043 or timeout != -1:
-			if eventcode == 'coresetd': 
-				# unlike py-appscript, objc-appscript doesn't special-case 'set' command's 'to' param,
-				# so put it back in params list
-				params = ['to: %s' % directparam] + params
-				directparam = None
-			classprefix = commandname[0].upper() + commandname[1:]
-			if directparam:
-				tmp = '[%s %s: %s]' % (target, commandname, directparam)
-			else:
-				tmp = '[%s %s]' % (target, commandname)
-			for param in params:
-				tmp = '[%s %s]' % (tmp, param)
-			# args
-			if resulttype:
-				code = _codecs.unpack(appdata.pack(resulttype)).code
-				tmp = '[%s requestedType: [ASConstant %s]]' % (tmp, typebycode[code]) # .AS_name
-			if timeout != -1:
-				tmp = '[%s timeout: %i]' % (tmp, timeout / 60)
-			if modeflags & 3 == aem.kae.kAENoReply:
-				tmp = '[%s ignoreReply]' % tmp
-			
-			s += '%s%sCommand *cmd = %s;\n' % (prefix, classprefix, tmp)
-			target = 'cmd'
-		elif eventcode == 'coresetd':
-			return s + 'id result = [%s setItem: %s];' % (target, directparam)
-		elif eventcode == 'coregetd':
-			return s + 'id result = [%s getItem];' % target
-		else:
-			target = '[%s %s]' % (target, commandname)
-		s += 'id result = [%s send];' % target
-		return s
+			tmp = '[%s %s]' % (target, commandname)
+		for param in params:
+			tmp = '[%s %s]' % (tmp, param)
+		# args
+		if resulttype:
+			code = _codecs.unpack(appdata.pack(resulttype)).code
+			tmp = '[%s requestedType: [ASConstant %s]]' % (tmp, typebycode[code]) # .AS_name
+		if timeout != -1:
+			tmp = '[%s timeout: %i]' % (tmp, timeout / 60)
+		if modeflags & 3 == aem.kae.kAENoReply:
+			tmp = '[%s ignoreReply]' % tmp
 		
-	except Exception, e:
-		import traceback
-		
-		return '%s\n\n%s' % (e, traceback.format_exc())
-
+		s += '%s%sCommand *cmd = %s;\n' % (prefix, classprefix, tmp)
+		target = 'cmd'
+	elif eventcode == 'coresetd':
+		return s + 'id result = [%s setItem: %s];' % (target, directparam)
+	elif eventcode == 'coregetd':
+		return s + 'id result = [%s getItem];' % target
+	else:
+		target = '[%s %s]' % (target, commandname)
+	s += 'id result = [%s send];' % target
+	return s
 

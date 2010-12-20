@@ -1,12 +1,13 @@
-#!/usr/bin/python
+""" rubyrenderer -- render Apple events as Ruby 1.8+ code """
 
 import types, datetime, os.path
 
 import aem, appscript
 from appscript import mactypes
 from osaterminology import makeidentifier
-
 from osaterminology.tables.tablebuilder import *
+
+from constants import *
 
 #######
 
@@ -270,49 +271,43 @@ def renderCommand(apppath, addressdesc,
 		appdata):
 	global _appData # kludge; TO DO: eventformatter should pass aem objects to each renderer module
 	_appData = appdata
-	try:
-		if not _formattercache.has_key((addressdesc.type, addressdesc.data)):
-			typebycode, typebyname, referencebycode, referencebyname = \
-					_terminology.tablesforapp(aem.Application(desc=addressdesc))
-			_formattercache[(addressdesc.type, addressdesc.data)] = typebycode, referencebycode
-		typebycode, referencebycode = _formattercache[(addressdesc.type, addressdesc.data)]
-		
-		appname = os.path.splitext(os.path.basename(apppath))[0]
-		f = _Formatter(typebycode, referencebycode)
-		appvar = 'app(%s)' % f.format(appname)
-		
-		if targetref and not isinstance(targetref, appscript.Application):
-			f = _Formatter(typebycode, referencebycode, appvar)
-			target = f.format(targetref)
-		else:
-			target = appvar
-		
-		commandname, paramnamebycode = referencebycode[kCommand+eventcode][1]
-		
-		args = []
-		f = _Formatter(typebycode, referencebycode, appvar, kNested)
-		
-		if directparam is not None:
-			args.append(f.format(directparam))
-		
-		for k, v in paramsdict.items():
-			args.append(':%s => %s' % (paramnamebycode[k], f.format(v)))
-		
-		if resulttype:
-			args.append(':result_type => %s' % f.format(resulttype))
-		if timeout != -1:
-			args.append(':timeout => %i' % (timeout / 60))
-		if modeflags & 3 == aem.kae.kAENoReply:
-			args.append(':wait_reply => false')
-		
-		if args:
-			args = '(%s)' % ', '.join(args)
-		else:
-			args = ''
-		return '%s.%s%s' % (target, commandname, args)
-		
-	except Exception, e:
-		import traceback
-		return '%s\n\n%s' % (e, traceback.format_exc())
-
+	if not _formattercache.has_key((addressdesc.type, addressdesc.data)):
+		typebycode, typebyname, referencebycode, referencebyname = \
+				_terminology.tablesforapp(aem.Application(desc=addressdesc))
+		_formattercache[(addressdesc.type, addressdesc.data)] = typebycode, referencebycode
+	typebycode, referencebycode = _formattercache[(addressdesc.type, addressdesc.data)]
+	
+	appname = os.path.splitext(os.path.basename(apppath))[0]
+	f = _Formatter(typebycode, referencebycode)
+	appvar = 'app(%s)' % f.format(appname)
+	
+	if targetref and not isinstance(targetref, appscript.Application):
+		f = _Formatter(typebycode, referencebycode, appvar)
+		target = f.format(targetref)
+	else:
+		target = appvar
+	
+	commandname, paramnamebycode = referencebycode[kCommand+eventcode][1]
+	
+	args = []
+	f = _Formatter(typebycode, referencebycode, appvar, kNested)
+	
+	if directparam is not kNoParam:
+		args.append(f.format(directparam))
+	
+	for k, v in paramsdict.items():
+		args.append(':%s => %s' % (paramnamebycode[k], f.format(v)))
+	
+	if resulttype:
+		args.append(':result_type => %s' % f.format(resulttype))
+	if timeout != -1:
+		args.append(':timeout => %i' % (timeout / 60))
+	if modeflags & 3 == aem.kae.kAENoReply:
+		args.append(':wait_reply => false')
+	
+	if args:
+		args = '(%s)' % ', '.join(args)
+	else:
+		args = ''
+	return '%s.%s%s' % (target, commandname, args)
 

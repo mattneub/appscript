@@ -1,15 +1,15 @@
 """
-Requirements:
+Requirements (available from PyPI except where noted):
 
-- py-appscript 0.20.0+ <http://appscript.sourceforge.net>
+- distribute 0.6.14+
 
-- py-osascript 0.6.0+
+- py-appscript 0.22.0+
 
-- py-osaterminology 0.14.3+
+- py-osaterminology 0.14.5+ (from appscript svn repository)
 
-- pyobjc <http://pyobjc.sourceforge.net>
+- pyobjc 2.3+
 
-- py2app <http://undefined.org/python/>
+- py2app 0.5.2+
 
 --
 
@@ -19,25 +19,33 @@ To build, cd to this directory and run:
 
 """
 
-from distutils.core import setup, Extension
+from setuptools import setup, Extension
 import py2app
 from plistlib import Plist
 
-version = '0.4.4'
+version = '0.5.0'
 
 
 setup(
 	app=["ASTranslate.py"],
 	data_files=["MainMenu.nib", "ASTranslateDocument.nib"],
+	
+	ext_modules = [
+		Extension('astranslate',
+			sources=['astranslate.c'],
+			extra_compile_args=['-DMAC_OS_X_VERSION_MIN_REQUIRED=MAC_OS_X_VERSION_10_4'],
+			extra_link_args=['-framework', 'Carbon'],
+		),
+	],
+
 	options=dict(
 	
 		py2app=dict(
 			plist=Plist(
-				NSAppleScriptEnabled=True,
 				CFBundleIdentifier="net.sourceforge.appscript.astranslate",
 				CFBundleVersion=version,
 				CFBundleShortVersionString=version,
-				NSHumanReadableCopyright="(C) 2007-2008 HAS",
+				NSHumanReadableCopyright="",
 				CFBundleDocumentTypes = [
 					dict(
 						CFBundleTypeExtensions=[],
