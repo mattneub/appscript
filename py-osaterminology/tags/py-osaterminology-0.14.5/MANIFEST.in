@@ -1,0 +1,3 @@
+include CHANGES README TODO
+recursive-include lib *.py
+
