@@ -9,7 +9,7 @@ from osaterminology.makeidentifier import getconverter
 from osaterminology.tables.tablebuilder import *
 
 
-kGlueVersion = '0.5.2'
+kGlueVersion = '0.5.3'
 
 
 ######################################################################
@@ -533,26 +533,6 @@ def makeappglue(appname, prefix, outdir, aetes=None):
 		aetes = _terminologytablebuilder.aetesforapp(aem.Application(appname))
 	builder = ClassBuilder(_terminologytablebuilder.tablesforaetes(aetes))
 	builder.render(ImplementationRenderer(appname, prefix, outdir))
-
-
-def makeosaxglue(osaxname, prefix, outdir, aetes=None):
-	"""
-		osaxname : str -- scripting addition name (if installed) or path
-		prefix : str -- ObjC classnam prefix, e.g. 'TE'
-		outdir : str -- path to glue folder
-		aetes : list of AEDesc | None -- if None, get aetes from specified osax, 
-				otherwise use supplied list of aetes
-	"""
-	if aetes is None:
-		if not osaxname.startswith('/'):
-			osaxname = _findosax(osaxname)
-		try:
-			aetes = aem.ae.getappterminology(osaxname)
-		except aem.MacOSError, e:
-			if e.args[0] == -192:
-				raise RuntimeError("No terminology found for osax: %s" % osaxname)
-	builder = ClassBuilder(_terminologytablebuilder.tablesforaetes(aetes), True)
-	builder.render(ImplementationRenderer(osaxname, prefix, outdir))
 
 
 def makedefaultglue(prefix, outdir):

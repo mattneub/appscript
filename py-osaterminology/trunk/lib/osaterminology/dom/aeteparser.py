@@ -10,12 +10,13 @@
 # TO DO: any plural classes without matching singular classes should be made singular too
 
 
-from aem.ae import newdesc, getappterminology, getsysterminology
-from aem import kae
+from aem.ae import newdesc, getsysterminology
+from aem import kae, Application
 
 from osadictionary import *
 from osaterminology import makeidentifier
 from osaterminology.sax import aeteparser
+from osaterminology.tables.tablebuilder import TerminologyTableBuilder
 
 # moved following from typemodule methods as putting them there causes import(?) problems in ASDictionary
 import applescripttypes, appscripttypes
@@ -269,6 +270,6 @@ def parsefile(paths, style='appscript'):
 	
 
 def parseapp(path, style='appscript'):
-	return parseaetes(getappterminology(path), path, style)
+	return parseaetes(TerminologyTableBuilder(style).aetesforapp(Application(path)), path, style)
 
 

@@ -218,6 +218,9 @@ class ListOfType(_Vis): # A property/parameter type description modifier
 	def __repr__(self):
 		return 'ListOfType(%r)' % self.type
 	
+	def _add_(self, item): # kludge
+		self.type.special.append(item) # TO FIX: weakref item
+	
 	def realvalue(self): # TO DO
 		return self.type.realvalue()
 	
@@ -666,8 +669,12 @@ class RecordType(_Base):
 		{'property':self.properties, 'type':self.types}[item.kind].append(item)
 
 
-class ValueType(_Base): # TO DO: suitename
+class ValueType(_Base):
 	kind = 'value-type'
+	
+	def __init__(self, visibility, name, code, description, visible, suitename): 
+		_Base.__init__(self, visibility, name, code, description, visible)
+		self.suitename = suitename
 
 
 

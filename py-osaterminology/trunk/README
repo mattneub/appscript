@@ -1,20 +1,33 @@
-osaterminology is packaged using the standard Python Distribution Utilities (a.k.a. Distutils). To install osaterminology, cd to the osaterminology-0.14.4 directory and run:
+About osaterminology
+====================
 
-	python setup.py install
+osaterminology implements aete/sdef terminology parsers and renderers. 
 
-Setuptools will be used if available, otherwise the setup.py script will revert to distutils.
+Used by ASDictionary and ASTranslate.
 
 
-======================================================================
-DEPENDENCIES
+Requirements
+------------
 
 - Python 2.3+
-- Mac OS X 10.3+ 
-- appscript 0.21.0+
+- Mac OS X 10.4+ 
+- appscript 0.22.0+
 
 
-======================================================================
-NOTES
+Installation
+------------
 
-- Distutil users should delete older non-egg installations (see site-packages/aeosa) before installation
+osaterminology is packaged using the standard Python Distribution Utilities 
+(a.k.a. Distutils). To install osaterminology, cd to the osaterminology-0.14.5
+directory and run:
 
+  python setup.py install
+
+Setuptools will be used if available, otherwise the setup.py script will revert
+to distutils.
+
+
+Copyright
+---------
+
+osaterminology is released into the public domain.

@@ -20,6 +20,5 @@ TO DO
 
 Note that dom.aeteparser has temporary patches to partially work around this issue for now (e.g. 'owner privileges' properties type appears in htmldoc output, even though its an Enumeration defined in tpnm suite and therefore marked as hidden by parser).
 
-- note that aem.ae.GetAppTerminology raises MacOSError -192 if no terminology found, whereas old getaete function returned an empty list; this will affect behaviour of parseapp() functions in aeteparser modules
 
 

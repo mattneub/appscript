@@ -1,6 +1,6 @@
 try:
 	from setuptools import setup, Extension
-	args = {'install_requires': ['appscript >= 0.21.0']}
+	args = {'install_requires': ['appscript >= 0.22.0']}
 except ImportError:
 	print "Note: couldn't import setuptools so using distutils instead."
 	from distutils.core import setup, Extension
@@ -9,7 +9,7 @@ except ImportError:
 
 setup(
 		name = "osaterminology",
-		version = "0.14.4",
+		version = "0.14.5",
 		description = "Parse and render aete/sdef resources.",
 		url='http://appscript.sourceforge.net',
 		license='Public Domain',

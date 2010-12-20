@@ -4,7 +4,6 @@ from aem import kae
 from os import sys
 
 from osaterminology.sax.aeteparser import Receiver, parse
-from aem.ae import getappterminology, getsysterminology
 
 
 __all__ = ['app', 'component', 'QuickDoc']
@@ -101,21 +100,12 @@ class QuickDoc(Receiver):
 # PUBLIC
 ######################################################################
 
-def app(path, out=sys.stdout, converter=None):
+def renderaetes(aetes, out=sys.stdout, converter=None):
 	"""Render raw terminology for application.
-		path : str -- full path to application
+		aetes : list of AEDesc -- the aete(s) to parse
 		out : file -- open file object to write to (default: stdout)
 		converter : function -- function to convert AppleScript-style keywords (default: None)
 	"""
-	data = getappterminology(path)
-	parse(data, QuickDoc(out, converter))
+	parse(aetes, QuickDoc(out, converter))
 
-def component(code='ascr', out=sys.stdout, converter=None):
-	"""Render raw terminology for scripting component.
-		code : str -- four-letter code indication component's subtype (default: AppleScript)
-		out : file -- open file object to write to (default: stdout)
-		converter : function -- function to convert AppleScript-style keywords (default: None)
-	"""
-	data = getsysterminology(code)
-	parse(data, QuickDoc(out, converter))
 

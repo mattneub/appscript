@@ -1,6 +1,12 @@
-2010-12-?? -- 0.??.??
+2010-12-19 -- 0.14.5
 
-- fixed objc-appscript memory leak caused by missing -release in -[<PREFIX>Application initWithTargetType:data:] glue
+- fixed objc-appscript memory leak caused by missing -release in -[<PREFIX>Application initWithTargetType:data:] glue; updated glue version to 0.5.3
+
+- eliminated aem.ae.getappterminology dependencies as this function is removed in appscript 0.22.0+
+
+- fixed (hopefully) sdef-related bugs in dom.sdefparser, osadictionary
+
+- replaced quickdoc app, component functions with renderaetes
 
 
 2009-12-17 -- 0.14.4

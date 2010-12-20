@@ -1,7 +1,5 @@
 """sdefparser -- parse an application's sdef, given an application path, file path or XML string. Returns a Dictionary object model. """
 
-# TO DO: objc-appscript support
-
 # TO DO: find app with missing savo and see how this is represented
 
 # Note: OSACopyScriptingDefinition's aete->sdef conversion has bug where classes and commands defined in hidden 'tpnm' suite aren't included in generated sdef (though enumerations are)
@@ -93,8 +91,10 @@ class Handler(ContentHandler):
 	def ascode(self, s):
 		if len(s) in [4, 8]:
 			return s.encode('MacRoman')
-		else:
+		try:
 			return struct.pack('L', int(s, 16))
+		except:
+			return ''
 	
 	def _gettype(self, name):
 		name = self.asname(name)
@@ -140,7 +140,10 @@ class Handler(ContentHandler):
 			self._stack[-1]._add_(self._gettype(d['type']))
 	
 	def start_type(self, d): # type elements = alternative to type attribute
-		t = self._gettype(d['type'])
+		if d.has_key('type'):
+			t = self._gettype(d['type'])
+		else:
+			t = Type(self._visibility) # kludge where <type list="yes">...</type>
 		if d.get('list') == 'yes':
 			t = ListOfType(self._visibility, t)
 		self._stack.append(t)
@@ -242,6 +245,9 @@ class Handler(ContentHandler):
 	#	for i in self._types.values():
 	#		if i.realvalue().kind == 'aem-type':
 	#			print i#,'\t\t',i.special
+		while len(self._stack) > 1: # bad sdef kludge
+			t = self._stack.pop()
+			self._stack[-1]._add_(t)
 		return self._stack[-1].result
 
 #######
@@ -298,8 +304,8 @@ class AppscriptHandler(Handler):
 				elif self.applescripttypesbyname.has_key(type.name):
 					type.code = self.applescripttypesbyname[type.name]
 				if type.code:
-					if appscripttypemodule.typebycode.has_key(type.code):
-						type.name = appscripttypemodule.typebycode[type.code]
+					if self.appscripttypemodule.typebycode.has_key(type.code):
+						type.name = self.appscripttypemodule.typebycode[type.code]
 					else:
 						type.name = '' # TO DO: decide
 		return Handler.result(self)
@@ -316,11 +322,17 @@ class RbAppscriptHandler(AppscriptHandler):
 	appscripttypemodule = appscripttypes.typetables('rb-appscript')
 
 
+class ObjCAppscriptParser(AppscriptHandler):
+	asname = staticmethod(makeidentifier.getconverter('objc-appscript'))
+	appscripttypemodule = appscripttypes.typetables('objc-appscript')
+
+
 handlers = {
 		'applescript': AppleScriptHandler,
 		'appscript': PyAppscriptHandler,
 		'py-appscript': PyAppscriptHandler,
 		'rb-appscript': RbAppscriptHandler,
+		'objc-appscript': ObjCAppscriptParser,
 }
 
 ######################################################################
@@ -346,8 +358,6 @@ def parsefile(path, style='appscript'):
 
 def parseapp(path, style='appscript'):
 	sdef = copyscriptingdefinition(path)
-	if sdef is None:
-		raise RuntimeError, "Can't get sdef (requires OS 10.4+)."
 	return parsexml(sdef, path, style)
 
 
