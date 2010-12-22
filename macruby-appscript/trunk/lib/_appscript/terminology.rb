@@ -1,10 +1,3 @@
-# Copyright (C) 2008-2009 HAS. 
-# Released under MIT License.
-
-######################################################################
-# TERMINOLOGY
-######################################################################
-
 module MRATerminology
 
 	framework 'Appscript'
@@ -82,4 +75,3 @@ module MRATerminology
 	end
 
 end
-

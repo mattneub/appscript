@@ -1,6 +1,3 @@
-# Copyright (C) 2008-2009 HAS. 
-# Released under MIT License.
-
 framework 'Appscript'
 
 
@@ -249,6 +246,3 @@ class MRAReferenceRenderer < AEMResolver
 	end
 
 end
-
-	
-	

@@ -105,7 +105,72 @@ AEMEnum.enumWithCode('xyz ')</code></pre>
 
 <h4>Filesystem references</h4>
 
-<p>MacRuby-appscript does not define its own mappings for filesystem-related types; instead, the mappings defined by objc-appscript are used. See the objc-appscript documentation for details.</p>
+<p>MacRuby-appscript does not define its own mappings for filesystem-related types; instead, the mappings defined by objc-appscript are used. Alias, file reference and file specifier descriptors are mapped to objc-appscript's <code>ASAlias</code>, <code>ASFileRef</code> and <code>ASFileSpec</code> classes. File URL descriptors are mapped to Cocoa's <code>NSURL</code> class.</p>
+
+<pre><code>class ASFileBase &lt; NSObject -- abstract base class
+
+    Class methods:
+    
+        HFSPathToURL(path) -- convert HFS path to file:// URL
+            path : String
+            Result : NSURL
+
+        URLToHFSPath(url) -- convert file:// URL to HFS path
+            url : NSURL
+            Result String
+
+    Instance methods:<!-- 
+   
+        initWithPath(path) -- create object with POSIX path
+            path : String
+
+        initWithFileURL(url) -- create object with NSURL
+            url : NSURL
+-->
+        path -- convert object to POSIX path
+            Result : String
+
+        url -- convert object to NSURL
+
+
+
+class ASAlias &lt; ASFileBase -- an alias object (typeAlias)
+
+    Class methods:
+    
+        aliasWithPath(path) -- create object with POSIX path
+            path : String
+
+        aliasWithFileURL(url) -- create object with NSURL
+            url : NSURL
+
+
+
+class ASFileRef &lt; ASFileBase -- a file ref object (typeFSRef)
+
+    Class methods:
+    
+        fileRefWithPath(path) -- create object with POSIX path
+            path : String
+
+        fileRefWithFileURL(url) -- create object with NSURL
+            url : NSURL
+
+
+
+class ASFileSpec &lt; ASFileBase -- a file specifier (typeFSS)
+
+    Class methods:
+    
+        fileSpecWithPath(path) -- create object with POSIX path
+            path : String
+
+        fileSpecWithFileURL(url) -- create object with NSURL
+            url : NSURL</code></pre>
+
+<p>All paths and URLs must be absolute, and only POSIX paths and file URLs are accepted.</p>
+
+<p>Note that the <code>ASFileSpec</code> class is provided solely for backward compatibility with unreformed Classic-era applications that don't understand typeFileURL. Avoid using this class unless absolutely necessary as FSSpecs are deprecated in OS X and absent in 64-bit.</p>
 
 
 <h4>Records</h4>
@@ -138,8 +203,6 @@ AEMEnum.enumWithCode('xyz ')</code></pre>
 <a href="05_keywordconversion.html">Previous</a> &bull;
 <a href="index.html">Up</a> &bull;
 <a href="07_applicationobjects.html">Next</a>
-
-<span>&copy; 2006-2009 HAS</span>
 </div>
 
 </body>

@@ -28,48 +28,36 @@
 <h3>Creating application objects</h3>
 
 
-<p>Before you can communicate with a scriptable application you must call one of the following methods to create an application object:</p>
+<p>Before you can communicate with a scriptable application you must create an <code>Application</code> object, for example:</p>
 
-<pre><code>app.by_name(name) # name or POSIX path of local application
-
-app.by_id(id) # bundle ID for a local application
-
-app.by_creator(creator) # 4-character creator type for a local application
-
-app.by_pid(pid) # Unix process id for a local process
-
-app.by_url(url) # eppc URL for a remote process
-
-app.by_aem_app(aem_app) # AEM::Application instance
-
-app.current # the host process</code></pre>
-
-<p>For convenience, the most commonly used form, <code>app.by_name(name)</code>, can be shortened to:</p>
-
-<pre><code>app(name)</code></pre>
+<pre><code>textedit = app.by_id('com.apple.textedit')</code></pre>
 
 
-<p>To target an application you must supply one of the following arguments:</p>
+<p>To target an application you must call one of the <code>app</code> object's <code>by_*</code> methods with the appropriate argument:</p>
 
 <dl>
-<dt><code>name</code></dt>
+<dt><code>app.by_name(<var>name</var>)</code> / <code>app(<var>name</var>)</code></dt>
 <dd>The application's filename or POSIX path, e.g. <code>'TextEdit'</code>, <code>'TextEdit.app'</code>, <code>'/Applications/TextEdit.app'</code>. Where a filename is provided, appscript uses LaunchServices to locate the application. An <code>.app</code> suffix is optional. e.g. Given the name <code>'TextEdit'</code>, appscript first searches for an application with that exact filename; if none is found, it automatically adds an <code>.app</code> suffix (<code>'TextEdit.app'</code>) and tries again.</dd>
 
-<dt><code>id</code></dt>
+<dt><code>app.by_id(<var>id</var>)</code></dt>
 <dd>The application's bundle id, e.g. <code>'com.apple.textedit'</code>. Cocoa applications often have unique bundle ids.</dd> 
 
-<dt><code>creator</code></dt>
+<dt><code>app.by_creator(<var>creator</var>)</code></dt>
 <dd>A four-character string containing the application's creator type, e.g. <code>'ttxt'</code>. Older Carbon-based applications and some Cocoa-based applications have unique creator types.</dd>
 
-<dt><code>pid</code></dt>
+<dt><code>app.by_pid(<var>pid</var>)</code></dt>
 <dd>A valid Unix process id, e.g. <code>5687</code>.</dd>
 
-<dt><code>url</code></dt>
+<dt><code>app.by_url(<var>url</var>)</code></dt>
 <dd>A URL of form <code>eppc://[user[:password]@host/Application%20Name[?[uid=#]&amp;[pid=#]</code>, e.g. <code>eppc://johnsmith:foobar@office-mac.local/TextEdit?uid=501</code>. The host name/IP address and the process name (case-sensitive) are required. The username and password are optional: if omitted, the OS will obtain this information from the user's keychain or display a dialog asking the user to input one or both values. The user id and process id are also optional; if the process id is given, the process name will be ignored.</dd>
 
-<dt><code>aem_app</code></dt>
+<dt><code>app.by_aem_app(<var>aem_app</var>)</code></dt>
 <dd>An <code>AEM::Application</code> instance.</dd>
+
+<dt><code>app.current</code></dt>
+<dd>The host application.</dd>
 </dl>
+
 
 
 <p>Examples:</p>
@@ -96,25 +84,27 @@ itunes = app.by_url('eppc://Jan%20Smith@G4.local/iTunes')</code></pre>
 
 <p>All applications should respond to the following commands:</p>
 
-<pre><code>run -- Run an application.
-        Most applications will open an empty, untitled window.
+<pre><code>run -- Run an application. Most applications will open an empty, 
+       untitled window.
 
-launch -- Launch an application without sending it a 'run' event. [1]
-        Applications that normally open a new, empty document upon launch won't.
+launch -- Launch an application without sending it a 'run' event.
+          Applications that normally open a new, empty document 
+          upon launch won't. [1]
 
 activate -- Bring the application to the front.
 
-reopen -- Reactivate a running application.
-        Some applications will open a new untitled window if no window is open.
+reopen -- Reactivate a running application. Some applications will 
+          open a new untitled window if no window is open.
 
-open(directarg) -- Open the specified object(s).
-    directarg : anything -- list of objects to open, typically a list of MacFile::Alias
+open(<var>value</var>) -- Open the specified object(s).
+    anything -- list of objects to open, typically a list of ASAlias
 
-print(directarg) -- Print the specified object(s).
-    directarg : anything -- list of objects to print, typically a list of MacFile::Alias
+print(<var>value</var>) -- Print the specified object(s).
+    anything -- list of objects to print, typically a list of ASAlias
 
-quit(saving) -- Quit an application.
-    saving : :yes | :ask | :no -- specifies whether to save currently open documents
+quit(saving: <var>value</var>) -- Quit an application.
+    saving : :yes | :ask | :no -- specifies whether to save currently 
+                                  open documents
 </code></pre>
 
 <p><small>[1] The <code>launch</code> command should be used before constructing references or sending other commands, otherwise appscript will run the application normally.</small></p>
@@ -123,11 +113,11 @@ quit(saving) -- Quit an application.
 
 <p>Appscript also defines <code>get</code> and <code>set</code> commands for any scriptable application that doesn't supply its own definitions:</p>
 
-<pre><code>get(reference) -- Get the data for an object.
+<pre><code>get(<var>value</var>) -- Get the data for an object.
     reference -- the object for the command
     Result: anything -- the reply for the command
 
-set(reference, :to =&gt; value) -- Set an object's data.
+set(<var>value</var>, to: <var>value</var>) -- Set an object's data.
     reference -- the object for the command
     to : anything -- The new value.</code></pre>
 
@@ -208,8 +198,6 @@ te.launch
 <a href="06_classesandenums.html">Previous</a> &bull;
 <a href="index.html">Up</a> &bull;
 <a href="08_realvsgenericreferences.html">Next</a>
-
-<span>&copy; 2006-2009 HAS</span>
 </div>
 
 </body>

@@ -1,6 +1,3 @@
-# Copyright (C) 2008-2009 HAS
-# Released under MIT License.
-
 module Appscript
 
 	framework 'Appscript'
@@ -515,12 +512,6 @@ module Appscript
 			raise Appscript::CommandError.new(self, name, args, error)
 		end
 		
-		
-		#######
-		# introspection
-		
-		# TO DO
-		
 		#######
 		# standard object methods
 		
@@ -554,10 +545,6 @@ module Appscript
 		def is_running?
 			return @AS_app_data.isRunning
 		end
-		
-		#######
-		# Public properties and methods; these are called by end-user and other clients (e.g. generic references)
-		
 		
 		#######
 		# Public properties and methods; these are called by end-user and other clients (e.g. generic references)
@@ -990,4 +977,3 @@ module Appscript
 	end
 	
 end
-

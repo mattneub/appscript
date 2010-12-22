@@ -59,7 +59,7 @@ app('TextEdit').documents[1].words.count</code></pre>
 
 <pre><code>#tell application "Finder" to count items of home
 
-app('Finder').home.count(:each =&gt; :item)</code></pre>
+app('Finder').home.count(each: :item)</code></pre>
 
 <p>(Note that the <code>each</code> parameter is required in Finder's <code>count</code> command.)</p>
 
@@ -72,8 +72,8 @@ app('Finder').home.count(:each =&gt; :item)</code></pre>
 #     with properties {text:"Hello World\n"}
 
 app('TextEdit').make(
-    :new =&gt; :document,
-    :with_properties =&gt; {:text =&gt; "Hello World\n"})</code></pre>
+    new: :document,
+    with_properties: {:text =&gt; "Hello World\n"})</code></pre>
 
 <p>Append text to a TextEdit document:</p>
 
@@ -82,15 +82,15 @@ app('TextEdit').make(
 #     with properties {text:"Yesterday\nToday\nTomorrow\n"}
 
 app('TextEdit').make(
-    :new =&gt; :paragraph,
-    :at =&gt; app.documents[1].text.end,
-    :with_data =&gt; "Yesterday\nToday\nTomorrow\n")</code></pre>
+    new: :paragraph,
+    at: app.documents[1].text.end,
+    with_data: "Yesterday\nToday\nTomorrow\n")</code></pre>
 
 <p>Note that the <code>make</code> command's <code>at</code> parameter can be omitted for convenience, in which case the reference that the command is invoked on is used instead:</p>
 
 <pre><code>app('TextEdit').documents[1].text.end.make(
-    :new =&gt; :paragraph,
-    :with_data =&gt; "Yesterday\nToday\nTomorrow\n")</code></pre>
+    new: :paragraph,
+    with_data: "Yesterday\nToday\nTomorrow\n")</code></pre>
 
 
 <h3><code>duplicate</code></h3>
@@ -101,7 +101,7 @@ app('TextEdit').make(
 #     duplicate folder "Projects" of home to disk "Work" with replacing
 
 app('Finder').home.folders['Projects'].duplicate(
-    :to =&gt; app.disks['Backup'], :replacing =&gt; true)</code></pre>
+    to: app.disks['Backup'], replacing: true)</code></pre>
 
 
 <h3><code>add</code></h3>
@@ -114,7 +114,7 @@ app('Finder').home.folders['Projects'].duplicate(
 
 app('Address Book').people[
     its.birth_date.ne(:missing_value)
-    ].add(:to =&gt; app.groups['Birthdays'])</code></pre>
+    ].add(to: app.groups['Birthdays'])</code></pre>
 
 
 
@@ -126,8 +126,6 @@ app('Address Book').people[
 <a href="11_applicationcommands.html">Previous</a> &bull;
 <a href="index.html">Up</a> &bull;
 <a href="13_performanceissues.html">Next</a>
-
-<span>&copy; 2006-2009 HAS</span>
 </div>
 
 </body>

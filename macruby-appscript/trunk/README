@@ -1,0 +1,36 @@
+About macruby-appscript
+==================
+
+MacRuby appscript (macruby-appscript) is a high-level, user-friendly 
+Apple event bridge that allows you to control AppleScriptable Mac OS X
+applications from Ruby.
+
+
+Requirements
+------------
+
+MacRuby appscript supports MacRuby 0.8 and later.
+
+MacRuby appscript requires objc-appscript.
+
+
+Installation
+------------
+
+To install macruby-appscript, cd to the macruby-appscript-0.1.0 directory 
+and run:
+
+  macruby setup.rb
+
+Install objc-appscript:
+
+  http://appscript.sourceforge.net/objc-appscript/install.html
+
+
+Copyright
+---------
+
+MacRuby appscript is released into the public domain, except for the 
+following code:
+
+- setup.rb; see code for details

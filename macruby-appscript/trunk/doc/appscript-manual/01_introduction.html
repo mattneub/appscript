@@ -23,10 +23,6 @@
 <!-- content -->
 <div id="content">
 
-<p class="hilitebox">Caution: this documentation is an initial conversion of the rb-appscript manual, and contains errors and omissions.</p>
-
-<p class="hilitebox">MacRuby-appscript requires the Objective-C Appscript framework to function. See the <a href="http://appscript.sourceforge.net/objc-appscript/">objc-appscript site</a> for information on downloading, building and installing objc-appscript. Users should refer to the objc-appscript documentation to understand how objc-appscript objects that appear directly in macruby-appscript work.</p>
-
 
 <h2>1. Introduction</h2>
 
@@ -58,6 +54,18 @@ app('TextEdit').documents.end.make(
     )</code></pre>
 
 
+<h3>Requirements</h3>
+
+<p>MacRuby appscript requires the following:</p>
+
+<ul>
+<li><a href="http://www.macruby.org">MacRuby 0.8</a> or later</li>
+
+<li><a href="http://appscript.sourceforge.net/objc-appscript">objc-appscript</a> (this should be built for 32- and 64-bit Mac OS X 10.5+, with garbage collection enabled)</li>
+
+<li>Xcode (required to build objc-appscript)</li>
+</ul>
+
 
 <h3>Before you start...</h3>
 
@@ -87,8 +95,6 @@ app('TextEdit').documents.end.make(
 <a href="index.html">Previous</a> &bull;
 <a href="index.html">Up</a> &bull;
 <a href="02_aboutappscripting.html">Next</a>
-
-<span>&copy; 2006-2009 HAS</span>
 </div>
 
 </body>

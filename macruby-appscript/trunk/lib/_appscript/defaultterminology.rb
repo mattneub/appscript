@@ -1,6 +1,3 @@
-# Copyright (C) 2006-2009 HAS. 
-# Released under MIT License.
-
 module MRADefaultTerminology
 	# Defines built-in terminology available for any application. When constructing the terminology tables for a particular application, the Terminology module will duplicate these tables and then add application-specific terms to create the finished lookup tables.
 
