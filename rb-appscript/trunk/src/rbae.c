@@ -541,7 +541,7 @@ rbAE_launchApplication(VALUE self, VALUE path, VALUE firstEvent, VALUE flags)
 {
 	FSRef appRef;
 	ProcessSerialNumber psn;
-	OSErr err = noErr;
+	OSStatus err = noErr;
 	
 	err = FSPathMakeRef((UInt8 *)StringValuePtr(path), &appRef, NULL);
 	if (err != noErr) rbAE_raiseMacOSError("Couldn't make FSRef for application.", err);

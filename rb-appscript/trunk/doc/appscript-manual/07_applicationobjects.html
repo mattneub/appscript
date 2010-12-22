@@ -89,25 +89,29 @@ itunes = app.by_url('eppc://Jan%20Smith@G4.local/iTunes')</code></pre>
 
 <p>All applications should respond to the following commands:</p>
 
-<pre><code>run -- Run an application.
-        Most applications will open an empty, untitled window.
+<pre><code>run -- Run an application. Most applications will open an empty, 
+          untitled window.
 
-launch -- Launch an application without sending it a 'run' event. [1]
-        Applications that normally open a new, empty document upon launch won't.
+launch -- Launch an application without sending it a 'run' event.
+          Applications that normally open a new, empty document 
+          upon launch won't. [1]
 
 activate -- Bring the application to the front.
 
-reopen -- Reactivate a running application.
-        Some applications will open a new untitled window if no window is open.
+reopen -- Reactivate a running application. Some applications 
+          will open a new untitled window if no window is open.
 
-open(directarg) -- Open the specified object(s).
-    directarg : anything -- list of objects to open, typically a list of MacFile::Alias
+open(<var>value</var>) -- Open the specified object(s).
+    anything -- list of objects to open, typically a list of 
+                MacTypes::Alias
 
-print(directarg) -- Print the specified object(s).
-    directarg : anything -- list of objects to print, typically a list of MacFile::Alias
+print(<var>value</var>) -- Print the specified object(s).
+    anything -- list of objects to print, typically a list of 
+                MacTypes::Alias
 
-quit(saving) -- Quit an application.
-    saving : :yes | :ask | :no -- specifies whether to save currently open documents
+quit(saving => <var>value</var>) -- Quit an application.
+    saving : :yes | :ask | :no -- specifies whether to save 
+                                  currently open documents
 </code></pre>
 
 <p><small>[1] The <code>launch</code> command should be used before constructing references or sending other commands, otherwise appscript will run the application normally.</small></p>
@@ -116,11 +120,11 @@ quit(saving) -- Quit an application.
 
 <p>Appscript also defines <code>get</code> and <code>set</code> commands for any scriptable application that doesn't supply its own definitions:</p>
 
-<pre><code>get(reference) -- Get the data for an object.
+<pre><code>get(<var>value</var>) -- Get the data for an object.
     reference -- the object for the command
     Result: anything -- the reply for the command
 
-set(reference, :to =&gt; value) -- Set an object's data.
+set(<var>value</var>, :to =&gt; <var>value</var>) -- Set an object's data.
     reference -- the object for the command
     to : anything -- The new value.</code></pre>
 

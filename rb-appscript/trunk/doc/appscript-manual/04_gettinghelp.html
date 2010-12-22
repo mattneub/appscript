@@ -137,6 +137,25 @@ p te.parameters('make')
 # ["at", "new", "with_data", "with_properties"]</code></pre>
 
 
+
+<h3>ASTranslate</h3>
+
+<p>ASTranslate, available from the appscript website's <a href="http://appscript.sourceforge.net/tools.html">tools page</a>, provides a simple tool for translating application commands from AppleScript to Ruby syntax - useful when help is needed in converting existing AppleScript code to Ruby. For example, the following AppleScript selects every file in the Home folder:</p>
+
+<pre><code>tell application "Finder"
+	select (every file of home whose name extension is in {"htm", "html"})
+end tell</code></pre>
+
+<p>To obtain the appscript equivalent, paste this script into ASTranslate and select <code>Execute</code> from the <code>Document</code> menu. ASTranslate will intercept any Apple events sent by AppleScript and display them appscript format:</p>
+
+<pre><code>app("Finder").home.files[its.name_extension.is_in(["htm", "html"])].select
+
+OK</code></pre>
+
+<p>See ASTranslate's documentation for more information.</p>
+
+
+
 <h3>Notes</h3>
 
 <p>While appscript's documentation systems try to be reasonably forgiving of flawed or faulty terminology resources, there may be a few particularly problematic applications on which they fail. Should this happen, use ASDictionary to export the application's terminology in plain text format instead.</p>
@@ -150,8 +169,6 @@ p te.parameters('make')
 <li>Refer to any scripting documentation and example scripts supplied by the application developer.</li>
 
 <li>Look for third-party scripts that provide examples of use (though many of these scripts will be written in AppleScript rather than Ruby).</li>
-
-<li>The <a href="http://appscript.sourceforge.net/tools.html">ASTranslate</a> tool can be used to convert application commands from AppleScript to Ruby syntax.</li>
 
 <li>The <a href="http://appscript.sourceforge.net">appscript website</a> has links to mailing lists and other general resources.</li>
 </ul>
