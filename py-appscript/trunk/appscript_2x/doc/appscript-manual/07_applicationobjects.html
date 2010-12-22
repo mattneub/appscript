@@ -48,12 +48,13 @@
     pid : int -- Unix process id for a local process
     url : str -- eppc URL for a remote process
     terms : module | bool -- if a module, get terminology from it;
-            if True, get terminology from target application;
-            if False, use built-in terminology only
-    newinstance : bool -- when specifying application by name, id or creator,
-            launch a new application instance?  
+                             if True, get terminology from target 
+                             application; if False, use built-in 
+                             terminology only
+    newinstance : bool -- when specifying application by name, id or
+                          creator, launch a new application instance?  
     hide : bool -- when specifying application by name, id or creator,
-            hide after launch?</code></pre>
+                   hide after launch?</code></pre>
 
 <p>To target an application you must supply at most <em>one</em> of the following arguments:</p>
 
@@ -104,30 +105,29 @@ terminal = app(url=address)</code></pre>
 
 <p>All applications should respond to the following commands:</p>
 
-<pre><code>run() -- Run an application.
-        Most applications will open an empty, untitled window.
+<pre><code>run() -- Run an application. Most applications will open an empty, 
+         untitled window.
 
 launch() -- Launch an application without sending it a 'run' event.
-        Applications that normally open a new, empty document upon
-        launch won't.
+            Applications that normally open a new, empty document
+            upon launch won't.
 
 activate() -- Bring the application to the front.
 
-reopen() -- Reactivate a running application.
-        Some applications will open a new untitled window if no window
-        is open.
+reopen() -- Reactivate a running application. Some applications 
+            will open a new untitled window if no window is open.
 
-open(directarg) -- Open the specified object(s).
-    directarg : anything -- list of objects to open, typically a list
-            of macfile.Alias
+open(<var>value</var>) -- Open the specified object(s).
+    anything -- list of objects to open, typically a list of 
+                mactypes.Alias
 
-print_(directarg) -- Print the specified object(s).
-    directarg : anything -- list of objects to print, typically a list
-            of macfile.Alias
+print_(<var>value</var>) -- Print the specified object(s).
+    anything -- list of objects to print, typically a list of 
+                mactypes.Alias
 
-quit(saving) -- Quit an application.
+quit(saving=<var>value</var>) -- Quit an application.
     saving : k.yes | k.ask | k.no -- specifies whether to save
-            currently open documents
+                                     currently open documents
 </code></pre>
 
 <p class="hilitebox">Note that appscript will automatically run an application in order to get its terminology. To start an application with a <code>launch</code> event instead of the usual <code>run</code> event, the <code>launch</code> command must be used immediately after an application object is created (i.e. before constructing any references or sending other commands).</p>
@@ -136,11 +136,11 @@ quit(saving) -- Quit an application.
 
 <p>Appscript also defines <code>get</code> and <code>set</code> commands for any scriptable application that doesn't supply its own definitions:</p>
 
-<pre><code>get(reference) -- Get the data for an object.
+<pre><code>get(<var>value</var>) -- Get the data for an object.
     reference -- the object for the command
     Result: anything -- the reply for the command
 
-set(reference, to) -- Set an object's data.
+set(<var>value</var>, to=<var>value</var>) -- Set an object's data.
     reference -- the object for the command
     to : anything -- The new value.</code></pre>
 
