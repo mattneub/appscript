@@ -1,8 +1,6 @@
 /*
  *  Appscript.h
  *
- *   Copyright (C) 2007-2008 HAS
- *
  */
 
 // aem

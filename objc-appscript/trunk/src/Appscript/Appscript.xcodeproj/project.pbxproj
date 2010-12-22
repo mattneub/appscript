@@ -528,7 +528,7 @@
 			};
 			name = Debug_10.4;
 		};
-		1DEB91AF08733DA50010E9CD /* Release_104_32 */ = {
+		1DEB91AF08733DA50010E9CD /* Release_10.4_32 */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEPLOYMENT_LOCATION = NO;
@@ -544,7 +544,7 @@
 				PRODUCT_NAME = Appscript;
 				WRAPPER_EXTENSION = framework;
 			};
-			name = Release_104_32;
+			name = Release_10.4_32;
 		};
 		1DEB91B208733DA50010E9CD /* Debug_10.4 */ = {
 			isa = XCBuildConfiguration;
@@ -560,7 +560,7 @@
 			};
 			name = Debug_10.4;
 		};
-		1DEB91B308733DA50010E9CD /* Release_104_32 */ = {
+		1DEB91B308733DA50010E9CD /* Release_10.4_32 */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = (
@@ -575,9 +575,9 @@
 				PREBINDING = NO;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
-			name = Release_104_32;
+			name = Release_10.4_32;
 		};
-		4F0C412B1097249600B879CE /* Release_104_32_embed */ = {
+		4F0C412B1097249600B879CE /* Release_10.4_32_embed */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = (
@@ -592,9 +592,9 @@
 				PREBINDING = NO;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
-			name = Release_104_32_embed;
+			name = Release_10.4_32_embed;
 		};
-		4F0C412C1097249600B879CE /* Release_104_32_embed */ = {
+		4F0C412C1097249600B879CE /* Release_10.4_32_embed */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEPLOYMENT_LOCATION = NO;
@@ -611,9 +611,9 @@
 				PRODUCT_NAME = Appscript;
 				WRAPPER_EXTENSION = framework;
 			};
-			name = Release_104_32_embed;
+			name = Release_10.4_32_embed;
 		};
-		4F0C412D1097249600B879CE /* Release_104_32_embed */ = {
+		4F0C412D1097249600B879CE /* Release_10.4_32_embed */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
@@ -637,7 +637,7 @@
 				WRAPPER_EXTENSION = octest;
 				ZERO_LINK = NO;
 			};
-			name = Release_104_32_embed;
+			name = Release_10.4_32_embed;
 		};
 		4F27FF700DF82C2100B681D4 /* Release_10.5_32_64_GC */ = {
 			isa = XCBuildConfiguration;
@@ -727,7 +727,7 @@
 			};
 			name = Debug_10.4;
 		};
-		4FED70890D2E6B64003412D7 /* Release_104_32 */ = {
+		4FED70890D2E6B64003412D7 /* Release_10.4_32 */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
@@ -751,7 +751,7 @@
 				WRAPPER_EXTENSION = octest;
 				ZERO_LINK = NO;
 			};
-			name = Release_104_32;
+			name = Release_10.4_32;
 		};
 		4FF1E92710C82C87002064A3 /* Release_10.5_32_64_GC_embed */ = {
 			isa = XCBuildConfiguration;
@@ -885,39 +885,39 @@
 			buildConfigurations = (
 				1DEB91AE08733DA50010E9CD /* Debug_10.4 */,
 				4FF1E93110C82D06002064A3 /* Debug_10.5 */,
-				1DEB91AF08733DA50010E9CD /* Release_104_32 */,
-				4F0C412C1097249600B879CE /* Release_104_32_embed */,
+				1DEB91AF08733DA50010E9CD /* Release_10.4_32 */,
+				4F0C412C1097249600B879CE /* Release_10.4_32_embed */,
 				4F27FF710DF82C2100B681D4 /* Release_10.5_32_64_GC */,
 				4FF1E92810C82C87002064A3 /* Release_10.5_32_64_GC_embed */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release_104_32;
+			defaultConfigurationName = Release_10.4_32;
 		};
 		1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "Appscript" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DEB91B208733DA50010E9CD /* Debug_10.4 */,
 				4FF1E93010C82D06002064A3 /* Debug_10.5 */,
-				1DEB91B308733DA50010E9CD /* Release_104_32 */,
-				4F0C412B1097249600B879CE /* Release_104_32_embed */,
+				1DEB91B308733DA50010E9CD /* Release_10.4_32 */,
+				4F0C412B1097249600B879CE /* Release_10.4_32_embed */,
 				4F27FF700DF82C2100B681D4 /* Release_10.5_32_64_GC */,
 				4FF1E92710C82C87002064A3 /* Release_10.5_32_64_GC_embed */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release_104_32;
+			defaultConfigurationName = Release_10.4_32;
 		};
 		4FED708A0D2E6B64003412D7 /* Build configuration list for PBXNativeTarget "objc-appscript-test" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				4FED70880D2E6B64003412D7 /* Debug_10.4 */,
 				4FF1E93210C82D06002064A3 /* Debug_10.5 */,
-				4FED70890D2E6B64003412D7 /* Release_104_32 */,
-				4F0C412D1097249600B879CE /* Release_104_32_embed */,
+				4FED70890D2E6B64003412D7 /* Release_10.4_32 */,
+				4F0C412D1097249600B879CE /* Release_10.4_32_embed */,
 				4F27FF720DF82C2100B681D4 /* Release_10.5_32_64_GC */,
 				4FF1E92910C82C87002064A3 /* Release_10.5_32_64_GC_embed */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release_104_32;
+			defaultConfigurationName = Release_10.4_32;
 		};
 /* End XCConfigurationList section */
 	};

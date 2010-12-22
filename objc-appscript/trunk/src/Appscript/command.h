@@ -2,8 +2,6 @@
 //  command.h
 //  Appscript
 //
-//  Copyright (C) 2007-2008 HAS
-//
 
 #import "event.h"
 #import "constant.h"

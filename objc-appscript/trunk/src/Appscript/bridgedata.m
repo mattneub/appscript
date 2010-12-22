@@ -2,12 +2,8 @@
 //  bridgedata.m
 //  Appscript
 //
-//  Copyright (C) 2008 HAS
-//
 
 #import "bridgedata.h"
-
-// TO DO: help agent support
 
 @implementation ASBridgeData
 
@@ -80,7 +76,7 @@
 			enumerators: [(ASAETEParser *)terms enumerators] 
 			 properties: [(ASAETEParser *)terms properties] 
 			   elements: [(ASAETEParser *)terms elements] 
-			   commands: [(ASAETEParser *)terms commands]]; // TO DO: cast appropriately
+			   commands: [(ASAETEParser *)terms commands]];
 		[terms release];
 		terms = tmp;
 	}

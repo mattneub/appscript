@@ -2,8 +2,6 @@
 //  specifier.m
 //  aem
 //
-//   Copyright (C) 2007-2008 HAS
-//
 
 #import "specifier.h"
 

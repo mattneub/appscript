@@ -1,0 +1,47 @@
+About objc-appscript
+====================
+
+ObjC appscript (objc-appscript) is a high-level, user-friendly 
+Apple event bridge that allows you to control AppleScriptable Mac OS X
+applications from Objective-C.
+
+
+Requirements
+------------
+
+ObjC appscript supports Mac OS X 10.4 and later.
+
+
+Installation
+------------
+
+The Xcode project provides a number of release build configurations:
+
+- 32-bit for OS X 10.4+:
+
+  Release_10.4_32 -- for installing in /Library/Frameworks
+  
+  Release_10.4_32_embed -- for embedding in .app bundles
+
+
+- 32- & 64-bit with support for retain/release and garbage collection
+
+  Release_10.5_32_64_GC -- for installing in /Library/Frameworks
+  
+  Release_10.5_32_64_GC_embed -- for embedding in .app bundles
+
+
+Embedded builds are the same as regular builds, except that the
+Installation Directory setting is @executable_path/../Frameworks
+(i.e. the framework should be placed in YourApp.app/Contents/Frameworks).
+
+
+Copyright
+---------
+
+ObjC appscript is released into the public domain, except for the following 
+code:
+
+- sendthreadsafe.h/sendthreadsafe.m, which are modified versions of Apple 
+  code (http://developer.apple.com/samplecode/AESendThreadSafe); see code 
+  for details

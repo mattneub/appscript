@@ -2,8 +2,6 @@
 //  codecs.m
 //  aem
 //
-//   Copyright (C) 2007-2008 HAS
-//
 
 #import "codecs.h"
 

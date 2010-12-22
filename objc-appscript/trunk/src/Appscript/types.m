@@ -2,8 +2,6 @@
 //  types.m
 //  aem
 //
-//   Copyright (C) 2007-2008 HAS
-//
 
 #import "types.h"
 
@@ -317,10 +315,6 @@ static ASBoolean *falseValue;
 	if (anObject == self) return YES;
 	if (!anObject || ![anObject isKindOfClass: [self class]]) return NO;
 	return [self fourCharCode] == [(AEMTypeBase *)anObject fourCharCode];
-}
-
-- (OSType)code { // TO DO: deprecated; delete
-	return [self fourCharCode];
 }
 
 - (OSType)fourCharCode {

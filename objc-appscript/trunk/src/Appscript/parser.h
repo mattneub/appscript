@@ -2,8 +2,6 @@
 //  parser.h
 //  appscript
 //
-//   Copyright (C) 2007-2008 HAS
-//
 
 #import "types.h"
 #import "utils.h"
@@ -46,7 +44,7 @@
 
 
 @interface ASAETEParser : NSObject {
-	char *aeteData; // TO DO: use NSData instead?
+	char *aeteData;
 	unsigned long aeteSize;
 	unsigned long cursor;
 	/* terminology tables; order is significant where synonym definitions occur */

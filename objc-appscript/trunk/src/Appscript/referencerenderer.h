@@ -2,15 +2,10 @@
 //  referencerenderer.h
 //  appscript
 //
-//   Copyright (C) 2007-2008 HAS
-//
 
 #import "objectrenderer.h"
 #import "reference.h"
 #import "utils.h"
-
-// TO DO: should accept non-references too
-// TO DO: rename ASObjectRenderer
 
 /**********************************************************************/
 // reference renderer abstract base

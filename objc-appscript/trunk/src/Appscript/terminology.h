@@ -2,8 +2,6 @@
 //  terminology.h
 //  appscript
 //
-//   Copyright (C) 2007-2008 HAS
-//
 
 #import "types.h"
 #import "parser.h"
@@ -45,8 +43,6 @@
 - (OSType)eventID;
 
 - (OSType)parameterForName:(NSString *)name_; // TO DO: needs to return error by arg if not found
-
-- (NSString *)parameterForCode:(OSType)code_;
 
 @end
 
@@ -108,7 +104,6 @@
 - (NSMutableDictionary *)elementByNameTable;
 - (NSMutableDictionary *)elementByCodeTable;
 - (NSMutableDictionary *)commandByNameTable;
-- (NSMutableDictionary *)commandByCodeTable; // TO DO
 
 @end
 

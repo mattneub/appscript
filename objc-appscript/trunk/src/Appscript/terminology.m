@@ -2,14 +2,8 @@
 //  terminology.m
 //  appscript
 //
-//   Copyright (C) 2007-2008 HAS
-//
 
 #import "terminology.h"
-
-// TO DO: add autorelease pool?
-
-// TO DO: cache converted names here
 
 
 /**********************************************************************/
@@ -74,10 +68,6 @@
 
 - (OSType)parameterForName:(NSString *)name_ {
 	return [[parameters objectForKey: name_] fourCharCode];
-}
-
-- (NSString *)parameterForCode:(OSType)code_ {
-	return nil; // TO DO
 }
 
 @end
@@ -339,10 +329,6 @@
 
 - (NSMutableDictionary *)commandByNameTable {
 	return commandByName;
-}
-
-- (NSMutableDictionary *)commandByCodeTable {
-	return nil; // TO DO
 }
 
 @end

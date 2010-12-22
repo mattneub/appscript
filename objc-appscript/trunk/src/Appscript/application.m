@@ -2,8 +2,6 @@
 //  application.m
 //  aem
 //
-//   Copyright (C) 2007-2008 HAS
-//
 
 #import "application.h"
 
@@ -23,9 +21,7 @@
 	CFURLRef outAppURL;
 	NSString *errorDescription;
 	NSDictionary *errorInfo;
-	NSError *errorStub;
 	
-	if (!error) error = &errorStub;
 	*error = nil;
 	err = LSFindApplicationForInfo(creator,
 								   (CFStringRef)bundleID,
@@ -33,14 +29,16 @@
 								   NULL,
 								   &outAppURL);
 	if (err) {
-		errorDescription = [NSString stringWithFormat: @"Can't find application (creator='%@', bundle ID=%@, name=%@): %@ (%i)", 
-														[AEMObjectRenderer formatOSType: creator], bundleID, name, 
-														ASDescriptionForError(err), err];
-		errorInfo = [NSDictionary dictionaryWithObjectsAndKeys: 
-									errorDescription, NSLocalizedDescriptionKey,
-									[NSNumber numberWithInt: err], kASErrorNumberKey,
-									nil];
-		*error = [NSError errorWithDomain: kASErrorDomain code: err userInfo: errorInfo];
+		if (error) {
+			errorDescription = [NSString stringWithFormat: @"Can't find application (creator='%@', bundle ID=%@, name=%@): %@ (%i)", 
+															[AEMObjectRenderer formatOSType: creator], bundleID, name, 
+															ASDescriptionForError(err), err];
+			errorInfo = [NSDictionary dictionaryWithObjectsAndKeys: 
+										errorDescription, NSLocalizedDescriptionKey,
+										[NSNumber numberWithInt: err], kASErrorNumberKey,
+										nil];
+			*error = [NSError errorWithDomain: kASErrorDomain code: err userInfo: errorInfo];
+		}
 		return nil;
 	}
 	return (NSURL *)outAppURL;
@@ -71,9 +69,7 @@
 	NSString *errorDescription;
 	NSDictionary *errorInfo;
 	pid_t pid;
-	NSError *errorStub;
 	
-	if (!error) error = &errorStub;
 	*error = nil;
 	if (!fileURL || !CFURLGetFSRef((CFURLRef)fileURL, &desired)) {
 		err = errFSBadFSRef;
@@ -88,13 +84,15 @@
 	if (err) goto error;
 	return pid;
 error:
-	errorDescription = [NSString stringWithFormat: @"Can't find process ID for application %@: %@ (%i)", 
-													fileURL, ASDescriptionForError(err), err];
-	errorInfo = [NSDictionary dictionaryWithObjectsAndKeys: 
-			errorDescription, NSLocalizedDescriptionKey,
-			[NSNumber numberWithInt: err], kASErrorNumberKey,
-			nil];
-	*error = [NSError errorWithDomain: kASErrorDomain code: err userInfo: errorInfo];
+	if (error) {
+		errorDescription = [NSString stringWithFormat: @"Can't find process ID for application %@: %@ (%i)", 
+														fileURL, ASDescriptionForError(err), err];
+		errorInfo = [NSDictionary dictionaryWithObjectsAndKeys: 
+				errorDescription, NSLocalizedDescriptionKey,
+				[NSNumber numberWithInt: err], kASErrorNumberKey,
+				nil];
+		*error = [NSError errorWithDomain: kASErrorDomain code: err userInfo: errorInfo];
+	}
 	return 0;
 }
 
@@ -142,88 +140,46 @@ error:
 	app = [[self alloc] initWithDescriptor: desc];
 	[[app eventWithEventClass: 'ascr'  eventID: 'noop'] sendWithError: &err]; // should raise -1708
 	[app release];
-	if (err) // e.g. -600 = not running, -905 = no network access
-		return ([err code] == -1708); // -1708 = usual 'event not handled' error; TO DO: any other 'OK' codes?
-	else
-		return YES;
+	return err ? ([err code] != procNotFound && [err code] != localOnlyErr) : YES; // not running/no network access
 }
 
 
-/*
- * Note: this uses Process Manager for 10.3 compatibility.
- *
- * TO DO: use LSLaunchApplication if available? This would give clients
- * access to additional launch flags on 10.4+.
- */
 + (pid_t)launchApplication:(NSURL *)fileURL
 					 event:(NSAppleEventDescriptor *)firstEvent
-					 flags:(LaunchFlags)launchFlags
+					 flags:(LSLaunchFlags)launchFlags
 					 error:(out NSError **)error {
-	OSStatus err;
+	OSStatus err = noErr;
 	FSRef fsRef;
-#ifndef __LP64__
-	FSSpec fss;
-#endif
-	AEDesc paraDesc;
-	Size paraSize;
-	AppParametersPtr paraData = NULL; // default event is aevtoapp
 	ProcessSerialNumber psn;
-	LaunchParamBlockRec launchParams;
 	pid_t pid;
 	NSString *errorDescription;
 	NSDictionary *errorInfo;
-	NSError *errorStub;
 	
-	if (!error) error = &errorStub;
 	*error = nil;
-	// Get FSSpec from NSURL
 	if (!fileURL || !CFURLGetFSRef((CFURLRef)fileURL, &fsRef)) {
 		err = fnfErr;
 		goto error;
 	}
-#ifndef __LP64__
-	err = FSGetCatalogInfo(&fsRef, kFSCatInfoNone, NULL, NULL, &fss, NULL);
-	if (err) goto error;
-#endif
-	// Get Apple event data
-	if (firstEvent) {
-		err = AECoerceDesc([firstEvent aeDesc], typeAppParameters, &paraDesc);
-		if (err) goto error;
-		paraSize = AEGetDescDataSize(&paraDesc);
-		paraData = (AppParametersPtr)NewPtr(paraSize);
-		if (!paraData) {
-			err = memFullErr;
-			goto error;
-		}
-		err = AEGetDescData(&paraDesc, paraData, paraSize);
-		if (err) goto error;
-	}
-	launchParams.launchBlockID = extendedBlock;
-	launchParams.launchEPBLength = extendedBlockLen;
-	launchParams.launchFileFlags = 0;
-	launchParams.launchControlFlags = launchFlags;
-#ifdef __LP64__
-	launchParams.launchAppRef = &fsRef;
-#else
-	launchParams.launchAppSpec = &fss;
-#endif
-	launchParams.launchAppParameters = paraData;
-	err = LaunchApplication(&launchParams);
+	LSApplicationParameters appParams = {0, 
+										 launchFlags, 
+										 &fsRef, 
+										 NULL, NULL, NULL, 
+										 (AEDesc *)[firstEvent aeDesc]};
+	err = LSOpenApplication(&appParams, &psn);
 	if (err) goto error; // Can't launch application.
-	psn = launchParams.launchProcessSN;
 	err = GetProcessPID(&psn, &pid);
 	if (err) goto error;
-	if (paraData) DisposePtr((Ptr)paraData);
 	return pid;
 error:
-	errorDescription = [NSString stringWithFormat: @"Can't launch application %@: %@ (%i)", 
-													fileURL, ASDescriptionForError(err), err];
-	errorInfo = [NSDictionary dictionaryWithObjectsAndKeys: 
-			errorDescription, NSLocalizedDescriptionKey,
-			[NSNumber numberWithInt: err], kASErrorNumberKey,
-			nil];
-	*error = [NSError errorWithDomain: kASErrorDomain code: err userInfo: errorInfo];
-	if (paraData) DisposePtr((Ptr)paraData);
+	if (error) {
+		errorDescription = [NSString stringWithFormat: @"Can't launch application %@: %@ (%i)", 
+														fileURL, ASDescriptionForError(err), err];
+		errorInfo = [NSDictionary dictionaryWithObjectsAndKeys: 
+				errorDescription, NSLocalizedDescriptionKey,
+				[NSNumber numberWithInt: err], kASErrorNumberKey,
+				nil];
+		*error = [NSError errorWithDomain: kASErrorDomain code: err userInfo: errorInfo];
+	}
 	return 0;
 }
 
@@ -238,7 +194,7 @@ error:
 											 transactionID: kAnyTransactionID];
 	return [self launchApplication: appFileURL
 							 event: evt
-							 flags: launchContinue | launchNoFileFlags | launchDontSwitch
+							 flags: kLSLaunchNoParams | kLSLaunchStartClassic | kLSLaunchDontSwitch
 							 error: error];
 }
 
@@ -252,7 +208,7 @@ error:
 											 transactionID: kAnyTransactionID];
 	return [self launchApplication: appFileURL
 							 event: evt
-							 flags: launchContinue | launchNoFileFlags | launchDontSwitch
+							 flags: kLSLaunchNoParams | kLSLaunchStartClassic | kLSLaunchDontSwitch
 							 error: error];
 }
 
@@ -267,7 +223,7 @@ error:
 	[evt setDescriptor: [[AEMCodecs defaultCodecs] pack: documentFiles] forKeyword: '----'];
 	return [self launchApplication: appFileURL
 							 event: evt
-							 flags: launchContinue | launchNoFileFlags | launchDontSwitch
+							 flags: kLSLaunchNoParams | kLSLaunchStartClassic | kLSLaunchDontSwitch
 							 error: error];
 }
 
@@ -288,7 +244,7 @@ error:
 		}
 		pid = [self launchApplication: fileURL
 								event: nil
-								flags: launchContinue | launchNoFileFlags | launchDontSwitch
+								flags: kLSLaunchNoParams | kLSLaunchStartClassic | kLSLaunchDontSwitch
 								error: &tempError];
 		if (tempError && [tempError code] != -600) {
 			*error = tempError;

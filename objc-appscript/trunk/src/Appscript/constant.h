@@ -2,8 +2,6 @@
 //  constant.h
 //  appscript
 //
-//   Copyright (C) 2007-2008 HAS
-//
 
 #import "utils.h"
 

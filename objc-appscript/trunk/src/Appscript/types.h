@@ -2,8 +2,6 @@
 //  types.h
 //  aem
 //
-//   Copyright (C) 2007-2008 HAS
-//
 
 #import "utils.h"
 #import "objectrenderer.h"
@@ -150,8 +148,6 @@ enum { typeFSS = 'fss ' };
 - (id)initWithDescriptor:(NSAppleEventDescriptor *)desc; // normally called by AEMCodecs -unpack:, though clients could also use it to wrap any loose NSAppleEventDescriptor instances they might have. Note: doesn't verify descriptor's type before use; clients are responsible for providing an appropriate value.
 
 - (id)initWithCode:(OSType)code_; // stub method; subclasses will override this to provide concrete implementations 
-
-- (OSType)code DEPRECATED_ATTRIBUTE; // TO DO: deprecated; delete
 
 - (OSType)fourCharCode;
 

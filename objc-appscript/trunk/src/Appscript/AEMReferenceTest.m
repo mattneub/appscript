@@ -2,13 +2,11 @@
 //  AEMReferenceTest.m
 //  Appscript
 //
-//   Copyright (C) 2007-2008 HAS
-//
 
 #import "AEMReferenceTest.h"
 
-// TO DO: -[NSArray description] displays empty arrays as "(\n)" on 10.5 but "()" on 10.4,
-// so some tests will currently fail on 10.4
+// note: -[NSArray description] displays empty arrays as "(\n)" on 10.5 but "()" on 10.4,
+// so some tests will fail on 10.4
 
 
 typedef struct {
@@ -293,9 +291,7 @@ typedef struct {
 			@"[[AEMApp elements: 'ctxt'] property: 'ctxt']",
 			[[AEMApp elements: 'ctxt'] property: 'ctxt'],
 		},
-		
-		// TO DO: need more complex inequality tests, including test specifiers
-		
+				
 		{nil, nil}
 	};
 	

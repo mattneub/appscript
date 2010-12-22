@@ -2,8 +2,6 @@
 //  specifier.h
 //  aem
 //
-//   Copyright (C) 2007-2008 HAS
-//
 
 #import "base.h"
 #import "test.h"

@@ -2,8 +2,6 @@
 //  application.h
 //  aem
 //
-//   Copyright (C) 2007-2008 HAS
-//
 
 #import "codecs.h"
 #import "sendthreadsafe.h"
@@ -91,7 +89,7 @@ typedef enum {
 
 + (pid_t)launchApplication:(NSURL *)fileURL
 					 event:(NSAppleEventDescriptor *)firstEvent
-					 flags:(LaunchFlags)launchFlags
+					 flags:(LSLaunchFlags)launchFlags
 					 error:(out NSError **)error;
 
 // convenience shortcuts for the above

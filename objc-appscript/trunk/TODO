@@ -2,6 +2,8 @@ TO DO
 
 ======= appscript =======
 
+- investigate four char code problem in FNGlue
+
 
 ======= aem/application.h =======
 
@@ -13,24 +15,7 @@ TO DO
 - check if kOSAErrorOffendingObject can be any type (the OSA API docs suggest that it may have to be an object specifier, but really aren't clear); currently, -sendWithError: returns anything for kAEMErrorOffendingObject when raising its own coercion error
 
 
-======= aem query builder =======
-
-======= aem types =======
-
-- subclass NSURL as ASURL, providing method parity with ASAlias, etc.?
-
 ======= miscellaneous =======
-
-- compiler warnings in 64-bit:
-
-	/Users/has/appscript/objc-appscript/src/Appscript/types.m:255: warning: multiple methods named '-code' found
-	/Developer/SDKs/MacOSX10.5.sdk/System/Library/Frameworks/Foundation.framework/Headers/NSError.h:53: warning: using '-(NSInteger)code'
-	/Users/has/appscript/objc-appscript/src/Appscript/types.h:141: warning: also found '-(OSType)code'
-
-	/Users/has/appscript/objc-appscript/src/Appscript/parser.m:76: warning: multiple methods named '-code' found
-	/Developer/SDKs/MacOSX10.5.sdk/System/Library/Frameworks/Foundation.framework/Headers/NSError.h:53: warning: using '-(NSInteger)code'
-	/Users/has/appscript/objc-appscript/src/Appscript/parser.h:23: warning: also found '-(OSType)code'
-
 
 - compiler warnings when [ASApplicationObj run] is used:
 
@@ -39,19 +24,9 @@ TO DO
 	/Users/has/AppscriptDemo/TEGlue/TEReferenceGlue.h:55: warning: also found '-(TERunCommand *)run'
 
 
-- add dynamic class generation option?
-
 - finish documentation, header comments
 
 - unit tests
 
 - update reserved ObjC keywords in py-osaterminology
-
-======= ignore =======
-
-- returnID support in high-level appscript API?; note: returnID is an argument to AECreateAppleEvent(), so the appscript layer would then need to avoid instantiating AEMEvent when a command is first called, allowing clients an opportunity to invoke -returnID: before adding attributes and parameters (including direct parameter and subject attribute).
-
-- define formal protocol or abstract base class for AEMEvent class, as clients can install their own choice of event class in AEMApplication if they wish
-
-- include a lookup table for pre-Leopard Cocoa Scripting error strings, c.f. rb-appscript
 

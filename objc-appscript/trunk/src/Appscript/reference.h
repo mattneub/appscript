@@ -2,8 +2,6 @@
 //  reference.h
 //  appscript
 //
-//   Copyright (C) 2007-2008 HAS
-//
 
 #import "application.h"
 #import "constant.h"
@@ -22,8 +20,8 @@
 
 
 @interface ASReference : NSObject {
-	id AS_appData; // TO DO: more specific type
-	id AS_aemReference; // TO DO: more specific type
+	id AS_appData;
+	id AS_aemReference;
 }
 
 + (id)referenceWithAppData:(id)appData aemReference:(id)aemReference;

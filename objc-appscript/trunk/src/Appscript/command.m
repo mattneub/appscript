@@ -2,8 +2,6 @@
 //  command.m
 //  Appscript
 //
-//  Copyright (C) 2007-2008 HAS
-//
 
 #import "command.h"
 
@@ -44,7 +42,6 @@ static NSAppleEventDescriptor *defaultIgnore;
 	ASRelaunchMode relaunchPolicy = [appData relaunchMode];
 	if (relaunchPolicy != kASRelaunchNever && [target targetType] == kAEMTargetFileURL
 			&& ![AEMApplication processExistsForPID: [[target descriptor] int32Value]]) {
-		// TO DO: what, if any, other events should be allowed to relaunch app when kASRelaunchSpecial is used?
 		if (relaunchPolicy == kASRelaunchAlways || classCode == kCoreEventClass && code == kAEOpenApplication) {
 			BOOL success = [target reconnectWithError: &targetError];
 			if (!success) goto fail;

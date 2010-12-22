@@ -2,8 +2,6 @@
 //  bridgedata.h
 //  Appscript
 //
-//  Copyright (C) 2008 HAS
-//
 
 #import "appdata.h"
 #import "parser.h"

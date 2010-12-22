@@ -2,8 +2,6 @@
 //  event.m
 //  aem
 //
-//   Copyright (C) 2007-2008 HAS
-//
 
 #import "event.h"
 
@@ -268,7 +266,7 @@ static ASEventAttributeDescription attributeKeys[] = {
 	}
 	// extract reply data, if any
 	if (replyDesc.descriptorType == typeNull) goto noResult; // application didn't return anything
-	// wrap AEDesc as NSAppleEventDescriptor for convenience // TO DO: might be easier to use C API and wrap AEDescs later
+	// wrap AEDesc as NSAppleEventDescriptor for convenience
 	replyData = [[NSAppleEventDescriptor alloc] initWithAEDescNoCopy: &replyDesc];
 	/*
 	 * Check for an application error
