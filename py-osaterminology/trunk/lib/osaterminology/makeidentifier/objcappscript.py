@@ -7,9 +7,6 @@
 # - names of methods used in ASConstant, ASReference classes
 # - names of additional methods used in Application classes
 # - names of built-in keyword arguments in ASCommand
-# - anything else?
-
-# TO DO: any ObjC 2.0 additions
 
 ######################################################################
 # PRIVATE

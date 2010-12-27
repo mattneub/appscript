@@ -9,7 +9,7 @@ from osaterminology.makeidentifier import getconverter
 from osaterminology.tables.tablebuilder import *
 
 
-kGlueVersion = '0.5.3'
+kGlueVersion = '0.5.4'
 
 
 ######################################################################
@@ -19,18 +19,6 @@ kGlueVersion = '0.5.3'
 
 
 _terminologytablebuilder = TerminologyTableBuilder('objc-appscript')
-
-	
-def _findosax(osaxname):
-	""" locate a scripting addition by name """
-	se = aem.Application(aem.findapp.byid('com.apple.systemevents'))
-	for domaincode in ['flds', 'fldl', 'fldu']:
-		osax = aem.app.property(domaincode).property('$scr').elements('file').byfilter(
-				aem.its.property('pnam').eq(osaxname)
-				.OR(aem.its.property('pnam').eq('%s.osax' % osaxname))).byindex(1)
-		if se.event('coredoex', {'----': osax}).send(): # domain has ScriptingAdditions folder
-			return se.event('coregetd', {'----': osax.property('posx')}).send()
-	raise RuntimeError("Scripting addition %r not found." % osaxname)
 
 
 #######
@@ -115,9 +103,9 @@ class ImplementationRenderer:
 
 class ClassBuilder:
 		
-	kLegalCodeChars = ''.join([chr(i) for i in range(32, 127) if i not in [ord(c) for c in '\\\'"']])
+	kLegalCodeChars = re.compile('^[a-zA-Z0-9* ]+$')
 	
-	def __init__(self, terms, isosax=False):
+	def __init__(self, terms):
 		self.typebycode = terms[0].items()
 		self.typebycode.sort(lambda a, b: cmp(a[1], b[1]))
 		self.typebyname = terms[1].items()
@@ -126,26 +114,15 @@ class ClassBuilder:
 		self.referencebycode.sort(lambda a, b: cmp(a[1][1], b[1][1]))
 		self.referencebyname = terms[3].items()
 		self.referencebyname.sort(lambda a, b: cmp(a[1][0], b[1][0]) or cmp(a[0], b[0]))
-		if isosax:
-			self._osaxloader = '\n'.join([
-			'    // make sure osaxen are loaded',
-			'    static int isReady = 0;',
-			'    if (!isReady) {',
-			'        isReady = 1;',
-			'        AEMApplication *targetApp = [[self AS_appData] targetWithError: nil];',
-			'	[[targetApp eventWithEventClass: kASAppleScriptSuite eventID: kGetAEUT] send];',
-			'    }'])
-		else:
-			self._osaxloader = ''
 	
 	##
 	
 	def _formatcode(self, code):
 		""" Format OSTypes as literals """
-		if [c for c in code if c not in self.kLegalCodeChars]:
-			return '0x' + getencoder('hex_codec')(code)[0]
-		else:
+		if self.kLegalCodeChars.match(code):
 			return "'%s'" % code
+		else:
+			return '0x' + getencoder('hex_codec')(code)[0]
 	
 	
 	def _capname(self, s):
@@ -353,8 +330,6 @@ class ClassBuilder:
 		src += '    [appData release];'
 		src += ''
 		src += '    if (!self) return self;'
-		if self._osaxloader:
-			src += self._osaxloader
 		src += '    return self;'
 		src.endmethod()
 		# public constructors
