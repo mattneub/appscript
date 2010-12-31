@@ -52,15 +52,15 @@ class ArrayToBooleanTransformer(NSValueTransformer):
 
 class ASDictionary(NSDocument):
 	
-	mainWindow = objc.IBOutlet()
-	filenameTableView = objc.IBOutlet()
-	selectedFilesController = objc.IBOutlet()
-	progressPanel = objc.IBOutlet()
-	progressBar = objc.IBOutlet()
-	itemName = objc.IBOutlet()
-	logDrawer = objc.IBOutlet()
-	logTextView = objc.IBOutlet()
-	objcPrefixColumn = objc.IBOutlet()
+	mainWindow = objc.IBOutlet('mainWindow')
+	filenameTableView = objc.IBOutlet('filenameTableView')
+	selectedFilesController = objc.IBOutlet('selectedFilesController')
+	progressPanel = objc.IBOutlet('progressPanel')
+	progressBar = objc.IBOutlet('progressBar')
+	itemName = objc.IBOutlet('itemName')
+	logDrawer = objc.IBOutlet('logDrawer')
+	logTextView = objc.IBOutlet('logTextView')
+	objcPrefixColumn = objc.IBOutlet('objcPrefixColumn')
 	
 	def init(self):
 		self = super(ASDictionary, self).init()
@@ -85,7 +85,7 @@ class ASDictionary(NSDocument):
 	def awakeFromNib(self):
 		userDefaults = NSUserDefaults.standardUserDefaults()
 		NSNotificationCenter.defaultCenter().addObserver_selector_name_object_(
-				self, 'notifyPreferencesChanged:', NSUserDefaultsDidChangeNotification, userDefaults)
+				self, 'notifyPreferencesChanged:', u'NSUserDefaultsDidChangeNotification', userDefaults)
 		self._updateLocks()
 		self.filenameTableView.registerForDraggedTypes_([NSFilenamesPboardType])
 		self.filenameTableView.setDraggingSourceOperationMask_forLocal_(NSDragOperationLink, False)

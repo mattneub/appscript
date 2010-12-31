@@ -9,9 +9,9 @@ Requirements (available from PyPI except where noted):
 
 - py-aemreceive 0.4.0+ (from appscript svn repository)
 
-- py-osaterminology 0.14.5+ (from appscript svn repository)
+- py-osaterminology 0.14.6+ (from appscript svn repository)
 
-- pyobjc 2.3+
+- pyobjc 1.4+
 
 - py2app 0.5.2+
 
@@ -29,7 +29,7 @@ from plistlib import Plist
 import os
 
 name = 'ASDictionary'
-version='0.13.0'
+version='0.13.1'
 
 os.system('''
 sdp -fa %s.sdef;
