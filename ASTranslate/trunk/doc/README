@@ -46,7 +46,7 @@ Notes
   commands are not translated automatically, but should be straightforward
   to translate manually using dictionaries exported from ASDictionary. 
 
-- Use ASDictionary 0.13.0 or later to generate objc-appscript glues.
+- Use ASDictionary 0.13.1 or later to generate objc-appscript glues.
 
 - The objc-appscript renderer creates two-letter class name prefixes based 
   on the application name for demonstration purposes. If using ASTranslate-

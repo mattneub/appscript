@@ -24,9 +24,9 @@ _standardCodecs = aem.Codecs()
 
 class ASTranslateDocument(NSDocument):
 	
-	codeView = objc.IBOutlet()
-	resultView = objc.IBOutlet()
-	styleControl = objc.IBOutlet()
+	codeView = objc.IBOutlet('codeView')
+	resultView = objc.IBOutlet('resultView')
+	styleControl = objc.IBOutlet('styleControl')
 		
 	currentStyle = 0
 

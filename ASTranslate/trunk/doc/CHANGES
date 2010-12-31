@@ -1,3 +1,8 @@
+2010-12-31 -- 0.13.1
+
+- fixed 10.4 compatibility [KW]
+
+
 2010-12-19 -- 0.5.0
 
 - fixed problem where sending commands to self would deadlock (now gives error -1708)

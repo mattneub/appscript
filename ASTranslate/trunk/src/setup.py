@@ -5,9 +5,9 @@ Requirements (available from PyPI except where noted):
 
 - py-appscript 0.22.0+
 
-- py-osaterminology 0.14.5+ (from appscript svn repository)
+- py-osaterminology 0.14.6+ (from appscript svn repository)
 
-- pyobjc 2.3+
+- pyobjc 1.4+
 
 - py2app 0.5.2+
 
@@ -23,7 +23,7 @@ from setuptools import setup, Extension
 import py2app
 from plistlib import Plist
 
-version = '0.5.0'
+version = '0.5.1'
 
 
 setup(
