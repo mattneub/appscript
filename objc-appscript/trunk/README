@@ -9,7 +9,9 @@ applications from Objective-C.
 Requirements
 ------------
 
-ObjC appscript supports Mac OS X 10.4 and later.
+- ObjC appscript supports Mac OS X 10.4 and later.
+
+- ASDictionary 0.13.1 or later is required to generate application glues.
 
 
 Installation

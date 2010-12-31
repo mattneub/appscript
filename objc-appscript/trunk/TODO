@@ -1,32 +1,9 @@
 TO DO
 
-======= appscript =======
-
-- investigate four char code problem in FNGlue
-
-
-======= aem/application.h =======
-
-- in +processExistsForDescriptor:, what codes should indicate running? (e.g. -1712 = running but unresponsive)
-
-
-======= aem/event.h =======
-
-- check if kOSAErrorOffendingObject can be any type (the OSA API docs suggest that it may have to be an object specifier, but really aren't clear); currently, -sendWithError: returns anything for kAEMErrorOffendingObject when raising its own coercion error
-
-
-======= miscellaneous =======
-
 - compiler warnings when [ASApplicationObj run] is used:
 
 	/Users/has/AppscriptDemo/AppscriptDemo.m:27: warning: multiple methods named '-run' found
 	/Developer/SDKs/MacOSX10.4u.sdk/System/Library/Frameworks/Foundation.framework/Headers/NSRunLoop.h:37: warning: using '-(void)run'
 	/Users/has/AppscriptDemo/TEGlue/TEReferenceGlue.h:55: warning: also found '-(TERunCommand *)run'
 
-
-- finish documentation, header comments
-
-- unit tests
-
-- update reserved ObjC keywords in py-osaterminology
 

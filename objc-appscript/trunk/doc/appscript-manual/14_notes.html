@@ -42,7 +42,7 @@
 
 <p>Some applications (e.g. QuarkXpress) may return values which appscript cannot convert to equivalent Cocoa types. These values are usually of types which are defined, used and understood only by that particular application, and will be represented in ObjC as <code>NSAppleEventDescriptor</code> instances which should generally be treated as opaque values.</p>
 
-<p>A few standard but rarely used AE types are also currently unbridged with Cocoa counterparts, such as image types (<code>typePict</code>, <code>typeTIFF</code>, etc.). Some of these types might be bridged in future releases; in the meantime, client code will have to perform any necessary conversions itself.</p>
+<p>A few standard but rarely used AE types are also currently unbridged with Cocoa counterparts, such as image types (<code>typePict</code>, <code>typeTIFF</code>, etc.). Client code should perform any necessary conversions itself.</p>
 
 
 
@@ -53,7 +53,7 @@
 
 <h3>Credits</h3>
 
-<p>Many thanks to all those who have contributed comments, suggestions and bug reports to py-appscript, upon which objc-appscript is based.</p>
+<p>Many thanks to all those who have contributed comments, suggestions and bug reports.</p>
 
 
 <h3>Website</h3>
