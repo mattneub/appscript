@@ -1,3 +1,8 @@
+2010-12-27 -- 0.14.6
+
+- tweaked formatting of OSTypes in ObjC glues to keep ObjC compiler happy
+
+
 2010-12-19 -- 0.14.5
 
 - fixed objc-appscript memory leak caused by missing -release in -[<PREFIX>Application initWithTargetType:data:] glue; updated glue version to 0.5.3

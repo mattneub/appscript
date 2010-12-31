@@ -9,7 +9,7 @@ except ImportError:
 
 setup(
 		name = "osaterminology",
-		version = "0.14.5",
+		version = "0.14.6",
 		description = "Parse and render aete/sdef resources.",
 		url='http://appscript.sourceforge.net',
 		license='Public Domain',
