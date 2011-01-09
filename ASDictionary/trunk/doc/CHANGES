@@ -1,6 +1,6 @@
 CHANGES
 
-2010-12-31 -- 0.13.1
+2011-01-09 -- 0.13.1
 - fixed 10.4 compatibility [KW]
 - fixed problem where some OSTypes in ObjC glues wouldn't compile (from py-osaterminology 0.14.6)
 
