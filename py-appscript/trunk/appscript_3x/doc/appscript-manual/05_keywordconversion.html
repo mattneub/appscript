@@ -44,22 +44,31 @@
 
 <li>All other characters are converted to 0x00-style hexadecimal representations.</li>
 
-<li>Names that match Python keywords or names reserved by appscript have an underscore appended.</li>
+<li>Names that match Python keywords or names reserved by appscript have an underscore appended. The following names are reserved by appscript:
+
+<pre><code>aborttransaction              help
+after                         ID
+AND                           ignore
+any                           isin
+before                        isnotin
+beginning                     last
+beginswith                    middle
+begintransaction              next
+contains                      NOT
+doesnotbeginwith              OR
+doesnotcontain                previous
+doesnotendwith                relaunchmode
+end                           resulttype
+endswith                      timeout
+endtransaction                waitreply
+first</code></pre>
+
+See Python's <code>keyword</code> module for a list of reserved Python keywords.</li>
+
+<li>Appscript defines default terminology for standard type classes such as <code>integer</code> and <code>unicode_text</code>, and standard commands such as <code>open</code> and <code>quit</code>. If an application-defined name matches a built-in name but has a different Apple event code, appscript will append an underscore to the application-defined name.</li>
 </ul>
 
-<p>The following names are reserved by appscript:</p>
-
-<pre><code>timeout waitreply resulttype ignore
-ID previous next
-beginning end before after
-first last middle any
-beginswith endswith contains isin
-doesnotbeginwith doesnotendwith doesnotcontain isnotin
-AND OR NOT
-begintransaction endtransaction aborttransaction
-relaunchmode
-help</code></pre>
-
+<p class="hilitebox">You can use ASDictionary or appscript's built-in <code>help</code> method to export or view application terminology in appscript format. See the <a href="04_gettinghelp.html">Getting Help</a> chapter for more information.</p>
 
 </div>
 

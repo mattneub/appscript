@@ -39,7 +39,10 @@ kReservedKeywords = [
 	"timeout",
 	"waitreply",
 	"help",
+	"relaunchmode",
 	"as",
 	"with",
-	"relaunchmode",
+	"True",
+	"False",
+	"None",
 	 ] + keyword.kwlist

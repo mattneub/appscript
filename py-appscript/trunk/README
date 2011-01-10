@@ -53,7 +53,7 @@ Notes
 
     http://appscript.sourceforge.net/tools.html
 
-  ASDictionary 0.13.0 or later is also required to use appscript's built-in 
+  ASDictionary 0.13.1 or later is also required to use appscript's built-in 
   help() method. If ASDictionary isn't installed, interactive help won't be 
   available but appscript will continue to operate as normal.
 
