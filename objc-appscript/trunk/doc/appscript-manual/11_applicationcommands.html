@@ -68,7 +68,7 @@
 
 <h4>Specifying considering/ignoring flags</h4>
 
-<p>Application commands may include flags that that instruct the application to consider or ignore case, diacriticals, etc. when comparing strings (e.g. when resolving equality tests in a by-test specifier). By default, appscript specifies that case should be ignored and all other attributes considered; other options may be specified via the <code>-considering:</code> method:<p>
+<p>Application commands may include flags that that instruct the application to consider or ignore case, diacriticals, etc. when comparing strings (e.g. when resolving equality tests in a by-test specifier). By default, appscript specifies that case should be ignored and all other attributes considered; other options may be specified via the <code>-considering:</code> method:</p>
 
 <pre><code>- (id)considering:(UInt32)flags;</code></pre>
 
@@ -175,7 +175,7 @@ kNoTimeOut</code></pre>
 
 <p>The <code>-returnClass:</code>/<code>-returnType:</code> method can be used to specify the AE type that the result descriptor returned by the application must be coerced to before unpacking. The default is <code>[ASConstant anything]</code>/<code>typeWildCard</code>.</p>
 
-<p>The <code>-returnListOfClass:</code>/<code>-returnListOfType:</code> method is similar, except that the returned result descriptor is first coerced to to a list descriptor (<code>typeAEList</code>); each list item is then coerced to the specified type.<p>
+<p>The <code>-returnListOfClass:</code>/<code>-returnListOfType:</code> method is similar, except that the returned result descriptor is first coerced to to a list descriptor (<code>typeAEList</code>); each list item is then coerced to the specified type.</p>
 
 <p>The <code>-returnList</code> method provides a convenient shortcut for <code>[cmd returnType: typeAEList]</code>.</p>
 
@@ -257,7 +257,7 @@ makeCmd = [[[textedit make]
 <pre><code>// try
 //     tell application "TextEdit" to return text of document 2
 // on error errString number errNumber
-//     return "error:\n number: " & errNumber & "\n message: " & errString 
+//     return "error:\n number: " &amp; errNumber &amp; "\n message: " &amp; errString 
 // end try
 
 TEApplication *textedit;
@@ -268,7 +268,7 @@ NSError *error;
 textedit = [[TEApplication alloc] initWithName: @"TextEdit.app"];
 
 getCmd = [[[textedit documents] at: 2] text];
-result = [getCmd sendWithError: &error];
+result = [getCmd sendWithError: &amp;error];
 if (result) 
     NSLog(@"result:\n%@\n\n", result);
 else
@@ -295,7 +295,7 @@ else
 <dd>The <code>userInfo</code> dictionary contains an <code>kASErrorNumberKey</code> key and zero or more additional keys:
 
 	<ul>
-		<li><code>kASErrorNumberKey</code> -- the Carbon error code</code></li>
+		<li><code>kASErrorNumberKey</code> -- the Carbon error code</li>
 		<li><code>kASErrorStringKey</code> -- error string returned by application, if given</li>
 		<li><code>kASErrorBriefMessageKey</code> -- brief error string returned by application, if given</li>
 		<li><code>kASErrorExpectedTypeKey</code> -- AE type responsible for a coercion error (-1700), if given</li>

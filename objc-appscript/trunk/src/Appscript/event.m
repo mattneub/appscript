@@ -318,7 +318,7 @@ static ASEventAttributeDescription attributeKeys[] = {
 	 * Unpack result, performing any coercions specified via -setUnpackFormat:type: before unpacking the descriptor
 	 */
 	if (resultFormat == kAEMUnpackAsList) {
-		if ([result descriptorType] != typeAEList) 
+		if ([result descriptorType] != typeAEList) // TO DO: check how this treats records
 			result = [result coerceToDescriptorType: typeAEList];
 		if (resultType != typeWildCard) {
 			NSMutableArray *resultList;

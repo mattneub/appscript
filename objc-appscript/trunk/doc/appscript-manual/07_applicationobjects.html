@@ -165,7 +165,7 @@ if ([textedit isRunning]) {
 
 <h4>Launching applications via <code>-launchApplicationWithError:</code></h4>
 
-<p>When appscript launches a non-running application, it normally sends it a <code>run</code> command as part of the launching process. If you wish to avoid this, you should start the application by sending it a <code>launch</code> command before doing anything else:<p>
+<p>When appscript launches a non-running application, it normally sends it a <code>run</code> command as part of the launching process. If you wish to avoid this, you should start the application by sending it a <code>launch</code> command before doing anything else:</p>
 
 <pre><code>- (BOOL)launchApplicationWithError:(NSError **)error;
 
