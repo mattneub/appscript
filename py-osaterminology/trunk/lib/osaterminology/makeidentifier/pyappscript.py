@@ -7,7 +7,7 @@
 
 import keyword
 
-kReservedWords = keyword.kwlist + [
+kReservedKeywords = [
 	"ID",
 	"beginning",
 	"end",
@@ -39,8 +39,11 @@ kReservedWords = keyword.kwlist + [
 	"timeout",
 	"waitreply",
 	"help",
-	"as", # not in kwlist before Python 2.5, so defined here to ensure scripts are portable between versions
-	"with", # not in kwlist before Python 2.6, so defined here to ensure scripts are portable between versions
 	"relaunchmode",
-]
+	"as",
+	"with",
+	"True",
+	"False",
+	"None",
+	 ] + keyword.kwlist
 
