@@ -7,7 +7,7 @@
 
 import keyword
 
-kReservedKeywords = [
+kReservedWords = [
 	"ID",
 	"beginning",
 	"end",
