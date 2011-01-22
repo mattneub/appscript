@@ -81,6 +81,9 @@ def makeCustomSendProc(addResultFn, isLive):
 							targetRef, directParam, params, 
 							resultType, modeFlags, timeout, 
 							appData))
+				except (UntranslatedKeywordError, UntranslatedUserPropertyError), e:
+					s = 'Untranslated event %r\n%s' % (eventcode, e)
+					addResultFn(key, s)
 				except Exception, e:
 					traceback.print_exc()
 					s = 'Untranslated event %r' % eventcode

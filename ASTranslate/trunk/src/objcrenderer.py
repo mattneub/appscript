@@ -116,7 +116,10 @@ class _Formatter:
 	##
 	
 	def formatConstant(self, val): # type, enumerator, property, keyword
-		return '[%sConstant %s]' % (self._prefix, self._typebycode[val.code]) # .AS_name
+		try:
+			return '[%sConstant %s]' % (self._prefix, self._typebycode[val.code]) # .AS_name
+		except KeyError:
+			raise UntranslatedKeywordError('constant', val.code, 'ObjC')
 	
 
 
@@ -127,14 +130,23 @@ class _Formatter:
 		try:
 			self.result = '[%s %s]' % (self.result, self._referencebycode[kProperty+code][1])
 		except KeyError:
-			self.result = '[%s %s]' % (self.result, self._referencebycode[kElement+code][1])
+			try:
+				self.result = '[%s %s]' % (self.result, self._referencebycode[kElement+code][1])
+			except KeyError:
+				raise UntranslatedKeywordError('property', code, 'ObjC')
 		return self
+	
+	def userproperty(self, name):
+		raise UntranslatedUserPropertyError(name, 'ObjC')
 
 	def elements(self, code):
 		try:
 			self.result = '[%s %s]' % (self.result, self._referencebycode[kElement+code][1])
 		except KeyError:
-			self.result = '[%s %s]' % (self.result, self._referencebycode[kProperty+code][1])
+			try:
+				self.result = '[%s %s]' % (self.result, self._referencebycode[kProperty+code][1])
+			except KeyError:
+				raise UntranslatedKeywordError('element', code, 'ObjC')
 		return self
 	
 	def byname(self, sel):
@@ -279,7 +291,10 @@ def renderCommand(apppath, addressdesc,
 	s += '%sApplication *%s = [%sApplication applicationWithName: %s];\n' % (
 			prefix, appvar, prefix, f.format(appname)) # TO DO: use bundle ID if available
 
-	commandname, paramnamebycode = referencebycode[kCommand+eventcode][1]
+	try:
+		commandname, paramnamebycode = referencebycode[kCommand+eventcode][1]
+	except KeyError:
+		raise UntranslatedKeywordError('event', eventcode, 'ObjC')
 	
 	if directparam is not kNoParam:
 		f = _Formatter(typebycode, referencebycode, appvar, prefix)
@@ -288,7 +303,10 @@ def renderCommand(apppath, addressdesc,
 	params = []
 	for k, v in paramsdict.items():
 		f = _Formatter(typebycode, referencebycode, appvar, prefix)
-		params.append('%s: %s' % (paramnamebycode[k], f.format(v)))
+		try:
+			params.append('%s: %s' % (paramnamebycode[k], f.format(v)))
+		except KeyError:
+			raise UntranslatedKeywordError('parameter', k, 'ObjC')
 	
 	if targetref and not isinstance(targetref, appscript.Application):
 		f = _Formatter(typebycode, referencebycode, appvar, prefix)

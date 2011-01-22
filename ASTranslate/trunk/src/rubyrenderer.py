@@ -127,8 +127,11 @@ class _Formatter:
 	##
 	
 	def formatConstant(self, val): # type, enumerator, property, keyword
-		return ':%s' % (self._typebycode[val.code]) # .AS_name
-	
+		try:
+			return ':%s' % (self._typebycode[val.code]) # .AS_name
+		except KeyError:
+			raise UntranslatedKeywordError('constant', val.code, 'Ruby')
+
 
 
 	#######
@@ -138,14 +141,23 @@ class _Formatter:
 		try:
 			self.result = '%s.%s' % (self.result, self._referencebycode[kProperty+code][1])
 		except KeyError:
-			self.result = '%s.%s' % (self.result, self._referencebycode[kElement+code][1])
+			try:
+				self.result = '%s.%s' % (self.result, self._referencebycode[kElement+code][1])
+			except KeyError:
+				raise UntranslatedKeywordError('property', code, 'Ruby')
 		return self
-
+	
+	def userproperty(self, name):
+		raise UntranslatedUserPropertyError(name, 'Ruby')
+	
 	def elements(self, code):
 		try:
 			self.result = '%s.%s' % (self.result, self._referencebycode[kElement+code][1])
 		except KeyError:
-			self.result = '%s.%s' % (self.result, self._referencebycode[kProperty+code][1])
+			try:
+				self.result = '%s.%s' % (self.result, self._referencebycode[kProperty+code][1])
+			except KeyError:
+				raise UntranslatedKeywordError('element', code, 'Ruby')
 		return self
 	
 	def byname(self, sel):
@@ -287,7 +299,10 @@ def renderCommand(apppath, addressdesc,
 	else:
 		target = appvar
 	
-	commandname, paramnamebycode = referencebycode[kCommand+eventcode][1]
+	try:
+		commandname, paramnamebycode = referencebycode[kCommand+eventcode][1]
+	except KeyError:
+		raise UntranslatedKeywordError('event', eventcode, 'Ruby')
 	
 	args = []
 	f = _Formatter(typebycode, referencebycode, appvar, kNested)
@@ -296,7 +311,10 @@ def renderCommand(apppath, addressdesc,
 		args.append(f.format(directparam))
 	
 	for k, v in paramsdict.items():
-		args.append(':%s => %s' % (paramnamebycode[k], f.format(v)))
+		try:
+			args.append(':%s => %s' % (paramnamebycode[k], f.format(v)))
+		except KeyError:
+			raise UntranslatedKeywordError('parameter', k, 'Ruby')
 	
 	if resulttype:
 		args.append(':result_type => %s' % f.format(resulttype))

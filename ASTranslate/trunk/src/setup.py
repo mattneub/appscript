@@ -23,7 +23,7 @@ from setuptools import setup, Extension
 import py2app
 from plistlib import Plist
 
-version = '0.5.1'
+version = '0.5.2'
 
 
 setup(

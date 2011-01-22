@@ -1,4 +1,9 @@
-2011-01-09 -- 0.13.1
+2011-01-22 -- 0.5.2
+
+- improved error reporting when translation fails
+
+
+2011-01-09 -- 0.5.1
 
 - fixed 10.4 compatibility [KW]
 

@@ -56,11 +56,17 @@ def renderCommand(appPath, addressdesc, eventcode,
 				dict([(v, k) for (k, v) in data[1][-1].items()])
 				)) for (name, data) in appdata.referencebyname().items() if data[0] == 'c'])
 	commandsbycode = _commandscache[(addressdesc.type, addressdesc.data)]
-	commandName, argNames = commandsbycode[eventcode]
+	try:
+		commandName, argNames = commandsbycode[eventcode]
+	except KeyError:
+		raise UntranslatedKeywordError('event', eventcode, 'Python command')
 	if directParam is not kNoParam:
 		args.append(renderobject(directParam))
 	for key, val in params.items():
-		args.append('%s=%s' % (argNames[key], renderobject(val)))
+		try:
+			args.append('%s=%s' % (argNames[key], renderobject(val)))
+		except KeyError:
+			raise UntranslatedKeywordError('parameter', k, 'Python command')
 	if resultType:
 		args.append('resulttype=%s' % renderobject(resultType))
 	if modeFlags & kae.kAEWaitReply != kae.kAEWaitReply:
