@@ -1,0 +1,4 @@
+include README
+recursive-include appscript_2x *.py *.sh *.h *.c *.css *.html *.png *.gif README
+recursive-include appscript_3x *.py *.sh *.h *.c *.css *.html *.png *.gif README
+

@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<title>py-osax manual | 2. Interface</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<style type="text/css" media="all"><!--@import url(../full.css);--></style>
+
+</head>
+<body>
+
+<h1><img src="../py-appscript-logo.png" alt="py-appscript" title="py-appscript" /></h1>
+
+<!-- top navigation -->
+<div class="navbar">
+<a href="01_introduction.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="03_examples.html">Next</a>
+
+<span>
+<a href="../appscript-manual/index.html">appscript</a> /
+<a href="../mactypes-manual/index.html">mactypes</a> /
+<strong><a href="../osax-manual/index.html">osax</a></strong> /
+<a href="../aem-manual/index.html">aem</a>
+</span>
+</div>
+
+<!-- content -->
+<div id="content">
+
+<h2>2. Interface</h2>
+
+<h3><code>osax.scriptingadditions()</code></h3>
+
+<p>The <code>scriptingadditions</code> function lists the names of all installed scripting additions:</p>
+
+<pre><code>import osax
+
+print osax.scriptingadditions()
+# Result: ["Digital Hub Scripting", "StandardAdditions", ...]</code></pre>
+
+
+<h3><code>osax.OSAX</code></h3>
+
+<p>The <code>OSAX</code> class represents a single scripting addition and its target application. <code>OSAX</code> is a subclass of appscript's <code>Application</code> class, and its constructor is the same apart from the additional <code>osaxname</code> argument:</p>
+
+<pre><code>OSAX(osaxname="StandardAdditions",
+        name=None, id=None, creator=None, url=None, terms=True)
+    osaxname : str -- name of scripting addition
+    name : str -- name or path of application, e.g. 'System Events', 
+            '/System/Library/CoreServices/System Events.app'
+    id : str -- bundle id of application,
+            e.g. 'com.apple.systemevents'
+    creator : bytes -- 4-character creator type of application,
+            e.g. b'sevs'
+    url : str -- eppc URL of remote process,
+            e.g. 'eppc://G5.local/System%20Events'
+    terms : module | bool -- if a module, get terminology from it;
+            if True, get terminology from target osax;
+            if False, use built-in terminology only</code></pre>
+
+
+</div>
+
+<!-- bottom navigation -->
+
+<div class="footer">
+<a href="01_introduction.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="03_examples.html">Next</a>
+</div>
+
+</body>
+</html>

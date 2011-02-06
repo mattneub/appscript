@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<title>py-aem manual | 3. Packing and unpacking data</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<style type="text/css" media="all"><!--@import url(../full.css);--></style>
+
+</head>
+<body>
+
+<h1><img src="../py-appscript-logo.png" alt="py-appscript" title="py-appscript" /></h1>
+
+<!-- top navigation -->
+<div class="navbar">
+<a href="02_apioverview.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="04_references.html">Next</a>
+
+<span>
+<a href="../appscript-manual/index.html">appscript</a> /
+<a href="../mactypes-manual/index.html">mactypes</a> /
+<a href="../osax-manual/index.html">osax</a> /
+<strong><a href="../aem-manual/index.html">aem</a></strong>
+</span>
+</div>
+
+<!-- content -->
+<div id="content">
+
+<h2>3. Packing and unpacking data</h2>
+
+<h3>Codecs</h3>
+
+<p>The <code>aem.Codecs</code> class provides methods for converting Python data to <code>aem.ae.AEDesc</code> objects, and vice-versa.</p>
+
+
+<pre><code>Codecs
+
+    Constructor:
+        __init__(self)
+
+    Methods:
+        pack(self, data) -- convert Python data to an AEDesc; will
+                raise a TypeError if data's type/class is unsupported
+            data : anything
+            Result : AEDesc
+
+        unpack(self, desc) -- convert an AEDesc to Python data; 
+                will return AEDesc if it's an unsupported type
+            desc : AEDesc
+            Result : anything</code></pre>
+
+
+
+<h3>AE types</h3>
+
+<p>The Apple Event Manager defines several types for representing type/class names, enumerator names, etc. that have no direct equivalent in Python. Accordingly, AEM defines several classes to represent these types on the Python side. All share a common abstract base class, <code>AETypeBase</code>:</p>
+
+<pre><code>
+
+AETypeBase -- Abstract base class
+
+    Constructor:
+        __init__(self, code)
+            code : bytes -- a four-character Apple event code
+
+    Properties:
+        code : bytes (read-only) -- Apple event code</code></pre>
+
+
+<p>The four concrete classes are:</p>
+
+<pre><code>AEType(AETypeBase) -- represents an AE object of typeType
+
+
+AEEnum(AETypeBase) -- represents an AE object of typeEnumeration
+
+
+AEProp(AETypeBase) -- represents an AE object of typeProperty
+
+
+AEKey(AETypeBase) -- represents an AE object of typeKeyword</code></pre>
+
+
+
+</div>
+
+<!-- bottom navigation -->
+
+<div class="footer">
+<a href="02_apioverview.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="04_references.html">Next</a>
+</div>
+
+</body>
+</html>

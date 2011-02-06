@@ -1,0 +1,209 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<title>py-aem manual | 6. Building and sending events</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<style type="text/css" media="all"><!--@import url(../full.css);--></style>
+
+</head>
+<body>
+
+<h1><img src="../py-appscript-logo.png" alt="py-appscript" title="py-appscript" /></h1>
+
+<!-- top navigation -->
+<div class="navbar">
+<a href="05_targetingapplications.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="07_findapp.html">Next</a>
+
+<span>
+<a href="../appscript-manual/index.html">appscript</a> /
+<a href="../mactypes-manual/index.html">mactypes</a> /
+<a href="../osax-manual/index.html">osax</a> /
+<strong><a href="../aem-manual/index.html">aem</a></strong>
+</span>
+</div>
+
+<!-- content -->
+<div id="content">
+
+<h2>6. Building and sending events</h2>
+
+<h3>The <code>Application</code> class's <code>event</code> method</h3>
+
+<p>The <code>Application</code> class's <code>event</code> method is used to create new Apple events targetted at the specified application.</p>
+
+<pre><code>        event(self, event, params={}, atts={}, returnid=kae.kAEAutoGenerateReturnID,
+                codecs=None) -- construct an Apple event
+            event : bytes -- 8-letter code indicating event's class and id,
+                    e.g. b'coregetd'
+            params : dict -- a dict of form {AE_code:anything,...} containing zero
+                    or more event parameters (message arguments)
+            atts : dict -- a dict of form {AE_code:anything,...} containing zero
+                    or more event attributes (event info)
+            returnid : int  -- reply event's ID
+            codecs : Codecs | None -- custom codecs to use when packing/unpacking
+                    this event; if None, codecs supplied in Application.__init__
+                    are used
+            Result : Event -- a ready-to-send Apple event</code></pre>
+
+
+<h3>The <code>Event</code> class</h3>
+
+<p>The <code>Event</code> class represents an Apple event that has been packed and is ready to send.</p>
+
+<pre><code>Event
+
+    Methods:
+
+        send(self, timeout=kae.kAEDefaultTimeout, flags=kae.kAEWaitReply) -- send event
+            timeout : int | kae.kAEDefaultTimeout | kae.kAENoTimeout -- no. of ticks
+                    to wait for application reply before raising timeout error
+            flags : int -- bitwise flags determining how event should be handled
+            Result : anything -- value returned by application, if any</code></pre>
+
+
+<h3>Constants</h3>
+
+<p>The following constants are defined in <code>aem.kae</code>.</p>
+
+<h4>Common parameter keys</h4>
+
+<pre><code>keyDirectObject
+keyAERequestedType</code></pre>
+
+<p>(The value for a <code>keyAERequestedType</code> parameter should be an <code>AEType</code> instance.)</p>
+
+<p>Other parameter keys are defined by individual applications.</p>
+
+
+<h4>Attribute keys</h4>
+
+<p>Most of the following attributes are already supplied by other means (e.g. <code>keyEventClassAttr</code>, <code>keyEventIDAttr</code> are supplied separately when creating an Apple event; <code>keyTimeoutAttr</code> when sending it) and are only of interest if unpacking AppleEvent descriptors manually. A few  may be used when passing an attributes dict to <code>Application.event</code> (<code>enumConsiderations</code>, <code>enumConsidsAndIgnores</code>, <code>keySubjectAttr</code>):</p>
+
+<pre><code>keyTransactionIDAttr
+keyReturnIDAttr
+keyEventClassAttr
+keyEventIDAttr
+keyAddressAttr
+keyOptionalKeywordAttr
+keyTimeoutAttr
+keyInteractLevelAttr
+keyEventSourceAttr
+keyOriginalAddressAttr
+keyAcceptTimeoutAttr
+enumConsiderations
+enumConsidsAndIgnores
+keySubjectAttr</code></pre>
+
+
+<p>The value of the <code>enumConsiderations</code> attribute should be a list containing zero or more <code>AEEnum</code> instances with the following codes:</p> 
+
+<pre><code>kAECase
+kAEDiacritic
+kAEWhiteSpace
+kAEHyphens
+kAEExpansion
+kAEPunctuation
+kASConsiderReplies
+kASNumericStrings</code></pre>
+
+<p>See the Mac OS X Apple Event Manager documentation for more info. Note that the <code>enumConsiderations</code> attribute is deprecated in favour of the <code>enumConsidsAndIgnores</code> attribute.</p>
+
+
+<p>The value of the <code>enumConsidsAndIgnores</code> attribute should be an integer composed from the sum of zero or more of the following bit masks:</p>
+
+<pre><code>kAECaseConsiderMask
+kAEDiacriticConsiderMask
+kAEWhiteSpaceConsiderMask
+kAEHyphensConsiderMask
+kAEExpansionConsiderMask
+kAEPunctuationConsiderMask
+kASConsiderRepliesConsiderMask
+kASNumericStringsConsiderMask
+
+kAECaseIgnoreMask
+kAEDiacriticIgnoreMask
+kAEWhiteSpaceIgnoreMask
+kAEHyphensIgnoreMask
+kAEExpansionIgnoreMask
+kAEPunctuationIgnoreMask
+kASConsiderRepliesIgnoreMask
+kASNumericStringsIgnoreMask</code></pre>
+
+
+<h4>Send flag constants</h4>
+
+<p>The value of the <code>send</code> method's <code>flags</code> argument should be an integer composed from the sum of zero or more of the following bit masks:</p>
+
+<pre><code>kAENoReply
+kAEQueueReply
+kAEWaitReply
+
+kAEDontReconnect
+
+kAEWantReceipt
+
+kAENeverInteract
+kAECanInteract
+kAEAlwaysInteract
+
+kAECanSwitchLayer</code></pre>
+
+<p>See the Mac OS X Apple Event Manager documentation for details.</p>
+
+
+<h4>Other constants</h4>
+
+<pre><code>kAutoGenerateReturnID</code></pre>
+
+
+<h3>Exception classes</h3>
+
+<h4><code>aem.EventError</code></h4>
+
+<p>The <code>aem.EventError</code> exception is raised by <code>Event.send</code> and represents an error raised by the target application or Apple Event Manager when sending an event.</p>
+
+<pre><code>EventError(aem.ae.MacOSError)
+
+    Properties:
+        errornumber : int -- Mac OS error number
+        errormessage : str -- application-supplied/generic error description
+        offendingobject : anything | None -- object that caused the error, 
+                                             if given by application
+        expectedtype : anything | None -- object that caused a coercion error, 
+                                          if given by application
+        partialresult : anything | None -- part of return value constructed 
+                                           before error occurred, if given 
+                                           by application
+
+    Methods:
+    
+        __int__(self) -- Mac OS error number
+
+        __str__(self) -- formatted description of error</code></pre>
+
+
+<h4><code>aem.ae.MacOSError</code></h4>
+
+<p>The <code>aem.ae.MacOSError</code> exception is raised by the low-level <code>aem.ae</code> extension and represents an error raised by the Apple Event Manager. The <code>aem</code> API usually traps these low-level errors and throws more descriptive errors in their place (e.g. <code>aem.EventError</code>).</p>
+
+<pre><code>MacOSError(Exception)
+
+    Attributes:
+        args : list -- contains a single integer, the Mac OS error number</code></pre>
+
+</div>
+
+<!-- bottom navigation -->
+
+<div class="footer">
+<a href="05_targetingapplications.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="07_findapp.html">Next</a>
+</div>
+
+</body>
+</html>

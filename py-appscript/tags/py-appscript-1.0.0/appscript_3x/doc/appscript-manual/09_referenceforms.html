@@ -1,0 +1,244 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<title>py-appscript manual | 9. Reference forms</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<style type="text/css" media="all"><!--@import url(../full.css);--></style>
+
+</head>
+<body>
+
+<h1><img src="../py-appscript-logo.png" alt="py-appscript" title="py-appscript" /></h1>
+
+<!-- top navigation -->
+<div class="navbar">
+<a href="08_realvsgenericreferences.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="10_referenceexamples.html">Next</a>
+
+<span>
+<strong><a href="../appscript-manual/index.html">appscript</a></strong> /
+<a href="../mactypes-manual/index.html">mactypes</a> /
+<a href="../osax-manual/index.html">osax</a> /
+<a href="../aem-manual/index.html">aem</a>
+</span>
+</div>
+
+<!-- content -->
+<div id="content">
+
+<h2>9. Reference forms</h2>
+
+<h3>Property reference</h3>
+
+<p>A property either contains a simple value or represents a one-to-one relationship between two application objects. Properties either describe the application object (its name, class, size, color, preferences, etc.) or provide a convenient reference to other object(s) of interest to users (e.g. home, current track).</p>
+
+<p>Syntax:</p>
+<pre><code>reference.property</code></pre>
+
+<p>Examples:</p>
+<pre><code>textedit.<em>name</em>
+textedit.documents[1].<em>text</em>
+finder.<em>home</em>.files.<em>name</em></code></pre>
+
+
+
+<h3>Element references</h3>
+
+<p>Elements represent a one-to-many relationship between application objects. Elements usually reflect the containment structure of the application object model and generally provide multiple ways of referencing some or all of those objects (e.g. characters/words/paragraphs of documents by index/relative-position/range/filter).</p>
+
+<h4>All elements</h4>
+
+<p>Syntax:</p>
+<pre><code>reference.elements</code></pre>
+
+<p>Examples:</p>
+<pre><code>finder.home.<em>folders</em>
+textedit.<em>windows</em>
+textedit.<em>documents[1]</em>.<em>paragraphs[1:5]</em></code></pre>
+
+
+<h4>By name</h4>
+	
+<p>Syntax:</p>
+<pre><code>elements[selector]
+        selector : str -- name of object (as matches its 'name' property)</code></pre>
+		
+<p>Examples:</p>
+<pre><code>disks['Macintosh HD']
+files['index.html']</code></pre>
+
+<p>Note: applications usually treat object names as case-insensitive. Where multiple element have the same name, a by-name reference only identifies the first element found with that name. (Tip: to identify <em>all</em> elements with a particular name, use a by-filter reference instead.)</p>
+
+
+<h4>By index</h4>
+	
+<p>Syntax:</p>
+<pre><code>elements[selector]
+        selector : int -- index of object</code></pre>
+		
+<p>Examples:</p>
+<pre><code>words[3]
+items[-1]</code></pre>
+
+<p>Note: elements are <em>one-indexed</em> (AEM-style indexing), not zero-indexed (Python-style indexing).</p>
+
+
+<h4>By id</h4>
+
+<p>Syntax:</p>
+<pre><code>elements.ID(selector)
+        selector : anything -- object's id</code></pre>
+
+<p>Examples:</p>
+<pre><code>windows.ID(4321)</code></pre>
+
+
+<h4>By absolute position</h4>
+
+<p>Syntax:</p>
+<pre><code>elements.first -- first element
+elements.last -- last element
+elements.middle -- middle element
+elements.any -- random element
+elements -- all elements</code></pre>
+	
+<p>Examples:</p>
+<pre><code>documents.first
+paragraphs.last
+files.any
+items</code></pre>
+
+
+<h4>By relative position</h4>
+
+<p>Syntax:</p>
+<pre><code>elements[selector].previous(class) -- nearest element of a given class to appear 
+                                       before the specified element
+elements[selector].next(class) -- nearest element of a given class to appear 
+                                   after the specified element
+        class : class -- class of element (see <a href="06_classesandenums.html">Classes and Enumerated Types</a>)</code></pre>
+
+<p>Examples:</p>
+<pre><code>words[3].next(k.word)
+paragraphs[-1].previous(k.character)</code></pre>
+
+
+<h4>By range</h4>
+
+<p>Range references select all elements between and including two references indicating the beginning and end of the range. The beginning and end references are normally declared relative to the container of the elements being selected. Appscript defines a constant, <code>con</code> (short for 'container'), to indicate this container; for example, to indicate the third paragraph of the currrent container object:</p>
+
+<pre><code>con.paragraphs[3]</code></pre>
+
+<p>For convenience, the range reference also allows beginning and end references to be written in shorthand form where their element class is the same as the elements being selected; thus:</p>
+
+<pre><code>ref.paragraphs[con.paragraphs[3]:con.paragraphs[-1]]</code></pre>
+
+<p>can also be written as:</p>
+
+<pre><code>ref.paragraphs[3:-1]</code></pre>
+
+<p>Some applications can handle more complex range references. For example, the following will work in Tex-Edit Plus:</p>
+
+<pre><code>ref.words[con.characters[5]:con.paragraphs[-2]]</code></pre>
+
+<p>Syntax:</p>
+<pre><code>elements[start:stop]
+        start : str | int | reference -- beginning of range
+        stop : str | int | reference -- end of range</code></pre>
+	
+<p>Examples:</p>
+<pre><code>folders['Documents':'Movies']
+documents[1:3]
+text[con.characters[5]:con.words[-2]]</code></pre>
+
+<p>Note: elements are <em>one-indexed</em> (AEM-style indexing), not zero-indexed (Python-style indexing).</p>
+
+<h4>By filter</h4>
+
+<p>A reference to each element that satisfies one or more conditions specified by a test expression:</p>
+
+<pre><code>elements[testexpression]</code></pre>
+
+<p>Test expressions consist of the following:</p>
+
+<ul>
+<li><p>A reference to each element being tested, represented by appscript's <code>its</code> constant. This object supports all valid reference forms, allowing you to construct references to its properties and elements. For example:</p>
+	
+<pre><code>its
+its.size
+its.words.first</code></pre></li>
+
+<li><p>One or more conditional tests, implemented as operators on the reference being tested. Each method takes a test reference or a value as its sole argument.</p>
+
+<p>Syntax:</p>
+<pre><code>reference &lt; value
+reference &lt;= value
+reference == value
+reference != value
+reference &gt; value
+reference &gt;= value
+reference.beginswith(value)
+reference.endswith(value)
+reference.contains(value)
+reference.isin(value)
+reference.doesnotbeginwith(value)
+reference.doesnotendwith(value)
+reference.doesnotcontain(value)
+reference.isnotin(value)
+        value : reference or value</code></pre>
+
+<p>Examples:</p>
+<pre><code>its == ''
+its.size &gt; 1024
+its.words.first.beginswith('A')
+its.characters.first == its.characters.last</code></pre>
+
+<li><p>Zero or more logical tests, implemented as properties/methods on conditional tests. The <code>AND()</code> and <code>OR()</code> methods take one or more conditional or logic tests as arguments.</p>
+
+<p>Syntax:</p>
+<pre><code>test.AND(test, ...)
+test.OR(test, ...)
+test.NOT</code></pre>
+
+<p>Examples:</p>
+<pre><code>(its == '').NOT
+(its.size &gt; 1024).AND(its.size &lt; 10240)
+its.words[1].beginswith('A').OR(
+    its.words[2].contains('ce'), its.words[1] == 'Foo')</code></pre></li>
+</ul>
+
+<p class="hilitebox">Note: conditional tests must be written with a test reference as the first operand otherwise an error will occur, e.g. write <code>its.size &gt;= 1024</code> <em>not</em> <code>1024 &lt; its.size</code></p>
+
+
+<h3>Insertion location</h3>
+
+<p>Insertion locations can be specified at the beginning or end of all elements, or before or after a specified element or element range.</p>
+
+<p>Syntax:</p>
+<pre><code>elements.beginning
+elements.end
+elements[selector].before
+elements[selector].after</code></pre>
+	
+<p>Examples:</p>
+<pre><code>documents.end
+paragraphs[1].before</code></pre>
+
+
+
+</div>
+
+<!-- bottom navigation -->
+
+<div class="footer">
+<a href="08_realvsgenericreferences.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="10_referenceexamples.html">Next</a>
+	
+</div>
+
+</body>
+</html>

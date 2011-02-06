@@ -1,0 +1,395 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<title>py-aem manual | 4. References</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<style type="text/css" media="all"><!--@import url(../full.css);--></style>
+
+</head>
+<body>
+
+<h1><img src="../py-appscript-logo.png" alt="py-appscript" title="py-appscript" /></h1>
+
+<!-- top navigation -->
+<div class="navbar">
+<a href="03_packingandunpackingdata.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="05_targetingapplications.html">Next</a>
+
+<span>
+<a href="../appscript-manual/index.html">appscript</a> /
+<a href="../mactypes-manual/index.html">mactypes</a> /
+<a href="../osax-manual/index.html">osax</a> /
+<strong><a href="../aem-manual/index.html">aem</a></strong>
+</span>
+</div>
+
+<!-- content -->
+<div id="content">
+
+<h2>4. References</h2>
+
+<h3>About references</h3>
+
+<p>An Apple Event Object Model query (a.k.a. "reference") essentially consists of a linked list made up of one or more Apple event descriptors (AEDescs) of, for the most part, <code>typeObjectSpecifier</code>. Object specifiers are used to identify properties and elements in the application's AEOM. Each object specifer contains four fields:</p>
+
+<dl>
+<dt>want</dt>
+<dd>four-char-code indicating desired element(s)'s class code (e.g. 'docu' = document), or 'prop' if it's a property specifier</dd>
+
+<dt>from</dt>
+<dd>an object specifer identifying container object(s)</dd>
+
+<dt>form</dt>
+<dd>four-char-code indicating how the element(s) should be selected (by index ['indx'], name ['name'], etc.), or 'prop' if it's a property specifier</dd>
+
+<dt>seld</dt>
+<dd>selector data (e.g. in a by-name specifier, this would be a string)</dd>
+</dl>
+
+<p>The Apple Event Manager (and, in turn, the <code>aem.ae</code> extension) provides several ways to construct object specifiers and assemble them into a complete reference, but these are all rather verbose and low-level. AEM hides all these details behind an object-oriented wrapper that uses chained property and method calls to gather the data needed to create object specifiers and assemble them into linked lists.</p>
+
+<p>For example, consider the reference <code>text of document 1</code>. The code for constructing this reference using the low-level <code>aem.ae</code> bridge would be:</p>
+
+<pre><code>rootref = aem.ae.newdesc(b'null', b'')
+
+docref = aem.ae.newrecord().coerce(b'obj ')
+docref.setparam(b'want', aem.ae.newdesc(b'type', b'docu'))
+docref.setparam(b'from', rootref)
+docref.setparam(b'form', aem.ae.newdesc(b'enum', b'indx'))
+docref.setparam(b'seld', aem.ae.newdesc(b'long', b'\x00\x00\x00\x01'))
+
+textref = aem.ae.newrecord().coerce(b'obj ')
+textref.setparam(b'want', aem.ae.newdesc(b'type', b'prop'))
+textref.setparam(b'from', docref)
+textref.setparam(b'form', aem.ae.newdesc(b'enum', b'prop'))
+textref.setparam(b'seld', aem.ae.newdesc(b'type', b'ctxt'))
+
+print(textref)
+# &lt;aem.ae.AEDesc type='obj ' size=152&gt;</code></pre>
+
+<p>This code works by creating an AEDesc of <code>typeObjectSpecifier</code> to represent each specifier and populating its fields one at a time. Each AEDesc is nested within the next to form a linked list of object specifier records; the last (innermost) descriptor in the finished list indicates the reference's root object in the AEOM (in this case, the <code>application</code> object, which is represented by a null descriptor).</p>
+
+<p>Now, compare the above with the AEM equivalent:</p>
+
+<pre><code>app.elements(b'docu').byindex(1).property(b'ctxt')</code></pre>
+
+<p>As you can see, AEM still uses low-level four-character codes to identify the <code>text</code> property and <code>document</code> class, but is otherwise a high-level object-oriented API. Once again, each reference begins with a root object, in this case <code>aem.app</code>. New AEM specifiers are constructed by method calls; each call returning a new specifier object whose own methods can be called, and so on. This allows clients to build up a chain of AEM specifier objects that AEM can later pack into AEDescs for sending to applications.</p>
+
+<p>One more thing to notice: in AEM, specifying a class of elements and indicating which of those elements should be selected are performed by separate method calls, although the information provided will eventually be packed into a single AEDesc of <code>typeObjectSpecifier</code>. This two-step approach makes it easier to integrate AEM with the higher-level appscript bridge, which also uses two calls to construct element specifiers (one to specify the element class, e.g. <code>documents</code>, and another to specify the selection, e.g. <code>[1]</code>).</p>
+
+<p>Note that <code>app.elements(b'docu')</code> is itself a valid reference, identifying <em>all</em> the document elements of the application class. You do not have to call an explicit <code>all</code> selector (indeed, none is provided) as AEM automatically handles the details for you. AEM even allows for some convenient shorthand, e.g. writing:</p>
+
+<pre><code>app.elements(b'docu').byfilter(...).first</code></pre>
+
+<p>is equivalent to writing:</p>
+
+<pre><code>app.elements(b'docu').byfilter(...).elements(b'docu').first</code></pre>
+
+<p>This allows clients to specify the first document that matches the given condition without having to specify the element class a second time. In AppleScript, the equivalent to this is:</p>
+
+<pre><code>first document whose ...</code></pre>
+
+<p>which is short for:</p>
+
+<pre><code>first document of (documents whose ...)</code></pre>
+
+<p>(Again, this additional behaviour primarily exists to serve the syntactically sugared appscript layer.)</p>
+
+
+
+<h3>Reference forms</h3>
+
+<p>AEM defines a number of classes representing each of the AEOM reference forms. There are eight AEOM reference forms:</p>
+
+<ul>
+<li>insertion location</li>
+<li>property</li>
+<li>element by absolute position (index or ordinal)</li>
+<li>element by name</li>
+<li>element by id</li>
+<li>element by relative position</li>
+<li>elements by range</li>
+<li>elements by test</li>
+</ul>
+
+<p>(Actually, there's nine forms if you count the 'user property' reference form, although this is only used by OSA (e.g. AppleScript Editor) applets to identify script properties. AEM supports this extra form more for sake of completeness than usefulness.)</p>
+
+<p>Each of these reference forms is represented by a different AEM specifier class, apart from the absolute position form which is represented by three different classes according to the kind of selector used: a numerical index (e.g. <code>1</code>, <code>-3</code>), a named ordinal identifying a single element (<code>first</code>, <code>middle</code>, <code>last</code>, <code>any</code>), or a named ordinal identifying all elements (<code>all</code>).</p>
+
+<p>The following diagram shows the AEM reference class hierarchy (slightly simplified for legibility); concrete classes are shown in bold:</p>
+
+<p><img src="aemreferenceinheritance.gif" alt="AEM reference class hierarchy" title="AEM reference class hierarchy" /></p>
+
+<p>Note that the user shouldn't instantiate these classes directly; instead, AEM will instantiate them as appropriate when the client calls the properties/methods of other AEM reference objects, starting with the <code>app</code>, <code>con</code> and <code>its</code> objects that form the root of all AEM references.</p>
+
+<p>In fact, it really isn't necessary to remember the reference class hierarchy at all, only to know which concrete classes implement which methods. All user-accessible properties and methods are defined by just four superclasses:</p>
+
+<dl>
+<dt><code>Query</code></dt>
+<dd>Defines comparison and hashing methods.</dd>
+
+<dt><code>PositionSpecifier</code></dt>
+<dd>Defines methods for identifying properties and all elements, insertion locations, elements by relative position. Also defines comparison and logical test methods for use in constructing its-based references.</dd>
+
+<dt><code>MultipleElements</code></dt>
+<dd>Defines methods for identifying specific elements of a multi-element reference.</dd>
+
+<dt><code>Test</code></dt>
+<dd>Defines logical test methods for use in constructing its-based references.</dd>
+</dl>
+
+
+
+<h3>Base classes</h3>
+
+<h4>Basic methods</h4>
+
+<pre><code>Query -- Base class for all reference form and test clause classes.
+    __hash__(self) -- AEM references can be used as dictionary keys
+
+    __eq__(self, value) -- AEM references can be compared for equality
+
+    __ne__(self, value)</code></pre>
+
+
+<h4>Properties and methods for all position specifiers</h4>
+
+<pre><code>PositionSpecifier(Specifier) -- base class for all property and element
+        reference forms (i.e. all forms except insertion location)
+
+    Properties:
+        beginning -&gt; InsertionSpecifier
+        end -&gt; InsertionSpecifier
+        before -&gt; InsertionSpecifier
+        after -&gt; InsertionSpecifier
+
+    Methods:
+        property(self, propertycode)
+            propertycode : bytes -- four-char code
+            Result : Property
+
+        userproperty(self, name)
+            name : str
+            Result : UserProperty
+
+        elements(self, classcode)
+            classcode : bytes -- four-char code
+            Result : AllElements
+
+        previous(self, classcode)
+            classcode : bytes -- four-char code
+            Result : Element
+
+        next(self, classcode)
+            classcode : bytes -- four-char code
+            Result : Element
+        
+        -- Note: following methods are for use on
+           its-based references only
+
+        gt(self, val) -- self is greater than value
+            val : anything
+            Result : Test
+        
+        ge(self, val) -- self is greater than or equal to value
+            val : anything
+            Result : Test
+            
+        eq(self, val) -- self equals value
+            val : anything
+            Result : Test
+    
+        ne(self, val) -- self does not equal value
+            val : anything
+            Result : Test
+    
+        lt(self, val) -- self is less than value
+            val : anything
+            Result : Test
+    
+        le(self, val) -- self is less than or equal to value
+            val : anything
+            Result : Test
+    
+        beginswith(self, val) -- self begins with value
+            val : anything
+            Result : Test
+    
+        endswith(self, val) -- self ends with value
+            val : anything
+            Result : Test
+    
+        contains(self, val) -- self contains value
+            val : anything
+            Result : Test
+    
+        isin(self, val) -- self is in value
+            val : anything
+            Result : Test</code></pre>
+
+
+<h4>Properties and methods for all multi-element specifiers</h4>
+
+<pre><code>MultipleElements(PositionSpecifier) -- base class for all multi-
+        element reference forms
+
+    Properties:
+        first -&gt; Element
+        middle -&gt; Element
+        last -&gt; Element
+        any -&gt; Element
+
+    Methods:
+        byindex(self, key)
+            key : int -- normally an integer, though some apps may 
+                    accept other types (e.g. Finder accepts an Alias)
+            Result : ElementByIndex
+
+        byname(self, key)
+            key : str -- the object's name
+            Result : ElementByName
+
+        byid(self, key)
+            key : anything -- the object's unique id
+            Result : ElementByID
+
+        byrange(self, startref, endref)
+            startref : Element -- an app- or con-based reference
+            endref : Element -- an app- or con-based reference
+            Result : ElementByRange
+
+        byfilter(self, testref)
+            testref : Test -- an its-based reference
+            Result : ElementsByFilter</code></pre>
+
+<h4>Properties and methods for all test clause classes</h4>
+
+<pre><code>Test(Query) -- represents a comparison/logic test
+
+    Properties:    
+        NOT -&gt; Test -- apply a logical 'not' test to self
+
+    Methods:
+        AND(self, *operands) -- apply a logical 'and' test to self and
+                one or more other operands
+            *operands : Test -- one or more comparison/logic test
+                objects
+            Result : Test
+            
+        OR(self, *operands) -- apply a logical 'or' test to self and one
+                    or more other operands
+            *operands : Test -- one or more comparison/logic test
+                objects
+            Result : Test</code></pre>
+
+
+<h3>Concrete classes</h3>
+
+<h4>Insertion location reference form</h4>
+
+<pre><code>InsertionSpecifier(Specifier) -- refers to insertion point before or after/at
+        beginning or end of element(s); e.g. ref.before</code></pre>
+
+<h4>Property reference forms</h4>
+
+<pre><code>Property(PositionSpecifier) -- refers to a property (whose value
+        may be a basic type, application object or reference);
+        e.g. ref.property(b'ctxt')
+
+
+UserProperty(PositionSpecifier) -- refers to a user-defined property 
+        (typically in an OSA applet); e.g. ref.userproperty('myVar')</code></pre>
+
+
+<h4>Single element reference forms</h4>
+
+
+<pre><code>ElementByIndex(SingleElement) -- refers to a single element in the referenced 
+        container object(s) by index; e.g. ref.byindex(3)
+
+ElementByName(SingleElement) -- refers to a single element in the referenced 
+        container object(s) by name; e.g. ref.byname('Documents')
+
+
+ElementByID(SingleElement) -- refers to a single element in the referenced container 
+        object(s) by unique id; e.g. ref.byid(3456)
+
+
+ElementByOrdinal(SingleElement) -- refers to first, middle, last or any element in 
+        the referenced container object(s); e.g. ref.first
+
+
+ElementByRelativePosition(SingleElement) -- refers to the previous or next element 
+        of the given class in the referenced container object(s); 
+        e.g. ref.next(b'cpar')</code></pre>
+
+
+<h4>Multiple element reference forms</h4>
+
+<pre><code>ElementsByRange(MultipleElements) -- refers to a range of elements
+        in the referenced container object(s) (including start and 
+        end points); e.g. ref.byrange(con.elements(b'cpar').byindex(2),
+                con.elements(b'cpar').last)
+
+
+ElementsByFilter(MultipleElements) -- refers to all elements in the
+        referenced container object(s) that fulfill a given condition; 
+        e.g. ref.byfilter(its.name.beginswith('a'))
+
+
+AllElements(MultipleElements) -- refers to all elements of 
+        the given class in the referenced container object(s); 
+        e.g. ref.elements(b'docu')</code></pre>
+
+
+<h4>Tests</h4>
+
+<p>The <code>Test</code> class represents a comparison test or logical test, and defines methods for composing additional logical tests on top of these. Each kind of test clause is represented by a different subclass of the main <code>Test</code> class. The details are not that important, however, so they're not listed here.</p>
+
+
+
+
+<h4>Reference Roots</h4>
+
+<p>The following classes are used to construct standard AEM references:</p>
+
+<pre><code>ApplicationRoot(ReferenceRoot) -- the exported 'app' variable contains
+        an instance of this class
+
+CurrentContainer(ReferenceRoot) -- the exported 'con' variable contains
+        an instance of this class
+
+ObjectBeingExamined(ReferenceRoot) -- the exported 'its' variable contains
+        an instance of this class</code></pre>
+
+<p>Clients shouldn't instantiate the above classes directly; instead, they should refer to the <code>app</code>, <code>con</code> and <code>its</code> variables exported by AEM.</p>
+
+<p>The <code>CustomRoot</code> class is used to construct AEM references with a non-standard root:</p>
+
+<pre><code>CustomRoot(ReferenceRoot) -- used to construct references with
+        a custom root
+
+    Constructor:
+
+        __init__(self, rootobj)
+            rootobj : anything -- value to use as innermost container
+                    in nested object specifiers</code></pre>
+
+<p>AEM exports the <code>CustomRoot</code> class via the <code>customroot</code> variable.</p>
+
+
+</div>
+
+<!-- bottom navigation -->
+
+<div class="footer">
+<a href="03_packingandunpackingdata.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="05_targetingapplications.html">Next</a>
+</div>
+
+</body>
+</html>

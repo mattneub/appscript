@@ -1,0 +1,68 @@
+About appscript
+===============
+
+Appscript is a high-level, user-friendly Apple event bridge that allows 
+you to control AppleScriptable Mac OS X applications from Python.
+
+
+Requirements
+------------
+
+Appscript supports Python 2.3 to 2.7, and Python 3.1 and later.
+
+Appscript requires Mac OS X 10.4 or later.
+
+
+Installation
+------------
+
+Appscript is packaged using the standard Python Distribution Utilities 
+(a.k.a. Distutils). To install appscript, cd to the appscript-1.0.0 
+directory and run:
+
+  python setup.py install
+
+or:
+
+  python3 setup.py install
+
+
+Setuptools/Distribute (available from <http://cheeseshop.python.org/pypi>) 
+will be used if installed, otherwise setup.py will revert to Distutils.
+
+Building appscript from source requires the gcc compiler supplied with 
+Apple's Xcode IDE. Xcode can be obtained from Mac OS X installer disks
+or <http://developer.apple.com>.
+
+
+Notes
+-----
+
+- Python 2.x documentation and sample scripts can be found in the 
+  appscript_2x/doc and appscript_2x/sample directories.
+
+- Python 3.x documentation and sample scripts can be found in the 
+  appscript_3x/doc and appscript_3x/sample directories.
+
+- Developer tools for exporting application dictionaries (ASDictionary) 
+  and converting application commands from AppleScript to appscript 
+  syntax (ASTranslate) are available separately:
+
+    http://appscript.sourceforge.net/tools.html
+
+  ASDictionary 0.13.1 or later is also required to use appscript's built-in 
+  help() method. If ASDictionary isn't installed, interactive help won't be 
+  available but appscript will continue to operate as normal.
+
+
+Copyright
+---------
+
+Appscript is released into the public domain, except for the following code:
+
+- portions of ae.c, which are Copyright (C) the original authors; see code 
+  for details
+
+- SendThreadSafe.h/SendThreadSafe.m, which are modified versions of Apple 
+  code (http://developer.apple.com/samplecode/AESendThreadSafe); see code 
+  for details

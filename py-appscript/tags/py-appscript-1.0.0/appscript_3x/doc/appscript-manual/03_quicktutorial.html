@@ -1,0 +1,176 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<title>py-appscript manual | 3. Quick tutorial</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<style type="text/css" media="all"><!--@import url(../full.css);--></style>
+
+</head>
+<body>
+
+<h1><img src="../py-appscript-logo.png" alt="py-appscript" title="py-appscript" /></h1>
+
+<!-- top navigation -->
+<div class="navbar">
+<a href="02_aboutappscripting.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="04_gettinghelp.html">Next</a>
+
+<span>
+<strong><a href="../appscript-manual/index.html">appscript</a></strong> /
+<a href="../mactypes-manual/index.html">mactypes</a> /
+<a href="../osax-manual/index.html">osax</a> /
+<a href="../aem-manual/index.html">aem</a>
+</span>
+</div>
+
+<!-- content -->
+<div id="content">
+
+<h2>3. A quick tutorial</h2>
+
+<p>The following tutorial provides a practical taste of application scripting with appscript. Later chapters cover the technical details of appscript usage that are mostly skimmed over here.</p>
+
+<h3>'Hello World' tutorial</h3>
+
+<p>This tutorial uses appscript, TextEdit and the interactive command line <code>python</code> interpreter to perform a simple 'Hello World' exercise.</p>
+
+<p class="hilitebox">Caution: It is recommended that you do not have any other documents open in TextEdit during this tutorial, as accidental modifications are easy to make and changes to existing documents are not undoable.</p>
+
+<p>To begin, launch Terminal.app and type <tt>python</tt> followed by a newline to launch the <code>python</code> interpreter:</p>
+
+<pre><code>brian% python
+Python 3.0 (r30:67503, Dec 29 2008, 20:39:59) 
+[GCC 4.0.1 (Apple Inc. build 5465)] on darwin
+Type "help", "copyright", "credits" or "license" for more information.
+&gt;&gt;&gt; </code></pre>
+
+<h4>Target TextEdit</h4>
+
+<p>The first step is to import the appscript module. Appscript exports only a few public attributes - <code>app</code>, <code>k</code>, <code>con</code>, <code>its</code>, <code>CommandError</code> and <code>ApplicationNotFoundError</code> - so it's common practice to import these into the top-level namespace for convenience:</p>
+
+<pre><code>&gt;&gt;&gt; from appscript import *
+&gt;&gt;&gt; </code></pre>
+
+<p>Once appscript is imported, create new <code>app</code> object, identifying the application to be manipulated, and assign it to a variable, <code>te</code>, for easy reuse:</p>
+
+<pre><code>&gt;&gt;&gt; te = app('TextEdit')
+&gt;&gt;&gt; </code></pre>
+
+<p>The application may be identified by name, path, bundle ID, creator type or, if running remotely, URL. If the application is local and is not already running, it will be launched automatically for you.</p>
+
+<h4>Create a new document</h4>
+
+<p>First, create a new TextEdit document by making a new <code>document</code> object. This is done using the <code>make</code> command, passing it a single parameter, <code>new=k.document</code>, indicating the type of object to create:</p>
+
+<pre><code>&gt;&gt;&gt; te.make(new=k.document)
+app('/Applications/TextEdit.app').documents[1]
+&gt;&gt;&gt; </code></pre>
+
+<p>Because <code>document</code> objects are always elements of the root <code>application</code> class, applications such as TextEdit can usually infer the location at which the new <code>document</code> object should appear. At other times, you need to supply an <code>at</code> parameter that indicates the desired location.</p>
+
+<p>As you can see, the <code>make</code> command returns a reference identifying the newly-created object. This reference can be assigned to a variable for easy reuse. Use the <code>make</code> command to create another document, this time assigning its result to a variable, <code>doc</code>:</p>
+
+<pre><code>&gt;&gt;&gt; doc = te.make(new=k.document)
+&gt;&gt;&gt; </code></pre>
+
+<h4>Set the document's content</h4>
+
+<p>The next step is to set the document's content to the string <code>"Hello World"</code>. Every TextEdit document has a property, <code>text</code>, that represents the entire text of the document. This property is both readable and writeable, allowing you to retrieve and/or modify the document's textual content as unstyled unicode text.</p>
+
+<p>Setting a property's value is done using the <code>set()</code> command. The <code>set()</code> command is exposed as a method of the root <code>application</code> class and has two parameters: a direct (positional) parameter containing reference to the property (or properties) to be modified, and a keyword parameter, <code>to</code>, containing the new value. In this case, the direct parameter is a reference to the new document's <code>text</code> property, <code>doc.text</code>, and the <code>to</code> parameter is the string <code>"Hello World"</code>:</p>
+
+<pre><code>&gt;&gt;&gt; te.set(doc.text, to='Hello World')
+&gt;&gt;&gt; </code></pre>
+
+<p>The front TextEdit document should now contain the text '<tt>Hello World</tt>'.</p>
+
+<p>Because the above expression is a bit unwieldy to write, appscript allows it to be written in a more elegant OO-like format as a special case, where the <code>set()</code> command is called upon the reference and the <code>to</code> keyword is omitted:</p>
+
+<pre><code>doc.text.set('Hello World')</code></pre>
+
+<p>Appscript converts this second form to the first form internally, so the end result is exactly the same. Appscript supports several such special cases, and these are described in the chapter on Application Commands. Using these special cases produces more elegant, readable source code, and is recommended.</p>
+
+<h4>Get the document's content</h4>
+
+<p>Retrieving the document's text is done using the <code>get()</code> command:</p>
+
+<pre><code>&gt;&gt;&gt; doc.text.get()
+'Hello World'
+&gt;&gt;&gt; </code></pre>
+
+<p>This may seem counter-intuitive if you're used to dealing with AppleScript or object-oriented Python references, where evaluating a literal reference returns the <em>value</em> identified by that reference. However, always remember that appscript 'references' are really first-class query objects: while the syntax may look familiar, any similarity is purely superficial. For example, when evaluating the literal reference:</p>
+
+<pre><code>te.documents[1].text</code></pre>
+
+<p>the result is another reference, <code>app('/Applications/TextEdit.app').documents[1].text</code>, not the value being referenced (<tt>'Hello World'</tt>). To get the value being referenced, you have to pass the reference as the direct argument to TextEdit's <code>get()</code> command:</p>
+
+<pre><code>&gt;&gt;&gt; te.get(doc.text)
+'Hello World!'
+&gt;&gt;&gt; </code></pre>
+
+<p>As usual, appscript provides alternative convenience forms that allow this to be written as:</p>
+
+<pre><code>doc.text.get()</code></pre>
+
+<p>or even:</p>
+
+<pre><code>doc.text()</code></pre>
+
+
+<p>Depending on what sort of attribute(s) the reference identifies, <code>get()</code> may return a primitive value (number, string, list, dict, etc.), or it may return another reference, or list of references, e.g.:</p>
+
+<pre><code>&gt;&gt;&gt; doc.text.get()
+'Hello World!'
+&gt;&gt;&gt; te.documents[1].get()
+app('/Applications/TextEdit.app').documents[1]
+&gt;&gt;&gt; te.documents.get()
+[app('/Applications/TextEdit.app').documents[1], 
+    app('/Applications/TextEdit.app').documents[2]]
+&gt;&gt;&gt; te.documents.text.get()
+['Hello World', '']
+&gt;&gt;&gt; </code></pre>
+
+
+
+<h4>More on <code>make()</code></h4>
+
+<p>The above exercise uses two commands to create a new TextEdit document containing the text '<tt>Hello World</tt>'. It is also possible to perform both operations using the <code>make()</code> command alone by passing the value for the new document's <code>text</code> property via the <code>make()</code> command's optional <code>with_properties</code> parameter:</p> 
+
+<pre><code>&gt;&gt;&gt; te.make(new=k.document, with_properties={k.text: 'Hello World'})
+app('/Applications/TextEdit.app').documents[1]
+&gt;&gt;&gt; </code></pre>
+
+<p>Incidentally, you might note that every time the <code>make()</code> command is used, it returns a reference to document <em>1</em>. TextEdit identifies <code>document</code> objects according to the stacking order of their windows, with document 1 being frontmost. When the window stacking order changes, whether as a result of a script command or GUI-based interaction, so does the order of their corresponding <code>document</code> objects. This means that a previously created reference such as <code>app('/Applications/TextEdit.app').documents[1]</code> may now identify a different <code>document</code> object to before! Some applications prefer to return references that identify objects by name or unique ID rather than index to reduce or eliminate the potential for confusion, but it's an issue you should be aware of, particularly with long-running scripts where there is greater opportunity for unexpected third-party interactions to throw a spanner in the works.</p>
+
+
+<h4>More on manipulating <code>text</code></h4>
+
+<p>In addition to getting and setting a document's entire text by applying <code>get()</code> and <code>set()</code> commands to <code>text</code> property, it's also possible to manipulate selected sections of a document's text directly. TextEdit's <code>text</code> property contains a <code>text</code> object, which in turn has <code>character</code>, <code>word</code> and <code>paragraph</code> elements, all of which can be manipulated using a variety of commands - <code>get()</code>, <code>set()</code>, <code>make()</code>, <code>move</code>, <code>delete</code>, etc. For example, to set the size of the first character of every paragraph of the front document to 24pt:</p>
+
+<pre><code>te.documents[1].text.paragraphs.size.set(24)</code></pre>
+
+<p>Or to insert a new paragraph at the end of the document:</p>
+
+<pre><code>te.make(
+        new=k.paragraph,
+        with_data='Hello Again, World\n',
+        at=te.documents[1].text.paragraphs.end)</code></pre>
+
+
+
+</div>
+
+<!-- bottom navigation -->
+
+<div class="footer">
+<a href="02_aboutappscripting.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="04_gettinghelp.html">Next</a>
+	
+</div>
+
+</body>
+</html>
