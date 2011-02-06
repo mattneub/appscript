@@ -14,7 +14,7 @@ else:
 
 setup(
 		name = "appscript",
-		version = "0.22.0",
+		version = "1.0.0",
 		description = "Control AppleScriptable applications from Python.",
 		url='http://appscript.sourceforge.net',
 		license='Public Domain',
@@ -41,7 +41,7 @@ setup(
 		package_dir = {'': os.path.join(root_dir, 'lib')},
 		classifiers = [
 			'License :: Public Domain',
-			'Development Status :: 4 - Beta',
+			'Development Status :: 5 - Production/Stable',
 			'Operating System :: MacOS :: MacOS X',
 			'Programming Language :: Python :: 2',
 			'Programming Language :: Python :: 3',

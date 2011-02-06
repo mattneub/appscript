@@ -66,7 +66,7 @@ First checked in.
 
 /*
 
-2007/06/24 -- Modified by HAS to make AESendMessageThreadSafeSynchronous API-compatible with AESendMessage; renamed AE_SendMessageThreadSafe.
+2007/06/24 -- Modified to make AESendMessageThreadSafeSynchronous API-compatible with AESendMessage; renamed AE_SendMessageThreadSafe.
 
 */
 
