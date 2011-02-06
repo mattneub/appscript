@@ -106,14 +106,12 @@ app('TextEdit').documents.count.help()</code></pre>
 <p>ASTranslate, available from the appscript website's <a href="http://appscript.sourceforge.net/tools.html">tools page</a>, provides a simple tool for translating application commands from AppleScript to Python syntax - useful when help is needed in converting existing AppleScript code to Python. For example, the following AppleScript selects every file in the Home folder:</p>
 
 <pre><code>tell application "Finder"
-	select (every file of home whose name extension is in {"htm", "html"})
+    select (every file of home whose name extension is in {"htm", "html"})
 end tell</code></pre>
 
-<p>To obtain the appscript equivalent, paste this script into ASTranslate and select <code>Execute</code> from the <code>Document</code> menu. ASTranslate will intercept any Apple events sent by AppleScript and display them appscript format:</p>
+<p>To obtain the appscript equivalent, paste this script into ASTranslate and select <code>Execute</code> from the <code>Document</code> menu. ASTranslate will intercept any Apple events sent by AppleScript and display them in appscript format:</p>
 
-<pre><code>app(u'Finder').home.files[its.name_extension.isin([u'htm', u'html'])].select()
-
-OK</code></pre>
+<pre><code>app(u'Finder').home.files[its.name_extension.isin([u'htm', u'html'])].select()</code></pre>
 
 <p>See ASTranslate's documentation for more information.</p>
 

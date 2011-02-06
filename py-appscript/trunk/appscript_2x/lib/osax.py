@@ -32,7 +32,7 @@ class SdefParser:
 		Note:
 		
 		- OSAX terminology can only be retrieved via OSAGetAppTerminology or OSACopyScriptingDefinition;
-			while the latter is more reliable, it is deprecated in 32-bit and absent in 64-bit Carbon APIs.
+			while the former is more reliable, it is deprecated in 32-bit and absent in 64-bit Carbon APIs.
 		
 		- Four char codes that contain non-printing codes in aetes (e.g. the 'caution' enum in StandardAdditions has code '\x00\x00\x00\x02') do not convert to valid code attributes in sdefs.
 		

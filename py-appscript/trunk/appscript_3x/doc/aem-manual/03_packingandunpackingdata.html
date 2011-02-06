@@ -50,31 +50,7 @@
         unpack(self, desc) -- convert an AEDesc to Python data; 
                 will return AEDesc if it's an unsupported type
             desc : AEDesc
-            Result : anything
-        
-        # compatibility options
-        
-        addunittypes(self, typedefs) -- register custom unit type 
-                definitions
-            types : list -- a list of tuples, where each tuple is 
-                    of form (name, code, pack_func, unpack_func) 
-                    or (name, code); if the pack and unpack 
-                    functions are omitted, the AEDesc data is 
-                    packed/unpacked as a double-precision float
-        
-        dontcacheunpackedspecifiers(self) -- by default, object 
-                specifier descriptors returned by an application 
-                are reused for efficiency; invoke this method to 
-                use AppleScript-style behavior instead (i.e. fully 
-                unpacking and repacking object specifiers each time) 
-                for better compatibility with problem applications
-        
-        packstringsastype(self, code) -- by default, strings are 
-                packed as typeUnicodeText descriptors; some older 
-                non-Unicode-aware applications may require text 
-                to be supplied as typeChar/typeIntlText descriptors
-            code : String -- four-char code, e.g. kae.typeChar 
-                    (see kae module for available text types)</code></pre>
+            Result : anything</code></pre>
 
 
 

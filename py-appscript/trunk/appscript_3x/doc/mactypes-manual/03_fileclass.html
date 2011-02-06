@@ -40,7 +40,7 @@
         deterministic/non-deterministic depending on the type of
         object it's constructed from. Provides a variety of
         properties and constructors for converting to and from
-        other MacPython types.
+        other Python types.
 
     Constructors:
 
@@ -61,9 +61,9 @@
 
         url : string -- file URL
 
-        file : macfile.File -- a new File object
+        file : mactypes.File -- a new File object
 
-        alias : macfile.Alias
+        alias : mactypes.Alias
 
         desc : aem.ae.AEDesc</code></pre>
 
@@ -73,13 +73,13 @@
 <pre><code>from appscript import *
 from mactypes import *
 
-f = File('/Users/foo/new file')
+f = File('/Users/foo/some file')
 
 print f
-# mactypes.File("/Users/foo/new file")
+# mactypes.File("/Users/foo/some file")
 
 print f.path
-# /Users/foo/new file
+# /Users/foo/some file
 
 print f.url
 # file://localhost/Users/foo/some%20file
@@ -92,7 +92,7 @@ app('TextEdit').documents[1].save(in_=f)
 
 <p>When creating a <code>File</code> instance, POSIX paths may be either relative or absolute and are automatically normalised using <code>os.path.abspath</code>.</p>
 
-<p>When comparing <code>File</code> objects for equality, <code>File.__eq__</code> will perform a case-sensitive comparison of their file paths. Client that need to perform (for example) case-insensitive comparisons should obtain path strings from each <code>File</code> object, then normalise and compare those values as necessary</p>
+<p>When comparing <code>File</code> objects for equality, <code>File.__eq__</code> will perform a case-sensitive comparison of their file paths. Client that need to perform (for example) case-insensitive comparisons should obtain path strings from each <code>File</code> object, then normalise and compare those values as necessary.</p>
 
 <p>Unlike the <code>Alias</code> class which represents <code>typeAlias</code> values only, the <code>File</code> class provides a uniform wrapper for several file-related types that may be returned by applications:</p>
 
@@ -113,7 +113,7 @@ app('TextEdit').documents[1].save(in_=f)
 <pre><code>from appscript import *
 from aem import kae
 
-fileurl = mactypes.File('/Users/foo/new file')
+fileurl = mactypes.File('/Users/foo/some file')
 fssdesc = fileurl.desc.coerce(kae.typeFSS)
 
 app('older app').documents[1].save(in_=fssdesc)</code></pre>

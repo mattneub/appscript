@@ -92,12 +92,12 @@ addressbook = app(id='com.apple.addressbook')
 
 quicktimeplayer = app(creator=b'TVOD')
 
-finder = app(url='eppc://0.0.0.3/Finder')
+finder = app(url='eppc://192.168.2.3/Finder')
 
-itunes = app(url='eppc://Jan%20Smith@0.0.0.10/iTunes')
+itunes = app(url='eppc://Jan%20Smith@192.168.2.10/iTunes')
 
 from urllib import quote
-address = 'eppc://%s:%s@0.0.0.15/Terminal' % (quote(user), quote(pass))
+address = 'eppc://%s:%s@192.168.2.15/Terminal' % (quote(user), quote(pass))
 terminal = app(url=address)</code></pre>
 
 

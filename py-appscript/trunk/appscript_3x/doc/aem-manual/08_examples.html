@@ -53,7 +53,7 @@ aem.app.elements(b'docu').property(b'ctxt')
 # end of every paragraph of text of document 1
 aem.app.elements(b'docu').byindex(1).property(b'ctxt').elements(b'cpar').end
 
-#Êparagraphs 2 thru last of first document
+# paragraphs 2 thru last of first document
 aem.app.elements(b'docu').first.elements(b'cpar').byrange(
         aem.con.elements(b'cpar').byindex(2), 
         aem.con.elements(b'cpar').last)

@@ -200,7 +200,7 @@ def localappbypid(pid):
 
 def remoteapp(url):
 	"""Make an AEAddressDesc identifying a running application on another machine.
-		url : string -- URL for remote application, e.g. 'eppc://user:password@0.0.0.1/TextEdit'
+		url : string -- URL for remote application, e.g. 'eppc://user:password@192.168.2.1/TextEdit'
 		Result : AEAddressDesc
 	"""
 	if ':' not in url: # workaround: process will crash if no colon in URL (OS bug)
