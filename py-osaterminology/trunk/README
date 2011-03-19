@@ -18,7 +18,7 @@ Installation
 ------------
 
 osaterminology is packaged using the standard Python Distribution Utilities 
-(a.k.a. Distutils). To install osaterminology, cd to the osaterminology-0.14.5
+(a.k.a. Distutils). To install osaterminology, cd to the osaterminology-0.14.6
 directory and run:
 
   python setup.py install

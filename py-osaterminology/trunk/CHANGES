@@ -1,6 +1,8 @@
-2010-12-27 -- 0.14.6
+2010-03-19 -- 0.14.6
 
 - tweaked formatting of OSTypes in ObjC glues to keep ObjC compiler happy
+
+- updated reserved keywords for py-appscript
 
 
 2010-12-19 -- 0.14.5
