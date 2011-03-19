@@ -1,0 +1,154 @@
+// !$*UTF8*$!
+{
+	08FB7793FE84155DC02AAC07 /* Project object */ = {
+		activeArchitecture = i386;
+		activeBuildConfigurationName = Release;
+		activeExecutable = 4F2F3AE90EAF90CF00A6BFF0 /* ViewCalendarInICal */;
+		activeTarget = 8DD76F960486AA7600D96B5E /* ViewCalendarInICal */;
+		addToTargets = (
+			8DD76F960486AA7600D96B5E /* ViewCalendarInICal */,
+		);
+		codeSenseManager = 4F2F3AF00EAF90DC00A6BFF0 /* Code sense */;
+		executables = (
+			4F2F3AE90EAF90CF00A6BFF0 /* ViewCalendarInICal */,
+		);
+		perUserDictionary = {
+			PBXConfiguration.PBXFileTableDataSource3.PBXExecutablesDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXExecutablesDataSource_NameID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					22,
+					300,
+					277,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXExecutablesDataSource_ActiveFlagID,
+					PBXExecutablesDataSource_NameID,
+					PBXExecutablesDataSource_CommentsID,
+				);
+			};
+			PBXConfiguration.PBXFileTableDataSource3.PBXFileTableDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					389,
+					20,
+					48,
+					43,
+					43,
+					20,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+					PBXFileDataSource_Target_ColumnID,
+				);
+			};
+			PBXConfiguration.PBXTargetDataSource.PBXTargetDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					349,
+					60,
+					20,
+					48,
+					43,
+					43,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXTargetDataSource_PrimaryAttribute,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+				);
+			};
+			PBXPerProjectTemplateStateSaveDate = 246832599;
+			PBXWorkspaceStateSaveDate = 246832599;
+		};
+		perUserProjectItems = {
+			4FA4844B0EB517AD00DB9A71 /* PBXTextBookmark */ = 4FA4844B0EB517AD00DB9A71 /* PBXTextBookmark */;
+			4FA484580EB67F0F00DB9A71 /* PBXTextBookmark */ = 4FA484580EB67F0F00DB9A71 /* PBXTextBookmark */;
+		};
+		sourceControlManager = 4F2F3AEF0EAF90DC00A6BFF0 /* Source Control */;
+		userBuildSettings = {
+		};
+	};
+	08FB7796FE84155DC02AAC07 /* ViewCalendarInICal.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {567, 406}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 624}";
+			sepNavWindowFrame = "{{601, 5}, {860, 1023}}";
+		};
+	};
+	4F2F3AE90EAF90CF00A6BFF0 /* ViewCalendarInICal */ = {
+		isa = PBXExecutable;
+		activeArgIndices = (
+		);
+		argumentStrings = (
+		);
+		autoAttachOnCrash = 1;
+		breakpointsEnabled = 0;
+		configStateDict = {
+		};
+		customDataFormattersEnabled = 1;
+		debuggerPlugin = GDBDebugging;
+		disassemblyDisplayState = 0;
+		dylibVariantSuffix = "";
+		enableDebugStr = 1;
+		environmentEntries = (
+		);
+		executableSystemSymbolLevel = 0;
+		executableUserSymbolLevel = 0;
+		libgmallocEnabled = 0;
+		name = ViewCalendarInICal;
+		sourceDirectories = (
+		);
+	};
+	4F2F3AEF0EAF90DC00A6BFF0 /* Source Control */ = {
+		isa = PBXSourceControlManager;
+		fallbackIsa = XCSourceControlManager;
+		isSCMEnabled = 0;
+		scmConfiguration = {
+		};
+	};
+	4F2F3AF00EAF90DC00A6BFF0 /* Code sense */ = {
+		isa = PBXCodeSenseManager;
+		indexTemplatePath = "";
+	};
+	4FA4844B0EB517AD00DB9A71 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 08FB7796FE84155DC02AAC07 /* ViewCalendarInICal.m */;
+		name = "ViewCalendarInICal.m: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 624;
+		vrLoc = 0;
+	};
+	4FA484580EB67F0F00DB9A71 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 08FB7796FE84155DC02AAC07 /* ViewCalendarInICal.m */;
+		name = "ViewCalendarInICal.m: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 624;
+		vrLoc = 0;
+	};
+	8DD76F960486AA7600D96B5E /* ViewCalendarInICal */ = {
+		activeExec = 0;
+		executables = (
+			4F2F3AE90EAF90CF00A6BFF0 /* ViewCalendarInICal */,
+		);
+	};
+}

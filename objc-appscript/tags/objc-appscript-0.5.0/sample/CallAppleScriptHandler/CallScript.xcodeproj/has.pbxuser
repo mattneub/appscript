@@ -1,0 +1,143 @@
+// !$*UTF8*$!
+{
+	08FB7793FE84155DC02AAC07 /* Project object */ = {
+		activeBuildConfigurationName = Debug;
+		activeExecutable = 4F834ACE0C3182FF001FED41 /* CallScript */;
+		activeTarget = 8DD76F960486AA7600D96B5E /* CallScript */;
+		addToTargets = (
+			8DD76F960486AA7600D96B5E /* CallScript */,
+		);
+		codeSenseManager = 4F834AD90C31832D001FED41 /* Code sense */;
+		executables = (
+			4F834ACE0C3182FF001FED41 /* CallScript */,
+		);
+		perUserDictionary = {
+			PBXConfiguration.PBXFileTableDataSource3.PBXFileTableDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					409,
+					20,
+					48,
+					43,
+					43,
+					20,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+					PBXFileDataSource_Target_ColumnID,
+				);
+			};
+			PBXConfiguration.PBXTargetDataSource.PBXTargetDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					203,
+					60,
+					20,
+					48,
+					43,
+					43,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXTargetDataSource_PrimaryAttribute,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+				);
+			};
+			PBXPerProjectTemplateStateSaveDate = 278372260;
+			PBXWorkspaceStateSaveDate = 278372260;
+		};
+		perUserProjectItems = {
+			4F86A9DC10979FC400946DB3 /* PBXTextBookmark */ = 4F86A9DC10979FC400946DB3 /* PBXTextBookmark */;
+			4FA486700ECF1E2500DB9A71 /* PBXTextBookmark */ = 4FA486700ECF1E2500DB9A71 /* PBXTextBookmark */;
+		};
+		sourceControlManager = 4F834AD80C31832D001FED41 /* Source Control */;
+		userBuildSettings = {
+		};
+	};
+	08FB7796FE84155DC02AAC07 /* CallScript.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {587, 910}}";
+			sepNavSelRange = "{924, 0}";
+			sepNavVisRange = "{0, 2026}";
+			sepNavVisRect = "{{0, 152}, {688, 702}}";
+			sepNavWindowFrame = "{{464, 0}, {830, 1028}}";
+		};
+	};
+	4F834ACE0C3182FF001FED41 /* CallScript */ = {
+		isa = PBXExecutable;
+		activeArgIndices = (
+		);
+		argumentStrings = (
+		);
+		autoAttachOnCrash = 1;
+		breakpointsEnabled = 0;
+		configStateDict = {
+		};
+		customDataFormattersEnabled = 1;
+		debuggerPlugin = GDBDebugging;
+		disassemblyDisplayState = 0;
+		dylibVariantSuffix = "";
+		enableDebugStr = 1;
+		environmentEntries = (
+		);
+		executableSystemSymbolLevel = 0;
+		executableUserSymbolLevel = 0;
+		libgmallocEnabled = 0;
+		name = CallScript;
+		savedGlobals = {
+		};
+		sourceDirectories = (
+		);
+	};
+	4F834AD80C31832D001FED41 /* Source Control */ = {
+		isa = PBXSourceControlManager;
+		fallbackIsa = XCSourceControlManager;
+		isSCMEnabled = 0;
+		scmConfiguration = {
+		};
+		scmType = "";
+	};
+	4F834AD90C31832D001FED41 /* Code sense */ = {
+		isa = PBXCodeSenseManager;
+		indexTemplatePath = "";
+	};
+	4F86A9DC10979FC400946DB3 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 08FB7796FE84155DC02AAC07 /* CallScript.m */;
+		name = "CallScript.m: 26";
+		rLen = 0;
+		rLoc = 924;
+		rType = 0;
+		vrLen = 2026;
+		vrLoc = 0;
+	};
+	4FA486700ECF1E2500DB9A71 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 08FB7796FE84155DC02AAC07 /* CallScript.m */;
+		name = "CallScript.m: 26";
+		rLen = 0;
+		rLoc = 924;
+		rType = 0;
+		vrLen = 2026;
+		vrLoc = 0;
+	};
+	8DD76F960486AA7600D96B5E /* CallScript */ = {
+		activeExec = 0;
+		executables = (
+			4F834ACE0C3182FF001FED41 /* CallScript */,
+		);
+	};
+}
