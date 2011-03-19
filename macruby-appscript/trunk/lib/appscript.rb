@@ -454,9 +454,9 @@ module Appscript
 			event.setParameter(result_type, forKeyword:KAE::KeyAERequestedType) if result_type != Appscript::NOVALUE
 			# extract labelled parameters, if any
 			keyword_args.each do |param_name, param_value|
-				param_code = definition.parameterForName(param_name)
-				raise ArgumentError, "Unknown keyword parameter: #{param_name}" if param_code == 0 # TO DO: note that param_code is 0 on error, so cannot distinguish a non-existent parameter from a parameter whose code is '\0\0\0\0' (not that this code ought to be used in practice)
-				event.setParameter(param_value, forKeyword:param_code)
+				param = definition.parameterForName(param_name)
+				raise ArgumentError, "Unknown keyword parameter: #{param_name}" if param == nil
+				event.setParameter(param_value, forKeyword:param.fourCharCode)
 			end
 			# build and send the Apple event, returning its result, if any
 			error_ptr = Pointer.new_with_type('@')
@@ -501,7 +501,7 @@ module Appscript
 				event.setAttribute(subject_attr, forKeyword:KAE::KeySubjectAttr)
 				event.setParameter(direct_param, forKeyword:KAE::KeyDirectObject) if direct_param != Appscript::NOVALUE
 				keyword_args.each do |param_name, param_value|
-					event.setParameter(param_value, forKeyword:definition.parameterForName(param_name))
+					event.setParameter(param_value, forKeyword:definition.parameterForName(param_name).fourCharCode)
 				end
 				event.setParameter(result_type, forKeyword:KAE::KeyAERequestedType) if result_type != Appscript::NOVALUE
 				error_ptr = Pointer.new_with_type('@')
