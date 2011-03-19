@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<title>rb-aem manual | 3. Packing and unpacking data</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<style type="text/css" media="all"><!--@import url(../full.css);--></style>
+
+</head>
+<body>
+
+<h1><img src="../rb-appscript-logo.png" alt="rb-appscript" title="rb-appscript" /></h1>
+
+<!-- top navigation -->
+<div class="navbar">
+<a href="02_apioverview.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="04_references.html">Next</a>
+
+<span>
+<a href="../appscript-manual/index.html">appscript</a> /
+<a href="../mactypes-manual/index.html">mactypes</a> /
+<a href="../osax-manual/index.html">osax</a> /
+<strong><a href="../aem-manual/index.html">aem</a></strong>
+</span>
+</div>
+
+<!-- content -->
+<div id="content">
+
+<h2>3. Packing and unpacking data</h2>
+
+<h3>Codecs</h3>
+
+<p>The <code>AEM::Codecs</code> class provides methods for converting Ruby data to <code>AE::AEDesc</code> objects, and vice-versa.</p>
+
+<pre><code>Codecs
+
+    Constructor:
+        new
+
+    Methods:
+        
+        # pack/unpack data
+        
+        pack(data) -- convert Ruby data to an AEDesc; will raise
+                a TypeError if data's type/class is unsupported
+            data : anything
+            Result : AEDesc
+
+        unpack(desc) -- convert an AEDesc to Ruby data; will return
+                the AEDesc unchanged if it's an unsupported type
+            desc : AEDesc
+            Result : anything
+        
+        # compatibility options
+        
+        add_unit_types(types) -- register custom unit type 
+                definitions
+            types : list -- a list of lists, where each sublist  
+                    is of form [name, code, pack_proc, unpack_proc] 
+                    or [name, code]; if the packer and unpacker 
+                    procs are omitted, the AEDesc data is packed/
+                    unpacked as a double-precision float
+        
+        dont_cache_unpacked_specifiers -- by default, object 
+                specifier descriptors returned by an application 
+                are reused for efficiency; invoke this method to 
+                use AppleScript-style behavior instead (i.e. fully 
+                unpacking and repacking object specifiers each time) 
+                for better compatibility with problem applications
+        
+        pack_strings_as_type(code) -- by default, strings are 
+                packed as typeUnicodeText descriptors; some older 
+                non-Unicode-aware applications may require text 
+                to be supplied as typeChar/typeIntlText descriptors
+            code : String -- four-char code, e.g. KAE::TypeChar 
+                    (see KAE module for available text types)
+        
+        use_ascii_8bit -- by default, text descriptors are unpacked 
+                as Strings with UTF-8 Encoding on Ruby 1.9+; invoke 
+                this method to mimic Ruby 1.8-style behavior where 
+                Strings contain UTF-8 encoded data and ASCII-8BIT 
+                Encoding
+        
+        use_datetime -- by default, dates are unpacked as Time 
+                instances; invoke this method to unpack dates as 
+                DateTime instances instead</code></pre>
+
+
+
+
+<h3>AE types</h3>
+
+<p>The Apple Event Manager defines several types for representing type/class names, enumerator names, etc. that have no direct equivalent in Ruby. Accordingly, aem defines several classes to represent these types on the Ruby side. All share a common abstract base class, <code>AETypeBase</code>:</p>
+
+<pre><code>AETypeBase -- Abstract base class
+
+    Constructor:
+        new(code)
+            code : str -- a four-character Apple event code
+
+    Methods:
+        code
+            Result : str -- Apple event code</code></pre>
+
+
+<p>The four concrete classes are:</p>
+
+<pre><code>AEType &lt; AETypeBase -- represents an AE object of typeType
+
+
+AEEnum &lt; AETypeBase -- represents an AE object of typeEnumeration
+
+
+AEProp &lt; AETypeBase -- represents an AE object of typeProperty
+
+
+AEKey &lt; AETypeBase -- represents an AE object of typeKeyword</code></pre>
+
+
+
+</div>
+
+<!-- bottom navigation -->
+
+<div class="footer">
+<a href="02_apioverview.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="04_references.html">Next</a>
+</div>
+
+</body>
+</html>

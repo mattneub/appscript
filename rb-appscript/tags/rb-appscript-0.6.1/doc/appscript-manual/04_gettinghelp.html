@@ -1,0 +1,188 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<title>rb-appscript manual | 4. Getting Help</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<style type="text/css" media="all"><!--@import url(../full.css);--></style>
+
+</head>
+<body>
+
+<h1><img src="../rb-appscript-logo.png" alt="rb-appscript" title="rb-appscript" /></h1>
+
+<!-- top navigation -->
+<div class="navbar">
+<a href="03_quicktutorial.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="05_keywordconversion.html">Next</a>
+
+<span>
+<strong><a href="../appscript-manual/index.html">appscript</a></strong> /
+<a href="../mactypes-manual/index.html">mactypes</a> /
+<a href="../osax-manual/index.html">osax</a> /
+<a href="../aem-manual/index.html">aem</a>
+</span>
+</div>
+
+<!-- content -->
+<div id="content">
+
+<h2>4. Getting Help</h2>
+
+<p>When developing appscript-based scripts, there are several ways to get information about applications' scripting interfaces: the ASDictionary application, appscript's powerful built-in <code>help</code> method, and introspection.</p>
+
+
+
+<h3>ASDictionary</h3>
+
+<p>ASDictionary, available from the appscript website's <a href="http://appscript.sourceforge.net/tools.html">Tools page</a>, provides a convenient GUI interface for exporting application terminology resources in plain text and HTML formats. ASDictionary can export HTML dictionaries in both single-file format and a frame-based format similar to rdoc's.</p>
+
+
+
+<h3>Built-in <code>help</code> method</h3>
+
+<p>Appscript's <code>Application</code> and <code>Reference</code> classes include a powerful interactive help system that allows you to explore applications' scripting interfaces from within running scripts and Ruby's interactive <code>irb</code> interpreter. The <code>help</code> method can provide information on any suite, class, command or reference, and display the inheritance and relationships for a selected class or the entire application.</p>
+
+<div class="hilitebox">Note that rb-appscript's built-in help system is only available when ASDictionary 0.9.0 or later is installed. If ASDictionary isn't available or is too old, invoking <code>help</code> will simply result in a "No help available" message and the script will continue to run as normal.</div>
+
+<p>Built-in help is invoked by calling an <code>app</code> object's <code>help</code> method, optionally passing it a string indicating the type of information you want. The resulting help message is printed to <code>stderr</code> and script execution continues as normal. For example, to view the help system's own help, call the <code>help</code> method with <code>'-h'</code> as its argument:</p>
+
+<pre><code>app('TextEdit').help('-h')</code></pre>
+
+<p>To print a description of any class or command or view inheritance and relationships, pass the <code>help</code> method a help string containing one or more of the following options:</p>
+
+<dl>
+<dt>-h</dt>
+<dd>show help</dd>
+<dt>-o</dt>
+<dd>overview of all suites, classes and commands</dd>
+<dt>-k</dt>
+<dd>list all built-in keywords (type names)</dd>
+<dt>-u [suite-name]</dt>
+<dd>summary of named suite or all suites</dd>
+<dt>-t [class-or-command-name]</dt>
+<dd>terminology for named class/command or current reference</dd>
+<dt>-i [class-name]</dt>
+<dd>inheritance tree for named class or all classes</dd>
+<dt>-r [class-name]</dt>
+<dd>one-to-one and one-to-many relationships for named class or current reference</dd>
+<dt>-s [property-or-element-name]</dt>
+<dd>values of properties and elements of object(s) currently referenced</dd>
+</dl>
+
+<p>Arguments (shown in brackets) are optional. Additional information on usage is available via <code>help('-h')</code>.</p>
+
+<p>Examples:</p>
+
+<pre><code>app('Finder').help('-o')
+app('Finder').help('-t window')
+app('Finder').files.help # same as help('-t')
+app('Finder').help('-d item -r folder -i container')
+app('Finder').files.help('-s')</code></pre>
+
+
+<p>To print detailed information on a specific reference, call its <code>help</code> method without arguments. Examples:</p>
+
+<pre><code>app('TextEdit').help
+app('TextEdit').version.help
+app('TextEdit').documents.help</code></pre>
+
+
+<p>To print detailed information on a specific command, call the <code>help</code> method on an application or reference object with the <code>-t</code> option followed by the command's name. Examples:</p>
+
+<pre><code>app('TextEdit').help('-t open')
+app('TextEdit').documents.help('-t count -t close')</code></pre>
+
+<div class="hilitebox">
+<p>Tip: <code>help</code> calls can safely be inserted at any point in a reference without disrupting your script's execution:</p>
+
+<pre><code>c = app('TextEdit')<strong>.help.help('-o -i -s')</strong>.documents.<strong>help</strong>[1]<strong>.help</strong>.count</code></pre>
+</div>
+
+
+
+<h3>Introspection</h3>
+
+<p>In addition to supporting Ruby's standard <code>#methods</code> and <code>#respond_to?</code> methods, appscript's <code>Application</code> and <code>Reference</code> classes also define several instance methods for obtaining information on the target application: </p>
+
+<dl>
+<dt><code>properties</code></dt>
+<dd>Returns a list of all property names.</dd>
+
+<dt><code>elements</code></dt>
+<dd>Returns a list of all element names.</dd>
+
+<dt><code>commands</code></dt>
+<dd>Returns a list of all command names.</dd>
+
+<dt><code>keywords</code></dt>
+<dd>Returns a list of all class, enumerator, type and property names.</dd>
+
+<dt><code>parameters(commandName)</code></dt>
+<dd>Takes a command's name as string and returns the names of its parameters.</dd>
+</dl>
+
+<p>As with Ruby's <code>Object#methods</code>, all of these methods return a list of strings.</p>
+
+<p>Examples</p>
+
+<pre><code>te = app('TextEdit')
+
+p te.commands
+# ["activate", "close", "count", "delete", "duplicate", "exists", ...]
+
+p te.parameters('make')
+# ["at", "new", "with_data", "with_properties"]</code></pre>
+
+
+
+<h3>ASTranslate</h3>
+
+<p>ASTranslate, available from the appscript website's <a href="http://appscript.sourceforge.net/tools.html">tools page</a>, provides a simple tool for translating application commands from AppleScript to Ruby syntax - useful when help is needed in converting existing AppleScript code to Ruby. For example, the following AppleScript selects every file in the Home folder:</p>
+
+<pre><code>tell application "Finder"
+	select (every file of home whose name extension is in {"htm", "html"})
+end tell</code></pre>
+
+<p>To obtain the appscript equivalent, paste this script into ASTranslate and select <code>Execute</code> from the <code>Document</code> menu. ASTranslate will intercept any Apple events sent by AppleScript and display them appscript format:</p>
+
+<pre><code>app("Finder").home.files[its.name_extension.is_in(["htm", "html"])].select
+
+OK</code></pre>
+
+<p>See ASTranslate's documentation for more information.</p>
+
+
+
+<h3>Notes</h3>
+
+<p>While appscript's documentation systems try to be reasonably forgiving of flawed or faulty terminology resources, there may be a few particularly problematic applications on which they fail. Should this happen, use ASDictionary to export the application's terminology in plain text format instead.</p>
+
+
+<h3>Other sources of help</h3>
+
+<ul>
+<li>The <code>sample</code> folder contains example scripts demonstrating a range of common tasks.</li>
+
+<li>Refer to any scripting documentation and example scripts supplied by the application developer.</li>
+
+<li>Look for third-party scripts that provide examples of use (though many of these scripts will be written in AppleScript rather than Ruby).</li>
+
+<li>The <a href="http://appscript.sourceforge.net">appscript website</a> has links to mailing lists and other general resources.</li>
+</ul>
+
+
+</div>
+
+<!-- bottom navigation -->
+
+<div class="footer">
+<a href="03_quicktutorial.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="05_keywordconversion.html">Next</a>
+</div>
+
+</body>
+</html>

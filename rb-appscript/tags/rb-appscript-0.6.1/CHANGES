@@ -1,0 +1,489 @@
+2010-03-19 -- 0.6.1
+
+- removed 32-bit only AE.run_application_event_loop, AE.quit_application_event_loop
+
+- updated AE.launch_application to use LSOpenApplication
+
+- minor documentation fixes
+
+
+2010-12-17 -- 0.6.0
+
+- added UTF-8 Encoding support in Ruby 1.9+; added AEMCodecs::Codecs#use_ascii_8bit for optionally disabling it
+
+- AEM::Codecs#pack now accepts Date, DateTime instances; added AEM::Codecs#use_date_time method for unpacking typeLongDateTime descriptors as DateTime instead of Time instances
+
+- removed AE.get_app_terminology() as it relied on deprecated Carbon APIs
+
+- added AE.copy_scripting_definition()
+
+- the OSAX module now now uses OSACopyScriptingDefinition() to obtain scripting addition terminology, so works in both 32- and 64-bit Ruby. Note that in addition to limitations of OSACopyScriptingDefinition (e.g. aete-to-sdef conversion is not 100% reliable), the SdefParser is limited in capability (no support for xi:include, class-extension, synonym elements), but should suffice for parsing relatively simple osax dictionaries.
+
+- modified Terminology.dump() to retrieve aete resources via 'ascrgdte' events; added OSAX.dump() method
+
+- added workaround for transaction id bug in some versions of OS X 10.6
+
+- renamed AEMReference::Base class to AEMReference::Query
+
+- renamed Send::CommandError class to Send::EventError; note that AEM re-exports it as AEM::EventError and [for backwards compatibilty] AEM::CommandError
+
+
+2009-07-18 -- 0.5.3
+
+- fixed pALL code in defaultterminology
+
+- fixed OSAX module initialisation code (previously didn't initialise if ScriptingAddition.new was called directly)
+
+- fixed out-of-date URLs in appscript manual
+
+
+2009-07-05 -- 0.5.2
+
+- removed deprecated AEM::Application.is_running? method
+
+- added #dont_cache_unpacked_specifiers, #pack_strings_as_type compatibility options to AEM::Codecs
+
+- added default definitions for 'item' type, 'items' elements, 'properties' property as Apple have removed the 'item' class definition from skeleton.sdef (the default terminology for Cocoa apps)
+
+- property and elements methods now raise ArgumentError if passed arguments; previously, malformed elements selectors, e.g. app('TextEdit').documents(1).text, would be silently ignored, resulting in unexpected behaviour
+
+- Codecs#unpack now tries to coerce descriptors of typeVersion to unicode text (works on 10.4+) c.f. AppleScript (note: itunes.version.get returns the wrong version number otherwise; this appears to be an iTunes bug, but is masked by current AppleScript behaviour)
+
+- #process_exists_for_url?, #remote_app in connect.rb now raise error if URL string doesn't contain a colon (process will crash otherwise due to an OS bug)
+
+- improved error reporting in Reference#[] when a malformed generic reference containing a command expands to a non-reference value. e.g. its.name.get() would previously expand the the value of the object's 'name' property, typically a string, resulting in a cryptic NoMethodError; this now raises a descriptive ArgumentError.
+
+- fixed bug where Terminology module would error on zero-length keywords in problem dictionaries (e.g. MS Word 12.1.7)
+
+- AEM::Codecs now correctly unpacks AEDescs of typeBoolean whose data >1 byte
+
+- fixed inconsistent escaping of application-defined property/element names that overlap built-in type/enum/property names but uses different codes. e.g. Adobe Illustrator defines 'rotation' as 'SxRx' - this overlaps built-in definition ('rotation' = 'trot'), so is escaped as 'rotation_'. Previously only the Keyword was escaped (i.e. :rotation_ but ref.rotation) now both are escaped (i.e. :rotation_, ref.rotation_). Users should update existing code as needed.
+
+- restructured defaultterminology.rb to make it easier to maintain
+
+- changed default terminology mapping for :data from KAE::CRawData ('rdat') to KAE::TypeData ('tdta')
+
+- the OSAX module now obtains list of installed scripting additions on first use instead of import (the .osax scanning code uses System Events via AEM, and sending Apple events in event loop-based application before the event loop is started can disrupt the process's handling of incoming Apple events)
+
+
+
+2008-02-18 -- 0.5.1
+
+- fixed bug in Appscript::Application#launch where calling it on an application specified by_pid/by_url/by_aem_app would raise error -1708
+
+- aem by-range specifiers now accept non-reference values (these are expanded to con-based references when packed)
+
+- fixed bug in Appscript::Reference#_send_command method's auto-reconnection code where a re-sent event that fails now raises the correct CommandError (previously re-raised the original 'invalid connection' error)
+
+- fixed bug when packing Fixnums in 64-bit Ruby
+
+- fixed a memory leak in AE.get_app_terminology
+
+- fixed minor bug and improved error reporting in Appscript::Reference#[]
+
+- removed AEMReference::PositionSpecifier's #and, #or, #not methods as these shortcuts are no longer supported
+
+- basic Ruby 1.9 compatibility
+
+
+2007-12-18 -- 0.5.0 (beta 2)
+
+- OSAX module no longer errors on import in 10.5 if a ScriptingAdditions folder (e.g. ~/Library/ScriptingAdditions) doesn't exist
+
+- added Appscript::Application#is_running? method
+
+- added hfs_path, #hfs_path methods to MacTypes::Alias, MacTypes::FileURL; existing path, #path methods now use CFURL functions to convert between POSIX paths and URLs
+
+- aem/appscript now raises Connect::CantLaunchApplicationError instead of AE::MacOSError if unable to launch an application. Users should update existing code as necessary.
+
+- fixed extconf.rb so that universal binaries build correctly
+
+- built-in help system now uses ASDictionary 0.9.0+ instead of AppscriptHelpAgent. (AppscriptHelpAgent is no longer used as-of rb-appscript 0.5.0 and may be removed if previously installed.)
+
+- #help method now writes messages to stderr instead of stdout
+
+- Appscript::Reference#respond_to? now has identical signature to Object#respond_to? (optional second argument was previously missing)
+
+- fixed bug in AE.convert_long_date_time_to_unix_seconds (used to unpack AEDescs of typeLongDateTime) where it would crash if passed a FixNum instead of a BigNum
+
+- now allow methods that have been added to Object class at runtime (e.g. importing the 'pp' module adds #pretty_print and #pretty_inspect) to be invoked on Appscript::Reference and Appscript::Application instances, assuming that the reference object doesn't already have a property/element/command by the same name. In other words, instances of these classes now behave more or less the same as instances of ordinary subclasses that use bound methods rather than #method_missing to handle incoming messages. Previously, calling (e.g.) #pretty_inspect on an appscript reference would result in a 'property/element/command not found' error.
+
+- improved behaviour of Appscript::Application#AS_new_reference when argument is nil (now returns a new reference to the root application object)
+
+- OSAX::Application initialiser now optionally accepts static terminology 'glue' module as its second argument. This is partly to provide scripts that need to run in 64-bit processes with a workaround for accessing the OSAX module, which can't yet automatically obtain osax terminology under 64-bit (see TODO file).
+
+- added process_exists_for_path?, process_exists_for_pid?, process_exists_for_url?, process_exists_for_desc? class methods to AEM::Application
+
+- deprecated AEM::Application.is_running? (will be removed in 1.0.0); any existing code that uses this method should be updated to use AEM::Application.process_exists_for_path? instead
+
+- fixed minor formatting flaw in generic references' #to_s method
+
+- AEM::Application is now a subclass of AEMReference::Base, allowing aem Codecs instances to pack it
+
+- added AB_export_vcard.rb sample script
+
+
+2007-08-17 -- 0.4.0 (beta 1)
+
+- renamed the following aem/appscript methods to be consistent with AppleScript:
+
+	start -> beginning
+	starts_with -> begins_with
+	does_not_start_with -> does_not_begin_with
+	start_transaction -> begin_transaction
+
+Users should update existing code as necessary.
+
+- aem and appscript no longer accept non-test references as test clauses. Previously, a reference such as 'its.visible' would automatically be expanded to the comparison test 'its.visible.eq(true)' as a convenience. However, this shortcut didn't apply when these non-test references appeared as arguments to the #and and #or logical test methods, which meant that this shortcut behaviour was inconsistent and potentially confusing; therefore it has been removed. Users should update existing code as necessary.
+
+- added AE::AEDesc#send_thread_safe; this is now used by AEM instead of AE::AEDesc.send to allow reply events to be received on non-main threads (note: this is a non-issue in non-threaded processes or in processes that only use Ruby 1.x's green threads within the main native thread, but as the additional overhead isn't noticeable it does no harm to make it the default behaviour anyway).
+
+- added AE::AEDesc#flatten and AE::AEDesc.unflatten for serialising AEDescs
+
+- added support for custom reference roots in AEM and Appscript
+
+- AEM::Application#inspect now displays correct class name when Application class is subclassed
+
+- Appscript::Reference#[] now accepts real references and aem specifiers as by-filter test clauses (previously only accepted GenericReference)
+
+- added note about rubygems to appscript manual; added rubygems support to sample scripts
+
+- aete parser no longer raises error if aete isn't fully parsed (i.e. same as AppleScript) [SI]
+
+- added Appscript::Reference#help
+
+
+2007-04-10 -- 0.3.1
+
+- 64-bit support in rbae.c [JB]
+
+- Terminology.dump will use 'ascrgdte' event to obtain aetes if AE.get_app_terminology is unavailable
+
+- added TypeUInt16, TypeUInt64 support to Codecs#unpack
+
+- added Codecs#pack_uint16; by default, this packs numbers in range (2**63)..(2**64 - 1) as 64-bit floats (lossy), but clients could override this to pack as TypeUInt64 where supported by OS and applications
+
+- changed timeout for ascrgdte event to 120 sec
+
+- terminology parser no longer errors on zero-length aetes
+
+
+2007-01-18 -- 0.3.0
+
+- removed 'AS' alias; client scripts should refer to Appscript module, e.g.:
+
+	textedit = AS.app('TextEdit')
+
+should be changed to:
+
+	textedit = Appscript.app('TextEdit')
+
+- added 'p' prefixes to 'pcls' and 'ID  ' keys in DefaultTerminology::ReferenceByCode (minor bugfix)
+
+- in AE::AEDesc, renamed #get to #get_item and added #get_param and #get_attr methods
+
+- improved unpacking of object specifiers and other reference-related AEDescs (10-20% faster)
+
+- adjusted ordering of case blocks in Codecs#pack, #unpack to improve performance when packing/unpacking more commonly used types
+
+- added Appscript::Application#AS_new_reference; this takes a generic/aem reference and returns an appscript reference
+
+- referencerenderer now displays accurate representation of an appscript reference when appscript-style representation is unavailable (previously rendered the appscript reference as an aem-style reference string, which was misleading)
+
+- tweaked APIs for UnitTypeCodecs' pack/unpack procs
+
+- moved problem apps chapter to website
+
+- added information on osadict to getting help chapter
+
+- renamed aem's #userproperty method to #user_property
+
+- modified AEM_resolve to dispatch method calls via #send. Client objects should now either implement all aem reference methods OR a send(name, *args) method. Clients should avoid using method_missing as that can cause problems if client code includes methods into Object, as those injected methods may then be called instead of method_missing.
+
+- appscript now unpacks AEAddressDescs as Appscript::Application instances (note: as with AppleScript, this behaviour is asymmetrical since application objects always pack as null descs, i.e. they're treated as references when packing)
+
+- added Appscript::Application#by_aem_app method for converting AEM::Application instances to appscript application objects
+
+- iTunes_top40_to_html.rb sample script now opens resulting HTML file in user's default web browser
+
+- removed MacTypes::Units.method_missing
+
+- Appscript::Reference and Appscript::GenericReference now inherit from SafeObject class (based on BasicObject class <http://facets.rubyforge.org>) to prevent any third-party methods added to base classes from showing up in Reference/GenericReference and interfering with method_missing's behaviour. Note that _appscript/safeobject.rb installs traps on Module#method_added and Module#included in order to detect any changes during runtime.
+
+- added OSAX#osax and OSAX#scripting_addition to allow these methods to be included for convenience
+
+- FindApp.by_name now always raises ApplicationNotFoundError when application not found (previously sometimes raised RuntimeError
+
+- added more tests
+
+- fixed bug in MacTypes::FileBase#== where comparing two Alias/FileURL objects with different paths would return true, not false, and generally improved its behaviour
+
+- added default value ('StandardAdditions') for OSAX.osax's name argument
+
+- added Add_iCal_event.rb, Export_Address_Book_phone_numbers.rb examples; updated Hello_World.rb example to also demonstrate OSAX usage; made Select_all_HTML_files.rb example clearer
+
+- improved handling of synonyms in Terminology, TerminologyParser modules (definitions with same codes but different names are now retained; previously only the last-found definition was retained). Still doesn't mimic AS's behaviour 100%, but it's difficult to get any closer without studying the original AS source code.
+
+- added Terminology.dump method; removed misc/dump.rb file
+
+
+2006-11-29 -- 0.2.1
+
+- renamed AS module to Appscript. An 'AS' alias is temporarily provided for backwards compatibility but this will be removed in a future release. Users should update their scripts accordingly.
+
+- _appscript/referencerenderer.rb no longer prefixes 'AS.' to reference representation strings
+
+- added #app, #con and #its instance methods to Appscript module to allow clients to include appscript methods and classes in other modules via 'include Appscript'; updated sample scripts and documentation to show this
+
+- OSAX.scripting_additions now returns unique sorted names
+
+- added MacTypes::Alias.url, MacTypes::Alias#url, MacTypes::File_URL.url, MacTypes::File_URL#url methods for working with file url strings
+
+- OSAX::ScriptingAddition#to_s and #inspect now render scripting addition's name correctly
+
+- removed unused AE.pid_to_psn method
+
+
+2006-11-20 -- 0.2.0
+
+- removed path expansion in FindApp#byName, MacFile::Alias#at, MacFile::FileURL#at
+
+- changed default send flags to KAE::KAECanSwitchLayer + KAE::KAEWaitReply (same as AppleScript)
+
+- aliased AE::MacOSError#number to #to_i; added #to_s and #inspect methods
+
+- added #to_s and #inspect methods to AE::AEDesc
+
+- fixed undefined variable bug in FindApp#byName when raising an ApplicationNotFoundError
+
+- added osax module and documentation
+
+- added event handling code to rbae.c (not yet fully tested)
+
+- added gemspec for source-based gem
+
+- made Reference class's AS_appdata and AS_aemreference instance variables writeable as well as readable - this'll make it easier to inject workarounds (e.g. modified pack/unpack routines) for occasional application flaws
+
+- added sample scripts: Organize_Mail_messages.rb, Create_daily_iCal_todos.rb, Simple_Finder_GUI_Scripting.rb, Set_iChat_status.rb
+
+- now always packs a subject attribute (KAE::TypeSubjectAttr); this is normally a null descriptor. (Note: AS includes a subject attribute for commands whose direct parameter isn't a reference, e.g. make. Photoshop CS2's make command requires either an 'at' parameter or subject attribute and throws an error if it doesn't get one. Including a subject attribute by default should hopefully prevent any complaints.) [BB]
+
+- removed built-in :telltarget argument to simplify the API a bit. Now, if a command is called on a reference and already has a direct parameter, the reference is packed as the subject attribute instead. Also, 'telltarget' is no longer a reserved word.
+
+- true and false are now packed as AEDescs of typeTrue and typeFalse (same as AppleScript), not typeBoolean [BB]
+
+- when hashes containing a :class or AEType.new('pcls') key whose value is a Symbol or AEBaseType instance are packed, the resulting AEDesc is now coerced to that type (previously the class property was packed as just another key-value pair, and the result was an AEDesc of typeAERecord) [BB]
+
+- codecs module now unpacks a record-like AEDesc with an unknown type as a hash containing an additional 'class' property that indicates the original type (i.e. same as AppleScript)
+
+- aliased AEM::CommandError#number to #to_i
+
+- where property and element names are the same (e.g. file, text in BBEdit), appscript now packs this as a property specifier, unless the name is 'text', in which case it's packed as an elements specifier (i.e. [hopefully] same as AppleScript)
+
+- renamed macfile.rb/MacFile module to mactypes.rb/MacTypes
+
+- renamed MacTypes::Alias, MacTypes::MacFileURL methods: 
+
+	Alias.at -> Alias.path
+	FileURL.at -> FileURL.path
+	Alias.newDesc -> Alias.desc
+	FileURL.newDesc -> FileURL.desc
+
+- renamed AS.app methods:
+
+	app#byName -> app#by_name
+	app#byCreator -> app#by_creator
+	app#byID -> app#by_id
+	app#byPID -> app#by_pid
+	app#byURL -> app#by_url
+
+- renamed appscript reference methods:
+
+	startswith -> starts_with
+	endswith -> ends_with
+	isin -> is_in
+	doesnotstartwith -> does_not_start_with
+	doesnotendwith -> does_not_end_with
+	doesnotcontain -> does_not_contain
+	isnotin -> is_not_in
+
+- renamed built-in appscript command parameters:
+
+	:waitreply -> :wait_reply
+	:resulttype -> :result_type
+
+- renamed AEM::Application methods:
+
+	Application.newPath -> Application.by_path
+	Application.newURL -> Application.by_url
+	Application.newPID -> Application.by_pid
+	Application.newAEDesc -> Application.by_desc
+
+- renamed aem reference methods:
+
+	byindex -> by_index
+	byname -> by_name
+	byid -> by_id
+	byrange -> by_range
+	byfilter -> by_filter
+	startswith -> starts_with
+	endswith -> ends_with
+	isin -> is_in
+
+- renamed FindApp methods:
+
+	FindApp.byName -> FindApp.by_name
+	FindApp.byCreator -> FindApp.by_creator
+	FindApp.byID -> FindApp.by_id
+
+- changed type names in defaultterminology.rb to be more AppleScript-like, e.g. :String -> :string, :MissingValue -> :missing_value (note that there are still a few deliberate differences, e.g. :float instead of :real)
+
+- added month and weekday name-code definitions to defaultterminology.rb
+
+- changed internal variable and method names to follow Ruby style guidelines
+
+- added MacTypes::Units class
+
+- added add_unit_types method to Codecs class, allowing additional unit type definitions to be added
+
+- fixed appscript reference rendering bug where property/element names could get muddled (e.g. 'document' property would appear as 'documents')
+
+- fixed wierd rendering bug where rendered references would be invisible if client script contained an 'app' method of its own (Ruby was invoking this instead of ReferenceRenderer#method_missing)
+
+- moved findapp.rb and mactypes.rb to _aem/ (they're already re-exported by aem.rb, appscript.rb, etc. so clients don't need to require them directly)
+
+- 'help' is now a reserved word (though is not currently implemented)
+
+- Attempting to pack invalid UTF8 strings now raises TypeError instead of AEM::NotUTF8TextError
+
+- changed AEM::Application#running? to AEM::Application.is_running?(path)
+
+- added aem manual
+
+- replaced big if...elsif... block in Codecs#pack with case block
+
+- removed AEM::AEEventName (the 'evnt' type, cEventIdentifier, is used by OSAGetHandlerNames)
+
+- updated kae.rb; now contains constants scraped from the following OS X 10.4u SDK frameworks: 
+	AE.framework (all headers)
+	Carbon.framework (AEInteraction.h only)
+	OpenScripting.framework (all headers except FinderRegistry.h)
+
+- Connect.local_app_by_pid now returns an AEDesc of typeKernelProcessID
+
+- added basic support for equality tests and hashing to MacFile::Alias and MacFile::URL. Note that it only tests for exact data equality; two objects that identify the same filesystem object/location by different means, using paths of different case, etc. will test as false.
+
+- adjusted packing of 'make' command so that if target reference is typeObjectSpecifier then it's packed as the subject attribute but if it's typeInsertionLoc it's packed as an 'at' parameter (this avoids a bug in Cocoa Scripting where packing an insertion location as the subject attribute results in an error when CS tries to coerce it to an object specifier)
+
+- fixed various bugs in aem's transaction-handling code
+
+- added #abort_transaction and added optional 'session' argument to #start_transaction in AEM::Application and AS::Application
+
+
+2006-10-23 -- 0.1.6
+
+- improved test_aemreference.rb
+
+- fixed bug in aemreference.rb where comparing two non-equivalent aem references could return true
+
+- simplified four-char-code conversion routines in codecs.rb
+
+- AS::Reference#methods now returns names of application-defined properties, elements and commands in addition to names of built-in methods [MN]
+
+- AS::Reference#respond_to? now returns true for names of application-defined properties, elements and commands in addition to names of built-in methods [MN]
+
+- removed rbosadict; use ASDictionary.app instead (available from <http://appscript.sourceforge.net>)
+
+- removed AS::Application#useterminology; added optional 'terms' argument to Application constructors instead
+
+- in Terminology module, changed timeout for ascrgdte event from 120 to 30 sec
+
+- added dump tool + documentation
+
+- added info to manual on scripting non-stay-open applications
+
+- removed MacFile::Alias#newPath and MacFile::FileURL#newPath constructors (use #at instead)
+
+- changed MacFile::Alias#to_s and MacFile::FileURL#to_s to return plain path string instead of object representation (use #inspect for that)
+
+- removed MacFile::Alias#path and MacFile::FileURL#path (use #to_s instead)
+
+- added macfile manual
+
+- Connect.launch_app no longer waits for reply/error when sending a launch event to an already running application
+
+
+2006-10-18 -- 0.1.5
+
+- renamed MacFile::Alias#newPath, MacFile::FileURL#newPath to Alias#at and FileURL#at for conciseness; e.g.: FileURL.at("/some/path"). Note: newPath methods will be removed in 0.2.0.
+
+- appscript module now packs UInt32 csig attributes correctly [DH]
+
+- fixed little-endian bugs when packing and unpacking typeSInt64 and typeLongDateTime
+
+- packing and unpacking typeLongDateTime AEDescs is now about as accurate as can be expected, given the inherent problems of LongDateTime (i.e. UCConvertLongDateTimeToCFAbsoluteTime and UCConvertCFAbsoluteTimeToLongDateTime have off-by-an-hour [or whatever the local difference is] inaccuracies at ST/DST/ST boundaries)
+
+- improved error reporting in MacFile module: creating a MacFile::Alias object with a path to a non-existent filesystem object, getting path for MacFile::Alias object that no longer identifies a valid filesystem object, etc. now raises MacFile::FileNotFoundError instead of various MacOSErrors
+
+- comparison methods' arguments now display correctly when to_s/inspect is called on its-based references
+
+- its-based aem references now correctly unpack KAEContains comparison descriptors as 'reference.isin(value)', rather than trying to unpack them incorrectly as 'value.contains(reference)'
+
+- first/middle/last/any references now compare correctly with identical references that have been previously packed and unpacked. Previously the codecs module was unpacking them with different _key attributes, so equality tests would always return false even when the two references were identical.
+
+- Attempting to pack invalid UTF8 strings now raises AEM::NotUTF8TextError rather than AE::MacOSError -1700.
+
+- fixed launch method (was calling non-existent Connect.launch, not Connect.launchApp)
+
+- attempting to retrieve aete resource from an application that doesn't have any terminology no longer raises 'resource not found' (-192) error
+
+- AEM module now re-exports AE::MacOSError class for convenience
+
+- Apple Event Manager-raised errors that occur when sending events are now reported correctly (was giving 'uninitialized constant Send::Event::None' errors)
+
+- appscript referencerenderer module now renders class names in next and previous references correctly
+
+- GenericReference#to_s now includes 'AS.' prefix when rendering string representations of generic references
+
+- fixed ==() methods in appscript Reference and aem Application classes
+
+- implemented eql? methods so aem types, aem references and appscript references should now work correctly as hash keys
+
+- fixed endian bugs in Codecs when unpacking insertion location selectors and comparison and logic operators
+
+
+2006-10-15 -- 0.1.4
+
+- fixed error message when reporting an unknown parameter (was showing command name, not parameter name)
+
+- fixed bug in TextEdit_demo.rb script (count command's parameter should be :each, not :each_)
+
+- fixed bug where typeBoolean AEDescs would always unpack as true
+
+- fixed bugs when packing and unpacking AEDescs of typeSInt64
+
+- integers between 2*31 and 2**63-1 now pack as typeSInt64, not typeFloat
+
+- [mostly] fixed timezone and winter/summer time bugs; there's probably still problems at the points where DST begins and ends (some of which may be Ruby's fault; this is still to be determined)
+
+
+2006-10-13 -- 0.1.3
+
+- fixed a bug in appscript where the first argument in a command call would be ignored if it was false or nil [MN]
+
+- changed priority order for determining what an ambiguous keyword (e.g. :workbook in Excel) that may be either a type or enumerator name should be packed as; previously typeEnumerated was the default, now it's typeType [MN]
+
+
+2006-10-12 -- 0.1.2
+
+- fixed a bug where appscript was unpacking typeEnumerated AEDescs as AEM::AEEnums instead of Symbols [MN]
+
+
+2006-10-10 -- 0.1.1
+
+- made several corrections and improvements to appscript manual [MN]
+
+
+2006-10-09 -- 0.1.0
+
+- first release

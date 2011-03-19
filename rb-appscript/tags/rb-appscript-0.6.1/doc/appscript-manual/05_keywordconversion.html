@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<title>rb-appscript manual | 5. Keyword Conversion</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<style type="text/css" media="all"><!--@import url(../full.css);--></style>
+
+</head>
+<body>
+
+<h1><img src="../rb-appscript-logo.png" alt="rb-appscript" title="rb-appscript" /></h1>
+
+<!-- top navigation -->
+<div class="navbar">
+<a href="04_gettinghelp.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="06_classesandenums.html">Next</a>
+
+<span>
+<strong><a href="../appscript-manual/index.html">appscript</a></strong> /
+<a href="../mactypes-manual/index.html">mactypes</a> /
+<a href="../osax-manual/index.html">osax</a> /
+<a href="../aem-manual/index.html">aem</a>
+</span>
+</div>
+
+<!-- content -->
+<div id="content">
+
+<h2>5. Keyword Conversion</h2>
+
+<h3>Keyword conversion</h3>
+
+<p>Because application terminology resources specify AppleScript-style keywords for class, property, command, etc. names, appscript uses the following rules to translate these keywords to legal Ruby identifiers:</p>
+
+<ul>
+<li>Characters a-z, A-Z, 0-9 and underscores (_) are preserved.</li>
+
+<li>Spaces, hyphens (-) and forward slashes (/) are replaced with underscores.</li>
+
+<li>Ampersands (&amp;) are replaced by the word 'and'.</li>
+
+<li>All other characters are converted to 0x00-style hexadecimal representations.</li>
+
+<li>Names that begin with '_' or 'AS_' have an underscore appended.</li>
+
+<li>Names that match the methods already defined on appscript's Application and Reference classes have an underscore appended. The reserved method names are:
+
+<pre><code>abort_transaction             ignore
+after                         inspect
+and                           instance_eval
+any                           instance_variable_get
+before                        instance_variable_set
+begin_transaction             instance_variables
+beginning                     is_in
+begins_with                   is_not_in
+by_aem_app                    keywords
+by_creator                    last
+by_id                         launch
+by_name                       le
+by_pid                        lt
+by_url                        method
+class                         method_missing
+clone                         methods
+commands                      middle
+contains                      ne
+current                       next
+display                       not
+does_not_begin_with           object_id
+does_not_contain              or
+does_not_end_with             parameters
+dup                           previous
+elements                      private_methods
+end                           properties
+end_transaction               protected_methods
+ends_with                     public_methods
+eq                            result_type
+extend                        send
+first                         singleton_methods
+freeze                        taint
+ge                            timeout
+gt                            to_a
+hash                          to_s
+help                          type
+ID                            untaint
+id                            wait_reply</code></pre>
+</li>
+
+<li>Appscript provides default terminology for standard type classes such as <code>integer</code> and <code>unicode_text</code>, and standard commands such as <code>open</code> and <code>quit</code>. If an application-defined name matches a built-in name but has a different Apple event code, appscript will append an underscore to the application-defined name.</li>
+</ul>
+
+<p class="hilitebox">You can use ASDictionary or appscript's built-in <code>help</code> method to export or view application terminology in appscript format. See the <a href="04_gettinghelp.html">Getting Help</a> chapter for more information.</p>
+</div>
+
+<!-- bottom navigation -->
+
+<div class="footer">
+<a href="04_gettinghelp.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="06_classesandenums.html">Next</a>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<title>rb-appscript manual | 10. Reference Examples</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<style type="text/css" media="all"><!--@import url(../full.css);--></style>
+
+</head>
+<body>
+
+<h1><img src="../rb-appscript-logo.png" alt="rb-appscript" title="rb-appscript" /></h1>
+
+<!-- top navigation -->
+<div class="navbar">
+<a href="09_referenceforms.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="11_applicationcommands.html">Next</a>
+
+<span>
+<strong><a href="../appscript-manual/index.html">appscript</a></strong> /
+<a href="../mactypes-manual/index.html">mactypes</a> /
+<a href="../osax-manual/index.html">osax</a> /
+<a href="../aem-manual/index.html">aem</a>
+</span>
+</div>
+
+<!-- content -->
+<div id="content">
+
+<h2>10. Reference Examples</h2>
+
+<h3>Application objects</h3>
+
+<pre><code>require "appscript"
+include Appscript
+
+# application &quot;Finder&quot;
+app('Finder')
+
+# application &quot;Macintosh HD:Applications:TextEdit.app:&quot;
+app('/Applications/TextEdit.app')</code></pre>
+
+
+<h3>Property references</h3>
+
+<pre><code># a reference to startup disk of application &quot;Finder&quot;
+app('Finder').startup_disk
+
+# a reference to name of folder 1 of home of application &quot;Finder&quot;
+app('Finder').home.folders[1].name
+
+# a reference to name of every item of home of application &quot;Finder&quot;
+app('Finder').home.items.name
+
+# a reference to text of every document of application &quot;TextEdit&quot;
+app('TextEdit').documents.text
+
+# a reference to color of character 1 of every paragraph of text &not;
+#     of document 1 of application &quot;TextEdit&quot;
+app('TextEdit').documents[1].text.paragraphs.characters[1].color</code></pre>
+
+
+<h3>All elements references</h3>
+
+<pre><code># a reference to disks of application &quot;Finder&quot;
+app('Finder').disks
+
+# a reference to every word of every paragraph of text of every document &not;
+#     of application &quot;TextEdit&quot;
+app('TextEdit').documents.text.paragraphs.words</code></pre>
+
+
+<h3>Single element references</h3>
+
+<pre><code># a reference to disk 1 of application &quot;Finder&quot;
+app('Finder').disks[1]
+
+# a reference to file &quot;ReadMe.txt&quot; of folder &quot;Documents&quot; of home of application &quot;Finder&quot;
+app('Finder').home.folders['Documents'].files['ReadMe.txt']
+
+# a reference to paragraph -1 of text of document 1 of application &quot;TextEdit&quot;
+app('TextEdit').documents[1].text.paragraphs[-1]
+
+# a reference to middle paragraph of text of last document of application &quot;TextEdit&quot;
+app('TextEdit').documents.last.text.paragraphs.middle
+
+# a reference to any file of home of application &quot;Finder&quot;
+app('Finder').home.files.any</code></pre>
+
+
+<h3>Relative references</h3>
+
+<pre><code># a reference to paragraph before paragraph 6 of text of document 1 of application &quot;TextEdit&quot;
+app('TextEdit').documents[1].text.paragraphs[6].previous(:paragraph)
+
+# a reference to paragraph after character 30 of document 1 of application &quot;Tex-Edit Plus&quot;
+app('Tex-Edit Plus').documents[1].characters[30].next(:paragraph)</code></pre>
+
+
+<h3>Element range references</h3>
+
+<pre><code># a reference to words 1 thru 4 of text of document 1 of application &quot;TextEdit&quot;
+app('TextEdit').documents[1].text.words[1, 4]
+
+# a reference to paragraphs 2 thru -1 of text of document 1 of application &quot;TextEdit&quot;
+app('TextEdit').documents[1].text.paragraphs[2, -1]
+
+# a reference to folders &quot;Documents&quot; thru &quot;Music&quot; of home of application &quot;Finder&quot;
+app('Finder').home.folders['Documents', 'Music']
+
+# a reference to text (word 3) thru (paragraph 7) of document 1 of application &quot;Tex-Edit Plus&quot;
+app('Tex-Edit Plus').documents[1].text[con.words[3], con.paragraphs[7]]</code></pre>
+
+
+<h3>Filter references</h3>
+
+<pre><code># a reference to every document of application &quot;TextEdit&quot; whose text is &quot;\n&quot;
+app('TextEdit').documents[its.text.eq("\n")]
+
+# a reference to every paragraph of document 1 of application &quot;Tex-Edit Plus&quot; &not;
+#     whose first character is last character
+app('Tex-Edit Plus').documents[1].paragraphs[
+    its.characters.first.eq(its.characters.last)]
+
+# a reference to every file of folder &quot;Documents&quot; of home of application &quot;Finder&quot; &not;
+#     whose name extension is &quot;txt&quot; and size < 10240
+app('Finder').home.folders['Documents'].files[
+    its.name_extension.eq('txt').and(its.size.lt(10240))]</code></pre>
+
+
+<h3>Insertion location references</h3>
+
+<pre><code># a reference to end of documents of application &quot;TextEdit&quot;
+app('TextEdit').documents.end
+
+# a reference to before paragraph 1 of text of document 1 of application &quot;TextEdit&quot;
+app('TextEdit').documents[1].text.paragraphs[1].before</code></pre>
+
+
+
+</div>
+
+<!-- bottom navigation -->
+
+<div class="footer">
+<a href="09_referenceforms.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="11_applicationcommands.html">Next</a>
+</div>
+
+</body>
+</html>

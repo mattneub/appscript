@@ -1,0 +1,69 @@
+About rb-appscript
+==================
+
+Ruby appscript (rb-appscript) is a high-level, user-friendly Apple event 
+bridge that allows you to control AppleScriptable Mac OS X applications 
+from Ruby.
+
+
+Requirements
+------------
+
+Appscript supports Ruby 1.8 and later.
+
+Appscript requires Mac OS X 10.4 or later.
+
+
+Installation
+------------
+
+To install appscript, cd to the rb-appscript-0.6.1 directory and run:
+
+  ruby extconf.rb
+  make
+  make install
+
+
+Building appscript from source requires the gcc compiler supplied with 
+Apple's Xcode IDE. Xcode can be obtained from Mac OS X installer disks
+or <http://developer.apple.com>.
+
+Please note that the version of Ruby included with Mac OS X 10.4 (Tiger) 
+is missing the header files needed to build appscript on PPC-based Macs. 
+Tiger users can avoid this issue by installing the latest version of Ruby 
+from <http://www.ruby-lang.org/en/downloads/> and updating their shell 
+login profiles to suit.
+
+
+Notes
+-----
+
+- rb-appscript 0.6.0+ supports string encodings in Ruby 1.9+; see the CHANGES 
+  file and documentation for details.
+
+- Developer tools for exporting application dictionaries (ASDictionary) 
+  and converting application commands from AppleScript to appscript syntax 
+  (ASTranslate) are available separately:
+
+    http://appscript.sourceforge.net/tools.html
+
+  ASDictionary 0.13.1 or later is also required to use rb-appscript's built-
+  in #help method. If ASDictionary isn't installed, interactive help won't 
+  be available but appscript will continue to operate as normal.
+
+
+Copyright
+---------
+
+Appscript is released into the public domain, except for the following code:
+
+- extconf.rb, which is a modified version of the RubyAEOSA/RubyOSA install 
+  script; see code for details
+
+- safeobject.rb, which is a modified version of basicobject 
+  <http://facets.rubyforge.org> released under the Ruby License; 
+  see code for details
+
+- SendThreadSafe.h/SendThreadSafe.m, which are modified versions of Apple 
+  code (http://developer.apple.com/samplecode/AESendThreadSafe); see code 
+  for details

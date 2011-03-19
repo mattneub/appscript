@@ -1,0 +1,126 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<title>rb-mactypes manual | 3. FileURL class</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<style type="text/css" media="all"><!--@import url(../full.css);--></style>
+
+</head>
+<body>
+
+<h1><img src="../rb-appscript-logo.png" alt="rb-appscript" title="rb-appscript" /></h1>
+
+<!-- top navigation -->
+<div class="navbar">
+<a href="02_aliasclass.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="04_unitsclass.html">Next</a>
+
+<span>
+<a href="../appscript-manual/index.html">appscript</a> /
+<strong><a href="../mactypes-manual/index.html">mactypes</a></strong> /
+<a href="../osax-manual/index.html">osax</a> /
+<a href="../aem-manual/index.html">aem</a>
+</span>
+</div>
+
+<!-- content -->
+<div id="content">
+
+
+<h2>3. The <code>MacTypes::FileURL</code> class</h2>
+
+<p>The <code>FileURL</code> class represents a fixed filesystem location. This may be deterministic (i.e. existing locations only) or non-deterministic depending on how the object is created.</p>
+
+<h3>Methods</h3>
+
+<pre><code>FileURL -- identifies a fixed filesystem location
+    Constructors:
+
+        FileURL.path(path) -- make FileURL object from POSIX path string
+
+        FileURL.hfs_path(path) -- make FileURL object from HFS path string
+
+        FileURL.url(url) -- make FileURL object from a local file:// URL string
+    
+        FileURL.desc(desc) -- make FileURL object from an AE::AEDesc
+                              of TypeFSS, TypeFSRef or TypeFileURL
+
+    Methods:
+
+        ==
+
+        hash
+    
+        inspect
+    
+        path -- returns POSIX path string
+    
+        hfs_path -- returns HFS path string
+
+        url -- returns file:// URL string
+
+        desc -- returns AE::AEDesc of TypeFSRef, TypeFSS or TypeFileURL
+
+        to_s -- synonym for #path
+    
+        to_alias -- returns a MacTypes::Alias object
+    
+        to_file_url -- returns a new MacTypes::FileURL object</code></pre>
+
+
+<h3>Examples</h3>
+
+<pre><code>require "appscript"
+
+f = MacTypes::FileURL.path('/Users/foo/new file')
+
+puts f.to_s
+# /Users/foo/new file
+
+puts f.url
+# file://localhost/Users/foo/some%20file
+
+puts f.inspect
+# MacTypes::FileURL.path("/Users/foo/new file")
+
+Appscript.app('TextEdit').documents[1].save(:in => f)
+# saves front TextEdit document at the given location</code></pre>
+
+
+<h3>Notes</h3>
+
+<p>Unlike the <code>Alias</code> class which wraps <code>TypeAlias</code> values only, the <code>FileURL</code> class provides a uniform wrapper for several file-related types that may be returned by applications: <code>TypeFSS</code>, <code>TypeFSRef</code> and <code>TypeFileURL</code>. When passing <code>FileURL</code> values to applications, you should not normally need to worry about which value type a <code>FileURL</code> object contains as well-designed applications will ask the Apple Event Manager to coerce the given value to the desired type as necessary.</p>
+
+<p>When dealing with less well-behaved applications, however, you may need to pass an AEDesc of a specific type. In this case you should use the <code>desc</code> method to obtain an <code>AE::AEDesc</code> object, then call its <code>coerce</code> method to obtain an AEDesc of the desired type. For example, if an older Carbon application refuses to accept a FileURL identifying a non-existing file location, you may need to provide a FSSpec instead:</p>
+
+<pre><code>require "appscript"
+
+file_url = MacTypes::FileURL.path('/Users/foo/new file')
+
+fs_spec = file_url.desc.coerce(KAE::TypeFSS)
+
+Appscript.app('older app').documents[1].save(:in => fs_spec)</code></pre>
+
+<p>When used in an application command, a <code>FileURL</code> object returned by appscript will always pack into the same <code>TypeFSRef</code>, <code>TypeFileURL</code> or <code>TypeFSS</code> AEDesc it was created from. A <code>FileURL</code> object returned by <code>FileURL.path</code>, <code>Alias#to_file_url</code> or <code>FileURL#to_file_url</code> will always pack into an AEDesc of <code>TypeFileURL</code>.</p>
+
+<p>When comparing <code>FileURL</code> objects for equality, be aware that <code>FileURL#==</code> always performs case-sensitive comparisons, regardless of how the underlying filesystem handles case-[in]sensitivity.</p>
+
+<p>Note that AEDescs of <code>TypeFSRef</code> can represent existing filesystem locations only. AEDescs of <code>TypeFileURL</code> can represent both existing and non-existing locations. AEDescs of <code>TypeFSS</code> (FSSpecs) are deprecated on Mac OS X due to lack of proper Unicode and long filename support, and are retained for backwards compatibility with older applications only.</p>
+
+<p>Be aware that <code>FileURL#==</code> does not normalize file URLs; thus minor differences in capitalization, etc. can result in <code>FileURL#==</code> returning <code>false</code> even if both objects happen to identify the same filesystem location.</p>
+
+</div>
+
+<!-- bottom navigation -->
+
+<div class="footer">
+<a href="02_aliasclass.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="04_unitsclass.html">Next</a>
+    </div>
+
+</body>
+</html>

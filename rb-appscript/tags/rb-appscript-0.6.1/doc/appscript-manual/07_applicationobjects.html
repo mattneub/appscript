@@ -1,0 +1,211 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<title>rb-appscript manual | 7. Application Objects</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<style type="text/css" media="all"><!--@import url(../full.css);--></style>
+
+</head>
+<body>
+
+<h1><img src="../rb-appscript-logo.png" alt="rb-appscript" title="rb-appscript" /></h1>
+
+<!-- top navigation -->
+<div class="navbar">
+<a href="06_classesandenums.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="08_realvsgenericreferences.html">Next</a>
+
+<span>
+<strong><a href="../appscript-manual/index.html">appscript</a></strong> /
+<a href="../mactypes-manual/index.html">mactypes</a> /
+<a href="../osax-manual/index.html">osax</a> /
+<a href="../aem-manual/index.html">aem</a>
+</span>
+</div>
+
+<!-- content -->
+<div id="content">
+
+<h2>7. Application Objects</h2>
+
+<h3>Creating application objects</h3>
+
+
+<p>Before you can communicate with a scriptable application you must create an <code>Application</code> object, for example:</p>
+
+<pre><code>textedit = app.by_id('com.apple.textedit')</code></pre>
+
+
+<p>To target an application you must call one of the <code>app</code> object's <code>by_*</code> methods with the appropriate argument:</p>
+
+<dl>
+<dt><code>app.by_name(<var>name</var>)</code> / <code>app(<var>name</var>)</code></dt>
+<dd>The application's filename or POSIX path, e.g. <code>'TextEdit'</code>, <code>'TextEdit.app'</code>, <code>'/Applications/TextEdit.app'</code>. Where a filename is provided, appscript uses LaunchServices to locate the application. An <code>.app</code> suffix is optional. e.g. Given the name <code>'TextEdit'</code>, appscript first searches for an application with that exact filename; if none is found, it automatically adds an <code>.app</code> suffix (<code>'TextEdit.app'</code>) and tries again.</dd>
+
+<dt><code>app.by_id(<var>id</var>)</code></dt>
+<dd>The application's bundle id, e.g. <code>'com.apple.textedit'</code>. Cocoa applications often have unique bundle ids.</dd> 
+
+<dt><code>app.by_creator(<var>creator</var>)</code></dt>
+<dd>A four-character string containing the application's creator type, e.g. <code>'ttxt'</code>. Older Carbon-based applications and some Cocoa-based applications have unique creator types.</dd>
+
+<dt><code>app.by_pid(<var>pid</var>)</code></dt>
+<dd>A valid Unix process id, e.g. <code>5687</code>.</dd>
+
+<dt><code>app.by_url(<var>url</var>)</code></dt>
+<dd>A URL of form <code>eppc://[user[:password]@host/Application%20Name[?[uid=#]&amp;[pid=#]</code>, e.g. <code>eppc://johnsmith:foobar@office-mac.local/TextEdit?uid=501</code>. The host name/IP address and the process name (case-sensitive) are required. The username and password are optional: if omitted, the OS will obtain this information from the user's keychain or display a dialog asking the user to input one or both values. The user id and process id are also optional; if the process id is given, the process name will be ignored.</dd>
+
+<dt><code>app.by_aem_app(<var>aem_app</var>)</code></dt>
+<dd>An <code>AEM::Application</code> instance.</dd>
+
+<dt><code>app.current</code></dt>
+<dd>The host application.</dd>
+</dl>
+
+
+<p>Examples:</p>
+
+<pre><code>require "appscript"
+include Appscript
+
+ical = app('iCal')
+
+textedit = app('TextEdit.app')
+
+safari = app('/Applications/Safari')
+
+addressbook = app.by_id('com.apple.addressbook')
+
+quicktimeplayer = app.by_creator('TVOD')
+
+finder = app.by_url('eppc://192.168.10.1/Finder')
+
+itunes = app.by_url('eppc://Jan%20Smith@G4.local/iTunes')</code></pre>
+
+
+<h3>Basic commands</h3>
+
+<p>All applications should respond to the following commands:</p>
+
+<pre><code>run -- Run an application. Most applications will open an empty, 
+          untitled window.
+
+launch -- Launch an application without sending it a 'run' event.
+          Applications that normally open a new, empty document 
+          upon launch won't. [1]
+
+activate -- Bring the application to the front.
+
+reopen -- Reactivate a running application. Some applications 
+          will open a new untitled window if no window is open.
+
+open(<var>value</var>) -- Open the specified object(s).
+    anything -- list of objects to open, typically a list of 
+                MacTypes::Alias
+
+print(<var>value</var>) -- Print the specified object(s).
+    anything -- list of objects to print, typically a list of 
+                MacTypes::Alias
+
+quit(saving => <var>value</var>) -- Quit an application.
+    saving : :yes | :ask | :no -- specifies whether to save 
+                                  currently open documents
+</code></pre>
+
+<p><small>[1] The <code>launch</code> command should be used before constructing references or sending other commands, otherwise appscript will run the application normally.</small></p>
+
+<p>Some applications may provide their own definitions of some or all of these commands, so check their terminology before use.</p>
+
+<p>Appscript also defines <code>get</code> and <code>set</code> commands for any scriptable application that doesn't supply its own definitions:</p>
+
+<pre><code>get(<var>value</var>) -- Get the data for an object.
+    reference -- the object for the command
+    Result: anything -- the reply for the command
+
+set(<var>value</var>, :to =&gt; <var>value</var>) -- Set an object's data.
+    reference -- the object for the command
+    to : anything -- The new value.</code></pre>
+
+<p>Note that these commands are only useful in applications that define an Apple Event Object Model as part of their Apple event interface.</p>
+
+
+<h3>Transaction support</h3>
+
+<p>Application objects implement three additional methods, <code>begin_transaction</code>, <code>end_transaction</code> and <code>abort_transaction</code> that allow a sequence of related commands to be handled as a single operation by applications that support transactions, e.g. FileMaker Pro.</p>
+
+<p>Once the application object's <code>begin_transaction</code> method is called, all subsequent commands to that application will be sent as part of the same transaction until <code>end_transaction</code> or <code>abort_transaction</code> is called.</p>
+
+<p>The <code>begin_transaction</code> method takes an optional <code>session</code> argument that indicates the specific transaction session to open (in applications that support this).</p>
+
+<p class="hilitebox">Remember to call <code>end_transaction</code> or <code>abort_transaction</code> at the end of every transaction. (This includes transactions interrupted by a raised exception.) If a transaction is accidentally left open, appscript will try to end it automatically when the application object is garbage-collected, but this is not guaranteed to succeed.</p>
+
+
+<h3>Local application launching notes</h3>
+
+<p>Note: the following information only applies to local applications as appscript cannot directly launch applications on a remote Mac. To control a remote application, the application must be running beforehand or else launched indirectly (e.g. by using the remote Mac's Finder to open it).</p>
+
+
+<h4>How applications are identified</h4>
+
+<p>When you create an Application object by application name, bundle id or creator type, appscript uses LaunchServices to locate an application matching that description. If you have more than one copy of the same application installed, you can identify the one you want by providing its full path, otherwise LaunchServices will identify the newest copy for you.</p>
+
+<p>Appscript identifies running applications by their process ids so it's possible to control multiple versions of an application running at the same time if their Application objects are created using process ids or eppc URLs.</p>
+
+
+<h4>Checking if an application is running</h4>
+
+<p>You can check if the application specified by an Application object is currently running by calling its <code>#is_running?</code> method. This is useful if you don't want to perform commands on an application that isn't already running. For example:</p>
+
+<pre><code>te = app('TextEdit')
+# Only perform TextEdit-related commands if it's already running:
+if te.is_running?
+    # all TextEdit-related code goes here...
+end</code></pre>
+
+<p class="hilitebox">Remember that appscript automatically launches a non-running application the first time your script makes reference to any of its properties, elements or commands. To avoid accidental launches, <em>all</em> code relating to that application must be included in a conditional block that only executes if <code>#is_running?</code> returns <code>true</code>.</p>
+
+
+<h4>Launch errors</h4>
+
+<p>If the application can't be launched for some reason (e.g. if it's in the Trash), an <code>Appscript::CantLaunchApplicationError</code> error will be raised. This provides a description of the problem (if it's a standard LaunchServices error) along with the original OS error number, which you can also obtain via the <code>CantLaunchApplicationError#to_i</code> method.</p>
+
+
+<h4>Using <code>launch</code> vs <code>run</code></h4>
+
+<p>When appscript launches a non-running application, it normally sends it a <code>run</code> command as part of the launching process. If you wish to avoid this, you should start the application by sending it a <code>launch</code> command before doing anything else. For example:</p>
+
+<pre><code>te = app('TextEdit')
+te.launch
+# other TextEdit-related code goes here...</code></pre>
+
+<p>This is useful when you want to start an application without it going through its normal startup procedure. For example, the above script will launch TextEdit without causing it to display a new, empty document (its usual behaviour).</p>
+
+<p><code>launch</code> is also useful if you need to send a non-running application an <code>open</code> command as its very first instruction. For example, to send an <code>open</code> command to a non-stay-open application that batch processes one or more dropped files then quits again, you must first start it using <code>launch</code>, then send it an <code>open</code> command with the files to process. If you forget to do this, the application will first receive a <code>run</code> command and quit again before the <code>open</code> command can be handled.</p>
+
+
+<h4>Restarting applications</h4>
+
+<p>As soon as you start to construct a reference or command using a newly created Application objects, if the application is not already running then appscript will automatically launch it in order to obtain its terminology.</p>
+
+<p>If the target application has stopped running since the Application object was created, trying to send it a command using that Application object will result in an invalid connection error (-609), unless that command is <code>run</code> or <code>launch</code>. This restriction prevents appscript accidentally restarting an application that has unexpectedly quit while a script is controlling it. Scripts can restart an application by sending an explicit <code>run</code> or <code>launch</code> command, or by creating a new Application object for it.</p>
+
+<p>Note that you can still use Application objects to control applications that have been quit <em>and</em> restarted since the Application object was created. Appscript will automatically update the Application object's process id information as needed.</p>
+
+
+<p class="hilitebox">There is a known problem with quitting and immediately relaunching an application via appscript, where the relaunch instruction is sent to the application before it has actually quit. This timing issue appears to be the OS's fault; the current workaround for scripts that need to quit and restart applications is to insert a few seconds' delay between the <code>quit</code> and <code>run</code>/<code>launch</code> using Ruby's <code>sleep</code> function.</p>
+
+
+</div>
+
+<!-- bottom navigation -->
+
+<div class="footer">
+<a href="06_classesandenums.html">Previous</a> &bull;
+<a href="index.html">Up</a> &bull;
+<a href="08_realvsgenericreferences.html">Next</a>
+</div>
+
+</body>
+</html>
