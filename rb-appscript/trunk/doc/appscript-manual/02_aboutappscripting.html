@@ -67,7 +67,7 @@
 
 <p><img src="ruby_to_itunes_event.gif" alt="Sending Apple event from Ruby to iTunes"/></p>
 
-<p>Applications may respond to an incoming Apple event by sending a reply event back to the client application. The reply event may contain either a return value, if there is one, or an error description if it was unable to handle the event as requested. For example, executing the command <code>app('TextEdit').name.get</code> in a Ruby interpreter sends TextEdit a <code>code/getd</code> event containing an object specifier identifying the <code>name</code> property of its root <code>application</code> object. TextEdit processes this event, then sends a reply event containing the string '<tt>TextEdit</tt>' back to the Ruby interpreter, where it is displayed as the command's result. This exchange is usually performed synchronously, appearing to the user as a simple remote procedure call. Asynchronous messaging is also supported, though is not normally used in application scripting.</p>
+<p>Applications may respond to an incoming Apple event by sending a reply event back to the client application. The reply event may contain either a return value, if there is one, or an error description if it was unable to handle the event as requested. For example, executing the command <code>app('TextEdit').name.get</code> in a Ruby interpreter sends TextEdit a <code>core/getd</code> event containing an object specifier identifying the <code>name</code> property of its root <code>application</code> object. TextEdit processes this event, then sends a reply event containing the string '<tt>TextEdit</tt>' back to the Ruby interpreter, where it is displayed as the command's result. This exchange is usually performed synchronously, appearing to the user as a simple remote procedure call. Asynchronous messaging is also supported, though is not normally used in application scripting.</p>
 
 
 <h3>What is a scriptable application?</h3>
@@ -83,7 +83,7 @@
 <ul>
 <li>support automatic translation of human-readable terminology to four-letter codes in high-level bridges such as AppleScript and appscript</li>
 
-<li>generate basic human-readable documentation by applications such as Script Editor and HTMLDictionary.</li>
+<li>generate basic human-readable documentation by applications such as AppleScript Editor and ASDictionary.</li>
 </ul>
 
 <p>(Note that the <code>aete</code> and <code>sdef</code> formats do not provide an exhaustive description of the application's scripting interface, and additional documentation is usually required - if not always provided - to form a complete understanding of that interface and how to use it effectively.)</p>

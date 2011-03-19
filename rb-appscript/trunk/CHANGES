@@ -1,8 +1,10 @@
-2010-12-20 -- 0.6.1
+2010-03-19 -- 0.6.1
 
 - removed 32-bit only AE.run_application_event_loop, AE.quit_application_event_loop
 
 - updated AE.launch_application to use LSOpenApplication
+
+- minor documentation fixes
 
 
 2010-12-17 -- 0.6.0

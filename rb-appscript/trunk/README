@@ -17,11 +17,11 @@ Appscript requires Mac OS X 10.4 or later.
 Installation
 ------------
 
-To install appscript, cd to the rb-appscript-0.6.0 directory and run:
+To install appscript, cd to the rb-appscript-0.6.1 directory and run:
 
   ruby extconf.rb
   make
-  sudo make install
+  make install
 
 
 Building appscript from source requires the gcc compiler supplied with 
@@ -38,7 +38,7 @@ login profiles to suit.
 Notes
 -----
 
-- rb-appscript 0.6.0 supports string encodings in Ruby 1.9+; see the CHANGES 
+- rb-appscript 0.6.0+ supports string encodings in Ruby 1.9+; see the CHANGES 
   file and documentation for details.
 
 - Developer tools for exporting application dictionaries (ASDictionary) 
@@ -50,10 +50,6 @@ Notes
   ASDictionary 0.13.1 or later is also required to use rb-appscript's built-
   in #help method. If ASDictionary isn't installed, interactive help won't 
   be available but appscript will continue to operate as normal.
-
-- This is a Beta release. Please report any issues you find, particularly in 
-  the new Ruby 1.9 string encoding support which is not yet heavily tested. 
-  If no major problems are reported, Release Candidate 1 will follow.
 
 
 Copyright
