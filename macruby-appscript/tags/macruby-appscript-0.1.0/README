@@ -1,0 +1,81 @@
+About macruby-appscript
+=======================
+
+MacRuby appscript (macruby-appscript) is a high-level, user-friendly 
+Apple event bridge that allows you to control AppleScriptable Mac OS X
+applications from Ruby.
+
+
+Requirements
+------------
+
+- MacRuby appscript supports MacRuby 0.8 and later.
+
+- MacRuby appscript requires objc-appscript 0.5.0 or later.
+
+
+Installation
+------------
+
+To install macruby-appscript, cd to the macruby-appscript-0.1.0 directory 
+and run:
+
+  macruby setup.rb
+
+To install objc-appscript:
+
+  http://appscript.sourceforge.net/objc-appscript/install.html
+
+When building the Appscript.framework from source, use one of the following
+build settings:
+
+  Release_10.5_32_64_GC -- for installing in /Library/Frameworks
+  
+  Release_10.5_32_64_GC_embed -- for embedding in .app bundles
+
+Both configurations are suitable for use with MacRuby. The only difference 
+is that the embedded configuration sets the Installation Directory to
+@executable_path/../Frameworks, so should be used when bundling the
+Appscript.framework in a MacRuby-based application for distribution.
+
+
+Notes
+-----
+
+- While macruby-appscript's design is derived from rb-appscript, there are 
+  some significant differences:
+  
+  - Rb-appscript uses a three-layer architecture, consisting of native Ruby 
+    Appscript and AEM modules and a C-based AE extension. In macruby-
+    appscript, only the top-level Appscript module is implemented natively; 
+    the AEM and AE layers are replaced by objc-appscript's AEM API and 
+    Cocoa's NSAppleEventDescriptor class. In practice, this should only 
+    affect users when dealing with applications that have faulty or missing 
+    terminology, or when packaging MacRuby-based applications for release.
+    
+  - Rb-appscript maps common Apple event types to standard Ruby classes where
+    practical and maps other types to custom classes provided by the MacTypes
+    module where no native equivalents exist. MacRuby appscript relies on  
+    the objc-appscript framework to map Apple event types to standard Cocoa 
+    classes or to custom objc-appscript classes where no Cocoa equivalents
+    exist. For example, a descriptor of typeUnicodeText is mapped to NSString
+    while a descriptor of typeAlias is mapped to ASAlias. The only exceptions 
+    are typeTrue and typeFalse descriptors, which macruby-appscript maps to 
+    'true' and 'false' rather than objc-appscript's ASBoolean class.
+    
+  - Rb-appscript represents the keyword parameters in an application command
+    as an inline hash, e.g. make(:new => :document), whereas macruby-appscript 
+    uses MacRuby's simpler selector syntax, e.g. make(new: :document).
+
+
+Copyright
+---------
+
+MacRuby appscript is released into the public domain, except for the 
+following code:
+
+- setup.rb; see code for details
+
+- safeobject.rb, which is a modified version of basicobject 
+  <http://facets.rubyforge.org> released under the Ruby License; 
+  see code for details
