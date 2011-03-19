@@ -1,9 +1,0 @@
-TO DO
-
-- compiler warnings when [ASApplicationObj run] is used:
-
-	/Users/has/AppscriptDemo/AppscriptDemo.m:27: warning: multiple methods named '-run' found
-	/Developer/SDKs/MacOSX10.4u.sdk/System/Library/Frameworks/Foundation.framework/Headers/NSRunLoop.h:37: warning: using '-(void)run'
-	/Users/has/AppscriptDemo/TEGlue/TEReferenceGlue.h:55: warning: also found '-(TERunCommand *)run'
-
-

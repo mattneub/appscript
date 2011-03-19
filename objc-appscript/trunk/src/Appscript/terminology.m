@@ -66,8 +66,8 @@
 	return eventID;
 }
 
-- (OSType)parameterForName:(NSString *)name_ {
-	return [[parameters objectForKey: name_] fourCharCode];
+- (AEMType *)parameterForName:(NSString *)name_ {
+	return [parameters objectForKey: name_];
 }
 
 @end

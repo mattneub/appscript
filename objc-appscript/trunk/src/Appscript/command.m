@@ -149,8 +149,6 @@ fail:
 	NSMutableDictionary *userInfo;
 	id result;
 	NSError *eventError = nil;
-	// TO DO: if error occurs, return new NSError containing original NSError and description of this command
-	// along with any other error info suitably formatted
 	
 	if (error)
 		*error = nil;

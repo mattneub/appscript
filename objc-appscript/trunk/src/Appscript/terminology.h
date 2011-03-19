@@ -42,7 +42,7 @@
 
 - (OSType)eventID;
 
-- (OSType)parameterForName:(NSString *)name_; // TO DO: needs to return error by arg if not found
+- (AEMType *)parameterForName:(NSString *)name_;
 
 @end
 

@@ -29,8 +29,6 @@
 
 <h2>13. Performance Issues</h2>
 
-<p class="hilitebox">Note: this chapter uses rb-appscript-based examples, though the general principles are the same for objc-appscript.</p>
-
 <h3>About performance</h3>
 
 <p>Application scripting is subject to a number of potential performance bottlenecks:</p>
@@ -50,21 +48,18 @@
 
 <p>While iterating over application objects and manipulating each in turn is a common technique, it's also the slowest by far:</p>
 
-<pre><code>require "appscript"
-include Appscript
+<pre><code>NSString *desiredEmail = @"sam.brown@example.com";
 
+NSMutableArray *foundNames = [NSMutableArray array];
 
-desiredEmail = 'sam.brown@foo.com'
-
-foundNames = []
-app('Address Book').people.get.each do |person|
-    person.emails.get.each do |email|
-        if email.value.get == desiredEmail
-            foundNames.push(person.name.get)
-        end
-    end
-end
-p foundNames</code></pre>
+for (ABReference *person in [[addressBook people] getList]) {
+    for (ABReference *email in [[people emails] getList]) {
+        if ([[[email value] getItem] isEqual: desiredEmail]) {
+            [foundNames addObject: [[person name] getItem]];
+        }
+    }
+}
+NSLog(@"%@", foundNames);</code></pre>
 
 
 <p>The above script sends one Apple event to get a list of references to all people, then one Apple event for each person to get a list of references to their emails, then one Apple event for each of those emails. Thus the time taken increases directly in proportion to the number of people in Address Book. If there's hundreds of people to search, that's hundreds of Apple events to be built, sent and individually resolved, and performance suffers as a result.</p>
@@ -78,22 +73,20 @@ p foundNames</code></pre>
 
 <p>In this case, the entire search can be performed using a single complex query sent to Address Book via a single Apple event:</p>
 
-<pre><code>require "appscript"
+<pre><code>NSString *desiredEmail = @"sam.brown@example.com";
 
-include Appscript
+NSArray *foundNames = [[[[addressBook people] byTest:
+        [[[ABIts emails] value] contains: desiredEmail]
+        ] name] getList];
 
-desiredEmail = 'sam.brown@foo.com'
-
-p app('Address Book').people[
-        its.emails.value.contains(desiredEmail)
-        ].name.get</code></pre>
+NSLog(@"%@", foundNames);</code></pre>
 
 <p>To explain:</p>
 
 <ul>
 <li>The query states: find the name of every person object that passes a specific test.</li>
 
-<li>The test is: does a given value, 'sam.brown@foo.com', appear in a list that consists of the value of each email object contained by an individual person?</li>
+<li>The test is: does a given value, 'sam.brown@example.com', appear in a list that consists of the value of each email object contained by an individual person?</li>
 
 <li>The command is: evaluate that query against the AEOM and get (return) the result, which is a list of zero or more strings: the names of the people matched by the query.</li>
 </ul>
@@ -103,29 +96,27 @@ p app('Address Book').people[
 
 <p>While AEOM queries can be surprisingly powerful, there are still many problems too complex for the application to evaluate entirely by itself. For example, let's say that you want to obtain the name of every person who has an email addresses that uses a particular domain name. Unfortunately, this test is too complex to express as a single AEOM query; however, it can still be solved reasonably efficiently by obtaining all the data from the application up-front and processing it locally. For this we need: 1. the name of every person in the Address Book, and 2. each person's email addresses. Fortunately, each of these can be expressed in a single query, allowing all this data to be retrieved using just two <code>get</code> commands.</p>
 
-<pre><code>require "appscript"
-include Appscript
+<pre><code>NSString *desiredDomain = @"@example.com";
 
-desiredDomain = 'foo.com'
+// get a list of name strings
+NSArray *names = [[[addressBook people] name] getList];
 
-domainPattern = Regexp.new(Regexp.escape('@'+desiredDomain) + '$')
+// a list of lists of email strings
+NSArray *emailsOfEveryPerson = [[[[addressBook people]
+                                       emails] value] getList];
 
-# get a list of name strings
-names = app('Address Book').people.name.get
+NSMutableArray *result = [NSMutableArray array];
 
-# a list of lists of email strings
-emailsOfEveryPerson = app('Address Book').people.emails.value.get
+for (i=0; i < [emailsOfEveryPerson length]; i++) {
+    for (NSString *email in [emailsOfEveryPerson objectAtIndex: i]) {
+        if ([email endsWith: desiredDomain]) {
+            [result addObject: [names objectAtIndex: i]];
+            break;
+        }
+    }
+}
 
-result = []
-names.zip(emailsOfEveryPerson).each do |name, emails|
-    emails.each do |email|
-        if domainPattern.match(email):
-            result.push(name)
-            break
-        end
-    end
-end
-p result</code></pre>
+NSLog(@"%@", result);</code></pre>
 
 <p>This solution isn't as fast as the pure-query approach, but is still far more efficient than iterating over and manipulating each of the application objects themselves.</p>
 </div>

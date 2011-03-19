@@ -41,8 +41,6 @@
 	return [NSString stringWithFormat: @"[%@ %@]", [self class], name];
 }
 
-// TO DO: hash, isEqual? note: these shouldn't be necessary as [long as] objects are cached when created and subsequently reused (glues do this; ASB API should do it too), and copying them returns the original object
-
 - (id)copyWithZone:(NSZone *)zone {
 	return [self retain];
 }
