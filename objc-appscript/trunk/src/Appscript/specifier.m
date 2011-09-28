@@ -60,10 +60,6 @@ static NSAppleEventDescriptor *kFormPropertyID,
 static NSAppleEventDescriptor *kClassProperty;
 
 
-// blank record used by -packWithCodecs: to construct object specifier descriptors
-static NSAppleEventDescriptor *kEmptyRecord;
-
-
 static BOOL specifierModulesAreInitialized = NO;
 
 
@@ -99,7 +95,6 @@ void initSpecifierModule(void) {
 	kClassProperty = [[NSAppleEventDescriptor alloc] initWithDescriptorType: typeType
 																	  bytes: &descData
 																	 length: sizeof(descData)];
-	kEmptyRecord = [[NSAppleEventDescriptor alloc] initRecordDescriptor];
 	specifierModulesAreInitialized = YES;
 }
 
@@ -131,7 +126,6 @@ void disposeSpecifierModule(void) {
 	[kFormTest release];
 	// miscellaneous
 	[kClassProperty release];
-	[kEmptyRecord release];
 	specifierModulesAreInitialized = NO;
 }
 
@@ -271,7 +265,7 @@ void disposeSpecifierModule(void) {
 }
 
 - (NSAppleEventDescriptor *)packWithCodecsNoCache:(id)codecs {
-	NSAppleEventDescriptor *desc = [kEmptyRecord coerceToDescriptorType: typeInsertionLoc];
+	NSAppleEventDescriptor *desc = AEMNewRecordOfType(typeInsertionLoc);
 	[desc setDescriptor: [container packWithCodecs: codecs] forKeyword: keyAEObject];
 	[desc setDescriptor: key forKeyword: keyAEPosition];
 	return desc;	
@@ -440,7 +434,7 @@ void disposeSpecifierModule(void) {
 // reserved methods
 
 - (NSAppleEventDescriptor *)packWithCodecsNoCache:(id)codecs {
-	NSAppleEventDescriptor *desc = [kEmptyRecord coerceToDescriptorType: typeObjectSpecifier];
+	NSAppleEventDescriptor *desc = AEMNewRecordOfType(typeObjectSpecifier);
 	[desc setDescriptor: kClassProperty forKeyword: keyAEDesiredClass];
 	[desc setDescriptor: kFormPropertyID forKeyword: keyAEKeyForm];
 	[desc setDescriptor: key forKeyword: keyAEKeyData];
@@ -464,7 +458,7 @@ void disposeSpecifierModule(void) {
 // reserved methods
 
 - (NSAppleEventDescriptor *)packWithCodecsNoCache:(id)codecs {
-	NSAppleEventDescriptor *desc = [kEmptyRecord coerceToDescriptorType: typeObjectSpecifier];
+	NSAppleEventDescriptor *desc = AEMNewRecordOfType(typeObjectSpecifier);
 	[desc setDescriptor: kClassProperty forKeyword: keyAEDesiredClass];
 	[desc setDescriptor: kFormUserPropertyID forKeyword: keyAEKeyForm];
 	[desc setDescriptor: [[NSAppleEventDescriptor descriptorWithString: key] coerceToDescriptorType: typeChar]
@@ -508,7 +502,7 @@ void disposeSpecifierModule(void) {
 // reserved methods
 
 - (NSAppleEventDescriptor *)packWithCodecsNoCache:(id)codecs {
-	NSAppleEventDescriptor *desc = [kEmptyRecord coerceToDescriptorType: typeObjectSpecifier];
+	NSAppleEventDescriptor *desc = AEMNewRecordOfType(typeObjectSpecifier);
 	[desc setDescriptor: [NSAppleEventDescriptor descriptorWithTypeCode: wantCode]
 			 forKeyword: keyAEDesiredClass];
 	[desc setDescriptor: kFormName forKeyword: keyAEKeyForm];
@@ -533,7 +527,7 @@ void disposeSpecifierModule(void) {
 // reserved methods
 
 - (NSAppleEventDescriptor *)packWithCodecsNoCache:(id)codecs {
-	NSAppleEventDescriptor *desc = [kEmptyRecord coerceToDescriptorType: typeObjectSpecifier];
+	NSAppleEventDescriptor *desc = AEMNewRecordOfType(typeObjectSpecifier);
 	[desc setDescriptor: [NSAppleEventDescriptor descriptorWithTypeCode: wantCode]
 			 forKeyword: keyAEDesiredClass];
 	[desc setDescriptor: kFormAbsolutePosition forKeyword: keyAEKeyForm];
@@ -558,7 +552,7 @@ void disposeSpecifierModule(void) {
 // reserved methods
 
 - (NSAppleEventDescriptor *)packWithCodecsNoCache:(id)codecs {
-	NSAppleEventDescriptor *desc = [kEmptyRecord coerceToDescriptorType: typeObjectSpecifier];
+	NSAppleEventDescriptor *desc = AEMNewRecordOfType(typeObjectSpecifier);
 	[desc setDescriptor: [NSAppleEventDescriptor descriptorWithTypeCode: wantCode]
 			 forKeyword: keyAEDesiredClass];
 	[desc setDescriptor: kFormUniqueID forKeyword: keyAEKeyForm];
@@ -594,7 +588,7 @@ void disposeSpecifierModule(void) {
 // reserved methods
 
 - (NSAppleEventDescriptor *)packWithCodecsNoCache:(id)codecs {
-	NSAppleEventDescriptor *desc = [kEmptyRecord coerceToDescriptorType: typeObjectSpecifier];
+	NSAppleEventDescriptor *desc = AEMNewRecordOfType(typeObjectSpecifier);
 	[desc setDescriptor: [NSAppleEventDescriptor descriptorWithTypeCode: wantCode]
 			 forKeyword: keyAEDesiredClass];
 	[desc setDescriptor: kFormAbsolutePosition forKeyword: keyAEKeyForm];
@@ -643,7 +637,7 @@ void disposeSpecifierModule(void) {
 // reserved methods
 
 - (NSAppleEventDescriptor *)packWithCodecsNoCache:(id)codecs {
-	NSAppleEventDescriptor *desc = [kEmptyRecord coerceToDescriptorType: typeObjectSpecifier];
+	NSAppleEventDescriptor *desc = AEMNewRecordOfType(typeObjectSpecifier);
 	[desc setDescriptor: [NSAppleEventDescriptor descriptorWithTypeCode: wantCode]
 			 forKeyword: keyAEDesiredClass];
 	[desc setDescriptor: kFormRelativePosition forKeyword: keyAEKeyForm];
@@ -838,10 +832,10 @@ void disposeSpecifierModule(void) {
 	else
 		stopReference_ = [[AEMCon elements: wantCode] byIndex: stopReference];
 	// pack descriptor
-	keyDesc = [kEmptyRecord coerceToDescriptorType: typeRangeDescriptor];
+	keyDesc = AEMNewRecordOfType(typeRangeDescriptor);
 	[keyDesc setDescriptor: [codecs pack: startReference_] forKeyword: keyAERangeStart];
 	[keyDesc setDescriptor: [codecs pack: stopReference_] forKeyword: keyAERangeStop];
-	desc = [kEmptyRecord coerceToDescriptorType: typeObjectSpecifier];
+	desc = AEMNewRecordOfType(typeObjectSpecifier);
 	[desc setDescriptor: [NSAppleEventDescriptor descriptorWithTypeCode: wantCode]
 			 forKeyword: keyAEDesiredClass];
 	[desc setDescriptor: kFormRange forKeyword: keyAEKeyForm];
@@ -871,7 +865,7 @@ void disposeSpecifierModule(void) {
 // reserved methods
 
 - (NSAppleEventDescriptor *)packWithCodecsNoCache:(id)codecs {
-	NSAppleEventDescriptor *desc = [kEmptyRecord coerceToDescriptorType: typeObjectSpecifier];
+	NSAppleEventDescriptor *desc = AEMNewRecordOfType(typeObjectSpecifier);
 	[desc setDescriptor: [NSAppleEventDescriptor descriptorWithTypeCode: wantCode]
 			 forKeyword: keyAEDesiredClass];
 	[desc setDescriptor: kFormTest forKeyword: keyAEKeyForm];
@@ -912,7 +906,7 @@ void disposeSpecifierModule(void) {
 }
 
 - (NSAppleEventDescriptor *)packWithCodecsNoCache:(id)codecs {
-	NSAppleEventDescriptor *desc = [kEmptyRecord coerceToDescriptorType: typeObjectSpecifier];
+	NSAppleEventDescriptor *desc = AEMNewRecordOfType(typeObjectSpecifier);
 	[desc setDescriptor: [NSAppleEventDescriptor descriptorWithTypeCode: wantCode]
 			 forKeyword: keyAEDesiredClass];
 	[desc setDescriptor: kFormAbsolutePosition forKeyword: keyAEKeyForm];

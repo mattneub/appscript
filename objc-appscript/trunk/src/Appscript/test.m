@@ -33,10 +33,6 @@ static NSAppleEventDescriptor *kEnumAND,
 							  *kEnumNOT;
 
 
-// blank record used by -packWithCodecs: to construct test descriptors
-static NSAppleEventDescriptor *kEmptyRecord;
-
-
 void initTestModule(void) { // called automatically
 	// comparison tests
 	OSType descData;
@@ -53,8 +49,6 @@ void initTestModule(void) { // called automatically
 	ENUMERATOR(AND);
 	ENUMERATOR(OR);
 	ENUMERATOR(NOT);
-	// miscellaneous
-	kEmptyRecord = [[NSAppleEventDescriptor alloc] initRecordDescriptor];
 }
 
 void disposeTestModule(void) {
@@ -71,8 +65,6 @@ void disposeTestModule(void) {
 	[kEnumAND release];
 	[kEnumOR release];
 	[kEnumNOT release];
-	// miscellaneous
-	[kEmptyRecord release];
 }
 
 
@@ -179,7 +171,7 @@ void disposeTestModule(void) {
 }
 
 - (NSAppleEventDescriptor *)packWithCodecsNoCache:(id)codecs {
-	NSAppleEventDescriptor *desc = [kEmptyRecord coerceToDescriptorType: typeCompDescriptor];
+	NSAppleEventDescriptor *desc = AEMNewRecordOfType(typeCompDescriptor);
 	[desc setDescriptor: [codecs pack: operand1] forKeyword: keyAEObject1];
 	[desc setDescriptor: [self operator] forKeyword: keyAECompOperator];
 	[desc setDescriptor: [codecs pack: operand2] forKeyword: keyAEObject2];
@@ -357,7 +349,7 @@ void disposeTestModule(void) {
 }
 
 - (NSAppleEventDescriptor *)packWithCodecsNoCache:(id)codecs {
-	NSAppleEventDescriptor *desc = [kEmptyRecord coerceToDescriptorType: typeCompDescriptor];
+	NSAppleEventDescriptor *desc = AEMNewRecordOfType(typeCompDescriptor);
 	[desc setDescriptor: [codecs pack: operand2] forKeyword: keyAEObject1];
 	[desc setDescriptor: [self operator] forKeyword: keyAECompOperator];
 	[desc setDescriptor: [codecs pack: operand1] forKeyword: keyAEObject2];
@@ -433,7 +425,7 @@ void disposeTestModule(void) {
 }
 
 - (NSAppleEventDescriptor *)packWithCodecsNoCache:(id)codecs {
-	NSAppleEventDescriptor *desc = [kEmptyRecord coerceToDescriptorType: typeLogicalDescriptor];
+	NSAppleEventDescriptor *desc = AEMNewRecordOfType(typeLogicalDescriptor);
 	[desc setDescriptor: [self operator] forKeyword: keyAELogicalOperator];
 	[desc setDescriptor: [codecs pack: operands] forKeyword: keyAELogicalTerms];
 	return desc;	

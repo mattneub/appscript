@@ -90,3 +90,6 @@ typedef enum {
 /**********************************************************************/
 
 NSString *ASDescriptionForError(OSStatus err);
+
+NSAppleEventDescriptor *AEMNewRecordOfType(DescType descriptorType);
+

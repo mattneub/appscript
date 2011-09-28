@@ -15,3 +15,13 @@ NSString *ASDescriptionForError(OSStatus err) {
 	}
 	return [NSString stringWithFormat: @"Mac OS error %i", err];
 }
+
+
+NSAppleEventDescriptor *AEMNewRecordOfType(DescType descriptorType) {
+	NSAppleEventDescriptor *recordDesc, *desc;
+	recordDesc = [[NSAppleEventDescriptor alloc] initRecordDescriptor];
+	desc = [recordDesc coerceToDescriptorType: descriptorType];
+	[recordDesc release];
+	return desc;
+}
+
