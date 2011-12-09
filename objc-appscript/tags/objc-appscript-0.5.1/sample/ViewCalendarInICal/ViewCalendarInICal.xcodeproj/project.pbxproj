@@ -1,0 +1,272 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 44;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		4F2F3AEE0EAF90DB00A6BFF0 /* Appscript.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F2F3AED0EAF90DB00A6BFF0 /* Appscript.framework */; };
+		4F2F3AFE0EAF913D00A6BFF0 /* ICApplicationGlue.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F2F3AF40EAF913D00A6BFF0 /* ICApplicationGlue.m */; };
+		4F2F3AFF0EAF913D00A6BFF0 /* ICCommandGlue.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F2F3AF60EAF913D00A6BFF0 /* ICCommandGlue.m */; };
+		4F2F3B000EAF913D00A6BFF0 /* ICConstantGlue.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F2F3AF80EAF913D00A6BFF0 /* ICConstantGlue.m */; };
+		4F2F3B010EAF913D00A6BFF0 /* ICReferenceGlue.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F2F3AFB0EAF913D00A6BFF0 /* ICReferenceGlue.m */; };
+		4F2F3B020EAF913D00A6BFF0 /* ICReferenceRendererGlue.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F2F3AFD0EAF913D00A6BFF0 /* ICReferenceRendererGlue.m */; };
+		8DD76F9A0486AA7600D96B5E /* ViewCalendarInICal.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FB7796FE84155DC02AAC07 /* ViewCalendarInICal.m */; settings = {ATTRIBUTES = (); }; };
+		8DD76F9C0486AA7600D96B5E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08FB779EFE84155DC02AAC07 /* Foundation.framework */; };
+		8DD76F9F0486AA7600D96B5E /* ViewCalendarInICal.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = C6859EA3029092ED04C91782 /* ViewCalendarInICal.1 */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		8DD76F9E0486AA7600D96B5E /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 8;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+				8DD76F9F0486AA7600D96B5E /* ViewCalendarInICal.1 in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		08FB7796FE84155DC02AAC07 /* ViewCalendarInICal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewCalendarInICal.m; sourceTree = "<group>"; };
+		08FB779EFE84155DC02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		32A70AAB03705E1F00C91783 /* ViewCalendarInICal_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewCalendarInICal_Prefix.pch; sourceTree = "<group>"; };
+		4F2F3AED0EAF90DB00A6BFF0 /* Appscript.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Appscript.framework; path = ../Library/Frameworks/Appscript.framework; sourceTree = SOURCE_ROOT; };
+		4F2F3AF20EAF913D00A6BFF0 /* ICAEMConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ICAEMConstants.h; sourceTree = "<group>"; };
+		4F2F3AF30EAF913D00A6BFF0 /* ICApplicationGlue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ICApplicationGlue.h; sourceTree = "<group>"; };
+		4F2F3AF40EAF913D00A6BFF0 /* ICApplicationGlue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ICApplicationGlue.m; sourceTree = "<group>"; };
+		4F2F3AF50EAF913D00A6BFF0 /* ICCommandGlue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ICCommandGlue.h; sourceTree = "<group>"; };
+		4F2F3AF60EAF913D00A6BFF0 /* ICCommandGlue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ICCommandGlue.m; sourceTree = "<group>"; };
+		4F2F3AF70EAF913D00A6BFF0 /* ICConstantGlue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ICConstantGlue.h; sourceTree = "<group>"; };
+		4F2F3AF80EAF913D00A6BFF0 /* ICConstantGlue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ICConstantGlue.m; sourceTree = "<group>"; };
+		4F2F3AF90EAF913D00A6BFF0 /* ICGlue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ICGlue.h; sourceTree = "<group>"; };
+		4F2F3AFA0EAF913D00A6BFF0 /* ICReferenceGlue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ICReferenceGlue.h; sourceTree = "<group>"; };
+		4F2F3AFB0EAF913D00A6BFF0 /* ICReferenceGlue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ICReferenceGlue.m; sourceTree = "<group>"; };
+		4F2F3AFC0EAF913D00A6BFF0 /* ICReferenceRendererGlue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ICReferenceRendererGlue.h; sourceTree = "<group>"; };
+		4F2F3AFD0EAF913D00A6BFF0 /* ICReferenceRendererGlue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ICReferenceRendererGlue.m; sourceTree = "<group>"; };
+		8DD76FA10486AA7600D96B5E /* viewcal */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = viewcal; sourceTree = BUILT_PRODUCTS_DIR; };
+		C6859EA3029092ED04C91782 /* ViewCalendarInICal.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = ViewCalendarInICal.1; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8DD76F9B0486AA7600D96B5E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8DD76F9C0486AA7600D96B5E /* Foundation.framework in Frameworks */,
+				4F2F3AEE0EAF90DB00A6BFF0 /* Appscript.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		08FB7794FE84155DC02AAC07 /* ViewCalendarInICal */ = {
+			isa = PBXGroup;
+			children = (
+				08FB7795FE84155DC02AAC07 /* Source */,
+				C6859EA2029092E104C91782 /* Documentation */,
+				08FB779DFE84155DC02AAC07 /* External Frameworks and Libraries */,
+				1AB674ADFE9D54B511CA2CBB /* Products */,
+			);
+			name = ViewCalendarInICal;
+			sourceTree = "<group>";
+		};
+		08FB7795FE84155DC02AAC07 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				4F2F3AF10EAF913D00A6BFF0 /* ICGlue */,
+				32A70AAB03705E1F00C91783 /* ViewCalendarInICal_Prefix.pch */,
+				08FB7796FE84155DC02AAC07 /* ViewCalendarInICal.m */,
+			);
+			name = Source;
+			sourceTree = "<group>";
+		};
+		08FB779DFE84155DC02AAC07 /* External Frameworks and Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				4F2F3AED0EAF90DB00A6BFF0 /* Appscript.framework */,
+				08FB779EFE84155DC02AAC07 /* Foundation.framework */,
+			);
+			name = "External Frameworks and Libraries";
+			sourceTree = "<group>";
+		};
+		1AB674ADFE9D54B511CA2CBB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8DD76FA10486AA7600D96B5E /* viewcal */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		4F2F3AF10EAF913D00A6BFF0 /* ICGlue */ = {
+			isa = PBXGroup;
+			children = (
+				4F2F3AF20EAF913D00A6BFF0 /* ICAEMConstants.h */,
+				4F2F3AF30EAF913D00A6BFF0 /* ICApplicationGlue.h */,
+				4F2F3AF40EAF913D00A6BFF0 /* ICApplicationGlue.m */,
+				4F2F3AF50EAF913D00A6BFF0 /* ICCommandGlue.h */,
+				4F2F3AF60EAF913D00A6BFF0 /* ICCommandGlue.m */,
+				4F2F3AF70EAF913D00A6BFF0 /* ICConstantGlue.h */,
+				4F2F3AF80EAF913D00A6BFF0 /* ICConstantGlue.m */,
+				4F2F3AF90EAF913D00A6BFF0 /* ICGlue.h */,
+				4F2F3AFA0EAF913D00A6BFF0 /* ICReferenceGlue.h */,
+				4F2F3AFB0EAF913D00A6BFF0 /* ICReferenceGlue.m */,
+				4F2F3AFC0EAF913D00A6BFF0 /* ICReferenceRendererGlue.h */,
+				4F2F3AFD0EAF913D00A6BFF0 /* ICReferenceRendererGlue.m */,
+			);
+			path = ICGlue;
+			sourceTree = "<group>";
+		};
+		C6859EA2029092E104C91782 /* Documentation */ = {
+			isa = PBXGroup;
+			children = (
+				C6859EA3029092ED04C91782 /* ViewCalendarInICal.1 */,
+			);
+			name = Documentation;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		8DD76F960486AA7600D96B5E /* ViewCalendarInICal */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1DEB927408733DD40010E9CD /* Build configuration list for PBXNativeTarget "ViewCalendarInICal" */;
+			buildPhases = (
+				8DD76F990486AA7600D96B5E /* Sources */,
+				8DD76F9B0486AA7600D96B5E /* Frameworks */,
+				8DD76F9E0486AA7600D96B5E /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ViewCalendarInICal;
+			productInstallPath = "$(HOME)/bin";
+			productName = ViewCalendarInICal;
+			productReference = 8DD76FA10486AA7600D96B5E /* viewcal */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		08FB7793FE84155DC02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 1DEB927808733DD40010E9CD /* Build configuration list for PBXProject "ViewCalendarInICal" */;
+			compatibilityVersion = "Xcode 3.0";
+			hasScannedForEncodings = 1;
+			mainGroup = 08FB7794FE84155DC02AAC07 /* ViewCalendarInICal */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8DD76F960486AA7600D96B5E /* ViewCalendarInICal */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8DD76F990486AA7600D96B5E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8DD76F9A0486AA7600D96B5E /* ViewCalendarInICal.m in Sources */,
+				4F2F3AFE0EAF913D00A6BFF0 /* ICApplicationGlue.m in Sources */,
+				4F2F3AFF0EAF913D00A6BFF0 /* ICCommandGlue.m in Sources */,
+				4F2F3B000EAF913D00A6BFF0 /* ICConstantGlue.m in Sources */,
+				4F2F3B010EAF913D00A6BFF0 /* ICReferenceGlue.m in Sources */,
+				4F2F3B020EAF913D00A6BFF0 /* ICReferenceRendererGlue.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		1DEB927508733DD40010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../Library/Frameworks\"",
+				);
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = ViewCalendarInICal_Prefix.pch;
+				INSTALL_PATH = /usr/local/bin;
+				PRODUCT_NAME = ViewCalendarInICal;
+				ZERO_LINK = YES;
+			};
+			name = Debug;
+		};
+		1DEB927608733DD40010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../Library/Frameworks\"",
+				);
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = ViewCalendarInICal_Prefix.pch;
+				INSTALL_PATH = /usr/local/bin;
+				PRODUCT_NAME = viewcal;
+			};
+			name = Release;
+		};
+		1DEB927908733DD40010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PREBINDING = NO;
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
+			};
+			name = Debug;
+		};
+		1DEB927A08733DD40010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (
+					ppc,
+					i386,
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PREBINDING = NO;
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1DEB927408733DD40010E9CD /* Build configuration list for PBXNativeTarget "ViewCalendarInICal" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB927508733DD40010E9CD /* Debug */,
+				1DEB927608733DD40010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1DEB927808733DD40010E9CD /* Build configuration list for PBXProject "ViewCalendarInICal" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB927908733DD40010E9CD /* Debug */,
+				1DEB927A08733DD40010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 08FB7793FE84155DC02AAC07 /* Project object */;
+}

@@ -1,0 +1,155 @@
+// !$*UTF8*$!
+{
+	08FB7793FE84155DC02AAC07 /* Project object */ = {
+		activeArchitecture = i386;
+		activeBuildConfigurationName = Release;
+		activeExecutable = 4F2F4E170D85B348004C31AD /* AddFilesToiTunes */;
+		activeTarget = 8DD76F960486AA7600D96B5E /* AddFilesToiTunes */;
+		addToTargets = (
+			8DD76F960486AA7600D96B5E /* AddFilesToiTunes */,
+		);
+		codeSenseManager = 4F2F4E2E0D85B357004C31AD /* Code sense */;
+		executables = (
+			4F2F4E170D85B348004C31AD /* AddFilesToiTunes */,
+		);
+		perUserDictionary = {
+			PBXConfiguration.PBXFileTableDataSource3.PBXFileTableDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					462,
+					20,
+					48,
+					43,
+					43,
+					20,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+					PBXFileDataSource_Target_ColumnID,
+				);
+			};
+			PBXPerProjectTemplateStateSaveDate = 247492935;
+			PBXWorkspaceStateSaveDate = 247492935;
+		};
+		perUserProjectItems = {
+			4FA485750EC079E600DB9A71 /* PBXTextBookmark */ = 4FA485750EC079E600DB9A71 /* PBXTextBookmark */;
+			4FA485760EC079E600DB9A71 /* PBXTextBookmark */ = 4FA485760EC079E600DB9A71 /* PBXTextBookmark */;
+			4FA485780EC079E600DB9A71 /* PBXTextBookmark */ = 4FA485780EC079E600DB9A71 /* PBXTextBookmark */;
+			4FA485790EC079E600DB9A71 /* PBXTextBookmark */ = 4FA485790EC079E600DB9A71 /* PBXTextBookmark */;
+		};
+		sourceControlManager = 4F2F4E2D0D85B357004C31AD /* Source Control */;
+		userBuildSettings = {
+		};
+	};
+	08FB7796FE84155DC02AAC07 /* AddFilesToiTunes.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {640, 910}}";
+			sepNavSelRange = "{59, 0}";
+			sepNavVisRange = "{0, 1610}";
+			sepNavWindowFrame = "{{356, 0}, {744, 1028}}";
+		};
+	};
+	4F2F4E170D85B348004C31AD /* AddFilesToiTunes */ = {
+		isa = PBXExecutable;
+		activeArgIndices = (
+		);
+		argumentStrings = (
+		);
+		autoAttachOnCrash = 1;
+		breakpointsEnabled = 0;
+		configStateDict = {
+		};
+		customDataFormattersEnabled = 1;
+		debuggerPlugin = GDBDebugging;
+		disassemblyDisplayState = 0;
+		dylibVariantSuffix = "";
+		enableDebugStr = 1;
+		environmentEntries = (
+		);
+		executableSystemSymbolLevel = 0;
+		executableUserSymbolLevel = 0;
+		libgmallocEnabled = 0;
+		name = AddFilesToiTunes;
+		sourceDirectories = (
+		);
+	};
+	4F2F4E2D0D85B357004C31AD /* Source Control */ = {
+		isa = PBXSourceControlManager;
+		fallbackIsa = XCSourceControlManager;
+		isSCMEnabled = 0;
+		scmConfiguration = {
+		};
+	};
+	4F2F4E2E0D85B357004C31AD /* Code sense */ = {
+		isa = PBXCodeSenseManager;
+		indexTemplatePath = "";
+	};
+	4FA485750EC079E600DB9A71 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 08FB7796FE84155DC02AAC07 /* AddFilesToiTunes.m */;
+		name = "AddFilesToiTunes.m: 2";
+		rLen = 0;
+		rLoc = 59;
+		rType = 0;
+		vrLen = 1610;
+		vrLoc = 0;
+	};
+	4FA485760EC079E600DB9A71 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 4FA485770EC079E600DB9A71 /* types.h */;
+		rLen = 0;
+		rLoc = 2147483647;
+		rType = 0;
+	};
+	4FA485770EC079E600DB9A71 /* types.h */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
+		name = types.h;
+		path = "/Users/has/Dev/appscript/objc-appscript/src/Appscript/types.h";
+		sourceTree = "<absolute>";
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {640, 3192}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{1067, 1282}";
+		};
+	};
+	4FA485780EC079E600DB9A71 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 08FB7796FE84155DC02AAC07 /* AddFilesToiTunes.m */;
+		name = "AddFilesToiTunes.m: 2";
+		rLen = 0;
+		rLoc = 59;
+		rType = 0;
+		vrLen = 1610;
+		vrLoc = 0;
+	};
+	4FA485790EC079E600DB9A71 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 4FA4857A0EC079E600DB9A71 /* types.h */;
+		name = "types.h: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 1282;
+		vrLoc = 1067;
+	};
+	4FA4857A0EC079E600DB9A71 /* types.h */ = {
+		isa = PBXFileReference;
+		name = types.h;
+		path = "/Users/has/Dev/appscript/objc-appscript/src/Appscript/types.h";
+		sourceTree = "<absolute>";
+	};
+	8DD76F960486AA7600D96B5E /* AddFilesToiTunes */ = {
+		activeExec = 0;
+		executables = (
+			4F2F4E170D85B348004C31AD /* AddFilesToiTunes */,
+		);
+	};
+}

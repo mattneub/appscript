@@ -1,0 +1,274 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 44;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		4F0FB1270E39FFFA008AA167 /* Appscript.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F0FB1260E39FFFA008AA167 /* Appscript.framework */; };
+		4F687BED0D8C147200B7D436 /* MLApplicationGlue.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F687BE30D8C147200B7D436 /* MLApplicationGlue.m */; };
+		4F687BEE0D8C147200B7D436 /* MLCommandGlue.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F687BE50D8C147200B7D436 /* MLCommandGlue.m */; };
+		4F687BEF0D8C147200B7D436 /* MLConstantGlue.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F687BE70D8C147200B7D436 /* MLConstantGlue.m */; };
+		4F687BF00D8C147200B7D436 /* MLReferenceGlue.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F687BEA0D8C147200B7D436 /* MLReferenceGlue.m */; };
+		4F687BF10D8C147200B7D436 /* MLReferenceRendererGlue.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F687BEC0D8C147200B7D436 /* MLReferenceRendererGlue.m */; };
+		8DD76F9A0486AA7600D96B5E /* SendEmail.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FB7796FE84155DC02AAC07 /* SendEmail.m */; settings = {ATTRIBUTES = (); }; };
+		8DD76F9C0486AA7600D96B5E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08FB779EFE84155DC02AAC07 /* Foundation.framework */; };
+		8DD76F9F0486AA7600D96B5E /* SendEmail.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = C6859EA3029092ED04C91782 /* SendEmail.1 */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		8DD76F9E0486AA7600D96B5E /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 8;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+				8DD76F9F0486AA7600D96B5E /* SendEmail.1 in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		08FB7796FE84155DC02AAC07 /* SendEmail.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SendEmail.m; sourceTree = "<group>"; };
+		08FB779EFE84155DC02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		32A70AAB03705E1F00C91783 /* SendEmail_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SendEmail_Prefix.pch; sourceTree = "<group>"; };
+		4F0FB1260E39FFFA008AA167 /* Appscript.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Appscript.framework; path = ../../../../../Library/Frameworks/Appscript.framework; sourceTree = SOURCE_ROOT; };
+		4F687BE10D8C147200B7D436 /* MLAEMConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLAEMConstants.h; sourceTree = "<group>"; };
+		4F687BE20D8C147200B7D436 /* MLApplicationGlue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLApplicationGlue.h; sourceTree = "<group>"; };
+		4F687BE30D8C147200B7D436 /* MLApplicationGlue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLApplicationGlue.m; sourceTree = "<group>"; };
+		4F687BE40D8C147200B7D436 /* MLCommandGlue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLCommandGlue.h; sourceTree = "<group>"; };
+		4F687BE50D8C147200B7D436 /* MLCommandGlue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLCommandGlue.m; sourceTree = "<group>"; };
+		4F687BE60D8C147200B7D436 /* MLConstantGlue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLConstantGlue.h; sourceTree = "<group>"; };
+		4F687BE70D8C147200B7D436 /* MLConstantGlue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLConstantGlue.m; sourceTree = "<group>"; };
+		4F687BE80D8C147200B7D436 /* MLGlue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLGlue.h; sourceTree = "<group>"; };
+		4F687BE90D8C147200B7D436 /* MLReferenceGlue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLReferenceGlue.h; sourceTree = "<group>"; };
+		4F687BEA0D8C147200B7D436 /* MLReferenceGlue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLReferenceGlue.m; sourceTree = "<group>"; };
+		4F687BEB0D8C147200B7D436 /* MLReferenceRendererGlue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLReferenceRendererGlue.h; sourceTree = "<group>"; };
+		4F687BEC0D8C147200B7D436 /* MLReferenceRendererGlue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLReferenceRendererGlue.m; sourceTree = "<group>"; };
+		8DD76FA10486AA7600D96B5E /* SendEmail */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = SendEmail; sourceTree = BUILT_PRODUCTS_DIR; };
+		C6859EA3029092ED04C91782 /* SendEmail.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = SendEmail.1; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8DD76F9B0486AA7600D96B5E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8DD76F9C0486AA7600D96B5E /* Foundation.framework in Frameworks */,
+				4F0FB1270E39FFFA008AA167 /* Appscript.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		08FB7794FE84155DC02AAC07 /* SendEmail */ = {
+			isa = PBXGroup;
+			children = (
+				08FB7795FE84155DC02AAC07 /* Source */,
+				C6859EA2029092E104C91782 /* Documentation */,
+				08FB779DFE84155DC02AAC07 /* External Frameworks and Libraries */,
+				1AB674ADFE9D54B511CA2CBB /* Products */,
+			);
+			name = SendEmail;
+			sourceTree = "<group>";
+		};
+		08FB7795FE84155DC02AAC07 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				4F687BE00D8C147200B7D436 /* MLGlue */,
+				32A70AAB03705E1F00C91783 /* SendEmail_Prefix.pch */,
+				08FB7796FE84155DC02AAC07 /* SendEmail.m */,
+			);
+			name = Source;
+			sourceTree = "<group>";
+		};
+		08FB779DFE84155DC02AAC07 /* External Frameworks and Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				4F0FB1260E39FFFA008AA167 /* Appscript.framework */,
+				08FB779EFE84155DC02AAC07 /* Foundation.framework */,
+			);
+			name = "External Frameworks and Libraries";
+			sourceTree = "<group>";
+		};
+		1AB674ADFE9D54B511CA2CBB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8DD76FA10486AA7600D96B5E /* SendEmail */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		4F687BE00D8C147200B7D436 /* MLGlue */ = {
+			isa = PBXGroup;
+			children = (
+				4F687BE10D8C147200B7D436 /* MLAEMConstants.h */,
+				4F687BE20D8C147200B7D436 /* MLApplicationGlue.h */,
+				4F687BE30D8C147200B7D436 /* MLApplicationGlue.m */,
+				4F687BE40D8C147200B7D436 /* MLCommandGlue.h */,
+				4F687BE50D8C147200B7D436 /* MLCommandGlue.m */,
+				4F687BE60D8C147200B7D436 /* MLConstantGlue.h */,
+				4F687BE70D8C147200B7D436 /* MLConstantGlue.m */,
+				4F687BE80D8C147200B7D436 /* MLGlue.h */,
+				4F687BE90D8C147200B7D436 /* MLReferenceGlue.h */,
+				4F687BEA0D8C147200B7D436 /* MLReferenceGlue.m */,
+				4F687BEB0D8C147200B7D436 /* MLReferenceRendererGlue.h */,
+				4F687BEC0D8C147200B7D436 /* MLReferenceRendererGlue.m */,
+			);
+			path = MLGlue;
+			sourceTree = "<group>";
+		};
+		C6859EA2029092E104C91782 /* Documentation */ = {
+			isa = PBXGroup;
+			children = (
+				C6859EA3029092ED04C91782 /* SendEmail.1 */,
+			);
+			name = Documentation;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		8DD76F960486AA7600D96B5E /* SendEmail */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1DEB927408733DD40010E9CD /* Build configuration list for PBXNativeTarget "SendEmail" */;
+			buildPhases = (
+				8DD76F990486AA7600D96B5E /* Sources */,
+				8DD76F9B0486AA7600D96B5E /* Frameworks */,
+				8DD76F9E0486AA7600D96B5E /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SendEmail;
+			productInstallPath = "$(HOME)/bin";
+			productName = SendEmail;
+			productReference = 8DD76FA10486AA7600D96B5E /* SendEmail */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		08FB7793FE84155DC02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 1DEB927808733DD40010E9CD /* Build configuration list for PBXProject "SendEmail" */;
+			compatibilityVersion = "Xcode 3.0";
+			hasScannedForEncodings = 1;
+			mainGroup = 08FB7794FE84155DC02AAC07 /* SendEmail */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8DD76F960486AA7600D96B5E /* SendEmail */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8DD76F990486AA7600D96B5E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8DD76F9A0486AA7600D96B5E /* SendEmail.m in Sources */,
+				4F687BED0D8C147200B7D436 /* MLApplicationGlue.m in Sources */,
+				4F687BEE0D8C147200B7D436 /* MLCommandGlue.m in Sources */,
+				4F687BEF0D8C147200B7D436 /* MLConstantGlue.m in Sources */,
+				4F687BF00D8C147200B7D436 /* MLReferenceGlue.m in Sources */,
+				4F687BF10D8C147200B7D436 /* MLReferenceRendererGlue.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		1DEB927508733DD40010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../Library/Frameworks\"",
+					"\"$(SRCROOT)/../../../../../Library/Frameworks\"",
+				);
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = SendEmail_Prefix.pch;
+				INSTALL_PATH = /usr/local/bin;
+				PRODUCT_NAME = SendEmail;
+				ZERO_LINK = YES;
+			};
+			name = Debug;
+		};
+		1DEB927608733DD40010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../Library/Frameworks\"",
+					"\"$(SRCROOT)/../../../../../Library/Frameworks\"",
+				);
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = SendEmail_Prefix.pch;
+				INSTALL_PATH = /usr/local/bin;
+				PRODUCT_NAME = SendEmail;
+			};
+			name = Release;
+		};
+		1DEB927908733DD40010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PREBINDING = NO;
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
+			};
+			name = Debug;
+		};
+		1DEB927A08733DD40010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (
+					ppc,
+					i386,
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PREBINDING = NO;
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1DEB927408733DD40010E9CD /* Build configuration list for PBXNativeTarget "SendEmail" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB927508733DD40010E9CD /* Debug */,
+				1DEB927608733DD40010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1DEB927808733DD40010E9CD /* Build configuration list for PBXProject "SendEmail" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB927908733DD40010E9CD /* Debug */,
+				1DEB927A08733DD40010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 08FB7793FE84155DC02AAC07 /* Project object */;
+}

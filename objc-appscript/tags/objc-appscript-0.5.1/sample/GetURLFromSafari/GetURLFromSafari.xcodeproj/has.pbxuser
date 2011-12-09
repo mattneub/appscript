@@ -1,0 +1,94 @@
+// !$*UTF8*$!
+{
+	08FB7793FE84155DC02AAC07 /* Project object */ = {
+		activeArchitecture = i386;
+		activeBuildConfigurationName = Release;
+		activeExecutable = 4F2F4DBC0D858F3A004C31AD /* GetURLFromSafari */;
+		activeTarget = 8DD76F960486AA7600D96B5E /* GetURLFromSafari */;
+		addToTargets = (
+			8DD76F960486AA7600D96B5E /* GetURLFromSafari */,
+		);
+		codeSenseManager = 4F2F4DD50D858F4D004C31AD /* Code sense */;
+		executables = (
+			4F2F4DBC0D858F3A004C31AD /* GetURLFromSafari */,
+		);
+		perUserDictionary = {
+			PBXConfiguration.PBXFileTableDataSource3.PBXFileTableDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					325,
+					20,
+					48,
+					43,
+					43,
+					20,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+					PBXFileDataSource_Target_ColumnID,
+				);
+			};
+			PBXPerProjectTemplateStateSaveDate = 238681928;
+			PBXWorkspaceStateSaveDate = 238681928;
+		};
+		sourceControlManager = 4F2F4DD40D858F4D004C31AD /* Source Control */;
+		userBuildSettings = {
+		};
+	};
+	08FB7796FE84155DC02AAC07 /* GetURLFromSafari.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {759, 939}}";
+			sepNavSelRange = "{789, 0}";
+			sepNavVisRange = "{0, 789}";
+			sepNavWindowFrame = "{{607, 0}, {818, 1028}}";
+		};
+	};
+	4F2F4DBC0D858F3A004C31AD /* GetURLFromSafari */ = {
+		isa = PBXExecutable;
+		activeArgIndices = (
+		);
+		argumentStrings = (
+		);
+		autoAttachOnCrash = 1;
+		breakpointsEnabled = 0;
+		configStateDict = {
+		};
+		customDataFormattersEnabled = 1;
+		debuggerPlugin = GDBDebugging;
+		disassemblyDisplayState = 0;
+		dylibVariantSuffix = "";
+		enableDebugStr = 1;
+		environmentEntries = (
+		);
+		executableSystemSymbolLevel = 0;
+		executableUserSymbolLevel = 0;
+		libgmallocEnabled = 0;
+		name = GetURLFromSafari;
+		sourceDirectories = (
+		);
+	};
+	4F2F4DD40D858F4D004C31AD /* Source Control */ = {
+		isa = PBXSourceControlManager;
+		fallbackIsa = XCSourceControlManager;
+		isSCMEnabled = 0;
+		scmConfiguration = {
+		};
+	};
+	4F2F4DD50D858F4D004C31AD /* Code sense */ = {
+		isa = PBXCodeSenseManager;
+		indexTemplatePath = "";
+	};
+	8DD76F960486AA7600D96B5E /* GetURLFromSafari */ = {
+		activeExec = 0;
+		executables = (
+			4F2F4DBC0D858F3A004C31AD /* GetURLFromSafari */,
+		);
+	};
+}
