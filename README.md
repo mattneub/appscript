@@ -6,6 +6,8 @@ Hamish has made it very clear that he isn't willing to touch this code any furth
 
 There's no reason in the world, for example, why appscript should stop working just because Hamish insists on using ascr/gdte as a way of fetching an application's dictionary. There are many other ways to fetch the dictionary that work perfectly well with appscript. The next step, clearly, will be to commit some of those into this repository.
 
+Please see the rbappscript folder for my solution (for rb-appscript). It should not be difficult for a Python person to imitate this in Python if desired.
+
 Please fork and let's carry on.
 
 — Matt Neuburg
