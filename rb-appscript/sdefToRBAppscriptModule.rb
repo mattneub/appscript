@@ -24,6 +24,13 @@ module SDEFParser
     s += "_" if s.start_with?("AS_") or @@_reserved_keywords.has_key?(s) or s.start_with?("_")
     s
   end
+  
+  def self.hexify(s)
+    # deal with sdef representation of nonprintables in codes
+    # put into the form appscript expects
+    s = [s[2..-1]].pack("H*") if s.length >= 10
+    s
+  end
 
   def self.makeModule(f, debugging=false)
     # f is expected to be the path to a scriptable application
@@ -49,7 +56,7 @@ module SDEFParser
     klasses = doc.search("class")
     klass_array = []
     klasses.each do |klass|
-      klass_array << [xform(klass["name"]),klass["code"]]
+      klass_array << [xform(klass["name"]),hexify(klass["code"])]
     end
     # sort array on name
     klass_array.sort! {|a,b| a[0] <=> b[0]}
@@ -61,7 +68,7 @@ module SDEFParser
     enums = doc.search("enumerator")
     enum_array = []
     enums.each do |enum|
-      enum_array << [xform(enum["name"]),enum["code"]]
+      enum_array << [xform(enum["name"]),hexify(enum["code"])]
     end
     enum_array.sort! {|a,b| a[0] <=> b[0]}
     enum_array.uniq!
@@ -72,7 +79,7 @@ module SDEFParser
     props = doc.search("property")
     prop_array = []
     props.each do |prop|
-      prop_array << [xform(prop["name"]),prop["code"]]
+      prop_array << [xform(prop["name"]),hexify(prop["code"])]
     end
     prop_array.sort! {|a,b| a[0] <=> b[0]}
     prop_array.uniq!
@@ -81,15 +88,18 @@ module SDEFParser
     # Elements ===============
     # Terminology.dump seems to use plurals in a slightly brute-force way
     # here, I'm only getting actual elements, and fetching their plurals from the classes
+    # TODO: is that a problem? we'll cross that bridge when we come to it
+    # (I can see why it might be, if the dictionary just forgot to list a class as an element)
 
     els = doc.search("element")
     el_array = []
     els.each do |el|
       # fetch corresponding property
       klas = doc.search("class[@name='#{el["type"]}']")
-      # assume we caught at least one; TODO: what if we don't?
+      # assume we caught at least one
       klas = klas[0]
-      el_array << [xform(klas["plural"]),klas["code"]]
+      next unless klas and klas["plural"] # if we didn't get one or no plural, skip for now (TODO: ok?)
+      el_array << [xform(klas["plural"]),hexify(klas["code"])]
     end
     el_array.sort! {|a,b| a[0] <=> b[0]}
     el_array.uniq!
@@ -105,9 +115,9 @@ module SDEFParser
       params = com.search("parameter")
       params_array = []
       params.each do |param|
-        params_array << [xform(param["name"]), param["code"]]
+        params_array << [xform(param["name"]),hexify(param["code"])]
       end
-      com_array << [xform(com["name"]),com["code"],params_array]
+      com_array << [xform(com["name"]),hexify(com["code"]),params_array]
     end
     com_array.sort! {|a,b| a[0] <=> b[0]}
     com_array.uniq!
