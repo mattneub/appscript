@@ -35,7 +35,9 @@ module SDEFParser
   def self.makeModule(f, debugging=false)
     # f is expected to be the path to a scriptable application
     # TODO: how about a little error checking in case sdef doesn't work?
-    orig = `sdef '#{f}'`
+    # orig = `sdef '#{f}'`
+    # use same underlying carbon call that sdef uses
+    orig = AE.copy_scripting_definition(f)
     
     # anonymous module, to be returned when filled out
     result = Module.new
