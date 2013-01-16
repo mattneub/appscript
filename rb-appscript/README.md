@@ -1,4 +1,12 @@
-iTunes 10.6.3 broke appscript because Hamish's method of fetching the dictionary, using an ascr/gdte Apple event, no longer works. This is an unnecessary limitation, as there are other ways to get the dictionary that do still work. I have written a script, sdefToRBAppscriptModule, that works around the problem by using a different way of fetching the dictionary, namely by calling the `sdef` command-line tool.
+iTunes 10.6.3 broke appscript because Hamish's method of fetching the dictionary, using an ascr/gdte Apple event, no longer works.
+
+*STOP READING!* iTunes 11.0.1 has fixed that bug. rb-appscript now works just fine with iTunes once again. The fix discussed in this note is no longer needed.
+
+----
+
+[The rest of this note remains here purely out of historical interest.]
+
+This is an unnecessary limitation, as there are other ways to get the dictionary that do still work. I have written a script, sdefToRBAppscriptModule, that works around the problem by using a different way of fetching the dictionary, namely by calling the `sdef` command-line tool.
 
 Here's how to use it:
 
