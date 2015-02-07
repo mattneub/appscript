@@ -9,9 +9,3 @@ spec = Gem::Specification.new do |s|
 #	s.platform = Gem::Platform::CURRENT
 	s.required_ruby_version = ">= 1.8"
 end
-
-
-if $0==__FILE__
-	Gem::manage_gems
-	Gem::Builder.new(spec).build
-end
