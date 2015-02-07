@@ -1,5 +1,3 @@
-require "rubygems"
-
 spec = Gem::Specification.new do |s|
 	s.name = "rb-appscript"
 	s.version = "0.6.1"
