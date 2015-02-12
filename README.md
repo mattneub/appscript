@@ -16,14 +16,13 @@ I am interested personally in rb-appscript. Python users and Objective-C users, 
 
 rb-appscript broke against iTunes, and later against the Finder. There's no reason in the world, however, why appscript should stop working just because Hamish insists on using `'ascr/gdte'` as a way of fetching an application's dictionary. There are many other ways to fetch the dictionary that work perfectly well with appscript. Please see the rbappscript folder for my solution (for rb-appscript). It should not be difficult for a Python person to imitate this in Python if desired.
 
-Another problem that has come to my attention is that there may be something wrong with the rb-appscript gemspec, such that it doesn't install properly. I don't know anything about gemspecs, and no one has suggested a fix. However, there's an easy workaround: install manually, like this:
+Thanks to kch for fixing the rb-appscript gemspec. If for any reason you still can't install as a gem, install manually (into the Ruby library), like this:
 
     $ cd /path/to/trunk
     $ ruby extconf.rb
     $ make
     $ make install
 
-That installs into the Ruby library, and I actually like that better than using rb-appscript as a gem anyway.
 
 — Matt Neuburg
 
